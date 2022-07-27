@@ -1,0 +1,2885 @@
+﻿;-------------------------------------------------
+; eraTheWorld proto4.48用 妖夢口上（キャラクターの名前を入れる、下にコンセプトなど一言あれば入れる）
+;-------------------------------------------------
+;ためしに自分で書いてみる口上。
+;移植程度しか経験ないので、とりあえず素質と合致した口上になるように心がけてみる。
+;
+;構文の知識は皆無に等しいので、先人の口上を参考にエロ文を必死に貼り付けるだけのものとなります。
+;よって、書いたはいいものの機能していない箇所があるかもしれません。
+;その辺りに気づいた方は私の代わりに直してくれると感激してむせび泣きます。
+
+;参考　霊夢口上　萃香口上　美鈴口上
+
+
+;メモ
+
+;素質
+;処女　キス未経験　自制心　保守的　無知　貞操観念　痛みに強い　献身的　快感に素直　C敏感　A敏感　貧乳　回復早い
+
+;PRINTL　　　　　……PRINTではできない改行をする
+;PRINTFORML　　　……%CALLNAME:MASTER%　のような変数を単語として表示し、なおかつ改行する
+;PRINTFORMW　　　……上にWAIT機能を追加したもの
+;PRINTFORM　　　 ……PRINTFORMLから改行機能をのけたもの
+
+
+
+
+;ライセンスについて
+; ・基本項目(許可する項目を"○"に、許可しない項目を"×"に変更してください。)
+; +----+----+-------------------------------+
+; |番号|許可|ライセンス内容                 |
+; +----+----+-------------------------------+
+; | 1　| ○ | 処理上のバグ修正              |
+; +----+----+-------------------------------+
+; | 2　| ○ | 口上の誤字・脱字の修正        |
+; +----+----+-------------------------------+
+; | 3　| ○ | 口上まとめへの収録            |
+; +----+----+-------------------------------+
+; | 4　| ○ | 口上の新規追加                |
+; +----+----+-------------------------------+
+; | 5　| ○ | 既存口上の改変                |
+; +----+----+-------------------------------+
+; | 6　| ○ | 改変した口上の自由な再配布    |
+; +----+----+-------------------------------+
+; | 7　| ○ | 口上内容の転載                |　*ただしera以外での流用は禁止とします
+; +----+----+-------------------------------+ 
+
+
+
+
+
+
+;------ ｷﾘﾄﾘ ｶｲｼ -----------
+;eraTheWorld proto4.07パッチ取り込み用 Ver1.13
+;テンプレートの使い方
+;初めに置換コマンド等により K23 を K(キャラNo) に変更して下さい  
+;キャラNoはCSVフォルダのCharaファイルを参照　例(霧雨 魔理沙の場合)：KX =置換=> K11
+;
+;------ ｷﾘﾄﾘ ｵﾜﾘ -----------
+
+;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;わからんちん
+;
+;
+;******************************************************************************
+
+;### 口上存在判定 ###################################
+@M_KOJO_K23(ARG)
+;別人版を作成する際はこのテンプレではなく別人版用口上テンプレをご利用ください
+
+;口上存在判定です、けしてコメントアウトしないでください
+;他の処理は一切行わないように
+RETURN 1
+
+;### 口上基本フラグ設定 #############################
+@M_KOJO_FLAGSETTING_K23
+;基本フラグ設定はここで行ってください
+;共通の口上フラグは必要な箇所のコメントアウトを外してご利用ください
+;口上専用フラグはご自由に
+;Xにはキャラ番号を入れてください
+
+;眠姦口上有、時間停止口上有、なりきりに1を入れると、それぞれ時間停止時、眠姦時、なりきり時にコマンド口上が読み込まれるように
+;入れないと時間停止時、眠姦時、なりきり時は一切喋りません
+;CFLAG:X:眠姦口上有 = 0
+;CFLAG:X:時間停止口上有 = 0
+;CFLAG:X:なりきり口上有 = 0
+
+;破瓜キャンセル口上有に1を入れると、@M_KOJO_EVENT_KX_LOST_VIRGIN_STOPでキャンセルの成否を操作できます
+;CFLAG:X:破瓜キャンセル口上有 = 0
+
+;口上内抱き寄せ判定_初回と口上内抱き寄せ判定_通常に1を入れると、M_KOJO_EVENT_KX_PERMISSIONで押し倒しの成否を操作できます
+;CFLAG:X:口上内抱き寄せ判定_初回 = 0
+;CFLAG:X:口上内抱き寄せ判定_通常 = 0
+
+;押し倒し禁止に1を入れると、自分から押し倒してこなくなります
+;以下は恋慕かセフレがつくまで押し倒してこなくなる使用例
+;IF !TALENT:X:恋慕 && !TALENT:X:セフレ
+;	CFLAG:X:押し倒し禁止 = 1
+;ELSE
+;	CFLAG:X:押し倒し禁止 = 0
+;ENDIF
+
+;来訪不能に1を入れると、来訪してこなくなります
+;以下は面識があるまで来訪してこなくなる使用例
+;IF !CFLAG:X:面識
+;	CFLAG:X:来訪不能 = 1
+;ELSE
+;	CFLAG:X:来訪不能 = 0
+;ENDIF
+
+;### 口上色判定 ###################################
+@M_KOJO_COLOR_K23
+
+;ここでSETCOLORすることで口上に色を付けられます
+;例：SETCOLOR 0xC07070
+SETCOLOR 0xFEFEFE
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"UPDATE判定"
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_UPDATE_K23
+;口上独自のUPDATE用
+;ENCOUNTER専用に独自分岐フラグを仕込んだ場合等にどうぞ
+;UPDATE判定でCFLAGを使う場合、キャラ番号の指定が必要になります
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"ENCOUNTER"系イベント（エクストラ構文）
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_ENCOUNTER_K23
+;初対面、挨拶のタイミング
+;TALENTの変更はここでどうぞ。
+
+
+	PRINTL
+	PRINTFORMW 「Good day.」
+	PRINTFORMDL When you turn around, you are unexpectedly greeted by a beautiful silver-haired girl with blue eyes, she wears dark green and white clothes.
+	PRINTFORMDW The girl carries a pair of swords with lovely cherry blossom insignias on her back and waist.
+	PRINTFORML 「You must be that foreigner everyone is talking about.」
+	PRINTFORMW 「My name is Youmu Konpaku, I work for Lady Yuyuko at the Hakugyokurou as her gardener and fencing instructor.」
+	PRINTFORMDL There is a strange white ghostly mass floating near the girl.
+	PRINTFORMW 「And this one here is my phantom-half. I am half-human and half phantom.」
+	PRINTFORMDW When you look at it, the phantom-half floats lower as if bowing to you.
+	PRINTFORMW 「I'm sure we'll see each other more often from now on, my best regards.」
+	PRINTFORMDL You are captivated by Youmu's smile and by the way the wind caresses her silver hair, it seems you forgot to properly introduce yourself to her.
+	PRINTL
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"SP_EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;デート帰りにファーストKISS（合意も付く）
+;==================================================
+@M_KOJO_SPEVENT_K23_1(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+;CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTFORML 「Thank you for inviting me out today.」
+	PRINTFORML 「Umm... In return for always being so nice to me, I've prepared you a gift.」
+	PRINTFORMW 「It's a little embarrassing, could you please close you eyes...?」
+	PRINTL
+	PRINTFORML 「――chu」
+	PRINTFORMW
+	PRINTFORML 「That... That was my first kiss...」
+	PRINTFORML 「I understand if this might not mean much to you. However, I wanted to get it from you.」
+	PRINTFORMW 「Well...... Would you ask me out again?」
+
+	;キスをキャンセルしたい場合は以下を開放
+	;TCVAR:キスキャンセル = 1
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰りに告白（恋人が付く）
+;==================================================
+@M_KOJO_SPEVENT_K23_2(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_2(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;告白内容
+	;この告白内容表示後に受けるかどうかの選択分が表示されます
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+
+	PRINTFORMW 「――Err!」
+	PRINTFORML 「No, well...... What I'm about to say might be sudden and troublesome...」
+	PRINTFORMW 「But, I should get this out of my chest!」
+	PRINTFORML 「...... I.――I love you!」
+	PRINTFORMW 「I love %CALLNAME:MASTER%!」
+	PRINTFORML 「I might not have a big chest, feminine charm, or even a happy personality.」
+	PRINTFORMW 「But, if I didn't tell you my feeling now, I know I'll regret it later...」
+	PRINTL
+	PRINTFORMW 「So please %CALLNAME:MASTER%, tell me your feeling.」
+
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白オッケー（恋人が付く）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+
+	PRINTFORMW 「――!!!」
+	PRINTFORMDL The very moment you answer, Youmu's small body impacts yours.
+	PRINTFORMDW You struggle desperately to keep balance, as Youmu buries her face in your chest sobbing.
+	PRINTFORML 「...... I was so sure you would refuse me.」
+	PRINTFORMW 「I thought you would want nothing from an inexperienced person such as me.」
+	PRINTL
+	PRINTFORML 「I love you...... I've been yearning for you for a long time.」
+	PRINTFORMDW You gently hug Youmu, burying her head in his chest while patting her head with one hand.
+
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+
+	PRINTFORMW 「――it's fine. I knew this would happen.」
+	PRINTFORML 「But,I just wanted you to know.」
+	PRINTFORMW 「My feelings.」
+	PRINTFORMDW Youmu informs you of her feelings, as she courageously smiles.
+
+		RETURN 1
+	ENDIF
+
+ENDIF
+RETURN 1
+
+;==================================================
+;Returning from a date
+;==================================================
+@M_KOJO_SPEVENT_K23_3(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+;CALL SPEVENT_MESSAGE_3(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		IF TALENT:恋人
+		PRINTFORML 「It's already time...」
+		PRINTFORML 「――wait a little%UNICODE(0x2665)%」
+		PRINTFORMDW You turn back and try to ask what's the matter, but Youmu interrupts you with a kiss.
+		RETURN 1
+
+		ELSEIF TALENT:恋慕
+		PRINTFORML 「It's already time...」
+		PRINTFORMDL Youmu mutters in disappointment.
+		PRINTFORMDW She's still holding on to your hand, it's clear she doesn't want to return yet.
+
+		ELSEIF TALENT:思慕
+		PRINTFORML 「Thank you for inviting me out today.」
+		PRINTFORML 「Uh-Uhm...!」
+		PRINTFORMDW It seems Youmu was trying to say something, but it seems she couldn't bring herself to do it.
+
+		ELSE
+			SELECTCASE RAND:2
+				CASE 1
+					PRINTFORMW 「I must go, I have to take care of Lady Yuyuko.」
+				CASE 0
+					PRINTFORMW 「This was a fun day. Well then.」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印消去イベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:恋人
+			PRINTFORML 「It was silly of me to get so angry...」
+			PRINTFORMDL Youmu calms down and lets out a small sigh.
+			PRINTFORMW 「Just don't tease me so much.」
+			RETURN 1
+		ELSE
+			PRINTFORML 「――tch!」
+			PRINTFORMW 
+			PRINTFORMDL Youmu suddenly performs a lightning-fast sword swing, it brushes your hair.
+			PRINTFORML 「I cut down evil. All of it.」
+			PRINTFORMW 「I'm still not satisfied with my training.」
+		RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印2>1レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+			PRINTFORML 「――tch!」
+			PRINTFORMW 
+			PRINTFORMDL Youmu suddenly performs a lightning-fast sword swing, the large tree besides you is cut in half.
+			PRINTFORML 「I failed. My training still isn't enough.」
+			PRINTFORMDW Once the tree fell down, it caused the ground to shake.
+			PRINTFORMDW The thought of having being her target leaves you in a cold sweat.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印3>2レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+			PRINTFORML 「――Haaa!!」
+			PRINTFORMW 
+			PRINTFORMDL Youmu yells as she performs a lightning-fast sword swing,
+			PRINTFORMDL She stops her swing a few centimeters from your nose.
+			PRINTFORMW 「Next time I won't hesitate.」
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;部屋で遭遇
+;==================================================
+@M_KOJO_EVENT_K23_1(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF !CFLAG:TARGET:ブチギレ
+			PRINTFORML 「%CALLNAME:MASTER%, do you need anything?」
+			SIF TALENT:思慕 || TALENT:恋慕
+				PRINTFORML 「――Well, if you have free time...」
+			IF TALENT:セフレ || TALENT:愛欲
+
+				PRINTFORML 「――Well, if it's alright with you...」
+			ENDIF
+			SIF TALENT:恋人
+				PRINTFORMDL Youmu unconsciously grasps your sleeve,
+			;時姦刻印があるとき時姦刻印/5で
+			IF MARK:時姦刻印 > 0 && RAND:5 < MARK:時姦刻印
+				PRINTFORMDL Youmu is having a hard time controlling herself,
+				SIF MARK:時姦刻印 > 1
+					PRINTFORMDL her small body trembles,
+				SIF MARK:時姦刻印 > 2
+					PRINTFORMDL her intimate place is completely wet.
+			ENDIF
+			PRINTFORMDW Youmu smiles at you.
+		ELSE
+			PRINTFORMDW Youmu unsheathes her sword silently and does sharp swings.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF !CFLAG:ブチギレ
+			PRINTFORM 「%CALLNAME:MASTER%
+			SIF TALENT:思慕 || TALENT:恋慕
+				PRINTFORM , excuse me, I must be going
+			PRINTFORML , is something wrong?」
+			SIF TALENT:セフレ || TALENT:愛欲
+				PRINTFORMDL Youmu gently holds you from the side.
+			SIF TALENT:恋人
+				PRINTFORMDL Youmu casually intertwines her fingers with yours.
+			;時姦刻印があるとき時姦刻印/5の確率で
+			IF MARK:時姦刻印 > 0 && RAND:5 < MARK:時姦刻印
+				PRINTFORMDL Youmu is having a hard time controlling herself,
+				SIF MARK:時姦刻印 > 1
+					PRINTFORMD her small body trembles with anticipation,
+				SIF MARK:時姦刻印 > 2
+					PRINTFORMD before she realized, intimate place was completely wet.,
+			ENDIF
+			PRINTFORMDW Youmu turns her gaze towards you.
+		ELSE
+			PRINTFORMDW When you came in, Youmu's hand was on the handle of her sword and she had a serious expression on her face.
+		ENDIF
+		RETURN 1
+
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて一緒に入る
+	;TARGETが恋慕を持っている時のみ ＝ 思慕、愛欲、セフレはない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF TALENT:恋人
+			PRINTFORML 「I'll wash your back.」
+			PRINTFORMDL 「Please don't hesitate telling me if there's another place you want me wash.」
+			PRINTFORMDL Youmu gets closer to you, exposing her soft skin.
+			SIF MARK:時姦刻印 && RAND:5 < MARK:時姦刻印-1
+				PRINTFORMDW You can feel Youmu's hardening nipples on his back.
+		ELSE
+			PRINTFORML 「――tsu, excuse me.」
+			PRINTFORMDL Youmu quickly covers her body with a bath towel.
+			PRINTFORML 「P-Please, don't look at me like that!」
+			PRINTFORMDW While blushing, Youmu diligently washes your back.
+			SIF MARK:時姦刻印 && RAND:5 < MARK:時姦刻印
+				PRINTFORMDW You can feel Youmu's hot breath on the back of your neck.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて出て行った
+	;通常はこちら
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 「M-Myon!」
+		PRINTFORMDL Youmu sees you naked, you forgot to cover your body..
+		PRINTFORML 「A-Aahh,――I'm sorry!!」
+		PRINTFORMDW When you came back to your senses, you realize she saw you naked, you feel ashamed.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて追い出された
+	;TARGETが自分の弱みを握る異性のときのみ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML 「Please get out!　Or I'll cut you!!」
+		PRINTFORMDW Youmu starts looking for her weapons, you cover your own naked body, and run away from the bathroom.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;外出先で遭遇した
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		IF CFLAG:ブチギレ
+			PRINTFORML 「――tch!」
+			PRINTFORMDL Youmu gets a sense of anxiety when she sees you,
+			PRINTFORMDW She unconsciously reaches for her sword...
+
+		ELSEIF TALENT:恋人
+			PRINTFORML 「――Ah, %CALLNAME:MASTER%-san!」
+			PRINTFORMDL Youmu excitedly comes closer to you.
+			PRINTFORML 「Umm, if you'd like, after this we could――」
+			PRINTFORMDW Youmu talks to you with a happy expression while hugging your arm, with no intention of letting it go.
+
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「――Ah, %CALLNAME:MASTER%-san!」
+			PRINTFORMDL Youmu excitedly comes closer to you...
+			PRINTFORML 「Umm, if it's alright with you...」
+			PRINTFORMDW Youmu nervously holds your arm from the side.
+
+		ELSEIF TALENT:思慕
+			PRINTFORML 「――Ah, %CALLNAME:MASTER%-san!」
+			PRINTFORMDW Youmu cheerfully speaks with you.
+
+		ELSEIF TALENT:愛欲
+			PRINTFORML 「%CALLNAME:MASTER%-san, are you currently free?」
+			PRINTFORMDL Youmu unexpectedly comes from a side and indecorously pushes her body against yours.
+			PRINTFORML 「If you have the time, you and I......%UNICODE(0x2665)%」
+			PRINTFORMDL The blushing Youmu scratches your arm while breathing heavily.
+			PRINTFORML 「――could you please do it with me?」
+			PRINTFORMDW Your hand feels a certain warmness once Youmu puts it near her intimate place.
+
+		ELSEIF TALENT:セフレ
+			PRINTFORML 「――Ah, %CALLNAME:MASTER%-san!」
+			PRINTFORMDL Youmu cheerfully speaks with you.
+			PRINTFORMDW However, she gazes and touches you in a very casual manner, her behavior is crossing the line.
+		ELSE
+			PRINTFORMDW When Youmu noticed you she made a small bow.
+
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;他キャラとデート中に遭遇した
+	;ARG:1にデート相手
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;恋人
+		IF TALENT:恋人
+			PRINTFORML 「...... That looks fun.」
+			PRINTFORML 「――ehh, I'm also looking forward to dating you on some other occasion.」
+			PRINTFORMDW While Youmu smile at you, you could sense some jealousy in her eyes.
+			;custom code, replaced faulty code
+			CALL GET_ANGRY(TARGET, 0)
+
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「Metting you in such a place, what a coincidence.」
+			PRINTFORMDW Youmu pretends to be calm, but she acting awkwardly.
+
+		;思慕
+		ELSEIF TALENT:思慕
+			PRINTFORML 「The two of you are going out together?」
+			PRINTFORML 「That's good...」
+			PRINTFORMDW Youmu mutters to herself while looking at %CALLNAME:(ARG:1)%.
+
+		;愛欲
+		ELSEIF TALENT:愛欲
+			PRINTFORMW 「You should invite me too%UNICODE(0x2665)%」
+			PRINTFORMDL Youmu looks at %CALLNAME:(ARG:1)% with envy.
+			PRINTFORMDL You can hear Youmu's muttering.
+
+		;セフレ
+		ELSEIF TALENT:セフレ
+			PRINTFORMDW Youmu looks at %CALLNAME:(ARG:1)% with envy.
+
+		ELSE
+			PRINTFORMDW When Youmu notices you and %CALLNAME:(ARG:1)% she makes a small bow.
+		ENDIF 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;朝起きたとき（おはよう口上）
+;==================================================
+@M_KOJO_EVENT_K23_2(ARG,ARG:1)
+CALL MESSAGE_GOODMONING(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;非同棲かつ相手が先に起きてる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;TARGET私室にMASTERが入っている（恋慕時添い寝中就寝時のみ？
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTER私室にTARGETが入ってきてる(恋慕無しでも入ってくる可能性有り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が起きている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が寝ている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERが起きていて、相手が起きてきた
+	;添い寝時TARGET起床はこちら（TARGET衰弱or添い寝中TARGET睡魔負け後そのままMASTERが起き続けた上で相手が起床した場合限定
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;-------------------------------------------------
+		;非同棲
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;同棲中
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;夜寝るとき（おやすみ口上）
+;==================================================
+@M_KOJO_EVENT_K23_3(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;自室に帰る（定時になって寝る）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;眠そうにしている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;睡眠中（起きていないので会話というよりは寝言？）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;イタズラ中
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 4
+		;PRINTFORMW 
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;衰弱中（恋慕付き拠点内キャラがMAIN_MAPで衰弱状態になった場合か、お招き部屋で相手が衰弱した場合に発生
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERがダウン（部屋まで運ばれる）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが自室まで戻ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;-------------------------------------------------
+		;そのまま着替えて寝た
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 0
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部屋から追い出された
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;他キャラとのＨを止めさせて寝た
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;非在住TARGETがMAIN_MAPで休憩
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;前のターンから一緒の部屋にいる状態で相手が寝る（お招き部屋含む（
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;移動時すれちがい
+;==================================================
+@M_KOJO_EVENT_K23_4(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;立ち止まった
+	;この後遭遇口上に接続
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;軽く会釈して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF CFLAG:ブチギレ
+			PRINTFORMDW Youmu unconsciously reached for her sword.
+
+		ELSEIF TALENT:恋人
+			PRINTFORML 「――Aah!」
+			PRINTFORMDW When Youmu notices you she returns the greeting.
+
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「――Aah......」
+			PRINTFORMDW Youmu's having a hard time expressing herself, so her phantom half gets close to you and nuzzles with you.
+
+		ELSEIF TALENT:思慕
+			PRINTFORML 「――Aah......」
+			PRINTFORMDW Youmu says something in a low voice while she looked at you passing by.
+
+		ELSE
+			SELECTCASE RAND:2
+				CASE 1
+					PRINTFORML 「What would be a good meal I could cook for today?...」
+					PRINTFORMDW Youmu thinks so deeply about it that she doesn't notice you.
+				CASE 0
+					PRINTFORMDW Youmu politely returns your greeting with a bow.
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無視して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;他者介入でムード変化
+;==================================================
+@M_KOJO_EVENT_K23_5(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;霊夢が入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;る～ことが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を目撃した
+;==================================================
+@M_KOJO_EVENT_K23_6(ARG,ARG:1)
+;口上主はTARGET
+;ARGに情事相手
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を目撃した（馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		IF TALENT:恋人
+			PRINTFORML 「W-What are you doing?」
+			PRINTFORML 「... It's probably fine. But you better give me a good 『explanation』 later.」
+			PRINTFORMDW Youmu gives you a nice smiles and leaves.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「――Ah!」
+			PRINTFORMDL Youmu catches you having an affair, and stares at your naked body,
+			PRINTFORMDW Before long, she runs away from that spot with her face completely red.
+		ELSE
+			PRINTFORML 「O-OH! I saw nothing, don't mind me!」
+			PRINTFORMDW Youmu runs away from that spot with her face completely red.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;負けじと参加（馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;気まずそうに立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERに誘われて参加
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG:1 == 4
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を見られた
+;==================================================
+@M_KOJO_EVENT_K23_7(ARG,ARG:1)
+;口上主はTARGET
+;ARGに目撃者
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を見られた（目撃者の馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+	PRINTFORML 「Ah, ah ,ah ,ah ～」
+	PRINTFORML 「What?　Someone saw us!?」
+	PRINTFORMW 「Uhhh, I don't know what to tell them if they ask us about this...」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が負けじと参加（目撃者の馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+	PRINTFORML 「――Oh! Umm... The two of us are...」
+	PRINTFORML 「W-Wait!　Why are YOU taking off your clothes too!?」
+	PRINTFORMW 「Ahh! I don't――%CALLNAME:MASTER% this isn't funny!!」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+	PRINTFORML 「――%CALLNAME:MASTER%, why did you stop?」
+	PRINTFORML 「Did someone see us? It's all right I didn't see anyone.」
+	PRINTFORMW 「%CALLNAME:MASTER%, just focus your eyes on me.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERに誘われて目撃者も参加
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG:1 == 4
+	PRINTFORML 「Eh? Umm, are...are you serious??」
+	PRINTFORML 「N-No, no way, I wouldn't do it with someone else being present...」
+	PRINTFORMW 「Ahh!　It's useless, I'm joining in!」
+		;RETURN 1
+	;ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;目撃した情事を問い詰める
+;==================================================
+@M_KOJO_EVENT_K23_8(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERだけ問い詰め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+
+	PRINTFORML 「It's alright, the Hakurouken can even cut through all hesitation.」
+	PRINTFORML 「%CALLNAME:MASTER%'s hesitation, I could cut it cleanly with my sword and rid you of it.」
+	PRINTFORMDW Youmu smiles at you, but you could sense jealousy in her eyes.
+
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;二人とも説教
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+
+	PRINTFORML 「Both of you will be fine.」
+	PRINTFORML 「The Hakurouken can even cut through all hesitation. You aren't in any danger.」
+	PRINTFORMDW While saying this, Youmu places her hand in one of her swords.」
+
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;パンツ没収された
+;==================================================
+@M_KOJO_EVENT_K23_9(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;同じ場所に居てパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;遠距離移動中にパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;押し倒した
+;==================================================
+@M_KOJO_EVENT_K23_10(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;うふふ==2（開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;MASTERを押し倒した（開始時）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTERに抱きついた（開始時）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;なだめられた（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		SELECTCASE ARG:1
+			CASE 0
+			;抜け出した
+				PRINTFORML
+				RETURN 1
+			CASE 1
+			;抱き着きモード満足終了
+				PRINTFORML
+				RETURN 1
+			CASE 2
+			;抱き着きモード強制終了
+				PRINTFORML
+				RETURN 1
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;抜け出す失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		SELECTCASE ARG:1
+			CASE 1
+			;好きにして状態から抜け出せなかった
+				PRINTFORML
+				RETURN 1
+			CASE 2
+			;欲求不満が高くて抜け出せなかった
+				PRINTFORML
+				RETURN 1
+		ENDSELECT
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;浴場で遭遇
+;==================================================
+@M_KOJO_EVENT_K23_11(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:思慕
+			PRINTFORML 「――M-Myon?!」
+			PRINTFORMDL Youmu forgets to cover her naked body from you and she freezes.
+			PRINTFORMDL You look at her face, slowly begin to look lower and lower, until your sight stops at her crotch.
+			PRINTFORML 「W-Wha...What is it?――」
+			PRINTFORMDW You run away as the embarrassed Youmu throws whatever she can find at you.
+		ELSE
+			PRINTFORML 「――M-Myon?!」
+			PRINTFORMDL Youmu forgets to cover her naked body from you and she freezes.
+			PRINTFORMDL You look at her face, slowly begin to look lower and lower, until your sight stops at her crotch.
+			PRINTFORML 「Please get out!　Or I'll cut you!!」
+			PRINTFORMDW Youmu starts looking for her weapons, you cover your own naked body, and run away from the bathroom.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目が合った（追い出されない）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:恋人
+			PRINTFORML 「――You should have told me that you were coming in.」
+			PRINTFORMDL Youmu gets closer to you, exposing her soft skin..
+			PRINTFORML 「I'll wash your back.」
+		ELSE
+			PRINTFORML 「――Eh!?」
+			PRINTFORMDL Upon seeing you, Youmu quickly covers her body with a bath towel.
+			PRINTFORML 「I-If you were coming in, then you should have said so!　P-Please, don't look at me like that!」
+			PRINTFORMDW Youmu soaks her blushing face in the water...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;寝床に忍び込み
+;==================================================
+@M_KOJO_EVENT_K23_12(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出される（怒り）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕・衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される（衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;お仕事中
+;==================================================
+@M_KOJO_EVENT_K23_13(ARG,ARG:1)
+;口上主はTARGET
+;ARG:1に残っている仕事量
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;仕事開始（職場へ移動する）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「I have to go and do some shopping soon...」
+		PRINTFORML 「Excuse me.」
+		PRINTFORMDW Once Youmu finishes preparing, she heads towards the Human Village pulling a small cart.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;業務中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		SELECTCASE RAND:3
+			CASE 2
+				PRINTFORML 「I bought rice, now, we have to buy meat and vegetables...」
+				PRINTFORMDW Youmu is walking along the road pulling a small cart.
+			CASE 1
+				PRINTFORML 「Please put it in this cart, over here.」
+				PRINTFORMW 「I'll pick up whatever is left at a later date...」
+			CASE 0
+				PRINTFORMW 「Yes, here's the payment as usual...」
+
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;仕事終了
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF TALENT:恋人
+			PRINTFORML 「Thank you very much for your help.」
+			PRINTFORML 「Umm, I don't have a way to properly reward you...」
+			PRINTFORMDW Youmu clearly wants to spend a little more time with you.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「Thank you very much for your help.」
+			PRINTFORML 「Umm, I don't have a way to properly reward you...」
+			PRINTFORMDW Youmu clearly wants to spend a little more time with %CALLNAME:MASTER%.
+		ELSE
+			PRINTFORML 「Thank you very much for your help.」
+			PRINTFORMDW Youmu bows to you in gratitude.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;食事系
+;==================================================
+@M_KOJO_EVENT_K23_14(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;持っていた食物を食べられた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == -1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;MASTERが押し倒した
+;==================================================
+@M_KOJO_EVENT_K23_15(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;未実装（押し倒しコマンドに統合？
+	;MASTERが押し倒した（ウフフ開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 1
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;moved to interaction
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;逢瀬終了（ウフフ終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;添い寝する
+;==================================================
+@M_KOJO_EVENT_K23_16(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;添い寝を始めた（開始時）(存在せず
+	;記入チェック
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;添い寝を終了した（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;時止め終了時
+;==================================================
+@M_KOJO_EVENT_K23_17(ARG,ARG:1)
+;口上主はTARGET
+;排他と明記されていないモノは状況によっては連続で表示されるので注意
+;ARGに射精状況
+;ARG:1に射精状態
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ARG=1～3は排他
+	;謎の快感		%CALLNAME:LOCAL%は、謎の快感にびくりと身を強張らせた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;絶頂回数カウント
+		LOCAL:4 = 0
+		LOCAL:4 += EX:23:50
+		LOCAL:4 += EX:23:51
+		LOCAL:4 += EX:23:52
+		LOCAL:4 += EX:23:53
+		;絶頂箇所判定
+		LOCAL:5 = 0
+		SIF EX:23:50 > 0
+			LOCAL:5 += 1
+		SIF EX:23:51 > 0
+			LOCAL:5 += 1
+		SIF EX:23:52 > 0
+			LOCAL:5 += 1
+		SIF EX:23:53 > 0
+			LOCAL:5 += 1
+		IF CFLAG:23:1002 == 0
+			PRINTFORML 「――Myon!?」
+			PRINTFORMD Youmu makes a high-pitched moan,
+				IF LOCAL:5 > 1
+					PRINTFORMD  her face becomes red,
+				ELSEIF EX:23:50 > 0 || EX:23:51 > 0
+					PRINTFORMD  she holds down her crotch as if trying to endure pleasure,
+				ELSEIF EX:23:52 > 0
+					PRINTFORMD  she covers her butt as if trying to endure pleasure,
+				ELSEIF EX:23:53 > 0
+					PRINTFORMD  covers her chest with her arms as if to endure pleasure,
+				ENDIF
+			PRINTFORMDW  she glances at her surroundings.
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:23:350 == 0
+					IF CFLAG:23:1001 == 0
+						PRINTFORML 「――eh?　What!?　It can't be...」
+						PRINTFORMDL To her surprise, her underwear vanished into thin air, Youmu is astonished.
+						PRINTFORMDW Her shoulders tremble with shame, but quickly tries to regain her composure so no one notices her.
+					ELSEIF CFLAG:23:1001 < 10
+						PRINTFORML 「......Khuu, not again!」
+						PRINTFORMDL Youmu is startled that the underwear she was wearing vanished once again.
+						PRINTFORMDW She reaches for her sword, and intends to check her surroundings, but her legs can't stop shaking.
+					ELSEIF CFLAG:23:1001 < 20
+						PRINTFORML 「...... Again　――You coward!! Show yourself!!」
+						PRINTFORMDL Youmu doesn't care about calling public attention and shouts as she pulls out her Roukanken.
+						PRINTFORMDW She both ashamed and furious of losing her underwear once again.
+					ELSEIF CFLAG:23:1001 == 100
+						PRINTFORML 「――tch!」
+						PRINTFORMDL As usual, her underwear vanished into thin air, Youmu silently unsheathes both her Roukanken and her Hakurouken.
+						PRINTFORML 「I don't know who is doing this, or what are his motives, but once I find him, I'll cut him down......!」
+						PRINTFORMDW Youmu completely changed into a battle attitude, she isn't even trying to hid her anger or embarrassment.
+					ENDIF
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+					CFLAG:23:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「――I can't feel any other suspicious presences.」
+			PRINTFORMDW Youmu mutters as she looks at you from a distance.
+		ELSEIF CFLAG:58:1002 < 350
+			PRINTFORML 「――――Myon!?」
+			PRINTFORMD Youmu's cheeks turn red from the pleasure she's feeling,
+				IF LOCAL:5 > 1
+					PRINTFORMD her face becomes red,
+				ELSEIF EX:23:50 > 0 || EX:23:51 > 0
+					PRINTFORMD  she holds down her crotch as if trying to endure pleasure,
+				ELSEIF EX:23:52 > 0
+					PRINTFORMD  she covers her anus as if trying to endure pleasure,
+				ELSEIF EX:23:53 > 0
+					PRINTFORMD  covers her chest with her arms as if to endure pleasure,
+				ENDIF
+			PRINTFORMDW  she glances at her surroundings.
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:23:350 == 0
+					IF CFLAG:23:1001 == 0
+						PRINTFORML 「――eh?　What!?　It can't be...」
+						PRINTFORMDL To her surprise, her underwear vanished into thin air, Youmu is astonished.
+						PRINTFORMDW Her shoulders tremble with shame, but quickly tries to regain her composure so no one notices her.
+					ELSEIF CFLAG:23:1001 < 10
+						PRINTFORML 「......Khuu, not again!」
+						PRINTFORMDL Youmu is startled that the underwear she was wearing vanished once again.
+						PRINTFORMDW She reaches for her sword, and intends to check her surroundings, but her legs can't stop shaking.
+					ELSEIF CFLAG:23:1001 < 20
+						PRINTFORML 「...... Again　――You coward!! Show yourself!!」
+						PRINTFORMDL Youmu doesn't care about calling public attention and shouts as she pulls out her Roukanken.
+						PRINTFORMDW She both ashamed and furious of losing her underwear once again.
+					ELSEIF CFLAG:23:1001 == 100
+						PRINTFORML 「――tch!」
+						PRINTFORMDL As usual, her underwear vanished into thin air, Youmu silently unsheathes both her Roukanken and her Hakurouken.
+						PRINTFORML 「I don't know who is doing this, or what are his motives, but once I find him, I'll cut him down......!」
+						PRINTFORMDW Youmu completely changed into a battle attitude, she isn't even trying to hid her anger or embarrassment.
+					ENDIF
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+					CFLAG:23:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「...Fuuuh...!」
+			PRINTFORMDW Youmu tries to calm down and takes deep breaths.
+		ELSEIF CFLAG:23:1002 < 500
+			PRINTFORML 「――――Myon!!?」
+			PRINTFORMDL Unable to fully suppress the pleasure, Youmu makes a loud moan.
+			PRINTFORMDL Her cheeks flush and is sweating profusely.
+			PRINTFORMD The pleasant sensation lasts for some time,
+				IF LOCAL:5 > 1
+					PRINTFORMD she tightly embraces her own body,
+				ELSEIF EX:23:50 > 0 || EX:15:51 > 0
+					PRINTFORMD  she places her hands in her intimate place to conceal it.
+				ELSEIF EX:23:52 > 0
+					PRINTFORMD  she uses her phantom half to conceal her butt.
+				ELSEIF EX:23:53 > 0
+					PRINTFORMD  she tries to cover her hardened nipples.
+				ENDIF
+			PRINTFORMDW  she desperately tries to protect her delicate body.
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:23:350 == 0
+					IF CFLAG:23:1001 == 0
+						PRINTFORML 「――Khuu!?　What the...」
+						PRINTFORMDL To her surprise, her underwear vanished into thin air, Youmu feels upset.
+						PRINTFORMDW However, the stagnating thought of feeling pleasure made her overcome the shamefulness.
+					ELSEIF CFLAG:23:1001 < 10
+						PRINTFORML 「......Khuu, not again!」
+						PRINTFORMDL Youmu feels upset that the underwear she was wearing vanished once again...
+						PRINTFORMDW She reaches for her sword, while looking at her surroundings, her legs can't stop trembling with pleasure.
+					ELSEIF CFLAG:23:1001 < 20
+						PRINTFORML 「...... Again　――You coward!! Show yourself!!」
+						PRINTFORMDL Youmu mumbles while reaching for her Roukanken.
+						PRINTFORMDW However, instead of worrying about her lost underwear. A feeling of fear of the person giving her pleasure clouds her mind.
+					ELSEIF CFLAG:23:1001 == 100
+						PRINTFORML 「――tch」
+						PRINTFORMDL As usual, her underwear vanished into thin air, Youmu silently unsheathes her Hakurouken.
+						PRINTFORML 「If my Hakurouken isn't able to cut through my hesitation, I will......!」
+						PRINTFORMDW Overcome by pleasure, Youmu unwillingly moans with pleasure.
+					ENDIF
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+					CFLAG:23:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「......Haaah......nhh...... Khu!」
+			PRINTFORMDL While she's unable to subdue the anger of being toyed with by someone unknown to her. Youmu smiles anxiously.
+			PRINTFORMDW She's expectantly waiting to feel pleasure more than anything.
+		ELSEIF CFLAG:23:1003 == 0
+			PRINTFORML 「――――Myon%UNICODE(0x2665)%」
+			PRINTFORMW 「......Fu-fuu......fufufu......haaah%UNICODE(0x2665)%」
+			PRINTFORMDL At long last, Youmu has finally begun to accept the pleasure that kept attacking her body countless times.
+			PRINTFORMDL She opens her mouth and despite her best efforts, she leaks a hot breath,
+			PRINTFORMDW the innocent and submissive expression on her face, is unfitting of a swordsman such as her.
+				IF CFLAG:291 == 1
+					PRINTFORMDL Youmu doesn't even notice her underwear is gone,
+					PRINTFORMDW her underwear is filled with an enchanting feminine allure.
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+				ENDIF
+			PRINTFORML 
+			PRINTFORMDW Youmu notices her underwear vanished into thin air.
+			PRINTFORML 「（I don't think such a pleasant feeling can be bad%UNICODE(0x2665)%...... There's nothing wrong with this%UNICODE(0x2665)%）」
+			PRINTFORMD She has completely surrendered to pleasure without questioning anything.
+				IF LOCAL:5 > 1
+					PRINTFORMD that part of her body that's been abused,
+				ELSEIF EX:23:50 > 0
+					PRINTFORMD  her clitoris painfully hardens,
+				ELSEIF EX:23:51 > 0
+					PRINTFORMD  her vagina walls get wet,
+				ELSEIF EX:23:52 > 0
+					PRINTFORMD  her anus twitches in pleasure,
+				ELSEIF EX:23:53 > 0
+					PRINTFORMD  her nipples become painfully hard,
+				ENDIF
+			PRINTFORMDW  she eagerly desires to be abused once more.
+			CFLAG:23:1003 = 1
+		ELSE
+			PRINTFORML 「――――Myaaaaaanh%UNICODE(0x2665)%%UNICODE(0x2665)%」
+			PRINTFORML 「Haah...haaahhaa%UNICODE(0x2665)%, this feels......so goooood%UNICODE(0x2665)%」
+			PRINTFORMDL Youmu is completely unable keep a normal expression as a pleasant feeling penetrates her body,
+			PRINTFORMDL she deeply blushing, sweating profusely, and she's completely wet.
+			PRINTFORMDL When she slightly opens her mouth, she can't help but droll.
+			PRINTFORMD It's completely unbearable,
+				IF LOCAL:5 > 1
+					PRINTFORMD  that part of her body that's been abused,
+				ELSEIF EX:23:50 > 0
+					PRINTFORMD  her clitoris painfully engorges,
+				ELSEIF EX:23:51 > 0
+					PRINTFORMD  her vagina walls immediately becomes completely wet,
+				ELSEIF EX:23:52 > 0
+					PRINTFORMD  her anus twitches, looking for more pleasure,
+				ELSEIF EX:23:53 > 0
+					PRINTFORMD  her nipples become painfully hard,
+				ENDIF
+			PRINTFORMDL ,as Youmu gropes her own body she notices you.
+			PRINTFORML 
+				IF CFLAG:291 == 1
+					PRINTFORMDL Even though love juices are flowing from her secret place, she doesn't seem to mind,
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+				ELSE
+					PRINTFORMDL While feeling troubled by her wet underwear,
+				ENDIF
+			PRINTFORMDW Youmu giggles with a seductive expression.
+		ENDIF
+		CFLAG:23:1002 += LOCAL:4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;絶頂	←正式名称：【強烈な快感】絶頂合計３０回以上でこちらに。
+	;		突然激しい絶頂に襲われた%CALLNAME:LOCAL%は、甘い嬌声をあげてその場にへたり込んでしまった
+	;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;絶頂回数カウント
+		LOCAL:4 = 0
+		LOCAL:4 += EX:23:50
+		LOCAL:4 += EX:23:51
+		LOCAL:4 += EX:23:52
+		LOCAL:4 += EX:23:53
+		IF CFLAG:23:1002 == 0
+			PRINTFORML 「――――Myaaanh!!　Aaaaahu!?」
+			PRINTFORMDL Youmu widely opens her eyes because of the pleasure penetrating her body.
+			PRINTFORML 「......Aahh!...... Khuaa......」
+			PRINTFORMDL She trembles as rolls up her skirt, exposing her white porcelain-like thighs, she's having a hard time standing afoot.
+			PRINTFORMDL Upon being seen by you, Youmu hurriedly adjusts her skirt,
+			PRINTFORML 「...Uhh, I'm deeply sorry you saw me doing such a thing.」
+			PRINTFORMDW She quickly regains her composure back.
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:23:350 == 0
+					IF CFLAG:23:1001 == 0
+						PRINTFORML 「――eh?　What!?　It can't be...」
+						PRINTFORMDL To her surprise, her underwear vanished into thin air, Youmu is astonished.
+						PRINTFORMDW Her shoulders tremble with shame, but quickly tries to regain her composure so no one notices her.
+					ELSEIF CFLAG:23:1001 < 10
+						PRINTFORML 「......Khuu, not again!」
+						PRINTFORMDL Youmu is startled that the underwear she was wearing vanished once again.
+						PRINTFORMDW She reaches for her sword, and intends to check her surroundings, but her legs can't stop shaking.
+					ELSEIF CFLAG:23:1001 < 20
+						PRINTFORML 「...... Again　――You coward!! Show yourself!!」
+						PRINTFORMDL Youmu doesn't care about calling public attention and shouts as she pulls out her Roukanken.
+						PRINTFORMDW She both ashamed and furious of losing her underwear once again.
+					ELSEIF CFLAG:23:1001 == 100
+						PRINTFORML 「――tch!」
+						PRINTFORMDL As usual, her underwear vanished into thin air, Youmu silently unsheathes both her Roukanken and her Hakurouken.
+						PRINTFORML 「I don't know who is doing this, or what are his motives, but once I find him, I'll cut him down......!」
+						PRINTFORMDW Youmu completely changed into a battle attitude, she isn't even trying to hid her anger or embarrassment.
+					ENDIF
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+					CFLAG:23:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「...Khuu... What's going on!?」
+			PRINTFORMDW Youmu looks around her for clues while covering her trembling legs.
+		ELSEIF CFLAG:23:1002 < 350
+			PRINTFORML 「――――Myaaanh!!　Aaaaahu!?」
+			PRINTFORML 「......Uhh! ......Hah-haaa, Such an......evil――」
+			PRINTFORMDL Attacked once more by intense pleasure, Youmu crumbles despite her best efforts.
+			PRINTFORMDW She opens her mouth and pants incessantly, she's can't even concentrate on adjusting her skirt.
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:23:350 == 0
+					IF CFLAG:23:1001 == 0
+						PRINTFORML 「――eh?　What!?　It can't be...」
+						PRINTFORMDL To her surprise, her underwear vanished into thin air, Youmu is astonished.
+						PRINTFORMDW Her shoulders tremble with shame, but quickly tries to regain her composure so no one notices her.
+					ELSEIF CFLAG:23:1001 < 10
+						PRINTFORML 「......Khuu, not again!」
+						PRINTFORMDL Youmu is startled that the underwear she was wearing vanished once again.
+						PRINTFORMDW She reaches for her sword, and intends to check her surroundings, but her legs can't stop shaking.
+					ELSEIF CFLAG:23:1001 < 20
+						PRINTFORML 「...... Again　――You coward!! Show yourself!!」
+						PRINTFORMDL Youmu doesn't care about calling public attention and shouts as she pulls out her Roukanken.
+						PRINTFORMDW She both ashamed and furious of losing her underwear once again.
+					ELSEIF CFLAG:23:1001 == 100
+						PRINTFORML 「――tch!」
+						PRINTFORMDL As usual, her underwear vanished into thin air, Youmu silently unsheathes both her Roukanken and her Hakurouken.
+						PRINTFORML 「I don't know who is doing this, or what are his motives, but once I find him, I'll cut him down......!」
+						PRINTFORMDW Youmu completely changed into a battle attitude, she isn't even trying to hid her anger or embarrassment.
+					ENDIF
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+					CFLAG:23:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「...Haa! Haaah...! Fuuh...」
+			PRINTFORMDW Youmu waits for the feeling of pleasure to cool down, she desperately tries to regain her composure by taking deep breaths.
+		ELSEIF CFLAG:23:1002 < 500
+			PRINTFORML 「――Iih!　Khuu..Fuuah%UNICODE(0x2665)%! Ah%UNICODE(0x2665)%!!」
+			PRINTFORMDL The sensation of cumming fills her to the core, Youmu can't keep keep her voice down and collapses.
+			PRINTFORMDW In a desperate effort to suppress her moans she covers he mouth, but her body can't stop trembling, it didn't go too well for her...
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:23:350 == 0
+					IF CFLAG:23:1001 == 0
+						PRINTFORML 「――Khuu!?　What the...」
+						PRINTFORMDL To her surprise, her underwear vanished into thin air, Youmu feels upset.
+						PRINTFORMDW However, the stagnating thought of feeling pleasure made her overcome the shamefulness.
+					ELSEIF CFLAG:23:1001 < 10
+						PRINTFORML 「......Khuu, not again!」
+						PRINTFORMDL Youmu feels upset that the underwear she was wearing vanished once again...
+						PRINTFORMDW She reaches for her sword, while looking at her surroundings, her legs can't stop trembling with pleasure.
+					ELSEIF CFLAG:23:1001 < 20
+						PRINTFORML 「...... Again　――You coward!! Show yourself!!」
+						PRINTFORMDL Youmu mumbles while reaching for her Roukanken.
+						PRINTFORMDW However, instead of worrying about her lost underwear. A feeling of fear of the person giving her pleasure clouds her mind.
+					ELSEIF CFLAG:23:1001 == 100
+						PRINTFORML 「――tch」
+						PRINTFORMDL As usual, her underwear vanished into thin air, Youmu silently unsheathes her Hakurouken.
+						PRINTFORML 「If my Hakurouken isn't able to cut through my hesitation, I will......!」
+						PRINTFORMDW Overcome by pleasure, Youmu unwillingly moans with pleasure.
+					ENDIF
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+					CFLAG:23:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 
+			PRINTFORML 「......Ghh, It's... Khu...... Useless...... Nngh%UNICODE(0x2665)%」
+			PRINTFORMDL Her pride as a swordsman helped her endure the desire to fall into pleasure,
+			PRINTFORMDW Youmu is very aware she could fall into degenerateness.
+		ELSEIF CFLAG:23:1003 == 0
+			PRINTFORML 「――――Myaaanh%UNICODE(0x2665)%　ahaaah%UNICODE(0x2665)%」
+			PRINTFORML 「......Aah, ahh... Khhu%UNICODE(0x2665)%,...... It's...good%UNICODE(0x2665)%」
+			PRINTFORML 
+			PRINTFORMDL A tsunami of pleasure attacks Youmu's body, she no longer resists it.
+			PRINTFORMDL She opens her mouth heavily panting and shamelessly starts moaning.
+			PRINTFORMDW her expression flushes with lust and pleasure, unbefitting of a swordsman such as her.
+				IF CFLAG:291 == 1
+					PRINTFORMDL Youmu doesn't even notice her underwear is gone,
+					PRINTFORMDW her underwear is filled with an enchanting feminine allure.
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+				ENDIF
+			PRINTFORML
+			PRINTFORMDL Youmu's usual composure and pride as a swordsman are completely gone,
+			PRINTFORML 「（――Haa%UNICODE(0x2665)%　More... More... Such a pleasant feeling can't be bad, there's nothing wrong with this......%UNICODE(0x2665)%）」
+			PRINTFORMDW She drowns pleasure without questioning anything.
+			CFLAG:23:1003 = 1
+		ELSE
+			PRINTFORML 「――――Myaaaaaanh%UNICODE(0x2665)%%UNICODE(0x2665)%」
+			PRINTFORML 「Haah...haaahhaa%UNICODE(0x2665)% This feels......so goooood%UNICODE(0x2665)%」
+			PRINTFORMDL Youmu has become completely submissive to the wave of pleasure that has attacked her so many times.
+			PRINTFORMDL After collapsing unto the floor, she rolls her tongue out and lets out hot breaths as she spreads her legs.
+			PRINTFORMDW Her dyes red as she rolls up her skirt, exposing her white porcelain-like thighs, her pupils have completely lost all focus.
+				IF CFLAG:291 == 1
+					PRINTFORMDL It seems she forgot to hide her secret place, which can be see from her rolled-up skirt,
+					TCVAR:23:350 = 1
+					CFLAG:23:1001 += 1
+				ELSE
+					PRINTFORMDL While feeling troubled by her wet underwear,
+				ENDIF
+			PRINTFORMDW she doesn't seem to care anymore, Youmu shakes her body without concern of being seen in public.
+		ENDIF
+		CFLAG:23:1002 += LOCAL:4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;パンツ紛失
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「――eh?　What!?　It can't be...」
+		PRINTFORMDL To her surprise, her underwear vanished into thin air, Youmu is astonished.
+		PRINTFORMDW Her shoulders tremble with shame, but quickly tries to regain her composure so no one notices her.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚口内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;精液中毒低精飲
+		IF ARG:1 == 1
+			PRINTFORML 「――!?」
+			PRINTFORMDL Youmu frown upon feeling semen in her throat.
+			PRINTFORML 「――Gh, Nggggh......gh」
+			PRINTFORMDL She can't afford spitting it in public,
+			PRINTFORMDL Youmu has to endure the taste, she swallows the unknown semen while maintaining her composure.
+			PRINTFORML 「H-......How did this happen?」
+			PRINTFORMDW You manage to avoid suspicions by keeping a straight face.
+
+		;精液中毒低吐き出し
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「――!?」
+			PRINTFORML 「Ng-gah! ――Ahh, Huuh, Keho!」
+			PRINTFORMDL Before her mind could even process what was happening, Youmu coughed out the semen in her throat.
+			PRINTFORMDL She desperately coughs and spits the semen while enduring the awful smell.
+			PRINTFORML 「――Uuuuh, That was unsightly, forgive me for that......please.」
+			PRINTFORMDW Youmu begs for forgiveness with tearful eyes, you feel strangely aroused.
+
+		;精液中毒低手で覆う
+		ELSEIF ARG:1 == 3
+			PRINTFORML 「――!?」
+			PRINTFORMDL Youmu slightly shrieked from the abnormal sensation on her throat.
+			PRINTFORMDL She tries to resist the bad smell and covers her mouth with her hands.
+			PRINTFORML 「G...hh...nghh... Keho, What the heck!?」
+
+		;精液中毒高精飲
+		ELSEIF ARG:1 == 4
+			PRINTFORML 「――!?　...nhh...chhw...nhh」
+			PRINTFORMDL When semen unexpectedly appeared inside Youmu's throat, she began to taste the semen with her tongue.
+			PRINTFORMDL Blushing, she finishes swallowing it all and takes a breath.
+			PRINTFORML 「...Haauu...nnh%UNICODE(0x2665)%（The semen of that mysterious person is so sweet...... Uuu.........）」
+			PRINTFORMDL While unconsciously licking her lips, Youmu lets out a small sigh
+			PRINTFORMDL While sensing a nasty smell through her nose, she begins to swallow saliva,
+			PRINTFORMDW She's seems more like a prostitute than a swordsman.
+
+		;濃厚精液＆精液中毒低吐き出し
+		ELSEIF ARG:1 == 5
+			PRINTFORML 「――!?」
+			PRINTFORML 「Nhh-gaah!――Ah, Ueeh, Keho!」
+			PRINTFORMDL Before her mind could even process what was happening, Youmu coughed out the semen in her throat.
+			PRINTFORML 「Gaah!　Nnkuh, Haahh... Ah... Khaa.」
+			PRINTFORMDL She desperately tries to spit out all of the semen in her throat, even if it means vomiting,
+			PRINTFORMDL She desperately coughs and spits the semen while enduring the awful smell.
+			PRINTFORML 「――Kohh... Uuuuh, sorry for that, that was unsightly, forgive me for that......please.」
+			PRINTFORMDW Youmu begs for forgiveness with tearful eyes, you feel strangely aroused.
+
+		;濃厚精液＆精液中毒高精飲
+		ELSEIF ARG:1 == 6
+			PRINTFORML 「――!?　Gahh!　Nkuh,nh」
+			PRINTFORMDL Youmu notices the large amount of semen that appeared inside her throat,she covers her mouth.
+			PRINTFORMDL She desperately swallows the semen with tearful eyes, still, some of the semen overflowed her mouth.
+			PRINTFORML 「...Haaahaaa...uu...nhh%UNICODE(0x2665)% This amount... It's way too much... Kohh」
+			PRINTFORMDL She senses a nasty smell through her nose, sepsite that, Youmu preferred to swallow it than spitting it out,
+			PRINTFORMDW You feel strangely aroused.
+
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚顔面射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;幼稚持ち＆精液経験100未満
+		IF ARG:1 == 1
+			PRINTFORML 「――Eh, w-what,is this!?」
+			PRINTFORML 「Uuuu, it's so sticky and smelly... Was this a prank!?」
+			PRINTFORMDW Youmu desperately wipes the semen off her face.
+
+		;通常ぬぐい取り
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「――Eh, w-what,is this!?」
+			PRINTFORML 「Uuuu, it's so sticky and smelly... I-Is this...se...semen!?」
+			PRINTFORMDL Upon the realization, Youmu angrily pull out both off her swords with an angry expression.
+			PRINTFORMW 「I don't know who did this, but when I find him I'll cut him down!!」
+
+		;顔射精液舐めとり
+		ELSEIF ARG:1 == 3
+			PRINTFORML 「――Eh, w-what,is this!?」
+			PRINTFORML 「It's so sticky and smelly... I-Is this...se...men...!?」
+			PRINTFORMDL Though she hesitates at first, she can't fully resist her desires, she shyly takes the semen in her fingers to her mouth.
+			PRINTFORML 「It's no good... What am I doing...... Nmmh... Pchhah... Cchhhp...... Nnkhhh......%UNICODE(0x2665)%」
+			PRINTFORMDL Falling into desire, Youmu uses her tongue and lustily licks off the semen attached to her face.
+			PRINTFORML 「......Nmmh... Pchhah...Cchhhp......Nnkhhu......%UNICODE(0x2665)%」
+			PRINTFORMDW You're breathless, you can't take your eyes off Youmu as she wipes the remaining semen off her blushing face.
+
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚手淫射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;ぬぐい取り
+		IF ARG:1 == 1
+			PRINTFORML 「――?　What the...」
+			PRINTFORMDL Youmu frowns and looks at her hand, she notices her whole arm is stained in sticky semen.
+			PRINTFORML 「Was this a prank?　But, how...?」
+			PRINTFORMDL She's unable of finding anyone suspicious in her surroundings.
+			PRINTFORMDW Youmu has a disgusted expression as she desperately wipes the semen dripping up to her elbow.
+
+		;舐めとり
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「――huh...... Is this...semen?」
+			PRINTFORMDL Youmu gazes at the semen dripping from her arm.
+			PRINTFORMDL Though she hesitates at first, she can't fully resist her desires.
+			PRINTFORMDL When she gets her semen-stained hand close to her face, she extends her tongue.
+			PRINTFORML 「It's no good... What am I doing...... Nmmh... Pchhah... Cchhhp...... Nnnkhhu......%UNICODE(0x2665)%」
+			PRINTFORMDL Falling into desire, Youmu tastes the semen with her tongue and slurps it.
+			PRINTFORMDL She then slowly licks up all of the semen, from her wrist up to her elbow.
+			PRINTFORML 「......Nhh... Delicious%UNICODE(0x2665)% Hchaa... It's all clean now...」
+			PRINTFORMDW You're breathless, you can't take your eyes off Youmu as she wipes the remaining semen off her blushing face.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚アナル射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;Ａ感覚2以下
+		IF ARG:1 == 1
+			PRINTFORML 「――Myoon!!」
+			PRINTFORMDL Youmu is shaken as she holds her butt, she feels a discomforting feeling filling her intestines.
+			PRINTFORML 「What i-is this!?　What's!!　Uuuu... It feels...gross... It's...」
+			PRINTFORMDW Youmu's grimaces as she feels indescribable sense of humiliation and discomfort. 
+		;ソレ以外
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「――Myaaaahn!!　Hiiaaaaah%UNICODE(0x2665)%」
+			PRINTFORMDL Youmu holds her butt as she suddenly felt a burning sensation in her intestines.
+			PRINTFORML 「What i-is this!?　What's!!　Noo!... It feels...gross...and yet%UNICODE(0x2665)%」
+			PRINTFORMDL The pleasure on her ass causes her legs to tremble, she can't keep her voice down anymore as she's cumming.
+			PRINTFORML 「!　It's no good... Khuu.」
+			PRINTFORMDW As Youmu waits for the pleasure to slowly dissipate, she stiffens her body to avoid the semen from coming out.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚処女喪失】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		PRINTFORML 「――Owww!?」
+		PRINTFORMDL Youmu's body twists in pain.
+		PRINTFORML 「W-What? What is this pain!?...Uuuu!」
+		PRINTFORMDW Youmu, who had experienced all types of pain during her training, once more felt a sense of anxiety from this unknown sensation. 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚膣内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		;非処女膣内射精ピルなし
+		IF ARG:1 == 1
+			PRINTFORML 「――tch!」
+			PRINTFORML 「Eh...... I'm feeling, something strange, ehh!　Is this...semen!?　Why!?」
+			PRINTFORMDW Youmu feels confused and distraught upon noticing someone ejaculated inside her without her even noticing.
+
+		;非処女膣内射精ピルあり
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「――tch!」
+			PRINTFORML 「Eh...... I'm feeling, something strange, ehh!　Is this...semen!?　Why!?」
+			PRINTFORMDW Youmu feels confused and distraught upon noticing someone ejaculated inside her without her even noticing.
+
+		;処女膣内射精
+		ELSEIF ARG:1 == 3
+			PRINTFORML 「――tch!」
+			PRINTFORML 「Eh...... W-What is this burning feeling, uuu it feels hot and unpleasant...　What's going on!?」
+			PRINTFORMDW Youmu's body trembles thanks to this strange feeling.
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;ナマでやらせろ時
+;==================================================
+@M_KOJO_EVENT_K23_18(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;避妊要求台詞
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断ったのに粘られて切れた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日以外許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;神社暮らしを承認して貰う
+;==================================================
+@M_KOJO_EVENT_K23_19(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;認められる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;認められない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;帰宅時
+;==================================================
+@M_KOJO_EVENT_K23_20(ARG,ARG:1)
+;口上主はLOCALS or RESULT
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;デート中帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;玄関先でお見送り
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;陥落素質取得時
+;==================================================
+@M_KOJO_EVENT_K23_21(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛欲取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛人取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;セフレ取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;調教終了時に自慰
+;==================================================
+@M_KOJO_EVENT_K23_22(ARG,ARG:1)
+;口上主はARG
+;ARG:0に自慰状況
+;ARG:1に自慰種類
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;通常自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同室時自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;中だし精液自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無知持ち（自慰経験(調教自慰経験は差し引き)による分岐あり
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		LOCAL:2 = EXP:自慰経験 - EXP:調教自慰経験
+		;無知消去イベントあり（表示は一度だけ
+		IF LOCAL:1 >= 25
+		;地の文分岐。書きたい場合は[SKIPSTART][SKIPEND]を削除してください
+		[SKIPSTART]
+		ELSEIF LOCAL:1 >= 20
+		ELSEIF LOCAL:1 >= 15
+		ELSEIF LOCAL:1 >= 10
+		ELSEIF LOCAL:1 >= 5
+		[SKIPEND]
+		ELSE
+		ENDIF
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質あり自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;-------------------------------------------------
+		;Ｃ敏感orＣ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｖ敏感orＶ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ａ敏感orＡ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 3
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｂ敏感orＢ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 4
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部位指定無し
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 5
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで陥落素質あり自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;-------------------------------------------------
+		;尻穴膣腔同時
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;膣腔のみ
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;我慢
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;その他
+	;上の分岐を一切書かずに、ここに書くことで自慰の共通口上を表示することが出来ます
+	PRINTFORML  
+	RETURN 1
+ENDIF
+RETURN 1
+;==================================================
+;浴場連れだし
+;==================================================
+@M_KOJO_EVENT_K23_23(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;断られた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;一緒に入ってくれた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;懐妊
+;==================================================
+@M_KOJO_EVENT_K23_24(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;出産
+;==================================================
+@M_KOJO_EVENT_K23_25(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;オナバレ
+;==================================================
+@M_KOJO_EVENT_K23_26(ARG,ARG:1)
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;見られた瞬間
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;何もしない
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;そのまま続行
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;追い出し
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 4
+		;やっちゃう
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 5
+		;事後
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 6
+		;事後お泊り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+	ENDSELECT
+ENDIF
+
+;==================================================
+;相手からデートのお誘い
+;==================================================
+@M_KOJO_EVENT_K23_27(ARG,ARG:1)
+;口上主はLOCAL
+;ARG:1は目的地
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;誘い文句
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;受けた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;断った
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;脱衣口上
+;==================================================
+@M_KOJO_EVENT_K23_28(ARG,ARG:1)
+;口上主はTARGET
+;ARGに脱がし方選択
+;ARG:1（ARG=3の場合のみあり）地の文の反応
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;全裸にする
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;下着姿にする
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;半脱ぎ
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;パンツちょうだい
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE ARG:1
+				;-------------------------------------------------
+				CASE 0
+				;交換です
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 1
+				;OK（嬉々
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 2
+				;OK（渋々
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 3
+				;嫌です
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				RETURN 1
+			ENDSELECT
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;怒り口上
+;==================================================
+@M_KOJO_EVENT_K23_29(ARG,ARG:1)
+;口上主はTARGET
+;ARGはTARGETの度胸で分岐
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;怒らせてしまった
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;泣かせてしまった　[臆病]持ち
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;相手が押し倒しを解除
+;==================================================
+@M_KOJO_EVENT_K23_30(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+	;疲れた
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+	;満足して解放
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+	;満足したところを押し倒された
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+	;壊れるまでしてあげる
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレ遭遇時の地の文。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K23_ONABARE_1(ARG)
+;-------------------------------------------------
+IF ARG
+	PRINTFORML A弄ってる場合
+ELSE
+	PRINTFORML V弄ってる場合
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレでそのまま続けてもらう場合の地の文。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K23_ONABARE_2(ARG)
+;-------------------------------------------------
+IF ARG
+	PRINTFORML A弄ってる場合
+ELSE
+	PRINTFORML V弄ってる場合
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレなし崩しックスの地の文。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K23_ONABARE_3(前戯１,本番はどっちか,回数,注入量)
+;-------------------------------------------------
+#DIM 前戯１
+;1=C 2=B 3=M
+#DIM 本番はどっちか
+;0でＶ、1でＡ
+#DIM 注入量
+#DIM 回数
+
+SELECTCASE 前戯１
+	CASE 1
+		PRINTFORML Ｃ責め
+	CASE 2
+		PRINTFORML Ｂ責め
+	CASE 3
+		PRINTFORML Ｍ責め
+ENDSELECT
+
+IF 本番はどっちか
+	PRINTFORML Aで本番
+ELSE
+	PRINTFORML Vで本番
+ENDIF
+;-------------------------------------------------
+[SKIPEND]

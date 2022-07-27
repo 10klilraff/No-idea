@@ -1,0 +1,4371 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;日常系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;300,会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_300
+;コマンド共通メッセージ(TRAIN_MESSAGE) 
+;削除すると「～話をした。」とかが消えます
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+CALL M_KOJO_MESSAGE_COM_K25_300_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_300_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+;時間停止口上を追加する場合は”&& !FLAG:70”を削除し、”IF FLAG:70 == 1”または”IF FLAG:時間停止”などで分岐
+IF LOCAL && !FLAG:70
+	IF TCVAR:302
+		PRINTFORMW 「Hey, calm down. Think before you speak.」
+	ELSE
+		;恋慕以上の筈
+		IF CFLAG:添い寝中
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 「Don't worry about the tails. They won't get hurt even if you climb on them.」
+				PRINTFORMW 「So come closer already!」
+			CASE 1
+				PRINTFORML 「Just laying around on the futon isn't bad either.」
+				PRINTFORMW 「But when you do it alone, it just makes you feel lazy.」
+			CASE 2
+				PRINTFORML 「409. 421. 433. Hore Hore, What's next?」
+				PRINTFORMDW It's impossible to beat Ran at math games...
+			CASE 3
+				PRINTFORML 「Why are you peeping up my nose? Hey!」
+				PRINTFORMDW You tease Ran childishly.
+			CASE 4
+				PRINTFORML 「......Hm, No, I'm not sleepy.」
+				PRINTFORMDW You both close your eyes and lean towards each other, your foreheads touching.
+			ENDSELECT
+			;配置変更＆よりわかりやすい感じに
+			;CFLAG:12からFLAG:73に変更。またデート中でも確率で通常会話を呼び出すように
+			;デート中に季節会話まで呼び出すとデート会話が出てこなさすぎるので季節会話は通常会話と併用
+		ELSEIF TALENT:恋慕
+			IF FLAG:デート相手 == 25
+				SELECTCASE RAND:2
+				CASE 0
+					CALL RAN_DATETALK
+				CASE 1
+					CALL RAN_NORMALTALK
+				ENDSELECT
+			ELSEIF !TCVAR:25:354
+				SELECTCASE RAND:2
+				CASE 0
+					CALL RAN_NORMALTALK
+				CASE 1
+					CALL RAN_SEASONTALK
+				ENDSELECT
+			ELSE
+				CALL RAN_NORMALTALK
+			ENDIF
+;		;恋慕が付いてから本番。分岐が増えすぎたので別の関数に分けました。スッキリ
+;		;引っ越しに伴う場所IDやデート中フラグの変化が把握出来ずこのような形に
+;			;神社から引っ越してた場合
+;			IF MAIN_MAP >= 1
+;				;現在地が引っ越した先のマップ内
+;				IF GET_MAPID(CFLAG:現在位置) == MAIN_MAP
+;					CALL RAN_NORMALTALK
+;				;そうじゃなかったら外。どっかで偶然出会った場合でもデート会話になるけど今は妥協
+;				ELSE
+;					CALL RAN_DATETALK
+;				ENDIF
+;			;以下は神社在住（デフォルト）時
+;			ELSE
+;				IF CFLAG:デート中
+;					CALL RAN_DATETALK
+;				ELSE
+;					CALL RAN_NORMALTALK
+;				ENDIF
+;			ENDIF
+		ELSEIF TALENT:思慕
+			SELECTCASE RAND:10
+			CASE 0
+				PRINTFORMDL Ran peers into your face.
+				PRINTFORML 「By the way, have you ever thought me to be frightening?」
+				PRINTFORML 「Never, you say? That might also be a bit of a problem.」
+				PRINTFORMDW From the shadow of her gentle demeanor, you sense sharp fangs peeping out.
+			CASE 1
+				PRINTFORML 「Hahaha, Brazenly asking what my troubles are. Start by taking care of your own worries first.」
+				PRINTFORMDL The usually always busy Ran replies like an old-timer.
+				PRINTFORMDL Despite her dismissive attitude, it still feels like the distance between the two of you has shrunk somehow.
+				PRINTFORMW 「Hm? What's wrong?」
+			CASE 2
+				PRINTFORML 「Studying is never a fruitless endeavor. Even cooking and housework are important skills.」
+				PRINTFORML 「Even haggling, like never showing a sour face to the shopkeeper.」
+				PRINTFORMDW Ran proudly gives you some advice and tricks.
+			CASE 3
+				PRINTFORML 「Humans and Youkai can't mingle.」
+				PRINTFORML 「That mentality proved successful in the old days. But the times are changing.」
+				PRINTFORMDW Ran mutters something while staring off in the distance, before turning to look at you.
+			CASE 4
+				PRINTFORML 「What in the world is different indeed...」
+				PRINTFORML 「No, That's just my perspective.」
+				PRINTFORMDW Ran gives you a wry smile as you tilt your head in confusion.
+			CASE 5
+				PRINTFORML 「Do you want to see my Danmaku?」
+				PRINTFORMW 「Fufu. Unfortunately I don't have the spare time, otherwise I'd have you stand right in front of me, dazzled by the barrage.」
+			CASE 6
+				PRINTFORML 「Aren't they overworking you at the Hakurei Shrine?」
+				PRINTFORMW 「That Miko doesn't seem to have a shred of tact. You're not responsible for anything, remember to decline at times.」
+			CASE 7
+				PRINTFORML 「Tamamo no mae? Kayofujin? I'm sorry, but I've got nothing to do with them.」
+				PRINTFORMDW So her mouth says, but Ran can't look you in the eyes when she does.
+			CASE 8
+				PRINTFORML 「Hmm? What are you staring so closely at?」
+				PRINTFORMDW Ran's smile catches you off-guard.
+			CASE 9
+				PRINTFORML 「The village seems to change every time I visit.」
+				PRINTFORML 「It changes to match its utility, the looks, the relations in it, it's always in flux.」
+				PRINTFORMW 「It's not like it's an issue, I'm just glad that some things have improved recently.」
+			ENDSELECT
+		ELSE
+			PRINTFORMDL Ran gives a retort to your story.
+			PRINTDATA
+				DATAFORM 「Hm, Is that so?」
+				DATAFORM 「Ho Ho.」
+				DATAFORM 「Even you have troubles it seems.」
+				DATAFORM 「Don't let things like that worry you. It's such a small thing.」
+				DATAFORM 「Hahaha, I understand how you feel.」
+				DATAFORM 「Aa, I've had a similar experience.」
+				DATAFORM 「Everybody has their failings.」
+				DATAFORM 「No, I think that shop is cheaper.」
+				DATAFORM 「You don't get it. You don't understand the true value of fried tofu.」
+				DATAFORM 「My master? If you want to know something, it's best to ask her yourself.」
+				;10
+				DATAFORM 「Cats or dogs? Naturally, cats, every time!」
+				DATAFORM 「Mushrooms or bamboo shoots? I use both at once, when I make fried tofu with rice.」
+				DATAFORM 「A wise man does not court danger. There is also strength in not fighting.」
+				DATAFORM 「Hey, over there. What are you looking at so intently?」
+				DATAFORM 「You look like you want to jump right into these tails. You can't, it'll mess them up terribly.」
+				DATAFORM 「Even with this hat covering my ears I can hear things just fine.」
+				DATAFORM 「Don't overthink things like that. At times, stupidity can be good.」
+				DATAFORM 「Anyway, there lives a Hakutaku in the village. It's all fine as long as she's not exposed.」
+				DATAFORM 「Ooh, You worked hard. Good child, good child.」
+				DATAFORM 「A story from the old days... It was just some youthful indiscretion. Don't pay attention to it.」
+				;20
+				DATAFORM 「At times even fashion designers stumble in from the outside. I look forward to the new line this year.」
+				DATAFORM 「It seems panties have been selling well recently.」
+				DATAFORM 「Be very careful around Tanuki. Wicked creatures.」
+				DATAFORM 「Don't walk into dangerous places carelessly. Even the Hakurei name isn't absolute.」
+				DATAFORM 「It goes without saying. Inarizushi.」
+				DATAFORM 「You have to be careful, otherwise some hair will get caught on the brush.」
+				DATAFORM 「It's so peaceful...」
+				DATAFORM 「I always turn down playboys.」
+				DATAFORM 「I can't relax in another person's house if it's cluttered. Are you the same?」
+				DATAFORM 「I won't forgive anyone who touches my Shikigami.」
+				;30
+			ENDDATA
+		ENDIF
+		PRINTL 
+	ENDIF
+ENDIF
+RETURN 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;以下自作関数。影狼口上を参考にさせて頂きました
+;藍様通常会話（恋慕前提）
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@RAN_NORMALTALK
+	;通常会話のうち四季を問わない物をこちらへ集約
+	;季節によっては爛れた生活が～とか見れないのが嫌だったんです……
+	SELECTCASE RAND:32
+	CASE 0
+		IF TALENT:恋人
+			PRINTFORML 「You are a good man, %CALLNAME:MASTER%.」
+			PRINTFORMDL Ran's sudden praise bewilders you so much that she just starts laughing.
+			PRINTFORMW 「However, your behavior and elegance aren't good enough. I'll have to refine you until you shine.」
+		ELSE
+			PRINTFORML  「...............」
+			PRINTFORMDL The conversation suddenly stops, Ran's eyes fixed on you.
+			PRINTFORMDL Then, with no warning, she bonks you gently on the forehead.
+			PRINTFORML 「The fruit of your labor. I'm not apologizing.」
+			PRINTFORMDW You try to get back at the giggling Ran, but she fends you off with ease.
+		ENDIF
+	CASE 1
+		IF TCVAR:25:352 == 1
+			PRINTFORML 「Foxes have been bewitching humans since time immemorial.」
+			PRINTFORML 「Don't you think I've bewitched you, %CALLNAME:MASTER%?」
+			PRINTFORMW 「...Is that so? Yeah, that was a silly question.」
+		ELSE
+			PRINTFORML 「I was teaching Chen something the other day. Sometimes the wrong answer can turn out to be the correct one.」
+			PRINTFORMW 「%CALLNAME:MASTER%, what does this stone look like?」
+			$INPUT_LOOP_01
+			PRINTL [0] Diamond
+			PRINTL [1] Crystallized carbon
+			PRINTL [2] A leaf
+			INPUT
+			SELECTCASE RESULT
+			CASE 0
+				PRINTFORML 「Sorry. It's actually just a leaf.」
+				PRINTFORML 「Every answer is incorrect. That is to say, it'll never be an answer I, the questioner, will accept.」
+				PRINTFORMW 「It's good that you gave a straightforward answer. You're a good listener.」
+			CASE 1
+				PRINTFORML 「Sorry. This is a glass forgery.」
+				PRINTFORML 「There's no way you could've guessed that. I knew that, so I could trick you.」
+				PRINTFORMW 「But being a contrarian and assuming that in the first place would have been even more wrong.」
+			CASE 2
+				PRINTFORML 「Sorry. It's actually a genuine article.」
+				PRINTFORML 「Even so, right and wrong are secondary. What does it matter if this thing is genuine?」
+				PRINTFORMW 「Oh nooooo... The diamond blew away.」
+			CASEELSE
+			GOTO INPUT_LOOP_01
+			ENDSELECT
+			TCVAR:25:352 = 1
+		ENDIF
+	CASE 2
+		IF TALENT:恋人
+			PRINTFORML 「Those who bear a grudge against the Yakumo name will inevitably target you.」
+			PRINTFORML 「Become strong. Your strength and wisdom aren't quite enough yet.」
+			PRINTFORMDW I don't want to lose you, you hear Ran murmuring.
+		ELSE
+			PRINTFORML 「Even if it's suicidal, sometimes people show up intending on breaking the Great Barrier.」
+			PRINTFORML 「Usually it's a human that has dabbled in magic, but sometimes it's a young Youkai from Gensokyo.」
+			PRINTFORML 「Those raised in these peaceful times don't realize its worth. They endanger themselves and others just because they want to test something.」
+			PRINTFORML 「Because of that, I always make sure to give it to them.」
+			PRINTFORMDW Ran says with a cruel and sadistic grin. It might be how she vents stress.
+		ENDIF
+	CASE 3
+		IF TALENT:恋人
+			PRINTFORML 「Go practice with Chen sometime.」
+			PRINTFORMW 「Once she can finally stand on her own, I've promised to give her a set of Taoist robes like mine.」
+		ELSE
+			PRINTFORML 「Chen has said she wants robes like mine.」
+			PRINTFORML 「I can make one for her, but it feels like I need to make it a reward for something.」
+			PRINTFORMW 「A birthday gift? Or maybe for learning a difficult subject. Uーmuu...」
+		ENDIF
+	CASE 4
+		PRINTFORML 「Foxes don't actually bark like "Kon! Kon!"」
+		PRINTFORMW 「How they really sound? ......Kyuuuuun...」
+	CASE 5
+		PRINTFORML 「Now, if I don't do the laundry next...」
+		PRINTFORML 「Hmm? Isn't that bad? I'm just taking a break from housework.」
+		PRINTFORMDW Ran is the very definition of a high-spec Shikigami.
+	CASE 6
+		PRINTFORML 「Good foxes and bad foxes, there's not much of a difference.」
+		PRINTFORMW 「I'm merely a Shikigami. I'll be whatever Yukari-sama orders me to be.」
+	CASE 7
+		PRINTFORML 「If you ever want to talk to me from far away, you might as well try Kokkuri-san.」
+		PRINTFORMW 「But since it's a pain to move the pieces, I'll just communicate with you telepathically.」
+	CASE 8
+		IF TALENT:恋人
+			PRINTFORML 「We are now deeply involved, this means you're also considered a Yakumo.」
+			PRINTFORML 「You must prepare yourself for when you will inevitably need to defend yourself.」
+			SIF TALENT:26:恋慕
+				PRINTFORML 「Remember that you are one of Yukari-sama's only weak spots as well.」
+			PRINTFORMDW Ran warns you with a serious face.
+		ELSE
+			PRINTFORML 「Yukari-sama thinks in ways completely different from everyone else.」
+			PRINTFORML 「That said, that doesn't mean that she always conducts herself like a wise and gallant sage.」
+			PRINTFORML 「At home, me and Chen take our tails and...」
+			PRINTFORMDW A washbasin comes flying out of nowhere and hits Ran straight on.
+		ENDIF
+	CASE 9
+		IF TALENT:恋人
+			PRINTFORML 「Hanafuda is a bit too easy after all.」
+			PRINTFORMW 「Then... When you lose, you take off one piece of clothing, wanna try that rule?」
+		ELSE
+			PRINTFORML 「Mahjong. Hanafuda. I wish impartial games like these became more popular.」
+			PRINTFORML 「You can have fun with both humans and Youkai with them. And since they're new and fresh it'll be easy to spread.」
+			PRINTFORMDL Ran considers various factors, and you just propose something stupid.
+			PRINTFORMW 「So, you think adding a stripping rule would help?」
+		ENDIF
+	CASE 10
+		PRINTFORML 「I do love sweets after all. Despite how much I love fried tofu, it's not my only favorite food.」
+		PRINTFORMW 「I'm good at making Japanese-style confectioneries. Shall I bring some Ohagi next time?」
+	CASE 11
+		PRINTFORML 「What I'm bad at?」
+		PRINTFORML 「Sorry, I used to be afraid of wolves when I only had one tail though.」
+		PRINTFORMW 「Now though... The crying of children I guess.」
+	CASE 12
+		PRINTFORML 「Science says love is nothing more than a phenomenon brought about by intracerebral chemicals.」
+		PRINTFORML 「If that's the case, does that mean beings that can think without a brain cannot fall in love?」
+		PRINTFORML 「%CALLNAME:MASTER%, what do you think?」
+		PRINTFORMDW Without saying a word, you just smile back at Ran.
+	CASE 13
+		PRINTFORML 「When was the last time I cried?」
+		PRINTFORML 「......Aah, Now that you mention it, I've been crying a lot recently.」
+		PRINTFORMDW Ran says as she stares straight at you, and give her a bitter smile.
+	CASE 14
+		PRINTFORML 「It's a secret hobby of mine, but I'm very particular when it comes to choosing my underwear.」
+		PRINTFORMW 「You've seen an impressive line-up of panties, what are your thoughts?」
+	CASE 15
+		IF ABL:MASTER:戦闘能力 >= 4
+			PRINTFORML 「Your growth has been rather impressive.」
+			PRINTFORML 「In such a short time, you've become on par with the most powerful people in Gensokyo. It's something to be proud of.」
+			PRINTFORMDW Still not enough to compete with Ran though. The day you can compare with her is still ways off.
+		ELSEIF ABL:MASTER:戦闘能力 == 3
+			PRINTFORML 「%CALLNAME:MASTER%, you've become much stronger than before.」
+			PRINTFORML 「However, remember that being good at Danmaku and being good at actual combat are two different things. Look at the Oni for instance.」
+			PRINTFORMDW You feel you're pretty good at Danmaku in general, but what would happen if you made a serious effort?
+		ELSE
+			PRINTFORML 「The basics of combat is hand-to-hand fighting. Don't just rely on techniques.」
+			PRINTFORML 「Someone powerful but with a weak body is at best a witch.」
+			PRINTFORMDW The image of a young girl holding a large hard-cover over her head comes to mind.
+		ENDIF
+	CASE 16
+		IF TALENT:恋人
+			PRINTFORML 「Recently, people have stopped calling out to me in the Human Village.」
+			PRINTFORML 「Don't you get what I mean? Be careful on the dark streets at nightー」
+			PRINTFORMDW You look around involuntarily.
+		ELSE
+			PRINTFORML 「Aah, Yes, I agree. There are many men that try to hit on me.」
+			PRINTFORML 「I've gotten used to turning them down, but it's really embarrassing when a young and pure boy comes with flowers.」
+			PRINTFORMW 「They were just so cute, I ended up thoughtlessly agreeing... Ahaha, You fell for it!」
+		ENDIF
+	CASE 17
+		;紫様の恋慕の有無とか
+		IF TALENT:恋人
+			PRINTFORML 「Hey, Why don't you move to Mayohiga?」
+			IF TALENT:26:恋慕
+				PRINTFORML 「Since it's %CALLNAME:MASTER%, Yukari-sama would welcome you as well.」
+				SIF TALENT:24:恋慕
+					PRINTFORML 「And I won't have to worry keeping an eye on Chen.」
+				PRINTFORML 「How about it? Indulge me, come live with us for a year or two.」
+				PRINTFORMDW You just answer『I'll think about it』and Ran giggles.
+			ELSE
+				PRINTFORML 「Yukari-sama is fine. I'm certain you'll enjoy it.」
+				PRINTFORML 「My work decreases with more hands, and thus my time with you will increase.」
+				PRINTFORMW 「It'd make me happy if you gave it some serious thought.」
+			ENDIF
+		ELSE
+			PRINTFORML 「Yukari-sama has been teasing me recently. She says I'm acting like a giddy young girl.」
+			IF TALENT:26:恋慕
+				PRINTFORML 「But she shouldn't be the one saying that.」
+				PRINTFORML 「This is your fault, so take responsibility.」
+				PRINTFORMDW Ran whispers『She wants to live with you.』in your ear, and you're at a loss for words.
+			ELSE
+				PRINTFORML 「Is there something on my face? I haven't even changed my make-up or anything.」
+				PRINTFORMDW 『Your smile is too cute.』You say, and Ran turns bright red.
+			ENDIF
+		ENDIF
+	CASE 18
+		PRINTFORML 「For me, it's naturally Kitsune udon.」
+		PRINTFORML 「While not as good, Ketsune udon is still great.」
+		PRINTFORML 「Now then you, surely you're not going to suggest Tanuki, right?」
+		PRINTFORMDW Chatting trivially, it really feels like you and Ran are getting along.
+	CASE 19
+		PRINTFORML 「Ahahaha, To go that far for socks!」
+		PRINTFORMDW It's a stupid joke that doesn't matter, but Ran still laughs uproariously.
+	CASE 20
+		PRINTFORML 「Don't you get dizzy you ask?」
+		PRINTFORML 「It's not a problem at all. Every time that attack starts I just feel giddy.」
+		PRINTFORMW 「I can change the speed and direction at will. But it still hurts as much as any other ramming attack.」
+	CASE 21
+		PRINTFORML 「Hey... You don't ask about women's erogenous zones in public.」
+		PRINTFORMW 「Some you're expected to know though. Lips and the base of the tails, and around that area.」
+	CASE 22
+		PRINTFORML 「『What if you fought Ibuki-dono』you ask again, it's an awkward question to answer.」
+		PRINTFORMW 「It wouldn't be a one-sided defeat. I won't say more than that. Ever.」
+	CASE 23
+		PRINTFORML 「............Hmm. What do you think?」
+		PRINTFORMDL In the middle of two topics, Ran indulges in a bit of philosophy and turns to you, her head cocked to the side.
+		PRINTFORMDW You wonder just how many people besides you have seen Ran's true face.
+	CASE 24
+		;橙の話
+		IF TALENT:恋人
+			IF TALENT:24:恋慕
+				PRINTFORML 「It's fine if you love Chen, but I outrank her in the harem.」
+				PRINTFORML 「Be you with her or with me. Be sure none of use are dissatisfied, my husband.」
+				PRINTFORMDW But if the two of them together... Ran makes an attractive suggestion.
+			ELSEIF TALENT:24:思慕
+				PRINTFORML 「Astonishing. That Chen could have such a face...」
+				PRINTFORMDL Ran stares at you closely.
+				PRINTFORMW 「It's too late to get out now. For the bond between me and her as master and servant, and for Chen herself, show off your resourcefulness.」
+			ELSE
+				PRINTFORML 「I'm glad you're also on good terms with Chen.」
+				PRINTFORML 「......Wait. Don't take that to mean anything weird, okay?」
+				PRINTFORMDW It's been a long time since Ran stared at someone with eyes this cold.
+			ENDIF
+		ELSE
+			PRINTFORML 「They say having some distance makes friendships lasting.」
+			PRINTFORML 「That is to say.」
+			PRINTFORML 「Make Chen cry, and I'll make you cry.」
+			PRINTFORMDW The complete lack of malice in Ran's smile tells you how serious she is.
+		ENDIF
+	CASE 25
+		IF TALENT:恋人
+			PRINTFORML 「Uーmu. That's a bit embarrassing.」
+			PRINTFORML 「Loving one another is great, but honestly it's a bit like a test...」
+			PRINTFORMDW Ran smiles with her entire face, shining a bright red.
+		ELSE
+			PRINTFORML 「In a sense, I don't have any experience with love.」
+			PRINTFORML 「I've made others fall for me, but I've never fallen myself.」
+			PRINTFORMW 「That is how things stand now.」
+		ENDIF
+	CASE 26
+		PRINTFORML 「Yes, I've been given the authority to go to the outside world if needed.」
+		PRINTFORML 「That said, I always return as soon as possible. The air there is bad for the skin.」
+		PRINTFORML 「My clothing? Generally I wear a suit, what about it?」
+		PRINTFORMDW Imagining how dignified Ran would look, you unintentionally clench your fist.
+	CASE 27
+		PRINTFORML 「I pride myself on these tails.」
+		PRINTFORML 「It's because I never slack off with grooming that they're like this.」
+		PRINTFORML 「Fufufu, You could dive into them however much you want, and I wouldn't lose a single hair.」
+		PRINTFORMDW You watch in fascination as Ran shakes her luxurious tails invitingly.
+	CASE 28
+		PRINTFORML 「Sorry, but it's a common misunderstanding. I'm not in any way related to the Inari Okami.」
+		PRINTFORML 「So even if you worshiped me, I can't give you any divine blessing.」
+		PRINTFORML 「......No. But I think if it's just you, I can look after you. Forever.」
+		PRINTFORMDW Seeing such a fox-like smile on Ran makes you unclench your joined hand instinctively.
+	CASE 29
+		PRINTFORML 「Gensokyo's tofu sellers, humans, Youkai, hermits, are all in league.」
+		PRINTFORMW 「I am extremely passionate about my fried tofu, and it's impossible to tell which one is best.」
+	CASE 30
+		PRINTFORML 「Japanese food, Western food, Chinese food... I know a bit about all of them.」
+		PRINTFORMW 「It's all for Yukari-sama. No matter how much you study, the road to cuisine never ends.」
+	CASE 31
+		PRINTFORML 「Alice's puppet shows are truly amazing.」
+		PRINTFORML 「Her puppetry technique continues to improve, the same goes for the writing and production quality.」
+		PRINTFORML 「A show like that would certainly set the mood during a date.」
+		PRINTFORMDW You laugh as you nod in agreement.
+	CASE 32
+		PRINTFORML 「By the way, %CALLNAME:MASTER%, have you ever met a Tsurube-otoshi? Be careful if you come across one.」
+		PRINTFORMW 「The autumn sun sets as quickly as a bucket dropping into a well, make sure one doesn't drop on you.」
+	ENDSELECT
+	TCVAR:25:354 = 0
+RETURN 1
+
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;藍様季節会話（恋慕前提）
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@RAN_SEASONTALK
+	;DAY:2で季節を選択。
+	;通常会話の中で季節を感じさせるものはこちらへ
+	SELECTCASE DAY:2
+	;春
+	CASE 1
+		SELECTCASE RAND:5
+		CASE 0
+			SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「Aah, Isn't that a flyer for that poltergeist orchestra concert?」
+				PRINTFORML 「Spring is the time for going out and being active. Shall we go and listen?」
+				PRINTFORMDW You nod in agreement to Ran's invitation.
+			CASE 1
+				PRINTFORML 「Aah, Isn't that a flyer for that poltergeist orchestra concert?」
+				PRINTFORML 「Oya? They have a new member? But what's this "with H" thing?」
+				PRINTFORMDW The two of you laugh at the weird name.
+			ENDSELECT
+		CASE 1
+			PRINTFORML 「Let's go flower viewing at Hakugyokurou while it's spring.」
+			PRINTFORMW 「This time of year the entire tree lights up. It's because of all the escaping souls.」
+		CASE 2
+			PRINTFORML 「The snow around here has completely melted now.」
+			PRINTFORML 「Spring has come again. I wonder how many more springs you will see.」
+			PRINTFORMDW The Kitsune looks at you affectionately.
+		CASE 3
+			PRINTFORML 「Be careful of flower and insect Youkai during spring, they're stronger than usual.」
+			PRINTFORML 「It's the breeding season, they'll be pollinating and laying eggs.」
+			PRINTFORMDW Being pushed down by two of those... You think a bit too too loudly.
+		CASE 4
+			PRINTFORML 「Speaking of spring flowers, what are your thoughts on cherry blossoms?」
+			PRINTFORML 「They're certainly beautiful in full bloom, but the plum blossoms signaling the start of spring are also beautiful.」
+			PRINTFORMW 「While watching the plum blossoms you drink sake. It's a different atmosphere from the cherry blossom viewing.」
+		ENDSELECT
+	;夏
+	CASE 2
+		SELECTCASE RAND: 5
+		CASE 0
+			PRINTFORML 「Don't make light of me. I've been taking care of my tails for a long time.」
+			PRINTFORMW 「They're always safe from heat and smell. At first I just hid my tails but no more!」
+		CASE 1
+			PRINTFORML 「I look cool you say? I am actually sweating though, just a bit..」
+			PRINTFORMDL Ran says as she opens her collar. Beads of glistening sweat trails down her neck, moving slowly downward until they reach...
+			PRINTFORMW 「That's far enough.」
+		CASE 2
+			PRINTFORML 「I've never gotten a tan. How should I put it, you have to be human, or close enough, for that to happen.」
+			PRINTFORML 「I'll explain the mechan... What's with the deplorable look?」
+			PRINTFORMDW It seems you'll never see Ran with a healthy tan and visible swimsuit lines.
+		CASE 3
+			PRINTFORML 「Speaking of summer, ghost stories. The ones that Youkai tell are different.」
+			PRINTFORML 「『One summer night, a starving man-eating Youkai went to a graveyard and ate a child out on a test of courage in high spirits.』」
+			PRINTFORMW 「『It was hard and smelly, it stunk, that wasn't a human, was it?』」
+		CASE 4
+			PRINTFORML 「Choujuu Gigaku......? Ah, That noise on the edge of the village.」
+			PRINTFORML 「Taking advantage of the feverish atmosphere of summer to scream is fine, but, it's a bit too loud for my ears.」
+			PRINTFORMDW Ran says that with a deep frown. It seems she's not into industrial music.
+		ENDSELECT
+	;秋
+	CASE 3
+		SELECTCASE RAND:6
+		CASE 0
+			PRINTFORML 「Fu Fu Fu... I bought lots of mountain chestnuts.」
+			PRINTFORML 「Candied ones go with rice. Roasted ones go well with tea. Mont Blanc for a western style is also nice.」
+			PRINTFORMDW Ran is adorable when she's in such high spirits.
+		CASE 1
+			PRINTFORML 「Don't say bad things. Always be polite in case you run across one of the Aki.」
+			PRINTFORML 「Getting in their good graces is extremely beneficial. Ah!」
+			PRINTFORMDW The cold wind suddenly changes as the delicious scent of roasted sweet potatoes comes wafting.
+		CASE 2
+			PRINTFORML 「I love bonfires. They give that autumn feel.」
+			PRINTFORML 「But best of all is when a man and a woman enjoy themselves as dusk approaches. Using each other to stay warm instead of the fire.」
+			PRINTFORMDW An obscene image comes to mind, but not a disagreeable one.
+		CASE 3
+			PRINTFORML 「Moon-viewing with perfectly round Dango is great. Chen loves them.」
+			PRINTFORMW 「Huh? Didn't you hear me? Round Dango.」
+		CASE 4
+			PRINTFORML 「The Tsukumo sisters? Yes, their skill is first-class.」
+			PRINTFORML 「That might be just the right thing for the long autumn nights. Shall we go there next time?」
+			PRINTFORMDW You nod in agreement to Ran's invitation.
+		CASE 5
+			IF TALENT:恋人
+				PRINTFORML 「A lot of holidays have become popular recently haven't they? Is this when that thing called Halloween is?」
+				PRINTFORML 「If I put on a costume and crawl into your bed, would you make some fried tofu for me?」
+				PRINTFORMDW She's not looking trick you... Wait, it's Ran, if you give her fried tofu you'll always get a treat.
+			ELSE
+				PRINTFORML 「A lot of holidays have become popular recently haven't they? Is this when that thing called Halloween is?」
+				PRINTFORML 「Seems like a pain, the giant pumpkins must be spurring the Youkai on.」
+				PRINTFORMDW You can't help but feel a bit sad, seeing the ever-stoic Ran get surprised would have been amazing.
+			ENDIF
+		ENDSELECT
+	;冬
+	CASE 4
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Umumu... Recently it feels like my back is being watched.」
+			PRINTFORML 「There's no doubt, they're aiming for my tails......!」
+			PRINTFORMDW It's rather natural given how she flaunts such a soft and comfy place when it's so cold out.
+		CASE 1
+			PRINTFORML 「I used to roll around in the snow long ago.」
+			PRINTFORML 「Now I just watch Chen play, sipping tea on the veranda.」
+			PRINTFORMDW So she says, but in the end she'd just ask to join in.
+		CASE 2
+			PRINTFORML 「The Ice Fairies and Yuki-onna seem to be having fun.」
+			PRINTFORML 「But even I need to warm up a bit when it's cold. Like this!」
+			PRINTFORMDW Ran slips her ice-cold hand down your neck, making you jump.
+		CASE 3
+			PRINTFORML 「Winter is the season for hot pots. You can put in so many things, but you always end up with picking from a list of two.」
+			PRINTFORML 「Which one choose... Udon or Zosui.」
+			PRINTFORMDW A spark of tension runs between the two of you.
+		CASE 4
+			IF TALENT:26:恋慕
+				PRINTFORML 「It seems Yukari-sama won't be hibernating this year either.」
+				PRINTFORMW 「Although I'm pretty sure she would spend a lot more time in bed if you were to come to Mayohiga.」
+			ELSE
+				PRINTFORML 「It seems Yukari-sama won't be hibernating this year either.」
+				PRINTFORMW 「I can't help but worry a bit, despite the insolence. Sleeping ten days in a row can't be healthy, can it?」
+			ENDIF
+		ENDSELECT
+	ENDSELECT
+	TCVAR:25:354 = 1
+RETURN 1
+
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;藍様デート会話（恋慕前提）
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@RAN_DATETALK
+	;幻想郷人妖探訪
+	SELECTCASE CFLAG:現在位置
+	;博麗神社 これでいけるかなーと思ったら表示出来てないのでコメントアウト
+	;CASE 桜並木の鳥居,神社境内,神社本堂,神社縁側,妖精の大樹,夢幻遺跡
+	;CASEに現在位置のサブマップ変数を叩きこむことで動くようになりました。ﾔｯﾀﾈ
+	CASE 10,20,30,40,50,60
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「It seems the Youkai Shrine's namesake has all but vanished.」
+			PRINTFORML 「So I say, but there's no way the Hakurei Shrine can ever truly fade.」
+			PRINTFORMDW It isn't the name Hakurei that sustains it, really, so much as the name Reimu.
+		CASE 1
+			PRINTFORML 「Looking back on the history of Gensokyo, there have been rare occasions where the Miko has been absent.」
+			PRINTFORML 「It must've been a few years. But, it seems people didn't notice at all.」
+			PRINTFORMDW You can tell who had to pick up the slack without asking.
+		CASE 2
+			PRINTFORML 「So, what's Ibuki-dono up to?」
+			PRINTFORMW 「If she's just lazing around we will deal with her.」
+		CASE 3
+			PRINTFORML 「To tell the truth, my ears are sharper than my nose.」
+			PRINTFORMW 「For instance, I can hear a certain fairy around over there.」
+		CASE 4
+			PRINTFORML 「I'm honestly glad that spring showed up. Very happy, in fact.」
+			PRINTFORMW 「It's perfect for soaking in once work is done. It's the best.」
+		ENDSELECT
+	;命蓮寺
+	;CASE お地蔵通り,枝垂れ柳の下,命蓮寺境内,命蓮寺方丈,墓地,神霊廟広場,神霊廟道場
+	CASE 110,120,130,140,160,170
+		SELECTCASE RAND:8
+		CASE 0
+			PRINTFORML 「......Fried mouse is actually one of the Bakegitsune's favorite foods. Be it deep-fried mouse or tempura.」
+			PRINTFORML 「Even if one has to kill to eat it's fine, that's the nature of foxes after all.」
+			PRINTFORMDW Ran gives a faint smile as she looks around, mice bursting out of their hiding spots trying to flee from her.
+		CASE 1
+			PRINTFORML 「A lot of Youkai have moved here recently.」
+			PRINTFORML 「Do you have the power to protect what's important in an hour of need? What will you defend? And from what?」
+			PRINTFORMDW Says Ran with a slightly mocking smile.
+		CASE 2
+			PRINTFORML 「You want me to talk about Tanuki?」
+			PRINTFORMW 「Well... That one from Sado looks pretty young. About 300 years or so.」
+		CASE 3
+			PRINTFORML 「Just because Nue's revealed her form, she's not to be taken lightly.」
+			PRINTFORMW 「Her being『Unidentifiable』is a serious problem. It makes her extremely hard to study.」
+		CASE 4
+			PRINTFORML 「That missionary-looking monk Youkai, she seems to be all on her own.」
+			PRINTFORMW 「With powerful people like that, it's best to offer some sake or something and win them over.」
+		CASE 5
+			PRINTFORML 「As expected, no Youkai seem to be going after those hermits.」
+			PRINTFORMW 「They say the flesh of hermits is amazing. But they're a bit too extravagant to be hermits if you ask me.」
+		CASE 6
+			PRINTFORML 「That Jiangshi... It's best to not get involved.」
+			PRINTFORMW 「Hora, It'll be a problem if you're bitten, won't it?」
+		CASE 7
+			PRINTFORMDL You hear the sound of lighting striking from somewhere close by.
+			PRINTFORMW 「......That startled me... It came from over there, let's stay away.」
+		ENDSELECT
+	;人里
+	;CASE 連れ込み宿
+	;連れ込み宿のほか、地底のラブホでも表示するように
+	CASE 260,950
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Going to a love hotel only to lay on top of the futon and talking is a bit weird.」
+			PRINTFORMW 「I'd want to do some flirting as well, is that so bad?」
+		CASE 1
+			PRINTFORMDL Ran tilts her head up a bit and sniffs the air.
+			PRINTFORMW 「The smell of sex permeates the rooms around here. Ah, They reek of it.」
+		CASE 2
+			PRINTFORML 「%CALLNAME:MASTER%, listen closely. Over by this wall here, come.」
+			PRINTFORMDW You lean against the edge of the wall peeking into the alley, and can intermittently hear the faint flirtatious voice of a young girl.
+		CASE 3
+			;don't say I never did anything for you, /jp/
+			CALL PRINT_DIALOGUE, @"I went to one of these before, \@ TCVAR:25:360 == 1 ? but they wouldn't let me in without a partner # spent a night with a man bragging of his sexual prowess \@.", "w"
+			PRINTFORMW 「\@ TCVAR:25:360 == 1 ? What a waste of time that was # But after all this time, you're the only man that's made me cry out \@.」
+		CASE 4
+			PRINTFORML 「Oh, It's nothing, reallyー Let's just enjoy ourselvesー」
+			PRINTFORMDW Ran leans against you while openly demanding something.
+		ENDSELECT
+	;CASE 広場,商家町,呑屋小道,寺子屋,大衆浴場,長屋街
+	CASE 210,220,230,240,250,270
+		SELECTCASE RAND:10
+		CASE 0
+			PRINTFORML 「Busy as ever in the village today I see.」
+			PRINTFORML 「It's great but...people say lights are usually followed by shadows.」
+			PRINTFORMDW A loud bang rings out. Danmaku flies up before exploding like fireworks from somewhere.
+		CASE 1
+			PRINTFORML 「If we're on a date, why aren't our arms linked?」
+			PRINTFORMDL Ran pulls up next to you, her face looking a bit malicious for some reason.
+			PRINTFORMDW Her gaze is full of jealousy, like she's feeling uncomfortable and unwanted.
+		CASE 2
+			PRINTFORML 「Over there this time. Let's goー」
+			PRINTFORMW 「Fufun... What's wrong with frolicking on a date?」
+		CASE 3
+			PRINTFORML 「Let's check out that clothes store next.」
+			PRINTFORML 「Whatever clothes, whatever underwear, I'll wear anything you pick.」
+			PRINTFORMDW You lead Ran by the hand as you quicken your pace.
+		CASE 4
+			PRINTFORML 「Excuse me old gentleman. Even if you pray to me nothing will happen.」
+			PRINTFORML 「Aaa, Young one. It's fine to touch my tails, but please don't pull on the furー」
+			PRINTFORMDW Ran says she's just trying to make everyone happy, but you don't notice that much difference.
+		CASE 5
+			PRINTFORML 「What say you I disguise myself as a normal human next time we visit the village?」
+			PRINTFORML 「I can choose any age and appearance you'd like. Doesn't that sound a bit interesting?」
+			PRINTFORMDW While fun, your reputation would be ruined.
+		CASE 6
+			PRINTFORML 「If you want Dango, then try that tea house. I recommend the Sasa Dango they've been selling since forever.」
+			PRINTFORML 「Of course the store has been passed down from shopkeeper to shopkeeper, but so have the skills.」
+			PRINTFORMW 「Now then, I wonder what Dango the next generation will be serving...」
+		CASE 7
+			PRINTFORML 「......I feel like my face is getting red.」
+			PRINTFORMW 「Don't say ”act your age”, %CALLNAME:MASTER%.」
+		CASE 8
+			PRINTFORML 「Of course I'll follow you where you'll lead me.」
+			PRINTFORMW 「Even if we end up in front of a love hotel, I wouldn't mind. I gratefully accept your company.」
+		CASE 9
+			PRINTFORML 「So this is an era where Youkai can walk around in the middle of a human village?」
+			PRINTFORML 「I used to doubt it was true. But it really is...」
+			PRINTFORMDW You have a hard time imagining what Gensokyo used to be like.
+		ENDSELECT
+	;紅魔館
+	;CASE 霧の湖,氷のかまくら,廃洋館
+	CASE 310,320,330
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「The sky isn't reflected on the lake.」
+			PRINTFORML 「It's a perfectly clear, cloudless sky, as far as the eye can see. That's rather rare around here.」
+			PRINTFORMW 「It's because it acts like a mirror, the entire water surface is like one huge gate.」
+		CASE 1
+			PRINTFORML 「That western-style house over there, I don't think it qualifies as a haunted house.」
+			PRINTFORMW 「They say they're not even trying to frighten people, but why not make it appear more ghostly?」
+		CASE 2
+			PRINTFORML 「If you want shaved ice, take it up with the Yuki-onna.」
+			PRINTFORMW 「The snow fairy though, just don't. That girl doesn't have any clue what business is.」
+		CASE 3
+			PRINTFORML 「Is that mermaid singing?」
+			PRINTFORMW 「But it's bad manners to impose. Let's wait a moment.」
+		CASE 4
+			PRINTFORML 「The fairies set up barriers to avoid being seen.」
+			PRINTFORMW 「Apropos of what? I just thought I felt someone staring at me just now.」
+		ENDSELECT
+	;CASE 正門,広間,食堂,大図書館,地下室
+	CASE 340,350,360,370,380
+		SELECTCASE RAND:7
+		CASE 0
+			PRINTFORML 「%CALLNAME:MASTER%, what do you think of that haughty vampire?」
+			PRINTFORML 「She turns heads by acting contrary to expectations. For one, she spoke perfect Japanese when she arrived.」
+			PRINTFORMDW You don't quite get what Ran's trying to say, and you're left thinking.
+		CASE 1
+			PRINTFORML 「That maid... Don't make light of her.」
+			PRINTFORML 「She's extremely skilled for her age. How in the world does she even have time to study so much?」
+			PRINTFORMDW Ran's face is serious, but she's just talking about housework skills.
+		CASE 2
+			PRINTFORML 「There are a great number of fairies working in the Scarlet Devil Mansion... But are they even useful?」
+			PRINTFORMW 「There are more windows there than I can clean. Silverware, too.」
+		CASE 3
+			PRINTFORML 「I've always been interested in the huge library here.」
+			PRINTFORMW 「A literally infinite collection, it makes my heart flutter.」
+		CASE 4
+			PRINTFORML 「A female household isn't that rare in Gensokyo but...」
+			PRINTFORML 「This is a special case, if a single man was thrown in it'd mess up the foundation. It wouldn't topple, but still.」
+			PRINTFORMDW You avert your gaze and say nothing.
+		CASE 5
+			PRINTFORML 「That vampire's lost her mind, hasn't she?」
+			PRINTFORMW 「Honestly, I don't think she's gotten any better.」
+		CASE 6
+			PRINTFORML 「Hobgoblins are paid a glass of milk and a piece of a cookie per day.」
+			PRINTFORMW 「If you give them clothes or such, they'll be so overjoyed they'll stop working.」
+		ENDSELECT
+	;迷いの竹林
+	;CASE 迷いの小道,斜角の竹林,兎の洞穴,永遠亭,無名の丘,太陽の畑,永遠亭奥ノ院
+	CASE 410,420,430,440,450,460,470,480
+		SELECTCASE RAND:7
+		CASE 0
+			PRINTFORML 「They say the standards of beauty from the Heian period are outdated, but I don't think so.」
+			PRINTFORMW 「Praise of Kaguya-Hime's looks can be heard all the way from the capital.」
+		CASE 1
+			PRINTFORML 「Ah, I know that little rabbit.」
+			PRINTFORMW 「Be careful. Annoy her and she'll tear your head off with her huge sharp teeth.」
+		CASE 2
+			PRINTFORML 「In Estonia there is a famous werewolf named "Hans the werewolf."」
+			PRINTFORML 「Thing is though, he's just a poor man who got put down because werewolf trials were popular back then.」
+			PRINTFORMW 「Although... There's no doubt that a werewolf named Hans does exist.」
+		CASE 3
+			PRINTFORML 「Don't dig up any bamboo shoots. We can always buy them in the village.」
+			PRINTFORMW 「But wouldn't that be a waste of money...?」
+		CASE 4
+			PRINTFORML 「Watch your step. Be careful with that flower.」
+			PRINTFORML 「How I know that? I have encyclopedic knowledge of wild plants.」
+			PRINTFORMDW The petals on the tiny flower shake towards you, despite there not being any breeze...
+		CASE 5
+			PRINTFORML 「If they have enough free time to kill one another, they could've achieved enlightenment instead.」
+			PRINTFORMW 「In the end, they spend all their time having fun.」
+		CASE 6
+			PRINTFORML 「Don't let her looks deceive you.」
+			PRINTFORML 「That white Inaba is older than I am.」
+		ENDSELECT
+	;魔法の森
+	;CASE 森の入り口,香霖堂,古木の大樹,霧雨魔法店,人形の洋館,再思の道,無縁塚
+	CASE 510,520,530,540,550,560,570
+		SELECTCASE RAND:6
+		CASE 0
+			PRINTFORMDL A poisonous spore comes drifting from somewhere, but Ran quickly brushes it aside.
+			PRINTFORML 「It's amazing how some people manage to live here without dying.」
+			PRINTFORMW 「You can tell from looking at their houses. It seems they didn't have anyone helping them.」
+		CASE 1
+			PRINTFORML 「It's nothing. Let's keep going.」
+			PRINTFORMDW You catch a glimpse of a torn-off tentacle flying off into the darkness of the forest.
+		CASE 2
+			PRINTFORML 「I don't recommend visiting the Muenzuka.」
+			PRINTFORMW 「It poses no danger to the safety of Gensokyo. Your safety on the other hand, is an entirely different matter.」
+		CASE 3
+			PRINTFORML 「!? %CALLNAME:MASTER%, did you see it just now!?」
+			PRINTFORML 「An about three meter tall mushroom with stubby hands and feet... A Youkai? Or a plant?」
+			PRINTFORMDW The ecosystem of the Forest of Magic is unique as always.
+		CASE 4
+			PRINTFORML 「The god of Makai hangs around here for some reason sometimes.」
+			PRINTFORMW 「It might be a good idea to leave...」
+		CASE 5
+			PRINTFORML 「I think the owner of that Kourindou is a bit wasteful. Just acting like that......」
+			PRINTFORMW 「No. It's exactly because he's like that, that he is what he is.」
+		ENDSELECT
+	;三途の川～冥界
+	;CASE 中有の道,三途の川,彼岸,白玉楼庭,白玉楼
+	CASE 610,620,640,650,660
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「%CALLNAME:MASTER%, how old do you suppose Youmu is?」
+			PRINTFORML 「She's a half-phantom half-human. Generally they age half as fast as normal humans.」
+			PRINTFORMW 「That is to say, just multiply whatever age you think she is by two.」
+		CASE 1
+			PRINTFORML 「The river's width... How the hell do the Shinigami... Hmm...」
+			PRINTFORMDW Ran seems to be considering some mistake she's done in a past calculation.
+		CASE 2
+			PRINTFORML 「Eiki-sama's lectures are good to listen to. They make your judgment after death lighter.」
+			PRINTFORML 「No, I'm not being facetious at all.」
+			PRINTFORMDW Ran smiles eloquently and shakes her head.
+		CASE 3
+			PRINTFORML 「You don't have to worry about food at Hakugyokurou, it's got ingredients from all over the world.」
+			PRINTFORMW 「If you want to return alive from the netherworld, just make sure not to be rude to the ghost princess.」
+		CASE 4
+			PRINTFORMDL Two souls float lazily in front of you.
+			PRINTFORML 「Soul tempura...」
+			PRINTFORMDW Whispers Ran, and the souls speed out of there.
+		ENDSELECT
+	;妖怪の山　山麓
+	;CASE マヨヒガ
+	;文字列指定だと三途の川～冥界側のマヨヒガで表示されないので数値で指定
+	CASE 630,740
+		SELECTCASE RAND:10
+		CASE 0
+			PRINTFORML 「Bringing something home from Mayohiga will make you happy, but.」
+			PRINTFORMW 「You don't really need to, do you? Since you so often bring me home.」
+		CASE 1
+			PRINTFORML 「Can't we rest just a bit longer?」
+			PRINTFORMW 「If it gets late you can just stay here, it'll be fine. Naturally, it'll be in my room.」
+		CASE 2
+			PRINTFORML 「If you find a cat in the garden, take care of how much attention you give it.」
+			PRINTFORMW 「There's a Bakeneko mixed in there. And it's more of a little tiger if you touch it.」
+		CASE 3
+			PRINTFORML 「I look a little different from usual, right?」
+			PRINTFORML 「It's because of the house. It changes according to the visitor, same goes for you.」
+			PRINTFORMDW The closeness between the two of you remind you of a married couple, and you rub your chin in thought.
+			PRINTL 
+			CALL AddEXP("愛情経験", TARGET, 2)
+		CASE 4
+			;紫様の恋慕
+			IF TALENT:26:恋慕
+				PRINTFORML 「Hm? Where are you going %CALLNAME:MASTER%?」
+				PRINTFORML 「I see. Yukari-sama.」
+				PRINTFORMDW Even if you can't see her, you're sure she's around.
+				PRINTL 
+				CALL AddEXP("愛情経験", 26, 2)
+			ELSE
+				PRINTFORML 「Yukari-sama's seat is always kept clear.」
+				PRINTFORML 「She has a tendency to just suddenly appear unexpectedly.」
+				PRINTFORMDW You nod in understanding.
+			ENDIF
+		CASE 5
+			;橙の恋慕
+			IF TALENT:24:恋慕
+				PRINTFORML 「Chen has given me so many excuses to see you.」
+				PRINTFORML 「I've got mixed feelings, but it can't be helped, at least she's learning something.」
+				PRINTFORMDW You puff your chest up with pride, certain that it's all for the best.
+				PRINTL 
+				CALL AddEXP("愛情経験", TARGET, 2)
+			ELSE
+				PRINTFORML 「The marks on that pillar over there is where Chen used to sharpen her claws.」
+				PRINTFORMW 「It was long ago. But if I had to say then it's my own fault...」
+			ENDIF
+		CASE 6
+			PRINTFORML 「Muuー What should I make for tomorrow...」
+			PRINTFORML 「I want to make something new for a change. Do you have any ideas?」
+			PRINTL 
+			IF ABL:MASTER:料理技能 >= 4
+				PRINTFORMDL You think it over for a short time before proposing a full menu.
+				PRINTFORML 「Then it's decided. Since you proposed it, you'll help, right?」
+				PRINTFORMDW Of course, you reply without hesitation.
+				PRINTL 
+				CALL AddEXP("料理経験", MASTER, 2)
+			ELSEIF ABL:MASTER:料理技能 == 3
+				PRINTFORMDL You list some candidates from your repertoire.
+				PRINTFORML 「Ah, That's a nice one. And we have all the required ingredients as well.」
+				PRINTFORMDW Ran finds you a bit dependable.
+				PRINTL 
+				CALL AddEXP("料理経験", MASTER, 1)
+			ELSE
+				PRINTFORMDL You're not much of a cook, and can't come up with anything good.
+				PRINTFORMDL You panic and say the first thing that comes to your mind. 
+				PRINTFORMDL You just say the first thing that comes to mind and propose a gingy dish.
+				PRINTFORML 「I've never heard of it... What's it made of?」
+				PRINTFORMDW Gingy.
+			ENDIF
+		CASE 7
+			PRINTFORML 「Taking a break while doing housework is great. You feel so fulfilled.」
+			PRINTFORMW 「As long as you're not overdoing it, it's great for recovering fatigue.」
+		CASE 8
+			PRINTFORML 「A long time ago, when I only had three tails...」
+			PRINTFORMDW Ran permits you to listen to a legend treasured far more than any other.
+		CASE 9
+			;Hey hey let's go kenka suru, taisetsu na mono protect /jp/'s balls, let's fighting love
+			PRINTFORML 「\@ TCVAR:25:360 == 1 ? Want to hear about the time Yukari-sama screwed up? # Want me to talk about my last man? \@」
+			PRINTFORMW 「That certainly got your attention.」
+		ENDSELECT
+	;CASE 麓の樹海,玄武の沢,大蝦蟇の池,仙人の屋敷,間欠泉地下センター
+	CASE 710,720,730,750,760
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Did you know? Kappa's arms are connected in their bodies, if one grows the other shrinks.」
+			PRINTFORML 「If you see one, try pulling on their arm, it'll be fine.」
+			PRINTFORMDW It's said to be hard to find a green-skinned plate-headed Kappa in Gensokyo.
+		CASE 1
+			PRINTFORML 「Oya, There used to be Sunekosuri around here.」
+			PRINTFORML 「It's a shame. I wanted to give one a rub.」
+			PRINTFORMDW Ran speaks as if she knew them, but they make bad company as they just bite shins all day.
+		CASE 2
+			PRINTFORML 「As the Yakujin-sama's body is clad in misfortune, you just need to see her for your luck to worsen.」
+			PRINTFORMW 「But if you get close enough you'll be fine, as she'll just become a doll.」
+		CASE 3
+			PRINTFORML 「Umu. Many evil Youkai look for Mayohiga with bad intentions.」
+			PRINTFORMW 「But, unless you're invited you can only stumble upon it randomly, you can't find it by searching.」
+		CASE 4
+			PRINTFORML 「Once in a while humans go missing here looking for edible plants, it's worrying.」
+			PRINTFORMW 「So sometimes I guide them to a Kappa's or hermit's house. Keep that a secret, alright?」
+		ENDSELECT
+	;妖怪の山　山頂
+	;CASE 九天の滝,絶景の丘,山の湖,守矢神社境内,守矢神社本殿,天界
+	CASE 810,820,830,840,850,890
+		SELECTCASE RAND:7
+		CASE 0
+			PRINTFORML 「Oh...... A flying dragon. It's a young one.」
+			PRINTFORMW 「Humans rejoice when they see one, as they say it's a rare sight, but that's because they never look up.」
+		CASE 1
+			PRINTFORML 「If you just ride on the winds, you can reach the foot of the mountain in no time.」
+			PRINTFORMW 「Oh, The Tengu seem a bit surprised, I usually fly wherever I go.」
+		CASE 2
+			PRINTFORMDL Ran suddenly falls deep in thought, her fingers making some symbols, before she snaps out of it just as fast.
+			PRINTFORML 「Never mind. It was just some boorish fellow, but they've been dealt with.」
+			PRINTFORMDW You hear some rustling noise in a grove a distance away.
+		CASE 3
+			PRINTFORML 「The Moriya Shrine architecture is lovely.」
+			PRINTFORML 「But, cleaning that must take forever......」
+			PRINTFORMDW The topic changes to how the Miko can keep it all clean.
+		CASE 4
+			PRINTFORML 「Even if I don't pay attention, things here tend to stay calm.」
+			PRINTFORMW 「One single girl can't shake Gensokyo on her own. It's a moderate danger.」
+		CASE 5
+			PRINTFORML 「Momiji, Kaede, Kunugi, Shikimi, Tsubaki.」
+			PRINTFORMW 「They're all White Wolf Tengu names. It's easy to misread them in the middle of sentences.」
+		CASE 6
+			PRINTFORML 「No matter how friendly, a Kami is still a Kami. Treat them with respect.」
+			PRINTFORMW 「If their emotions are stirred, calamities follow in great numbers.」
+		ENDSELECT
+	;地底
+	;CASE 幻想風穴,地獄の深道,旧地獄街道,旧地獄温泉,地霊殿,灼熱地獄跡
+	CASE 910,920,930,940,960,970
+		SELECTCASE RAND:7
+		CASE 0
+			PRINTFORML 「It's not like I enjoy butting heads with Oni but...」
+			PRINTFORML 「Why? Whenever they see me they become restless.」
+			PRINTFORMDW Of course, Oni love fighting, and they love strong people, there's no way they'd leave Ran alone.
+		CASE 1
+			PRINTFORML 「Satori? What is scary about her? She isn't hard to deal with.」
+			PRINTFORML 「But, well, even if she's weak, she's great at psychological warfare.」
+			PRINTFORMW 「Actually fighting her is a very bothersome.」
+		CASE 2
+			PRINTFORML 「That Tsuchigumo is nice and peaceful now.」
+			PRINTFORML 「In the old days, there was a sect that wanted to collect all of the world's diseases.」
+			PRINTFORMDW Ran tells you of a disease that makes influenza look absolutely adorable.
+		CASE 3
+			PRINTFORML 「As expected of the underworld. It's extremely ill suited for humans.」
+			PRINTFORML 「Even I wouldn't go to a steakhouse where they sell carrion crawling with maggots?」
+			PRINTFORMDW Despite appearances, it seems the menu just follows demand.
+		CASE 4
+			PRINTFORMDL Far off in the distance, vivid Danmaku flutters about in the sealed-up underground sky.
+			PRINTFORML 「An offensive Danmaku. Seems like the type designed to strip your opponent naked.」
+			PRINTFORMDW You strain your eyes as much as you can, but it's too far away to see the fighters.
+		CASE 5
+			PRINTFORML 「......There are supposed to be some Shirime here in the underground.」
+			PRINTFORMW 「Sorry. I'm not commenting on that.」
+		CASE 6
+			PRINTFORML 「Hmn?」
+			PRINTFORMW 「Nothing, thought I felt someone brush against my tails.」
+		ENDSELECT
+	CASEELSE
+		;藍の部屋 の筈
+		;IF CFLAG:現在位置 == OMANEKIBEYA()
+		;現住所のID*100に98(たぶん部屋に入るコマンドの奴)を足すと直接指定できるっぽい
+		IF CFLAG:現在位置 == (98 + MAIN_MAP * 100)
+			SELECTCASE RAND:6
+			CASE 0
+				PRINTFORMDL You and Ran sit in a well-kept room, having a meal as you engage in a lively conversation.
+				PRINTFORML 「Hm. You are the first man to have entered.」
+				PRINTFORMW 「Never before has a man stepped into Mayohiga. The only exception being tomcats.」
+			CASE 1
+				PRINTFORML 「You can say whatever you want here, but you have to be careful even if it's just the two of us here.」
+				PRINTFORMW 「Although not on par with mine, Chen has good ears. Yukari-sama is just out of the question.」
+			CASE 2
+				PRINTFORML 「Then, I said『You won't pass these nine tails.』」
+				PRINTFORML 「It hurt a bit, but, aren't foxes those that deceive humans? A bluff is a powerful thing.」
+				PRINTFORMDW Ran never stops smiling, telling her story with energy. 
+			CASE 3
+				PRINTFORML 「Will you stay on the border? Will you visit the underworld? Will you visit Hakugyokurou?」
+				PRINTFORML 「In your case, you can go wherever you want.」
+				PRINTFORMW 「You don't have to die to cross the river, %CALLNAME:MASTER%. Yuyuko-sama's has already given her approval.」
+			CASE 4
+				PRINTFORML 「A woman falls in love with her ears, have you heard something like that before?」
+				PRINTFORML 「It's not necessarily a lie, is what I think.」
+				PRINTFORMDW Ran sits with her chin in her hand, her fox ears dancing entrancingly.
+			CASE 5
+				PRINTFORML 「Constant trimming isn't needed if you want a beautiful garden.」
+				PRINTFORML 「If everything is flawless, it will lack all soul.」
+				PRINTFORMW 「Something that sheltered won't survive an overnight storm.」
+			ENDSELECT
+		;これ以外だと道中会話 の筈
+		ELSE
+			SELECTCASE RAND:6
+			CASE 0
+				PRINTFORML 「We'd arrive in no time if we simply flew there.」
+				PRINTFORML 「But walking like this, side by side, is the best after all.」
+				PRINTFORMDW She hugs your arm, and the sensation softens your face.
+			CASE 1
+				PRINTFORMDL You look around carefully, surveying the land, when things suddenly start shaking.
+				PRINTFORMW 「Hey. %CALLNAME:MASTER%. Look at me, talk to me.」
+			CASE 2
+				PRINTFORML 「The mountain's - narrow paths - which one - to take.」
+				PRINTFORMW 「A fox and her child - travel through - A moonlight Tanuki - travels through.」
+			CASE 3
+				PRINTFORML 「Ah. A ghost.」
+				PRINTFORMW 「The underworld is right over there. If you don't move, that Youkai in the field will swallow you upー」
+			CASE 4
+				PRINTFORML 「You don't have to worry about being attacked when you're with me, no matter where you go.」
+				PRINTFORMW 「I'm sorry to say that this means you'll never be able to show some chivalrous spirit and protect me.」
+			CASE 5
+				PRINTFORML 「Who do you think made this road?」
+				PRINTFORMW 「It certainly must've been a down to earth person.」
+			ENDSELECT
+		ENDIF
+	ENDSELECT
+RETURN 1
+;==================================================
+;301,お茶を淹れる
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_301
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_301_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_301_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	IF TALENT:恋慕
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「Yes. It is impeccable.」
+			PRINTFORMDW With a thanks, Ran praises you openly.
+		CASE 1
+			PRINTFORML 「Haha. I appreciate your concern, but I don't have any problems with indigestion.」
+			PRINTFORMDW You tried to follow the warring states general's recipe, but it didn't turn out too well.
+		CASE 2
+			PRINTFORMDW You and Ran spend some time together in silence, warm cups in your hands.
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「I prefer it a bit hotter.」
+			PRINTFORMDW You commit that to memory.
+		CASE 1
+			PRINTFORML 「Being able to brew tea anywhere, what a useful thing, isn't it?」
+			PRINTFORMDW Her pride as a servant seems to have been a tiny bit wounded.
+		CASE 2
+			PRINTFORML 「It goes without saying, but each tea leaf has its own suitable temperature.」
+			PRINTFORMDW Ran teaches you a secret from her centuries of experience of making tea.
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「Itadakou.」
+			PRINTFORMDW Ran tips the cup to her lips with perfect posture.
+		CASE 1
+			PRINTFORML 「............」
+			PRINTFORMDW It seems you must've made a mistake somehow when preparing the tea.
+		CASE 2
+			PRINTFORML 「Advice? No, nothing comes to mind.」
+			PRINTFORMDW It wasn't a noticeable failure this time.
+		ENDSELECT
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;302,スキンシップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_302
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_302_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_302_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	;会話と並んで使用頻度が高いだけにバリエーション重視
+	IF TALENT:恋慕
+		;神社から引っ越してた場合
+		IF FLAG:デート相手 == 25
+			CALL RAN_DATESKINSHIP
+		ELSE
+			CALL RAN_NORMALSKINSHIP
+;		IF MAIN_MAP >= 1
+;			;現在地が引っ越した先のマップ内
+;			IF GET_MAPID(CFLAG:現在位置) == MAIN_MAP
+;				CALL RAN_NORMALSKINSHIP
+;			;そうじゃなかったら外
+;			ELSE
+;				CALL RAN_DATESKINSHIP
+;			ENDIF
+;		;以下は神社在住（デフォルト）時
+;		ELSE
+;			IF CFLAG:デート中
+;				CALL RAN_DATESKINSHIP
+;			ELSE
+;				CALL RAN_NORMALSKINSHIP
+;			ENDIF
+		ENDIF
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:10
+		CASE 0
+			PRINTFORML 「Ahh, That's nice. If you want to touch, go right ahead.」
+			PRINTFORMDW Ran gives you a wry smile of permission.
+		CASE 1
+			PRINTFORML 「When I was young, I would trim my hair with my own claws.」
+			PRINTFORML 「Your bangs are a bit uneven. Don't moveー」
+			PRINTFORMDW You have time to tell her claws are sharp enough to rival even the most famous of swords.
+		CASE 2
+			PRINTFORML 「That's the spotー A bit further out, please.」
+			PRINTFORMDW You can tell how hard Ran works from the knots in her shoulders.
+		CASE 3
+			PRINTFORML 「Did you know? You can play an unexpectedly interesting game with just your hands.」
+			PRINTFORMDL Ran's fingertips delicately trace the inside and back of your hand.
+			PRINTFORMDW You understand the meaning, but you have trouble repeating the pattern.
+		CASE 4
+			PRINTFORMDL You sit kneeling properly and massage Ran's back with the belly of your thumbs.
+			PRINTFORML 「You're learning my weak points pretty well, %CALLNAME:MASTER%.」
+			PRINTFORMDW Since your partner is a beautiful woman, your motivation is skyrocketing.
+		CASE 5
+			PRINTFORML 「Hey now. Is it that fun massaging my upper arms?」
+			PRINTFORMDW You've heard it's supposed to be as soft as breasts, but, that's not quite right.
+		CASE 6
+			PRINTFORMDL You try to caress Ran's earlobe.
+			PRINTFORMDW You ask her to tilt her head towards you a bit.
+		CASE 7
+			PRINTFORMDL You nonchalantly bring your arm around Ran's back and places it on her waist, holding her like a lover.
+			PRINTFORMDW She doesn't seem to resist at all, accepting it like it's nothing.
+		CASE 8
+			PRINTFORML 「Fum Fum... And then what?」
+			PRINTFORMDW In the middle of the conversation, Ran grasps your hand smoothly.
+		CASE 9
+			PRINTFORML 「I seem to like being with you, you say? Don't get carried away, fool!」
+			PRINTFORMDW Ran gently flicks the tip of your nose.
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:10
+		CASE 0
+			PRINTFORMDL Ran permits you to stroke one of her glossy tails.
+			PRINTFORMDL It isn't like the tail of a normal fox, Ran's is soft to the touch and it feels amazing...
+			PRINTFORMW 「How is it? Those tails are my pride.」
+		CASE 1
+			PRINTFORMDL You run some of Ran's hair through your fingers, marveling at the soft, golden strands.
+			PRINTFORML 「Don't do overly familiar things so suddenly.」
+			PRINTFORMDW Ran seems to think nothing of it as she pulls back a bit.
+		CASE 2
+			PRINTFORMDL You take Ran's hand respectfully, bowing your head to plant a kiss on it.
+			PRINTFORML 「French courting? That's about the only well-mannered place to bring your lips.」
+			PRINTFORMDW It seems even this level of skinship doesn't bother Ran in the slightest.
+		CASE 3
+			PRINTFORML 「Don't just touch me however you like.」
+			PRINTFORMDW You trace your hand along her back, when a half-opened eye makes you freeze in place.
+		CASE 4
+			PRINTFORMW 「Mmm... A bit harder.」
+			PRINTFORMDW Ran seems to be satisfied with your shoulder massages.
+		CASE 5
+			PRINTFORML 「As expected, you go straight for my... Hm, Mmmh.」
+			PRINTFORMDW Her tails wiggle and twitch. She doesn't seem to mind.
+		CASE 6
+			PRINTFORML 「A split hair. Want me to cut it?」
+			PRINTFORMDW Ran draws close to your face suddenly, her nails extended and sharp.
+		CASE 7
+			PRINTFORML 「It's dangerous to suddenly approach me from behind.」
+			PRINTFORML 「My tails might just send you flying.」
+			PRINTFORMDW That feels a bit like an indirect threat.
+		CASE 8
+			PRINTFORML 「Your fussing won't mess up my tails, their maintenance is perfect.」
+			PRINTFORMDW It's true, it doesn't seem like running a comb through it would do anything at all.
+		CASE 9
+			PRINTFORML 「I'm not saying you can't touch, but that doesn't count as a curt permission.」
+			PRINTFORMDW It's an extremely light rejection.
+		ENDSELECT
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;藍様通常スキンシップ（恋慕前提）
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@RAN_NORMALSKINSHIP
+	;お風呂場スキンシップ
+;	IF TALENT:恋慕 && (CFLAG:現在位置 == 13 || CFLAG:現在位置 == 24 || CFLAG:現在位置 == 30 || CFLAG:現在位置 == 39)
+	IF BATHCHECK(CFLAG:MASTER:現在位置) && IN_HOME(CFLAG:MASTER:現在位置)
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「I'm sorry to impose on you. Next time I'll ask further ahead of time.」
+			PRINTFORMDL You help Ran wash her nine tails, dividing the labor and focusing on one tail at a time.
+			PRINTFORMDW Unlike your expectations, just sitting together with Ran and taking care of her important tails is extremely enjoyable.
+		CASE 1
+			PRINTFORMDL Using a bit of magic, Ran hides her tails so you can wash her soft, white back.
+			PRINTFORMDL Her tight waist, her sideboob peeking out under her arms, and her ass that spills out as she sits down on the chair are all enchanting.
+			PRINTFORMW 「Fufu, I can guess pretty well where you're looking right now.」
+		CASE 2
+			PRINTFORMDL Ran washes her tails, leaving you in charge of cleaning the rest of her.
+			PRINTFORMDL Starting from the neck you go lower, and lower, washing those two massive things thoroughly, marveling at the size.
+			PRINTFORMW 「Nnn. Hey. Don't wash just my chest...」
+		CASE 3
+			PRINTFORMDL You trace Ran's slender back with a towel, paying careful attention to how hard you scrub.
+			PRINTFORMDL Water trickles down her smooth skin, tracing the beautiful lines of her moderate musculature.
+			PRINTFORMW 「Would you wash here as well, %CALLNAME:MASTER%?」
+		CASE 4
+		;お毛々を弄る 五分の一なので狙って出しづらいかも
+			IF CFLAG:25:1006 == 1
+				PRINTFORMDL Suddenly, you catch a glimpse of Ran's nethers.
+				PRINTFORMDW She takes care of that area of her own. Right now it's...
+				$INPUT_LOOP_02
+				PRINTDL [0] Shaved as usual
+				PRINTDL [1] Starting to show tiny golden strands
+				PRINTDL [2] All grown out
+				INPUT
+				SELECTCASE RESULT
+				CASE 0
+					PRINTFORMDW As bare as that of a young girl. It's beautiful hairless.
+					PRINTFORMDL Ran sees you staring as if you want to say something.
+					PRINTFORML 「I shave about every other day, for you.」
+					PRINTFORMDW You are elated, no doubt, but you secretly wish you could see her tiny hairs growing, too.
+				CASE 1
+					PRINTFORMDL Actually, a fair bit of golden, soft hairs have started poking out.
+					PRINTFORML 「I haven't been maintaining it...... But that I'm not the least bit ashamed.」
+					PRINTFORMDL Your cheeks flush as Ran glares at you, before you roll her onto her back.
+					PRINTFORMDL Putting her knees around her head, you leave her crotch completely exposed, revealing the hair that's started growing around her anus.
+					PRINTFORMDW You hold your tongue to avoid making it more embarrassing, carefully applying a razor as Ran starts blushing unexpectedly.
+				CASE 2
+					PRINTFORML 「As you can see, it has fully grown. Now it's back to how it was.」
+					PRINTFORMDL Soft and glossy golden hairs have sprouted, but it's ordered elegantly and neatly.
+					PRINTFORMDW It doesn't feel like pubic hair at all, wrapping some strands around your finger as your enjoy yourself.
+					CFLAG:25:1006 = 0
+				CASEELSE
+				GOTO INPUT_LOOP_02
+				ENDSELECT
+			ELSE
+				PRINTFORMDL Suddenly, you catch a glimpse of Ran's nethers.
+				PRINTFORMDL Her well-prepared golden pubes glisten beautifully as water runs over them.
+				PRINTFORML 「Hm? What's wrong %CALLNAME:MASTER%, what are you staring at?」
+				PRINTFORMW 「Is it really such an unusual sight?」
+				$INPUT_LOOP_03
+				PRINTL [0] I want to shampoo here as well
+				PRINTL [1] I want to shave it all off
+				PRINTL [2] I want to help with maintenance
+				INPUT
+				SELECTCASE RESULT
+				CASE 0
+					PRINTFORML 「Hmmm. Fine, %CALLNAME:MASTER%, if you would?」
+					PRINTFORMDL It's not like she has to ask, Ran's approving smile talking for her.
+					PRINTFORMDL She turns towards you before spreading her knees wide.
+					PRINTFORMDL You reach towards the bush from the front, lathering it up with soap.
+					PRINTFORMDW The quality of her pubic hair is worlds apart from your own, and you comment on how soft it is as you wash her.
+				CASE 1
+					PRINTFORML 「Uwaa, So that's why you wanted it to build up, you pervert.」
+					PRINTFORMDL Despite saying so, Ran approves with a smile.
+					PRINTFORMDL She lays down on a towel, spreading her legs wide before you.
+					PRINTFORMDL Sitting in front, you bring your face close as you guide the razor to her secret place.
+					PRINTFORMDW You shave off all the tiny hairs, leaving the Kitsune bare and smooth.
+					CFLAG:25:1006 = 1
+				CASE 2
+					PRINTFORML 「Eh? No, I do that myself but...」
+					PRINTFORML 「......So you just want to change the shape. You have some weird tastes.」
+					PRINTFORMDL Despite saying so, Ran approves with a laughter.
+					PRINTFORMDL She lays down on a towel, spreading her legs wide before you.
+					PRINTFORMDL You carefully work with the razor. You feel like an artist for the first time in your life.
+					PRINTFORMDL Sitting in front, you bring your face close as you guide the razor to her secret place...
+					IF RAND:4 == 0
+						PRINTFORMDW You shape Ran's pubic hair into a lovely heart.
+					ELSEIF RAND:3 == 0
+						PRINTFORMDW You shape Ran's pubic hair into a diamond.
+					ELSEIF RAND:2 == 0
+						PRINTFORMDW You shape Ran's pubic hair into a perfect oval.
+					ELSE
+						PRINTFORMDW You shape Ran's pubic hair into a tiny upside-down triangle.
+					ENDIF
+				CASEELSE
+				GOTO INPUT_LOOP_03
+				ENDSELECT
+			ENDIF
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:10
+		CASE 0
+			PRINTFORML 「Hey, Look up, let me see your face.」
+			PRINTFORMDW Before you know it, the situation is reversed, and you shower Ran with love.
+		CASE 1
+			PRINTFORMDL You trace Ran's contour, drawing a finger along the edge of her face.
+			PRINTFORMW 「That tickles, now it's your turn.」
+		CASE 2
+			PRINTFORMDL You find a gap and peck Ran lightly in the side.
+			PRINTFORML 「Uwa, Y-You little miscreant!」
+			PRINTFORMDW Ran laughs, enjoying it as she squirms.
+		CASE 3
+			PRINTFORML 「Letting you cling all over me in public, my dignity will... Yes yes, you can have my hand.」
+			PRINTFORMDW Ran doesn't get mad even if you treat her like a dog, her broadminded-ness is skyrocketing.
+		CASE 4
+			PRINTFORMDL Ran's tails waggle obediently only before you.
+			PRINTFORML 「Nnhhー」
+			PRINTFORMDW She seems pleased by the way you're petting her back.
+		CASE 5
+			PRINTFORMDL Using the pad of your fingers, you gently rub under Ran's chin.
+			PRINTFORML 「I am a Canidae but... Kyuーuunn...」
+			PRINTFORMDW Ran is absolutely adorable whenever she's embarrassed and ashamed.
+		CASE 6
+			PRINTFORML 「Waauu Ahahaha, I-I-, I-It tickles! It's embarrassing!」
+			PRINTFORMDW You tickle Ran until she pins her sides down, howling.
+		CASE 7
+			PRINTFORMDL You run your hand through Ran's soft, golden hair, her scent wafting back at you.
+			PRINTFORML 「Hearing you say it's beautiful makes me the most happy.」
+			PRINTFORMDW She takes your hand, pressing it against her cheek, trying to hide her blush.
+		CASE 8
+			PRINTFORMDL Without a word, you put your hands on Ran's cheeks.
+			PRINTFORML 「!?」
+			PRINTFORMDW Your palms slowly grow warm as her cheeks heat up.
+		CASE 9
+			PRINTFORMDL Whispering words of love, you close in on Ran from behind, leaning against her.
+			PRINTFORMW 「Yeah, I love you too.」
+		ENDSELECT
+	ENDIF
+RETURN 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;藍様デート中スキンシップ（恋慕前提）
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@RAN_DATESKINSHIP
+	;デート中は別扱い。現状はマヨヒガと連れ込み宿でだけ専用あり
+
+	IF !CFLAG:うふふ
+		SELECTCASE CFLAG:現在位置
+		;博麗神社
+;		CASE 桜並木の鳥居,神社境内,神社本堂,神社縁側,妖精の大樹,夢幻遺跡
+		;命蓮寺
+;		CASE お地蔵通り,枝垂れ柳の下,命蓮寺境内,命蓮寺方丈,墓地,神霊廟広場,神霊廟道場
+		;人里・連れ込み宿
+		CASE 260,950
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORMDL Ran coils around your body and nibbles on your ear.
+				PRINTFORMDW Something large and soft presses into your back, and her scent nearly overcomes your senses.
+			CASE 1
+				PRINTFORML 「Really? So cruel...」
+				PRINTFORMDL You trace your hand up along Ran's inner thigh, before slipping inside her clothes.
+				PRINTFORMDW Touching her delicate bits, her body warms up along with her breath.
+			CASE 2
+				PRINTFORMDL You raise the forefingers on both hands, take careful aim, and thrust.
+				PRINTFORMW 「Miss. What kind of game are you playing?」
+			CASE 3
+				PRINTFORMDL You raise the forefingers of both hands, take careful aim, and thrust.
+				PRINTFORML 「Well done, Hit... So are you going to stop?」
+				PRINTFORMDW In response, you keep your fingers buried as you begin grinding them around.
+			CASE 4
+				PRINTFORMDL You grab hold of Ran's now bare leg, and begin massaging her foot.
+				PRINTFORML 「Ku, It does feel a bit nice, but it also tickles, it's a delicate area.」
+				PRINTFORMDW She twists and turns, writing amorously.
+			ENDSELECT
+		;人里
+;		CASE 広場,商家町,呑屋小道,寺子屋,大衆浴場,長屋街
+		;紅魔館
+;		CASE 霧の湖,氷のかまくら,廃洋館,正門,広間,食堂,大図書館,地下室
+		;迷いの竹林
+;		CASE 迷いの小道,斜角の竹林,兎の洞穴,永遠亭,無名の丘,太陽の畑,永遠亭奥ノ院
+		;魔法の森
+;		CASE 森の入り口,香霖堂,古木の大樹,霧雨魔法店,人形の洋館,再思の道,無縁塚
+		;三途の川～冥界
+;		CASE 中有の道,三途の川,彼岸,白玉楼庭,白玉楼
+		;妖怪の山　山麓・マヨヒガ
+		CASE 630,740
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORMDL You lie on the tatami mat, using Ran's lap as a pillow as she affectionately strokes your hair.
+				PRINTFORMDW Her fox ears are perking up, standing on end, and you can't help but touch them.
+			CASE 1
+				PRINTFORMDL Even if Ran's nine tails are symbols of her power, they're still just nine tails. Looking at them one by one, they have things telling them apart.
+				PRINTFORMDL The tint of the fur differs, the touch, how they react when brushed, you even start start making out personalities when up close...
+				PRINTFORMW 「Hey. Hey! Are you jealous of my tails or something?」
+			CASE 2
+				PRINTFORML 「My fox form? It too is amazing.」
+				PRINTFORML 「Striking, sinister eyes, an enormous body, and tails reaching all the way to the sky.」
+				PRINTFORML 「You really should thank me for suppressing it every day. Go ahead.」
+				PRINTFORMDW You scratch under Ran's chin while stroking her back, and your adorable pet closes her eyes partly.
+			CASE 3
+				PRINTFORML 「How about a massage, %CALLNAME:MASTER%?」
+				PRINTFORML 「I do it every time Yukari-sama exits her bath. I must brag a bit about my skill.」
+				PRINTFORMDW Accepting the offer, you give yourself to Ran's ministration.
+				PRINTL 
+				PRINTFORMDL Your STA and ENE recovers a bit.
+				BASE:MASTER:体力 += 50
+				BASE:MASTER:気力 += 100
+			CASE 4
+				PRINTFORML 「You're quite good. Ah, There, a bit harder.」
+				PRINTFORMDL Ran lays on her front as you massage her thoroughly.
+				PRINTFORMDW The area around her thighs seem especially worn, so you focus on her thighs and ass.
+				PRINTL 
+				PRINTFORMDL Ran's STA and ENE recovers a bit.
+				BASE:25:体力 += 50
+				BASE:25:気力 += 100
+			ENDSELECT
+		;妖怪の山　山麓
+;		CASE 麓の樹海,玄武の沢,大蝦蟇の池,仙人の屋敷,間欠泉地下センター
+		;妖怪の山　山頂
+;		CASE 九天の滝,絶景の丘,山の湖,守矢神社境内,守矢神社本殿,天界
+		;地底
+;		CASE 幻想風穴,地獄の深道,旧地獄街道,旧地獄温泉,地霊殿,灼熱地獄跡
+		;それ以外
+		CASEELSE
+			IF CFLAG:現在位置 == (98 + MAIN_MAP * 100)
+				SELECTCASE RAND:5
+				CASE 0
+					PRINTFORMDL After some playing, Ran is lying down on her side, her head resting in your lap.
+					PRINTFORMDW It's a bit childish, and the two of you laugh at it.
+				CASE 1
+					PRINTFORMDL Neither of you say anything, but the silence isn't meaningless.
+					PRINTFORMDW You two just sit quietly holding hands.
+				CASE 2
+					PRINTFORML 「When you get close like that...」
+					PRINTFORML 「At some point, don't you think the clothes just get in the way?」
+					PRINTFORMDW The shine in Ran's eyes starts becoming a bit muddled.
+				CASE 3
+					PRINTFORMDL Ran shakes with laughter as you poke her here and there.
+					PRINTFORMDW You think decide to stop, but then you see her enormous tits bouncing and shaking.
+				CASE 4
+					PRINTFORMDL Ran suddenly squeezes you hard from behind, her two massive breasts pressing into you.
+					PRINTFORMDW Due to her sheer mass, you can feel her all over.
+				ENDSELECT
+			ELSE
+			SELECTCASE RAND:8
+			CASE 0
+				PRINTFORML 「What?」
+				PRINTFORMDW Before Ran notices, you hook your arm around hers.
+			CASE 1
+				PRINTFORML 「Uwa, That's so childish, now my face is getting hot...」
+				PRINTFORMDW Just locking your fingers together is enough to make the always so stoic Ran's mask crack.
+			CASE 2
+				PRINTFORMDL You bring your hand around Ran's back before drawing her in close.
+				PRINTFORMDW For Ran to be this intimate with a man is supposed to be a rare sight.
+			CASE 3
+				PRINTFORMDL While brushing Ran's hair with your fingers, you suddenly pull off her white hat.
+				PRINTFORMDL Having her fox ears suddenly exposed changes her entire impression at once, and she comes off as more womanly.
+				PRINTFORMW 「Stay like this for a while? It's fine, but... Ahh... I can't calm down...」
+			CASE 4
+				PRINTFORMDL Ran laughs as she pulls you, leading you by your hand without a care in the world.
+				PRINTFORMDW A cool and silent air usually envelops her beautiful face, but now that you're here it's started warming up.
+			CASE 5
+				PRINTFORMDL Ran tires of just holding your arm, and leans her entire body against yours.
+				PRINTFORMDL Your arm is wrapped in warmth and softness, and she rubs the back of your hand further down, below her abdomen...
+				PRINTFORMW 「No one can see it...」
+			CASE 6
+				PRINTFORML 「This is a date, if you don't have anything to do with your hand, hold mine.」
+				PRINTFORML 「Or... Would you rather have your hand on something else?」
+				PRINTFORMDW In response to such an invitation, you set your hand on her ample butt.
+			CASE 7
+				PRINTFORMDL You suddenly find your legs and loins entwined with fox tails.
+				PRINTFORMDW She seems to be claiming you as her own.
+			ENDSELECT
+
+			ENDIF
+		ENDSELECT
+	ENDIF
+RETURN 1
+;==================================================
+;303,謝る
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_303
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_303_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_303_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;304,仕事を手伝う
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_304
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_304_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_304_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	IF TALENT:恋慕 || TALENT:思慕
+		IF ABL:MASTER:教養 >= 4
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL As your knowledge and skill has increased, you've started getting a better understanding in how the barrier works as a whole.
+				PRINTFORML 「......Not a single flaw. Good work, %CALLNAME:MASTER%.」
+				PRINTFORMDW You pass Ran's examination, puffing your chest out in pride.
+			CASE 1
+				PRINTFORML 「So on to the next one. Examine it closely like the last one.」
+				PRINTFORMDW You no longer hold Ran back, and the two of you speed up the work together.
+			CASE 2
+				PRINTFORML 「I apologize for having troubled you. But I think we can afford a break for now.」
+				PRINTFORML 「So, please lend your lap to my fatigue.」
+				PRINTFORMDW Ran takes off her hat, before lying down and using your lap as a pillow.
+			ENDSELECT
+			PRINTL 
+			CALL AddEXP("学習経験", MASTER, 3)
+		ELSEIF ABL:MASTER:教養 == 3
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL You help Ran with her work, now that you're starting to understand what you're doing.
+				PRINTFORML 「Alright, start by dealing with this area here please.」
+				PRINTFORMDW You obey her directions closely, and make steady progress.
+			CASE 1
+				PRINTFORML 「Hmn? There's this small tear here...」
+				PRINTFORMDW To not disturb the concentrating Ran, you focus on other parts in silence.
+			CASE 2
+				PRINTFORML 「Don't worry. Your help is satisfactory.」
+				PRINTFORMDL Despite working your hardest, you're far slower than Ran.
+				PRINTFORMDW You worry if you're just getting in the way, when the Shikigami laughs and pets your head.
+			ENDSELECT
+			PRINTL 
+			CALL AddEXP("学習経験", MASTER, 2)
+		ELSE
+			PRINTFORMDL You want to help Ran with her work, but you honestly have no clue what she's doing.
+			PRINTFORML 「I can't let even a bit of this barrier fail. Please make me some tea.」
+			PRINTFORMDW You obediently assist while staying out of the way.
+			PRINTL 
+			CALL AddEXP("学習経験", MASTER, 1)
+		ENDIF
+	ELSE
+		PRINTFORML 「Help? That would be appreciated.」
+		PRINTFORML 「To start, why don't you make us a cup of tea?」
+		PRINTFORMDW Ran doesn't ask you to help her with the actual work.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;305,膝枕してもらう
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_305
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_305_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_305_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	IF TALENT:恋慕
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Fufufu.」
+			PRINTFORMDW You rest your head in Ran's lap, the Kitsune smiling warmly as she strokes your head.
+		CASE 1
+			PRINTFORMDL Your head in Ran's lap - a blanket of fluffy tails covering you.
+			PRINTFORMDW Giving your entire body to the Shikigami, you relax in peace.
+		CASE 2
+			PRINTFORML 「How do you feel?」
+			PRINTFORMDW Ran strokes your belly like a dog, and your lower body won't calm down.
+		CASE 3
+			PRINTFORMDL Lap pillows are lap pillows, but it feels like your head is guided a bit deeper.
+			PRINTFORMDW The thighs and lower abdomen, you feel an unparalleled softness and warmth envelop you.
+		CASE 4
+			PRINTFORMDL You're starting to prefer Ran's lap to an actual pillow.
+			PRINTFORMDW Ran gently brushes your hair with a look that overflows with motherly affection.
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「That's fine, come here then.」
+			PRINTFORMDW Ran pats her lap with a smile.
+		CASE 1
+			PRINTFORML 「Hey! Stop squirming, it tickles.」
+			PRINTFORMDW You enjoy the feel of her thigh against your cheek.
+		CASE 2
+			PRINTFORMDL You brush Ran's Taoist robes aside and lay your head right on her lap.
+			PRINTFORMW 「Kuku, You look so careless.」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「Yare Yare... There's just no helping you.」
+			PRINTFORMDW After hearing your persistent request, Ran reluctantly lends you her lap.
+		CASE 1
+			PRINTFORML 「Lying in another's lap like this really exposed you neck.」
+			PRINTFORMDW A sharp claw suddenly appears, crossing over your carotid artery.
+		CASE 2
+			PRINTFORML 「I think it's about time to get up now, isn't it?」
+			PRINTFORMDW Sleeping in Ran's lap is still a distant goal.
+		ENDSELECT
+	ENDIF
+	PRINTL
+ENDIF
+RETURN 1
+;==================================================
+;306,お腹を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_306
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_306_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_306_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	;上から懐妊、事後、通常
+	IF TALENT:妊娠
+		IF TALENT:恋慕 || TALENT:思慕
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 「It was a splendid shot.」
+				PRINTFORMDW You think you hear Ran mutter『as planned』.
+			CASE 1
+				PRINTFORML 「My heart is fluttering. I wonder what the child will be like.」
+				PRINTFORMDW Nodding in agreement, you brush Ran's belly that swells because of you two.
+			CASE 2
+				PRINTFORML 「I'm sure Chen will be happy to become an older sister.」
+				PRINTFORMDW You talk with Ran about fatherhood and childcare.
+			CASE 3
+				PRINTFORMDL Holding your hand on Ran's belly, you wait for your child to kick.
+				PRINTFORMDW The time passes peacefully.
+			CASE 4
+				PRINTFORML 「What's with that quiet look...?」
+				PRINTFORMDW Every time you think that the child in Ran is truly yours, emotions stir deep inside you.
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「You don't need to pretend like you're going to be a father.」
+				PRINTFORMDW Rejected, you pull your hand back reluctantly.
+			CASE 1
+				PRINTFORML 「I am expecting soon. Your worrying is useless.」
+				PRINTFORMDW Despite from the distended stomach, Ran is acting like usual.
+			CASE 2
+				PRINTFORML 「I'm sorry, but I'll be the one to name this child.」
+				PRINTFORMDW Ran's tone tells you it's useless.
+			ENDSELECT
+		ENDIF
+	ELSEIF 充填率(TARGET,1) > 30
+	;無自覚射精のケースは考慮せず。問答無用であなたのせいになります
+		IF TALENT:恋慕
+			SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML 「It's full of your seed.」
+				PRINTFORMDW Mutters Ran happily.
+			CASE 1
+				PRINTFORML 「I can tell how they move.」
+				PRINTFORMDW Ran guides your hand, whispering with a sweet smile.
+			CASE 2
+				PRINTFORML 「I don't want to soil my clothes, so I have to keep my lips shut.」
+				PRINTFORML 「I can keep it stored for days if needed.」
+				PRINTFORMDW Ran whispers something in your ear, fanning the flames of lust in you.
+			CASE 3
+				PRINTFORML 「Now then, just how much semen did you shoot into me.」
+				PRINTFORML 「Of course I'm counting them. I know everything, even how many times you thrusted all the way in.」
+				PRINTFORMDW You try not to react, but eventually a crack starts forming in your smile.
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「So then what if I get pregnant?」
+				PRINTFORMDW Ran laughs as you struggle for an answer.
+			CASE 1
+				PRINTFORML 「I am certain I told you to pull out... Didn't I?」
+				PRINTFORMDW Ran mocks you with a ridiculing smile, but she's still radiates the scent of lust.
+			CASE 2
+				PRINTFORML 「Vigor to conquer even a beast. You have my admiration!」
+				PRINTFORMDW You stroke Ran's semen-filled belly sympathetically.
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「You dared filling it that much...」
+				PRINTFORMDW Despite her rough words, it still feels like Ran is satisfied in some way.
+			CASE 1
+				PRINTFORML 「Your vigor and impudence are astounding.」
+				PRINTFORMDW Ran blames you for cumming inside her despite not being her lover.
+			CASE 2
+				PRINTFORML 「When playing with fire, do it in moderation.」
+				PRINTFORMDW So she doesn't mind it in moderation, is that what she means?
+			ENDSELECT
+		ENDIF
+	ELSE
+		IF TALENT:恋慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「If you really want to to be spoiled...」
+				PRINTFORMDW Ran gives you a flirtatious glance full of allure.
+			CASE 1
+				PRINTFORML 「Settle down.」
+				PRINTFORMDW Ran whispers something about it being because it's your hand.
+			CASE 2
+				PRINTFORMW 「There are no children...yet.」
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Did you know? Just under there is the womb.」
+				PRINTFORMDW Ran mocks you a bit with a seductive remark.
+			CASE 1
+				PRINTFORML 「Hm? I don't exactly hate it.」
+				PRINTFORMDW Ran puts her hand on yours softly.
+			CASE 2
+				PRINTFORMW 「I don't particularly mind if you rub my belly.」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL Ran's stomach muscles become tense as you touch them.
+				PRINTFORMW 「You're extremely overfamiliar...」
+			CASE 1
+				PRINTFORMW 「Will you stop that?」
+			CASE 2
+				PRINTFORMW 「...What are you doing?」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	PRINTL
+ENDIF
+RETURN 1
+;==================================================
+;307,頬をつまむ
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_307
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_307_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_307_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	IF CFLAG:睡眠
+		IF TALENT:恋慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL You poke Ran's soft cheeks, making a Muni Muni sound.
+				PRINTFORMDW The peacefully sleeping Ran's face changes humorously, smiling unintentionally.
+			CASE 1
+				PRINTFORMDL Once Ran has fallen asleep it's hard to wake her up.
+				PRINTFORMDW You're not sure if it's just because it's right in front of you, but her defenseless sleeping face is much more adorable.
+			CASE 2
+				PRINTFORMDL Ran is breathing so quietly you have to strain your ears to hear it.
+				PRINTFORMDW You feel some baseless worry for a moment, before you touch the sleeping Shikigami's cheek.
+			ENDSELECT
+		ELSE
+			PRINTFORMDL You poke the sleeping Ran's cheeks, making a Muni sound.
+			PRINTFORMDW You worry if she'll wake up, but it seems she's let her guard down unexpectedly...
+		ENDIF
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「Stop pulling. My face will look weird.」
+			PRINTFORMDW But that's exactly what you want to see.
+		CASE 1
+			PRINTFORML 「Payback time.」
+			PRINTFORMDW Ran's cheeks have become all puffy.
+		CASE 2
+			PRINTFORMDL You stretch out Ran's cheeks, marveling at how unique her normally cool beauty has become.
+			PRINTFORMDW The two of you continue pulling each other's cheeks, making funny faces.
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「What if my makeup is ruined?」
+			PRINTFORMDW You'll be just as beautiful as usual, you reply, Ran glaring at you.
+		CASE 1
+			PRINTFORML 「Stop, right, now. Or is this some kind of punishment?」
+			PRINTFORMDW You really just want to mess with her.
+		CASE 2
+			PRINTFORML 「Is is just me or is Chen more grown-up than you?」
+			PRINTFORMDW Ran likens you to a lovable child who tends to get naughty once in a while.
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「Hoy! (Oi)」
+			PRINTFORMDW Ran just glares at you as you do some petty mischief.
+		CASE 1
+			PRINTFORML 「............」
+			PRINTFORMDW The thought that Ran's scolding is just one more tug away sends shivers down your spine.
+		CASE 2
+			PRINTFORMDW Ran's tails smack you in the head.
+		ENDSELECT
+	ENDIF
+	PRINTL
+ENDIF
+RETURN 1
+;==================================================
+;308,頬をつつく
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_308
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_308_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_308_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	IF CFLAG:睡眠
+		IF TALENT:恋慕 || TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL You marvel at Ran's squishy cheeks.
+				PRINTFORMDW Her perturbed face is absolutely adorable.
+			CASE 1
+				PRINTFORML 「.........Kyuu.」
+				PRINTFORMDW In response to the light touch, a sound like that of a small fox escapes Ran's lips.
+			CASE 2
+				PRINTFORMDL You do some mischief with Ran's cheeks while she sleeps face-up.
+				PRINTFORMDL It doesn't look painful even with the tails pinned under her, but lying on her stomach might be uncomfortable though.
+				PRINTFORMDW You take the opportunity to stare at the cause of the problem, slowly rising and falling as she breathes.
+			ENDSELECT
+		ELSE
+			PRINTFORMDL You poke Ran's cheek with your finger, trying to tickle her.
+			PRINTFORMDW Her lips and fox ears respond weakly by twitching, which you find highly amusing.
+		ENDIF
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「Doing things like these ruins your image.」
+			PRINTFORMDW Isn't it a bit late for that?
+		CASE 1
+			PRINTFORML 「Yukari-sama used to do that as well. I was always terrified what would happen if I fought back.」
+			PRINTFORMDW Ran pokes your face even as you continue poking hers.
+		CASE 2
+			PRINTFORML 「Yes, yes. Time for revenge.」
+			PRINTFORMDW Spending time with Ran like this is great fun.
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMK 「Uri Uri!」
+			PRINTFORMDW Ran counterattacks, enjoying it surprisingly much.
+		CASE 1
+			PRINTFORML 「What do you think you're doing to a woman's face? You little...」
+			PRINTFORMDW No matter how you twist and turn, you can't escape Ran's persistent barrage.
+		CASE 2
+			PRINTFORMDW Instead of poking back, Ran traces your cheek with a claw.
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL Tapping Ran on the shoulder - there's no way you'd do something childish like that.
+			PRINTFORMDW You strike from the front with a pincer attack, followed immediately by a splendid counterattack.
+		CASE 1
+			PRINTFORML 「Ummu. Thag is irru-tatig.」
+			PRINTFORMDW Ran pays you back twofold.
+		CASE 2
+			PRINTFORML 「Alright, clench your teeth.」
+			PRINTFORMDW Ran just stands there and laughs scornfully, what a good sport.
+		ENDSELECT
+	ENDIF
+	PRINTL
+ENDIF
+RETURN 1
+;==================================================
+;309,頭を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_309
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_309_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_309_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	;遥か年下にいい子いい子されるという屈辱
+	IF CFLAG:睡眠
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL Ran sleeps defenselessly, as you softly comb her hair with your fingers.
+			PRINTFORMDW Having her lower her guard, even like this, feels like an honor.
+		CASE 1
+			PRINTFORMDL Charmed by the beauty of Ran's sleeping face, you reach out to it.
+			PRINTFORMDW You carefully sweep aside some golden strands of hair stuck to her cheek.
+		CASE 2
+			PRINTFORML 「Suu.........」
+			PRINTFORMDW You pat the sleeping Ran's head, being careful not to wake her.
+		ENDSELECT
+	ELSEIF CFLAG:添い寝中
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「Hmn. Spoil me more.」
+			PRINTFORMDL Ran doesn't bother keeping up with her pride when it's just the two of you.
+			PRINTFORMDW You brush her hair gently, the Kitsune closing her eyes peacefully.
+		CASE 1
+			PRINTFORMDL Ran lies with shut eyes, you're not sure if she's asleep or awake.
+			PRINTFORMDW However, every time you're about to move your hand away, her ears twitch a little.
+		CASE 2
+			PRINTFORMDL You and Ran lie facing each other, when she suddenly murmurs something.
+			PRINTFORML 「......So this is love.」
+			PRINTFORMDW Combing her hair in silence, you two continue like that.
+		ENDSELECT
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORMDL Ran lowers her head in submission.
+			PRINTFORMW 「Do as you like. Really now...」
+		CASE 1
+			PRINTFORMDL The feeling of Ran's tails can't be beat, but you also love her fox ears.
+			PRINTFORMW 「Now do the base of my ears, please.」
+		CASE 2
+			PRINTFORMDL Although you started out as the one petting, before you know it Ran has taken control.
+			PRINTFORML 「Yes, yes. Good boy. Good boy.」
+			PRINTFORMDW As revenge, Ran treats you like a child, but it doesn't feel all that bad.
+		CASE 3
+			PRINTFORMDL When you take off Ran's hat and look down on her, you get a totally different impression of her.
+			PRINTFORMDL The Shikigami feels like a young lover full of affection.
+			PRINTFORMW 「What are... I don't allow anyone but Yukari-sama to do this, but...」
+		CASE 4
+			PRINTFORMDL Brushing Ran from the front, she suddenly thumps her forehead into your chest.
+			PRINTFORMDL And she freezes there.
+			PRINTFORMDW You pat her with even greater affection.
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Normally, I'm the one patting.」
+			PRINTFORMDW Although she's looking dissatisfied, Ran doesn't brush your hand aside.
+		CASE 1
+			PRINTFORML 「...............」
+			PRINTFORMDW Ran glares daggers at you as you pat her head. The tension in the air reminds you of a game of chicken.
+		CASE 2
+			PRINTFORMDL You take off Ran's ear-shaped hat and pat her golden head.
+			PRINTFORMDW Her ears twitch in response as she glares at you. This could become a habit.
+		CASE 3
+			PRINTFORML 「Mugugu...」
+			PRINTFORMDW Ran blushes a little as you pat her head like she's being a good girl.
+		CASE 4
+			PRINTFORML 「Just hurry up and get satisfied.」
+			PRINTFORMDW It's rare for the usually so calm and collected Ran to be talking so fast.
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORMDL You gently pat Ran's hat.
+			PRINTFORMW 「Would you stop?」
+		CASE 1
+			PRINTFORMDL Ran manages to escape.
+			PRINTFORMW 「Eeei, Too over-familiar.」
+		CASE 2
+			PRINTFORMDL Ran's brow furrows.
+			PRINTFORMW 「You have some nerve going against me.」
+		CASE 3
+			PRINTFORMW 「Hey, Don't touch my ears.」
+		CASE 4
+			PRINTFORMW 「I'm not angry. My pride simply doesn't allow me to submit.」
+		ENDSELECT
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;310,尻を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_310
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_310_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_310_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL Ran doesn't even move a muscle as you fondle her ass.
+		PRINTFORMDW She won't get mad no matter what you do, and you continue fondling her to your heart's content.
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:10
+		CASE 0
+			PRINTFORMDL You gather up as much of Ran's fleshy ass in your hands as you can, groping her to your heart's content.
+			PRINTFORML 「Satisfied?」
+			PRINTFORMDW Although there are many asses to love, none can challenge hers.
+		CASE 1
+			PRINTFORMDL You use Ran's lack of resistance to fondle her round ass without pause, groping and molesting her.
+			PRINTFORMDW Saying nothing, the Kitsune simply turns to you with a smile.
+		CASE 2
+			PRINTFORMDL You reach the base of Ran's thighs, your fingers working their way towards her crotch through her clothes.
+			PRINTFORMDW The Kitsune tries to act cool, but you can tell from how her tails flutter a bit.
+		CASE 3
+			PRINTFORML 「If you overdo it, I guess I won't mind.」
+			PRINTFORMDW One of Ran's tails coils around your arm, pulling your hand a little deeper into her ass.
+		CASE 4
+			PRINTFORMDL You trace the folds of Ran's thick ass, sliding your palms down her thighs.
+			PRINTFORMDW Ran's usually pale face blushes a bit red like a young girl.
+		CASE 5
+			PRINTFORMDL You find it impossible to draw your hands away from Ran's plump and massive ass, its devilish charm keeping you captive.
+			PRINTFORMDW Or, it might not just be the ass you think, it might be that it's Ran's ass.
+		CASE 6
+			PRINTFORML 「If you do that and put me in the mood, make sure you finish what you started...」
+			PRINTFORMDW Ran looks at you, her eyes have a dangerous shine to them.
+		CASE 7
+			PRINTFORMDL You grab onto Ran's child-bearing ass with both hands, your fingers sinking in.
+			PRINTFORMDL Putting strength into your groping, you try to loosen up her gluteal muscles through the fat.
+			PRINTFORMW 「Muu... It's just a massage now...」
+		CASE 8
+			PRINTFORML 「Really, if it weren't you, that'd be an extremely rude place to put your hand.」
+			PRINTFORMDW Ran smiles bitterly but doesn't seem to mind as you continue groping her ass.
+		CASE 9
+			PRINTFORML 「My chest or buttocks. Which one do you prefer?」
+			PRINTFORMDW It's an extremely difficult question.
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「You'll just continue forever unless I stop you...」
+			PRINTFORMDW Ran looks at you in amazement as you fondle her ass.
+		CASE 1
+			PRINTFORMDL Even if you're in a relationship, this does count as a bit of mischief.
+			PRINTFORML 「Tou.」
+			PRINTFORMDW Then one of her tails wraps around your arms, before hurling you away.
+		CASE 2
+			PRINTFORML 「I can see you're the type of person to fondle a woman's behind without reserve.」
+			PRINTFORMW 「But dial it down a bit, it can be misinterpreted.」
+		CASE 3
+			PRINTFORMDL You fondle Ran's ass, trying to tickle her a bit.
+			PRINTFORMW 「Muu... What? Is this an attempt at seduction?」
+		CASE 4
+			PRINTFORMDL You use Ran's lack of resistance to fondle her round ass without pause, groping and molesting her.
+			PRINTFORMDW Saying nothing, the Kitsune simply turns away, pretending not to notice.
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORMDW You brush against Ran for just a moment before her tails seize your hand.
+		CASE 1
+			PRINTFORML 「Watch that hand.」
+			PRINTFORMDW The hairs on Ran's tails stand on end like a million needles, and you pull your hand back...
+		CASE 2
+			PRINTFORML 「Hey, Stop that already.」
+			PRINTFORMDW Ran pinches the back of your hand painfully.
+		CASE 3
+			PRINTFORML 「The impudence, really...」
+			PRINTFORMDW Ran sighs at your completely open and frank sexual harassment.
+		CASE 4
+			PRINTFORML 「It's rare seeing someone as fearless as you.」
+			PRINTFORMDW Ran gives you a look full of surprise.
+		ENDSELECT
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;311,抱き付く
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_311
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_311_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_311_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	;尻尾ダイブはここ。簡単には許してくれない
+	IF CFLAG:睡眠
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORMDL You hug Ran as the two of you lie in the futon.
+			PRINTFORMDW No one else in the world has such a luxurious body pillow.
+		CASE 1
+			PRINTFORMDL Moving your hand to Ran's back, you bury your hand in her tails.
+			PRINTFORMDW It's warm and cozy wherever you touch.
+		CASE 2
+			PRINTFORMDL You reach towards Ran's ass, drawing her a little closer.
+			PRINTFORMDW Feeling the voluminous mass even over her clothes, you find yourself unable to remove your hand.
+		CASE 3
+			PRINTFORMDL You bury your face in the sleeping Ran's cleavage, taking a deep breath.
+			PRINTFORMDW The sweet smell is incomparable. The warmth and softness puts your mind at ease.
+		CASE 3
+			PRINTFORMDL Lying next to Ran, you stare right at her sleeping face up close.
+			PRINTFORMDL Her eyelashes are long and golden, her features awe-inspiring, her lips - the color of a cherry blossom.
+			PRINTFORMDW Just watched her like this is enjoyable.
+		ENDSELECT
+	ELSEIF CFLAG:添い寝中
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL You take Ran into your arms, and she draws you in.
+			PRINTFORMDW Like this, she looks vulnerable, and you begin spoiling her like a young fox.
+		CASE 1
+			PRINTFORMDL Where has Ran's usually so cold and dignified demeanor gone? You coddle her like she's a child.
+			PRINTFORMW 「Hmm... I don't remember my childhood...」
+		CASE 2
+			PRINTFORML 「Kyaー」
+			PRINTFORMDW Ran's fox ears tickle your cheek as you coddle her to your heart's content.
+		ENDSELECT
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Very well. Do it with force.」
+			PRINTFORMDL Says Ran and turns her back to you.
+			PRINTFORMDL You take a deep breath before jumping into her nine tails.
+			PRINTFORMDW Every part of your body is wrapped up in impossible softness, it is a supreme bliss. This is a paradise to match even the heavens.
+		CASE 1
+			PRINTFORMDL If you were to hug Ran from the front, her abundance would gently push you back.
+			PRINTFORMDL Hugging her from the front or the back, they're both amazing.
+			PRINTFORMW 「Fu Fu Fu... Don't hold back, feel free to indulge.」
+		CASE 2
+			PRINTFORMDL You've hugged Ran many times like this, but it's rare for her to hug you back.
+			PRINTFORMDL Suddenly, her arms envelop your back.
+			PRINTFORMW 「What's the matter? Just enjoy it.」
+		CASE 3
+			PRINTFORML 「With your weak nose, I guess I'll have to do it until you understand.」
+			PRINTFORML 「Try to sense it.」
+			PRINTFORMDW Ran hugs you with all her strength, imprinting your entire body with her aroma.
+		CASE 4
+			PRINTFORML 「Sun Sun. Kon Kon.」
+			PRINTFORMDL Ran buries her face in your neck and takes a whiff of your scent.
+			PRINTFORMDW Seeing as she seems to enjoy it, you simply let her.
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Funfun.」
+			PRINTFORMW 「I wonder if I can guess what you ate.」
+		CASE 1
+			PRINTFORML 「You womanizer. Who else have you embraced?」
+			PRINTFORMDW Ran laughs, but seems to be going a bit pale.
+		CASE 2
+			PRINTFORML 「Even if we're acquainted, don't you think you should be a bit wary?」
+			PRINTFORMW 「If you put me in a foul mood I'll blow you away with Danmaku.」
+		CASE 3
+			PRINTFORMDL You bring your nose closer, noticing a light, woodsy scent on Ran's clothes.
+			PRINTFORMW 「Yare Yare... They'll end up smelling like you like this.」
+		CASE 4
+			PRINTFORML 「Handle them with care.」
+			PRINTFORMDL At last, Ran finally permits your touching of her tails.
+			PRINTFORMDW It's just one tail, but the volume is evident as you embrace it, enjoying the abundant softness.
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「What are you doing?」
+			PRINTFORMDW You press your face forward as you hold on.
+		CASE 1
+			PRINTFORML 「If you're quite done, get off.」
+			PRINTFORMDW Ran's ice glare sends a shiver down you spine.
+		CASE 2
+			PRINTFORML 「Aren't there some other women you can hug?」
+			PRINTFORMDW Using normal pick-up lines on Ran seems to have no effect.
+		CASE 3
+			PRINTFORMDL Ran jams her hands into her sleeves, and refuses to take them out.
+			PRINTFORMW 「You, don't you have a lover or something?」
+		CASE 4
+			PRINTFORML 「If you had a good nose you wouldn't be doing that.」
+			PRINTFORMDW Says Ran as she turns away, that hurt a bit.
+		ENDSELECT
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;312,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_312
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_312_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_312_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;軽めの接吻。ディープなのは”もっとキスする”にて
+	;と思ったけどごちゃまぜの方が変化が付くかも
+	IF FLAG:時間停止
+		PRINTFORMDL Ran's eyes are open but unmoving, and you stare at her golden irises as you steal a kiss.
+		PRINTFORMDW Being able to indulge in such a powerful woman this one-sidedly sates your lust for conquest.
+	ELSEIF TALENT:恋慕
+		IF CFLAG:睡眠
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL The Nine-Tailed Kitsune lies in her bed, as you trace her lustrous lips with your tongue.
+				PRINTFORMDW Your heart pounds with excitement as you realize you're getting away with doing something so unthinkable.
+			CASE 1
+				PRINTFORMDL You lock lips with the sleeping Ran, enjoying the softness as you please.
+				PRINTFORMDW The thought that she must be so deep asleep because she trusts you makes you lose your head.
+			CASE 2
+				PRINTFORMDL Her cheek, her hand, her jaw, her neck.
+				PRINTFORMDW You repeat your one-sided affectionate kiss on every part of skin you can find.
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:10
+			CASE 0
+				PRINTFORML 「My lips are not cheap. Don't forget that.」
+				PRINTFORMDW You place your index finger softly on Ran's lip still lingering with heat, as she closes her eyes contently.
+			CASE 1
+				PRINTFORML 「Ah. I think some red got stuck on you.」
+				PRINTFORMDW Ran wipes your lips with her ring finger, before putting against her own.
+			CASE 2
+				PRINTFORMDL Your lips devour each other when Ran suddenly changes her angle, making light of your skills.
+				PRINTFORML 「...Did you memorize that, %CALLNAME:MASTER%?」
+				PRINTFORMDW You nod weakly in exhaustion.
+			CASE 3
+				PRINTFORML 「Question. What is the difference between a peck and a real kiss?」
+				PRINTFORML 「The answer is simple. It's the contact area.」
+				PRINTFORMDW Ran gives you some easy-to-understand practice.
+			CASE 4
+				PRINTFORML 「Brushing the hair or patting the head isn't bad but... For now, focus on the lips.」
+				PRINTFORMDW You respond to her request as best you can.
+			CASE 5
+				PRINTFORML 「Today's kiss... Let's say 90 points.」
+			CASE 6
+				PRINTFORMDW Ran catches her breath, looking rather satisfied.
+			CASE 7
+				PRINTFORMDW When you pull away from each other, Ran's tongue snakes out and licks your lips.
+			CASE 8
+				PRINTFORMDW When you kiss like that, you realize how difficult it is to take the lead from Ran.
+			CASE 9
+				PRINTFORMW 「Really, Your reactions are just too cute.」
+			ENDSELECT
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF CFLAG:睡眠
+			PRINTFORMDL You can't resist the sleeping Ran's adorable face, and steal a kiss.
+			PRINTFORMDW She wouldn't refuse you even if she was awake. The thought alone lights a fire in you.
+		ELSE
+			SELECTCASE RAND:10
+			CASE 0
+				PRINTFORML 「Yes, yes. I love you too.」
+				PRINTFORMDW Ran smiles as she jokes.
+			CASE 1
+				PRINTFORMDL You courteously ask Ran if she would mind if you kissed her.
+				PRINTFORML 「Fine. Hora, Hurry up.」
+				PRINTFORMDW The Kistune laughs at your surprised face.
+			CASE 2
+				PRINTFORML 「63 points. Please do some voluntary study, I'll keep the score a secret.」
+				PRINTFORMDW It seems you have the privilege of learning via practice by repetition from Ran.
+			CASE 3
+				PRINTFORML 「.........」
+				PRINTFORMDW Ran simply stares at you as your lips meet.
+			CASE 4
+				PRINTFORMDL Just as your lips are about to meet Ran's lips, she pulls back.
+				PRINTFORMW 「Fuu. I must've let down my guard, no good.」
+			CASE 5
+				PRINTFORMDW Ran doesn't refuse your kisses anymore.
+			CASE 6
+				PRINTFORMDW You've become quite close, greeting Ran with a quick kiss is no longer out of the question.
+			CASE 7
+				PRINTFORMDW Ran's glossy lips draw you in, and before you notice you're kissing her.
+			CASE 8
+				PRINTFORML 「Better than last time.」
+				PRINTFORMW 「...Or maybe not.」
+			CASE 9
+				PRINTFORMW 「Yukari-sama? There's no reason to fear her that much.」
+			ENDSELECT
+		ENDIF
+	ELSE
+		IF CFLAG:睡眠
+			PRINTFORMDL You snatch a kiss from the sleeping Ran's lips.
+			PRINTFORMDW This is far more than a bit of mischief.
+		ELSE
+			SELECTCASE RAND:10
+			CASE 0
+				PRINTFORMDL You graze Ran's cheek with your lips.
+				PRINTFORMW 「I guess I was standing a bit too close to you.」
+			CASE 1
+				PRINTFORMDL Once your faces are close, you take the opportunity to steal a light kiss.
+				PRINTFORMW 「All right. In return I offer you a jab in the forehead.」
+			CASE 2
+				PRINTFORML 「There are Youkai that live for hundreds of years without kissing even once.」
+				PRINTFORMW 「If you act that loosely around one of those, you will suffer a dreadful fate.」
+			CASE 3
+				PRINTFORMW 「...Maa, I'll forgive this much.」
+			CASE 4
+				PRINTFORMW 「Couldn't you do it a little more politely?」
+			CASE 5
+				PRINTFORMW 「Just some childish mischief.」
+			CASE 6
+				PRINTFORMDW Right after kissing Ran, she gives you a look that sense shivers down your spine.
+			CASE 7
+				PRINTFORMW 「Using me to practice kissing, Huh? You...」
+			CASE 8
+				PRINTFORMW 「31 points. Large deduction due to lack of intimacy.」
+			CASE 9
+				PRINTFORMW 「It's bad for my heart for your face to spring up on me like that.」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	PRINTL
+ENDIF
+RETURN 1
+;==================================================
+;313,胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_313
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_313_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_313_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You toy with Ran's soft lumps of meat, which are so big they don't even fit in your hand.
+		PRINTFORMDW Whether you pinch her nipples or stretch them to your heart's content, Ran's expression doesn't change at all.
+	ELSEIF ABL:Ｂ感覚 > 4
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORMDL You play with Ran's big bulges from the front, bouncing and kneading them in your hands.
+			PRINTFORMDW You don't worry about giving her sexual stimulation, and instead just enjoy rubbing her breasts as though they're big rubber toys.
+		CASE 1
+			PRINTFORMDL As you scoop up the fox's hefty milk tanks with your palms and squeeze them, Ran leaks out a hot sigh.
+			PRINTFORMDW Your hands engrave pleasure onto her... The fox's nipples stand erect and exalt in the pleasure of being molested.
+		CASE 2
+			PRINTFORML 「That's right... I'm a stubborn girl, so I just can't say it honestly... Ahh～」
+			PRINTFORMDW While having a relaxed conversation with Ran, you continually massage her plush chest, enjoying its squishy fullness.
+		CASE 3
+			PRINTFORMDL Reaching around Ran, your roughly grab her rack with both hands like a molester.
+			PRINTFORMDW You savor her overwhelming volume spilling out between your fingers, far to large to fit within your palms.
+		CASE 4
+			PRINTFORMDL You pinch Ran's stiff nipples right at the base and pull her jugs up and down, left and right, stimulating the fox's mammaries roughly.
+			PRINTFORMDW Ran smiles and stays silent, arching her back to better present her chest to you as she leaves herself to your mischief. 
+		ENDSELECT
+	ELSEIF ABL:Ｂ感覚 == 3
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL You gently rub and squeeze Ran's generous rack, as though you were giving her a massage.
+			PRINTFORMDW It still takes quite a bit of effort on your part, simply due to the incredible volume of foxflesh you need to pleasure.
+		CASE 1
+			PRINTFORMDL You lift from the bottom and knead your way around the entire circumference of Ran's breasts while making sure not to touch her erect nipples.
+			PRINTFORMDW You might have gotten the idea from a dirty magazine, but it's quite nice to watch the expression on the fox's face as you bring her to the edge.
+		CASE 2
+			PRINTFORMDL Ran's breasts are just a little cool to the touch... You cup them and caress them, warming them with your hands.
+			PRINTFORMDW Gently, like handling a treasure, you express your love for the voluptuous vulpine with delicate movements. 
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL You reach out both hands and press them tightly to Ran's breasts... You feel her nipples start to poke your palms as they slowly grow erect.
+			PRINTFORMDW You try to pace yourself, telling yourself that it's still too soon to unleash your full lust on these massive milk tanks.
+		CASE 1
+			PRINTFORMDL You bury your hands in Ran's rack, giving you a feeling like you're the one holding up her big boobs.
+			PRINTFORMDW Her chest is so incredible that just the feeling of heft and weight cause a sense of elation to rise in your chest.
+		CASE 2
+			PRINTFORML 「Well, how do they feel～?」
+			PRINTFORMDW With a wry grin, Ran teases you as you lose yourself in her huge tits.
+		ENDSELECT
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;314,アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_314
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_314_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_314_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You thrust your middle finger into the center Ran's pucker and stir up her warm mucous membrane.
+		PRINTFORMDW Looking at her static, unconcerned face gives you a sense of wry amusement as you violate her. 
+	ELSEIF ABL:Ａ感覚 > 4
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL You lightly trace with your finger to count the wrinkles around Ran's rectum one by one, and it twitches in response to your stimulation.
+			PRINTFORMDW You time your movement to its contractions and slip a finger inside her dirty hole with a *plop*.
+		CASE 1
+			PRINTFORMDL You stroke the slimy soft intestinal mucosa with the pad of your finger.
+			PRINTFORMDW Ran's voluminous butt shakes seductively, chasing the movements of your wrist around as you stir her up.
+		CASE 2
+			PRINTFORML 「Nhh～...!」
+			PRINTFORMDW Ran covers her mouth tries to suppress her cries while you fingerbang her anus...
+		ENDSELECT
+	ELSEIF ABL:Ａ感覚 == 3
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL You stimulate Ran's convulsing butthole with your middle finger while you tease the outside with your thumb.
+			PRINTFORMDW You're amused by her complicated face as she's having trouble figuring out how to react to your ministrations.
+		CASE 1
+			PRINTFORMDL Ran's tight anus resists any invasion by your fingers.
+			PRINTFORMDW In an attempt to loosen the tense sphincter, you lightly draw a circles around its circumference with your fingertips.
+		CASE 2
+			PRINTFORML 「Why are you touching there?!」
+			PRINTFORMDW Ran's body reacts sharply while you're just lightly knocking at her backdoor.
+		ENDSELECT
+	ELSE
+		PRINTFORML 「Hey, that's my...!」
+		PRINTFORMDW Ran holds her chin in her hand and frowns at you as you trace your hand through her asscrack.
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;315,クリ愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_315
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_315_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_315_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You flick and rub Ran's clitoris, playing with it with a carefree pace.
+		PRINTFORMDW She'd be writhing if she were conscious, but you don't have to worry about that right now.
+	ELSEIF ABL:Ｃ感覚 > 4
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL Sandwiching her clitoris with two fingers, you pinch it lightly as you massage her mons pubis with your other hand.
+			PRINTFORMDW Ran clenches her teeth and lets out a high-pitched cry as she tries to endure your stimulation.
+		CASE 1
+			PRINTFORMDL You use your finger to scoop up the love juice oozing from her fertile cleft and lather it onto the fox's pleasure bud.
+			PRINTFORMDW Ran shakes her hips lewdly just from the slimy sensation of your finger skating over her sensitive swelling.
+		CASE 2
+			PRINTFORMDL Now that you have grasped all the habits of Ran's body, her sensitive pleasure bud is a mass of weaknesses in your grasp.
+			PRINTFORMDW Your delicate, rapid fingering maker her scream sweet cries into the air, and you can feel her pounding heartbeat through her throbbing clit.
+		ENDSELECT
+	ELSEIF ABL:Ｃ感覚 == 3
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL Pressing her clitoris with the pad of your finger, you draw soft circles around the hood.
+			PRINTFORMDW Ran's hips begin to convulse gently and her jaw drops open as the pleasure starts to build.
+		CASE 1
+			PRINTFORMDL With a gentle caress, you dare to increase the pressure as you rub Ran's sensitive protrusion.
+			PRINTFORMDW Surprised, Ran reacts strongly and her hips buck so hard her clitty leaves your hand for a moment.
+		CASE 2
+			PRINTFORMDL You undress Ran's clitoris from its hood and love it carefully with your fingers.
+			PRINTFORMDW Her whole body trembles with pleasure, but the smile she gives you is full of tolerance, encouraging you to go further.
+		ENDSELECT
+	ELSE
+		PRINTFORMDL You slide your hand over Ran's crotch and squeeze her clitoris with a light movement of your fingers.
+		PRINTFORMDW It's not that it's not working at all, but her reaction isn't good enough...
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;316,指挿入れ
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_316
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_316_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_316_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You churn up Ran's insides with a finger.
+		PRINTFORMDW Naturally, no matter what you do, she won't be able to resist.
+	ELSEIF ABL:Ｖ感覚 > 4
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORMDL Your fingers crawl across Ran's mons pubis before sliding down between her lips.
+			PRINTFORMDL A quiet noise slips out of the Kitsune.
+			PRINTFORMDW Her walls press down on the foreign object as you touch various spots, and fluid starts flowing out in no time.
+		CASE 1
+			PRINTFORMDL You impudently thrust two fingers into Ran's secret place.
+			PRINTFORMDL The intruding fingers are met by soft, yielding vaginal flesh, and you close your fingers partly, adding strength as you churn her up.
+			PRINTFORMDW The Shikigami's obscenely well-developed pussy sends intense stimulation through her body as she arches her back.
+		CASE 2
+			PRINTFORMDL Ran's warm and drenched walls shudder in delight as they usher two of your fingers inside.
+			PRINTFORMDL They move as if trying to draw you deeper, the opening nibbling and gnawing on your fingers, overflowing with desire.
+			PRINTFORMDW Fluids come gushing out as you scrape, splattering obscenely on the bed.
+		CASE 3
+			PRINTFORMDL The fox's tight, juicy vaginal walls wriggle like they're sucking on your fingers.
+			PRINTFORMDL It's not enough to simply call Ran's lewd pussy a masterpiece. It's a magical comfort hole cultivated as a labor of her love.
+			PRINTFORMDW In order to discipline this scandalous foxhole, you do your best to counter with your supreme fingerblasting techniques.
+		CASE 4
+			PRINTFORMDL A female hole overflowing with love juices squeezes your finger, making nasty, obscene noises as you assault her weakness of weaknesses.
+			PRINTFORMDL Impure noises come out the other end too... It seems like Ran might be losing her composure in the face of your skills.
+			PRINTFORMDL However, suspecting that this might be acting, you further increase the speed of your attack to punish the lewd fox. 
+		ENDSELECT
+	ELSEIF ABL:Ｖ感覚 == 3
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL You're starting to get the full measure of Ran's erogenous zones and the habits of her body.
+			PRINTFORMDL You sink your extended middle finger deeply inside and pump it straight in and out, stirring up her slime.
+			PRINTFORMDW Ran's well-trained vagina, reminded of a cock, instinctively begins to drown your finger in a river of femcum.
+		CASE 1
+			PRINTFORMDL Trying to break down Ran's composure, you stir up her vaginal mucosa endlessly.
+			PRINTFORMDL While watching her reactions, you stimulate various parts of her body, searching for the most responsive places.
+			PRINTFORMDW As you steadily hunt down all her erogenous zones, Ran teases you, saying 『You're not good enough yet』.
+		CASE 2
+			PRINTFORMDL You gently trace your fingers through Ran's labia, slowly counting out every one of her folds.
+			PRINTFORMDL After all, Ran would laugh at you if you only paid attention to one side of her love tunnel.
+			PRINTFORMDW As you hoped, Ran's cheeks slowly blush at your caress, and you take a little time to taste her whole fleshpot. 
+		ENDSELECT
+	ELSE
+		PRINTFORMDL Ran looks unsure as you sink a finger into her.
+		PRINTFORMDW You thoroughly stroke the vaginal opening with your index finger, attacking the lips consistently.
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;317,Ｖ腰を振る
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_317
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_317_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_317_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;318,Ａ腰を振る
+;==================================================
+;@M_KOJO_MESSAGE_COM_K25_318
+;CALL TRAIN_MESSAGE
+;CALL M_KOJO_MESSAGE_COM_K25_318_1
+;RETURN RESULT
+
+;@M_KOJO_MESSAGE_COM_K25_318_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+;LOCAL = 0
+;-------------------------------------------------
+;IF LOCAL
+
+;ENDIF
+;RETURN 1
+;==================================================
+;330,スカートめくり
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_330
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_330_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_330_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	;EVENT_MESSAGE_COM_セクハラ から分岐をコピー
+	;CFLAG:2は好感度。LOCAL:3で人の有無を確認。無人なら露出癖4以上でたくし上げ、人目があれば6以上でたくし上げ
+	LOCAL:3 = 0
+	FOR LOCAL,1,CHARANUM
+		SIF CFLAG:LOCAL:同室
+			LOCAL:3 ++
+	NEXT
+		SELECTCASE CFLAG:2
+			;好感度5000未満では叱られる
+			CASE IS < 5000
+				IF TALENT:思慕 || TALENT:恋慕
+					SELECTCASE RAND:5
+					CASE 0
+						PRINTFORMDL Ran's huge tails make it hard to flip her skirt from behind.
+						PRINTFORMDL Moreover, a surprise attack is made more difficult by her great height.
+						PRINTFORMW 「At least have the courage to try to do it from the front.」
+					CASE 1
+						PRINTFORML 「Don't think I show off my panties lightly.」
+						PRINTFORMDW Ran overpowers you with nothing more than her smile.
+					CASE 2
+						PRINTFORML 「Don't be such a child.」
+						PRINTFORMDW Ran looks at you with soft eyes, and you feel your lecherous heart take a hit.
+					CASE 3
+						PRINTFORML 「People like you... Even scolding you is useless.」
+						PRINTFORMDW Ran is absolutely right.
+					CASE 4
+						PRINTFORML 「Teriya!」
+						PRINTFORMDW Ran whacks you forcefully with her tails.
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:5
+					CASE 0
+						PRINTFORML 「Idiot.」
+						PRINTFORMDW Ran lands a chop on your forehead.
+					CASE 1
+						PRINTFORML 「Hey, You!」
+						PRINTFORMDW Ran's tail forcefully slaps the back of your hand.
+					CASE 2
+						PRINTFORML 「If you're joking, do it with someone that plays along.」
+						PRINTFORMDW Ran lifts you by the nape of the neck with just one arm.
+					CASE 3
+						PRINTFORMW 「If you want to see it that badly, why not grovel and peek?」
+					CASE 4
+						PRINTFORMW 「At least your bravery is a redeeming virtue.」
+					ENDSELECT
+				ENDIF
+			CASE IS > 5000
+				IF LOCAL:3 == 1
+				;人目が無い場合
+					IF TALENT:恋慕 && ABL:露出癖 > 3
+						SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMDL 『What's today's underwear?』you crudely ask Ran.
+							PRINTFORMDL 『Let me show you』says Ran smiling mysteriously, and starts lifting her skirt above her knee.
+						CASE 1
+							PRINTFORMDL You attempt to quickly flip Ran's skirt, but are promptly intercepted.
+							PRINTFORML 「What a fool. I'll demonstrate how to do this properly.」
+							PRINTFORMDL Saying this, Ran sticks her ass out toward you and slowly draws up her skirt...
+						CASE 2
+							PRINTFORMDL You grab Ran around the waist with one arm, and try to flip her skirt with the other.
+							PRINTFORMDL Your efforts fail due to the length of her skirt. Eventually she smiles wryly and assists you.
+							PRINTFORML 「What a slow child. Hora, Quickly...」
+						ENDSELECT
+						PRINTL 
+						IF EQUIP:TARGET:下半身下着１ || EQUIP:TARGET:下半身下着２
+							SELECTCASE RAND:5
+							CASE 0
+								PRINTFORMDL Ran's white legs are gradually exposed to the light, revealing the %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)%.
+								PRINTFORMDL It's just you two, so you needn't worry about being seen.
+								PRINTFORMDW You take your time in appreciating the suppleness of her voluptuous lower body.
+							CASE 1
+								PRINTFORMDL Ran seems to be wearing %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)% today.
+								PRINTFORMDW You roll up her clothes and enjoy the expression of shyness at having her undergarments exposed.
+							CASE 2
+								PRINTFORMDL You bring your face close to Ran's %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)%, gazing at them transfixed.
+								PRINTFORMDW It seems your heavy breathing is tickling her, judging by how her thighs shake.
+							CASE 3
+								PRINTFORMDL Ran voluntarily draws up her skirt to the side of her waist,  her %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)% laid bare.
+								PRINTFORMDW She goes so far as to twirl around and strike a sensual pose especially for her audience of one.
+							CASE 4
+								PRINTFORMDL Ran's ass, adorned with her %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)%, is now exposed before you.
+								PRINTFORMDW Saying nothing, you hook your finger around her undergarments, and quickly pull them down to her knees.
+							ENDSELECT
+						ELSE
+							SELECTCASE RAND:3
+							CASE 0
+								PRINTFORMDL Teasing you in an unbearable way, Ran slowly exposes her secret place to the naked air.
+								PRINTFORMDW Ran's bare crotch, completely on display. She laughs happily at your speechlessness.
+							CASE 1
+								PRINTFORMDL You gaze breathlessly as that particular part of Ran is at last revealed to the light.
+								IF CFLAG:25:1006 == 1
+									PRINTD A sleek slit divides a smooth expanse of bare flesh.
+								ELSE
+									PRINTD Two puffy white lips reside in a neat forest of golden undergrowth.
+								ENDIF
+								PRINTFORMDW It's pretty clear to you at this point——Ran isn't wearing panties.
+							CASE 2
+								PRINTFORMDL As Ran's skirt slides to the base of her long, shapely legs, you see no sign of any panties.
+								PRINTFORMDW No matter how many times you blink, you still can't believe what you're seeing. Ran's vagina really is exposed before you.
+							ENDSELECT
+						ENDIF
+					ELSE
+						SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMDL 『What's today's underwear?』you ask rudely of Ran.
+							PRINTFORMDL 『Look as you please』Ran replies cordially, slowly turning up her skirt.
+						CASE 1
+							PRINTFORMDL You slip under Ran's tails and seize the hem of her skirt with your hands.
+							PRINTFORMDL She acquiesces by ignoring you. Wasting no time, you shamelessly draw up her dress from behind.
+						CASE 2
+							PRINTFORMDL It's impossible to catch Ran off guard enough to flip her skirt.
+							PRINTFORMDL The moment that notion enters your head, you deny it. Here is a challenge for you.
+							PRINTFORMDL You wait until she's distracted and has her hands in her sleeves. You roll her skirt up. Success!
+							;XXX
+						ENDSELECT
+						PRINTL 
+						IF EQUIP:TARGET:下半身下着１ || EQUIP:TARGET:下半身下着２
+							SELECTCASE RAND:3
+							CASE 0
+								PRINTFORMDL From the darkness of her skirt, %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)% emerge.
+								PRINTFORMDW It's a sight most men could never see even if they risked their lives trying.
+							CASE 1
+								PRINTFORMDL You boldly pull up Ran's skirt clear to her waistline, exposing her %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)% to the light of day.
+								PRINTFORMDW Ran seems unable to bear the shame, and quietly averts her flushed face.
+							CASE 2
+								PRINTFORMDL A wonderful ass wrapped in %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)% is revealed.
+								PRINTFORMDW You gather her skirt at her waist as Ran waits in embarrassment for you to finish.
+							ENDSELECT
+						ELSE
+							SELECTCASE RAND:3
+							CASE 0
+								PRINTFORMDL For some reason Ran isn't wearing panties.....
+								PRINTFORMDW You stiffen in shock for a while, and gently lower her skirt without a word.
+							CASE 1
+								PRINTFORMDL Ran's genitals are completely uncovered and defenseless.
+								PRINTFORMDW With a small surprised voice escaping your lips, you quietly appreciate her pretty slit up close.
+							CASE 2
+								PRINTFORMDW The moment you pull the skirt up, soft golden hairs wave before your eyes.
+								PRINTFORMDW Ran wears no undergarments, and her naked lips lie exposed before you.
+							ENDSELECT
+						ENDIF
+					ENDIF
+				ELSE
+				;人目がある場合
+					IF TALENT:恋慕 && ABL:露出癖 > 5
+						SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMDL Ran lifts her skirt with no concern about public notice.
+							PRINTFORMDL Or rather, almost no concern. She covers about herself with her tails, but it's clearly visible from your direction.
+						CASE 1
+							PRINTFORMDL Ran lifts the hem of her skirt with her tails, concealing what's beneath from outside view.
+							PRINTFORMDL This way, the contents of her skirt are revealed only for you to see. 
+						CASE 2
+							PRINTFORMDL Floating you a lustful smile, Ran raises up her skirt.
+							PRINTFORMDL Even though anybody could see right now, she doesn't hesitate at all.
+						ENDSELECT
+						PRINTL 
+						IF EQUIP:TARGET:下半身下着１ || EQUIP:TARGET:下半身下着２
+							SELECTCASE RAND:3
+							CASE 0
+								PRINTFORMDL Ran's %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)% are unconcealed in the middle of public.
+								PRINTFORMDW The way she raises her skirt is too bold, it's possible someone could have noticed.
+							CASE 1
+								PRINTFORMDL Ran's %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)% are completely exposed from the waist down.
+								PRINTFORMDW Even if her underwear were to be pulled down right here, you doubt she'd resist.
+							CASE 2
+								PRINTFORMDL Ran sweeps up her skirt, displaying her %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)%.
+								PRINTFORMDW Ran's undergarments——something others can only imagine seeing——is fully revealed to you without shame.
+							ENDSELECT
+						ELSE
+							SELECTCASE RAND:3
+							CASE 0
+								PRINTFORMDL Under her clothing lies a pristine color of white flesh.
+								PRINTFORMDW You're completely stunned. Ran smiles, overtly exposing her genitals to you.
+							CASE 1
+								PRINTFORMDL Ran gives you a glimpse of that certain part of her body.
+								PRINTFORMDW You stare ahead in wonderment at her bare labia, bathed in a soft light.
+							CASE 2
+								PRINTFORMDL Witnessing her naked slit causes you to release an involuntary sound from your throat.
+								PRINTFORMDW Ran touches the spot with her finger. The flesh around it indents, proving it's not just an illusion.
+							ENDSELECT
+						ENDIF
+					ELSE
+						SELECTCASE RAND:3
+						CASE 0
+							PRINTFORML 「Hey, we're in the middle of public...」
+							PRINTFORMDL You grow excited by Ran's unbecoming shyness as her skirt is forcibly lifted.
+						CASE 1
+							PRINTFORML 「At least don't let everyone see it...」
+							PRINTFORMDL You nod in agreement with Ran's whispered request. Silently she raises her skirt.
+						CASE 2
+							PRINTFORML 「Erm... Oh, it's nothing...」
+							PRINTFORMDL Ran responds to the person who called out to her as you lie beneath her upturned skirt, concealed behind her tails.
+						ENDSELECT
+						PRINTL 
+						IF EQUIP:TARGET:下半身下着１ || EQUIP:TARGET:下半身下着２
+							SELECTCASE RAND:3
+							CASE 0
+								PRINTFORMDL Today's undergarments appear to be %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)%.
+								PRINTFORMW 「Just this much... I won't go any further...」
+							CASE 1
+								PRINTFORMDL You confirm without a doubt, she's wearing %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)%, and then straighten your posture.
+								PRINTFORMDW Ran gives a sigh of relief and quickly tosses her skirt back down.
+							CASE 2
+								PRINTFORMDL Quickly and quietly, Ran's %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)% are displayed.
+								PRINTFORMDW Ran's tails cover up the shameless act until the end.
+							ENDSELECT
+						ELSE
+							SELECTCASE RAND:3
+							CASE 0
+								PRINTFORMDL Ran is wearing no panties. Involuntarily, your eyes shift to her face.
+								PRINTFORMW 「There. Now do you understand why I can't show it?」
+							CASE 1
+								PRINTFORMDL A bare slit is revealed to your eyes.
+								PRINTFORMDW You feel yourself grow weak at the sight, only just able to resist Ran's attempts at lowering her skirt.
+							CASE 2
+								PRINTFORMDL The undergarments you had hoped to peek at were not present. Instead, you are greeted by Ran's bare womanhood.
+								PRINTFORMDW You think you might be seeing things, and have to touch it with the tip of your finger to be sure.
+							ENDSELECT
+						ENDIF
+					ENDIF
+				ENDIF
+		ENDSELECT
+		PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;331,お茶を淹れる（薬入り）
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_331
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_331_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_331_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;350,押し倒す（時姦時イタズラする
+;TFLAG:194 (0=成功 1=人目がある　2=野外は嫌でござりまする　3=多人数プレイは勘弁　4=合意があってもムードが足りぬ）
+;TCVAR:抱き寄せ初回　1=普通に合意ゲット　2=先にキスぐらいしろよ　3=媚薬or発情には勝てなかったよお…　4=悔しい…刻印さえなければﾋﾞｸﾋﾞｸﾝ
+;5=強引に迫られると断れぬ(素質臆病持ち専用) 6=まんざらでもない　7=駄目　8=論外
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_350
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_350_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_350_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;351,連れ出す
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_351
+;連れ出しにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K25_351_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_351_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;352,告白する
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_352
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_352_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_352_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	IF TFLAG:193
+		SIF CFLAG:25:1005 == 1
+			PRINTFORMDW Now is the time to give Ran an answer.
+		PRINTFORMDW Resolving yourself, you look Ran in the eyes.
+		PRINTFORMDW Her magnificent and dignified nine tails stand still as she waits for you to speak, her demeanor the same as ever.
+		PRINTFORMDW You shake off your unbecoming fright, psych up, open your lips, and answer.
+		PRINTFORMDW You fire yourself up, shaking off your unbecoming fright, as you open your mouth.
+		PRINTL 
+		PRINTFORMW 「Ran, I want us to be...」
+		PRINTL 
+		PRINTFORMDW Ran's reaction is far from favorable.
+		PRINTFORMDW Knitting her brow, she stares at you, her face telling you it's useless.
+		PRINTL 
+		PRINTFORMW 「This is something like abhimana [prideful attachment], right?」
+		PRINTFORMW 「We are nothing but normal playmates. No matter how close we become, it will never be more than that.」
+		PRINTFORMW 「You plan on becoming my equal? The sole Shikigami of Yakumo Yukari, you plan on becoming equal to that?」
+		PRINTL 
+		PRINTFORMDW Her overpowering and almost threatening words are heavy.
+		PRINTFORMDW This is not a joke. But as serious she is, so are you.
+		PRINTFORMDW You puff your chest out a little and answer with your intentions.
+		PRINTFORMDW The Kitsune's questions keep piling on you, when you puff your chest out and give you answer.
+		PRINTL 
+		PRINTFORMW 「......I see. If you have that much resolve then it's fine.」
+		PRINTFORMW 「I won't test you any more. I will also...be more honest.」
+		PRINTL 
+		PRINTFORMDW Ran's tails droop a little, looking a bit docile as she is ushered into your arms.
+		PRINTL 
+		CALL AddEXP("愛情経験", TARGET, 30)
+	ELSE
+	;言葉が口から出て来ない
+		PRINTFORMDL You want to confess, but the timing is off.
+		PRINTFORMDW Next time it'll absolutely work, you settle on, as you try to change the subject.
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;353,イタズラする
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_353
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_353_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_353_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;354,添い寝する（相手は起きて布団に招く感じ）
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_354
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_354_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_354_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋慕
+		;こんなあからさまに寂しがりそうにないけど唯一本気になった相手だしまあ多少はね？
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「...Mmm, %CALLNAME:MASTER%?」
+			PRINTFORML 「Let's sleep. It might be childish, but sleeping alone is lonely.」
+			PRINTFORMDW Having no reason to turn down such a charming suggestion, you accept it readily.
+		CASE 1
+			PRINTFORML 「......I'm lonelyー」
+			PRINTFORML 「Horaー It's warm and cozy in hereー」
+			PRINTFORMDW Hearing such a request from someone looking so lonely, you get in at once.
+		CASE 2
+			PRINTFORML 「Oh, Come here, come here.」
+			PRINTFORML 「Husband, I've warmed your bed for youー... As if.」
+			PRINTFORMDW Ran teases you a bit, but still beckons you into her futon.
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;355,時止め（地の文の改変程度に留めるべき
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_355
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_355_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_355_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;360,身を任せる
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_360
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_360_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_360_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;363,読み聞かせ（[幼稚]持ち）
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_363
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_363_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_363_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;402,就寝（添い寝時）
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_402
+;就寝にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K25_402_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_402_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;403,休憩
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_403
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_403_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_403_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;405,出掛ける(同行時デートに出掛ける
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_405
+;出掛けるにTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K25_405_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_405_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	SIF FLAG:時間停止 ;fix
+		RETURN 0
+	;デート。博麗神社が住まいの時は何故か読まれない
+	IF CFLAG:同行
+		IF TALENT:恋人
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Let's walk at a leisurely pace, we'll arrive eventually.」
+				PRINTFORMDL Ran follows right behind you.
+				PRINTFORMDW Now then, where to today?
+			CASE 1
+				PRINTFORML 「Hmmー...... Avoid taking that road just to be safe. There's a Danmaku match going on there, one you can't just simply watch.」
+				PRINTFORML 「Or maybe, perhaps that would also be fun?」
+				PRINTFORMDW It would stop being a date, so you decide to take the safe road.
+			CASE 2
+				PRINTFORML 「How about we take a walk in the outside world?」
+				PRINTFORML 「As ifー You're not about to get preferential treatment.」
+				PRINTFORMDW You would need to set up some arrangements for that to work.
+			ENDSELECT
+		ELSEIF TALENT:恋慕 || TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL Ran readily consents when you invite her to a date.
+				PRINTFORML 「So, where to today?」
+				PRINTFORMDW You answer by turning your feet towards the road.
+			CASE 1
+				PRINTFORML 「That'd be nice, I just happened to have some free time.」
+				PRINTFORMDL You ask Ran if it's really fine, as she always seem to be busy.
+				PRINTFORMW 「It's easy to make some time for myself. It's alright, don't worry.」
+			CASE 2
+				PRINTFORML 「I know of places where you can look at beautiful things to your heart's content.」
+				PRINTFORML 「And, places where two people can be alone together.」
+				PRINTFORMDW Only Ran, who has been performing maintenance on Gensokyo for centuries, would know its dating spots so well.
+			ENDSELECT
+		ELSE
+			PRINTFORML 「A date? Well, I will accompany you.」
+			PRINTFORMDL Ran nods when you ask if this fits into her schedule.
+			PRINTFORMDW It's a good opportunity to deepen your relationship with her. But proceed carefully and politely.
+		ENDIF
+	;非同行時。此方の分岐は問題なく読まれる
+	ELSE
+		IF TALENT:恋慕
+			PRINTFORML 「Come back safe. Otherwise you'll make me cry.」
+			PRINTFORMDW Ran waves jokingly, but there's some lingering feeling of seriousness in her words.
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Make sure to take the safe pathsー」
+			PRINTFORMDW You tell Ran that you are going out, and she sees you off.
+		ELSE
+			PRINTFORML 「Going out? Be careful on the road.」
+			PRINTFORMDW Ran sends you off with a wave.
+		ENDIF
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;410,掃除
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_410
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_410_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_410_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL With a bit of imagination, this power can be used for many things.
+		PRINTFORMDW You gather up the unmoving dust with a trash bag.
+	ELSEIF CFLAG:睡眠
+		PRINTFORMDL You tidy up around the sleeping Ran.
+		PRINTFORMDW It's a trifling kindness, as she'd clean it up herself were she awake.
+	ELSEIF CFLAG:うふふ
+		IF TALENT:恋慕
+			PRINTFORMDL Because the clutter makes you uneasy, you endure Ran's glare as you clean up.
+			PRINTFORML 「I don't understand how you feel... No, I don't understand in the least, you idiot.」
+			PRINTFORMDW It seems she can't admire this form of neglect play.
+		ELSE
+			PRINTFORMDL Because the clutter makes you uneasy, you endure Ran's glare as you clean up.
+			PRINTFORML 「Why are you doing this?」
+			PRINTFORMDW The Kitsune's tails beat against the floor, you wish she'd stop as it sends dust everywhere.
+		ENDIF
+	ELSE
+		IF TALENT:恋慕 || TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Alright, I'll help you. You can leave it all to me.」
+				PRINTFORMDW Despite her saying that, both you and Ran roll up your sleeves.
+				PRINTL 
+				CALL AddEXP("清掃経験", TARGET, 1)
+				CALL AddEXP("清掃経験", MASTER, 1)
+			CASE 1
+				PRINTFORML 「Hmph! I've had to do housework for centuries on my own, perfecting my talent, just watch.」
+				PRINTFORMDL It seems Ran has no intentions of losing to you when it comes to cleaning.
+				PRINTFORMDW You and the Shikigami hold a competition to see who can clean the most.
+				PRINTL 
+				CALL AddEXP("清掃経験", TARGET, 1)
+				CALL AddEXP("清掃経験", MASTER, 1)
+			CASE 2
+				PRINTFORML 「The essence of cleaning is...... and so on. Let's stop the lecture for now.」
+				PRINTFORML 「It's all about how you put it into practice. Have at you!」
+				PRINTFORMDW And with that, the two master housekeepers begin their zealous cleaning battle......!
+				PRINTL 
+				CALL AddEXP("清掃経験", TARGET, 2)
+				CALL AddEXP("清掃経験", MASTER, 2)
+			ENDSELECT
+		ELSE
+			PRINTFORML 「Work hard, but in moderation.」
+			PRINTFORMDW Ran aids you gracefully.
+		ENDIF
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;411,戦闘訓練
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_411
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_411_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_411_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	;各スペルカードごとにあなたの戦闘能力で分岐(4以上回避、3はギリギリ、2以下被弾)
+	;真言は適当に検索したもの。カッコが付けばなんでもよし！
+	IF TALENT:恋慕 || TALENT:恋人 
+		PRINTFORML 「Alright, let's go. Time to temper ourselves!」
+		PRINTL 
+		SELECTCASE RAND:4
+		CASE 0
+			PRINTFORML 「On Gyakugyaku Ennoubasoku Arangya Sowaka.」
+			PRINTFORMW 「『Soaring En no Ozuno』!」
+			PRINTW 
+			IF ABL:MASTER:戦闘能力 >= 4
+				PRINTFORMDL You spot superhuman high-speed charge, and manage to capture it.
+				PRINTFORMW 「Well done! How about we try some combat-like practice next time?」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSEIF ABL:MASTER:戦闘能力 == 3
+				PRINTFORMDL Ran accelerates, going faster and faster, driving you into a corner with a curtain of butterfly bullets, and finally landing a hit.
+				PRINTFORMW 「You have to stay calm even to the end. It only hurts if you get hit.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSE
+				PRINTFORMDL Ran flies at impossible speeds before sending you flying.
+				PRINTFORMW 「Trying to get away on foot? I'd love to see that!」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 1)
+			ENDIF
+		CASE 1
+			PRINTFORML 「Naumaku Samanda Bazaradan Kan.」
+			PRINTFORMW 「『Eighty Million Goma Boards』!」
+			PRINTW 
+			IF ABL:MASTER:戦闘能力 >= 4
+				PRINTFORMDL The Danmaku fills everything around you in charms, but you capture it.
+				PRINTFORMW 「Flawless. When it comes to Danmaku, most people don't know how to take it slow.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSEIF ABL:MASTER:戦闘能力 == 3
+				PRINTFORMDL You continue dodging charm after charm, but you find it impossible to counterattack.
+				PRINTFORMW 「Not quite. Not bad, but there are a few areas you can improve in.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSE
+				PRINTFORMDL A gigantic fan-shaped wall of charms completely crushes you.
+				PRINTFORMW 「As you can see, the safe zone is behind me. How will you capture this one?」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 1)
+			ENDIF
+		CASE 2
+			PRINTFORML 「On Chirachiraya Sowaka」
+			PRINTFORMW 「『Descent of Izuna-gongen』!」
+			PRINTW 
+			IF ABL:MASTER:戦闘能力 >= 4
+				PRINTFORMDL You focus as hard as you can, cutting through the approaching Danmaku.
+				PRINTFORMW 「Good movements. Set your sights even higher still.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSEIF ABL:MASTER:戦闘能力 == 3
+				PRINTFORMDL You're one step away from being safe before a bullet hits you.
+				PRINTFORMW 「Regrettable. But you're improving.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSE
+				PRINTFORMDL The violent Danmaku gradually corners you, before completely crushing you.
+				PRINTFORMW 「There's no trick to beating this one, just simple skill. Continue practicing to improve.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 1)
+			ENDIF
+		CASE 3
+			PRINTFORML 「Namu Kubiradaishou Namu Basaradaishou Namu Mekiradaishou...」
+			PRINTFORMW 「『Banquet of the Twelve General Gods』!」
+			PRINTW 
+			IF ABL:MASTER:戦闘能力 >= 4
+				PRINTFORMDL You attack and dodge confidently at the same time, capturing her spell card in short time.
+				PRINTFORMW 「Splendid. However, set your sights even higher.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSEIF ABL:MASTER:戦闘能力 == 3
+				PRINTFORMDL You scream from the bottom of your lungs as you challenge the Danmaku, and manage to avoid it with a bit of luck.
+				PRINTFORMW 「That's it, show off your male spirit!」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSE
+				PRINTFORMDL The sheer number of bullets confuses you, and you're hit.
+				PRINTFORMW 「There's no way you can dodge if you give up. Trust your own eyes.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 1)
+			ENDIF
+		ENDSELECT
+	ELSE
+		PRINTFORML 「Alright, let's do a light workout.」
+		PRINTL 
+		SELECTCASE RAND:4
+		CASE 0
+			PRINTFORML 「Om Kirikaku Sowaka.」
+			PRINTFORMW 「『Channeling Dakiniten』!」
+			PRINTW 
+			IF ABL:MASTER:戦闘能力 >= 4
+				PRINTFORMDL Staying calm, you slip through a gap in the sphere.
+				PRINTFORMW 「So you noticed my movement? It shouldn't be that easy.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSEIF ABL:MASTER:戦闘能力 == 3
+				PRINTFORMDL Despite getting cornered multiple times, you manage to avoid the Danmaku.
+				PRINTFORMW 「Pretty good. There's no doubt you can capture it.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 1)
+			ELSE
+				PRINTFORMDL You can't follow Ran's movements, and get shot down.
+				PRINTFORMW 「Don't panic even if you get surrounded, think fast on how to escape.」
+			ENDIF
+		CASE 1
+			PRINTFORML 「Let's have some fun.」
+			PRINTFORMW 「『Ultimate Buddhist』!」
+			PRINTW 
+			IF ABL:MASTER:戦闘能力 >= 4
+				PRINTFORMDL You avoid the pattern completely as it changes.
+				PRINTFORMW 「We're still on normal.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSEIF ABL:MASTER:戦闘能力 == 3
+				PRINTFORMDL You evade with no problems.
+				PRINTFORMW 「Even if you dodged one, you might carelessly get hit by the next.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 1)
+			ELSE
+				PRINTFORMDL A laser suddenly reverses direction and hits you.
+				PRINTFORMW 「Fu, Did you freeze in fear?」
+			ENDIF
+		CASE 2
+			PRINTFORML 「Will this make you give up?」
+			PRINTFORMW 「『Charming Siege from All Sides』!」
+			PRINTW 
+			IF ABL:MASTER:戦闘能力 >= 4
+				PRINTFORMDL You keep your eyes open, dodging the large balls while launching counterattacks.
+				PRINTFORMW 「Full marks. This card won't work anymore.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSEIF ABL:MASTER:戦闘能力 == 3
+				PRINTFORMDL Despite being confused by what you see, you somehow manage to avoid the bullets.
+				PRINTFORMW 「That was a bit iffy. You don't give off the impression of being experienced enough.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 1)
+			ELSE
+				PRINTFORMDL You get hit instantly.
+				PRINTFORMW 「You're looking in the wrong place. That's what I think at least.」
+			ENDIF
+		CASE 3
+			PRINTFORML 「Let's go easy on you.」
+			PRINTFORMW 「『Senko Thoughtful Meditation』!」
+			PRINTW 
+			IF ABL:MASTER:戦闘能力 >= 4
+				PRINTFORMDL You effortlessly sidestep the entire attack.
+				PRINTFORMW 「That was too easy for you.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 2)
+			ELSEIF ABL:MASTER:戦闘能力 == 3
+				PRINTFORMDL You dodge without being in any real danger.
+				PRINTFORMW 「Fumu, You're no beginner.」
+				PRINTL 
+				CALL AddEXP("戦闘経験", MASTER, 1)
+			ELSE
+				PRINTFORMDL You get hit almost immediately.
+				PRINTFORMW 「Did you panic? The most important thing in Danmaku is to stay calm.」
+			ENDIF
+		ENDSELECT
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;412,勉強
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_412
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_412_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_412_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	;教養0～1はお子様。2は幻想郷平均。3は博識。4は天才。5は賢者
+	IF CFLAG:睡眠
+		PRINTFORMDL You hear Ran sleeping close by.
+		PRINTFORMDW Turning the pages silently, you continue working with your brush.
+	ELSEIF ABL:MASTER:教養 >= 4
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「There's a problem in a question I handed Chen, could you help me with it?.」
+		CASE 1
+			PRINTFORML 「According to Yukari-sama, I'm far too passive. But I'm trying new things.」
+		CASE 2
+			PRINTFORML 「A Danmaku where functions on papers complement each other. A good idea, but processing it would be too difficult for practical use.」
+		CASE 3
+			PRINTFORML 「A new species of plant has appeared again. We have to make sure it doesn't disturb the ecosystem.」
+		CASE 4
+			PRINTFORML 「Gensokyo's population changes like this, Youkai are stable, but the human population's birthrate is declining...」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDW You and Ran have a lively exchange as equals.
+		PRINTL 
+		CALL AddEXP("学習経験", MASTER, 2)
+	ELSEIF ABL:MASTER:教養 == 3
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「An external threat can unify a group, and a mutual response can create an equilibrium, a stable structure of antagonism can create peace.」
+		CASE 1
+			PRINTFORML 「Humans have trichromatic vision. Dogs, cats, and several other mammals are bichromatic. Birds are tetrachromatic. Same goes for Shikigami.」
+		CASE 2
+			PRINTFORML 「Similar to earth, all bodies have an attractive force to some extent. The strength of the gravity is...」
+		CASE 3
+			PRINTFORML 「The logarithmic spiral can be found everywhere in nature. It also has various uses in... Golden Ratio? What's that?」
+		CASE 4
+			PRINTFORML 「Let's take the opportunity to have a poetry contest. The loser will have to take a shot.」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDW Ran uses her first-rate technical knowledge to teach you a few things.
+		PRINTL 
+		CALL AddEXP("学習経験", MASTER, 1)
+	ELSEIF ABL:MASTER:教養 == 2
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Spiritual power, Youkai power, magical power, divine power, Tao power, hermetic power, and willpower. In truth, they're all the same thing.」
+		CASE 1
+			PRINTFORML 「This is read "hikkyou." It means "finally" or "in the end."」
+		CASE 2
+			PRINTFORML 「When a mountain loses its trees, it also loses its water retention ability. Rain after forest fires is usually accompanied by landslides.」
+		CASE 3
+			PRINTFORML 「In Precious Key to the Secret Treasury, Kuukai wrote "the end of their deaths they do not know." That means...」
+		CASE 4
+			PRINTFORML 「Humans sometimes eat food totally unsuited for their bodies. It's not just Youkai that get ill from eating bad things.」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDW Ran teaches you some useful things.
+		PRINTL 
+		CALL AddEXP("学習経験", MASTER, 1)
+	ELSEIF ABL:MASTER:教養 == 1
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Regarding the achievements of Shoutoku Taishi... It might be more interesting to ask the person herself.」
+		CASE 1
+			PRINTFORML 「It's alright. You just have to punch in the correct numbers in the correct formulae. Try this.」
+		CASE 2
+			PRINTFORML 「That one is "ouitsu," or "overflowing." This means "cosmos." This is said "pikaichi"...」
+		CASE 3
+			PRINTFORML 「Eucalyptus leaves are hard and extremely poisonous, it's because of that the koala has a two meter long appendix.」
+		CASE 4
+			PRINTFORML 「Nightingale flooring has ended up in Gensokyo as well... Well, it's useless as the intruders can fly but still...」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDW Ran teaches you some simple things.
+	ELSE
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「How about we start with simple arithmetic?」
+		CASE 1
+			PRINTFORML 「You do not neglect the stroke order when it comes to kanji.」
+		CASE 2
+			PRINTFORML 「Mental arithmetic becomes easier once you memorize the multiplication table.」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDW Ran teaches you the absolute basics affectionately.
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;413,料理
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_413
+;料理にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K25_413_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_413_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	SIF FLAG:時間停止 || CFLAG:睡眠
+		RETURN 0
+	;藍様の料理技能は初期で3
+	IF ABL:MASTER:料理技能 >= 4
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「Fumu Fumu.」
+			PRINTFORML 「Magnificent skills. I will have to study it.」
+		CASE 1
+			PRINTFORML 「Delicious. Where in the world did you find such stock?」
+		CASE 2
+			PRINTFORML 「Mumumu, What is this well-rounded and full aroma...?」
+			PRINTFORML 「Perhaps, fruit soaked in sake or something... Persimmon nuts! That's it, right?」
+		CASE 3
+			PRINTFORML 「Hey, What's this mountain of green stuff in the corner of the kitchen?」
+			PRINTFORML 「It's the first time I've seen such cooking ingredients... What's it called?」
+			PRINTFORML Matadei. 
+		CASE 4
+			PRINTFORML 「Yes, It's cooked perfectly.」
+			PRINTFORML 「I think I have improved a bit lately as well.」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDW You and Ran compare your cooking skills, both of you improving as a result.
+		PRINTL 
+		CALL AddEXP("料理経験", MASTER, 2)
+		CALL AddEXP("料理経験", TARGET, 2)
+	ELSEIF ABL:MASTER:料理技能 == 3
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORML 「A pinch of salt can change the taste completely. That's Japanese cuisine.」
+		CASE 1
+			PRINTFORML 「You cut it before you freeze it with magic... Wait, I guess you can't do that, right?」
+		CASE 2
+			PRINTFORML 「With Chinese cuisine, firepower is everything. Leave all that to me.」
+		CASE 3
+			PRINTFORML 「Let's do a taste-test. Maybe just a bit more salt?」
+		CASE 4
+			PRINTFORML 「Just theory isn't enough to make delicious food, the path to good cooking is an interesting one.」
+			PRINTFORML 「Of course, love alone isn't enough either.」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDW You and Ran stand should-to-shoulder as you cook.
+		PRINTL 
+		CALL AddEXP("料理経験", MASTER, 1)
+		CALL AddEXP("料理経験", TARGET, 1)
+	ELSEIF ABL:MASTER:料理技能 == 2
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「Fufufu. This definitely has the air of a man's cooking.」
+			PRINTFORML 「It's a little cute.」
+		CASE 1
+			PRINTFORML 「If you allow me to bother you, I have some pointers to give.」
+		CASE 2
+			PRINTFORML 「Did you mix in some of the egg shells? If that happens you have to scoop out the shell......」
+			PRINTFORML 「Hora, It's easy.」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDW You do the cooking while listening to Ran's advice.
+		PRINTL 
+		CALL AddEXP("料理経験", MASTER, 1)
+	ELSEIF ABL:MASTER:料理技能 <= 1
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「......That seems dangerous. Let me help you a bit.」
+		CASE 1
+			PRINTFORML 「That's dangerous. You have to be careful when using a kitchen knife.」
+		CASE 2
+			PRINTFORML 「When turning on the fire, do like this...」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDW Ran tries chipping away at your abysmal cooking skills and giving you a foundation to stand on.
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;414,食事
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_414
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_414_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_414_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;415,食事をふるまう
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_415
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_415_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_415_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;416,演奏する(凍結中？
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_416
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_416_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_416_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;417,昼寝をする
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_417
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_417_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_417_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;421,願掛けする
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_421
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_421_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_421_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	;願掛けは一日一回。以下の口上はお願いを済ませた後に表示される
+	;念のためTCVARを入れて制御。また気力体力精力はCALL BUFFへ。精力は濃厚精液でない場合濃厚精液付加
+	IF TALENT:恋慕 && !TCVAR:25:353
+		PRINTFORMDL After you finish praying, Ran says something to you.
+		PRINTFORML 「A nameless god is about as powerful as a Youko.」
+		PRINTFORML 「Come on. Let me hear your wish. I'm certain it'll become true if your faith is.」
+		PRINTL 
+		$INPUT_LOOP_04
+		PRINTDL [0] Remove the exhaustion from my body.
+		PRINTDL [1] I want to become energetic.
+		PRINTDL [2] Maximum virility!
+		PRINTDL [3] I want Ran's panties.
+		PRINTDL [4] I want to dive into some tails with all my might.
+		INPUT
+		PRINTL 
+		SELECTCASE RESULT
+		CASE 0
+			PRINTFORML 「I can certainly grant that.」
+			PRINTFORMDL Ran puts her hand on your chest, and you feel warmth flowing into you.
+			PRINTFORMDL You feel a bit of fatigue disappearing.
+			PRINTL 
+			PRINTFORMDL Stamina ＋300
+			CALL BUFF_BASE(MASTER,BASE_体力,300)
+			TCVAR:25:353 = 1
+			;BASE:MASTER:体力 = MIN(MAXBASE:MASTER:体力,BASE:MASTER:体力 + 300)
+		CASE 1
+			PRINTFORML 「I can certainly grant that.」
+			PRINTFORMDL Ran puts her hand on your chest, and you feel warmth flowing into you.
+			PRINTFORMDL You feel a little bit like shouting.
+			PRINTL 
+			PRINTFORMDL ENE＋300
+			CALL BUFF_BASE(MASTER,BASE_気力,300)
+			TCVAR:25:353 = 1
+			;BASE:MASTER:気力 = MIN(MAXBASE:MASTER:気力,BASE:MASTER:気力 + 300)
+		CASE 2
+			;濃厚精液を勝手に足してしまったけどたぶん大丈夫だろう
+			PRINTFORML 「I can certainly grant that. ...By the way, do you have any plans for this evening?」
+			PRINTFORMDL Ran puts her hand on your crotch, and you feel warmth flowing into you.
+			PRINTFORMDL ........It feels like they got a bit heavier.
+			PRINTL 
+			PRINTFORMDL VIG＋300
+			SIF !TALENT:MASTER:120
+				TALENT:MASTER:120 = 1
+			CALL BUFF_BASE(MASTER,BASE_精力,300)
+			TCVAR:25:353 = 1
+			;BASE:MASTER:精力 = MIN(MAXBASE:MASTER:精力,BASE:MASTER:精力 + 300)
+		CASE 3
+		;USERCOM_服を脱がせる から処理をコピペ
+			PRINTFORML 「......I can certainly grant that. You pervert.」
+			PRINTFORMDL Ran blushes heavily as she rolls up her skirt, revealing her long, white legs.
+			PRINTFORMDL The Kitsune stands briefly on her toes as she pulls them off, stretching out the crotch of the panties before you.
+			PRINTL 
+			PRINTFORMDL You receive Ran's %PANTSNAME(EQUIP:TARGET:下半身下着２, TARGET)%!
+			CALL PANTS_GET(TARGET,"もらう")
+			TCVAR:25:353 = 1
+		CASE 4
+			PRINTFORML 「I can certainly grant that...... Come here then.」
+			PRINTFORML 「You don't have to ask each and every tail for permission.」
+			PRINTFORMDL You dive into the nine tails, softness enveloping you as you're snatched out of the air.
+			PRINTFORMDL It's like a dream of fluffiness, filling your body with energy.
+			PRINTL 
+			PRINTFORMDL Stamina and ENE＋150 Love XP ＋5
+			BASE:MASTER:体力 = MIN(MAXBASE:MASTER:体力,BASE:MASTER:体力 + 150)
+			BASE:MASTER:気力 = MIN(MAXBASE:MASTER:気力,BASE:MASTER:気力 + 150)
+			CALL AddEXP("愛情経験", TARGET, 5)
+			TCVAR:25:353 = 1
+		CASEELSE
+		GOTO INPUT_LOOP_04
+		ENDSELECT
+	ELSE
+		PRINTFORML 「As expected of the grace of gods......」
+		PRINTFORMDL Ran looks a bit suspicious.
+	ENDIF
+	PRINTW 
+ENDIF
+RETURN 1
+;==================================================
+;431,お風呂でくつろぐ
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_431
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_431_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_431_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	IF TALENT:恋慕
+		SELECTCASE RAND:4
+		CASE 0
+			PRINTFORML 「Mmmー Your fatigue just vanishesー」
+			PRINTFORMDL Ran stretches out wide, loving the sensation.
+			PRINTFORMDW As her body trembles, so too do her massive breasts. It's an amazing sight.
+		CASE 1
+			PRINTFORML 「Letting the washcloth get wet is a breach of manners.」
+			PRINTFORML 「And in mixed baths, so is trying to hide your body while staring at others'.」
+			PRINTFORMDW Ran thrusts her chest out proudly. It's clear she's teasing you.
+		CASE 2
+			PRINTFORML 「Fufufufufu...」
+			PRINTFORMDL Suppressing a laughter, Ran sidles up next to you, before burying your arm in her chest.
+			PRINTFORMDW The hot water seems to make your skin stick to each other, and the feeling of being stuck in her deep valley is unbearable.
+		CASE 3
+			PRINTFORML 「Here's some trivia.」
+			PRINTFORML 「If there's a hair stuck on a soap you can't get off with your hand, you can try rubbing against your ass.」
+			PRINTFORMDW You can't help but instinctively lower your gaze.
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「Aren't you staring a little too hard?」
+			PRINTFORMDL Bathing together with Ran, she covers her massive floating breasts with an arm.
+			PRINTFORMDW Doing that will just fan the man's flame, but it doesn't seem like she understands that.
+		CASE 1
+			PRINTFORML 「The water's warm and nice, %CALLNAME:MASTER%.」
+			PRINTFORMDL Ran calls out to you as she scoops up some warm water, letting it trickle down her slender neck.
+			PRINTFORMDW Sharing the bath with a beautiful woman makes it all the more special.
+		CASE 2
+			PRINTFORML 「It's fine, it's fine. So you don't have to show it off.」
+			PRINTFORMDL You thought Ran would be at least a bit embarrassed, but as expected she doesn't balk at the sight of a man's thing.
+			PRINTFORMDW However, it seems it's a completely different story if it's a woman about to stand naked in the open.
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;440,待つ
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_440
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_440_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_440_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;441,授業を受ける(慧音専用？
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_441
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_441_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_441_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;442,伐採する
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_442
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_442_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_442_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;デート系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+[SKIPSTART]
+;現状未実装
+;==================================================
+;600,デート会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_600
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_600_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_600_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;601,デートスキンシップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_601
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_601_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_601_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;602,デートキス
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_602
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_602_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_602_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;603,手を繋ぐ
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_603
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_603_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_603_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	SELECTCASE RAND:3
+	CASE 0
+		PRINTFORMW 「Hou, Are you taking the lead?」
+	CASE 1
+		PRINTFORMW 「This is a bit embarrassing.」
+	CASE 2
+		PRINTFORMW 「Hmm, Very well.」
+	ENDSELECT
+	PRINTL 
+ENDIF
+RETURN 1
+
+;==================================================
+;604,散策する
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_604
+;散策するにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K25_604_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_604_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;605,寄り道する
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_605
+;寄り道するにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K25_605_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_605_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;610,食事に誘う
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_610
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_610_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_610_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	SELECTCASE RAND:3
+	CASE 0
+		PRINTFORMDW You and Ran clap your palms together, and begin eating.
+	CASE 1
+		PRINTFORMW 「Umu... The chef seems to have a delicate sense of taste.」
+	CASE 2
+		PRINTFORMW 「It's delicious. Want me to give you some pointers?」
+	ENDSELECT
+	PRINTL 
+ENDIF
+RETURN 1
+
+;==================================================
+;613,お金稼ぎする
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_613
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_613_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_613_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;614,食材の買い出し
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_614
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_614_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_614_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;615,お弁当を食べる
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_615
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_615_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_615_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋慕 || TALENT:思慕
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMDL Ran pulls out a large lunch box from her sleeve.
+			PRINTFORML 「As a servant, one must always be able to respond immediately if the master says they are hungry.」
+			PRINTFORML 「As expected, you can't do something like this, can you?」
+			PRINTFORMDW You return the favor and make two cups of tea on the spot.
+		CASE 1
+			PRINTFORMDL Putting your lunch boxes on your knees, the two of you enjoy eat in peace.
+			PRINTFORML 「Keep the Nori separate from the Onigiri until you're going to eat it, otherwise it'll shrivel.」
+			PRINTFORMDW Ran makes for first-class wife material.
+		CASE 2
+			PRINTFORMDL You've only started eating when a cat approaches, it's tail clearly showing it smelled the food.
+			PRINTFORMDL Most animals don't dare approaching Ran, always sitting a respectful distance away.
+			PRINTFORML 「You... I recognize your coat. One of Chen's underlings?」
+			PRINTFORMDW The calico answers with a "Nyaーn", and you two give it a share.
+		ENDSELECT 
+	ELSE
+		PRINTFORML 「The lunch box? No, I haven't prepared anything like that.」
+		PRINTFORML 「But that doesn't mean I can't make one. Wait a moment.」
+		PRINTFORMDL With that, Ran disappears, before coming back with several freshwater fish.
+		PRINTFORMDL She rubs salt on them, sears them with a seal, and just like that she's made salt-grilled fish.
+		PRINTFORMW 「You're okay with the guts still there, right? Well, let's eat then.」
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;617,甘味処に誘う
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_617
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_617_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_617_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	SELECTCASE RAND:5
+	CASE 0
+		PRINTFORMDW Ran munches enthusiastically on some Sasa Dango.
+	CASE 1
+		PRINTFORMDW You take Ran to a trendy pastry shop, and share a cake together.
+	CASE 2
+		PRINTFORMDW You and Ran eat Taiyaki hungrily.
+	CASE 3
+		PRINTFORMDW Ran stares transfixed on the Anmitsu, looking adorable and youthful.
+	CASE 4
+		PRINTFORMDW Ran pokes a Kuzumochi with a toothpick, watching it jiggle. She looks adorable.
+	ENDSELECT
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;618,花屋
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_618
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_618_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_618_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;620,鈴奈庵
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_620
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_620_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_620_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;436,読書 custom code, edited
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_436
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_436_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_436_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;698,部屋に入る
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_698
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_698_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_698_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;699,外に出る
+;==================================================
+@M_KOJO_MESSAGE_COM_K25_699
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K25_699_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K25_699_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;派生コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;60,耳かき
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K25_60
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K25_60_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K25_60_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	IF TALENT:恋慕 || TALENT:思慕
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「It's done.」
+			PRINTFORMDW Ran finishes by blowing in your ear.
+		CASE 1
+			PRINTFORML 「It's bad for you if you do it too oftenー」
+			PRINTFORMDW You don't feel any worse this time though.
+		CASE 2
+			PRINTFORML 「Caring for human and animal ears are very different things.」
+			PRINTFORMW 「I hope that you will remember that.」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「That's... What do you want me to do?」
+			PRINTFORMDW You ask Ran to hold her waist lower, but the earpicking is still amazing.
+		CASE 1
+			PRINTFORML 「To just ask something so frankly... If you want to be the least bit polite, just stay still.」
+			PRINTFORMDW Ran still keeps going until the end.
+		CASE 2
+			PRINTFORML 「Or maybe I should be charging you for this instead.」
+			PRINTFORMDW You assure Ran that if she made a business out of this she'd be extremely prosperous.
+		ENDSELECT
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;61,抱き枕
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K25_61
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K25_61_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K25_61_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	PRINTFORMDW Being embraced by Ran's shapely body is amazing, a sense of euphoria washing over you as you fall asleep.
+ENDIF
+RETURN 1
+;==================================================
+;62,デコちゅー
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K25_62
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K25_62_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K25_62_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You lift Ran's bangs and kiss her forehead over and over.
+	ELSEIF TALENT:恋慕
+		IF CFLAG:睡眠
+			PRINTFORML 「Hn...」
+			PRINTFORMDW You kiss not only the sleeping Ran's forehead, but eyelids, bridge of her nose, and her temples...
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「It always makes me laugh when you do that.」
+				PRINTFORMDW She seem to think it's fun, but that's not all.
+			CASE 1
+				PRINTFORML 「It's fine to kiss here too if you want.」
+				PRINTFORMDW Ran traces her fingertip along her lips.
+			CASE 2
+				PRINTFORML 「Hmm... So that's it then.」
+				PRINTFORMDW Ran's cheeks blush light red.
+			ENDSELECT
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF CFLAG:睡眠
+			PRINTFORMDL So as to not wake Ran, you kiss her softly on the forehead.
+			PRINTFORMDW You think you see a small smile on her face.
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「What a sickly-sweet persuasion technique. Far too sweet for my palate.」
+				PRINTFORMDW Contrary to her speech, Ran's smile belies her true thoughts.
+			CASE 1
+				PRINTFORML 「My turn.」
+				PRINTFORMDW Ran brushes aside your hair and kisses your forehead in return.
+			CASE 2
+				PRINTFORML 「Ku Ku Ku... Don't look so serious when you do that.」
+				PRINTFORMDW Ran seems a bit smug, and starts laughing.
+			ENDSELECT
+		ENDIF
+	ELSE
+		IF CFLAG:睡眠
+			PRINTFORMDL You kiss the sleeping Ran on her forehead.
+			PRINTFORMDW You can just imagine her glare if she woke up, how she'd scowl at you.
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「That's be fine if I was a little girl.」
+				PRINTFORMDW Ran's face tells you she hated it.
+			CASE 1
+				PRINTFORMDL As your lips close in, Ran puts an immediate stop to it with a finger.
+				PRINTFORMW 「That's embarrassing, stop.」
+			CASE 2
+				PRINTFORML 「Doing something like that to a woman who isn't even your lover...」
+				PRINTFORMDW Says Ran as she distances herself from you.
+			ENDSELECT
+		ENDIF
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;63,もっとキスする
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K25_63
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K25_63_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K25_63_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You give Ran a deep kiss while time is stopped.
+		PRINTFORMDW You twine your tongue around her immobile one, relishing the taste.
+	ELSEIF TALENT:恋慕
+		IF CFLAG:睡眠
+			PRINTFORMDL You trace the lips of the sleeping Ran, tasting both the inside and outside of her mouth.
+			PRINTFORMDW Continuing to lick her, you ignore the saliva that gets spread around her face.
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL You and Ran lock your lips together, the Kitsune holding your head in place preventing escape.
+				PRINTFORMDL Whether it be hypoxia or love, you indulge greedily until you feel your knees starting to give in.
+				PRINTFORMW 「Gochisousamadeshita.」
+			CASE 1
+				PRINTFORML 「Ffmm... Nn, Nhh...」
+				PRINTFORMDL You count Ran's teeth with your tongue, your saliva mixing as you moan into each others' throat.
+				PRINTFORMDW Listening to the Kitsune's obscene moans, you indulge in a deep kiss.
+			CASE 2
+				PRINTFORML 「Chyu. Nnh, Chuu, Nmuu...」
+				PRINTFORMDL Ran is intentionally loud as she moves her tongue.
+				PRINTFORMDW She stares at you closely through slitted eyes while you kiss.
+			ENDSELECT
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF CFLAG:睡眠
+			PRINTFORMDL You steal the sleeping Ran's defenseless lips, slipping your tongue inside on your own.
+			PRINTFORMDW Continuing to play with her tongue, you enjoy her unconscious reactions.
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL While holding her hands in her sleeves, Ran tilts her head down as you give her a deep kiss.
+				PRINTFORMW 「ーFuu. So, what now?」
+			CASE 1
+				PRINTFORMDL As you push your tongue inside, Ran doesn't seem to mind at all.
+				PRINTFORMDW Your lips lock together, your tongues twining around each other.
+			CASE 2
+				PRINTFORML 『A Youkai's teeth can easily bite through human flesh.』
+				PRINTFORMDL With a brief warning, Ran accepts the kiss.
+				PRINTFORMDW Undeterred by such a threat, you drag your tongue over the Shikigami's fangs over and over, letting them nibble on you.
+			ENDSELECT
+		ENDIF
+	ELSE
+		IF CFLAG:睡眠
+			PRINTFORMDL Were Ran to wake up now, there's no doubt she'd be absolutely furious.
+			PRINTFORMDW Even so, you cannot fight your desires, and you continue indulging in the Kitsune's lips without permission.
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「......How tenacious...」
+				PRINTFORMDW Ran stays silent as she briefly accepts your kiss.
+			CASE 1
+				PRINTFORMDL You wedge your tongue past Ran's lips, but she pins it between two sharp canines.
+				PRINTFORML 「Oi, Don't get ahead of yourself.」
+				PRINTFORMDW She warns you with perfect and unabated pronunciation.
+			CASE 2
+				PRINTFORML 「...So you are a playboy after all. Maybe we should stop seeing each other.」
+				PRINTFORMDW Ran wipes her lips as she gives you a cold stare.
+			ENDSELECT
+		ENDIF
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+;==================================================
+;80,手を引く
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K25_80
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K25_80_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K25_80_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70
+	SELECTCASE RAND:3
+	CASE 0
+		PRINTFORMW 「H-Hey.」
+	CASE 1
+		PRINTFORMW 「What is it, are you in a hurry?」
+	CASE 2
+		PRINTFORMW 「Don't tripー!」
+	ENDSELECT
+	PRINTL 
+ENDIF
+RETURN 1
+

@@ -1,0 +1,97 @@
+﻿@GET_SCORE_INFO_MESSAGE_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "そのシリーズの楽譜を手に入れた際に入手"
+		LOCALS = Get a score from this set 
+	CASE "このシリーズの楽譜を初めて手に入れた際に入手"
+		LOCALS = Get any score from this set 
+	CASE "演奏時にランダムで入手"
+		LOCALS = Get randomly while playing
+	CASE "演奏時にランダムで入手（重複なし）"
+		LOCALS = Get randomly while playing (Without Duplication)
+	CASE "このシリーズのランダム入手を全部手に入れる"
+		LOCALS = Get all random songs from this series 
+	CASE "シリーズ内でこれ以外の楽譜を全部手に入れる"
+		LOCALS = Get all the other songs in this series 
+	CASE "このシリーズの関連キャラに陥落資質（恋慕・愛欲）がついた場合"
+		LOCALS = Get Love or Lust with the character this is a theme for 
+	CASE "サニー・ルナ・スター・大妖精・チルノの依頼成功時"
+		LOCALS = Do requests for Sunny, Luna, Star, Daiyousei, or Cirno
+	CASE "このシリーズの関連キャラに弾幕勝負を挑む"
+		LOCALS = Fight this theme's dedicatee with Danmaku 
+	CASE "文の依頼成功時"
+		LOCALS = Complete a request for Aya
+	CASE "はたての依頼成功時"
+		LOCALS = Complete a request for Hatate
+	CASE "関連キャラの演奏大成功時に入手"
+		LOCALS = Perform well for the character this is a theme for 
+	CASE "反発刻印がついた場合"
+		LOCALS = Get a Hate Mark
+	CASE "依賴を失敗した際に入手"
+		LOCALS = Fail a request
+	CASE "依賴失敗時に入手"
+		LOCALS = Fail a request
+	CASEELSE
+		LOCALS = %ARGS%
+ENDSELECT
+RETURNF LOCALS
+
+;-------------------------------------------------
+;シリーズ名を取得
+;SERIES_NO	; シリーズ番号
+;
+;RETURNFS シリーズ名
+;-------------------------------------------------
+@GET_SERIES_SHORT_NAME_TR(SERIES_NO)
+#FUNCTIONS
+#DIM SERIES_NO	; シリーズ番号
+
+RETURNF REPLACE(GET_SERIES_NAME_TR(SERIES_NO), " ～.*$", "")
+
+;-------------------------------------------------
+;シリーズ名を取得
+;SERIES_NO	; シリーズ番号
+;
+;RETURNFS シリーズ名
+;-------------------------------------------------
+@GET_SERIES_NAME_TR(SERIES_NO)
+#FUNCTIONS
+#DIM SERIES_NO		; シリーズ番号
+
+RETURNF STR_TR(楽譜シリーズ名開始番号 + SERIES_NO)
+
+;-------------------------------------------------
+;楽譜名(シリーズ名も含む)を取得
+;SCORE_NO 楽譜番号
+;
+;RETURNFS 楽譜名(シリーズ名も含む)
+;-------------------------------------------------
+@GET_SCORE_FULLNAME_TR(SCORE_NO)
+#FUNCTIONS
+#DIM SCORE_NO	; 楽譜番号
+
+#DIM SERIES_NO		; シリーズ番号
+#DIM SERIES_SCORE_NO; シリーズ内の楽譜番号
+
+SERIES_NO = GET_SERIES_NO(SCORE_NO)
+SERIES_SCORE_NO = GET_SERIES_SCORE_NO(SCORE_NO)
+
+RETURNF @"【{SERIES_NO + 1}:%GET_SERIES_SHORT_NAME_TR(SERIES_NO)%】「{SERIES_SCORE_NO + 1}:%GET_SCORE_NAME_TR(SCORE_NO)%」"
+
+;-------------------------------------------------
+;楽譜名を取得
+;SCORE_NO 楽譜番号
+;MASK_FLAG 楽譜名を隠す場合、1
+;
+;RETURNFS 楽譜名
+;-------------------------------------------------
+@GET_SCORE_NAME_TR(SCORE_NO, MASK_FLAG=0)
+#FUNCTIONS
+#DIM SCORE_NO	; 楽譜番号
+#DIM MASK_FLAG	; マスク処理フラグ
+
+IF MASK_FLAG
+	RETURNF ("?" * STRLENS(STR_TR(SCORE_NO)))
+ELSE
+	RETURNF STR_TR(SCORE_NO)
+ENDIF

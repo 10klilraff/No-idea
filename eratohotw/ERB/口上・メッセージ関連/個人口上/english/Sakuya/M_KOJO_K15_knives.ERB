@@ -1,0 +1,348 @@
+﻿;==================================================
+;hate comment
+;==================================================
+@K15_HATE_COMMENT
+#DIM iRoll
+	;-------------------------------------------------
+	;will never hate if love or is Remilia's lover
+	IF TALENT:恋慕 == 1 || K15_PLAYER_LOVER_REMILIA()
+		PRINTFORMDW %CALLNAME:15% looks angry at you.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;special
+	
+	;Player is in Remilia's room while she sleeps and is not players bedroom
+	IF K15_SAME_LOCATION_AS(16) && CFLAG:16:睡眠 && !K15_BED_ROOM(1)
+		PRINTFORMW 「I won't let you disturb the Mistress.」
+		CALL K15_KNIFEATTACK_SPELLCARD()
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	
+	iRoll = 48 - 6 * MARK:反発刻印
+	
+	;-------------------------------------------------
+	;comment or attack
+	;30
+	SELECTCASE RAND:iRoll
+		;-------------------------------------------------
+		CASE 0,1,2
+			PRINTFORMDL You suddenly trip while walking.
+			PRINTFORMW 「Ara, so useless.」
+			
+			BASE:MASTER:体力 -= 25
+			EXP:嗜虐快楽経験 += 1
+		;-------------------------------------------------
+		CASE 3,4,5
+			PRINTFORML 「Please don't come near me.」
+			PRINTFORMW 「I just cleaned my clothes and I'm not in the mood to rewash them.」
+		;-------------------------------------------------
+		CASE 6,7,8,9
+			PRINTFORMDL %CALLNAME:15% looks annoyed as she notices you.
+			PRINTFORML 「%CALLNAME:MASTER%, I just cleaned this place.」
+			PRINTFORMW 「You made it all dirty again just by coming here.」
+		;-------------------------------------------------
+		CASE 11,12,10,13
+			PRINTFORMW 「Ara, good timing.」
+			PRINTFORMW 「There is this dirty window I want you to lick clean.」
+		;-------------------------------------------------
+		CASE 19,18,17
+			CALL K15_KNIFEATTACK_STEALTH
+			PRINTFORMW 「Ara, my apologies. I thought you were just a rat.」
+			
+			IF MARK:反発刻印 == 3
+				CALL K15_KNIFEATTACK_STEALTH
+				CALL K15_KNIFEATTACK_STEALTH
+				
+				EXP:嗜虐快楽経験 += 1
+			ENDIF
+		;-------------------------------------------------
+		CASE 20,21,22,23,24
+			;hates the player or wants to punish
+			IF MARK:反発刻印 == 3 || CFLAG:弱み握り
+				CALL K15_KNIFEATTACK_STEALTH
+			ENDIF
+			PRINTFORMDW %CALLNAME:15% pretends to ignore you.
+		;-------------------------------------------------
+		CASEELSE
+			PRINTFORMDW %CALLNAME:15% glares at you.
+	ENDSELECT
+RETURN 1
+
+;==================================================
+;attack
+;ARG 1 = no commentary
+;==================================================
+;roll attack
+@K15_DO_KNIFEATTACK(ARG)
+#DIM iRoll
+
+	iRoll = 25
+	iRoll += ABL:MASTER:戦闘能力*3
+	;sakuya is drunk
+	SIF TCVAR:15:泥酔
+		iRoll += 15
+	;sakuya is lustful
+	SIF K15_LUST(750)
+		iRoll += 5
+		
+	iRoll -= ABL:戦闘能力*3
+	
+	;15 is minimum
+	SIF iRoll < 15
+		iRoll = 15
+	
+	;roll
+	iRoll = RAND:iRoll
+	
+	SELECTCASE iRoll
+	CASE 0,1
+		CALL K15_KNIFEATTACK_SPELLCARD(ARG)
+	CASE 2,3,4,5,6
+		CALL K15_KNIFEATTACK_HITMANY(ARG)
+	CASE 7,8,9,10,11,12,13,14,15,16,17
+		CALL K15_KNIFEATTACK_HIT(ARG)
+	CASE 18,19,20,21,22,23,24,25
+		CALL K15_KNIFEATTACK_MISS(ARG)
+	CASEELSE
+		CALL K15_KNIFEATTACK_DODGE(ARG)
+	ENDSELECT
+RETURN 1
+
+;==================================================
+;attack - fatal
+;ARG 1 = no commentary
+;==================================================
+@K15_KNIFEATTACK_SPELLCARD(ARG)
+#DIM iRoll
+	
+	iRoll = 12
+	iRoll += ABL:MASTER:戦闘能力
+	iRoll -= ABL:戦闘能力
+	
+	;sakuya is drunk
+	SIF TCVAR:15:泥酔
+		iRoll += 6
+	;sakuya is lustful
+	SIF K15_LUST(750)
+		iRoll += 2
+		
+	;8 is minimum
+	SIF iRoll < 8
+		iRoll = 8
+		
+	CALL PRINT_SAKUYA_KNIFE
+
+	IF !ARG
+		PRINTFORMW 「Die.」
+	ENDIF
+	
+	;roll
+	iRoll = RAND:iRoll
+		
+	SELECTCASE iRoll
+		CASE 0,1,2,3,4,5,6,7,8
+			PRINTFORMDW You get hit by one of %CALLNAME:15%'s spellcards, needling you with many silver knives.
+			;damage
+			CALL K15_KNIFEATTACK_DODAMAGE(9999)
+		CASE 9,10,11,12
+			PRINTFORMDW You get hit by one of %CALLNAME:15%'s spellcards, somehow you still managed to dodge a lot of knives.
+			;damage
+			CALL K15_KNIFEATTACK_DODAMAGE(1300)
+		CASE 13,14,15,16
+			PRINTFORMDW You get hit by one of %CALLNAME:15%'s spellcards, somehow you still managed to dodge most of the knives.
+			;damage
+			CALL K15_KNIFEATTACK_DODAMAGE(500)
+		CASEELSE
+			PRINTFORMDL You get attacked by one of %CALLNAME:15%'s spellcards, yet somehow you managed to dodge all the knives.
+			PRINTFORMW 「Tssk...」
+	ENDSELECT
+	
+	EXP:戦闘経験 += 3
+RETURN 1
+
+;==================================================
+;attack - hit many
+;ARG 1 = no commentary
+;==================================================
+@K15_KNIFEATTACK_HITMANY(ARG)
+	CALL PRINT_SAKUYA_KNIFE
+
+	PRINTFORMDW You get hit by multiple of %CALLNAME:15%'s knife throws.
+	
+	IF !ARG
+		PRINTDATAW
+			DATAFORM 「Did you learn your lesson yet?」
+			DATAFORM 「Does it hurt?」
+		ENDDATA
+	ENDIF
+	
+	;damage
+	CALL K15_KNIFEATTACK_DODAMAGE(800)
+	
+	EXP:戦闘経験 += 2
+RETURN 1
+
+;==================================================
+;attack - hit
+;ARG 1 = no commentary
+;==================================================
+@K15_KNIFEATTACK_HIT(ARG)
+	CALL PRINT_SAKUYA_KNIFE
+
+	PRINTFORMDW You get hit by one of %CALLNAME:15%'s knife throws.
+	
+	IF !ARG
+		PRINTDATAW
+			DATAFORM 「I'm sorry, I accidentally hit that one.」
+			DATAFORM 「Does it hurt?」
+		ENDDATA
+	ENDIF
+	
+	;damage
+	CALL K15_KNIFEATTACK_DODAMAGE(350)
+	
+	EXP:戦闘経験 += 1
+RETURN 1
+
+;==================================================
+;attack - miss
+;ARG 1 = no commentary
+;==================================================
+@K15_KNIFEATTACK_MISS(ARG)
+	CALL PRINT_SAKUYA_KNIFE
+
+	PRINTFORMDW One of %CALLNAME:15%'s throwing knives just misses you by a tiny amount.
+	IF !ARG
+		PRINTDATAW
+			DATAFORM 「That was a warning.」
+			DATAFORM 「Ara, I missed.」
+		ENDDATA
+	ENDIF
+	
+	EXP:戦闘経験 += 1
+RETURN 1
+
+;==================================================
+;attack - dodge
+;==================================================
+@K15_KNIFEATTACK_DODGE(ARG)
+	CALL PRINT_SAKUYA_KNIFE
+
+	PRINTFORMDW You dodge her knives throws.
+	IF !ARG
+		PRINTDATAW
+			DATAFORM 「Tssk.」
+			DATAFORM 「Ara, I missed.」
+		ENDDATA
+	ENDIF
+	
+	EXP:MASTER:戦闘経験 += 1
+	EXP:戦闘経験 += 1
+RETURN 1
+
+;==================================================
+;stealth attack
+;==================================================
+;roll attack
+@K15_KNIFEATTACK_STEALTH
+#DIM iRoll
+	
+	iRoll = 25
+	iRoll += ABL:MASTER:戦闘能力*3
+	;sakuya is drunk
+	SIF TCVAR:15:泥酔
+		iRoll += 15
+	;sakuya is lustful
+	SIF K15_LUST(750)
+		iRoll += 5
+	
+	iRoll -= ABL:戦闘能力*3
+	
+	;15 is minimum
+	SIF iRoll < 13
+		iRoll = 13
+	
+	;roll
+	iRoll = RAND:iRoll
+	
+	SELECTCASE iRoll
+	CASE 0,1,2,3,4,5,6,7,8,9,10
+		CALL K15_KNIFEATTACK_STEALTH_HIT
+	CASE 12,13,14,15,16,17,18,19,20
+		CALL K15_KNIFEATTACK_STEALTH_HIT_CUT
+	CASEELSE
+		CALL K15_KNIFEATTACK_STEALTH_DODGE
+	ENDSELECT
+	
+RETURN 1
+
+;==================================================
+;stealth attack - hit
+;==================================================
+@K15_KNIFEATTACK_STEALTH_HIT
+	PRINTFORMDL You suddenly get hit by a knife thrown at you.
+	
+	;damage
+	CALL K15_KNIFEATTACK_DODAMAGE(500)
+	
+	EXP:戦闘経験 += 1
+RETURN 1
+
+;==================================================
+;stealth attack - hit
+;==================================================
+@K15_KNIFEATTACK_STEALTH_HIT_CUT
+	PRINTFORMDL You suddenly get graced by a knife thrown at you, leaving a cut.
+	
+	;damage
+	CALL K15_KNIFEATTACK_DODAMAGE(250)
+	
+	EXP:戦闘経験 += 1
+RETURN 1
+
+;==================================================
+;stealth attack - dodge
+;==================================================
+@K15_KNIFEATTACK_STEALTH_DODGE
+	PRINTFORMDW You somehow managed to dodge a knife thrown at you.
+	
+	EXP:MASTER:戦闘経験 += 1
+	EXP:戦闘経験 += 1
+RETURN 0
+
+;==================================================
+;stealth attack - dodge
+;==================================================
+@K15_KNIFEATTACK_DODAMAGE(ARG)
+	SIF BASE:MASTER:体力 <= 0
+		RETURN 1
+	
+	;full damage
+	IF ARG == 9999
+		BASE:MASTER:体力 = 0
+		BASE:MASTER:気力 = 0
+	ELSE
+		;damage
+		BASE:MASTER:体力 -= ARG
+		;SETCOLOR C_RED
+		;PRINTFROMW STA {ARG}
+		;RESETCOLOR
+	ENDIF
+	
+RETURN 1
+
+
+;=========================================================
+;	added, graphic for Sakuya's knife throw
+;=========================================================
+@PRINT_SAKUYA_KNIFE()
+#DIMS ShownImage
+#DIMS ShownImageBB
+
+SIF !FLAG:画像表示
+	RETURN RESULT
+
+
+CALL 画像表示("Sakuya_Knife", 0, 0, 0, 140, 1)

@@ -1,0 +1,215 @@
+﻿;==================================================
+;弾幕勝負
+;==================================================
+;
+@M_KOJO_MESSAGE_COM_K33_DANMAKU(ARGS, 相手残機)
+#DIM 相手残機
+;全体の流れ
+;①【戦闘前】→②ダイスロールとプレイヤー選択肢、ハンデをつけた場合は【ハンデ口上】→③対応スキルが発動した場合【スキル口上】→④被弾判定、キャラが被弾したなら【被弾口上】→
+;どちらかの残機が0になっていなければ②に戻る→⑤【戦闘後口上】
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;戦闘前
+	HANDICAP_FIXED = 0
+	HANDICAP_RAND = 0
+	;ハンデをつけることができ、数値が大きいほどあなたが不利になる　数値が負ならあなたが有利に
+	;キャラの能力に関わらずクッソ強くしたり弱くしたりできる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘前"
+		IF ITEM:三粒の天滴
+			PRINTFORMDL Countless frogs jump out of your bosom!
+			PRINTFORML 「Hmm, so yer gonna use my own blessing that I've given you against me?」
+			PRINTFORMW 「Jokes on you, I like that kind of impudence♪ Come at me with everything you've got!」
+		ENDIF
+		PRINTFORML 「Come now, let us begin the offering to the gods, the Kagura! Make sure to keep me entertained♪」
+		PRINTL 
+		PRINTFORMDL ――Party Start "Two Bows, Two Claps, and One Bow" 
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;ハンデ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "ハンデ"
+		;ハンデつけなかったら表示されないので無記入でよい
+		PRINTFORML 
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中TARGET被弾時口上
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" 
+		;別に一律で「やられたー」だけでもいいよ
+		SELECTCASE 相手残機
+			;残り残機3が表示されるのは【洽覧深識】持ちのみ
+			CASE 3
+				PRINTFORML 
+			CASE 2
+				PRINTDATAW
+					DATAFORM 「Woooweee, yer quite somethin'!♪」
+					DATAFORM 「We're juuuust gettin' started here... Get ready for some more～!」
+					DATAFORM 「Aww darn, did I mess it up? No worries, this is the part where I'm goin' all in!」
+					DATAFORM 「So you can dodge that, huh... I may have underestimated ya a bit, eh?」
+				ENDDATA
+				PRINTL 
+				RESETCOLOR
+				PRINTDATADW
+					DATAFORM ――Native God "Lord Long-Arm and Lord Long-Leg"
+					DATAFORM ――Divine Tool "Moriya's Iron Ring"
+					DATAFORM ――Iron Ring "Mythical Ring"
+					DATAFORM ――Spring Sign "Jade of the Horrid River"
+					DATAFORM ――Spring Sign "Suwa Clear Water"
+					DATAFORM ――Hime River "Princess Jade Green"
+					DATAFORM ――Green Stone "Jade Break"
+					;says snake hunt (蛇狩) in the original, intentional or just a typo? the rest is the same
+					DATAFORM ――Frog Hunt "The Snake Eats the Croaking Frog"
+					DATAFORM ――Native God "Seven Stones and Seven Trees"
+					DATAFORM ――Divine Sakura "Full Sakura Blizzard"
+					DATAFORM ――Native God "Froggy Braves the Wind and Rain"
+					DATAFORM ――Native God "Red Frogs of Houei 4"
+					DATAFORM ――Frog Sign "Bloody Mound of Red Frogs"
+					DATAFORM ――"Suwa War ～ Native Myth vs Central Myth"
+				ENDDATA
+			CASE 1
+				PRINTDATAW
+					DATAFORM 「%SPLIT_G("Thaaat's the stuff:Nicely done")%... Fufufu, this gets my blood pumpin'!♪」
+					DATAFORM 「To see you push me this far... Yer quite the entertainer!」
+					DATAFORM 「Fufu... Now we're talkin'! You gotta have this kind of spirit if yer goin' to %SPLIT_G("challenge:take on")% a God!」
+					;added
+					DATAFORM 「Ohh man, I haven't been cornered like this in a hot minute! I love that!」
+				ENDDATA
+				PRINTL 
+				RESETCOLOR
+				PRINTDATADW
+					;different kanji (祟 instead of 崇)
+					DATAFORM ――Scourge Sign "Mishaguji-sama"
+					DATAFORM ――Scourge God "Mishaguchi-sama"
+					DATAFORM ――Native God "Mishaguji-sama"
+				ENDDATA
+			CASE 0
+				PRINTFORML 
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【残忍酷薄】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "残忍酷薄"
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【乾坤一擲】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "乾坤一擲"
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【怪力乱神】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "怪力乱神"
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Puhaaa～!」
+				PRINTFORMDW Suwako just dived under the ground and dodged all the Danmaku... Say what?!
+				PRINTFORMW 「Earth is not my element for nothin' after all, you know. Now, let's get this started over♪」
+			CASE 1
+				PRINTFORMDL All of a sudden a huge geyser erupts, prompting you to watch in amazement as it blasts away the Danmaku.
+				PRINTFORMW 「Power of the earth shouldn't be taken lightly, I hope you understand～」
+				PRINTFORMDL She is not crawling about on the ground simply trying to show off or be eccentric about it, no...
+				PRINTFORMDW It's that the very "ground" she puts her feet on is her greatest weapon!――
+			CASE 2
+				PRINTFORMW 「That's just another way of using these iron rings, y'know～♪」
+				PRINTFORMDL Suwako smiles broadly as she twirls the iron ring with incredible grace.
+				PRINTFORMDW A divine tool that can be used for both offense and defense, this is going to be a handful...
+		ENDSELECT
+	ENDIF
+	
+	;-------------------------------------------------
+	;戦闘後
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" 
+		PRINTFORML 
+		;残り残機4が表示されうるのは【洽覧深識】持ちのみ
+		;残機が1以上ならあなたの負け、0の場合はあなたの勝利
+		SELECTCASE 相手残機
+			CASE 4
+				PRINTFORML 
+			CASE 3
+				PRINTDATAW
+					DATAFORM 「Humm, I hoped that you'd be a bit more of a challenge than this, honestly～」
+					DATAFORM 「And there we have it. Bullying something so weak puts a bad look on divine majesty after all♪」
+					DATAFORM 「Eeeeh～ And here I thought we were just gettin' started～」
+				ENDDATA
+			CASE 2
+				PRINTDATAW
+					DATAFORM 「You got somethin' going for you, that's for sure. But it's far from bein' able to satisfy me just yet～」
+					DATAFORM 「And there we have it. Bullying something so weak puts a bad look on divine majesty after all♪」
+					DATAFORM 「%SPLIT_G("Yer not ready yet:Ya still got some ways to go")%～ %SPLIT_G("I hope you'll get more training after this:You should get some more practice:Gotta practice some more")%.」
+				ENDDATA
+			CASE 1
+				PRINTDATAW
+					DATAFORM 「Come on, come on, we still got some time left, let's rematch――What, no? Booo～!」
+					DATAFORM 「You were just thiiiiis close, I guess. But it was fun, I enjoyed it♪」
+					DATAFORM 「You've done well gettin' this far. That persistence is right up my alley, you know?」
+					;added
+					DATAFORM 「Close, but no cigar, %K33_BOY()%～ Better luck next time, I'm lookin' forward to it!」
+				ENDDATA
+			CASE 0
+				PRINTDATAL
+					DATAFORM 「Ahahaha! %SPLIT_G("Brilliantly done:Splendid")%♪」
+					DATAFORM 「Awesome... Yer full of surprises, %CALLNAME:MASTER%.」
+					DATAFORM 「Aah, I've had my fill of fun, and boy am I satisfied!」
+				ENDDATA
+				IF !CFLAG:[[諏訪子]]:弾幕勝負勝利
+					PRINTFORMW 「Even though I'm far from the power I had in my prime, you still managed to defeat me, the God who once ruled an entire nation.」
+					PRINTFORMW 「Yup-yup, you pass! I'm sooo impressed! That's why I can never tire of living in Gensokyo♪」
+					PRINTFORML 「You can play with me again if you want. I'll be sure to thank you for the pleasure you've given me at some point.」
+					PRINTFORMDW Suwako has a big smile on her face, with sincere happiness radiating from it...
+				ELSE
+					PRINTDATAL
+						DATAFORM 「I'd be happy to duel you sometime again～」
+						DATAFORM 「Looks like I can't afford just sittin' around and doin' nothing. Maybe I should start working out again...」
+						DATAFORM 「I'm happy even though I lost? Well, but of course! We fought, we competed, and it's very exciting, very fun♪」
+						;added
+						DATAFORM 「Let's rematch at a later time again! I'll make it worth your while♪」
+					ENDDATA
+					PRINTFORMDW Suwako seems truly happy from the bottom of her heart, grinning at you from ear to ear...
+				ENDIF
+		ENDSELECT
+		IF 相手残機 >= 1
+			PRINTFORML 「Well, at any rate, thanks for coming along for the kagura, I appreciate it.」
+			PRINTFORML 「No matter the outcome, just the fact that yer willing to play with me like this is enough to make me happy♪」
+			PRINTFORMDW Suwako says with a wide grin as she takes your hand...
+		ENDIF
+	ENDIF
+RESETCOLOR
+ENDIF
+RETURN 1
+

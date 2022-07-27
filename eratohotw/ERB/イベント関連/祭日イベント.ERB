@@ -1,0 +1,250 @@
+﻿;-------------------------------------------------
+;関数名:FESTIVAL
+;概　要:行事を表す文字列を取得する関数
+;引　数:なし
+;-------------------------------------------------
+@FESTIVAL
+#FUNCTIONS
+IF DAY:2 == 1
+	SELECTCASE DAY:3
+		CASE 1
+			RETURNF "元日"
+		CASE 3
+			RETURNF "雛祭り"
+		CASE 11
+			RETURNF "母の日"
+		CASE 13
+			RETURNF "ホワイトデー前日"
+		CASE 14
+			RETURNF "ホワイトデー"
+		CASE 25
+			RETURNF "例大祭"
+		CASE 28
+			RETURNF "バニーの日"
+	ENDSELECT
+ELSEIF DAY:2 == 2
+	SELECTCASE DAY:3
+		CASE 7
+			RETURNF "七夕"
+		CASE 14
+			RETURNF "お盆"
+		CASE 28
+			RETURNF "バニーの日"
+	ENDSELECT
+ELSEIF DAY:2 == 3
+	SELECTCASE DAY:3
+		CASE 1
+			RETURNF "風神「二百十日」"
+		CASE 15
+			RETURNF "十五夜"
+		CASE 27
+			RETURNF "収穫祭"
+		CASE 28
+			RETURNF "バニーの日"
+		CASE 30
+			RETURNF "ハロウィン"
+	ENDSELECT
+ELSEIF DAY:2 == 4
+	SELECTCASE DAY:3
+		CASE 3
+			RETURNF "節分"
+		CASE 14
+			RETURNF "バレンタインデー"
+		CASE 24
+			RETURNF "クリスマスイヴ"
+		CASE 25
+			RETURNF "クリスマス"
+		CASE 28
+			RETURNF "バニーの日"
+		CASE 31
+			RETURNF "大晦日"
+	ENDSELECT
+ENDIF
+
+;特定の祭日の起床時メッセージ
+@SEASONAL_MORNING
+#DIM 生活時間補正, 5
+SELECTCASE FESTIVAL()
+	CASE "元日"
+		SIF DAY != 1
+			CALL NEWYEAR
+	CASE "バレンタインデー"
+		PRINTFORML Maybe %PARSE("you")% will get chocolates today...
+	CASE "ホワイトデー前日"
+		PRINTFORMW Let's get ready to return the favor.
+	CASE "バニーの日"
+		PRINTFORMW \@ DAY:2 == 4? It's hard work spending a day in the freezing wind in just a bunny suit...# Everyone should be wearing a bunny suit.\@
+	CASE "ホワイトデー"
+		FOR LOCAL,1,CHARANUM
+			SELECTCASE CFLAG:LOCAL:バレンタイン
+				CASE 1
+					PRINTFORML %PARSE("You")% received a Black Thunder from %CALLNAME:LOCAL%...
+					PRINTFORMW Thanks for the gift...?
+				CASE 2
+					PRINTFORML %PARSE("You")% received an ordinary chocolate from %CALLNAME:LOCAL%...
+					PRINTFORMW Let's return the favor.
+				CASE 3
+					PRINTFORML %PARSE("You")% received a premium chocolate from %CALLNAME:LOCAL%...
+					PRINTFORMW Let's give them a proper reward.
+				CASE 4
+					PRINTFORML %PARSE("You")% received a handmade chocolate from %CALLNAME:LOCAL%...
+					PRINTFORMW Let's give them a hearty reward.
+			ENDSELECT
+		NEXT
+	CASE "大晦日"
+		PRINTL This day everyone can stay up all night.
+ENDSELECT
+
+
+@SEASONAL(ARG)
+VARSET LOCAL
+;出会ったとき
+SELECTCASE FESTIVAL()
+	CASE "元日"
+		PRINTL
+		PRINTFORML ●%PARSE("You wish")% %CALLNAME:ARG% a happy New Year.
+		CALL OTOSHIDAMA(ARG)
+	CASE "バレンタインデー"
+		SELECTCASE CFLAG:ARG:好感度
+			CASE 1000 TO 3000
+				PRINTFORMW %PARSE("You receive")% a chocolate from %CALLNAME:ARG%.
+				PRINTW ... Black Thunder.
+				ITEM:120 ++
+				CFLAG:ARG:バレンタイン = 1
+			CASE 3001 TO 5000
+				PRINTFORMW %PARSE("You receive")% a chocolate from %CALLNAME:ARG%.
+				ITEM:121 ++
+				CFLAG:ARG:バレンタイン = 2
+			CASE IS > 5000
+				IF EXP:ARG:愛情経験 < 100
+					PRINTFORMW %PARSE("You receive")% an expensive chocolate from %CALLNAME:ARG%.
+					ITEM:122 ++
+					CFLAG:ARG:バレンタイン = 3
+				ELSE
+					PRINTFORML %PARSE("You receive")% a chocolate from %CALLNAME:ARG%.
+					PRINTW It's handmade! Cool!
+					ITEM:123 ++
+					CFLAG:ARG:バレンタイン = 4
+				ENDIF
+		ENDSELECT
+ENDSELECT
+
+@FESTIVAL_MENU()
+#FUNCTIONS
+SELECTCASE DAY:2
+	;春
+	CASE 1
+		SELECTCASE DAY:3
+			CASE 1,2
+				RETURNF "おせち料理"
+		ENDSELECT
+	;夏
+	CASE 2
+	;秋
+	CASE 3
+	;冬
+	CASE 4
+		SELECTCASE DAY:3
+			CASE 3
+				RETURNF "恵方巻"
+			CASE 31
+				RETURNF "年越し蕎麦"
+		ENDSELECT
+ENDSELECT
+
+@NEWYEAR
+#DIM YOME
+#DIM ChildCount
+#DIM CardCount
+PRINTW Happy New Year!
+CardCount = 0
+FOR LOCAL,1,CHARANUM
+	IF ABL:YOME:親密 >= 5 && !CFLAG:YOME:神社在住
+		PRINTFORML %PARSE("You receive")% a new-years card from %CALLNAME:YOME%.
+		CardCount ++ 
+	ENDIF
+	SIF CFLAG:YOME:子供人数 - CFLAG:YOME:育児人数 <= 0
+		CONTINUE
+	FOR ChildCount,1,11
+		IF DAY - CHILD_BIRTHDAY:YOME:ChildCount < 120
+			PRINTFORML %PARSE("You receive")% a new-years card from %CALLNAME:YOME%'s \@ CHILD_SEX:YOME:ChildCount == 1 ? daugter # son \@ %CHILDNAME:YOME:ChildCount%.
+			CardCount ++ 
+		ENDIF
+	NEXT
+NEXT
+IF CardCount > 0
+	PRINTFORMW In total, {CardCount} card\@CardCount > 1?s#\@!
+ENDIF
+PRINTFORML Now then, what should %PARSE("your")% resolution be this year?
+PRINTL
+PRINTLC [1] Masturbation encouragement
+PRINTLC [2] Homosexuality promotion
+PRINTLC [3] Loosening up female holes
+PRINTL
+PRINTL
+PRINTLC [4] Asshole development
+PRINTLC [5] Pleasuring breasts
+PRINTLC [6] Having many kids
+$LOOP
+INPUT
+SELECTCASE RESULT
+	CASE 1
+		LOCALS = masturbation
+	CASE 2
+		LOCALS = homosexuality
+	CASE 3
+		LOCALS = having sex
+	CASE 4
+		LOCALS = having anal sex
+	CASE 5
+		LOCALS = paizuri
+	CASE 6
+		LOCALS = child making
+	CASEELSE
+		GOTO LOOP
+ENDSELECT
+
+PRINTFORML %PARSE("You set")% %PARSE("your",1)% mind to concentrate on %LOCALS% this year.
+FLAG:抱負 = RESULT
+
+;通年フラグをリセット
+FOR LOCAL,0,CHARANUM
+	CFLAG:LOCAL:通年 = 0
+NEXT
+
+
+@OTOSHIDAMA(ARG)
+SIF DAY <= 1
+	RETURN
+SIF !TALENT:ARG:幼稚 && !TALENT:ARG:育児中
+	RETURN
+IF TALENT:ARG:幼稚
+	PRINTFORMW %CALLNAME:ARG% pesters %PARSE("you")% for a New Year's present!
+ELSE
+	PRINTFORMW %CALLNAME:ARG% wants %PARSE("you")% to give a New Year's present for %SHOW_CHILDNAME(ARG)%.
+ENDIF
+
+SELECTCASE MONEY
+	CASE IS > 500000
+		LOCAL = 10000
+	CASE IS > 100000
+		LOCAL = 5000
+	CASE IS > 30000
+		LOCAL = 3000
+	CASE IS > 3000
+		LOCAL = 1000
+	CASEELSE
+		LOCAL = 0
+ENDSELECT
+IF !LOCAL
+	PRINTFORML However, when %PARSE("you show your")% empty wallet to %CALLNAME:ARG%, %HE_SHE(ARG)% \@ TALENT:ARG:幼稚?looks at %PARSE("you",5)% pitifully#looks frankly disappointed with %PARSE("you",5)%\@.
+	PRINTFORMW %PARSE("Your heart")% is wounded.
+ELSE
+	PRINTFORML %HE_SHE(ARG,1)% receives \\{LOCAL} from %PARSE("you")%...
+	PRINTFORML %HE_SHE(ARG,1)% seems extremely happy.
+	MONEY -= LOCAL
+	TALENT:ARG:機嫌 = 1
+	;custom code
+	CALL CHANGE_CFLAG(2,ARG,LOCAL/200)
+	CALL CHANGE_CFLAG(4,ARG,LOCAL/200)
+ENDIF

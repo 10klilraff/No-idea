@@ -1,0 +1,5160 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;日常系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;300,会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_300
+;コマンド共通メッセージ(TRAIN_MESSAGE) 
+;削除すると「～話をした。」とかが消えます
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+CALL M_KOJO_MESSAGE_COM_K97_300_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_300_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;added
+	IF !FIRSTTIME("SeijaFuta", 1, 97) && FIRSTTIME("SeijaFutaConfront")
+		PRINTFORMW 「Hey, uhh... %CALLNAME:MASTER%. Can I have you for a moment?」
+		PRINTFORMDW Seija asks you to come with her away from the public.
+		PRINTFORMW 「Do you know... anything about this?」
+		PRINTFORMDW Seija says, lifting her skirt and pointing at her... bulge in her pants!
+		CALL ASK_YN("Admit you did it", "Feign ignorance")
+		IF !RESULT
+			PRINTFORMW 「...!」
+			PRINTFORMW 「Y-You...!」
+			PRINTFORMDW Seija glares at you and grabs you by the neck.
+			PRINTFORMW 「You really done it now, huh... You actually messed up my body!」
+			PRINTFORMW 「I never asked for this! Are you kidding me?!」
+			PRINTFORMW 「Who the fuck do you think you are...」
+			PRINTFORMDW Seija growls angrily, but then lets go of you.
+			PRINTFORMW 「Haa... You're unbelievable. I don't know why you did it, or how...」
+			PRINTFORMW 「But I'll have you take responsibility for this.」
+			PRINTFORMW 「This thing, it aches for action all the time, y'know? And you'll take care of it.」
+		ELSE
+			PRINTFORMW 「Yeah, figures. But something like this can't just happen for no reason.」
+			PRINTFORMW 「My hunch tells me that you were involved somehow. And I tend to trust my feelings.」
+			PRINTFORMW 「Look, I won't get mad, but... Now that it's here, you'll be keeping it company.」
+			PRINTFORMW 「No objections. You're the only one sick enough to enjoy it... Isn't that right?」
+		ENDIF
+		PRINTFORMDW Seija presses herself closer against you and squeezes your groin.
+		PRINTFORMW 「Anytime, anywhere... I'll be putting your holes to good use, %K97_DUDE()%.」
+		PRINTFORMW 「Kick and scream all you like, but when I want it, I'll find you...」
+		PRINTFORMW 「Heh, I guess it's no use threatening you with a good time though, eh?」
+		PRINTFORMDW Her face softens with a smug grin as she backs away.
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		;added
+		IF RAND:6 == 0
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「Don't even think about sweet-talkin' me, you good-for-nothing %K97_IDIOT_RUDE()%!」
+				CASE 1
+					PRINTFORMW 「I don't remember giving you permission to speak with me.」
+				CASE 2
+					PRINTFORMW 「The wind must blow right through them ears if you think you can still talk to me.」
+			ENDSELECT
+		;-----
+		ELSEIF RAND:5 == 0
+			PRINTFORMW 「Huh?」
+			PRINTFORMW 「What? Don't think you can just speak with me like that.」
+			PRINTFORMW 「What a pain in the ass.」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「...%SPLIT_G("Tch:Tsk:Sheesh")%.」
+			PRINTFORMW 「%SPLIT_G("Shaddap:Buzz off:Get lost")%!」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「...」
+			PRINTFORMDW Seija turns away, obviously looking annoyed.
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Are you stupid or something?」
+			PRINTFORMW 「Ya blabbermouth.」
+		ELSE
+			PRINTFORMW 「.........」
+			PRINTFORMW 「%SPLIT_G("Ain't gonna waste time listening to you:I ain't gonna talk to you")%.」
+		ENDIF
+	ELSEIF TFLAG:193 == -1 ;added, negative reaction
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORMW 「What are you even mumbling about?」
+				PRINTFORMW 「How annoying...」
+				PRINTFORMW 「Go away already.」
+			CASE 1
+				PRINTFORMW 「Don't you have anyone else to waste time talking with?」
+				PRINTFORMW 「I'm sure you do. Go then, stop bothering yourself with me.」
+			CASE 2
+				PRINTFORMW 「Huh, what was that?」
+				PRINTFORMW 「Sorry, I was too busy ignoring everything you just said.」
+			CASE 3
+				PRINTFORMW 「...You're like a puppy, so eager to attract my attention.」
+				PRINTFORMW 「Give it a rest, %K97_DUDE()%. Do something else.」
+		ENDSELECT
+	;special, added
+	ELSEIF CHK_DATENOW(CFLAG:デート中) && INRANGE(TIME:5, 4, 13) && !TEQUIP:TARGET:201 && OUTROOF(CFLAG:MASTER:現在位置) && ONCE("SeijaRainNoUmbrella")
+		PRINTFORMW 「Something ain't right...」
+		PRINTFORMW 「Last I checked, you're supposed to hold the umbrella for a lady.」
+		PRINTFORMDW Seija grumbles as you both get attacked by the weather.
+	ELSEIF CHK_DATENOW(CFLAG:デート中) && DATENAME_SPOT() != "on the road" && GROUPMATCH(CFLAG:デート中, 4, 5, 6, 8) && ( (GROUPMATCH(天候, 9) || FLAG:異常気象 == 10) || GROUPMATCH(天候, 4, 6, 7) ) && ONCE("ShitholeComplain")
+		PRINTFORMW 「We have arrived...」
+		PRINTFORMW 「In the middle of nowhere.」
+		PRINTFORMW 「And it's \@ (GROUPMATCH(天候, 9) || FLAG:異常気象 == 10) ? snowing # raining\@.」
+		PRINTFORMW 「...Great.」
+		PRINTFORMDW Seija grumbles and groans...
+	;風呂場
+	ELSEIF BATHCHECK(CFLAG:MASTER:現在位置) && IN_HOME(CFLAG:MASTER:現在位置)
+		IF RAND:3 == 0
+			PRINTFORMW 「C'mon, don't stare holes in me like that, %K97_DUDE()%. Nothing to see here.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「They say that a bath is the washing of life, but I usually just get in and get out real quick, so I don't really get it.」
+			PRINTFORMDW [命の洗濯 - lit. washing of life, is an expression that means "casting off the drudgery of everyday life and doing as one pleases"]
+		ELSE
+			PRINTFORMW 「You're the reason I'm in here with you, so don't get the wrong idea!」
+		ENDIF
+	;会話不能
+	ELSEIF TCVAR:302
+		PRINTFORMW 「...%SPLIT_G("You and your big mouth.:Finally ran out of things to say?:Come on, say something interesting for once!:You're like a fish out of the water.")%」
+	ELSEIF TALENT:恋人 && !RAND:10 ;added
+		PRINTFORMW 「Hey, don't tell me you believe in all of that 'life after death' nonsense.」
+		PRINTFORMW 「You should be more concerned with avoiding death than making plans for after it finds you.」
+		PRINTFORMW 「...Cuz I need you here with me, got it?」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:6 == 0 ;added
+			PRINTFORMW 「I just need some good luck? Naaah.」
+			PRINTFORMW 「I mean, people are quick to claim that they're unlucky just because things don't go their way.」
+			PRINTFORMW 「There's an element of chaos, sure, but you gotta have a plan first and foremost.」
+			PRINTFORMW 「Those who rely on blind luck have already lost.」
+		ELSEIF RAND:5 == 0
+			PRINTFORMW 「Why did I convince Princess Sukuna to accept her position?」
+			PRINTFORMW 「Simple stuff, really. The media would be all over the weakling who stood up to the strong in order to avenge her people, right?」
+			PRINTFORMW 「Even if the whole thing is contrived at best, the media is more or less susceptible to such stories.」
+			PRINTFORMW 「All it takes to start a rebellion is a good cause, and as long as you have the support of the masses, the success is practically in your reach.」
+			PRINTFORMW 「...At least that's how it was supposed to go, but it resulted in a crushing defeat.」
+			PRINTFORMW 「Not that big of a deal though, I can always start over as long as I'm still alive.」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「So I take it your ability was to stop time all along, right?」
+			PRINTFORMW 「Yeaaah, I just had a certain feeling about it, I guess.」
+			PRINTFORMW 「For one, if it was manipulating the unconscious then the other side won't feel anything out of place all of a sudden after all.」
+			PRINTFORMW 「Well, there's a lot of things you can do with it either way.」
+			PRINTFORMDW Seija is happily expressing her thoughts on your abilities.
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「Did you know that Youkai Mountain is actually armed to the teeth and have their own army?」
+			PRINTFORMW 「I just thought it would be interesting to see if the junior officers would start a mutiny.」
+			PRINTFORMW 「One has to wonder why would white wolf tengu worship the king of the monkey hill so zealously.」
+			PRINTFORMDW For some reason Seija just enjoys making incitement plans.
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I don't care who is in charge, be it youkai or humans.」
+			PRINTFORMW 「If I'm gonna take over the world, I'm gonna have to do it myself.」
+			PRINTFORMW 「That's just my thoughts on the matter.」
+			PRINTFORMW 「We're gonna teach these cocky bastards who are looking down on us what equality really means.」
+		ELSE
+			PRINTFORMW 「Whether you're a human or a youkai, in the end we will all face death no matter what.」
+			PRINTFORMW 「And I've been thinking, if you're going to die for someone's ideals or ideology, then...」
+			PRINTFORMW 「I'd rather die for my own ideals.」
+			PRINTFORMW 「Yeah, I know, it's quite a depressing talk, and besides...」
+			PRINTFORMW 「I'm not planning to die any time soon, so relax.」
+			PRINTFORMW 「But if I gonna die anyway, I'm gonna make a damn sure my name's gonna end up on the last page of history. No doubt about it.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:6 == 0 ;added
+			PRINTFORMW 「The only reason we can stay together so smoothly... Probably has to do with you.」
+			PRINTFORMW 「Maybe you're too much of a threat for that hag to fuck with you...?」
+			PRINTFORMW 「Or maybe you already got on her good side? Whatever might be the case...」
+			PRINTFORMW 「We need to be ready for inevitable separation.」
+			PRINTFORMW 「Gensokyo accepts all, as she likes to say, but someone might have a problem with it.」
+		ELSEIF RAND:5 == 0
+			PRINTFORMW 「Huh...? What's up?」
+			PRINTFORMW 「What are my plans for today?」
+			PRINTFORMW 「...I wanna stay with you.」
+			PRINTFORMW 「That's all I ever need, really...」
+			PRINTFORMW 「But, uhh, what about you?」
+			PRINTFORMW 「Is there anything you wanna do?」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「Do you have a favorite food or something?」
+			PRINTFORMW 「Nah, I mean, if there's nothing, then it's fine.」
+			PRINTFORMW 「I probably should've asked you what you don't like.」
+			PRINTFORMW 「I'll make it possible for you to eat whatever you want, by force if necessary.」
+			PRINTFORMDW Seija smirks mischievously.
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「What's the matter? I got something on my face?」
+			PRINTFORMW 「Ah man... I bet it's not all that fun just because you saw me show up.」
+			PRINTFORMW 「I mean... I got no confidence... And with your looks you're way out of my league, so...」
+			PRINTFORMDW Seija keeps mumbling and grumbling.
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Mmm... I'm kinda bored.」
+			PRINTFORMW 「Well, I'm happy enough just to be like this though.」
+			PRINTFORMW 「How should I put it... I've never done anything like this before.」
+			PRINTFORMW 「So yeah... I love you, %CALLNAME:MASTER%.」
+		ELSE
+			PRINTFORMW 「Hey-hey...」
+			PRINTFORMW 「Where would you like to go, %CALLNAME:MASTER%?」
+			PRINTFORMW 「I'm gonna be with you.」
+			PRINTFORMW 「I'm just an aimless wanderer with no place to stay or a family to be with anyway.」
+			PRINTFORMW 「So I've got all time in the world to keep you company.」
+			PRINTFORMW 「I will stick with you till the day you die, and you gotta deal with it.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:5 == 0
+			PRINTFORMW 「Heya, would you stop eyeballing people so hard?」
+			PRINTFORMW 「Your stare is just really that creepy.」
+			PRINTFORMW 「What, you haven't noticed?」
+			PRINTFORMW 「It's the look of a stalker preying on women, that's what kind of stare it is.」
+			PRINTFORMW 「...All you have to do is look at me.」
+			PRINTFORMW 「Don't worry, I'll oblige and do whatever you like once in a while.」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「You have a family, too?」
+			PRINTFORMW 「I'm just a little curios is all.」
+			PRINTFORMW 「Me? Well...」
+			PRINTFORMW 「...I don't think my old man or my mother would ever forgive me, if they were around that is.」
+			PRINTFORMDW Seija says, somewhat sadly.
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「What do you usually do, anyway?」
+			PRINTFORMW 「Is it just wandering around aimlessly?」
+			PRINTFORMW 「Perhaps you know more about Gensokyo than I do at this point.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hey... What is it?」
+			PRINTFORMW 「What's my goal?」
+			PRINTFORMW 「Dunno why would you ask that, but...」
+			PRINTFORMW 「I guess it would be dragging down those who keep sitting on people's back.」
+		ELSE
+			PRINTFORMW 「Whether you're a human or a youkai, in the end we will all face death no matter what.」
+			PRINTFORMW 「And I've been thinking, if you're going to die for someone's ideals or ideology, then...」
+			PRINTFORMW 「I'd rather die for my own ideals.」
+			PRINTFORMW 「Yeah, I know, it's quite a depressing talk, and besides...」
+			PRINTFORMW 「I'm not planning to die any time soon, so relax.」
+			PRINTFORMW 「But if I gonna die anyway, I'm gonna make a damn sure my name's gonna end up on the last page of history. No doubt about it.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:6 == 0 ;added
+			PRINTFORMW 「Why am I so mean to you?」
+			PRINTFORMW 「Tch... Love without hate is something for sad little losers, y'know?」
+			PRINTFORMW 「And quit clingin' to me, it's gross...」
+		ELSEIF RAND:5 == 0
+			PRINTFORMW 「Hey, don't just speak with me like we're buddies.」
+			PRINTFORMW 「Huh?」
+			PRINTFORMW 「I'm saying, why do you keep bothering me every damn minute?!」
+			;added
+			PRINTFORMW 「You're all over me every chance you get! Gross...」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「The hell you want?」
+			PRINTFORMW 「Who would even want to speak with someone like you?」
+			PRINTFORMW 「You're pretty damn annoying, you know that?!」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「What?」
+			PRINTFORMW 「Ya dingus.」
+			PRINTFORMW 「Don't talk to me when you don't have anything to say.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Heeey, %CALLNAME:MASTER%...」
+			PRINTFORMW 「No, never mind.」
+			PRINTFORMW 「You heard me, it's nothing, forget it...」
+		ELSE
+			PRINTFORMW 「...?!」
+			PRINTFORMW 「D-Don't just talk to me out of the blue! You %K97_IDIOT()%!」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:5 == 0
+			PRINTFORMW 「What's up? You got plans for dinner today?」
+			PRINTFORMW 「Let's see, today I want―――」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「Do I have a job?」
+			PRINTFORMW 「Well, maybe I have, maybe I don't. Something like that.」
+			PRINTFORMW 「I'm just a wandering bum as of now, unfortunately.」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「At the end of the day, the weak can't win against the strong, can they?」
+			PRINTFORMW 「If a weakling beats someone strong, then he was undeniably the strong one all along, right?」
+			PRINTFORMW 「So that's why this battle may never end.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Do you consider yourself strong?」
+			PRINTFORMW 「No, I don't mean in terms of raw strength, but in terms of position.」
+			PRINTFORMW 「We might become enemies at some point, you know?」
+		ELSE
+			;Seija is quoting "The Art Of War" here I think. I couldn't find full japanese translation with this exact line so I had to come up with my own interpretation
+			PRINTFORMW 「"It's not so easy to see the low by the high", huh...」
+			PRINTFORMW 「The point is, the weak are at disadvantage just by the nature of it.」
+			PRINTFORMW 「And, well, my job is to do something about it.」
+			PRINTFORMDW It doesn't feel like that's what the quote meant though...
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:6 == 0 ;added
+			PRINTFORMW 「I'm a lot better than you expected? Hah!」
+			PRINTFORMW 「Who are you to talk? You're always trying to get everyone to like you, aren'tcha?」
+			PRINTFORMW 「Ridiculous. You gotta accept the fact that not all people gonna readily accept you.」
+			PRINTFORMW 「Or what, is it your life's mission to get into everyone's pants?」
+		ELSEIF RAND:5 == 0
+			PRINTFORMW 「Your story sounds rather dicey.」
+			PRINTFORMW 「Yeaaah, I guess it wasn't all that engaging in the end.」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「Huuuh～」
+			PRINTFORMW 「Well, how about you tell me more about yourself? I wanna hear it.」
+			PRINTFORMW 「What, I just thought it would be a little interesting, that's all.」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「Yup, yup.」
+			PRINTFORMW 「I see. Tell me more. I'd like to hear the details.」
+			PRINTFORMW 「I gotta collect all kinds of information, you see.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hey, what are your plans for the future?」
+			PRINTFORMW 「Well, I kinda thought about keepin' you company when I got time.」
+			PRINTFORMW 「Doesn't sound too bad, right? Or, uh, not?」
+		ELSE
+			PRINTFORMW 「Uh huh, but who are you, anyway?」
+			PRINTFORMW 「Call it a hunch, but...」
+			PRINTFORMW 「You're actually pretty strong, aren'tcha?」
+		ENDIF
+	ELSE
+		IF RAND:6 == 0 ;added
+			PRINTFORMW 「Hangin' out with the likes of me, what a social butterfly you are, huh.」
+			PRINTFORMW 「That sort of thing speaks volumes about you, %K97_DUDE()%.」
+			PRINTFORMW 「Unfortunately for you I ain't so desperate, so you still gotta work hard.」
+		ELSEIF RAND:5 == 0
+			PRINTFORMW 「What?」
+			PRINTFORMW 「%SPLIT_G(@"It's boring talkin' to me, %K97_DUDE()%:You'd get bored talkin' with me")%.」
+			PRINTFORMW 「No point chatting up with pariahs, is there?」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「...」
+			PRINTFORMW 「%SPLIT_G("Ever been told that you suck at talking:Has anyone ever told you that you're not a good speaker")%?」
+			PRINTFORMW 「That's what I thought. You get the point.」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「...Why are you talking to me?」
+			PRINTFORMW 「My gut tells me you must be up to something.」
+			PRINTFORMW 「I've got a very keen hunch for that kind of stuff.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「You know, if you're gonna talk to people, you should get some more interesting topics.」
+			PRINTFORMW 「It's about basic common courtesy, for crying out loud...」
+		ELSE
+			PRINTFORMW 「You should be a little more careful, y'know, when you talk with others.」
+			PRINTFORMW 「I'm sayin' you should at least come up with something exciting to discuss for once.」
+		ENDIF
+	ENDIF
+	RETURN 0
+ENDIF
+RETURN 1
+;==================================================
+;301,お茶を淹れる
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_301
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_301_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_301_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193 == -1 ;added, bad reaction
+		PRINTFORMW 「Well that's real cordial of ya.」
+		PRINTFORMW 「Don't mind if I do!」
+		PRINTFORMW 「Gulp-gulp... Pfffttt!!!」
+		PRINTFORMDW Seija hastily spits the tea out before placing the cup down and wiping her mouth clean.
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORMW 「Awful. I don't know how other people can drink this.」
+			CASE 1
+				PRINTFORMW 「Ugh, gross. No, for real this time.」
+			CASE 2
+				PRINTFORMW 「Sheesh, just because I'm amanojaku doesn't mean you can dump your worst tea on me.」
+			CASE 3
+				PRINTFORMW 「What kind of tea is this? I'd rather drink piss...」
+		ENDSELECT
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...」
+			PRINTFORMW 「%SPLIT_G("Nasty:Terrible:Tasteless:Same old bad taste")% as %SPLIT_G("always:usual")%.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Yeah...」
+			PRINTFORMW 「.........」
+		ELSE
+			PRINTFORMW 「.........」
+			PRINTFORMW 「...Sip-sip...」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Yeah... Thanks...」
+			PRINTFORMW 「Fuu... %SPLIT_G("Tea... It's delicious...:Your tea... is pretty good...")%」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hmm... A tea, huh...」
+			PRINTFORMW 「Gulp... Thank you very much, it was a treat.」
+		ELSE
+			PRINTFORMW 「Gulp... Gulp... Mm...」
+			PRINTFORMW 「%CALLNAME:MASTER%, you're pretty good at making tea, seriously.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Gulp... Gulp...」
+			PRINTFORMW 「Haa... Mm... %SPLIT_G("Not too shabby:A fine taste")%.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Gulp... Mm...」
+			PRINTFORMW 「Yup, that's a very nice tea.」
+		ELSE
+			PRINTFORMW 「Mm... Fuu, fuu...」
+			PRINTFORMW 「Oh, this is so good actually.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Tea?」
+			PRINTFORMW 「...Sure, why not. I'll have it.」
+			PRINTFORMW 「I wouldn't exactly count on your skills, though.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%CALLNAME:MASTER%.」
+			PRINTFORMW 「I appreciate your efforts and all, but...」
+			PRINTFORMW 「Your tea sucks!」
+		ELSE
+			PRINTFORMW 「Right, tea, eh...?」
+			PRINTFORMW 「Do you enjoy serving shitty tea or somethin'?」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Gulp...」
+			PRINTFORMW 「Hm... This ain't so bad, actually.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Gulp-gulp...」
+			PRINTFORMW 「Thank you, it was great.」
+		ELSE
+			PRINTFORMW 「Mm... Oh, thanks, sorry to trouble ya with that.」
+			PRINTFORMW 「Sip-sip... Mhmm...」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Tea...?」
+			PRINTFORMW 「Don't mind if I do, I guess...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Tea...? If you're serving, then sure.」
+		ELSE
+			PRINTFORMW 「Mm... Tea, huh... That would be nice.」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...A tea? Yeah, I%SPLIT_G(" can use some refreshment:'ll have some")%.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「You didn't put anything weird in there, did ya?」
+		ELSE
+			PRINTFORMW 「Oh, thanks. Sorry to bother.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;302,スキンシップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_302
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_302_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_302_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193 == -1 ;bad reaction added
+		IF TALENT:恋慕
+			PRINTFORMW 「You just can't resist touching me, can you?」
+			PRINTFORMW 「At least do it when no one's looking, dummy.」
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「Hey, mind %SPLIT_G("the personal space:your distance")% will ya?」
+				CASE 1
+					PRINTFORMW 「...You have any idea who I am?」
+					PRINTFORMW 「Don't think you can just touch me willy-nilly, %K97_IDIOT()%!」
+				CASE 2
+					PRINTFORMW 「You really think you can make a move on me, Seija Kijin, proud amanojaku and future ruler of Gensokyo?!」
+			ENDSELECT
+		ENDIF
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...What do you want?」
+			PRINTFORMW 「Yikes, what a creep.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Listen, you.」
+			PRINTFORMW 「...Back off, will ya?」
+		ELSE
+			PRINTFORMW 「...%SPLIT_G("Don't you touch me:Hands off:Get your hands off me")%.」
+		ENDIF
+	;風呂場
+	ELSEIF BATHCHECK(CFLAG:MASTER:現在位置) && IN_HOME(CFLAG:MASTER:現在位置)
+		IF RAND:3 == 0
+			PRINTFORMW 「I owe you quite a favor, so lemme at least wash your back!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「What's the matter? I can't wash your back if you wiggle too much.」
+		ELSE
+			PRINTFORMW 「%PRINT_MALE("I've never washed a man's body before:I don't usually wash with others", MASTER)%, but it's a lot more fascinating than it seems.」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Mm... What's the matter? Wanna come rub my shoulders?」
+			PRINTFORMW 「Phew... You're pretty good.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「W-What are you doing all of a sudden...?」
+			PRINTFORMW 「%K97_STOP(1)%... it's tickling me!」
+		ELSE
+			PRINTFORMW 「Mm～ Man, your back is so wide.」
+			PRINTFORMW 「This feels okay actually when I think about it.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Mm...」
+			PRINTFORMDW Seija embraces %PARSE("you")% from behind.
+			PRINTFORMW 「Well, it's not too bad.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Ah... Wa...it...」
+			PRINTFORMW 「It's embarrassing when you start touching me all of a sudden... For real...」
+		ELSE
+			PRINTFORMW 「...Mmm...」
+			PRINTFORMW 「I guess I might go for an ear cleaning at least, is that alright with you %CALLNAME:MASTER%?」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Mm... Hey...」
+			PRINTFORMW 「Quit groping me so much, you hear?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%MOAN()%... Mm...」
+			PRINTFORMW 「I think I'm supposed to say no to these things... Well, whatever...」
+		ELSE
+			PRINTFORMW 「Here-here.」
+			PRINTFORMDW Seija is poking %PARSE("you")% with the elbow.
+			PRINTFORMW 「Heya, aren't you getting a bit too flabby on your belly?」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「What are you touching me all of a sudden for?」
+			PRINTFORMW 「Eugh, ya creep...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%CALLNAME:MASTER%!」
+			PRINTFORMW 「...No, it's nothing.」
+		ELSE
+			PRINTFORMW 「What? You want some hugs?」
+			PRINTFORMDW Seija hugs you from behind.
+			PRINTFORMW 「Mm... But don't think I'm doing it for your sake.」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Mm... Your touch feels so warm.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「How about some shoulder massage?」
+			PRINTFORMW 「C'mon, stay still, I can't rub you when you keep moving.」
+		ELSE
+			PRINTFORMW 「...Your body is a lot tougher than I thought.」
+			PRINTFORMW 「You've got more muscles than it looks.」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「W-Why are you so clingy all of a sudden...」
+			PRINTFORMW 「%K97_STOP(1)%... It's gross...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hm... %K97_WHAT(1)%?」
+		ELSE
+			PRINTFORMW 「You're rather spoiled, aren't you...」
+			PRINTFORMW 「%K97_WHATEV(1)%.」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...You better stop touching me so casually.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Don't do anything stupid, got it?」
+		ELSE
+			PRINTFORMW 「Are you always so clingy with people?」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;303,謝る
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_303
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_303_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_303_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SELECTCASE TFLAG:193
+	CASE 0,1,2
+		IF CFLAG:1304 == 1 && TALENT:恋人
+			PRINTFORMW 「Huh?」
+			PRINTFORMW 「Yeah, well, if you want me to forgive you, that's fine.」
+			PRINTFORMW 「It's my fault too for being so immature about it, too.」
+			PRINTFORMW 「There's no way I would ever hate my pal, right?」
+			PRINTFORMW 「So here, I apologize as well. I didn't mean to be so stubborn.」
+			PRINTFORMW 「Just try to refrain from getting on my nerves too much, a'ight?」
+		ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+			PRINTFORMW 「Huh...」
+			PRINTFORMW 「Alright, I forgive you.」
+			PRINTFORMW 「It can happen to anyone once in a while.」
+			PRINTFORMW 「It's just...」
+			PRINTFORMW 「I don't want to grow to hate you.」
+			PRINTFORMW 「So please, try to behave yourself and don't do anything weird.」
+			PRINTFORMW 「...I'm asking you.」
+		ELSEIF TALENT:恋人
+			PRINTFORMW 「You want my forgiveness, huh...」
+			PRINTFORMW 「Well, I don't really mind though.」
+			PRINTFORMW 「This all happened because you do things that piss people off in the first place.」
+			PRINTFORMW 「So y'know, I was hoping you'd feel a little remorse.」
+		ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+			PRINTFORMW 「O-Okay, okay.」
+			PRINTFORMW 「I'll let that slide this time.」
+			PRINTFORMW 「Just... Don't do anything that might offend people again.」
+			PRINTFORMW 「...Do you understand what I'm asking?」
+			PRINTFORMW 「Don't think you can fool people with insincere apology.」
+		ELSEIF CFLAG:1302 == 1 && TALENT:恋慕
+			PRINTFORMW 「Hm... Well...」
+			PRINTFORMW 「We both already know that you're one hell of a perv, so...」
+			PRINTFORMW 「Okay, I'll forgive you.」
+			PRINTFORMW 「Just don't do that again.」
+		ELSEIF CFLAG:1302 == 1 && TALENT:思慕
+			PRINTFORMW 「I may forgive you this time, but...」
+			PRINTFORMW 「Don't say I didn't warn ya next time.」
+			PRINTFORMW 「Be ready for that, you %K97_PANTY()%.」
+		ELSEIF CFLAG:1302 == 1
+			PRINTFORMW 「Well, I don't see why not.」
+			PRINTFORMW 「Try that again and you'll be sorry, yeah?」
+			PRINTFORMW 「You hear me, %K97_PANTY()%?」
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「I don't mind forgiving you.」
+			PRINTFORMW 「But are you really sorry for what you did?」
+			PRINTFORMW 「It seems to me that you're up to something again.」
+			PRINTFORMW 「Oh well, I guess that's good enough for now.」
+			PRINTFORMW 「I'll forgive you, but you better promise to learn to do better.」
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「Well, I guess I'll forgive you this time.」
+			PRINTFORMW 「But I wonder how it will go if you make me angry next time, or the time after that.」
+			PRINTFORMW 「Bear that in mind. Got it?」
+		ELSE
+			PRINTFORMW 「...Yeah, sure.」
+			PRINTFORMW 「I'm not the type of person to hold a grudge to that extent after all.」
+			PRINTFORMW 「I s'ppose I'll forgive you this time.」
+		ENDIF
+	CASEELSE
+		IF CFLAG:1304 == 1 && TALENT:恋人
+			PRINTFORMW 「...Do you really want me to forgive you?」
+			PRINTFORMW 「No can do.」
+			PRINTFORMW 「You better reflect on it some more, pal.」
+		ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+			PRINTFORMW 「Hmm...」
+			PRINTFORMW 「I'm not going to forgive you.」
+			PRINTFORMW 「Even if I forgive you, you'll just do it all over again, right?」
+			PRINTFORMW 「...So reflect on it for a bit first.」
+		ELSEIF TALENT:恋人
+			PRINTFORMW 「Weeeell, if you insist so much... Though I can't be so sure if you really mean it, y'know?」
+			PRINTFORMW 「For all I know, these might be just mere words, and I feel like they are.」
+			PRINTFORMW 「I'm not a fool either.」
+			PRINTFORMW 「So I won't forgive you for a while. That's all.」
+		ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+			PRINTFORMW 「Huh? Why do I have to forgive you?」
+			PRINTFORMW 「You gotta be kiddin' me, %K97_DUDE()%.」
+			PRINTFORMW 「I don't care even if you keep groveling and saying just how you're sorry, okay?」
+			PRINTFORMW 「You're the one who screwed up here. And it's up to me whether I will grant you forgiveness or not.」
+			PRINTFORMW 「So no matter what you say, I don't intend to forgive you. Get lost!」
+		ELSEIF CFLAG:1302 == 1 && TALENT:恋慕
+			PRINTFORMW 「Y'know, when I think about it, there's no reason to forgive you at all.」
+			PRINTFORMW 「Hear that, %K97_PANTY()%?」
+			PRINTFORMW 「Well, even leaving aside the obvious part of rebelling against someone who's obviously a threat to all women around...」
+			PRINTFORMW 「I'm not gonna let you get away with being such a pervert.」
+			PRINTFORMW 「Although if you still insist, I s'pose... I might give it some extra thought.」
+		ELSEIF CFLAG:1302 == 1 && TALENT:思慕
+			PRINTFORMW 「...Are you stupid or something?」
+			PRINTFORMW 「What makes you think you should be forgiven?」
+			PRINTFORMW 「So much arrogance for a mere %K97_PANTY()%, sheesh.」
+		ELSEIF CFLAG:1302 == 1
+			PRINTFORMW 「Say whaaat?!」
+			PRINTFORMW 「No no no, hell no!」
+			PRINTFORMW 「First off, the fact that it was %ARTICLE(K97_PANTY())% like you who angered me already gives me no reason to forgive you.」
+			PRINTFORMW 「...Use your head a little, will ya?」
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「Ha-ha-ha! That's quite amusing to hear it from you.」
+			PRINTFORMW 「Never thought I'd see you begging me for forgiveness like this.」
+			PRINTFORMW 「But remember, it is my decision whether I forgive you or not.」
+			PRINTFORMW 「And right now... I don't feel like it.」
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「So you think you'd be forgiven the moment you apologize? Who taught you that?」
+			PRINTFORMW 「No, I'm still mad at you.」
+		ELSE
+			PRINTFORMW 「Huh?」
+			PRINTFORMW 「Nope, ain't forgivin' you, go away.」
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;304,仕事を手伝う
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_304
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_304_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_304_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You try to help Seija out with her work during time stop.
+		PRINTFORMDW But then you realize that the audience are frozen too!
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...To hell with you.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「You'd do whatever you want anyway.」
+		ELSE
+			PRINTFORMW 「.........」
+		ENDIF
+	ELSEIF DAY % 7 == 1
+		IF RAND:3 == 0
+			PRINTFORMW 「Oh yeah, I'd appreciate it if you could help me.」
+			PRINTFORMW 「While I'm talking, you can throw in a question or two, that'll work.」
+			
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Sure, help me out if you have some time.」
+			PRINTFORMW 「Just act as my hired applauder, nod and support my point and that should do it.」
+		ELSE
+			PRINTFORMW 「My work?」
+			PRINTFORMW 「Sure, if you're up for it then go over there and start %SPLIT_G("hooting:jeering")%.」
+		ENDIF
+	ELSEIF DAY % 7 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「Hmm? In that case, hand out the lunches over there.」
+			PRINTFORMW 「Well, it's a common trick... Don't eat it yourself though, got it?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「How about you start attracting attention, like cheering or %SPLIT_G("hollering:hooting")%.」
+			PRINTFORMW 「The key to this kind of thing is a good audience, you know what I mean?」
+		ELSE
+			PRINTFORMW 「Work? Here, start distributing these flyers.」
+			PRINTFORMW 「I spent all night making these for publicity's sake, I'm very proud of 'em. I'm sure they'll work out great.」
+		ENDIF
+;	ELSEIF CFLAG:300 == 九天の滝
+;		IF RAND:3 == 0
+;			PRINTFORMW 「おお、じゃあそこの弁当配ってくれよ」
+;			PRINTFORMW 「夜警の皆様方も喜ぶだろ、手作りなんだぞ」
+;		ELSEIF RAND:2 == 0
+;			PRINTFORMW 「じゃあ野次やってくれよ」
+;			PRINTFORMW 「こういうのは観客が盛り上がらんとな」
+;		ELSE
+;			PRINTFORMW 「んじゃあビラ配ってくれよ」
+;			PRINTFORMW 「こういうののテンプレっちゃテンプレだがやらん理由もないしな」
+;		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;305,膝枕してもらう
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_305
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_305_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_305_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...Just stay still.」
+			PRINTFORMW 「It gets creepy otherwise.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Look here...」
+			PRINTFORMW 「...Can't you see when someone's pissed off at you?」
+		ELSE
+			PRINTFORMW 「...The hell is with you?」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hm... What is it? A lap pillow?」
+			PRINTFORMW 「I don't mind, but... Don't get any funny ideas.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「A lap pillow?」
+			PRINTFORMW 「Here ya go, suit yourself.」
+		ELSE
+			PRINTFORMW 「If that's what you want I'll do it.」
+			PRINTFORMW 「I just don't get it, what's so good about it?」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hm... Lap pillow?」
+			PRINTFORMDW Seija pats %HIS_HER(TARGET)% lap repeatedly for you to rest your head on.
+			PRINTFORMW 「...You're such a cutie.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I don't mind giving you a lap pillow...」
+			PRINTFORMW 「...Just don't do anything weird, okay?」
+		ELSE
+			PRINTFORMW 「...Mmm...」
+			PRINTFORMW 「%CALLNAME:MASTER%, you wanna get a lap pillow from me, right?」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hoo, a lap pillow?」
+			PRINTFORMW 「Sure, will do.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「A lap pillow, eh...」
+			PRINTFORMW 「Okay, but try not to move.」
+		ELSE
+			PRINTFORMW 「A lap pillow?」
+			PRINTFORMDW Seija pats her lap invitingly.
+			PRINTFORMW 「Here ya go, enjoy.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Huh? Lap pillow?」
+			PRINTFORMW 「...%K97_WHATEV(1)%.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Lap pillow? That's kinda...」
+			PRINTFORMW 「...No, actually... Just go ahead, do as you like.」
+		ELSE
+			PRINTFORMW 「A lap pillow...?」
+			PRINTFORMDW With that, Seija pushes your head into her lap.
+			PRINTFORMW 「Well, how's that? Are you satisfied now?」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「A lap pillow? Alright...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Sure, I can afford giving you a lap pillow at least.」
+			PRINTFORMW 「Here, how does that feel?」
+		ELSE
+			PRINTFORMW 「...A lap pillow, huh...」
+			PRINTFORMW 「Nah, it's not like I hate it or anything... More like embarrassed... Well, whatever, here goes nothing.」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF !RAND:4
+			PRINTFORMW 「...My lap is a little skinny though, but if you're okay with that then be my guest.」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「W-What's that, a lap pillow...?」
+			PRINTFORMW 「Yeah, sure... Just keep still, okay?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Lap pillow you say... Okay, sure...」
+		ELSE
+			PRINTFORMW 「Okay, here's your lap pillow.」
+			PRINTFORMW 「You must be really liking it, so enjoy while you can.」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...%K97_WHATEV(1)%!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...My lap is free at the moment, so I guess it's whatever.」
+		ELSE
+			PRINTFORMW 「A lap pillow would be... acceptable, if you really want it.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;306,お腹を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_306
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_306_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_306_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:TARGET:妊娠
+		IF FLAG:時間停止
+			PRINTFORMDW You %FSYN("rub")% Seija's %SPLIT_G("swollen:pregnant:big")% %FSYN("belly")% during time stop.
+		ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+			PRINTFORMW 「...%SPLIT_G(@"You better get your shit together, %K97_DUDE()%:How about you start behaving yourself for once")%.」
+			PRINTFORMW 「You know exactly what I mean, right?」
+		ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+			PRINTFORMW 「Hopefully the baby... will be born with sound health.」
+			PRINTFORMW 「...You think so too, right?」
+		ELSEIF TALENT:恋人
+			PRINTFORMW 「Oh...」
+			PRINTFORMW 「It just... kicked my belly.」
+			PRINTFORMW 「Did you feel it? Just now...」
+		ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+			PRINTFORMW 「.........」
+			PRINTFORMW 「Can you feel it? This child's heartbeat...」
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「Ah...」
+			PRINTFORMW 「...You like kids too?」
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「...I don't really mind, but...」
+			PRINTFORMW 「Just be careful...」
+		ELSE
+			PRINTFORMW 「...Sure...」
+			PRINTFORMW 「Do it... gently...」
+		ENDIF
+	ELSEIF FLAG:時間停止
+		PRINTFORMDW You %FSYN("rub")% Seija's %SPLIT_G("skinny:thin:rigid:flat")% %FSYN("belly")% during time stop.
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「...Are you molesting me?」
+		PRINTFORMW 「Behave yourself already.」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「...What got into you all of a sudden?」
+		PRINTFORMW 「Well, it's not a big deal though.」
+		PRINTFORMW 「Nah, I'm telling you it's fine, keep going.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Ah...」
+		PRINTFORMW 「What are you doing so suddenly...」
+		PRINTFORMW 「...I'm not... Getting fat, right? Right?」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「%K97_WHAT(1)%?」
+		PRINTFORMW 「Nah, it's not like it's something outlandish or anything, but...」
+		PRINTFORMW 「Just don't startle me like that.」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「Ogh?!」
+		PRINTFORMW 「W-What are you touching a lady's belly for so suddenly...」
+		PRINTFORMW 「You must be a pervert! Yep, that's exactly what a pervert would do!」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「%K97_WHAT(1)%? Why rub my belly out of nowhere?」
+		PRINTFORMW 「I'm not packing much muscle or fat in there, or so I think...」
+		PRINTFORMW 「Well, I'm a woman too, so you know.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「?」
+		PRINTFORMW 「Too bad, but I'm not planning to get fat any time soon.」
+	ELSE
+		PRINTFORMW 「What's up with you?」
+		PRINTFORMW 「Touching me so suddenly, what a freak.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;307,頬をつまむ
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_307
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_307_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_307_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You pinch Seija's cheeks during time stop.
+		PRINTFORMDW You find it quite enjoyable to the touch as they were surprisingly pinchable and puffy.
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「...Hm?」
+		PRINTFORMW 「%K97_WHAT(1)%?」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「...U%SLUR("u")%h～」
+		PRINTFORMW 「What's up with you? You think it's funny or something?」
+		PRINTFORMW 「Don't go around hurtin' other's delicate parts too much.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Mm... Huh?」
+		PRINTFORMW 「What? %K97_WHAT(1)%?」
+		PRINTFORMW 「Don't pull too hard, you're hurting me.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Unh...」
+		PRINTFORMW 「Do you really find my face that interesting?」
+		PRINTFORMW 「Just don't bully me too much...」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「%GROAN()%?!」
+		PRINTFORMW 「Ouch ouch ouch...」
+		PRINTFORMW 「The hell are you doing, you %K97_IDIOT_RUDE()%...?!」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Funyah?!」
+		PRINTFORMW 「...The pain!!」
+		PRINTFORMW 「Listen... Go easy on that stuff, %K97_DUDE()%, seriously...」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Hoeh?」
+		PRINTFORMW 「Iht hhurts hurhts hurths shtoop iittt...!」
+	ELSE
+		PRINTFORMW 「Wha?」
+		PRINTFORMW 「Oi, what is wrong with you?!」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;308,頬をつつく
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_308
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_308_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_308_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You poke Seija's cheeks during time stop, enjoying the feel of her soft pale skin.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORMW 「...Mmm... Zzz...」
+		PRINTFORMDW Seija is sleeping soundly.
+		PRINTFORMDW Her cheeks were as soft and elastic as jelly.
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「.........」
+		PRINTFORMDW Seija stares at you with a pout.
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「...Yup?」
+		PRINTFORMW 「What, %K97_WHAT()%?」
+		PRINTFORMW 「Don't poke me so much, c'mon, hey, ouch, ow ow ow...」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Hm?」
+		PRINTFORMW 「%K97_WHAT(1)%?」
+		PRINTFORMW 「...It's fine if you keep going, I just don't get what's so funny about it.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Hm... You think it's funny when you poke me like that?」
+		PRINTFORMW 「Well, if that's how it is, then sure, go at it, I don't care.」
+		PRINTFORMW 「I don't think it's all that enjoyable though.」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「%GROAN()%?!」
+		PRINTFORMW 「Ouch...」
+		PRINTFORMW 「What was that for... Man...」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Fugyah?!」
+		PRINTFORMW 「...You're %SPLIT_G("poking me like you wanna jam a finger in there:really poking me with some serious vigor")%...」
+		PRINTFORMW 「Well, I don't mind as long as you're having fun I guess.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Yeah?」
+		PRINTFORMW 「What? %K97_WHAT(1)%?」
+	ELSE
+		PRINTFORMW 「Hm?」
+		PRINTFORMW 「Oi, %K97_WHAT()%?」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;309,頭を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_309
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_309_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_309_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You stroke Seija's hair during time stop, enjoying the feel of her cuticles.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORMW 「...Hrgh... Zzz...」
+		PRINTFORMDW Seija is sleeping soundly.
+		PRINTFORMDW Her hair looks surprisingly well groomed.
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「.........」
+		PRINTFORMW 「It's no use trying to put me in a good mood like that.」
+	ELSEIF TALENT:機嫌 < 0 ;added
+		IF TALENT:恋慕
+			PRINTFORMW 「Hey %CALLNAME:MASTER%, I have this horrible splitting headache right now...」
+			PRINTFORMW 「I'd like a little head rub if you don't mind. Could you please?」
+		ELSE
+			PRINTFORMW 「This headache is killing me... Hey, can you rub my head a little?」
+		ENDIF
+		PRINTFORMW 「Aah, that feels a lot better. Thanks...」
+			
+		TALENT:機嫌 = TALENT:恋慕 ? 1 # 0
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「...Whoaaahh?!」
+		PRINTFORMW 「What, %K97_WHAT()%?!」
+		PRINTFORMW 「Aagh, geez... My hair's all %SPLIT_G("shaggy:over the place")% now...」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Hm?」
+		PRINTFORMW 「...」
+		PRINTFORMW 「...Keep going.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「What the heck are you doing all of a sudden?」
+		PRINTFORMW 「Have I done something to deserve this?」
+		PRINTFORMW 「...It feels good though, so you may continue.」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「Hnnn?!」
+		PRINTFORMW 「W-Why would you touch my hair of all places... It a mess now, thanks to you!」
+		PRINTFORMW 「I... I don't mind you doing that though, just... Fix it back when you're done.」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Unh?!」
+		PRINTFORMW 「...Just what are you stroking my head for out of the blue...」
+		PRINTFORMW 「It's... fine, though...」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Mm～...」
+		PRINTFORMW 「What? %K97_WHAT(1)%?」
+	ELSE
+		PRINTFORMW 「?」
+		PRINTFORMW 「Hey, %K97_WHAT()%?」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;310,尻を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_310
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_310_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_310_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You caress Seija's butt during time stop, enjoying the feel of her peachy curves.
+	ELSEIF CFLAG:睡眠
+	ELSEIF CFLAG:うふふ == 2
+		CALL M_KOJO_MESSAGE_COM_K97_5_1
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...Listen, you.」
+			PRINTFORMW 「%SPLIT_G("Tone it down with the harassment, y'hear?:Molesting, too, should stay within bounds, you know.:Don't be such a pervert, sheesh.")%」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「.........!」
+			PRINTFORMDW Seija glares at you angrily.
+		ELSE
+			PRINTFORMW 「...Just drop dead already.」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN(,,2)%...」
+			PRINTFORMW 「You like doing this or something?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hyahn?!」
+			PRINTFORMW 「%CAPITALIZE(FSYN("geez"))%... %CAPITALIZE(FSYN("rub"))% it all you want, though.」
+		ELSE
+			PRINTFORMW 「%FSYN("hii")%...!」
+			PRINTFORMW 「Oh, you...」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%...! That place...!!!」
+			PRINTFORMDW Seija fidgets and shifts uncomfortably, but nevertheless goes along without resistance.
+			PRINTFORMW 「...I guess your preferences aren't all that bad...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%MOAN()%...」
+			PRINTFORMW 「...Go ahead and %FSYN("rub")% me all you want, okay?」
+		ELSE
+			PRINTFORMW 「...%MOAN(,,2,"dot")%...」
+			PRINTFORMW 「%SPLIT_G("You like what you touch:Are you into that kind of thing")%, %CALLNAME:MASTER%?」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%?!」
+			PRINTFORMW 「Oh... %K97_WHATEV(1)%...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%MOAN()%...! %FSYN("hii")%...!」
+			PRINTFORMW 「...Do as you like...」
+		ELSE
+			PRINTFORMW 「%MOAN()%?!」
+			PRINTFORMDW Seija seems surprised, but she readily savors the feel of your palm on her butt.
+			PRINTFORMW 「Well, have it your way.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Huh? Eh? Hey...」
+			PRINTFORMW 「Listen %K97_IDIOT()%, don't %SPLIT_G("you dare touch my butt:go around touching other's butts")%!!!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...?!」
+			PRINTFORMW 「Oi, %SPLIT_G("what the hell are you doing touching my ass?!:get your hands off my butt!:watch it, dammit!!!")%」
+		ELSE
+			PRINTFORMW 「You...!」
+			PRINTFORMDW Despite the fierce reaction, Seija stays still and allows you to fondle her butt.
+			PRINTFORMW 「%SPLIT_G(@"So you have these kinds of interests, huh %K97_DUDE()%?:So this is how you spend your free time, huh.")%」
+		ENDIF
+	ELSEIF CFLAG:1302 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%... Oh you...」
+			PRINTFORMW 「%K97_WHAT(1)%? You want my panties or something?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...?!」
+			PRINTFORMW 「Wanna feel the warmth of a girl's bum, huh %K97_DUDE()%?」
+		ELSE
+			PRINTFORMW 「Listen...」
+			PRINTFORMW 「Agh, whatever... I guess it's not that big of a deal...」
+		ENDIF
+	ELSEIF CFLAG:1302 == 1 && TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「%K97_WHAT(1)%...」
+			PRINTFORMW 「Is that how you get your panties, huh?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Sigh...」
+			PRINTFORMW 「Dunno if you think this is doing you any favors, being %ARTICLE(K97_PANTY())% already...」
+		ELSE
+			PRINTFORMW 「Seriously, %K97_DUDE()%...」
+			PRINTFORMW 「Panty stealing is one thing, but... groping too now? Sheesh...」
+		ENDIF
+	ELSEIF CFLAG:1302 == 1
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%... Looks like I'm getting molested by %K97_PANTY()%, huh...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「?!」
+			PRINTFORMW 「So we now arrived at molestation, eh...」
+		ELSE
+			PRINTFORMW 「...」
+			PRINTFORMW 「...Honestly, I don't have a single clue what's going on in a pervert's head.」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%...! Look, you...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%FSYN("hii")%?!」
+			PRINTFORMW 「%CAPITALIZE(FSYN("geez"))%... You're into that too, huh... But of course you would be...」
+		ELSE
+			PRINTFORMW 「...You really like touching me through my skirt that much?」
+			PRINTFORMW 「...%K97_WHATEV(1)%...」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「W-Wuh?! What the--?!」
+			PRINTFORMW 「...Sheesh, it's you again. %SPLIT_G("Did you enjoy touching my ass:Is it that much fun groping my ass")%?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...C'mon, this is too embarrassing... I don't think I like this too much...」
+		ELSE
+			PRINTFORMW 「Who said you can do as you please with my ass--... %FSYN("hii")%?!」
+			PRINTFORMW 「You really are such a... %CAPITALIZE(FSYN("geez"))%... %K97_IDIOT()%...」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...The hell are ya doing?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...%K97_STOP(1)%... You %K97_IDIOT()%...」
+		ELSE
+			PRINTFORMW 「If it's my ass that you want... I don't see why not...」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;311,抱き付く
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_311
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_311_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_311_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You cling to Seija in an embrace during time stop, enjoying the slenderness of her body.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORMW 「...Kuhh... Zzz... Suu... Khaa... Piii...」
+		PRINTFORMDW Seija keeps sleeping soundly even as you hug her.
+		PRINTFORMDW Her body felt a little thin, showing the effects of her life on the run.
+	ELSEIF CFLAG:うふふ == 2
+		PRINTFORMW 「I guess I'll never get used to doing these things, even if you help me out like this.」
+	ELSEIF TFLAG:193 == -1 ;bad reaction, added
+		SELECTCASE RAND:4
+			CASE 3 ;new
+				PRINTFORMW 「What are you pressing yourself so close against me for?」
+				PRINTFORMW 「It's just an excuse for you to grope me, isn't it?!」
+				PRINTFORMW 「Haah?! I can't hear you! Speak up, %K97_IDIOT()%!」
+			CASE 2 ;new
+				PRINTFORMW 「...Don't just act all familiar with me, %K97_IDIOT()%.」
+				PRINTFORMW 「Or do you wanna kiss your hand goodbye?」
+				PRINTFORMDW Seija shows a dangerous grin with %HIS_HER(TARGET)% sharp teeth glittering.
+			CASE 1
+				PRINTFORMW 「...What do you want?」
+				PRINTFORMW 「Yikes, what a creep.」
+			CASEELSE
+				PRINTFORMW 「%SPLIT_G("...You better stop touching me so casually.:Don't do anything stupid.:Are you always so clingy with people?")%」
+		ENDSELECT
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「.........?!」
+			PRINTFORMW 「Get %SPLIT_G("your filthy hands off of me:off me")%, %K97_IDIOT_RUDE()%!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Don't think you can get away with this...」
+			PRINTFORMDW Seija glares at you angrily.
+		ELSE
+			PRINTFORMW 「...I'm not in the mood for this.」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hnn... %CAPITALIZE(FSYN("geez"))%...」
+			PRINTFORMW 「You're... pretty warm.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Ouh?!」
+			PRINTFORMW 「%CAPITALIZE(FSYN("geez"))%... Feeling lonely? I don't mind giving you a hug if %SPLIT_G("that's alright with ya:you're okay with me")%.」
+		ELSE
+			PRINTFORMW 「What's with the sudden hug?」
+			PRINTFORMW 「Well, I'll go along if you want.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「?!」
+			PRINTFORMDW Seija fidgets from the hug, but then wraps her arms around you.
+			PRINTFORMW 「...Love ya.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Mmm...」
+			PRINTFORMW 「...You like being all lovey dovey, huh? Then I'll give you some more.」
+		ELSE
+			PRINTFORMW 「Oh?」
+			PRINTFORMW 「Turns out you can get lonely too, huh %CALLNAME:MASTER%?」
+			PRINTFORMW 「Sure, have at it.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hnn?!」
+			PRINTFORMW 「Ah... %K97_WHATEV(1)%.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Ahh! %FSYN("hii")%...!」
+			PRINTFORMW 「...%K97_WHATEV(1)%...」
+		ELSE
+			PRINTFORMW 「Hn?!」
+			PRINTFORMDW Seija seems surprised, but she readily savors the feel of your hands exploring her body.
+			PRINTFORMW 「%K97_WHATEV(1)%.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Oi! Oi...! Quit... hugging me!」
+			PRINTFORMW 「...Sheesh... Looks like I ain't got no choice...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...?!」
+			PRINTFORMW 「Get away from me, %K97_IDIOT()%!」
+		ELSE
+			PRINTFORMW 「Oi! What are you doing hugging me all of a sudden..」
+			PRINTFORMDW Seija gets all timid from the hug, but then wraps her arms around you.
+			PRINTFORMW 「Just this once...」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Ah...! Look... Don't just hug me all of a sudden...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「You like this kind of thing, hmm?」
+			PRINTFORMW 「I mean, I'm not that different... Nah, never mind, forget it.」
+		ELSE
+			PRINTFORMW 「...Don't hug me out of the blue...」
+			PRINTFORMW 「...Well... I guess it's fine...」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Wha--...」
+			PRINTFORMW 「Hey... Do you... have a thing for hugging people...?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...This sure making me blush... For real.」
+		ELSE
+			PRINTFORMW 「?!」
+			PRINTFORMW 「Listen, you... %CAPITALIZE(FSYN("geez"))%... %K97_WHATEV(1)%...」
+		ENDIF
+	ELSE
+		;added
+		IF RAND:4 == 0
+			PRINTFORMW 「Hey, what the--」
+			PRINTFORMW 「C'mon, get off me, %K97_IDIOT()%...」
+		;added
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「That's the lamest hug ever...」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「...What's with the sudden...?!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...It's making me sweat by the way...」
+		ELSE
+			PRINTFORMW 「...Are you sure you took a bath recently?」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;312,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_312
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_312_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_312_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You kiss Seija during time stop, enjoying the soft touch of her lips.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORMW 「...Kuhh... Zzz... Suu... %FSYN("lips_muffle")%...」
+		PRINTFORMDW Seija is sleeping soundly.
+		PRINTFORMDW Her lips felt so very soft.
+	ELSEIF CFLAG:うふふ == 2
+		CALL M_KOJO_MESSAGE_COM_K97_20_1
+	ELSEIF TFLAG:193 == 99 ;added
+		IF RAND:2
+			PRINTFORMW 「Nuh-uh, not a chance.」
+			PRINTFORMW 「Now beat it before you get hurt. I'm serious.」
+		ELSE
+			PRINTFORMW 「%CALLNAME:MASTER%... Have you looked at yourself in the mirror lately?」
+			PRINTFORMW 「You can't seriously be thinking you can kiss a girl while looking like that.」
+		ENDIF
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...%FSYN("lips_muffle")%?!」
+			PRINTFORMW 「...Is this how you get girls to cheer up?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「.........!」
+			PRINTFORMDW Seija glares at you angrily.
+		ELSE
+			PRINTFORMW 「...Just die already.」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%RANDLIPS(, "kiss")%...」
+			PRINTFORMW 「What's that about? %SPLIT_G("You sure you just wanna kiss me:Just a kiss:Is the kiss alone enough for ya")%?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「You wanna kiss? Fine by me.」
+			PRINTFORMW 「%FSYN("lips_muffle")%... Is this... alright?」
+		ELSE
+			PRINTFORMW 「%SPLIT_G(@"%K97_WHAT(1)%:Hey, what")%--... %FSYN("lips_muffle")%?!」
+			PRINTFORMW 「%FSYN("lips_muffle")%... %FSYN("lips_over")%... I think... we gotta at least set the mood for this kind of thing first.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%FSYN("lips_muffle")%?!」
+			PRINTFORMDW Seija seems a little surprised when you press your lips against hers, but then wraps her arms around you.
+			PRINTFORMW 「...Let's just... stay like this for a bit...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%FSYN("lips_muffle")%... %RANDKISS("kiss")%...」
+			PRINTFORMW 「...This is kinda sweet, in a lot of ways.」
+		ELSE
+			PRINTFORMW 「Ooh?」
+			PRINTFORMW 「Yeah, I gotcha. Close... your eyes.」
+			PRINTFORMW 「...%FSYN("lips_muffle")%...」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%FSYN("lips_muffle")%?!」
+			PRINTFORMW 「%RANDLIPS(, "kiss")%...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%RANDLIPS(, "kiss")%...!」
+			PRINTFORMW 「...%SPLIT_G("Did you enjoy that:Is that what you wanted")%?」
+		ELSE
+			PRINTFORMW 「%FSYN("lips_muffle")%?!」
+			PRINTFORMW 「...%FSYN("lips_over")%?! C'mon, quit doing it out of the blue...」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「%FSYN("lips_muffle")%...?!」
+			PRINTFORMW 「...You... %PRINT_MALE("son of a... bitch:stupid... slut", MASTER)%!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...?!」
+			PRINTFORMW 「.........」
+			PRINTFORMW 「%FSYN("lips_over")%...! Too long, you %K97_IDIOT()%!」
+		ELSE
+			PRINTFORMW 「Oi! %K97_WHAT(1)%--... %FSYN("lips_muffle")%?!」
+			PRINTFORMW 「.........」
+			PRINTFORMW 「%FSYN("lips_muffle")%... Ah... %SPLIT_G("Is that it:You done:Is it over yet")%?」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「!」
+			PRINTFORMDW Seija obediently surrenders herself as you take her lips.
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Just... make sure you keep those eyes closed...」
+			PRINTFORMW 「%RANDLIPS(, "kiss")%...」
+		ELSE
+			PRINTFORMW 「...I hear ya, just stay still then...」
+			PRINTFORMW 「...And %SPLIT_G("don't even think about shoving your tongue in:keep the tongue stuff out of this")%, got it?」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Wha--...」
+			PRINTFORMW 「You seriously wanna... Right here? %FSYN("lips_muffle")%...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「......%FSYN("lips_muffle")%...」
+		ELSE
+			PRINTFORMW 「?!」
+			PRINTFORMW 「...%FSYN("lips_muffle")%...」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...%FSYN("lips_muffle")%?!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...It's... %SPLIT_G("fine:okay")%... I guess.」
+		ELSE
+			PRINTFORMW 「...Don't think %SPLIT_G("you'll get away with it:it's free of charge:you can just walk away after this")%...」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;313,胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_313
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_313_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_313_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You %FSYN("rub")% Seija's %FSYN("chest:non",, TARGET)% during time stop, enjoying how puffy they are.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORMW 「...Suu... Zzz... %MOAN(,,2,"dot")%...」
+		PRINTFORMDW Seija is sleeping soundly.
+		PRINTFORMDW Her %FSYN("chest:non",, TARGET)% felt so very soft.
+	ELSEIF CFLAG:うふふ == 2
+		CALL M_KOJO_MESSAGE_COM_K97_6_1
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...You...!」
+			PRINTFORMW 「What was that for all of a sudden, sheesh...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...I really hope you'd just stop breathing, seriously.」
+			PRINTFORMDW Seija glares at you angrily.
+		ELSE
+			PRINTFORMW 「...You... frigging... %K97_PERV()%!」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%... Oi...」
+			PRINTFORMW 「I don't really mind, but is this what gets you going?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Touching my %FSYN("chest")% like this...」
+			PRINTFORMW 「%K97_WHATEV(1)%...」
+		ELSE
+			PRINTFORMW 「%K97_WHAT(1)%--... %MOAN()%?!」
+			PRINTFORMW 「%MOAN(,,2,"dot")%... %CAPITALIZE(FSYN("geez"))%...」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%?!」
+			PRINTFORMW 「...It's not like you can't... but...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%MOAN(,,2,"dot")%...」
+			PRINTFORMW 「...Be nice about it, please.」
+		ELSE
+			PRINTFORMW 「Ooh?」
+			PRINTFORMW 「...%MOAN()%... You having fun?」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%?!」
+			PRINTFORMW 「W-Why... you...!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%MOAN()%! Ulp...!」
+			PRINTFORMW 「...You little...!」
+		ELSE
+			PRINTFORMW 「Nghaa?!」
+			PRINTFORMW 「...Without a warning, too...」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「...%MOAN()%...?!」
+			PRINTFORMW 「...You... piece of shit!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...?!」
+			PRINTFORMW 「...%K97_PERV(1)%!」
+		ELSE
+			PRINTFORMW 「Oi! %MOAN()%...!」
+			PRINTFORMW 「%MOAN(,,2,"dot")%... Why you...」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「...%MOAN()%...」
+			PRINTFORMW 「%MOAN()%...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「My %FSYN("chest")%...」
+			PRINTFORMW 「%MOAN(,,2,"dot")%...!」
+		ELSE
+			PRINTFORMW 「...Gah, fine, just be a little gentler.」
+			PRINTFORMW 「...Nghaa! %CAPITALIZE(FSYN("geez"))%...」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Wha--... You little...」
+			PRINTFORMW 「%MOAN(,,2,"dot")%...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...%MOAN()%...」
+		ELSE
+			PRINTFORMW 「?!」
+			PRINTFORMW 「...%MOAN()%... Why you...」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...Nghaa?!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...I don't mind, but... not really.」
+		ELSE
+			PRINTFORMW 「...My %FSYN("chest")%, huh...」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;314,アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_314
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_314_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_314_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You %FSYN("rub")% Seija's anus during time stop.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORMW 「Suu... Zzz... %MOAN(,,2,"dot")%... Kuhh...」
+		PRINTFORMDW Seija is sleeping soundly. However, she still seems to be affected by it a little.
+	ELSEIF CFLAG:うふふ == 2
+		CALL M_KOJO_MESSAGE_COM_K97_5_1
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...Seriously, you...」
+			PRINTFORMW 「...One of these days, you'll be in for a world of hurt.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「......Urk?!」
+			PRINTFORMDW Seija glares at you angrily.
+		ELSE
+			PRINTFORMW 「...You're beyond help.」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Nghii?!」
+			PRINTFORMW 「...I mean, I'm pretty sensitive there...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hauhh?!」
+			PRINTFORMW 「......Oh you...」
+		ELSE
+			PRINTFORMW 「Whaaa--?!」
+			PRINTFORMW 「...Where the hell you think you're touching me... %CAPITALIZE(FSYN("geez"))%...」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Nghaa?!」
+			PRINTFORMDW Seija lets out a bewildered yelp from sudden anal caress.
+			PRINTFORMW 「...N-Nah, it's fine... I don't mind...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%FSYN("hii")%?!」
+			PRINTFORMW 「......This stuff might be a little...」
+		ELSE
+			PRINTFORMW 「Yo? %K97_WHAT(1)%-―」
+			PRINTFORMW 「%FSYN("hii")%?!」
+			PRINTFORMW 「...%MOAN()%...」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Nghaa?!」
+			PRINTFORMW 「H-Hey... Don't you know that spot is...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%MOAN()%...! Urk...!」
+			PRINTFORMW 「......I'm really weak there, so please %K97_STOP()%...」
+		ELSE
+			PRINTFORMW 「?!」
+			PRINTFORMW 「...Ulp... This really puts me in a spot...」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Nghaa?!」
+			PRINTFORMW 「...You... %K97_IDIOT_RUDE()%!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Iigh?!」
+			PRINTFORMW 「Y-You... filthy rapist!」
+		ELSE
+			PRINTFORMW 「Aghiii?!」
+			PRINTFORMW 「......Seriously, you...」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「?!」
+			PRINTFORMDW Seija shudders really hard for a moment before glaring at you.
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Uooohhh...?!」
+			PRINTFORMW 「%MOAN()%... Oh you and your...」
+		ELSE
+			PRINTFORMW 「...Hyahhh?!」
+			PRINTFORMW 「...Just get on with it until it makes you happy...」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Wha--?!」
+			PRINTFORMW 「You... %FSYN("hii")%?!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hyaahn?!」
+		ELSE
+			PRINTFORMW 「?!」
+			PRINTFORMW 「......Just %K97_STOP()% already...」
+		ENDIF
+	ELSE
+		PRINTFORMW 「...%SPLIT_G(@"Nghaa:Kuhii:Hyaaah:%MOAN()%:%GROAN()%")%?!」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;315,クリ愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_315
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_315_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_315_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You %FSYN("rub")% Seija's clit during time stop.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORMW 「...Suu... Zzz... Kuhh...」
+		PRINTFORMDW Seija is sleeping soundly. However, she still seems to be affected by it a little.
+	ELSEIF CFLAG:うふふ == 2
+		CALL M_KOJO_MESSAGE_COM_K97_0_1
+	ELSEIF IS_HERM(TARGET) && !RAND:3 ;added
+		IF RAND:3 == 0
+			PRINTFORMW 「...You really like touching my dick, huh.」
+			PRINTFORMW 「That's not something you can just do, y'know.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%K97_STOP(1)% before I get erect, c'mon.」
+			PRINTFORMW 「Or I won't be able to control myself.」
+		ELSE
+			PRINTFORMW 「Don't... stimulate me...」
+			PRINTFORMW 「It's gonna soil my panties... It already feels cramped as is.」
+		ENDIF
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...Ugh.」
+			PRINTFORMW 「...Why you little...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Really, dude...」
+			PRINTFORMDW Seija glares at you angrily.
+		ELSE
+			PRINTFORMW 「...This ain't just your regular sexual harassment anymore.」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%FSYN("hii")%?!」
+			PRINTFORMW 「...Where do you think you're touching me... %CAPITALIZE(FSYN("geez"))%...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Auhhn?!」
+			PRINTFORMW 「...If you wanna get laid then just say so, no need to twist my bean.」
+		ELSE
+			PRINTFORMW 「Wha--?!」
+			PRINTFORMW 「...What are you touching me there for... %CAPITALIZE(FSYN("geez"))%...」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%?!」
+			PRINTFORMW 「If you wanna get intimate then just say so... I'll do whatever you want, y'know.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hyaah?!」
+			PRINTFORMW 「...Sure it feels good, it's just...」
+		ELSE
+			PRINTFORMW 「Afuhh?!」
+			PRINTFORMW 「.........」
+			PRINTFORMW 「...%MOAN()%... What, that's it?」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「?!」
+			PRINTFORMW 「...Hey now... This stuff is, y'know, a bit...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%MOAN()%...!」
+			PRINTFORMW 「...At this rate I'm gonna...」
+		ELSE
+			PRINTFORMW 「?!」
+			PRINTFORMW 「...Urk... This is hella embarrassing, don'tcha know...」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%?!」
+			PRINTFORMW 「...Listen, you...!!!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Ighiii...?!」
+			PRINTFORMW 「Ugh... You piece of shit pervert scum!!!」
+		ELSE
+			PRINTFORMW 「Fueeh?!」
+			PRINTFORMW 「...You... stinking... %K97_PERV()%!」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「%MOAN()%?!」
+			PRINTFORMDW Seija shudders really hard for a moment before glaring at you.
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hyaahn?!」
+			PRINTFORMW 「%MOAN(,,2,"dot")%...」
+		ELSE
+			PRINTFORMW 「...%FSYN("hii")%?!」
+			PRINTFORMW 「...Well, I mean... %SPLIT_G("That just really sucked:It wasn't pleasant at all")%...」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Hyaah?!」
+			PRINTFORMW 「What are you--?!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Kuhhh...! %CALLNAME:MASTER%...!」
+		ELSE
+			PRINTFORMW 「...Urk?!」
+			PRINTFORMW 「......C'mooon, %K97_STOP()%...」
+		ENDIF
+	ELSE
+		PRINTFORMW 「...%SPLIT_G(@"%FSYN("hii")%:%MOAN()%")%?!」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;316,指挿入れ
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_316
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_316_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_316_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	LOCALS =
+
+	IF FLAG:時間停止
+		PRINTFORMDW You slide your finger inside Seija's slit and finger her during time stop.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORMW 「...Suu... Zzz... Kuhh... %MOAN()%...」
+		PRINTFORMDW Seija is sleeping soundly. However, she still seems to be affected by it a little.
+	ELSEIF CFLAG:うふふ == 2
+		CALL M_KOJO_MESSAGE_COM_K97_3_1
+	ELSEIF TALENT:処女 == 1 && RAND:3
+		PRINTFORMW 「C-Careful with that...」
+		PRINTFORMW 「It's still, y'know... Not used to it...」
+	;added for pissed off section
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTDATAW
+			DATAFORM 「Are you actually serious right now...」
+			DATAFORM 「That's not where you can just touch a girl freely...」
+			DATAFORM 「You'll be so very sorry for this, I swear...」
+			DATAFORM 「Do you even understand what you're doing...?」
+			DATAFORM 「Sure, console a girl by rubbing her twat, you %K97_IDIOT_RUDE()%...」
+		ENDDATA
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hyaahn?!」
+			PRINTFORMW 「...%MOAN()%... %SPLIT_G("So nice of you to try and pleasure me like this... But you know...:I don't mind as long as you make it feel good...")%」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Afuhh?!」
+			PRINTFORMW 「...%SPLIT_G("Looks like you know what you're doing:You got some technique going on, huh")%...」
+		ELSE
+			PRINTFORMW 「Fuahh?!」
+			PRINTFORMW 「...%SPLIT_G("You naughty fella, trying to get me wet... What are you plotting:How are you gonna make up for it... if you get me wet, huh")%?」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「%SPLIT_G(@"Nghoo?!:%FSYN("hii")%?!:%MOAN()%...")%」
+		SIF !RAND:3
+			PRINTFORMW 「%CAPITALIZE(FSYN("geez"))%...」
+	ELSEIF TALENT:恋人
+		LOCALS = %CAPITALIZE(FSYN("geez"))%... You..._Really now... %CAPITALIZE(FSYN("geez"))%..._You little_Why you_You
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		LOCALS = Listen now...!_Seriously...!_%FSYN("hii")%?!_Fuehh?!
+	ELSEIF TALENT:恋慕
+		LOCALS = Nghaa_Kuhh_%FSYN("hii")%_?!_?!
+	ELSEIF TALENT:思慕
+		LOCALS = Hyaah_Kuhh_Urk_Ulp_?!_?!
+	ELSE
+		LOCALS = Nghii_Hyaahn_Afuhhn_%FSYN("hii")%_?!_?!
+	ENDIF
+	
+	IF STRLENS(LOCALS)
+		LOCALS = %MOAN("l" + (TALENT:恋慕 || ABL:Ｖ感覚 >= 3 ? ":m" # ""),, RAND(1,4), "name:charname_" + LOCALS)%
+		PRINTFORMW 「%LOCALS%\@ STRCOUNT(LOCALS, "(!|♪|\\.\\.\\.)$") ? # %SPLIT_G("...:...:")%%SPLIT_G("!:?!:!!!")%\@」
+	ENDIF
+	
+	IF !RAND:4 && TALENT:恋慕 && ONCE("GrabHerByThePussy") ;added, just a little teasing flavor for early stages
+		PRINTFORML
+		PRINTFORMDW After you're done sticking your fingers into Seija's vagina, you demonstratively lick them clean in front of her.
+		IF TALENT:恋人
+			PRINTFORMW 「I-Is it that tasty? %CAPITALIZE(FSYN("geez"))%, I don't get you one bit sometimes...」
+			PRINTFORMW 「Well, I mean... I'm not against it, but... Meh, %K97_WHATEV()%.」
+			PRINTFORMDW Seija blushes slightly as you finish tasting her from your fingers.
+			PRINTFORMW 「If you want more, then... Just help yourself to it.」
+		ELSE
+			PRINTFORMW 「Wh-What are you...?!」
+			PRINTFORMDW It's a little salty... but tastes great!
+			PRINTFORMW 「Oh, s-shut up, you! Don't say that, it's gross!」
+			PRINTFORMW 「Eugh!」
+			PRINTFORMDW Seija tries to get you to stop licking your fingers while blushing profusely...
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;317,Ｖ腰を振る
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_317
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_317_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_317_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		LOCALS = Nghaaauoooohnnghhh!_Kuaahhh_Ahiii_Mooore_Keep at it_Gimme more_Don't stop
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		LOCALS = Nhaa_Kuhh_%FSYN("hii")%_Hyaah_Fueehh_♪_♪_♪_♪_♪_～_～_～
+	ELSEIF TALENT:恋人
+		LOCALS = Nhaa_Kuhh_♪_Hyaahn_Nghaa_Fuhh_I don't feel a thing, to be honest_I don't really enjoy it_That's not the best thing ever
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		LOCALS = Nghaa_Hyaah_♪_Kuhh_%FSYN("hii")%_Yaahh_Nah, it doesn't... really... feel that..._Nkuhh
+	ELSEIF TALENT:恋慕
+		LOCALS = Nhaa_Kuhh_?!_Hiinn_%FSYN("hii")%_Hyaah_?!
+	ELSEIF TALENT:思慕
+		LOCALS = Fuahh!_Nghaa...!_Kuhh_Urk_Ulp_?!
+	ELSE
+		LOCALS = Nghii_Kuhh_Hyaahn
+	ENDIF
+	LOCALS = %MOAN("l:m:h",, RAND(2,5), "name:charname_" + LOCALS)%
+	PRINTFORMW 「%LOCALS%\@ STRCOUNT(LOCALS, "(!|♪|\\.\\.\\.)$") ? # %SPLIT_G("...:...:")%%SPLIT_G("!:?!:!!!")%\@」
+ENDIF
+RETURN 1
+;==================================================
+;318,Ａ腰を振る edit: uncommented out todo: test
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_318
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_318_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_318_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		LOCALS = Aahiiiaaahhnnaahnn!_Guaahh_Aheee_%GROAN()%!!!
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		LOCALS = Hyaah_Hiiyaa_Nhaaa_Kuhh_♪_♪_♪_♪_♪_～_～_～
+	ELSEIF TALENT:恋人
+		LOCALS = Ngh_Aghh_Kuhh_Hyaah_♪_I can't believe it's in my %FSYN("ass")%_My %FSYN("ass")% of all things_Why my %FSYN("ass")%
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		LOCALS = Nghaa_Aahn_Kuhh_♪_Yaah_Nguhh_I can't believe it, my %FSYN("ass")%_My %FSYN("ass")% of all things is making me_Why is my %FSYN("ass")% so...?!
+	ELSEIF TALENT:恋慕
+		LOCALS = Kuhh_Uuugh_?!_Kuh_?!_Hyaah_%GROAN()%
+	ELSEIF TALENT:思慕
+		LOCALS = Kuahh_Hyaah_?!_%GROAN()%
+	ELSE
+		LOCALS = Guh_Kuhh_Hyahn_Nghh_Aghh_%GROAN()%
+	ENDIF
+	LOCALS = %MOAN("l:m:h",, RAND(2,4), "name:charname_" + LOCALS)%
+	PRINTFORMW 「%LOCALS%\@ STRCOUNT(LOCALS, "(!|♪|\\.\\.\\.)$") ? # %SPLIT_G("...:...:")%%SPLIT_G("!:?!:!!!")%\@」
+ENDIF
+RETURN 1
+;==================================================
+;330,スカートめくり
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_330
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_330_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_330_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You flip Seija's skirt during time stop, enjoying the sight of her soft-looking naughty bits.
+	ELSEIF CFLAG:うふふ == 2
+		PRINTFORMW 「Peek all you want, who am I to stop you now?」
+		PRINTFORMW 「%K97_WHATEV(1)%.」
+	ELSEIF ABL:露出癖 > 3
+		PRINTFORMW 「...What's thaaat? You wanna see it, hmmm?」
+		PRINTFORMDW Without hesitation, Seija promptly lifts her skirt for you.
+		PRINTFORMW 「Well? This is what you wanted, right?」
+		PRINTFORMDW She asks coyly while revealing what was under her skirt with a slight blush on her cheeks.
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...Listen here.」
+			PRINTFORMW 「Get over yourself already, I'm warning ya.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Pervert at %HIS_HER(MASTER)% finest.」
+			PRINTFORMW 「...I can't beging to imagine what kind of nerve you must have for this.」
+		ELSE
+			PRINTFORMW 「...Seems like you just want to piss people off for no reason as much as you can.」
+		ENDIF
+	ELSEIF !RAND:3 && TALENT:恋人 && ABL:露出癖 > 3 ;added
+		PRINTFORMW 「Alright, you've made your point. Here, look all you want.」
+		PRINTFORMDW Seija holds her skirt for you so you could see what's underneath with a naughty smirk.
+		PRINTFORMW 「Well? Like what you see, hmm? It's your turn to blush now.」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人 && ABL:露出癖 > 3
+		IF RAND:3 == 0
+			PRINTFORMW 「Yeah... You've always had a taste for this kind of thing, haven'tcha?」
+			PRINTFORMDW Seija calmly reveals the inside of her skirt to you.
+			PRINTFORMW 「Well, what's up? This is what you wanted to see, right?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Oooh?!」
+			PRINTFORMDW Seija grins a mean smile as she recovers from the surprise.
+			PRINTFORMW 「%CAPITALIZE(FSYN("geez"))%... If that's what you want, go ahead. Indulge in it to your satisfaction.」
+		ELSE
+			PRINTFORMW 「What's with the skirt flipping all of a sudden?」
+			PRINTFORMDW Seija asks calmly, totally unbothered.
+			PRINTFORMW 「If you think it's fun to look at mine, then be my guest.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人 && ABL:露出癖 > 3
+		IF RAND:3 == 0
+			PRINTFORMW 「?!」
+			PRINTFORMDW Seija looks at you in a mean way with her skirt rolled up.
+			PRINTFORMW 「...If you wanna see it so badly, just tell me and I'll show you.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hmm... %CAPITALIZE(FSYN("geez"))%, you're such a...」
+			PRINTFORMDW Seija shows you the inside of her skirt, blushing a little.
+			PRINTFORMW 「...You wanted to see what's underneath, right? Then I'll show you some more.」
+		ELSE
+			PRINTFORMW 「Oh?」
+			PRINTFORMW 「%CALLNAME:MASTER%, are you curious about what's inside?」
+			PRINTFORMW 「Sure. You can have a look if you want.」
+			PRINTFORMDW Seija flashes a blush and shows you the inside of her skirt.
+		ENDIF
+	ELSEIF TALENT:恋人 && ABL:露出癖 > 3
+		IF RAND:3 == 0
+			PRINTFORMW 「Hmmm?!」
+			PRINTFORMDW Seija blushes a little, but doesn't object and does what she's told.
+			PRINTFORMW 「Listen, you're really embarrassing me like this, you know...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Ah...!」
+			PRINTFORMDW Seija felt a blush creep over her face as she did as was told.
+			PRINTFORMW 「This is what you're dyin' to see, ain't that right? %K97_WHATEV(1)%.」
+		ELSE
+			PRINTFORMW 「?!」
+			PRINTFORMDW Seija looks shocked yet has a mean look on her face as her skirt is rolled up.
+			PRINTFORMW 「...What's the matter? You wanna see it, right?」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hmmm?!」
+			PRINTFORMDW Seija blushes a little and holds her skirt down.
+			PRINTFORMW 「Listen, you're really embarrassing me like this, you know...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Oiii?!」
+			PRINTFORMDW Seija felt a blush creep over her face as she did as was told.
+			PRINTFORMW 「This ain't worth looking at, I mean... It ain't much.」
+		ELSE
+			PRINTFORMW 「?!」
+			PRINTFORMDW Seija looks shocked yet has a mean look on her face as her skirt is rolled up.
+			PRINTFORMW 「...Well? You're into this, aren'tcha? This stuff drives you wild, doesn't it?」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		;added, if she still wears panties
+		IF EQUIP:下半身下着２ && RAND:4 == 0
+			PRINTFORMDW Realizing that you just saw her panties, Seija starts shaking while pounding on your chest.
+			PRINTFORMW 「Dammit! You saw it, didn't you?! Imma kill your sorry ass!」
+			PRINTFORMW （%HE_SHE(MASTER, 1)% saw it... %HE_SHE(MASTER, 1)% saw it, %HE_SHE(MASTER)% did! Gaahhh... What do I do now?）
+			PRINTFORMW （If I knew %HE_SHE(MASTER)%'d do this, I'd wear something cuter today... Blast!）
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「Hey! ...Hey! You %K97_IDIOT()%! What the hell are you doing?!」
+			PRINTFORMDW Seija goes red in the face as she holds her skirt down.
+			PRINTFORMW 「...Sheesh, seriously... It ain't much to look at anyways...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...?!」
+			PRINTFORMDW Seija blushes profusely, struggling to hold her rolled-up skirt in place.
+			PRINTFORMW 「You...! %K97_PERV(1)%! Asshole! Molester!」
+		ELSE
+			PRINTFORMW 「?!?!?!」
+			PRINTFORMDW Seija seems flustered, but still manages to hold her rolled-up skirt in place.
+			PRINTFORMW 「Oh, you... W-Why would you even do this...」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Oi, watch it! What are you doing flippin' my skirt like this without asking?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「You know, %SPLIT_G("doin' this sort of stuff ain't a good look:you're gonna get yourself in a lot of trouble doing this")%.」
+			PRINTFORMW 「I mean, I wouldn't mind showing you if you wanted to see it that badly, you could've just asked.」
+		ELSE
+			PRINTFORMW 「...Ooohh?!」
+			PRINTFORMW 「...What are you even trying to do there...」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Wha--... %CALLNAME:MASTER%...」
+			PRINTFORMW 「Are you actually nuts...?!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「The hell are you flipping my skirt for, ya bastard...」
+		ELSE
+			PRINTFORMW 「?!」
+			PRINTFORMW 「Look, %CALLNAME:MASTER%... What's the big idea...」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...You must be stupid.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...What the hell are you doing, acting like some sort of brat?」
+		ELSE
+			PRINTFORMW 「...What are you, a molester?」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;331,お茶を淹れる（薬入り）
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_331
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_331_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_331_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;custom, added
+	IF TFLAG:193 == 1
+		PRINTFORML 「Here comes my favorite drugged tea.」
+		PRINTFORMW 「You put something in there, right? I'm gonna be disappointed if you didn't.」
+	ELSEIF TFLAG:193 == -1
+		PRINTFORMW 「Yeah, no, ain't drinkin' that.」
+		PRINTFORMW 「Try to make it less obvious next time, you %K97_IDIOT()%.」
+		PRINTFORMDW Seija says before demonstratively dumping your tea on the ground.
+		RETURN 1
+	ELSE
+		PRINTFORMW 「You spiked it, didn'tcha?」
+		PRINTFORMW 「Don't worry, I can tell. I'm just curious what did you come up with this time.」
+		PRINTFORMW 「Besides, it would be a waste not to drink it, right?」
+	ENDIF
+	
+	IF TCVAR:97:媚薬 == 210
+		PRINTFORMW 「Wow, that's hot, that's really hot...」
+		PRINTFORMW 「%MOAN()%...! It feels like I'm burning from inside...」
+		PRINTFORMDL Seija staggers a bit and almost falls on you, using you for support.
+		PRINTFORMW 「I trust... You'll take care of this... Right?」
+	ELSEIF TCVAR:97:利尿剤 == 210
+		PRINTFORMW 「What's that? This is weird... I really need to find a bathroom. Be right back.」
+	ELSEIF TCVAR:97:惚れ薬 == 210
+		IF TALENT:恋慕
+			PRINTFORMW 「Oh... Oohhh... I know this feeling, this is like when I...」
+			PRINTFORMW 「Heh, you %K97_IDIOT_SOFT()%. Don't you know that I'm already like this just from seein' you?」
+		ELSE
+			IF FIRSTTIME("SeijaLovePotion")
+				PRINTFORMW 「What the hell...? What is this feeling... My heart's never been beating so fast...」
+				PRINTFORMW 「Is this... Love?」
+			ELSE
+				PRINTFORMW 「Oh, it's that stuff again... The sickly sweet one, it's like a syrup.」
+				PRINTFORMW 「You really want me to fall for you quickly, huh? What for?」
+			ENDIF
+		ENDIF
+	ELSEIF TCVAR:97:睡眠薬お茶使用
+		PRINTFORMW 「Oh... I see... I see how it is...」
+		IF TALENT:恋慕
+			PRINTFORMW 「Y-You put sleeping pills in this, didn'tcha? And then while I'm out cold...」
+			PRINTFORMW 「You're gonna have your way with me, right...? You and your kinks, siiighhh...%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「So you decided... To put me to sleep... That's pretty low, %K97_DUDE()%...」
+			PRINTFORMW 「I just can't catch a break, can I? Just don't... molest me in my sleep... I'm gonna get pissed...」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;332,お酒をふるまう (added, link to the other com)
+;TFLAG:193(0=下戸飲み成功 -1=下戸飲み失敗 -2=下戸飲み大失敗 -5=下戸飲みあきらめ)
+;TFLAG:194(51=どぶろく 52=清酒 53=鬼殺し 55=お神酒 58=蒸留酒 59=薬酒 513=一夜のクシナダ)
+;ALCOHOL_TASTE(TFLAG:194)(15以上=気に入る 9以下=口に合わない)
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_332
+CALL TRAIN_MESSAGE
+
+PRINTFORML
+;drinking failure
+IF ALCOHOL_TASTE(TFLAG:194) < 9
+	IF GROUPMATCH(TFLAG:194, 53, 58, 513)
+		PRINTFORMW 「Cough-cough, hack, khaaa! Haah...」
+		PRINTFORMW 「Gaah, it burns! Fuck me, I don't think I can handle that after all...」
+	ELSE
+		IF TALENT:恋慕
+			PRINTFORMW 「Yeah, thanks, but...」
+			PRINTFORMW 「I think I had enough of this one.」
+		ELSE
+			PRINTFORMW 「You expect me to take drinks from strangers, are you daft?!」
+			PRINTFORMW 「Pweh... It tastes awful too.」
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+
+IF ONCE(@"SeijaDrink_{TFLAG:194}")
+	SELECTCASE TFLAG:194
+		CASE 51
+			PRINTFORMW 「What is this cheap nasty looking trash?」
+			PRINTFORMW 「Are you trying to dump your worst alcohol on me or something?」
+			PRINTFORMW 「C'mon, I know you have better stuff. Cheap booze won't cut it!」
+		CASE 52
+			PRINTFORMW 「Ooh, sake, huh! The classic stuff...」
+			PRINTFORMW 「Well, let's get to it then.」
+		CASE 53
+			PRINTFORMW 「Oh my, this is gonna be heavy. Literal fire water, it burns but feels so good...」
+			PRINTFORMW 「Let's see if I can handle that. Even the name implies that it can fell oni like nothing!」
+		CASE 55
+			PRINTFORMW 「Hey, I ain't a deity, y'know.」
+			PRINTFORMW 「It's no use tryin' to offer me something like this. At best I'll just curse ya, hehe...」
+			PRINTFORMW 「Well, I'm not turning it down though.」
+		CASE 58
+			PRINTFORMW 「Wow, did you brew that? Looks pretty darn appetizing...」
+			PRINTFORMW 「Well, don't mind if I do! It's gonna burn alright, I bet!」
+		CASE 59
+			PRINTFORMW 「Oh, this one's sweet and tasty indeed!」
+			PRINTFORMW 「Though it still gets you drunk all the same without you even noticing.」
+		CASE 513
+			PRINTFORMW 「This is some high quality stuff right here...」
+			PRINTFORMW 「Hey, thanks. I know it prolly wasn't cheap. I kinda feel special now, heh.」
+	ENDSELECT
+	PRINTFORML
+ENDIF
+
+;drunk
+IF (TALENT:恋慕 || TALENT:服従) && BASE:酒気 > (MAXBASE:酒気 / 10) * 5
+	SELECTCASE RAND:4
+		CASE 0
+			PRINTFORMW 「Hick! Awright, one more and I might as well go for a striptease...」
+			PRINTFORMDW You smile wryly at drunk Seija while reprimanding %HIM_HER(TARGET)%.
+		CASE 1
+			PRINTFORMW 「Kuah～ After seein' the misfortune of others, this drink tastes better somehow!」
+			PRINTFORMW 「Hey, c'mon now, don't just stand there and pour me another one, chop-chop!」
+			PRINTFORMDW Seija presents %HIS_HER(TARGET)% empty cup as you politely pour %HIM_HER(TARGET)% another shot.
+		CASE 2
+			PRINTFORMW 「Orraaahhh! Drink's all gone man, it's all goooone!」
+			PRINTFORMW 「Where's myyy booze?!」
+			PRINTFORMDW Seija waves with an empty bottle in %HIS_HER(TARGET)% hand at you.
+			PRINTFORMDW You bring %HIM_HER(TARGET)% another one in a hurry.
+		CASE 3
+			PRINTFORMW 「Yup, I still need another one... Hick! Uhaa...」
+			PRINTFORMW 「What, are you gonna deny me now, huuuh?! Orrah, I'll smash ya-- Oh, there it is.」
+			PRINTFORMDW You prepare a new bottle right before Seija becomes rowdy.
+			PRINTFORMW 「Thank you-thank you, gulp-gulp-gulp... Puhaaaa♪」
+			PRINTFORMDW Seija roughly ruffles your hair and empties the bottle in one go.
+			PRINTFORMDW ...It's somewhat unsettling to see how much of a drunkard %HE_SHE(TARGET)% is after drinking a bit.
+	ENDSELECT
+	RETURN 1
+ENDIF
+			
+CALL M_KOJO_MESSAGE_COM_K97_334_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_332_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;333,愚痴を聞く original code, all added (based on Reisen's case I wrote)
+;TFLAG:193(6=大成功(酔い) 5=成功(酔い) 4=失敗(酔い) 3=大成功 2=成功 1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_333
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+PRINTFORML
+IF CFLAG:1307
+	PRINTFORMW 「Haa?! Me, pissed?! It's none of your fucking concern, okay?!」
+	PRINTFORMW 「Bargin' in here all high and mighty, as if you're the one who can make the problems go away...」
+	PRINTFORMW 「Who the hell do you think you are?!」
+	PRINTFORMDW Seija keeps bitching and ranting, but you manage to get the gist of it.
+;love
+ELSEIF TALENT:恋人 || TALENT:恋慕
+	PRINTFORMW 「Look man, I kinda feel bad using you as my emotional tampon, really... I think I can handle it myself...」
+	PRINTFORMDW But what's the point if we're not having each other's backs?
+	PRINTFORMW 「Huh? Haah... Yeah, you're right. Well, if you don't mind me bitchin', here it goes...」
+;hate/angry
+ELSEIF MARK:反発刻印 || CFLAG:ブチギレ
+	PRINTFORMW 「Ohh, screw you.」
+	PRINTFORMW 「First you act like an asshole, and now you think you can just make me pour my heart out to you?」
+	PRINTFORMW 「Yeah, right, in your dreams. Get lost.」
+	PRINTFORMDW After many attempts, you manage to get Seija to talk about it a little. But it doesn't seem like it'd be easy...
+ELSE
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「Aahn? Listen, just leave me alone, alright?! You wouldn't get it...」
+			PRINTFORMW 「It's too much even for me...」
+		CASE 1
+			PRINTFORMW 「Things are not going my way and I'm pissed... I don't need you around trying to sour my mood even further!」
+		CASE 0
+			PRINTFORMW 「Nah, it's none of your business. Mind your own stuff, will ya?」
+	ENDSELECT
+ENDIF
+
+RESETCOLOR
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_333_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_333_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML
+	IF MARK:反発刻印 || CFLAG:ブチギレ
+		SELECTCASE TFLAG:193
+			CASE 6, 3
+				PRINTFORMW 「I-I guess I was at fault too... Wait, no!」
+				PRINTFORMW 「I can't believe you just persuaded me like this! How did you do that?!」
+			CASE 5, 2
+				PRINTFORMW 「What a conundrum this is... Look, you messed up, I get it.」
+				PRINTFORMW 「At least you had the guts to apologize for it. I respect it.」
+				PRINTFORMW 「...But don't think I'm an easy girl who just forgets and forgives all the time, alright?」
+			CASE 4, 1
+				PRINTFORMW 「...」
+				PRINTFORMDW Seija rolls her eyes and scoffs, turning around and leaving without saying a word.
+				PRINTFORMW 「...Don't follow me.」
+		ENDSELECT
+	ELSE
+		SELECTCASE TFLAG:193
+			CASE 6, 3
+			;大成功
+				PRINTFORMDW Suddenly Seija shows a smile that you rarely get to see.
+				PRINTFORMW 「...Yeah. Maybe I should just listen to you and not worry my pretty little head about a thing.」
+				PRINTFORMW 「I could use some peace of mind for once.」
+			CASE 5, 2
+			;成功
+				PRINTFORMW 「Hmm... Well if you put it that way...」
+				PRINTFORMW 「Huh? Nah, I'm already way past that! Just forget it, I'm fine!」
+			CASE 4, 1
+			;失敗
+				PRINTFORMW 「Yeah, what do you know... You're just saying that...」
+				PRINTFORMW 「No, it's nothing... I said, I'm not pouting!」
+				PRINTFORMW 「Leave me be, sheesh!」
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;334,料理を勧める/杯を交わす
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_334
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_334_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_334_1
+IF FLAG:70
+ELSEIF TFLAG:193 == -1 ;added, drinking failure
+	IF TALENT:恋慕
+		PRINTFORMW 「Yeah, thanks, but...」
+		PRINTFORMW 「I think I had enough of this one.」
+	ELSEIF CFLAG:2 >= 1000
+		PRINTFORMW 「Cough-cough, hack, khaaa! Haah...」
+		PRINTFORMW 「Gaah, it burns! Fuck me, I don't think I can handle that after all...」
+	ELSE
+		PRINTFORMW 「You expect me to take drinks from strangers, are you daft?!」
+		PRINTFORMW 「Pweh... It tastes awful too.」
+	ENDIF
+	RETURN 1
+ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+	IF RAND:4 ;added
+		PRINTFORMW 「You're not trying to make me drunk on purpose, are you?」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「...Your drink, huh.」
+		PRINTFORMW 「Well, don't mind if I do.」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「.........」
+		PRINTFORMW 「I just need to down a cup, right?」
+	ELSE
+		PRINTFORMW 「...C'mon, just drink yours.」
+	ENDIF
+ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+	IF RAND:3 == 0
+		PRINTFORMW 「Yeah... Cheers!」
+		PRINTFORMW 「Gah, it tastes awful, it does! Gimme more!」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「Gulp... Mm...」
+		PRINTFORMW 「What's up? You're not gonna drink it?」
+	ELSE
+		PRINTFORMW 「I'll pour you some, so drink! Drink!」
+		PRINTFORMW 「Mm... Cheers!」
+	ENDIF
+ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+	IF RAND:3 == 0
+		PRINTFORMW 「Mm... What, you're not gonna drink?」
+		PRINTFORMW 「Well... You don't really need to force yourself, y'know?」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「Oh, hold o-- It's spilling out a bit...」
+		PRINTFORMW 「...Mm... Damn, that's good stuff.」
+	ELSE
+		PRINTFORMW 「Gulp-Gulp-Gulp...」
+		PRINTFORMW 「I... I think I love you, %CALLNAME:MASTER%.」
+	ENDIF
+ELSEIF TALENT:恋人
+	IF RAND:3 == 0
+		PRINTFORMW 「Guuulp...」
+		PRINTFORMW 「That's quite the good stuff, huh. I'm surprised.」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「Mmm...」
+		PRINTFORMW 「It sure is tasty, this liquor.」
+	ELSE
+		PRINTFORMW 「There, cheers!」
+		PRINTFORMW 「Mm... What's up?」
+	ENDIF
+ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+	IF RAND:3 == 0
+		PRINTFORMW 「What's the matter...? You're gonna drink, right?」
+		PRINTFORMW 「...Cheers.」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「Hey, %CALLNAME:MASTER%.」
+		PRINTFORMW 「Drink up, c'mon.」
+	ELSE
+		PRINTFORMW 「What?」
+		PRINTFORMDW Seija asks while pouring some more into the cup.
+		PRINTFORMW 「Yeah... Cheers.」
+	ENDIF
+ELSEIF TALENT:恋慕
+	IF RAND:3 == 0
+		PRINTFORMW 「Cheers.」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「How's that? I'll pour you some more too.」
+		PRINTFORMW 「%SPLIT_G("It's tasty, isn't it:You like it")%?」
+	ELSE
+		PRINTFORMW 「...Gulp-gulp...」
+		PRINTFORMW 「Phew...」
+	ENDIF
+ELSEIF TALENT:思慕
+	IF RAND:3 == 0
+		PRINTFORMW 「Phew...」
+		PRINTFORMW 「I'll pour you some too, c'mon.」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「Hm? What's wrong? Drink up.」
+	ELSE
+		PRINTFORMW 「What, you can't handle my drink?」
+		PRINTFORMW 「C'mon, drink, drink! Drink till you drop!」
+	ENDIF
+ELSE
+	IF RAND:4 ;added
+		PRINTFORMW 「You're not trying to make me drunk on purpose, are you?」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「...I'll pour you a cup, get it ready.」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「...Cheers.」
+	ELSE
+		PRINTFORMW 「...C'mon, get some cups, I'm gonna %SPLIT_G("serve you:pour it")%.」
+	ENDIF
+ENDIF
+
+;added
+LOCAL = 1
+SELECTCASE BASE:酒気
+	CASE IS > (MAXBASE:酒気 / 10) * 8
+		LOCAL = 4
+	CASE IS > (MAXBASE:酒気 / 10) * 5
+		LOCAL = 3
+	CASE IS > (MAXBASE:酒気 / 10) * 2
+		LOCAL = 2
+ENDSELECT
+
+IF ONCE(@"SeijaDrinkReact_{LOCAL}")
+	PRINTFORML
+	SELECTCASE LOCAL
+	CASE 4
+		PRINTDATAW
+			DATAFORM 「Oh crap... I just... blacked out a little... Maybe I had enough...」
+			DATAFORM 「I'm gonna... feel it tomorrow...」
+			DATAFORM 「Ooohh... my liver is certainly feelin' it right now...」
+		ENDDATA
+	CASE 3
+		PRINTDATAW
+			DATAFORM 「Nice... I got smashed alright. Just how I like it.」
+			DATAFORM 「I can hold my drink, y'know... Don't even think about molesting me yet.」
+			DATAFORM 「Yeah, that's more like it...」
+		ENDDATA
+	CASE 2
+		PRINTDATAW
+			DATAFORM 「Mm... Not bad, not bad.」
+			DATAFORM 「Pretty good, I gotta say though. Just what I need to get through the day.」
+			DATAFORM 「If we start doing this, I think I'm gonna down the whole bottle before long...」
+		ENDDATA
+	CASEELSE
+		PRINTFORMW 「Hmm... Well, that was a welcome change of pace.」
+		PRINTFORMW 「I didn't know I'd need this, thanks.」
+	ENDSELECT
+ENDIF
+
+RETURN 1
+;==================================================
+;350,押し倒す（時姦時イタズラする
+;TFLAG:194 (0=成功 1=人目がある　2=野外は嫌でござりまする　3=多人数プレイは勘弁　4=合意があってもムードが足りぬ）
+;TCVAR:抱き寄せ初回　1=普通に合意ゲット　2=先にキスぐらいしろよ　3=媚薬or発情には勝てなかったよお…　4=悔しい…刻印さえなければﾋﾞｸﾋﾞｸﾝ
+;5=強引に迫られると断れぬ(素質臆病持ち専用) 6=まんざらでもない　7=駄目　8=論外
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_350
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_350_1
+RETURN RESULT
+
+;added, seija wouldn't really get super mad, just ticked off a bit (not before she verbally abuses you though)
+@M_KOJO_EXTRASOURCE_COM_K97_350
+SOURCE:反感 = SOURCE:反感/10
+
+@M_KOJO_MESSAGE_COM_K97_350_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You decide to push Seija down and have your way with her body during time stop.
+		PRINTFORMDW Her thin body, without much meat on it, seemed somehow fragile.
+		PRINTFORMDW You resolved to take your time and enjoy it to the fullest...
+	;怒り時には押し倒せなかった気がする…
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...Right, there are some humans who are just plain despicable it seems.」
+			PRINTFORMW 「I see, well, you're just totally irredeemable.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Listen, you...」
+			PRINTFORMW 「...I know it doesn't count for much, but you're just disgusting, if I say so myself.」
+		ELSE
+			PRINTFORMW 「...Well, I'm used to this kind of situation.」
+		ENDIF
+	ELSEIF TFLAG:194
+		SELECTCASE TFLAG:194
+			CASE 1
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「...This spot's a bit populated, can't you see?」
+					PRINTFORMW 「Look, we may be one and the same as a team, but this is a bad idea. I mean it.」
+					PRINTFORMW 「Let's do... this sort of stuff... in a more appropriate place, shall we?」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「...This obviously can't be a good spot for this, yeah?」
+					PRINTFORMW 「With it being very public and all...」
+					PRINTFORMW 「...If you wanna get down to business, then let's... find a room and then do it, okay?」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「...I don't wanna turn you down so often, but this is not a good place, is it?」
+					PRINTFORMW 「We're being watched here, after all.」
+					PRINTFORMW 「...I'm all for it if we find a better place though.」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Whaa-?!」
+					PRINTFORMW 「Y-You wanna *do* it here of all places...?! Are you fucking stupid or what?!」
+					PRINTFORMW 「...We gotta move somewhere else, then we'll do it.」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「Listen, no offence, but... this stuff is kinda... I have my doubts.」
+					PRINTFORMW 「We're supposed to do it in a private place. That should be common knowledge.」
+					PRINTFORMW 「Let's change the location and try again.」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「Hmm?」
+					PRINTFORMW 「Here...? Nah, I pass... It's no good, y'know.」
+				ELSE
+					PRINTFORMW 「What kind of nerve do you have, seriously...」
+					PRINTFORMW 「With all the people waltzing in and out, we'll be seen! Seen, I say!」
+				ENDIF
+			CASE 2
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「...Hm?」
+					PRINTFORMW 「I know you want to, but... Listen.」
+					PRINTFORMW 「I'm not sure I wanna do this outside...」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「Yeah, I mean... I don't mind if you wanna go at it, it's just...」
+					PRINTFORMW 「I don't think I'm ready... to do it outside.」
+					PRINTFORMW 「...Spare me that, please.」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「Look, this spot is kinda... y'know.」
+					PRINTFORMW 「I mean, people might walk in on us. Or rather, that's exactly what's gonna happen.」
+					PRINTFORMW 「...Let's change places.」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Whaa-?!」
+					PRINTFORMW 「Here...? You mean... That's just, not gonna... I mean, if it's with you--...」
+					PRINTFORMW 「No, no, absolutely not! Let's go elsewhere!」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「Ooh, you're in the mood for it here?」
+					PRINTFORMW 「...Sorry, but I prefer not to do it outside.」
+					PRINTFORMW 「Let's switch places, c'mon!」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「...People often come here. Get it?」
+					PRINTFORMW 「So let's go somewhere else, okay?」
+				ELSE
+					PRINTFORMW 「I'd like to stay away from outdoor kind of thing, y'see.」
+					PRINTFORMW 「It just smells like trouble, I assure ya.」
+				ENDIF
+			CASE 3
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「I mean, I can see that you wanna have an orgy, but...」
+					PRINTFORMW 「Count me out please. It's gonna be a pain in the ass if I flash my face around.」
+					PRINTFORMW 「Sheesh, seriously... Are you really that unhappy with me alone? I'm not enough to satisfy your needs, hmm?」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「Well, I mean... That's a bit...」
+					PRINTFORMW 「Yeah, it's not really my kind of thing, you see...」
+					PRINTFORMW 「...Are you... not happy with me alone?」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「Uh-huh... Yeah I heard ya, so an orgy? You wanna have that?」
+					PRINTFORMW 「Nah, I'll pass. Don't bother begging me, please.」
+					PRINTFORMW 「I mean, I just wanna have some private time with you alone... Can't we just do that?」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Look, I hate to break it to ya, but...」
+					PRINTFORMW 「I'm not gonna share you with anyone else, alright?」
+					PRINTFORMW 「...But if it's just us... That's another topic.」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「Yeah? You wanna fuck us all together?」
+					PRINTFORMW 「...What are you even saying out of the blue...」
+					PRINTFORMW 「No, I ain't doing it! Cut me some slack, %K97_DUDE()%. That just spells trouble and I don't want any part of it.」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「No-no-no-no!」
+					PRINTFORMW 「Anything but a bunch of you, please.」
+				ELSE
+					PRINTFORMW 「Huuh, the fuck?」
+					PRINTFORMW 「I mean, why would I ever do it with you lot...」
+				ENDIF
+			CASE 4
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「I mean, this kind of thing, y'know...」
+					PRINTFORMW 「It requires a certain kind of mood even between us partners, capeesh?」
+					PRINTFORMW 「...So, y'know... Apply yourself a little.」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「Yeah?」
+					PRINTFORMW 「...Well, let's see.」
+					PRINTFORMW 「I think you gotta learn to set a special sort of mood for this first.」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「Haa?」
+					PRINTFORMW 「Look... There needs to be a certain vibe to it, things just don't happen spontaneously.」
+					PRINTFORMW 「So that's why I'm gonna have to turn you down for now.」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Say whaa-?!」
+					PRINTFORMW 「I can't believe you... This sort of stuff... It needs to be a little more... atmospheric and such...」
+					PRINTFORMW 「...Look, I'm telling you to mind the mood, you big oaf!」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「Uooohh?!」
+					PRINTFORMW 「...C'mon, you should be a little more mindful about how the whole process works.」
+					PRINTFORMW 「You know how it is. Right?」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「Mmm...」
+					PRINTFORMW 「Not until I'm a bit more ready, so... Yeah, I'm counting on ya.」
+				ELSE
+					PRINTFORMW 「Oi!」
+					PRINTFORMW 「You should be setting a better mood for this first, c'mon...」
+				ENDIF
+		ENDSELECT
+	ELSEIF TCVAR:抱き寄せ初回
+		SELECTCASE TCVAR:抱き寄せ初回
+			CASE 1
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「...Hmm...」
+					PRINTFORMW 「Well, sure, be my guest. Suit yourself.」
+					PRINTFORMW 「What's with the long face? We're partners in crime, right? I did say that you can do whatever you want with me after all.」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「So you're in that kind of mood, huh...」
+					PRINTFORMW 「...Very well, I'll do anything you ask.」
+					PRINTFORMW 「Even if I turn out weird and become a pervert.」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「Hmm... So that's what you want. Well... okay.」
+					PRINTFORMW 「Then... be nice with me, alright?」
+					PRINTFORMW 「...And I ain't jokin' around here for the record, y'hear? I'll get seriously angry if you hurt me!」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Whaa--?!」
+					PRINTFORMW 「...W-What's with the... sudden request like that...」
+					PRINTFORMW 「...Alright, I get it... Do what you must.」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「Humm... Well if it ain't out of the blue, I didn't see it coming.」
+					PRINTFORMW 「Well, sure thing. Enjoy yourself all you want.」
+					PRINTFORMW 「Just, uh... don't make it hurt too much.」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「Hmm?」
+					PRINTFORMW 「Are you saying you wanna get laid with me?」
+				ELSE
+					PRINTFORMW 「?!」
+					PRINTFORMW 「Oi, really now? Sheesh... Hey, what the hell are you--...?!」
+				ENDIF
+			CASE 2
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「...Hey, uh... We've both come this far in this relationship, but, y'know...」
+					PRINTFORMW 「It was all without a single kiss at this point, is what I'm saying.」
+					PRINTFORMW 「Well... Suit yourself, really. I'm not forcin' ya or anything like that. I ain't gonna be mad either.」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「...」
+					PRINTFORMW 「This reminds me... We haven't even kissed yet, have we?」
+					PRINTFORMW 「You're a freak of nature too, it seems... For fucks sake...」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「What's wrong with you... seriously.」
+					PRINTFORMW 「I thought these things were supposed to start with a kiss.」
+					PRINTFORMW 「...Well, I guess the order doesn't really matter in the end.」
+					PRINTFORMW 「Textbook sex is boring as hell, is what I say.」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Whaa--?!」
+					PRINTFORMW 「L-Listen, you... We haven't kissed or anything yet... so...」
+					PRINTFORMW 「Oh sheesh, whatever! Just do what you want! Idiot...」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「Yeah... There's a little problem though... Aren't you forgetting something?」
+					PRINTFORMW 「I just think there should be an order to it.」
+					PRINTFORMW 「Well, that said, I like that kind of rebelliousness.」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「Are you one of those who sleeps with someone you haven't even kissed properly yet?」
+					PRINTFORMW 「Oh well, I guess it doesn't matter. Stuff like that is of no consequence anyway.」
+				ELSE
+					PRINTFORMW 「...Oi?!」
+					PRINTFORMW 「I don't think we're supposed to be like this yet...」
+				ENDIF
+			CASE 3
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「...%MOAN(,,3,"dot")%...」
+					PRINTFORMW 「I see you've... done something interesting to me, haven'tcha...」
+					PRINTFORMW 「Fine then, it's you versus me... Let's play!」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「Hm? Aahh...♪」
+					PRINTFORMW 「You drugged me with something... didn't you...」
+					PRINTFORMW 「...If I wasn't as assertive then obviously you'll take the charge... Tell me though, was I really that frigid?」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「What the hell did you... What did you do to make me like this...? Mmmn...♪」
+					PRINTFORMW 「...Did you get me high on something?」
+					PRINTFORMW 「Oh well, just keep going then... I don't mind if it's you...」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Nhaa♪ Kuhh... What is going on...」
+					PRINTFORMW 「Aah...♪ ...Don't get so close, y'hear... Mm...♪」
+					PRINTFORMW 「O-Okay... I get it... Just do whatever you want with me, alright?!」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「What's with the pushing and shoving and... Mnn...♪」
+					PRINTFORMW 「Dunno what you did, but...」
+					PRINTFORMW 「I hope you'll make it feel good...♪」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「%MOAN()%...♪」
+					PRINTFORMW 「You bastard... What did you do to me...?!」
+				ELSE
+					PRINTFORMW 「Nghaa?!」
+					PRINTFORMW 「What the-?! What's going on--... Nngh...♪」
+				ENDIF
+			CASE 4
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「...Nhaa...」
+					PRINTFORMW 「Aww man, you know full well that I can't go against you anymore, don't you?」
+					PRINTFORMW 「That's what you get after training me for so long.」
+					PRINTFORMW 「Well, I'll leave it to you... Make sure you keep it fun, alright...?」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「Nghh... How odd...」
+					PRINTFORMW 「...Don't tell me, this kind of thing means you--...」
+					PRINTFORMW 「...Agh, fine, just keep going then.」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「What's the matter with you... Wait, you don't mean...」
+					PRINTFORMW 「I feel all kinds of weird, actually. Dunno why.」
+					PRINTFORMW 「...I can't help it, my body's on fire. You have to calm it down. You're the only one who can...」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Mnnghh?!」
+					PRINTFORMW 「W-Wait, you... I see what this is all about, but...」
+					PRINTFORMW （Why can't I... push %HIM_HER(MASTER,,1)% away?!）
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「Oh, you... I-I get where this is going, but y'know...」
+					PRINTFORMW 「...If you try something funny with me... You know what's gonna happen, right?」
+					PRINTFORMW 「So c'mon, do it the normal way... Just take it easy...」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「Nghaaahh?!」
+					PRINTFORMW 「What the... What are you...?!」
+				ELSE
+					PRINTFORMW 「?!」
+					PRINTFORMW 「Oi, what are you... doing all of a sudden...」
+					PRINTFORMW （I can't bring myself to... resist %HIS_HER(MASTER)% advances?!）
+				ENDIF
+			CASE 5
+			CASE 6
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「I know you're free to do whatever you want, but...」
+					PRINTFORMW 「We've never gotten to the point where we'd be comfortable doing this, have we?」
+					PRINTFORMW 「Well, I don't mind if you press me for it again, but for now, no.」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「Hmm?」
+					PRINTFORMW 「Sorry to disappoint, but that's just not my thing.」
+					PRINTFORMW 「Well, for the time being... that is.」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「...You don't necessarily need me to do that for you, do you?」
+					PRINTFORMW 「Don't get me wrong, I'm really glad you chose me, but y'know...」
+					PRINTFORMW 「I don't... particularly like the idea of sex. It's pretty scary to me.」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Whaa--?!」
+					PRINTFORMW 「L-Listen, %CALLNAME:MASTER%... this is just...」
+					PRINTFORMW 「No, I can't do it... Look, I'm really sorry, but...」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「Aahn?」
+					PRINTFORMW 「...Look, I'm not really trying to be your personal mistress, though.」
+					PRINTFORMW 「But hey, I'll do it, eventually. One of these days, sooner or later... When I'm ready. Just be patient.」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「Uh huuh, yeaaah, I heard ya...」
+					PRINTFORMW 「Oh, stop it. Sex with me? You won't enjoy it one bit.」
+				ELSE
+					PRINTFORMW 「Haaa?!」
+					PRINTFORMW 「I'm sure it'd make for a fun memory to sleep with someone like you, but...」
+				ENDIF
+			CASE 7
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「...Your insatiable appetite for sex is mind-boggling, to say the least.」
+					PRINTFORMW 「That's a sure way to lose any credibility you had, so I'd advise against it.」
+					PRINTFORMW 「You don't like the idea of someone catching you by the rear end and then being taken advantage of, do you?」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「...I'm not really in the mood, sorry.」
+					PRINTFORMW 「You know what I mean, right? It's just one of those times.」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「Yeaaah, that ain't happening. Not now.」
+					PRINTFORMW 「I'm just not in the mood for this.」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「Oohh...」
+					PRINTFORMW 「No can do. I'm sorry for your loss.」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「I'm afraid you'll have to look elsewhere for that.」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「Hmm～ Nah, don't think so.」
+				ELSE
+					PRINTFORMW 「...No way.」
+				ENDIF
+			CASE 8
+				IF CFLAG:1304 == 1 && TALENT:恋人
+					PRINTFORMW 「...Look, I told you.」
+					PRINTFORMW 「We can't.」
+					PRINTFORMW 「Don't you get it? I mean... it's as clear as it gets.」
+				ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+					PRINTFORMW 「.........」
+					PRINTFORMW 「No.」
+				ELSEIF TALENT:恋人
+					PRINTFORMW 「Huh?」
+					PRINTFORMW 「Nope.」
+				ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+					PRINTFORMW 「...」
+					PRINTFORMW 「Stop bothering me, go away.」
+				ELSEIF TALENT:恋慕
+					PRINTFORMW 「...What the fuck?」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「My answer will always be the same.」
+				ELSE
+					;added
+					PRINTDATAW
+						DATAFORM 「No matter how many times you ask my answer won't change. No.」
+						DATAFORM 「Hahaha! You must be joking! You think I'd let you fuck me? I don't even know you.」
+						DATAFORM 「Keep it in your pants, will ya?」
+						DATAFORM 「How can one be so desperate? You should know better than this.」
+						DATAFORM 「You're kidding. I ain't gonna spread my legs for you just cuz you asked.」
+					ENDDATA
+				ENDIF
+		ENDSELECT
+	ELSE
+		CALL KOJO_MESSAGE_SEND("EVENT", 15, TARGET, 1)
+		PRINTL
+		SIF FLAG:口上色
+			TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+
+		IF TALENT:MASTER:濃厚精液 && TALENT:恋慕 && ONCE("SeijaRelieve") ;added
+			PRINTFORMW 「...Huh? You're all backed up and you want me to relieve you? Agh, what a pain...」
+			PRINTFORMW 「Wait, what? "Do it like I taught you"? You mean...」
+			PRINTFORMW 「Tch.」
+			PRINTFORMW 「Alright, fine, I get it, shut up! I'll do it, okay?!」
+			PRINTFORMDW Looking both irritated and embarrassed, Seija spreads her legs and her pussy lips with a squelch.
+			PRINTFORMW 「P-Please make use of your... personal use cum-dumping hole to your heart's desire... %CALLNAME:MASTER%%UNICODE(0x2764)%」
+			PRINTFORMDW Staring in awe at her twitching and drooling pussy, you quickly get down to business and push her down, accompanied by Seija's loud moan.
+			PALAM:潤滑 = PALAMLV:3
+			BASE:MASTER:勃起 = MAXBASE:MASTER:勃起
+		ELSEIF !RAND:4 && TALENT:恋人 ;added
+			SELECTCASE RAND:6
+				CASE 0
+					PRINTFORMW 「Let's not waste time then.」
+					PRINTFORMW 「Come hit this!」
+					PRINTFORMDW Seija moves her body seductively, setting your flames of passion ablaze...
+				CASE 1
+					PRINTFORMW 「Alright %K97_DUDE()%, drop your pants and get ready to have the time of your life.」
+				CASE 2
+					PRINTFORMW 「Alright, fine. I'll get you laid. Let's get started.」
+				CASE 3
+					PRINTFORMW 「Yeah, I heard ya. I can't let those desperate cries stay unanswered then, can I?」
+				CASE 4
+					PRINTFORMW 「You mean you already worked up an appetite?」
+					PRINTFORMW 「...Sure. For you - anything. No matter how selfish...」
+				CASE 5
+					PRINTFORMW 「Hmm, I guess... If it wasn't for sex, I bet you wouldn't want to associate with me at all, right?」
+					PRINTFORMW 「It's alright, I get it. Go on, do your thing. I'll enjoy myself, don't you worry...」
+			ENDSELECT
+		ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+			IF RAND:3 == 0
+				PRINTFORMW 「Yeah, I heard ya.」
+				PRINTFORMW 「I'll make you cum alright.」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「You're one eager %PRINT_MALE("guy", MASTER)% after all.」
+				PRINTFORMW 「Well... This is just another one of those give-and-take situations.」
+			ELSE
+				PRINTFORMW 「I trust you'll make it enjoyable, right?」
+			ENDIF
+		ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+			IF RAND:3 == 0
+				PRINTFORMW 「Mm... Understood.」
+				PRINTFORMW 「Be... gentle.」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Alright then. Hopefully...」
+				PRINTFORMW 「You'll make it feel good... okay?」
+			ELSE
+				PRINTFORMW 「...%K97_WHATEV(1)%.」
+			ENDIF
+		ELSEIF TALENT:恋人
+			IF RAND:3 == 0
+				PRINTFORMW 「Yeah sure. %K97_WHATEV(1)%.」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「You'll give me my share of pleasure, right?」
+			ELSE
+				PRINTFORMW 「Just don't hurt me, okay?」
+			ENDIF
+		ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+			IF RAND:3 == 0
+				PRINTFORMW 「Oi?! Don't just push me down without any warning...」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「...?!」
+				PRINTFORMW 「Look, I get it... Just be nice about it.」
+			ELSE
+				PRINTFORMW 「...Is this how you wanna do it?」
+			ENDIF
+		ELSEIF TALENT:恋慕
+			IF RAND:3 == 0
+				PRINTFORMW 「...Sheesh, oh you...」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Aww man, you're so thirsty.」
+			ELSE
+				PRINTFORMW 「What's up? You're raring to let off some steam, huh?」
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF RAND:3 == 0
+				PRINTFORMW 「What? Well, looks like you already decided where this is going.」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「What's the matter? I mean, you pushed me down all of a sudden.」
+			ELSE
+				PRINTFORMW 「Well, at the very least I can tell you're not kidding about this...」
+			ENDIF
+		ELSE
+			IF RAND:3 == 0
+				PRINTFORMW 「...Owie?!」
+				PRINTFORMW 「I hit my head...」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Oh, you want to shag me? Fine.」
+			ELSE
+				PRINTFORMW 「%K97_WHATEV(1)%.」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;351,連れ出す
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_351
+;連れ出しにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K97_351_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_351_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「What's up? You got a new one?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Where are we headed?」
+		ELSE
+			PRINTFORMW 「Tell me you got something worthwhile this time, alright?」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF !RAND:3 && ONCE("SeijaHappy")
+			PRINTFORMW 「Oh? Goin' out?」
+			PRINTFORMW 「'Kaaay, I'm with you!」
+			PRINTFORMDW Seija says as she firmly hugs you from behind!
+			PRINTFORMDW She seems unusually cheerful today for some reason...
+			PRINTFORMW 「And I ain't letting go♪」
+			PRINTFORMDW Okay, fine...
+			PRINTFORMW 「Yaay! Hehe～ Now then, onwards!」
+			TALENT:機嫌 = 1
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「Gotcha, %SPLIT_G("I'm coming:I'll be right there:I'm on my way")%.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「What's the deal?」
+		ELSE
+			PRINTFORMW 「...Sure thing.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Oh? You got somethin' on your mind?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Sounds good and all, but what's the plan?」
+		ELSE
+			PRINTFORMW 「Alright, let's go.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Huh? With yo--... Don't pull my hand, hey...!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Very well, just don't start messing around.」
+		ELSE
+			PRINTFORMW 「Okay, fffiiine! I'm coming, sheesh...」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「...Where are we going?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I don't really mind, but tell me what's going on.」
+		ELSE
+			PRINTFORMW 「Yeah-yeah, %SPLIT_G("coming:I'll be right there:I'm on my way")%... Huff!」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「'Sup?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「What is it?」
+		ELSE
+			PRINTFORMW 「Hm? What?」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...What's that all about?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「%K97_WHATEV(1)%.」
+		ELSE
+			PRINTFORMW 「?」
+			PRINTFORMW 「%SPLIT_G("Coming:I'll be right there:I'm on my way")%.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;352,告白する
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_352
+CALL M_KOJO_MESSAGE_COM_K97_352_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_352_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193
+		PRINTFORMW 「What's with the serious face out of the blue?」
+		PRINTFORMW 「It doesn't suit you to look like that.」
+		PRINTFORMW 「So, what's the deal anyways?」
+		PRINTFORMDW Seija asks, grinning.
+		CALL TRAIN_MESSAGE
+		PRINTFORMW 「Hoo, I see I see.」
+		PRINTFORMW 「You say you've grown fond of this humble me.」
+		PRINTFORMW 「Therefore, you want me to go out with you.」
+		PRINTFORMDW After a brief moment, her voice rang out in response.
+		PRINTFORMW 「Yeah, sure, I don't mind. I just...」
+		PRINTFORMW 「I actually do enjoy being with you. So it's not a bad deal for me.」
+		PRINTFORMW 「And, well, no matter what happens next...」
+		PRINTFORMW 「The more allies we have, the better.」
+		PRINTFORMW 「A person with a vulnerable, weak side tends to go soft on others.」
+		PRINTFORMW 「Well then, I hope to continue our blooming relationship, %CALLNAME:MASTER%.」
+		PRINTFORMDW With that, she turned and faced you, smiling.
+		CFLAG:1399 = 1
+	ELSE
+		PRINTFORMDW Before you could express your feelings the tension gets to you, preventing you from speaking...
+		;added
+		PRINTFORMDW Seija stares at you, dumbfounded, and the only words that leave your mouth is the awkward "I... like... you."
+		PRINTFORMW 「Huh? Come again? You like me? You can't be serious, %K97_DUDE()%...」
+		PRINTFORMW 「Sorry to burst your bubble, but can't you see my horns or somethin'? Do you even know who I am?」
+		PRINTFORMW 「Look, we're different species to begin with, alright? Humans don't live as long as youkai do, right?」
+		PRINTFORMDW %BREAKENG(@"It's true. In addition to that, Seija is an amanojaku, so she is always surrounded by enemies. And to top it off, she's a fugitive too. But still...")%
+		CALL PRINT_DIALOGUE, @"But what? We don't get along terribly well, anyway. So no matter how long we've known each other, it'll never work out. You just wanna use me, right?", "w"
+		CALL PRINT_DIALOGUE, @"Like, 'let me use you for money,' or pester me for quick fuck, or whatever. That's the kind of person you are, huh?! Maybe you think I'm easy to use, too!", "w"
+		PRINTFORMDW Seija says that while looking down her nose at you.
+		PRINTFORMW 「...And besides, humans and youkai can't even have children either. As far as I'm aware, anyways.」
+		PRINTFORMDW You're about to object, but she shuts you down.
+		PRINTFORMW 「You got that? Then go on and scram, don't bother me... I got stuff to do.」
+		IF GET_MAPID(CFLAG:現在位置) == MAIN_MAP
+			PRINTFORMDW Seija turns her back toward you and walks off.
+			PRINTFORMDW Afterward, you are left standing there in shock.
+			PRINTFORMDW You find yourself staring at Seija's back.
+			PRINTFORMDW She just keeps walking without turning around.
+			CFLAG:ブチギレ = 1
+			CALL GETOUT(TARGET)
+		ELSE
+			PRINTFORMDW Seija starts pouting as her expression darkens. She zones you out and stares off into the distance.
+			CFLAG:ブチギレ = 1
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;353,イタズラする
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_353
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_353_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_353_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;354,添い寝する（相手は起きて布団に招く感じ）
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_354
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_354_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_354_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「...」
+		PRINTFORMW 「Just... try to keep things low key.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Mm... Hm?」
+		PRINTFORMW 「...Hey, let's sleep together... Okay?」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Mmhn... Nn...」
+		PRINTFORMW 「You wanna come sleep with me?」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「...You wanna crash with me?」
+		PRINTFORMW 「Well, I guess it's okay...」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Fwaaaahhh...」
+		PRINTFORMW 「...Let's get some sleep.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「.........Mmm.」
+		PRINTFORMW 「Let's just call it a night... I'm beat.」
+	ELSE
+		PRINTFORMW 「Hm?」
+		PRINTFORMW 「Hey, wanna sleep?」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;355,時止め（地の文の改変程度に留めるべき
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_355
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_355_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_355_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;360,身を任せる
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_360
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_360_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_360_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;361,抵抗する added
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_361
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_361_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_361_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMW 「I ain't stoppin' till I have my way with you, you know that right?」
+			PRINTFORMW 「Or-rah! Stay put and lemme enjoy this!!!」
+		CASE 1
+			PRINTFORMW 「You know, I'm not lettin' you go till we fuck.」
+			PRINTFORMW 「Just give it up.」
+		CASE 2
+			PRINTFORMW 「That's good♪ Keep talkin'!」
+			PRINTFORMW 「Protest%UNICODE(0x2764)% Struggle%UNICODE(0x2764)%」
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;363,読み聞かせ（[幼稚]持ち）
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_363
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_363_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_363_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;364,豆まき(萃香、勇儀、スカーレット姉妹用
+;com 364 modified to add seija
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_364
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_364_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_364_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF ONCE("SeijaSetsubun")
+		PRINTFORMDW It's Setsubun time.
+		PRINTFORMW 「Wait, what?! Nooooooooooooo!」
+		PRINTFORMW 「How did you know?! I'm not a demon, stooooooppppp!!! Ouch ouch, stop iiiiiiiiit!」
+		PRINTFORMW 「AAAAAAAAAAAA IT'S IN MY EYEEEEEES, AAAAAAAAAAAAAAA!!!」
+		PRINTFORMW 「I'M DYING, I'M FUCKING DYING OVER HERE!!!」
+		PRINTFORMW 「AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...!!!!!!」
+		PRINTFORMDW ...
+		PRINTFORMDW Seija lies on the ground, exhausted and defeated.
+		PRINTFORMW 「Haaah, haah... Assholes... Lot of you... How dare you do this to me...」
+		CALL PRINT_DIALOGUE, @"Hey, by the way... These beans are supposed to bring in luck if you eat them... I'm kinda hungry too... It's still food, right? Maybe I should try one--", "w"
+		PRINTFORMW 「IT BURNS IT BURNS IT'S INSIDE MEEEEEEEEEEEEEEE!!!」
+		PRINTFORMW 「AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...!!!!!!」
+		PRINTFORMDW Looks like it completely knocked %HIM_HER(TARGET)% out.
+		PRINTFORMDW Safe to say, it took quite a lot of time for %HIM_HER(TARGET)% to come to %HIS_HER(TARGET)% senses.
+		PRINTFORMW 「...I hate beans...」
+	ELSE
+		PRINTFORMW 「Wh... AGAIN?! NOOOOOOOOO!!!」
+		PRINTFORMW 「PLEASE, HAVE MERCY ON ME!!! I DIDN'T DO ANYTHING WRONG!!!」
+		PRINTFORMW 「SPARE ME, I BEG YOU!!! MAKE IT STOP, MAKE IT STOP, MAKE IT STOOOOOOOOOOOOOOOOOPPPPPPPPPP!!!」
+		PRINTFORMW 「AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA......!!!!!!!!!!!」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;365,守矢神社へ移動(早苗、神奈子、諏訪子用
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_365
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_365_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_365_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;402,就寝（添い寝時）
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_402
+;就寝にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K97_402_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_402_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 「Mm... Suu... Zzzz...」
+	PRINTFORMDW Seija is in her sleep.
+	PRINTFORMDW It wouldn't be a bad idea to sleep here.
+ENDIF
+RETURN 1
+;==================================================
+;403,休憩
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_403
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_403_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_403_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;405,出掛ける(同行時デートに出掛ける
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_405
+;出掛けるにTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K97_405_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_405_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SIF FLAG:時間停止 ;fix
+		RETURN 0
+	;with seija
+	IF CFLAG:TARGET:同行
+		IF CFLAG:1304 == 1 && TALENT:恋人
+			PRINTFORMW 「Yeah, sounds good.」
+			PRINTFORMW 「So... What's the plan?」
+		ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+			PRINTFORMW 「Yeah, let's move on.」
+			PRINTFORMW 「I'll follow you anywhere.」
+		ELSEIF TALENT:恋人
+			PRINTFORMW 「Yup-yup, off I go... Hang on!」
+			PRINTFORMW 「And where would we be going then?」
+		ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+			PRINTFORMW 「Huh? Why would I go out with you?」
+			PRINTFORMW 「We-Well, if you insist... I'll make an exception and tag along...」
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「Not sure where are you plannin' to go, but...」
+			PRINTFORMW 「Doesn't sound like it'll be boring.」
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「You got somethin' interesting %SPLIT_G("to show:in store for me")%?」
+		ELSE
+			PRINTFORMW 「Fair enough, but you better keep me from getting bored.」
+		ENDIF
+	ELSE
+	;with someone else
+		IF CFLAG:1304 == 1 && TALENT:恋人
+			PRINTFORMW 「...Dunno what you're up to though.」
+			PRINTFORMW 「But I sure am looking forward to the spoils from your exploits.」
+		ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+			PRINTFORMW 「Okay... See you later.」
+			PRINTFORMW 「...Don't get lost on me, okay?」
+		ELSEIF TALENT:恋人
+			PRINTFORMW 「Yeah, have fun there.」
+		ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+			PRINTFORMW 「...Well, you can go wherever you like, you don't need to ask me for permission.」
+			PRINTFORMW 「It's not like I care, y'hear! Not at all!」
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「Take care.」
+			PRINTFORMW 「...So cold, eh.」
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「Yeah, off you go %K97_DUDE()%.」
+		ELSE
+			PRINTFORMW 「Hm? Goin' somewhere?」
+			PRINTFORMW 「Yeah, have a nice trip.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;410,掃除
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_410
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_410_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_410_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;Custom code, prevents people from cleaning when sleeping
+	SIF CFLAG:睡眠
+		RETURN 0
+	IF FLAG:時間停止
+		RETURN 0
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:4 == 0 ;added
+			PRINTFORMW 「...This gotta be the only thing you're good at. Cleaning other's dirt.」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「...Hah, brown noser.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Looks like you're doing great at it, huh.」
+		ELSE
+			PRINTFORMW 「.........」
+		ENDIF
+	ELSEIF TALENT:恋慕 && DAY:2 == 4 && RAND:3 && ONCE("SeijaCleaningIce") ;added, during winter
+		PRINTFORMDW Seija vigorously breaks the ice stuck to the ground.
+		PRINTFORMW 「Hey, want some ice for your drink? Hehehe...」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Look at you pouring all that enthusiasm into this...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I don't think it's going to score you any brownie points.」
+		ELSE
+			PRINTFORMW 「Sorry, but I'm not very good at keeping stuff tidy and in order.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Shall I help?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Are you into this kind of thing?」
+		ELSE
+			PRINTFORMW 「You're pretty darn enthusiastic about it.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Is cleaning really that much fun? Huuuh...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I thought being that much of a clean-freak has its limits.」
+		ELSE
+			PRINTFORMW 「Good luck cleaning that up.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「You care more about cleaning than me?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Keep cleaning for the rest of your life for all I care...」
+		ELSE
+			PRINTFORMW 「Not sure how much cleaner this can even get...」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Wow, you are passionate alright.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Keep it clean, but not too clean. It gets weird otherwise.」
+		ELSE
+			PRINTFORMW 「Hey, not a bad idea to clean it up.」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Good job, thanks for your help.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Good luck with that one.」
+		ELSE
+			PRINTFORMW 「Look at you goin' at it!」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「You cleaning up? Ain't helpin' ya though.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Sounds like a lot of work.」
+		ELSE
+			PRINTFORMW 「Are you sure you're not some kind of clean-freak?」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;411,戦闘訓練
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_411
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_411_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_411_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF RAND:10 == 0
+		PRINTFORMW 「Unfortunately for you, I have ways to stop you from moving!」
+		PRINTFORMW 「Reverse Sign "Danmaku Through the Looking-Glass"!」
+	ELSEIF RAND:9 == 0
+		PRINTFORMW 「The world inside this mirror shall not allow you freedooooooom!!!」
+		PRINTFORMW 「Reverse Sign "Evil in the Mirror"!」
+	ELSEIF RAND:8 == 0
+		PRINTFORMW 「There's no cover for you!」
+		PRINTFORMW 「Deceit Sign "Reverse Needle Attack"!」
+	ELSEIF RAND:7 == 0
+		PRINTFORMW 「Who's going to come on top, you or me?!」
+		PRINTFORMW 「Reverse Sign "This Side Down"!」
+	ELSEIF RAND:6 == 0
+		PRINTFORMW 「I will not be eating dirt today!」
+		PRINTFORMW 「Reverse Sign "Overturning All Under Heaven"!」
+	ELSEIF RAND:5 == 0
+		PRINTFORMW 「Too bad, but you're "on top" now!」
+		PRINTFORMW 「Turnabout "Reverse Hierarchy"!」
+	ELSEIF RAND:4 == 0
+		PRINTFORMW 「Where'd you go?! No matter, I'll find you and melt the place with this!」
+		PRINTFORMW 「Turnabout "Change Air Brave"!」
+	ELSEIF RAND:3 == 0
+		PRINTFORMW 「This is the same one that used to shoot down Nakime the pheasant!」
+		PRINTFORMW 「Reverse Bow "Decree of the Dream Bow of Heaven & Earth"!」
+	ELSEIF RAND:2 == 0
+		PRINTFORMW 「The pheasant and the Name-Crying-Female Nakime, you know the rest.」
+		PRINTFORMW 「Reverse Bow "Dream Bow of Heaven & Earth"!」
+	ELSE
+		PRINTFORMW 「Well then, is there any hope? For you, that is.」
+		PRINTFORMW 「Looks like you're pretty good at avoiding them, though.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;412,勉強
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_412
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_412_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_412_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SIF CFLAG:睡眠
+		RETURN 0
+	SIF FLAG:時間停止
+		RETURN 0
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...%SPLIT_G("Is being a bookworm that much fun?:The hell are you even doing in here?")%」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Hmph, you're really diligent when it comes to studying.」
+		ELSE
+			PRINTFORMW 「.........」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Simply speaking, a revolutionary is synonymous with, uhh, a dictator I guess?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Goebbels, huh? Well, I'm not a big fan of that kind of agitation among orators from outside world.」
+		ELSE
+			PRINTFORMW 「Winning over people's hearts and minds is something like of a talent, and I don't have that myself.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「You're actually studying, huh... Sorry, but I hate dealing with math.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Don't get too obsessed with those, it will all come to nothing if you harm yourself.」
+		ELSE
+			PRINTFORMW 「Huh, is that the Analects of Confucius you're reading there?」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Dealing with economics and whatnot is really not my specialty.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Aggregate demand curve... I really have no idea what are you studying that for.」
+		ELSE
+			PRINTFORMW 「Gee, you're back at it again with some overly complicated stuff, huh.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Hmm. You're studying that stuff, huh?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Do you like studying this much?」
+		ELSE
+			PRINTFORMW 「I don't get what's so amusing about this.」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「You just like doing that, don'tcha? You got a homework there or something?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Every time I read Kojiki, I just can't help but wonder if Ame-no-Sagume actually had an affair with Ame-no-Wakahiko?」
+			PRINTFORMW 「What's Kojiki? Oh, that's "Records of Ancient Matters", chronicle of early myths, legends, songs... I thought you knew that!」
+		ELSE
+			PRINTFORMW 「Back in the age of theocracy even amanojaku were revered in their own way, you know? As gods of evil and curses, that is.」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「A textbook about some coups would be up my alley right now...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I heard there were some people from Outside who staged a coup against the descendants of the Amatsukami heavenly gods.」
+			PRINTFORMW 「Though apparently they never seemed to have the intention to actually rebel against heavens, fools I say.」
+		ELSE
+			PRINTFORMW 「No one can be possibly satisfied with the status quo. Living beings are always greedy for more, they just fail to realize it.」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...You're grinding them books pretty hard, huh.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Got somethin' interesting there?」
+		ELSE
+			PRINTFORMW 「Let's see if they have stuff with %SPLIT_G("essays about revolutions:stories about coups")%.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;413,料理
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_413
+;料理にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K97_413_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_413_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SIF CFLAG:睡眠
+		RETURN 0
+	SIF FLAG:時間停止
+		RETURN 0
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「You cooking? I'll help ya.」
+		PRINTFORMW 「Well, it tastes better than it looks, I promise.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Yeah... Lemme help.」
+		PRINTFORMW 「...%SPLIT_G("I've lived on my own for a long time. I can at least cook.:I know one thing or two when it comes to cooking since I live alone, so.")%」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「...Hey, I'm gonna help you.」
+		PRINTFORMW 「I'll feed ya even if we do poorly, don't worry.」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「As if I would eat something made by you.」
+		PRINTFORMW 「But if you really need me to help you, I'll graciously lend you a hand.」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「...Cooking, huh.」
+		PRINTFORMW 「%SPLIT_G("Do you want me to help you? I don't want you to make me something I can't eat.:Should I help you out? Can't have you make something inedible after all.")%」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Oh? Are you gonna make me some lunch?」
+	ELSE
+		PRINTFORMW 「You're good at this kind of thing?」
+	ENDIF
+	
+	;added
+	IF ABL:料理技能 < 3 && !RAND:3
+		PRINTFORMW 「Darn... I really suck at this, don't I?」
+		PRINTFORMW 「Yeah-yeah, I cut my finger, don't laugh.」
+	ELSEIF ABL:MASTER:料理技能 > ABL:料理技能
+		PRINTFORMW 「Aw man, I'm messing this up again... I've spent so much time trying to get better, and this is the result still.」
+		PRINTFORMW 「Sheesh. Huh? You'd like to teach me if I like?」
+		PRINTFORMW 「Nah, it's fine. I'm not really interested in cookin', anyways. So long as I have food, I'm satisfied.」
+	ELSEIF ABL:料理技能 > ABL:MASTER:料理技能
+		PRINTFORMW 「Come on, you gotta keep up with me.」
+		PRINTFORMW 「Or it would be just me making food for you which is not what I signed up for.」
+	ELSEIF ABL:料理技能 >= 3 && !RAND:3
+		PRINTFORMW 「Oh yeah, this was good.」
+		PRINTFORMW 「This meal came out very good, if I say so myself!」
+		PRINTFORMDW Seija beams with a smile, proud of her contribution.
+	ELSE
+		PRINTFORMW 「...I'm sure it will taste great now.」
+		PRINTFORMW 「Why? Because of my generous contribution obviously.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;414,食事
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_414
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_414_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_414_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「Lunch break, eh? Yeah, that smells yummy.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Eating together? ...Sounds like fun.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Hm, a meal, huh? I hope it's good.」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「Is that food... any good?」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「...A meal, you say.」
+		PRINTFORMW 「I suppose, as long as it tastes good.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「One of these days I'm gonna get you a treat.」
+	ELSE
+		PRINTFORMW 「Hm... Well, %SPLIT_G("thanks for the offer:don't mind if I do")%!」
+	ENDIF
+	
+	;added
+	IF TALENT:恋人 && FIRSTTIME("SeijaTouchedEat")
+		PRINTFORML
+		PRINTFORMW 「...Hm, what's so funny you ask?」
+		PRINTFORMW 「Ah, well... Lively meals are a great thing, aren't they?」
+		PRINTFORMW 「I have no friends and no family, so I never really had any family meals before...」
+		PRINTFORMW 「I always thought that was just how it was, but...」
+		PRINTFORMW 「Now I see that eating with people that are dear to me makes even the food taste better.」
+		PRINTFORMDW Seija says with a cheerful smile, enjoying your food.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;415,食事をふるまう
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_415
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_415_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_415_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「Mmm... That sure looks good.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Yeah, thank you.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「I hope you're treatin' me with somethin' great!」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「If you insist... So be it, I'll eat it.」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「...Weeeell.」
+		PRINTFORMW 「Doesn't it look just delicious?」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「This pleases the eye, doesn't it?」
+	ELSE
+		PRINTFORMW 「%SPLIT_G("I'll be happy to accept:I'll help myself to that. Much obliged")%.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;416,演奏する(凍結中？
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_416
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_416_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_416_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;417,昼寝をする
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_417
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_417_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_417_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「Hmm... Nah, I just thought you looked like you wanted to nap a little more.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「...Rise and shine, love.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「...%SPLIT_G("Sleep well:How'd you sleep")%?」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「You got a surprisingly cute sleeping face, lemme tell ya.」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「.........」
+		PRINTFORMW 「Now then, tell me what happens next?」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「What are we gonna do next?」
+	ELSE
+		PRINTFORMW 「%SPLIT_G(@"Well, look who's got time on %HIS_HER(MASTER)% hands:%SPLIT_G("Slackin' off:Lazin' around")%, huh")%.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;421,願掛けする
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_421
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_421_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_421_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FIRSTTIME("SeijaPray")
+		PRINTFORMW 「I know it doesn't seem like it, but I'm pretty religious too, y'know?」
+		PRINTFORMW 「Well, whatever helps my chances, even if it's a prayer!」
+	ENDIF
+	PRINTFORMDW Seija clasps her palms in a praying manner.
+	
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「I pray so that the low overcomes the high... That's about it, I guess.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「.........」
+		PRINTFORMW 「What did I pray for, eh? Well, that's a secret.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「...I'd like to have some peace and quiet for a while.」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「.........」
+		PRINTFORMW 「S-Surely I don't have to tell you, do I?!」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「...May we prevail...」
+		PRINTFORMW 「...If at all possible, hopefully.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「May the strong be dragged down where they belong.」
+	ELSE
+		PRINTFORMW 「May I be victorious in the next incident.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;431,お風呂でくつろぐ
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_431
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_431_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_431_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;added, revamped
+	PRINTFORMW 「%SPLIT_M("Fuah:Haah:Fah:Kh:Mmm:Nn:Ah:Nnh:Haa:Ha:Fuh", "...: ", RAND:3 + 1)%」
+	PRINTFORMW 「%SPLIT_G("What a nice hot bath.:Water's quite nice, I must say.:This is seriously rejuvenating...:I feel alive... again.:That hits the spot.:Maan, that was a terrific soak.")%」
+
+	IF !TALENT:恋人 && CFLAG:1307 == 1
+		PRINTFORMW 「...Quit starin', ya %K97_PERV()%!」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「%SPLIT_G("I might as well... wash your back, okay?:...Hey, turn away.")%」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;440,待つ
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_440
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_440_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_440_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;441,授業を受ける(慧音専用？
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_441
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_441_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_441_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;442,伐採する
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_442
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_442_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_442_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;デート系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+[SKIPSTART]
+;現状未実装
+;==================================================
+;600,デート会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_600
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_600_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_600_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;601,デートスキンシップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_601
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_601_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_601_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;602,デートキス
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_602
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_602_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_602_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;603,手を繋ぐ
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_603
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_603_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_603_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...You know, you've got a lot of nerve. Ya impudent brat...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「What is it?」
+		ELSE
+			PRINTFORMW 「Come on, quit tryin' to touch me...!」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Yeah, you better don't go getting lost.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I'm not goin' anywhere, relax.」
+		ELSE
+			PRINTFORMW 「Don't squeeze too hard, y'hear?」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hm... Your hand feels so big, y'know.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...So warm.」
+		ELSE
+			PRINTFORMW 「This is kinda nice, I like it.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Don't wander off, alright?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I'll hold your hand, but don't do anything crazy.」
+		ELSE
+			PRINTFORMW 「Right-right, c'mon then, gimme your hand!」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「...You got it.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Alright, fine! Just don't get any funny ideas!」
+		ELSE
+			PRINTFORMW 「%SPLIT_G("Man, your hand is so clammy. Gross:Just don't make it hard for me")%.」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「I don't really like when it gets all sticky and sweaty though...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Ah...」
+		ELSE
+			PRINTFORMW 「Don't pull, y'hear?」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Yeah-yeah, do I look dumb enough to get lost?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Fine by me, but no funny business.」
+		ELSE
+			PRINTFORMW 「Are you happy to have a cute girl hold your hand?」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「With you? Sure, why not.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Dunno what you're going for, holding a woman's hand.」
+		ELSE
+			PRINTFORMW 「Man, you're %SPLIT_G("such a creep:so gross")%.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;604,散策する
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_604
+;散策するにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K97_604_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_604_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		RETURN 0
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		IF RAND:3 == 0
+			PRINTFORMW 「...I ain't going anywhere with you, %K97_IDIOT()%.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...%K97_WHATEV()%.」
+		ELSE
+			PRINTFORMW 「.........」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「I think there's something over there.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「You find something interesting?」
+		ELSE
+			PRINTFORMW 「Hmm... let's go that way.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Yeah, sure thing... I'll go anywhere with you.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Which way are we going?」
+		ELSE
+			PRINTFORMW 「Let's try that way.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Where do you wanna go?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「This might be a good idea.」
+		ELSE
+			PRINTFORMW 「Let's see if anybody's dropped anything interesting around here.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Phah! I ain't goin' anywhere you want me to go!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Don't you get lost, y'hear!」
+		ELSE
+			PRINTFORMW 「Stop scurrying around like a little kid, seriously.」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「You want us to go over there?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Over there? Does that spot interest you?」
+		ELSE
+			PRINTFORMW 「Sounds like fun, %K97_DUDE()%.」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Maybe I should just leave you here all by yourself, eh?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Hey, where the hell are we?」
+		ELSE
+			PRINTFORMW 「Here are we going...?」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「Argh, how booooooring... Sheesh.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「This way? Then that way we go.」
+		ELSE
+			PRINTFORMW 「You wanna go that way? Then let's go this way.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;605,寄り道する
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_605
+;寄り道するにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K97_605_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_605_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「.........」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「A detour? I suppose it wouldn't hurt.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「We're taking a detour?」
+		PRINTFORMW 「Yeah, I'm good with that. Be my guest.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Where are we going?」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「Get on with your business, will ya?」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「I don't mind if we take a little detour.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Sounds good. Whatever floats your boat.」
+	ELSE
+		PRINTFORMW 「...%SPLIT_G("Hurry the hell up, seriously:Just get it over with")%.」
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;610,食事に誘う
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_610
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_610_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_610_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「.........」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「Gotcha, gotta fortify ourselves with a meal and all.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「A meal, huh.」
+		PRINTFORMW 「Alright, let's get ourselves stuffed.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Let's go grab a bite then.」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「It's not like I have to that with y--... You know what, never mind. Let's get something to eat.」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Is there a place around here too?」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「What are we gonna eat?」
+	ELSE
+		PRINTFORMW 「...You're payin' for everythin' though.」
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;613,お金稼ぎする
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_613
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_613_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_613_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「...Humm...」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「Oh, fundraising? Yeah, I'll leave it to you, break a leg.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「I mean, you don't have to do any of that stuff...」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「%K97_WHATEV(1)%.」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「Well, even if I could do it for you, I'd... Wait, I'm a fugitive, riiight.」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Yup, best of luck to you.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Good luck earning your keep.」
+	ELSE
+		PRINTFORMW 「You better cough up that 30 percent share with me.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;614,食材の買い出し
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_614
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_614_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_614_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「.........」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Carrots... pork... I guess it wouldn't hurt to go for a hot pot right now.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I'd prefer stuff to be shelf-stable, as far as I'm concerned.」
+		ELSE
+			PRINTFORMW 「I gotta get some more dried goods.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hmm... What would you like to eat?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Octopus... Squid... What's that all for?」
+		ELSE
+			PRINTFORMW 「I think we're out of soy sauce. I'll get some.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Carrots... radishes... Everything you need is here, eh.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Ohh the stringfish, I heard they're on the rise over here.」
+		ELSE
+			PRINTFORMW 「Spinach, huh. It's too alkaline for my taste, so I'm not exactly a fan.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Hey, can you eat green peppers and the like?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Oh, shiitake mushrooms. Well, not too bad actually.」
+		ELSE
+			PRINTFORMW 「Man, that cabbage sure is cheap. Shall I make some flour from it?」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Miso or soy sauce, which do you prefer for your pork and veggie gravy?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Oh, a blowfish.」
+		ELSE
+			PRINTFORMW 「I wonder if lamb tastes good...」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Sweet potatoes, yam... Yum.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I'd like to get some more green onions too.」
+		ELSE
+			PRINTFORMW 「Onions, eh. You wanna make some curry?」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「What are ya buyin'?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I hope you aren't one of those people who doesn't like veggies.」
+		ELSE
+			PRINTFORMW 「This cucumber... Must be from Kappa.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;615,お弁当を食べる
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_615
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_615_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_615_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「...Man, you're a glutton...」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「Want me to feed you? Here, open wide, aaaa～hn!」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「There you go... How is it? Is it good?」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「C'mon, eat up, eat up!」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「Anyways, I came in prepared and brought some packed lunch.」
+		PRINTFORMW 「There's Tabasco in one of these, but don't you dare leave any behind, y'hear?」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Here, I'll give you mine if you like.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「You can have it, but I make no guarantees about the taste.」
+	ELSE
+		PRINTFORMW 「I've got some for you, but it's gonna be very spicy.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;617,甘味処に誘う
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_617
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_617_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_617_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「.........」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「%SPLIT_G("It ain't my style, y'know.:Sweets, huh? So what are you grabbin'?")%」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「%SPLIT_G("Even just lookin' at 'em is kinda fun, huh. I guess I like dango the most myself.:I guess... I'd like to eat some sweet read-bean soup oshiruko, or something...")%」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Ohh, these dango look so %FSYN("tasty")%...」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「I don't even like sweets, but...」
+		PRINTFORMW 「If you wanna eat it, I don't mind coming along then.」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「I'm fine with whatever, as long as it tastes good.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Mmm... red bean paste, that's the stuff.」
+	ELSE
+		PRINTFORMW 「%SPLIT_G("I've got some for you, but it's gonna be very spicy.:Is that what you're into?")%」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;618,花屋
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_618
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_618_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_618_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;disabled, merged with above
+ENDIF
+RETURN 1
+;==================================================
+;620,鈴奈庵
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_620
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_620_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_620_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「.........」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「All kinds of weird stuff over here.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Necronomicon... Pnakotic Manuscripts...」
+		ELSE
+			PRINTFORMW 「"Mein Kampf"... Sounds interesting, though I can't read it.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hmm... Whatcha gonna borrow?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Is there something you wanna borrow?」
+		ELSE
+			PRINTFORMW 「Maybe I should come and borrow somethin' too, whatcha think?」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Are you gonna pay the late fee?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「What are you gonna grab?」
+		ELSE
+			PRINTFORMW 「They got any interesting books? Let's see...」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「You're here for the girl?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I don't see why not. Go ahead and borrow what you want.」
+		ELSE
+			PRINTFORMW 「...Hm, let's see if they got some demon books available.」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Hurry up and borrow somethin', we ain't got a whole day.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Think I'm gonna borrow a Koudanbon story book or something.」
+		ELSE
+			PRINTFORMW 「Are you plannin' on borrowing a Shunga, or...? I'm talkin' about erotic woodblock prints, y'know.」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Man, it stinks like books and ink in 'ere.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Do they also charge a late fee?」
+		ELSE
+			PRINTFORMW 「...Is it okay if a youkai uses this as well?」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「A rental bookstore, huuuh.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Maybe I'll borrow a book or somethin' myself.」
+		ELSE
+			PRINTFORMW 「This dump looks like it'll burn alright.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;626,土産屋
+;added, based on hatate
+;TFLAG:194(行動結果(-2=ひやかし -1=ウィンドウショッピング 1=400点未満（BAD） 2=～699点（NOMAL） 3=700点以上（GOOD）
+;CFLAG:性格傾向による地の文分岐あり
+;==================================================
+;映姫様口上作者様から拝借しました。いつもすみません
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_626
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_626_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_626_1
+#DIMS strGift
+#DIMS strReaction
+#DIM nPrice
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;贈っていたら本体名と属性を取得しておく
+	IF TFLAG:194 > 0
+		CALL GIFTDATA_MAIN(GET_GIFTDATA(TCVAR:97:今日の贈り物, "本体"))
+		strGift = %RESULTS%
+		nPrice = RESULT:1
+		IF STRFIND(RESULTS:1, "抱く") >= 0
+			strReaction = 抱く
+		ELSEIF STRFIND(RESULTS:1, "眺める") >= 0
+			strReaction = 眺める
+		ELSEIF STRFIND(RESULTS:1, "握る") >= 0
+			SIF STRFIND(RESULTS:1, "装飾") >= 0
+				strReaction = 身につける
+			strReaction = 握る
+		ELSE
+			strReaction = 身につける
+		ENDIF
+	ENDIF
+	
+	SIF FLAG:口上色
+		TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	SELECTCASE TFLAG:194
+	;ひやかし
+	CASE -2
+		IF TALENT:恋慕
+			IF RAND:2
+				PRINTFORML 「Well, if you didn't find what you want, then let's get going.」
+			ELSE
+				PRINTFORML 「Whatever. Let's not waste time here.」
+			ENDIF
+		ELSE
+			IF RAND:2
+				PRINTFORML 「You don't need to force yourself to buy me anything, you know.」
+			ELSE
+				PRINTFORML 「That's for the best. I don't feel like having some useless trinket anyway.」
+			ENDIF
+		ENDIF
+	;やっぱりやめる（見送り）
+	CASE -1
+		IF RAND:2
+			PRINTFORML 「What, you wanted to grab something for me?」
+			PRINTFORML 「Well, I've got some specific tastes. Finding what I like would be difficult.」
+		ELSE
+			PRINTFORML 「Heh, did you see that clerk? She was totally fuming.」
+			PRINTFORML 「Well, too bad.」
+		ENDIF
+	;400点未満（BAD）
+	CASE 1
+		PRINTFORML 「Huh, is that for me?」
+		PRINTFORML 「...Hate to break it to you, but I'll probably toss it away.」
+		SIF nPrice >= 30000
+			PRINTFORML 「Or maybe I'll just pawn it. Yeah, thanks for that at least.」
+	;400点～699点（NOMAL）
+	CASE 2
+		IF TALENT:恋慕 || TALENT:恋人
+			PRINTFORML 「Wow, you're giving this to me?」
+			PRINTFORML 「...Thanks, I'll treasure it.」
+			PRINTFORML 「You chose what I actually like, good on you. I knew you can do it.」
+		ELSE
+			PRINTFORML 「What, is that for me? Really?」
+			PRINTFORML 「Hmm... Yeah, I think I'll... Keep it.」
+			IF nPrice >= 30000
+				PRINTFORML 「But y'know, you shouldn't splurge so much money on this stuff.」
+				PRINTFORML 「You're not impressing anyone.」
+			ENDIF
+		ENDIF
+	;700点以上（GOOD）
+	CASE 3
+		;形容詞+本体名を取得
+		CALL GIFTNAME(TCVAR:97:今日の贈り物)
+		PRINTFORML 「Hey, is that %RESULTS%... It's for me? You sure?」
+		PRINTFORML 「Thanks, %CALLNAME:MASTER%. I really mean it.」
+		PRINTW
+		SELECTCASE strReaction
+		CASE "眺める"
+			PRINTFORML 「It looks something like I'd just admire forever.」
+			PRINTFORML 「I'll treasure it for sure.」
+		CASE "抱く"
+			PRINTFORML 「Wow, I think... I'm in love with this thing.」
+			PRINTFORML 「I never thought I'd need this in my life.」
+		CASE "握る"
+			PRINTFORML 「Aah, it looks even better when I hold it in my hands.」
+			PRINTFORML 「I really wanted this one at some point. Yeah, I'll be really careful with it.」
+		CASE "身につける"
+			PRINTFORML 「Hm, is this something I gotta put on? Alright... Turn away.」
+			PRINTFORML 「There, how does it look? Is it good? ...Heh, thought so.」
+			PRINTFORML 「Amazing stuff, I'll be sure to flaunt it wherever I go from now on.」
+		ENDSELECT
+		
+		IF nPrice >= 30000
+			PRINTW
+			PRINTFORML 「...Wait, this must've been expensive as hell.」
+			PRINTFORML 「Are you sure it's alright to give me something like this? I hardly deserve that...」
+			PRINTFORML 「Gifts are not always good just because they cost an arm and a leg.」
+		ENDIF
+		
+		IF TALENT:恋人
+			PRINTFORML 「I know this isn't much, but... Smoooch!%UNICODE(0x2665) *1%」
+			PRINTFORML 「Just a little token of appreciation from me. On the cheek, I know, but we'll do more... later.」
+		ENDIF
+	ENDSELECT
+	PRINTW
+ENDIF
+RETURN 1
+
+;==================================================
+;621,釣りをする
+;added, based on hatate
+;TFLAG:193(0=釣れない 1～4=魚 11～15=うまい魚 610=木材 131=守矢の守札 21=ローター 609=氷の鱗 606=龍の爪)
+;TFLAG:194(1000以上ならTARGETが釣った)
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_621
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_621_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_621_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;釣った
+	IF TFLAG:194 >= 1000
+		PRINTDATAW
+			DATAFORM 「Whoa, hey! I'm about to catch something!」
+			DATAFORM 「There we go, it's here! Let's see it!」
+			DATAFORM 「It got the bait! All I have to do now is reel in...」
+			DATAFORM 「Nice, I did it! Orrah, gimme something nice!」
+		ENDDATA
+		
+		SELECTCASE TFLAG:193
+		CASE 1 TO 4
+			PRINTFORML 「Heh, look at it jumping around. Sorry buddy, but you'll be my food now.」
+		CASE 11 TO 15
+			PRINTFORML 「Ooh great, this looks like something big alright.」
+			PRINTFORML 「Fishing is fun!」
+		CASE 610
+			PRINTFORML 「Wait, this is just a plank of wood.」
+			PRINTFORML 「Sheesh, talk about getting my hopes up for nothing...」
+		CASE 131
+			PRINTFORML 「Gaah, who keeps dumping this crap all over the water?!」
+		CASE 21
+			PRINTFORML 「Wait... Is that what I think it is...?」
+			PRINTFORML 「Did someone dump a used one? Gross, man...」
+		CASE 609
+			PRINTFORML 「Huh, this ain't a fish. Weird, it doesn't look like your average ice either.」
+		CASE 606
+			PRINTFORML 「Huh, some kind of claw?」
+			PRINTFORML 「How interesting. I wonder how much I can sell that for.」
+		ENDSELECT
+	;あなたが釣った
+	ELSE
+		SELECTCASE TFLAG:193
+		CASE 0
+			PRINTDATAW
+				DATAFORM 「Failure is just a part of learning process, right?」
+				DATAFORM 「...Maybe today isn't the day, who knows.」
+				DATAFORM 「Huh, I could've swore I saw some fish around though.」
+				DATAFORM 「Aww, too bad. Maybe next time.」
+			ENDDATA
+		;ウグイ
+		CASE 1, 5, 6
+			PRINTFORML 「Nice and easy fish to catch. Even I get them every now and then.」
+		;アマゴ
+		CASE 2
+			PRINTFORML 「Huh, this is just the same masu salmon, but it's also called red-spotted.」
+			PRINTFORML 「Even though the original one is red-spotted already, and this one has no red spots at all! How weird.」
+			PRINTFORML 「Let's just call it amago instead. It's a native fish in our lands after all.」
+		;ヤマメ
+		CASE 3
+			PRINTFORML 「Nice staple fish. By the way, its original name is yamame, just like that weird spider youkai from hell.」
+			PRINTFORML 「Though instead, this one gets to be eaten by humans. How ironic.」
+		;イワナ
+		CASE 4
+			PRINTFORML 「Look how long it is. I wonder if I can gulp it all in one go.」
+			PRINTFORML 「Let's roast it later and try it out!」
+		;フナ
+		CASE 7
+			PRINTFORML 「Nice, I like these. They taste great with some liquor.」
+			PRINTFORML 「They also got a lot of guts. If you roast them just slightly they're actually very tasty!」
+		;ピラニア
+		CASE 8
+			PRINTFORML 「Heh, now this fish knows what good teeth do for ya.」
+			PRINTFORMDL Seija says with a wide grin, revealing her own set of sharp teeth.
+			PRINTFORML 「It's said that a pack of those can nibble at you until you're dead meat.」
+			PRINTW 
+			PRINTFORML 「Well, it gotta be yucky, right? Considering its steady diet of dumbass villagers and idiot fishermen.」
+			PRINTFORML 「Huh, they actually don't eat people all that often? Geh, disappointment.」
+		;ガーパイク
+		CASE 9
+			PRINTFORML 「Another one of those salmons, huh. How many of those are there?」
+			PRINTFORML 「It looks kinda intimidating though, if you ask me.」
+		;サケ
+		CASE 11
+			PRINTFORML 「Heh, so tiny. We'll need at least twenty more to fill our bellies.」
+			PRINTFORML 「Still, it must be pretty hard to catch something so tiny.」
+			PRINTFORML 「I speak from experience...」
+		;ニジマス
+		CASE 13
+			PRINTFORML 「Nice, it glistens and almost glows.」
+			PRINTFORML 「I wonder why this fish chose to look this way, it just attracts attention, right?」
+			PRINTFORMDL Says the most odd-looking girl in Gensokyo...
+		;ヤツメウナギ
+		CASE 14
+			PRINTFORML 「I-Is that an eel...? Ah, just a lamprey. Good job catching it, it's hella slippery.」
+			PRINTFORML 「Maybe we should bring it to that girl who often serves them, they're delicious.」
+			PRINTFORML 「Still, she must be pretty skillful if she can catch these, provided she does it herself.」
+		;ピラルクー
+		CASE 15
+			PRINTFORML 「Snakehead, huh. I can see why they're called like that.」
+			PRINTFORML 「Invasive and dangerous, it eats everything on its path. I like the sound of that.」
+		;アユ
+		CASE 17
+			PRINTFORML 「Sweetfish... Mm, it even smells nice.」
+			PRINTFORML 「Huh, it smells pretty awful to you? Pish, what do you know about the smell anyways...」
+		;ナマズ
+		CASE 18
+			PRINTFORML 「Catfish, huh. Doesn't look like a cat to me.」
+			PRINTFORML 「I mean it's got those funny things on its head, but still. No ears, no cat!」
+		;ウナギ
+		CASE 19
+			PRINTFORML 「Uugh, an eel... Ouch, this reminds me of something painful...」
+			PRINTFORML 「Uh, never mind. I don't wanna delve deeper into it.」
+		;ローター
+		CASE 21
+			PRINTFORML 「Uugh, gross. Don't tell me they actually grow in the water or something.」
+			PRINTFORML 「C'mon, just toss it somewhere. ...Wait, are you actually putting it into your pocket?」
+			PRINTFORML 「...%K97_PERV(1)%.」
+		;コイ
+		CASE 22
+			PRINTFORML 「Carp, how nice. Despite being one of the most widely available fish out there, it's actually pretty hard to catch.」
+		;シーラカンス
+		CASE 23
+			PRINTFORML 「Now this is a blast from the past. This fish is so old, they might as well be a subtype of youkai at this point.」
+			PRINTFORML 「Will it count as cannibalism if I eat it? We'll see.」
+		;チョウザメ
+		CASE 24
+			PRINTFORML 「Oh if it isn't sturgeon. Its roe goes amazing with some beer.」
+		CASE 25;クニマス
+			PRINTFORML 「This fish went extinct, or so I heard. It took refuge here.」
+			PRINTFORML 「Just so we could eat it, hehe...」
+		CASE 29;オオクチバス
+			PRINTFORML 「That's one lively fish. I wonder if it already knows we're gonna eat it, huh?」
+		CASE 30;ピラルクー
+			PRINTFORML 「Hey, you need help with that? It seems hella big...」
+			PRINTFORML 「Heave-ho! Aagh, there it is! Call me when you cook it, alright?」
+			PRINTFORML 「I deserve a bite for my trouble.」
+		CASE 31 ;アオウオ
+			PRINTFORML 「Chinese specialty fish, eh? I hope that lady who lives here won't mind much...」
+			PRINTFORML 「She seems totally nuts, y'know. Get ready to bail just in case. If anyone asks, I don't know you.」
+		;タキタロウ
+		CASE 31
+			PRINTFORML 「Holy shit, how big is this thing?!」
+			PRINTFORML 「Takitaro? Of course I know what that is, it's that fish from the legends...」
+			PRINTFORML 「So it's actually real, huh. That'll sure generate some headlines, heh.」
+		;守矢の守札
+		CASE 131
+			PRINTFORML 「...No one likes that shrine anyway.」
+			PRINTFORML 「I mean, gambling at the shrine? Even I would be a saint in comparison.」
+		;龍の爪
+		CASE 606
+			PRINTFORML 「Huh, that ain't a fish.」
+			PRINTFORML 「I say hold onto it. It might be valuable, who knows.」
+		;氷の鱗
+		CASE 609
+			PRINTFORML 「Look at it glistening. Well, that's winter for ya.」
+			PRINTFORML 「That looks like something that one stupid fairy likes to use.」
+		;木材
+		CASE 610
+			PRINTFORML 「Wow, how did you manage that?」
+			PRINTFORML 「That ain't something you can catch even if you tried!」
+			PRINTFORMDL Seija cackles and makes fun of you.
+		CASE 643;龍涎香
+			PRINTFORML 「Is that... That's only something I saw in the book once.」
+			PRINTFORML 「Well that seems stupidly rare. Sell it later or something.」
+		;カエル
+		CASE 706
+			PRINTFORML 「Huh, a frog. Never thought you can catch those like that.」
+			PRINTFORML 「Is it even edible? Wait, what if it's poisonous?」
+			PRINTFORML 「...I had bad experience with frogs, I don't recommend it.」
+		CASEELSE
+			PRINTFORML 「Hey, look at you go. Well done.」 
+		ENDSELECT
+	ENDIF
+	PRINTW
+ENDIF
+RETURN 1
+
+;==================================================
+;436,読書 custom code, edited
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_436
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_436_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_436_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF RAND:3 ;added
+		PRINTFORMW 「I bet you're readin' some kind of awful obscenity right now, eh?」
+		PRINTFORMDW Seija gives you an understanding smirk.
+	ELSEIF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「...Don't disturb me...」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「What are you reading? Do tell.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「...Oh, this one sounds kinda amusing.」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Can I borrow it after you're done?」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「.........」
+		PRINTFORMW 「Hmm? Nah, I just thought it sounded interesting for a second.」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Well, is it fun?」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Hurry up and finish readin' it already, c'mon.」
+	ELSE
+		PRINTFORMW 「Readin' you say, huh...」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;698,部屋に入る
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_698
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_698_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_698_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「...What, you're going in?」
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hm, you wanna go in?」
+			PRINTFORMW 「...Just don't go on a treasure hunt inside my house, okay?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「So we're having a strategy meeting at my place this time, eh?」
+			PRINTFORMW 「That's fine by me. C'mon, get in.」
+		ELSE
+			PRINTFORMW 「In my room?」
+			PRINTFORMW 「I don't mind, it's just... No funny business, alright?」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Okay, I gotcha.」
+			PRINTFORMW 「Make yourself at home.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Just don't go probin' into stuff too much.」
+			PRINTFORMW 「There are some things I don't want people to see.」
+		ELSE
+			PRINTFORMW 「...I don't have anything interesting in here though.」
+			PRINTFORMW 「But if that's alright with ya, then by all means. Come on in.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Well, I don't have any problem with that.」
+			PRINTFORMW 「Though I can't fathom your intentions here... y'know.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「In my room, you say? Huuuh.」
+			PRINTFORMW 「Yeah, sure. Take your time.」
+		ELSE
+			PRINTFORMW 「?」
+			PRINTFORMW 「You don't need my permission to enter my room at this point, you know.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Huh. %K97_WHATEV(1)%.」
+			PRINTFORMW 「...But don't go getting' weird about this, y'hear?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Fine, do as you please.」
+		ELSE
+			PRINTFORMW 「Not sure what's that for, but...」
+			PRINTFORMW 「Just don't turn my place upside down, seriously.」
+		ENDIF
+	ELSEIF CFLAG:1302 == 1
+		IF RAND:3 == 0
+			PRINTFORMW 「You plan to go through my underwear?」
+			PRINTFORMW 「...Hmph, %K97_WHATEV()%.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「...Lettin' %ARTICLE(K97_PANTY())% of all people into my room, huuuh.」
+		ELSE
+			PRINTFORMW 「Dunno what you're up to, but...」
+			PRINTFORMW 「Behave yourself, got it?」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「You coming?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「What's up?」
+			PRINTFORMW 「You wanna visit my room, don't you?」
+		ELSE
+			PRINTFORMW 「It's a mess, but I hope you don't mind.」
+			PRINTFORMW 「It's the way I am.」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「...」
+			PRINTFORMW 「Just don't make too much of a mess.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I don't really mind if you do.」
+		ELSE
+			PRINTFORMW 「You're free to go in, y'know.」
+			PRINTFORMW 「Try not to wreck my stuff though.」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「...Why don't you just let yourself in?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Just don't pry into my things too much.」
+		ELSE
+			PRINTFORMW 「Hey, don't you move a thing.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;699,外に出る
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_699
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_699_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_699_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;派生コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;60,耳かき
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K97_60
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K97_60_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K97_60_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「C'mon then, I'll clean your ears.」
+			PRINTFORMW 「...Don't you move a muscle, or I'm gonna mess this up. You don't want that, do ya now?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Don't move while I clean your ears.」
+			PRINTFORMW 「Though maybe it's better for the sake of the world that I just drive this thing all the way and end you on the spot... No, it's nothing.」
+		ELSE
+			PRINTFORMW 「Yeah-yeah, don't say you didn't hear me though.」
+			PRINTFORMW 「Let's see if I can get a big one.」
+		ENDIF
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Hm... Ear cleaning, then.」
+			PRINTFORMW 「Wish me luck with this one, I'm gonna need it.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Here, I'll clean your ears just as you want.」
+			PRINTFORMW 「I know I probably won't stab ya, but you better be ready just in case.」
+		ELSE
+			PRINTFORMW 「...Yeah, I'll try.」
+			PRINTFORMW 「Beware though, I don't have much practice with this. Not sure if I can pull it off.」
+		ENDIF
+	ELSEIF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORMW 「Fine, I'll clean your ears, but you gotta stay still.」
+			PRINTFORMW 「I hear it's best not to do this stuff too much, but who knows.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Don't move too much, okay?」
+			PRINTFORMW 「Your ears are all stuffed with this crap or something?」
+		ELSE
+			PRINTFORMW 「Ear cleaning, huh.」
+			PRINTFORMW 「Sure, but I ain't great at it.」
+		ENDIF
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Is this what you are into?」
+			PRINTFORMW 「I don't really mind it.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I'm gonna scrape it all out with your brains included, so sit back and relax.」
+		ELSE
+			PRINTFORMW 「Want me to keep going and just shove it in?」
+			PRINTFORMW 「I bet you're a fan of having somethin' thrust in and out of ya.」
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Yeah, yeah. Just hold your horses while I'm at it.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Well, I don't mind doin' it for ya.」
+			PRINTFORMW 「Shall I start scraping things off?」
+		ELSE
+			PRINTFORMW 「For cryin' out loud, that's what happens when you don't keep yourself clean on a regular basis, I warned ya.」
+			PRINTFORMW 「C'mon now, be still. This is gonna be rough!」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:3 == 0
+			PRINTFORMW 「Just keep still.」
+			PRINTFORMW 「I'm gonna clean up these filthy ears of yours alright!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「I wonder if cleaning up your ears will make you a little more perceptive. Let's find out.」
+		ELSE
+			PRINTFORMW 「Don't worry, %K97_DUDE()%.」
+			PRINTFORMW 「We just need to get some airflow in there.」
+		ENDIF
+	ELSE
+		IF RAND:3 == 0
+			PRINTFORMW 「Shall I punch a hole in it? Heheh...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Gah, you should at least take care of your own earwax.」
+		ELSE
+			PRINTFORMW 「Ear cleaning, huh... What a hassle.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;61,抱き枕
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K97_61
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K97_61_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K97_61_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 「%SPLIT_G("Suu:Hnn:Mmm:Khh:Kuh:Ah:Zzz")%... %SPLIT_G("Faah:Suu:Kuu:Aah:Zzz:Supii:Snooore")%...」
+	PRINTFORMDW You see Seija smiling a little as she gets embraced in her sleep.
+ENDIF
+RETURN 1
+;==================================================
+;62,デコちゅー
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K97_62
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K97_62_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K97_62_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「Hmph. What the hell was that for...」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Ah... Mmm...」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Mm... Is something wrong?」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「Ah...! %K97_IDIOT(1)%...」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「...You weirdo...」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「...Are you kiddin' me...?」
+	ELSE
+		PRINTFORMW 「.........」
+	ENDIF
+	PRINTFORMDW Seija's cheeks flush a little as she gets kissed on the forehead.
+ENDIF
+RETURN 1
+;==================================================
+;63,もっとキスする
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K97_63
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K97_63_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K97_63_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDW You continue kissing with Seija during time stop.
+		PRINTFORMDW You enjoy the softness of her lips once again.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORMW 「...Zz... Khh... %FSYN("lips_muffle")%...」
+		PRINTFORMDW Seija is sleeping soundly.
+		PRINTFORMDW Her lips feel so very soft.
+	ELSE
+		;added
+		IF TALENT:恋慕 && !RAND:3
+			PRINTFORMW 「Hey, %CALLNAME:MASTER%... Let's kiss again!」
+			PRINTFORMDW At first, you just touched your lips together. But before you knew it, you were entwining your tongues.
+			PRINTFORML
+		ENDIF
+
+		;PRINTFORML 「%RANDLIPS(, "suck" + (TALENT:恋人 ? ":heart" # "") + (TALENT:恋慕 ? ":name" # "") )%」
+		PRINTFORML 「%RANDLIPS(, "suck")%」
+		
+		IF CFLAG:1304 == 1 && TALENT:恋人
+			IF RAND:2
+				PRINTFORMW 「%SPLIT_G(@"I told you not to shove your tongue inside, c'mon...:You can do it without... Stickin' your tongue all the way in.:It's surprisingly... nice...:I kinda... like it, to my own surprise...:That's the stuff... oh yeah.:You really gotta do that tongue stuff too, huh.")%」
+			ENDIF
+		ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+			IF RAND:2
+				PRINTFORMW 「...%SPLIT_G(@"Love ya:This is kinda nice.:I like this, I think.:You're goin' too hard at it... You %K97_IDIOT_SOFT()%...:So overzealous... Man.")%」
+			ENDIF
+		ELSEIF TALENT:恋人
+			IF !RAND:3
+				PRINTFORMW 「...Too long, %K97_DUDE()%.」
+			ELSEIF RAND:2
+				PRINTFORMW 「...%FSYN("lips_over")%?!」
+			ENDIF
+		ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+			IF RAND:2
+				PRINTFORMW 「...%SPLIT_G("You're making it way too long:That's too much")%!」
+			ENDIF
+		ELSEIF TALENT:恋慕
+			IF !RAND:3
+				PRINTFORMDW Seija surrenders herself meekly as her lips get pressed against yours.
+			ELSEIF RAND:2
+				PRINTFORMW 「...%FSYN("lips_over")%?!」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;80,手を引く
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K97_80
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K97_80_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K97_80_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:318 == 1 || MARK:反発刻印 == 3
+		PRINTFORMW 「.........」
+	ELSEIF RAND:2 ;added
+		IF TALENT:恋慕
+			PRINTFORMW 「Oh, I know a shortcut here, let's go!」
+			PRINTFORMW 「Come on, we're taking the scenic route!」
+		ELSE
+			PRINTFORMW 「Hey, wait! Slow down! I can't walk that fast!」
+		ENDIF
+	ELSEIF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「Hm... Aren't you a little too pushy...?」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Yeah, sure, take me somewhere nice...」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Where do you wanna go?」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「Hey, stop pulling...!」
+		PRINTFORMW 「If there's anywhere you want to go, just tell me... And I'll go...」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Where are we going?」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「You're surprisingly pushy, huh.」
+	ELSE
+		PRINTFORMW 「...Hey, where are you planning to take me?」
+	ENDIF
+ENDIF
+RETURN 1

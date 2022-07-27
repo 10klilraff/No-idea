@@ -1,0 +1,95 @@
+﻿;new menuing for item use menu
+@QoL_490_ITEMMENU(対象)
+#DIM REF 対象
+#DIM DYNAMIC nPage
+#DIM DYNAMIC nPageLength
+#DIM nPageSize = 20
+#DIM DYNAMIC nPrintCount
+#DIMS strPrintRange
+#DIM nLineCnt_Head
+;CALL COLORMESSAGE(@"Drugs",C_ORANGE)
+;PRINTL  can be used only once a day.
+CALL COLORMESSAGE(@"Snack",C_GREEN)
+PRINTL  items have a cooldown.
+DRAWLINE
+nLineCnt_Head = LINECOUNT
+$LOOP
+SIF LINECOUNT - nLineCnt_Head > 0
+	CLEARLINE LINECOUNT - nLineCnt_Head
+
+LOCAL:6 = 0
+strPrintRange = 
+FOR LOCAL,120, 699
+	IF 対象
+		IF 使用可能アイテム(LOCAL) == 2 && ITEM:LOCAL
+			strPrintRange += TOSTR(LOCAL) + ":"
+			LOCAL:6 ++
+		ENDIF
+	ELSE
+		IF 使用可能アイテム(LOCAL) && ITEM:LOCAL
+			strPrintRange += TOSTR(LOCAL) + ":"
+			LOCAL:6 ++
+		ENDIF
+	ENDIF
+NEXT
+
+nPageLength = LOCAL:6 / nPageSize
+SIF nPage > nPageLength
+	nPage = 0
+
+nPrintCount = 0
+LOCAL:7 = LINECOUNT
+FOR LOCAL,120, 699
+	SIF !SPLIT_CHECK(strPrintRange, LOCAL:0) ;show only those who are in the list
+		CONTINUE
+	SIF (nPrintCount >= (nPage) * nPageSize) && (nPrintCount < (nPage+1) * nPageSize)
+		CALL PRINT_ITEM_EXPLANATION2(LOCAL)
+
+	nPrintCount ++
+NEXT
+CALL EQUATE_LINE, LOCAL:7 + nPageSize*2
+
+;controls
+IF nPageLength != 0
+	PRINTFORML
+	PRINTBUTTON @"%"Prev page",15,LEFT%", 888
+	PRINTFORM (Page {nPage+1,2}/{nPageLength+1,2})%" "*6%
+	PRINTBUTTON @"%"Next page",15,LEFT%", 777
+	PRINTFORML
+ENDIF
+
+DRAWLINE
+SIF ITEM:昆虫採集セット
+	PRINTFORML [901] Check Bug Cage
+PRINTFORML [900] Use Collector's Gap automatically (Currently: \@ FLAG:Cスキマ自動仕様 ? ON# OFF\@) 
+IF TARGET && SHIRAHU(TARGET)
+	SIF 対象
+		SETCOLOR C_YELLOW
+	PRINTFORMLC [998] Use on %CALLNAME:TARGET%
+	RESETCOLOR
+ENDIF
+
+PRINTLC [999] Return
+INPUT
+;custom code
+SELECTCASE RESULT
+	CASE 777, 888
+		SIF nPageLength == 0
+			GOTO LOOP
+		nPage = PAGE_HANDLE(RESULT, 888, nPage, 0, nPageLength)
+		GOTO LOOP
+ENDSELECT
+RETURN RESULT
+
+;replacement for the original function
+@PRINT_ITEM_EXPLANATION2(ARG)
+;SIF GROUPMATCH(ARG, 501, 502, 503, 505, 506, 507, 508, 509, 511)
+;	SETCOLOR C_ORANGE
+SIF ITEM_SWEETS(ARG)
+	SETCOLOR C_GREEN
+PRINTFORM [{ARG,3}] %ITEMNAME_TR(ARG), 28, LEFT%
+RESETCOLOR
+PRINTFORML 　Quantity: {ITEM:ARG, 2}
+SETCOLOR C_L_GRAY
+	PRINTFORML 　%ITEM_EXPLANATION(ARG)%
+RESETCOLOR

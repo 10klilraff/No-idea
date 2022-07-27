@@ -1,0 +1,252 @@
+﻿@GO_OUT_CONDITION_EV1
+RESULT = 0
+;デート中は発生しない
+SIF RAND:3 || FLAG:デート相手
+	RETURN 0
+;その日物色済みだと無理
+SIF GETBIT(TFLAG:一日一回, 9)
+	RETURN 0
+CALL GO_OUT_EV1
+RETURN RESULT
+
+@GO_OUT_EV1
+#DIM ENEMY
+#DIMS ENEMY_RACE
+#DIM 勝敗
+#DIM LOOT
+#DIM LOOT_CANDIDATE, 17 = 51, 52, 53, 55, 56, 58, 59, 81, 82, 83, 84, 121, 131, 500, 501, 502, 510
+#DIM CONST CANDIDATE_N = 17
+#DIM REWARD
+#DIM DYNAMIC HORNY ;addition custom code
+;相手が変わるとかやりたい
+SELECTCASE CFLAG:MASTER:デート中
+	;湖
+	CASE 3
+		ENEMY_RACE = 妖精
+	;竹林
+	CASE 4
+		IF !RAND:3
+			ENEMY_RACE = イナバ
+		ELSE
+			ENEMY_RACE = 妖精
+		ENDIF
+	;addition custom code
+	CASE 5
+		ENEMY_RACE '= TEXTR("化け狸/茨たぬき")
+	CASE 6
+		IF !RAND:3
+			ENEMY_RACE '= TEXTR("化け狐/化け猫")
+		ELSE
+			RETURN 0
+		ENDIF
+	;--------------------
+	;山麓
+	CASE 7
+		ENEMY_RACE = 河童
+	;山頂
+	CASE 8
+		ENEMY_RACE = 白狼天狗
+	;地底
+	CASE 9
+		;addition custom code
+		IF !RAND:3
+			ENEMY_RACE = 鬼
+		ELSE
+			ENEMY_RACE = ゾンビフェアリー
+		ENDIF
+	;月
+	CASE 10
+		ENEMY_RACE = 玉兎
+	CASEELSE
+		RETURN 0
+ENDSELECT
+
+PRINTFORMW On the way %PARSE("you're")% suddenly attacked by %ARTICLE(RACE_TR(ENEMY_RACE))%!
+SETBIT TFLAG:一日一回, 9
+CALL MAKE_YUKIZURI(RANDOM_CHARANUM, ENEMY_RACE, 1)
+;bug fix, moved definition here
+ENEMY = RANDOM_CHARANUM
+TARGET = ENEMY
+CFLAG:ENEMY:デート中 = -1 ;bug fix, disable dating flag
+;-----------------------------
+HANDICAP_FIXED = RAND:(ABL:ENEMY:戦闘能力 * 5 + 1) + 10
+HANDICAP_RAND = 0
+;addition custom code, in heat
+IF TCVAR:ENEMY:発情 != 1
+	IF FLAG:異常気象 == 8  ;if pink wind, guaranteed
+		TCVAR:ENEMY:発情 = 1
+	ELSE
+		SIF RAND(CFLAG:ENEMY:溜まってる度) > 600 ;check how horny they are, if their upper level is high enough then we get this
+			TCVAR:ENEMY:発情 = 1
+	ENDIF
+	SIF TCVAR:ENEMY:発情
+		HORNY = 1
+ENDIF
+
+CALL KOJO_MESSAGE_SEND("DANMAKU", 0, RANDOM_CHARANUM, 1, -1, "戦闘前")
+TEQUIP:RANDOM_CHARANUM:上半身着衣状況 = 1
+
+CALL CHARA_STATE_TR(RANDOM_CHARANUM)
+	DRAWLINE
+	CALL COLORMESSAGE(@"Virginity loss history: %CSTR:RANDOM_CHARANUM:処女喪失履歴%",C_PINK,1)
+	PRINTFORML 
+CALL DANMAKU_OPPONENT_STATUS(RANDOM_CHARANUM)
+IF HANDICAP_FIXED
+	CALL COLORMESSAGE(@"Terrain effect: %CALLNAME:MASTER%'s dice goes down by {HANDICAP_FIXED}!",C_YELLOW,1)
+	;【三粒の天滴】の効果
+	IF ITEM:三粒の天滴
+		HANDICAP_FIXED /= 2
+		CALL COLORMESSAGE(@"But the Curse of the Native God halves it, becoming {HANDICAP_FIXED}!",C_YELLOW,1)
+	ENDIF
+ENDIF
+;addition custom code
+SIF TCVAR:ENEMY:発情
+	CALL COLORMESSAGE(@"%CALLNAME:ENEMY% seems incredibly aroused. Losing could be dangerous...",C_YELLOW,1)
+;--------------------
+$LOOP
+CALL ASK_M("Fight",1,"Escape",1,"Rules",1)
+SELECTCASE RESULT
+	CASE 0
+		IF BASE:MASTER:気力 < 500 || BASE:MASTER:体力 < 500
+			PRINTFORML %PARSE("You are")% too tired.
+			GOTO LOOP
+		ENDIF
+	CASE 1
+		PRINTFORML %PARSE("You flee")% from the fight.
+		RETURN 1
+	CASE 2
+		CALL SHOW_DANMAKU_RULE
+		GOTO LOOP
+ENDSELECT
+;bug fix, moved above
+; ENEMY = RANDOM_CHARANUM
+; TARGET = ENEMY
+REWARD = MAX(ABL:ENEMY:戦闘能力 * 10 + RAND:5, 1)
+;米とか酒とか
+LOOT = LOOT_CANDIDATE:(RAND:CANDIDATE_N)
+TIME += 60
+CFLAG:ENEMY:面識 = 1
+CALL QoL_Info_Write(ENEMY, Qol_Dates_Meet) ;qol custom code
+PRINTFORMW Game Start!!
+CALL DANMAKU_BATTLE(TARGET, 1)
+
+勝敗 = RESULT
+CALL RECOVER(MASTER, -500, "体力")
+CALL RECOVER(MASTER, -500, "気力")
+CALL KOJO_MESSAGE_SEND("DANMAKU", 勝敗, TARGET, 1, -1, "戦闘後")
+SIF 勝敗 < 3
+	EXP:MASTER:戦闘経験 += ABL:ENEMY:戦闘能力 * 3
+SIF 勝敗 < 1
+	EXP:MASTER:戦闘経験 += ABL:ENEMY:戦闘能力
+IF 勝敗 > 0
+	;CALL KOJO_MESSAGE_SEND("DANMAKU", 勝敗, TARGET, 1, -1, "逆レ開始")
+	SETCOLOR C_RED
+	IF TCVAR:ENEMY:発情 ;&& HAS_PENIS(MASTER) ;addition custom code
+		PRINTFORMW No longer able to move, %CALLNAME:ENEMY% pins %PARSE("you")% down.
+		PRINTFORMW %PARSE("You feel",1)% a warm breath on %PARSE("your",1)% throat...
+		CALL Add_LOST_GYAKURE_EX(ENEMY, HORNY) ;addition custom code
+		SIF RESULT
+			GOTO GYAKURE_END
+		;------------------------------
+		PRINTFORMW Next thing %PARSE("you know",1)%, %PARSE("you feel")% something warm wrapped around %PARSE("your",1)% genitals.
+		PRINTFORMW Looking down timidly, %PARSE("you're")% met with %CALLNAME:ENEMY% grinning broadly, her pussy swallowing %PARSE("your",1)% cock to the base.
+		PRINTFORMW \@ HORNY ? Aroused to %HIS_HER(ENEMY)% peak, %CALLNAME:ENEMY% # Estrus hits its peak during full moon, and %CALLNAME:ENEMY%\@ deals with the thirst by ravaging, tormenting, and violating %PARSE("you",5)%...
+		PRINTFORMW .........
+		PRINTFORMW ......
+		PRINTFORMW ...
+		PRINTFORMW %CALLNAME:ENEMY% continues indulging in %PARSE("you")% until she's satisfied, before just leaving %PARSE("you",5)% dead-tired and exhausted on the ground.
+		$GYAKURE_END
+		FLAG:気絶中断 = 100 + CFLAG:MASTER:現在位置 / 100
+		CFLAG:MASTER:デート中 = CFLAG:MASTER:現在位置 / 100
+		CALL LOST_GYAKURE(ENEMY)
+	ELSEIF ITEM:LOOT
+		PRINTFORMW %PARSE("You lose")% %A_AN(ITEMNAME_TR(LOOT))%%ITEMNAME_TR(LOOT)%...
+		ITEM:LOOT --
+	ELSEIF MONEY:2 >= REWARD
+		PRINTFORMW %PARSE("You lose")% %DIGIT_GROUP(REWARD)% Charisma...
+		MONEY:2 -= REWARD
+	ELSE
+		REWARD *= 300
+		PRINTFORMW %PARSE("You lose")% \@ MONEY > REWARD ? \\%DIGIT_GROUP(REWARD)%# all the money %PARSE("you have",1)%\@...
+		MONEY = MAX(MONEY - REWARD, 0)
+	ENDIF
+	RESETCOLOR
+	RETURN 1
+ENDIF
+
+;source操作他
+TCVAR:ENEMY:弾幕勝負不能 = 1
+CFLAG:ENEMY:弾幕勝負勝利 = 1
+CFLAG:ENEMY:負け犬 = 1
+CFLAG:ENEMY:よく行く地域 = CFLAG:MASTER:デート中
+
+PRINTFORML %CALLNAME:ENEMY% collapses on her knees...
+CALL ASK_M("Give an offering",1,"Demand money",1,"Demand her body",1, "Use a Stone of Mirada", ITEM:ミラダの石)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML %PARSE("You hold your")% hands towards %CALLNAME:ENEMY% and cite a prayer, and %PARSE("you",1)% can see her panties starting to shine lightly.
+		PRINTFORML Soon the light turns into a supernatural flame and begins burning her panties away without harming her nor her clothes.
+		PRINTFORML Having witnessed divine intervention, %CALLNAME:ENEMY% flees in fear.
+		CALL BUFF_BASE(MASTER,BASE_TSP,500, 1)
+		CALL BUFF_BASE(MASTER,BASE_精力,500, 1)
+		FLAG:篤信 += 10
+		;DELCHARA RANDOM_CHARANUM
+		;ADDCHARA RANDOM_CHARANUM
+		TARGET = 0
+		RETURN
+	CASE 1
+		PRINTFORMW Ora! Dance! Dance!
+		MONEY:2 += REWARD
+		PRINTFORMW %PARSE("You get")% {REWARD} Charisma from %CALLNAME:ENEMY%.
+		IF RAND:5 < ABL:ENEMY:戦闘能力
+			PRINTFORMW %PARSE("You")% also %PARSE("get")% %A_AN(ITEMNAME_TR(LOOT))%%ITEMNAME_TR(LOOT)%.
+			ITEM:LOOT ++
+		ENDIF
+		TARGET = 0
+		;DELCHARA RANDOM_CHARANUM
+		;ADDCHARA RANDOM_CHARANUM
+		RETURN 1
+	CASE 2
+		MARK:ENEMY:反発刻印 = 1
+		PRINTFORML %CALLNAME:ENEMY% refuses to hand over her maidenhood today but accepts %PARSE("your")% order.
+		CALL COLORMESSAGE(@"%CALLNAME:ENEMY% has a permanent Hate Mark, but can be pushed down anywhere that isn't public.",C_YELLOW,1)
+		PRINTFORMW %PARSE("You")% triumphantly %PARSE("take")% %CALLNAME:ENEMY% with %PARSE("you",5)% back home.
+	CASE 3
+		PRINTFORML %CALLNAME:ENEMY% glares at %PARSE("you")% as %PARSE("you grasp",1)% the Stone of Mirada.
+		PRINTFORML She quickly averts her gaze however.
+		CFLAG:ENEMY:体目当て = 1
+		ITEM:ミラダの石 --
+		ABL:ENEMY:親密 = MAX(3, ABL:ENEMY:親密)
+		ABL:ENEMY:欲望 = MAX(3, ABL:ENEMY:欲望)
+		CFLAG:ENEMY:溜まってる度 = 1000
+		PRINTFORML %PARSE("You put your")% hand on %CALLNAME:ENEMY%'s shoulder and order her to obey %PARSE("you",5)% for one day.
+		PRINTFORML %CALLNAME:ENEMY% accepts awfully obediently.
+		CALL COLORMESSAGE(@"%CALLNAME:ENEMY% can now be pushed down anywhere that isn't public.",C_YELLOW,1)
+		PRINTFORMW %PARSE("You")% triumphantly %PARSE("take")% %CALLNAME:ENEMY% with %PARSE("you",5)% back home.
+ENDSELECT
+
+CFLAG:ENEMY:デート中 = MAIN_MAP ;bug fix
+FLAG:デート相手 = TARGET
+CFLAG:TARGET:同行 = 180
+CFLAG:MASTER:同行 = 180
+CFLAG:ENEMY:眠気覚まし = 600
+CFLAG:拠点来訪 = 1
+CSTR:ENEMY:モブ子プロフィール２ = 無様にも返り討ちにされ今はもう大人しい
+
+RETURN 1
+
+@LOST_GYAKURE(ARG)
+CALL Add_LOST_GYAKURE(ARG) ;addition custom code
+BASE:MASTER:体力 = 0
+BASE:MASTER:気力 = 0
+BASE:MASTER:精力 = 0
+CFLAG:ARG:溜まってる度 = 0
+CALL SET_SLEEP(1,MASTER,0)
+CFLAG:MASTER:就寝時間 = DAY * 1440 + TIME + 120 + RAND:120
+TFLAG:106 = 0
+BEGIN AFTERTRAIN
+
+;IF TIME:2 >= 5 && TIME:2 <= 7 && TIME:5 < 2
+;	CALL COLORMESSAGE(@"満月の光が%CALLNAME:TARGET%の本能をかき立てる…！",C_YELLOW,1)
+;	CALL COLORMESSAGE(@"%CALLNAME:TARGET%の戦闘力がアップ！",C_YELLOW,1)
+;ENDIF

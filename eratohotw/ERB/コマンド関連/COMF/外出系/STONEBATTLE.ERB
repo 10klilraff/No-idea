@@ -1,0 +1,212 @@
+﻿@STONEBATTLE(difficulty, C_ID)
+#DIM C_ID
+#DIM FIRSTONE
+#DIM SECONE, 3
+#DIM LASTONE, 3
+#DIM FIRSTONE_E
+#DIM SECONE_E
+#DIM LASTONE_E
+#DIM Skill
+#DIM OUTCOME	;0=双方失敗 1=あなた成功 2=相手成功 3=双方成功
+#DIM PLAYER_TOTAL
+#DIM ENEMY_TOTAL
+#DIM difficulty
+{
+FIRSTONE = 1 + RAND:5 + (TALENT:MASTER:針さばき * 2) + (TALENT:MASTER:器用な指 * 2) + (TALENT:MASTER:採集Lv / 2 )
++ ( ABL:MASTER:音楽技能 / 2 ) + (TALENT:MASTER:調合Lv / 2 ) + (TALENT:MASTER:石積みランカー * 2) 
+}
+Skill = ABL:MASTER:技巧 + ABL:MASTER:指
+
+SECONE:0 = RAND:(6 + Skill) + Skill + RAND:7 + 6
+SECONE:1 = RAND:(4 + Skill) + Skill + RAND:5 + 4
+SECONE:2 = RAND:(2 + Skill) + Skill + RAND:3 + 2
+LASTONE:0 = RAND:9 + 2
+LASTONE:1 = RAND:7 + 4
+LASTONE:2 = RAND:5 + 7
+IF difficulty == 0
+	FIRSTONE_E = RAND:3
+	SECONE_E = RAND:4 + RAND:5
+	LASTONE_E = RAND:3
+ELSEIF difficulty == 1
+	FIRSTONE_E = RAND:5
+	SECONE_E = RAND:5 + RAND:6
+	LASTONE_E = RAND:5
+ELSEIF difficulty == 2
+	FIRSTONE_E = RAND:7 + 1
+	SECONE_E = RAND:6 + RAND:6 + 1
+	LASTONE_E = RAND:6
+ELSEIF difficulty == 3
+	FIRSTONE_E = RAND:7 + 2
+	SECONE_E = RAND:6 + RAND:7 + 1
+	LASTONE_E = RAND:7 + 1
+ELSEIF difficulty == 4
+	FIRSTONE_E = RAND:7 + 3
+	SECONE_E = RAND:7 + RAND:7 + 2
+	LASTONE_E = RAND:8 + 2
+ELSEIF difficulty == 5
+	FIRSTONE_E = RAND:9 + 3
+	SECONE_E = RAND:7 + RAND:8 + 2
+	LASTONE_E = RAND:9 + 2
+ELSEIF difficulty == 6
+	SELECTCASE RAND:3
+		CASE 0
+			FIRSTONE_E = RAND:9 + 4
+		CASE 1
+			FIRSTONE_E = RAND:9 + 5
+		CASE 2
+			FIRSTONE_E = RAND:10 + 5
+	ENDSELECT
+	SELECTCASE RAND:3
+		CASE 0
+			SECONE_E = RAND:7 + RAND:8 + 3
+		CASE 1
+			SECONE_E = RAND:8 + RAND:8 + 3
+		CASE 2
+			SECONE_E = RAND:8 + RAND:9 + 4
+	ENDSELECT
+	LASTONE_E = RAND:3 + 8
+ELSEIF difficulty == 7
+	SELECTCASE RAND:3
+		CASE 0
+			FIRSTONE_E = RAND:9 + 6
+		CASE 1
+			FIRSTONE_E = RAND:9 + 7
+		CASE 2
+			FIRSTONE_E = RAND:10 + 7
+	ENDSELECT
+	SELECTCASE RAND:3
+		CASE 0
+			SECONE_E = RAND:7 + RAND:8 + 5
+		CASE 1
+			SECONE_E = RAND:8 + RAND:8 + 5
+		CASE 2
+			SECONE_E = RAND:8 + RAND:9 + 6
+	ENDSELECT
+	LASTONE_E = RAND:3 + 10
+ELSEIF difficulty == 8
+	FIRSTONE_E = RAND:5 + 10
+	SECONE_E = RAND:7 + RAND:7 + 10
+	LASTONE_E = 20
+ELSE 
+	FIRSTONE_E = RAND:6 + 12
+	SECONE_E = RAND:8 + RAND:8 + 12
+	LASTONE_E = 22
+ENDIF
+
+DRAWLINE
+PRINTFORMW The stacking game has begun!
+PRINTFORML Having made a good start in the early stages, %PARSE("you have")% now stacked {FIRSTONE} stones.
+PRINTFORMW In the other corner, %CALLNAME:C_ID% has stacked {FIRSTONE_E}.
+{
+CALL ASK_M(@"Stack fast（Risk: {20 + ABL:欲望}％ & Number of stones: Many）",1,@"Steady pace（Risk: {15 + ABL:欲望}％）",1,
+@"Slow and careful（Risk: {8 + ABL:欲望}％ & Number of stones: Few）",1, @"Do nothing（Risk: 0 & Number of stones: 0）",1)
+}
+
+IF RESULT == 0
+	PRINTFORMW %PARSE("You stack")% stones fast, even if there's some risk!
+	PRINTFORMW 
+	SELECTCASE RAND:100
+		CASE 0 TO 9
+			OUTCOME = 1
+		CASE 10 TO 19
+			OUTCOME = 0
+		CASE 20 TO 30 + ABL:欲望
+			OUTCOME = 2
+		CASEELSE
+			OUTCOME = 3
+		ENDSELECT
+ELSEIF RESULT == 1
+PRINTFORMW %PARSE("You stack")% some stones.
+PRINTFORMW 
+	SELECTCASE RAND:100
+		CASE 0 TO 9
+			OUTCOME = 1
+		CASE 10 TO 19
+			OUTCOME = 0
+		CASE 20 TO 25 + ABL:欲望
+			OUTCOME = 2
+		CASEELSE
+			OUTCOME = 3
+	ENDSELECT
+ELSEIF RESULT == 2
+	PRINTFORMW %PARSE("You stack")% stones very carefully.
+	PRINTFORMW 
+	SELECTCASE RAND:100
+		CASE 0 TO 9
+			OUTCOME = 1
+		CASE 10 TO 17
+			OUTCOME = 0
+		CASE 18 TO 18 + ABL:欲望
+			OUTCOME = 2
+		CASEELSE
+			OUTCOME = 3
+	ENDSELECT
+ELSEIF RESULT == 3
+	PRINTFORMW %PARSE("You don't")% stack more stones.
+	PRINTFORMW 
+	PLAYER_TOTAL = FIRSTONE
+	SELECTCASE RAND:100
+		CASE 0 TO 19
+			PRINTFORMW %PARSE("You wait")%, doing nothing.
+			PRINTFORMW Oh no! It looks like %CALLNAME:C_ID%'s pile crumbled right before the end!
+			PRINTFORMW %PARSE("Your")% opponent now has %PRINT_PLUR("stone", LASTONE_E)%...
+			ENEMY_TOTAL = LASTONE_E
+		CASEELSE
+			PRINTFORMW %PARSE("You wait")%, doing nothing.
+			PRINTFORMW Taking a break, %PARSE("you",1)% %PARSE("look")% at %PARSE("your",1)% opponent...
+			PRINTFORMW %PARSE("Your")% opponent is making steady progress, adding {SECONE_E} more while %PARSE("you",1)% %PARSE("wait")%......
+			ENEMY_TOTAL = FIRSTONE_E + SECONE_E
+	ENDSELECT
+ENDIF
+IF GROUPMATCH(RESULT, 0, 1, 2)
+	IF OUTCOME % 2 == 1
+		PRINTFORMW %PARSE("You have")% piled up %PRINT_PLUR("stone", SECONE:RESULT)%!
+		PLAYER_TOTAL = FIRSTONE + SECONE:RESULT
+	ELSE
+		PRINTFORMW Ah!
+		PRINTFORMW %PARSE("You")% accidentally knocked it over!
+		PRINTFORMW Rushing to restore it, %PARSE("you end")% up with only %PRINT_PLUR("stone", LASTONE:RESULT)%.
+		PLAYER_TOTAL = LASTONE:RESULT
+	ENDIF
+	IF OUTCOME >= 2
+		PRINTFORMW Meanwhile, it seems %PARSE("your")% opponent has steadily racked up {SECONE_E} additional %PLURALIZER("piece", SECONE_E)%...
+		ENEMY_TOTAL = FIRSTONE_E + SECONE_E
+	ELSE
+		PRINTFORMW Oops! %CALLNAME:C_ID% knocked over %HIS_HER(C_ID)% pile\@ OUTCOME % 2 == 1? %" "%right at the end# \@!
+		PRINTFORMW Rushing to restore it, %CALLNAME:C_ID% ends up with only %PRINT_PLUR("stone", LASTONE_E)%.
+		ENEMY_TOTAL = LASTONE_E
+	ENDIF
+ENDIF
+CALL COLORMESSAGE(@"%CALLNAME:MASTER%：{PLAYER_TOTAL}　VS　%CALLNAME:C_ID%：{ENEMY_TOTAL}",C_YELLOW,2)
+PRINTFORML 
+IF PLAYER_TOTAL > ENEMY_TOTAL
+	CALL COLORMESSAGE(@"YOU WIN!",C_YELLOW,1)
+	CALL COLORMESSAGE(@"Life Prevails!",C_YELLOW,1)
+	PRINTFORMW
+	;ラスボス特殊分岐
+	IF difficulty == 8
+		TRYCALLFORM StoneMessage_{C_ID}("lastbattle_w")
+	ELSE
+		TRYCALLFORM StoneMessage_{C_ID}("win")
+	ENDIF
+	RETURN 0
+ELSEIF PLAYER_TOTAL == ENEMY_TOTAL
+	PRINTFORML
+	PRINTFORMW Because it ended in a draw, there will be another match.
+	JUMP STONEBATTLE(difficulty, C_ID)
+ELSE
+	CALL COLORMESSAGE(@"YOU LOSE!",C_YELLOW,1)
+	CALL COLORMESSAGE(@"LOSER!",C_YELLOW,1)
+	PRINTFORMW
+	;ラスボス特殊分岐
+	IF difficulty == 8
+		TRYCALLFORM StoneMessage_{C_ID}("lastbattle_l")
+	ELSE
+		TRYCALLFORM StoneMessage_{C_ID}("lose")
+	ENDIF
+	RETURN 1
+ENDIF
+
+RETURN 0
+		
+;タッグバトル構文予定地

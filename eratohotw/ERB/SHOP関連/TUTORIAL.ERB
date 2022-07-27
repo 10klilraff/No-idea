@@ -1,0 +1,1047 @@
+﻿@TUTORIAL_MAIN
+#DIM チュート行数保管
+
+CLEARLINE 1
+PRINTL 
+CALL 画像表示("立ち絵_服_通常_109", "right", 0, 130, 110)
+CALL 画像描画終了
+PRINTL 
+PRINTL 
+PRINTL 
+SETBGCOLOR 0, 0, 102
+PRINTFORML ........................
+PRINTFORML ..................
+PRINTFORML ............
+PRINTFORML ...... Regaining your senses, you find yourself in a strange room.
+PRINTFORML Before you sits girl with deep blue hair and a red nightcap.
+PRINTW 
+SETCOLOR 0xE6E6FA
+CALL DQPRINT("「Welcome, to a world of dreams with neither left or right, up or down, in or out, or then and now.」")
+
+SELECTCASE FLAG:592
+	CASE 0
+		IF CFLAG:[[ドレミー]]:面識
+			CALL DQPRINT("「Ara, So you know me?」")
+			CALL DQPRINT("「Whether the me you know and the me that's『me』are the same...... Why don't we find out?」")
+			PRINTFORMDW The girl smiles suggestively...
+		ELSE
+			CALL DQPRINT("「I function as a navigator of this place.」")
+			CALL DQPRINT("「Think of me as the manager of dreams.」")
+			PRINTFORMDW The girl introduces herself politely, and you respond in kind.
+		ENDIF
+	CASE 1
+		CALL DQPRINT("「So you come here again.」")
+		CALL DQPRINT("「Now then, what would you like to hear on this occasion?」")
+		PRINTFORMDW The girl greets you with a composed look.
+	CASE 2
+		CALL DQPRINT("「Ah, Pleasant to see you again.」")
+		CALL DQPRINT("「Please listen more to what I have to say, just make sure you don't oversleep.」")
+		PRINTFORMDW The girl smiles as she invites you over...
+	CASE 3
+		CALL DQPRINT("「Thank you for your repeated patronage.」")
+		CALL DQPRINT("「I cannot offer much hospitality, but please continue visiting.」")
+		PRINTFORMDW The girl ushers you in with a soft look...
+	CASEELSE
+		SELECTCASE RAND:5
+			CASE 0
+				CALL DQPRINT("「So you come here again.」")
+				CALL DQPRINT("「Now then, what would you like to hear on this occasion?」")
+				PRINTFORMDW The girl greets you with a composed look.
+			CASE 1
+				CALL DQPRINT("「Ah, Pleasant to see you again.」")
+				CALL DQPRINT("「Please listen more to what I have to say, just make sure you don't oversleep.」")
+				PRINTFORMDW The girl smiles as she invites you over...
+			CASE 2
+				CALL DQPRINT("「Thank you for your repeated patronage.」")
+				CALL DQPRINT("「I cannot offer much hospitality, but please continue visiting.」")
+				PRINTFORMDW The girl ushers you in with a soft look...
+			CASE 3
+				IF CFLAG:[[ドレミー]]:面識
+					CALL DQPRINT("「We've met in the real world you say?」")
+					CALL DQPRINT("「Whether the me you know and the me that's『me』are the same...... Why don't we find out?」")
+					PRINTFORMDW The girl smiles suggestively...
+				ELSE
+					CALL DQPRINT("「Just hearing『stories』is a bit dull you say?」")
+					CALL DQPRINT("「Fufu...... Have you gotten your hopes worked up? Well, maybe at some point.」")
+					PRINTFORMDW The girl smiles suggestively...
+				ENDIF
+			CASEELSE
+				CALL DQPRINT("「How is that pillow I bestowed upon you?」")
+				CALL DQPRINT("「Aa, Aa, I see. It's one of my masterpieces after all♪」")
+				PRINTFORMDW The girl grins in self-satisfaction...
+		ENDSELECT
+ENDSELECT
+PRINTL 
+CALL DQPRINT("「Now then. Now that you're here, I'm sure you have some questions.」")
+CALL DQPRINT("「...... What is it you would like to know?」",2)
+DRAWLINE
+PRINTL 
+
+$LOOP01
+
+チュート行数保管 = 0
+
+RESETCOLOR
+PRINTLC [100] - What do you recommend?
+PRINTLC [101] - "Stopping time"?
+PRINTLC [102] - Ways of earning money
+PRINTLC [103] - The basic progression of a day
+PRINTL 
+PRINTLC [104] - Sleep schedule
+PRINTLC [105] - Concerning prayer
+PRINTLC [106] - Special prayers
+PRINTLC [107] - Concerning achievements
+PRINTL 
+PRINTLC [108] - Relationship advice
+PRINTLC [109] - Getting along
+PRINTLC [110] - I just wanna do it...
+PRINTLC [111] - What's frustration?
+PRINTL 
+PRINTLC [112] - Being pushed down
+PRINTLC [113] - Someone hates me
+PRINTLC [114] - Mob characters?
+PRINTLC [115] - What are Mob attacks?
+PRINTL 
+PRINTLC [116] - About Charisma
+PRINTLC [117] - Meeting certain people
+PRINTLC [118] - Concerning fortune
+PRINTLC [119] - Concerning music sheets
+PRINTL 
+PRINTLC [200] - About cleaning
+PRINTLC [201] - The art of conversing
+PRINTLC [202] - Fighting ability
+PRINTLC [203] - About knowledge
+PRINTL 
+PRINTLC [204] - Cooking
+PRINTLC [205] - More about cooking
+PRINTLC [206] - Musical skill
+PRINTLC [207] - About fishing
+PRINTL 
+PRINTLC [208] - About foraging
+PRINTLC [209] - About mixing
+PRINTLC [210] - About brewing
+PRINTLC [211] - About gardening
+PRINTLC [216] - About logging
+PRINTL 
+PRINTLC [212] - About requests
+PRINTLC [213] - About Danmaku
+PRINTLC [214] - Can't win at Danmaku
+PRINTLC [215] - Special Travel
+PRINTL 
+;PRINTLC [216] - 伐採について
+PRINTLC [217] - About trapping
+PRINTLC [218] - About gifts
+PRINTL 
+PRINTLC [220] - About bug catching
+PRINTLC [221] - About bug fighting
+PRINTLC [222] - The art of bug fighting
+PRINTL 
+IF FLAG:チュートログ == 0;FLAG:594
+	PRINTL [996] - I forgot a thing you said just now (Keep message log)
+ELSE
+	PRINTL [996] - I want to focus on every word you're saying right now (Clear every line)
+ENDIF
+PRINTL 
+PRINTL [997] - Talk faster
+PRINTL [998] - By the way...
+PRINTL [999] - Nothing in particular comes to mind
+
+$INPUTLOOP
+INPUT
+SETCOLOR 0xE6E6FA
+;★消去行数はLOOP01からのPRINTLの数+1
+CLEARLINE 17
+SELECTCASE RESULT
+	;何をすればいい？
+	CASE 100
+		CALL DQPRINT("「You ask me what you should do?」", FLAG:594)
+		CALL DQPRINT("「...... There's nothing you really『have』to do in this world.」", FLAG:594)
+		CALL DQPRINT("「Fufu, But that's life for you, isn't it?」", FLAG:594)
+		CALL DQPRINT("「You should just follow your desires, spending each day as you like.」", FLAG:594)
+		CALL DQPRINT("「Till the soil, sustain yourself, live modestly――」", FLAG:594)
+		CALL DQPRINT("「Build up a fortune and indulge in decadence――」", FLAG:594)
+		CALL DQPRINT("「Find someone to love, raise a child tying your life to the next generation.」", FLAG:594)
+		CALL DQPRINT("「Do it all, overcome time, then do it all again.」", FLAG:594)
+		CALL DQPRINT("「...... Any choice you make will be accepted, that's the kind of world this is.」", FLAG:594)
+		チュート行数保管 += 9
+	;時間停止って？
+	CASE 101
+		CALL DQPRINT("「Stopping time――A power you posses, the only power you posses.」", FLAG:594)
+		CALL DQPRINT("「As long as it says [Stop Time] in the upper right, you can do it.」", FLAG:594)
+		CALL DQPRINT("「But naturally it's not infinite, it consumes so-called『TSP』.」", FLAG:594)
+		CALL DQPRINT("「In a world where time is frozen, you can do whatever you want......」", FLAG:594)
+		CALL DQPRINT("「Fufu...... As you might think, doing obscene things is totally within your purview.」", FLAG:594)
+		CALL DQPRINT("「That said, any relationship started with such a thing can hardly be called『pure』anymore.」", FLAG:594)
+		CALL DQPRINT("「It can also be used for things like『drugging the food』or transporting certain『things』unseen.」", FLAG:594)
+		CALL DQPRINT("「When brewing, speeding up time makes the sake finish faster.」", FLAG:594)
+		CALL DQPRINT("「You can travel great distances in but a moments notice.」", FLAG:594)
+		CALL DQPRINT("「At first it will feel like you can't stop it for long.」", FLAG:594)
+		CALL DQPRINT("「But continue to use your ability and your TPS capacity will increase little by little.」", FLAG:594)
+		CALL DQPRINT("「Experience is everything, I say♪」", FLAG:594)
+		チュート行数保管 += 12
+	;お金を稼ぐ方法
+	CASE 102
+		CALL DQPRINT("「Fufu, So making a living comes first.」", FLAG:594)
+		CALL DQPRINT("「That said, in this world there are no real living expenses.」", FLAG:594)
+		CALL DQPRINT("「...... Though, should your household『increase』and you find yourself with another mouth to feed, that's another matter.」", FLAG:594)
+		CALL DQPRINT("「If you help someone with their work, you'll only get a proportional amount.」", FLAG:594)
+		CALL DQPRINT("「Finding out who works when and where, check the『calendar』in your room.」", FLAG:594)
+		CALL DQPRINT("「Alternatively, cleaning where you live will give you a small allowance.」", FLAG:594)
+		CALL DQPRINT("「Other than that, you can make sake in the kitchen and sell it to the liquor store in the human village.」", FLAG:594)
+		CALL DQPRINT("「Or forage plants and make medicine to sell to Eientei...」", FLAG:594)
+		CALL DQPRINT("「You can fish, do some gardening or mix medicine and set up a stall in the village.」", FLAG:594)
+		CALL DQPRINT("「There's also tree-cutting, just cut down trees and sell them wholesale in the village.」", FLAG:594)
+		CALL DQPRINT("「Before going to bed, you can use up your remaining TSP on side jobs. It will accumulate and begin piling up after a while.」", FLAG:594)
+		CALL DQPRINT("「Setting whether to do this or not can be done from the【Side Job】option in the sleep menu.」", FLAG:594)
+		CALL DQPRINT("「Oh, Right, There's also that casino opening at the Scarlet Devil Mansion.」", FLAG:594)
+		CALL DQPRINT("「If you're confident in your luck and fortune, why not give it a visit?」", FLAG:594)
+		チュート行数保管 += 13
+	;一日の基本の流れ
+	CASE 103
+		CALL DQPRINT("「Every day starts with the menu screen.」", FLAG:594)
+		CALL DQPRINT("「There you can do things like【Change Sleeping Quarters】,【Set Alarm Clock】,【SAVE】and【LOAD】among other things.」", FLAG:594)
+		CALL DQPRINT("「When you're ready, just【Wake Up】to start the day proper.」", FLAG:594)
+		CALL DQPRINT("「If there's anything like a typhoon or blizzard going on, you'll be informed of that then.」", FLAG:594)
+		CALL DQPRINT("「If you run low on『ENE』during the day some commands will become unavailable.」", FLAG:594)
+		CALL DQPRINT("「In addition, if you run out of『STA』that day will end.」", FLAG:594)
+		CALL DQPRINT("「Having snacks, choosing to【Take a Nap】,【Bathe】, or using an【Item】can restore your energy and stamina.」", FLAG:594)
+		CALL DQPRINT("「A fixed time after waking up, you will enter a state where you『Need Sleep』.」", FLAG:594)
+		CALL DQPRINT("「Once you『Need Sleep』, your stamina and energy consumption will increase drastically.」", FLAG:594)
+		CALL DQPRINT("「Choosing to【Take a nap】or using certain items that help you stay awake can delay the status.」", FLAG:594)
+		CALL DQPRINT("「Going to bed or running out stamina ends the day.」", FLAG:594)
+		CALL DQPRINT("「You'll receive compensation based on how much cleaning or helping with work you did, and Charisma from increasing favorability.」", FLAG:594)
+		CALL DQPRINT("「At this time any child rearing expenses are paid, and your energy and stamina recovers.」", FLAG:594)
+		CALL DQPRINT("「Depending on your possessions and circumstances, something special might occur at this point.」", FLAG:594)
+		CALL DQPRINT("「...... That's the general gist of it. If you want a more complete description, ask about specific topics.」", FLAG:594)
+		チュート行数保管 += 15
+	;起床と就寝
+	CASE 104
+		CALL DQPRINT("「Choosing【House Settings】from the sleep menu lets you change when you wake up.」", FLAG:594)
+		CALL DQPRINT("「Unless you're in a really bad state, you will never oversleep.」", FLAG:594)
+		CALL DQPRINT("「It's another story if you're sharing a bed with someone.」", FLAG:594)
+		CALL DQPRINT("「When you go to sleep depends on when you wake up...... Changing when you『Need Sleep』.」", FLAG:594)
+		CALL DQPRINT("「Some people are nocturnal, to get to know someone like that it's a good idea to set the alarm to ring later during the day.」", FLAG:594)
+		CALL DQPRINT("「You can go to bed any time as long as it says you『Can Sleep』.」", FLAG:594)
+		CALL DQPRINT("「If you run out of stamina away from home or sleep in a strange place you won't recover as much, same if pull an all-nighter.」", FLAG:594)
+		CALL DQPRINT("「Also, if you don't go to bed properly then『Automatic prayer for love』won't work, so be careful.」", FLAG:594)
+		CALL DQPRINT("「At any rate, go to bed when you're tired and get some quality sleep. For my sake as well♪」", FLAG:594)
+		IF ITEM:スイート安眠枕
+			CALL DQPRINT("「By the way, how is that tapir pillow I graced you with?」", FLAG:594)
+			CALL DQPRINT("「We can perform small tune-ups as needed in the future, so please continue patronizing us forever♪」", FLAG:594)
+		ELSE
+			CALL DQPRINT("「Even so, maintaining a good sleep schedule when you're busy is hard.」", FLAG:594)
+			CALL DQPRINT("「If you're so busy, receiving a『Dreamy Pillow』might just be the thing you need, so please look forward to it.」", FLAG:594)
+		ENDIF
+		チュート行数保管 += 11
+	;願掛けについて
+	CASE 105
+		CALL DQPRINT("「On certain maps you can【Pray】once per day.」", FLAG:594)
+		CALL DQPRINT("「After getting a certain achievement, you will receive an『Altar』from which you can【Pray】at in your room.」", FLAG:594)
+		CALL DQPRINT("「What sort of god you pray to? Uhh...... Are you asking me?」", FLAG:594)
+		CALL DQPRINT("「Just offer a bit of coin while you【Pray】and small miracles will bless you.」", FLAG:594)
+		CALL DQPRINT("「『Love Prayer』is a special one that will make it so the person you pray for will come visit you the next day.」", FLAG:594)
+		CALL DQPRINT("「Wishing for『Endless Sexual Stamina』or『Peace of Mind』... Well, it is what it is.」", FLAG:594)
+		CALL DQPRINT("「『Oppai Oppai』you say... It can't be helped if you're that kind of person.」", FLAG:594)
+		CALL DQPRINT("「It helps you call out to『Certain Gods』during daily events, those that do not commonly get worshipped.」", FLAG:594)
+		CALL DQPRINT("「『Girl P...』Aaah! Just give it a rest. If you want things like that you can get them much more easily by just cleaning.」", FLAG:594)
+		CALL DQPRINT("「『Make Everyone Horny』...... That's just disgusting you know.」", FLAG:594)
+		CALL DQPRINT("「Doing that can cause the abnormal weather『Pink Wind』but... You do get this isn't something you should do, right?」", FLAG:594)
+		チュート行数保管 += 11
+	;特殊な願掛け
+	CASE 106
+		CALL DQPRINT("「I'm going to tell you about the special types of【Pray】.」", FLAG:594)
+		CALL DQPRINT("「『Something must be done about the pissed off girls』... How extremely convenient.」", FLAG:594)
+		CALL DQPRINT("「By giving a special offering... The panties of the angry girl, a hatred mark can be removed.」", FLAG:594)
+		CALL DQPRINT("「As for past mistakes... It's even possible to erase old hate marks.」", FLAG:594)
+		CALL DQPRINT("「But, this can also be used to make people less sadistic and more open to normal relationships.」", FLAG:594)
+		CALL DQPRINT("「There's also『Pray for a child』. Fufu, How earnest.」", FLAG:594)
+		CALL DQPRINT("「For a prayer this specific it needs a target, both as compensation as as directions, in this case a pair of panties.」", FLAG:594)
+		CALL DQPRINT("「So make sure to collect some every day, just make sure not to cause trouble, okay?」", FLAG:594)
+		CALL DQPRINT("「...Eh? What's with the monotone response? Maybe I should leak your secret... No, it really is a troublesome god, as you say.」", FLAG:594)
+		CALL DQPRINT("「You can also track down『A certain evildoer who sells them』if you get the chance.」", FLAG:594)
+		CALL DQPRINT("「Also, if you're helping someone look for something, you can use their panties as a catalyst to find it.」", FLAG:594)
+		CALL DQPRINT("「Ah, Right, from【House Settings】, you can enable【Automatic prayer for love】.」", FLAG:594)
+		CALL DQPRINT("「If you forget to 【Pray】that day, you will automatically do so before going to bed.」", FLAG:594)
+		CALL DQPRINT("「Please take time and place into consideration when doing it however.」", FLAG:594)
+		チュート行数保管 += 14
+	CASE 107
+		CALL DQPRINT("「Achievements can be accessed from the sleep menu.」", FLAG:594)
+		CALL DQPRINT("「You will receive a bonus if you fulfill one the requirements, such as getting a sufficient number of people to『Yearning』.」", FLAG:594)
+		CALL DQPRINT("「There are useful abilities such as『Dirt Sense』, along with useful items such as the『Altar』.」", FLAG:594)
+		CALL DQPRINT("「They are extremely convenient, so make sure to do a ton of them.」", FLAG:594)
+		CALL DQPRINT("「Since max stamina and energy are mainly grown here, put it on high priority.」", FLAG:594)
+		CALL DQPRINT("「Even if you forget about it, you can check in from time to time to see if you've unlocked something new.」", FLAG:594)
+		チュート行数保管 += 6
+	;女の子との関係性
+	CASE 108
+		CALL DQPRINT("「All relationships are broken into several stages.」", FLAG:594)
+		CALL DQPRINT("「Generally you either go『Yearning』→『Love』, or『Sex Friend』→『Lust』.」", FLAG:594)
+		CALL DQPRINT("「Once you go down one route, you're more or less locked to it.」", FLAG:594)
+		CALL DQPRINT("「You can go into the options and change it to the latter can turn into the former. This might be useful in some cases.」", FLAG:594)
+		CALL DQPRINT("「The conditions for『Yearning』can be checked in the【Abilities】view, under『Falling Conditions』.」", FLAG:594)
+		CALL DQPRINT("「Additionally, if you deepen a relationship enough you can confess to them.」", FLAG:594)
+		CALL DQPRINT("「However, in this world it is a fundamental law that you can only be in a relationship with one person.」", FLAG:594)
+		IF TALENT:[[ドレミー]]:恋人
+			CALL DQPRINT("「...... That said, please value me forever♪」", FLAG:594)
+			CALL DQPRINT("「You're in control of the dream world you say? Fufu, So you're the type to go after women like that?」", FLAG:594)
+		ELSEIF TALENT:MASTER:恋人
+			CALL DQPRINT("「Regrettable isn't it? Well, if you want to make a harem, find another world.」", FLAG:594)
+			CALL DQPRINT("「But if you absolutely want to check all possibilities... There's always the option of using『BAITSA・DASUTO』.」", FLAG:594)
+			CALL DQPRINT("「It can only be done 120 days after start...... Just make sure not to regret it.」", FLAG:594)
+			チュート行数保管 ++
+		ELSE
+			CALL DQPRINT("「Spend a lot of time together, make sure the mood is right, and offer a burning hot confession.」", FLAG:594)
+			CALL DQPRINT("「Depending on the situation, perhaps on the way home from a date?」", FLAG:594)
+		ENDIF
+		チュート行数保管 += 9
+	;仲良くなるには？
+	CASE 109
+		CALL DQPRINT("「In order to get along with anyone, you just need to find some common ground.」", FLAG:594)
+		CALL DQPRINT("「If you're not close already, there are very few things you can do.」", FLAG:594)
+		CALL DQPRINT("「Having conversations, serving tea... Assisting with work might also help.」", FLAG:594)
+		CALL DQPRINT("「If you're confident in your cooking or musical skills, many find that rather appealing.」", FLAG:594)
+		CALL DQPRINT("「【Foraging】and【Mixing】can help you get closer to someone to some extent.」", FLAG:594)
+		CALL DQPRINT("「Once you get close enough you can 【Lead them around】, and eventually take them on a【Date】.」", FLAG:594)
+		CALL DQPRINT("「It's much easier to become closer to someone during a date. You also get『Dating Experience』.」", FLAG:594)
+		CALL DQPRINT("「『Dating Experience』helps deepen relationships in various ways, so make sure to be proactive.」", FLAG:594)
+		CALL DQPRINT("「If you get closer to them you can do more, but if you go too far you might end up with a『Hate Mark』.」", FLAG:594)
+		CALL DQPRINT("「Basically, body contact should be avoided until you get『Yearning』at least.」", FLAG:594)
+		CALL DQPRINT("「This goes for obscene actions as well, it's recommended to get to at least『Yearning』or『Sex Friend』before trying anything.」", FLAG:594)
+		CALL DQPRINT("「Aahh yes... You can also put『Love Potions』in their food or drink, this will help a lot with favorability.」", FLAG:594)
+		チュート行数保管 += 12
+	;早く楽しみたい…
+	CASE 110
+		CALL DQPRINT("「If you want to have fun fast... It's best to do it while you're【Stopping Time】.」", FLAG:594)
+		CALL DQPRINT("「By developing someone's body beforehand, you get『Time Stop Marks』which makes it easier to execute commands.」", FLAG:594)
+		CALL DQPRINT("「However, climaxes during Time Stop count as『Unaware』. So if you are aiming for the sex friend route these do not count.」", FLAG:594)
+		CALL DQPRINT("「TSP will be drained slowly if you rape someone during Time Stop, but if it hits zero you will instantly be found out.」", FLAG:594)
+		CALL DQPRINT("「You can also lower a girl's guard by just giving her liquor.」", FLAG:594)
+		CALL DQPRINT("「Or rather, if you make them『Dead Drunk』, they will lose consciousness and be completely unable to resist.」", FLAG:594)
+		CALL DQPRINT("「Taking a『Turmeric Drink』will help you avoid getting drunk, so remember to take one if you're bringing out the strong stuff.」", FLAG:594)
+		CALL DQPRINT("「A third way is to just put some『Sleeping Pills』in their tea, going into their room as they sleep, and do whatever you want.」", FLAG:594)
+		CALL DQPRINT("「Proceed with caution though, as having the girl wake up while you're raping her in her sleep or intoxication will make her hate you.」", FLAG:594)
+		CALL DQPRINT("「So depending on the situation, know when to『Stop』, okay?」", FLAG:594)
+		CALL DQPRINT("「In any case, just remember that doing these sorts of things makes it impossible to have a『Pure Relationship』.」", FLAG:594)
+		チュート行数保管 += 11
+	;欲求不満度とは
+	CASE 111
+		CALL DQPRINT("「『Sexual Frustration』is an indication of how much desire has built up in a girl.」", FLAG:594)
+		CALL DQPRINT("「By clearing a【Achievement】you will get『Lust Sense』that lets you visualize it as a number.」", FLAG:594)
+		CALL DQPRINT("「When『Sexual Frustration』is high, it increases the chance of being pushed down, and the guard against the opposite sex might be lowered.」", FLAG:594)
+		CALL DQPRINT("「It builds up on its own, and once it's built up enough the girl will simply masturbate to reduce it.」", FLAG:594)
+		CALL DQPRINT("「In addition, using an『Aphrodisiac』without any climax will build the frustration up rapidly.」", FLAG:594)
+		CALL DQPRINT("「Conversely, when they climax or experience something sexual enough it will decrease.」", FLAG:594)
+		CALL DQPRINT("「Incidentally, if you are pushed down, they won't let you go until『Sexual Frustration』has reached zero.」", FLAG:594)
+		CALL DQPRINT("「So make sure to keep them company until the end.」", FLAG:594)
+		チュート行数保管 += 8
+	;押し倒されるには
+	CASE 112
+		CALL DQPRINT("「What a nymphomaniac...」", FLAG:594)
+		CALL DQPRINT("「Having conscious sex with a girl without having her fall for you first requires independent acting on her part.」", FLAG:594)
+		CALL DQPRINT("「That is what『Pushed Down』is. If you meet certain requirements, the girl will be the one pushing you down instead.」", FLAG:594)
+		CALL DQPRINT("「When you are pushed down, your partner's energy and stamina consumption are reduced, letting you enjoy it for a long time.」", FLAG:594)
+		CALL DQPRINT("「Also, if your stamina runs out while you're pushed down, you'll make your partner more sadistic.」", FLAG:594)
+		CALL DQPRINT("「To be pushed down, they must know what sex is, and they must be in the right『Mindset』.」", FLAG:594)
+		CALL DQPRINT("「Specifically, their『Desire』and『Sexual Frustration』must be high enough.」", FLAG:594)
+		CALL DQPRINT("「Further, the【Embrace】command has the effect of making it easier for the recipient to push you down.」", FLAG:594)
+		CALL DQPRINT("「Build up『Desire』during Time Stop rape, make liberal use of aphrodisiacs, and hug them for the final push.」", FLAG:594)
+		CALL DQPRINT("「【Mixing】allows you to make other items than normal『Aphrodisiac』that might help more.」", FLAG:594)
+		CALL DQPRINT("「Either way, it's pretty difficult to get if no falling conditions have fired.」", FLAG:594)
+		CALL DQPRINT("「Watch out for『Hostility』and『Discomfort』, don't be careless lest you end up with a hate mark.」", FLAG:594)
+		チュート行数保管 += 12
+	;嫌われた時は？
+	CASE 113
+		CALL DQPRINT("「What to do if a girl hates you? Well, why not just try apologizing?」", FLAG:594)
+		CALL DQPRINT("「If you see the『Anger Gauge』, don't act carelessly.」", FLAG:594)
+		CALL DQPRINT("「Anger is temporary and passes with the day, but『Hate Mark』stay and continue affecting her.」", FLAG:594)
+		CALL DQPRINT("「『Hate Mark』makes it much harder to use some commands, so deal with it as fast as you can.」", FLAG:594)
+		CALL DQPRINT("「If it's just『Hate Mark』１, mail-order a『Box of Cakes』and use them to【Apologize】, and if you're lucky, that'll remove it.」", FLAG:594)
+		CALL DQPRINT("「If it's『Hate Mark』２, steal their panties repeatedly and offer them while【Praying】, this will always remove one degree of hate mark.」", FLAG:594)
+		CALL DQPRINT("「If you can invite them to a date, then sometimes there will be an event at the end which removes one『Hate Mark』.」", FLAG:594)
+		CALL DQPRINT("「If you do wrong during a date, work your hardest to make sure it ends well at least and try to clear to name.」", FLAG:594)
+		CALL DQPRINT("「When a『Hate Mark』is deleted, information and history still stays the same.」", FLAG:594)
+		CALL DQPRINT("「If you【Pray】you can delete it, but there's an advantage to having them.」", FLAG:594)
+		CALL DQPRINT("「When gaining a『Hate Mark』, a comparison is made to the worst incident, meaning having history makes it harder to be hated.」", FLAG:594)
+		CALL DQPRINT("「But it's just a bit easier, so if you push someone far enough, they'll still hate you!」", FLAG:594)
+		CALL DQPRINT("「Please take care not to get too many『Hate Mark』.」", FLAG:594)
+		チュート行数保管 += 13
+	;モブキャラとは？
+	CASE 114
+		CALL DQPRINT("「They are non-fixed characters, so called random characters.」", FLAG:594)
+		CALL DQPRINT("「Mainly they can be found by going to certain places and choosing to【Hunt For Girls】.」", FLAG:594)
+		CALL DQPRINT("「If you spend some time, or just stop time, I'm sure you'll find a girl that catches your eye.」", FLAG:594)
+		CALL DQPRINT("「Depending on the region, the species and features will vary, so check many places.」", FLAG:594)
+		CALL DQPRINT("「You can then spend a bit of time with the girl you decide to pick up.」", FLAG:594)
+		CALL DQPRINT("「During the first day, all growth rates are increased considerably, making it possible to deepen the relationship fast.」", FLAG:594)
+		CALL DQPRINT("「... Depending on the situation, it might develop into a『Passing Relationship』.」", FLAG:594)
+		CALL DQPRINT("「At the end of the day, you can choose to either remember or forget the girl you saw that day.」", FLAG:594)
+		CALL DQPRINT("「If you think you want to meet them again, choose to【Remember】.」", FLAG:594)
+		CALL DQPRINT("「If you return to the same place and take【Hunt For Girls】, you can choose【Find one from before】.」", FLAG:594)
+		CALL DQPRINT("「If you choose to【Completely Forget】someone you cannot meet them again.」", FLAG:594)
+		CALL DQPRINT("「Some achievements might have conditions, so it may be necessary to forget sometimes.」", FLAG:594)
+		CALL DQPRINT("「Aahh, Also, these mob character files are stored as files separate from the saves.」", FLAG:594)
+		CALL DQPRINT("「When updating, don't forget to copy of the『dat folder』as well.」", FLAG:594)
+		チュート行数保管 += 14
+	;モブキャラの襲撃
+	CASE 115
+		CALL DQPRINT("「Another way of meeting Mob characters is by running into them accidentally.」", FLAG:594)
+		CALL DQPRINT("「If you go around outside on your own you might get assaulted lawless types.」", FLAG:594)
+		CALL DQPRINT("「Is it dangerous you ask? No, Gensokyo is that kind of place. Humans are in no danger.」", FLAG:594)
+		CALL DQPRINT("「Uhh, Be sure not to do【Hunt For Girls】on the same day you want to get assaulted, they might interfere.」", FLAG:594)
+		CALL DQPRINT("「You will be challenged to Danmaku, so make sure your『Combat Skill』is tampered.」", FLAG:594)
+		CALL DQPRINT("「By the way, during the Danmaku fight, your opponent will have home advantage, so be careful with that.」", FLAG:594)
+		CALL DQPRINT("「If you receive a blessing from the God that governs the land, that will remove your opponent's advantage.」", FLAG:594)
+		CALL DQPRINT("「If you win at Danmaku, you can do whatever you want. The loser deserves no mercy♪」", FLAG:594)
+		CALL DQPRINT("「On the other hand, if you're defeated, you'll lose money and Charisma and such.」", FLAG:594)
+		CALL DQPRINT("「If your opponent is in『Heat』, they might assault you. Sexually that is.」", FLAG:594)
+		CALL DQPRINT("「Eh? ...... Either way that sounds like a great experience you say?」", FLAG:594)
+		CALL DQPRINT("「... For someone as resolute as you, Gensokyo is the perfect place I think, yes.」", FLAG:594)
+		チュート行数保管 += 12
+	;カリスマについて
+	CASE 116
+		CALL DQPRINT("「Charisma is a form of『Currency』you can use instead of money.」", FLAG:594)
+		CALL DQPRINT("「It's mainly used to wager bets at the【Scarlet Devil Mansion Casino】or trade for money.」", FLAG:594)
+		CALL DQPRINT("「Also, some stores accept Charisma as payment alongside money.」", FLAG:594)
+		CALL DQPRINT("「Usually it's better to pay with Charisma than money.」", FLAG:594)
+		CALL DQPRINT("「Depending on how much favorability you get during a day, you might receive some Charisma as a bonus at the end of it.」", FLAG:594)
+		CALL DQPRINT("「However, the amount you get that way is rather small, so using as the only source of income is difficult.」", FLAG:594)
+		CALL DQPRINT("「The exchange rate between Charisma and money is floating, trading can be done at the Scarlet Devil Mansion.」", FLAG:594)
+		CALL DQPRINT("「The rate of Charisma depends on the date in『that』place, and it changes from day to day.」", FLAG:594)
+		CALL DQPRINT("「By buying a lot of Charisma when it's cheap you can make a large profit. 」", FLAG:594)
+		CALL DQPRINT("「However, do note that trading might be suspended if Charisma crashes completely.」", FLAG:594)
+		チュート行数保管 += 10
+	;あの子に会いたい
+	CASE 117
+		CALL DQPRINT("「Can't find the girl you're looking for?」", FLAG:594)
+		CALL DQPRINT("「If you live where she lives, it'll be much easier to find her.」", FLAG:594)
+		CALL DQPRINT("「You can also go out and visit where they live, but there are many that lack permanent residence.」", FLAG:594)
+		CALL DQPRINT("「If you want to find where someone is right now, simply【Pray】or choose【Listen to God】」", FLAG:594)
+		CALL DQPRINT("「When you do, if you【Find someone who's outside】but can't find someone and they're not asleep, you can't meet them that day.」", FLAG:594)
+		CALL DQPRINT("「Some people have different hours of activity, to meet them you have to make sure you set your alarm to wake you up later in the day.」", FLAG:594)
+		CALL DQPRINT("「If you want to meet them by any means, you can always【Pray】and then choose to【Pray for Love】.」", FLAG:594)
+		CALL DQPRINT("「The next day, that person will come visit you. In【House Settings】enabling【Automatic Prayer for Love】can be very convenient.」", FLAG:594)
+		CALL DQPRINT("「If someone lacks a place to stay, inviting them instead might be a good idea.」", FLAG:594)
+		チュート行数保管 += 9
+	;運勢について
+	CASE 118
+		CALL DQPRINT("「Fortune... It's a matter of probability skewing, or in simpler terms, just luck.」", FLAG:594)
+		CALL DQPRINT("「You can tell what fortune you will have for the day via the Hakurei Omikuji『Fortune Letter』service.」", FLAG:594)
+		CALL DQPRINT("「If you're lucky, fishing, foraging, and Danmaku might turn out just a bit better.」", FLAG:594)
+		CALL DQPRINT("「Your odds of winning at the lottery might also increase as well.」", FLAG:594)
+		CALL DQPRINT("「Your chances of getting lucky with a girl too.」", FLAG:594)
+		CALL DQPRINT("「If you just want to increase the chance of lewd things happening, buy the『Great Fortune Crest』from the White Hare of Inaba. 」", FLAG:594)
+		CALL DQPRINT("「If you check your fortune at the start of the day, you can use the outcome to plan what you're going to do that day.」", FLAG:594)
+		チュート行数保管 += 7
+	;楽譜について
+	CASE 119
+		CALL DQPRINT("「A music sheet, it's a collectible.」", FLAG:594)
+		CALL DQPRINT("「They're character themes, and can be obtained if you pull off a great performance to someone.」", FLAG:594)
+		CALL DQPRINT("「To get the main theme of a set you have to complete the rest of it first, then you'll automatically get it.」", FLAG:594)
+		CALL DQPRINT("「You have a 30 percent chance of getting themes for normal stages and non-character themes when playing.」", FLAG:594)
+		CALL DQPRINT("「You get the game over theme by playing Danmaku and winning against people.」", FLAG:594)
+		CALL DQPRINT("「And you get the ending theme by getting Love or Lust with anyone in the set.」", FLAG:594)
+		CALL DQPRINT("「Some you get via fulfilling requests, some you even get by failing requests.」", FLAG:594)
+		CALL DQPRINT("「That's mainly for those who like to『Play protagonists』aside from the usual two.」", FLAG:594)
+		CALL DQPRINT("「When you fill out a series, you get the ending theme along with others at the end.」", FLAG:594)
+		CALL DQPRINT("「Why not polish up your musical skills a bit and take some time to relax and pick up sheets?」", FLAG:594)
+		チュート行数保管 += 10
+	;清掃について
+	CASE 200
+		CALL DQPRINT("「In this world you can't use pots or drawers, but you can still clean them.」", FLAG:594)
+		CALL DQPRINT("「As time passes, things get a littler dirtier over time, so cleaning is important.」", FLAG:594)
+		CALL DQPRINT("「If you clean someone's room for them, they'll usually appreciate it.」", FLAG:594)
+		CALL DQPRINT("「... You might『find』some unexpected things, but please don't clean just for that reason.」", FLAG:594)
+		CALL DQPRINT("「Depending on how much you cleaned, your landlord will give you a bit of money at the end of the day.」", FLAG:594)
+		CALL DQPRINT("「To not waste so much time on cleaning, you can always do it while stopping time.」", FLAG:594)
+		CALL DQPRINT("「... That said, make sure not to overdo it, otherwise you might end up with a『Cleaning Addiction』.」", FLAG:594)
+		CALL DQPRINT("「There's no way you'd find yourself sleeping with someone, and suddenly begin cleaning... Right?」", FLAG:594)
+		CALL DQPRINT("「By the way, there's an achievement that gives you『Dirt Sense』that tells you exactly where it's dirty at all times.」", FLAG:594)
+		チュート行数保管 += 9
+	;話術技能について
+	CASE 201
+		CALL DQPRINT("「The art of conversing, you say.」", FLAG:594)
+		CALL DQPRINT("「Talking is the first step to deepening a friendship, but whether it works is another matter.」", FLAG:594)
+		CALL DQPRINT("「Your speech skill dictates how good you are at making the person you're talking with enjoy the conversation.」", FLAG:594)
+		CALL DQPRINT("「Depending on the time and place, talking someone up can be extremely useful.」", FLAG:594)
+		CALL DQPRINT("「... That said, no matter how good you are, it's useless if you run out of material.」", FLAG:594)
+		CALL DQPRINT("「Look, no matter how close you are, if you talk with someone for long enough you'll run out of things to say, right?」", FLAG:594)
+		CALL DQPRINT("「But... Should you decide to『Open a Stall』, you'll be able to sell things at a high price if you're good enough.」", FLAG:594)
+		チュート行数保管 += 7
+	;戦闘技能について
+	CASE 202
+		CALL DQPRINT("「Fighting ability, you say.」", FLAG:594)
+		CALL DQPRINT("「That's all it is. It's just how good you are at Danmaku.」", FLAG:594)
+		CALL DQPRINT("「... In extreme circumstances it might also be used to dodge things.」", FLAG:594)
+		CALL DQPRINT("「In order to train, either engage in『Danmaku』, or go to an【Open Place】and choose to do some『Combat Training』.」", FLAG:594)
+		CALL DQPRINT("「Compared to doing it yourself, training with someone is much more efficient, but that's obvious.」", FLAG:594)
+		CALL DQPRINT("「By the way, you can borrow a book called『Martial Arts Guidebook』at the library in the village, it'll help you get experience faster.」", FLAG:594)
+		CALL DQPRINT("「Even if you think it tires you out, doing a bit for self-defense will do you good.」", FLAG:594)
+		CALL DQPRINT("「Wandering around alone outside without stopping time is liable to get you in trouble with Youkai and fairies.」", FLAG:594)
+		チュート行数保管 += 8
+	;教養について
+	CASE 203
+		CALL DQPRINT("「Knowledge, you say.」", FLAG:594)
+		CALL DQPRINT("「No matter the situation, being knowledgeable will give you an advantage.」", FLAG:594)
+		CALL DQPRINT("「There are some that just refuse to listen to uneducated people.」", FLAG:594)
+		CALL DQPRINT("「In addition, there are some jobs you can't help and some locations you can't go to unless your knowledge level is high enough.」", FLAG:594)
+		CALL DQPRINT("「It will also fill out your forage and mixing lists just by increasing it.」", FLAG:594)
+		CALL DQPRINT("「The best way to increase your knowledge is to, well, just hurry up and study.」", FLAG:594)
+		CALL DQPRINT("「Find a quiet room, and maybe get someone to help you, and you'll learn a bit at a time.」", FLAG:594)
+		CALL DQPRINT("「If you rent a『Dictionary』at the library in the village, you'll get more experience faster.」", FLAG:594)
+		CALL DQPRINT("「Work hard at becoming a Quiz King... I mean a sage.」", FLAG:594)
+		チュート行数保管 += 9
+	;料理について
+	CASE 204
+		CALL DQPRINT("「Cooking, you say?」", FLAG:594)
+		CALL DQPRINT("「While you're in a kitchen and you have ingredients, you can do some cooking.」", FLAG:594)
+		CALL DQPRINT("「Most cooking things like『Ingredients』and『Toppings』can be ordered via mail.」", FLAG:594)
+		CALL DQPRINT("「By going to town and visiting stores, you'll be able to buy『Meat』and『Vegetables』, allowing you to cook more.」", FLAG:594)
+		CALL DQPRINT("「There's also『Frog』,『Fish』,『Wild Plants』, and『Bugs』you can use.」", FLAG:594)
+		CALL DQPRINT("「These can be obtained by『Fishing』,『Foraging』, and『Bug Catching』.」", FLAG:594)
+		CALL DQPRINT("「Each dish requires only one ingredient, so choose whichever.」", FLAG:594)
+		CALL DQPRINT("「Note however that certain dishes require sufficient『Cooking Skill』experience.」", FLAG:594)
+		CALL DQPRINT("「Cooking with others is more beneficial, and borrowing the『Cookbook』at the bookstore can help.」", FLAG:594)
+		CALL DQPRINT("「Do your best to become an iron chef♪」", FLAG:594)
+		チュート行数保管 += 10
+	;もっと料理について
+	CASE 205
+		CALL DQPRINT("「You seem rather interested in cooking.」", FLAG:594)
+		CALL DQPRINT("「If you are cooking alone, you can change『Preparation』and add『Additives』to the meal.」", FLAG:594)
+		CALL DQPRINT("「As for『Additives』and『Preparation』... Please don't go too far.」", FLAG:594)
+		CALL DQPRINT("「There are also some『Forbidden Dishes』that use special ingredients... You really shouldn't cook those, you know.」", FLAG:594)
+		CALL DQPRINT("「When you serve food, you get feedback which depends on preference.」", FLAG:594)
+		CALL DQPRINT("「The quality depends mostly on『Cooking Skill』and『Ingredients』, but also『Season』and if it's『Auspicious』.」", FLAG:594)
+		CALL DQPRINT("「If you want a certain girl to be happy, check her preferences first.」", FLAG:594)
+		CALL DQPRINT("「When cooking with someone, you can learn their『Signature Dish』if they like you enough.」", FLAG:594)
+		CALL DQPRINT("「With repeated instructions, the『Signature Dish』can be yours.」", FLAG:594)
+		CALL DQPRINT("「You can carry around dishes you've made, but they go bad after a while, so eat up fast.」", FLAG:594)
+		CALL DQPRINT("「You can mail-order a『Thermal Jar』that prevents food from getting cold for a longer time.」", FLAG:594)
+		CALL DQPRINT("「Lastly, some special benefits that depend on your assistant.」", FLAG:594)
+		CALL DQPRINT("「Medicinal: Restores Energy.」", FLAG:594)
+		CALL DQPRINT("「Vigorous: Restores Vigor.」", FLAG:594)
+		CALL DQPRINT("「Yakuzen: Restores energy and increases max temporarily.」", FLAG:594)
+		CALL DQPRINT("「Performance Enhancer: Restores vigor and increases max temporarily.」", FLAG:594)
+		;CALL DQPRINT("「Demon Magic: Restores vigor and increases max temporarily.」", FLAG:594)
+		;CALL DQPRINT("「Blood Magic: Restores TSP and increases max temporarily.」", FLAG:594)
+		CALL DQPRINT("「Miracle/Good Luck: Improves your fortune.」", FLAG:594)
+		CALL DQPRINT("「Blessing: Increases pregnancy chance.」", FLAG:594)
+		CALL DQPRINT("「Enchantment: Improves dice rolls in Danmaku.」", FLAG:594)
+		CALL DQPRINT("「Divine Protection: Reduces opponent's dice rolls in Danmaku.」", FLAG:594)
+		CALL DQPRINT("「Fertility: Increases vegetable yield.」", FLAG:594)
+		CALL DQPRINT("「That is all, I look forward to seeing your wonderful dishes!」", FLAG:594)
+		チュート行数保管 += 22
+	;音楽技能と演奏
+	CASE 206
+		CALL DQPRINT("「If you mail-order an instrument, you will be able to【Perform】music.」", FLAG:594)
+		CALL DQPRINT("「Only the violin is difficult to play without any experience.」", FLAG:594)
+		CALL DQPRINT("「However, the piano is impossible to carry around as expected, it has to be installed ahead of time.」", FLAG:594)
+		CALL DQPRINT("「If you play where there are people, you can perform for them.」", FLAG:594)
+		CALL DQPRINT("「It speaks greater than words, and lets you carry your message and thoughts to many people at once.」", FLAG:594)
+		CALL DQPRINT("「During this, if you're good enough, you'll receive words of praise and『Offerings』.」", FLAG:594)
+		CALL DQPRINT("「On the other hand, if you're playing poorly, or near someone working, you might end up in trouble.」", FLAG:594)
+		CALL DQPRINT("「Please practice your『Musical Skill』on your own before debuting, okay?」", FLAG:594)
+		CALL DQPRINT("「Practice enough and you'll improve little by little, not only getting better『Musical Skills』but also a『Sense of Pitch』.」", FLAG:594)
+		CALL DQPRINT("「If you borrow a『Music Instruction Manual』from the library in the village, your experience gain will increase.」", FLAG:594)
+		CALL DQPRINT("「Eventually, if you become good enough, others might join in when you perform.」", FLAG:594)
+		CALL DQPRINT("「Getting the crowd wild while jamming in public, how romantic♪」", FLAG:594)
+		チュート行数保管 += 12
+	;釣りについて
+	CASE 207
+		CALL DQPRINT("「Mail-order a『Fishing Rod』and you'll be able to【Fish】.」", FLAG:594)
+		CALL DQPRINT("「You can fish at water bodies when you are out exploring away from home.」", FLAG:594)
+		CALL DQPRINT("「『Patience』is important for fishers. If you want to catch something, just prepare yourself and wait.」", FLAG:594)
+		CALL DQPRINT("「You can get both『Fish』and『Good Fish』, but you'll also end up catching a bunch of trash.」", FLAG:594)
+		CALL DQPRINT("「Depending on the day, there are times where you won't catch anything at all. But sometimes days are just like that.」", FLAG:594)
+		CALL DQPRINT("「Even if it didn't go well to fish in one place, you're sure to catch something eventually.」", FLAG:594)
+		CALL DQPRINT("「The fish change with the weather and season. It's generally better to fish when it's cloudy or rainy, and morning or evening.」", FLAG:594)
+		CALL DQPRINT("「Some fish can also only be found in certain places, regardless of season, so make sure to check the【Fish Collection】.」", FLAG:594)
+		CALL DQPRINT("「If you borrow the『Fishing Picture Book』at the library in the village, you will gain experience more efficiently.」", FLAG:594)
+		CALL DQPRINT("「Fishfag and fish maniac are compliments, why not continue until you become an angler?」", FLAG:594)
+		チュート行数保管 += 10
+	;採集について
+	CASE 208
+		CALL DQPRINT("「You can【Forage】on certain maps in certain places.」", FLAG:594)
+		CALL DQPRINT("「If you have little『Foraging Skills』, you might not find a whole lot.」", FLAG:594)
+		CALL DQPRINT("「Foraging gets you ingredients to use in【Mixing】, it also gives you items you can consume.」", FLAG:594)
+		CALL DQPRINT("「Depending on what it is, you might be able to sell what you find at a stall, or to the doctor at Eientei if it's medical in nature.」", FLAG:594)
+		CALL DQPRINT("「By the way, what you can find depends on where you're foraging and what time of year it is.」", FLAG:594)
+		CALL DQPRINT("「To get a good idea of when and where to look, check out the『Foraging Spots』in the sleep menu.」", FLAG:594)
+		CALL DQPRINT("「Do note that the foraging spots list is updated based on your『Knowledge』.」", FLAG:594)
+		CALL DQPRINT("「If you borrow the『Foraging Guide』at the library in the village, you will gain experience more efficiently.」", FLAG:594)
+		CALL DQPRINT("「Instead of doing it alone, foraging with someone else increased the quality, quantity, and experience you get.」", FLAG:594)
+		CALL DQPRINT("「If you don't have a lot of time, you can always『Stop Time』, but this will consume TSP.」", FLAG:594)
+		CALL DQPRINT("「Naturally, when time is stopped you can't get help, so you'll be on your own.」", FLAG:594)
+		CALL DQPRINT("「Lastly, depending on where it is, you might need to obtain permission from the landowner.」", FLAG:594)
+		チュート行数保管 += 12
+	;調合について
+	CASE 209
+		CALL DQPRINT("「If you mail-order『Mixing Supplies』, you will be able to do【Mixing】.」", FLAG:594)
+		CALL DQPRINT("「Even if you don't have mixing supplies, there are some places where you can rent the equipment needed.」", FLAG:594)
+		CALL DQPRINT("「Essentially, you use material you foraged to create items.」", FLAG:594)
+		CALL DQPRINT("「As you gain more experience, your『Mixing Skill』will go up, increasing your success rate and unlocking more items to make.」", FLAG:594)
+		CALL DQPRINT("「Some recipes call for『Water』, requiring you to first go and【Draw Water】, be mindful of that.」", FLAG:594)
+		CALL DQPRINT("「As long as you have enough of the required ingredients, you can create multiple of the same item at once.」", FLAG:594)
+		CALL DQPRINT("「The amount of experience you get is the same, but the time spent is reduced, so I recommend making batches.」", FLAG:594)
+		CALL DQPRINT("「If you borrow the『Pharmacy Textbook』at the library in the village, you will gain experience more efficiently.」", FLAG:594)
+		CALL DQPRINT("「Also, if you have someone helping you it will be more efficient.」", FLAG:594)
+		CALL DQPRINT("「There are also some recipes you can only get from certain people.」", FLAG:594)
+		CALL DQPRINT("「Try increasing『Intimacy』with one of them and maybe they'll teach you something.」", FLAG:594)
+		チュート行数保管 += 11
+	;酒造について
+	CASE 210
+		CALL DQPRINT("「You can make sake in the『Kitchen』by using the sake bug there.」", FLAG:594)
+		CALL DQPRINT("「Choose【Make Sake】when you are in a kitchen to do so.」", FLAG:594)
+		CALL DQPRINT("「First you need to【Draw Water】, which will eventually turn into sake.」", FLAG:594)
+		CALL DQPRINT("「After a few days it will turn into sake on its own.」", FLAG:594)
+		CALL DQPRINT("「If you want to shorten the time it takes, you can do【Time Controlling Sake Brewing】if you have enough TSP.」", FLAG:594)
+		CALL DQPRINT("「With『Normal Water』you can make『Unrefined Sake』which will turn into normal sake after 5 days.」", FLAG:594)
+		CALL DQPRINT("「Depending on the water used, different types of sake will be made.」", FLAG:594)
+		CALL DQPRINT("「『Normal Water』from wells becomes『Unrefined Sake』, which in turn becomes『Sake』.」", FLAG:594)
+		CALL DQPRINT("「Drawing from the『Misty Lake』gives you『Misty Lake Water』, which becomes『Refined Sake』.」", FLAG:594)
+		CALL DQPRINT("「Drawing water from the『Hell Onsen』gives you 『Hell Onsen Water』, which turns into 『Oni-slaying Sake』, but not a whole lot.」", FLAG:594)
+		CALL DQPRINT("「Drawing water from the『Mountain Lake』 gives you 『Mountain Lake Water』, which turns into『Sacred Sake』, but not a whole lot.」", FLAG:594)
+		CALL DQPRINT("「Once you're finished and you've drawn out the new sake you must replace it with water.」", FLAG:594)
+		CALL DQPRINT("「The amount of sake produced depends on your『Knowledge』level.」", FLAG:594)
+		CALL DQPRINT("「The sake you make can either be given to people, sold in bulk to the liquor store in the village, or just drank as it is.」", FLAG:594)
+		CALL DQPRINT("「By the way, 『Distilled Alcohol』and『Medicinal Sake』are things you get from【Mixing】, the sake bug cannot make those.」", FLAG:594)
+		チュート行数保管 += 15
+	;家庭菜園について
+	CASE 211
+		CALL DQPRINT("「Start by going to the【Florist】and buying『Gardening Supplies』along with seeds, then you can set up a kitchen garden.」", FLAG:594)
+		CALL DQPRINT("「The spots on the home map marked with a W is where you can start farming.」", FLAG:594)
+		CALL DQPRINT("「Do note that some places don't have enough land for farming, making it impossible to do so.」", FLAG:594)
+		CALL DQPRINT("「Sow some seeds, draw some water, and water them.」", FLAG:594)
+		CALL DQPRINT("「Just keep doing that and they'll mature in a few days, just be patient.」", FLAG:594)
+		CALL DQPRINT("「If the soil gets too dry the plant might die. In some rare cases watering them at this point will revive them.」", FLAG:594)
+		CALL DQPRINT("「You can also request『Watering Services』from the Scarlet Devil Mansion to have others do the watering.」", FLAG:594)
+		CALL DQPRINT("「Alternatively, if you buy a『Simple Pool』from the Kappa shop, along with a『Sprinkler』, it will water them for you.」", FLAG:594)
+		CALL DQPRINT("「Sunlight makes the plants grow faster, while winter and snow slow them down.」", FLAG:594)
+		CALL DQPRINT("「You can buy『Manure』at the florist, or make it via【Mixing】, and then use it to speed up plant growth.」", FLAG:594)
+		CALL DQPRINT("「Once crops are either『Fruit』or『Ripe』they can be harvested.」", FLAG:594)
+		CALL DQPRINT("「（Ripe）crops will produce more, so be sure not to accidentally harvest before they're completely done.」", FLAG:594)
+		CALL DQPRINT("「In some places you can even grow things all year round, the weather having no effect. Work hard at improving your farming skills.」", FLAG:594)
+		チュート行数保管 += 13
+	;依頼について
+	CASE 212
+		CALL DQPRINT("「At times, you might get requests from people you meet.」", FLAG:594)
+		CALL DQPRINT("「If you complete the requests in time, you'll receive a reward of some kind.」", FLAG:594)
+		CALL DQPRINT("「On the other hand, if you fail you'll lose favorability and reliability.」", FLAG:594)
+		CALL DQPRINT("「There are lots of different requests, some requests are character-unique.」", FLAG:594)
+		CALL DQPRINT("「Some are really troublesome like『Deliver a Letter』,『Return the Lost Item』, and『Find the Lost Item』.」", FLAG:594)
+		CALL DQPRINT("「To find the person you're looking for, choosing to【Listen to God】is a good idea.」", FLAG:594)
+		CALL DQPRINT("「If it's an item you're looking for, it might be best finding an expert at dowsing.」", FLAG:594)
+		CALL DQPRINT("「Or, you can【Pray】and give up an offering, relying on the power of the gods to tell you the general area.」", FLAG:594)
+		CALL DQPRINT("「When you've completed the request, be sure to【Execute】it.」", FLAG:594)
+		CALL DQPRINT("「Even if the one that requested is out, you can go visit them and hand it in anyway.」", FLAG:594)
+		CALL DQPRINT("「Oh, also, if you ask Marisa-san, she will tell you if anyone has any requests.」", FLAG:594)
+		チュート行数保管 += 11
+	;弾幕勝負について
+	CASE 213
+		CALL DQPRINT("「Danmaku? It's a beautiful shoot-out where you compete to see who's the best.」", FLAG:594)
+		CALL DQPRINT("「You can practice in any large open area, so be sure to do so.」", FLAG:594)
+		CALL DQPRINT("「And sometimes when returning home after going out alone, you'll be challenged by ruffians.」", FLAG:594)
+		CALL DQPRINT("「The basic idea is to hit your opponent three times before you're hit three times.」", FLAG:594)
+		CALL DQPRINT("「If your dice value is clearly lower than theirs, it's best to【Evade】.」", FLAG:594)
+		CALL DQPRINT("「While【Evading】, you can graze the shots and get health back.」", FLAG:594)
+		CALL DQPRINT("「If you run out of stamina you will Pichuun as well, so you have to hold out to survive.」", FLAG:594)
+		CALL DQPRINT("「When you【Attack】, you can use a bomb to increase the value of your dice.」", FLAG:594)
+		CALL DQPRINT("「Note that using a bomb also ensures you won't take damage even if your dice value is lower, so treasure them well.」", FLAG:594)
+		CALL DQPRINT("「Winning does more than just give lots of experience, it also gives『Achievements』and musical sheets.」", FLAG:594)
+		CALL DQPRINT("「Ah, there's also the『Shooter Cast』, it will make it harder to fight, but winning will give more experience.」", FLAG:594)
+		チュート行数保管 += 11
+	;弾幕勝負で勝てない
+	CASE 214
+		CALL DQPRINT("「Of course you need to train... But I guess that's not the answer you want.」", FLAG:594)
+		CALL DQPRINT("「『Combat Ability』is directly tied to the dice, so the solution is simple.」", FLAG:594)
+		CALL DQPRINT("「Aside from that, via【Mixing】you can get support items that help a bit, the increased value might give the advantage you need.」", FLAG:594)
+		CALL DQPRINT("「You need a decent『Mixing Lv』though, and there are many things you can't make without learning it from others.」", FLAG:594)
+		CALL DQPRINT("「You can also get bonuses from『Achievements』,  under the『Danmaku』section, so go fight some weaker opponents first.」", FLAG:594)
+		CALL DQPRINT("「First time you win against someone gives a lot more experience.」", FLAG:594)
+		チュート行数保管 += 6
+	;特殊地域間移動
+	CASE 215
+		CALL DQPRINT("「To shorten travel time, you can use【Shortcuts】between regions.」", FLAG:594)
+		CALL DQPRINT("「It lets you move around very fast, reducing time consumption.」", FLAG:594)
+		CALL DQPRINT("「When you're on a date, and can't stop time, it might be good to use these.」", FLAG:594)
+		CALL DQPRINT("「Now, let's talk about all the ways have been developed.」", FLAG:594)
+		CALL DQPRINT("「『Human village  North of the Plaza』←→『Youkai Mountain・Summit　Scenic hill』Via the cableway station.」", FLAG:594)
+		CALL DQPRINT("「Using an overhead cableway, you can cut down travel down but a ton.」", FLAG:594)
+		CALL DQPRINT("「『Youkai Mountain・Foot　Road to the Summit』→→『Youkai Mountain・Summit　Nine Heavens Waterfall』」", FLAG:594)
+		CALL DQPRINT("「It's a secret path for those living at the foot of the mountain. It's one-way though so be careful.」", FLAG:594)
+		CALL DQPRINT("「『Youkai Mountain・Foot　Underground Geyser Center』←→『Underworld　Remains of Blazing Hell』」", FLAG:594)
+		CALL DQPRINT("「These places are actually really close to each other, so don't forget this one.」", FLAG:594)
+		CALL DQPRINT("「『Forest of Magic　Muenzuka』→→『Sanzu River～Netherworld　Road of Liminality』」", FLAG:594)
+		CALL DQPRINT("「It's a one-way trip, but it's a huge shortcut. If you're in the company of someone from the netherworld it'll be even faster.」", FLAG:594)
+		CALL DQPRINT("「『Hakurei Shrine　Moriya Shrine Branch』→→『Youkai Mountain・Summit　Moriya Shrine』」", FLAG:594)
+		CALL DQPRINT("「It's at the shinto shrine, and you must be accompanied by a Moriya official, but it's a great shortcut.」", FLAG:594)
+		CALL DQPRINT("「That's all of them. Please try to remember them.」", FLAG:594)
+		チュート行数保管 += 15
+	;伐採について
+	CASE 216
+		CALL DQPRINT("「You can do【Logging】specifically in places where there are many trees and nature is abundant.」", FLAG:594)
+		CALL DQPRINT("「As expected it takes a lot of time and energy, so you'll want to make sure you're in shape.」", FLAG:594)
+		CALL DQPRINT("「As you get better at it, you will find yourself handling the work at a much faster and efficient pace.」", FLAG:594)
+		CALL DQPRINT("「You may also purchase related tools from the Kappa in order to make your job easier if you wish.」", FLAG:594)
+		CALL DQPRINT("「Logs or bamboo materials obtained from logging can be brought to a lumber dealer in the village who can purchase them.」", FLAG:594)
+		CALL DQPRINT("「Note that【Bamboo】counts as【Lumber】and won't appear in your item list normally.」", FLAG:594)
+		CALL DQPRINT("「After making a certain number of deals, in time you might receive something【Valuable】for your efforts.」", FLAG:594)
+		CALL DQPRINT("「There are many types of trees growing in different places, so it's a good idea to do some exploring.」", FLAG:594)
+		CALL DQPRINT("「So far, you can cut down trees at the Hakurei Shrine, Forest of Magic, Bamboo Forest of the Lost and all around Youkai Mountain.」", FLAG:594)
+		CALL DQPRINT("「However, if you don't make good friends with the local owners, they may not allow you to cut down the trees to begin with.」", FLAG:594)
+		CALL DQPRINT("「Also, when you are looking for a tree to cut down, you may occasionally come across a【Big】or a【Gigantic】tree.」", FLAG:594)
+		CALL DQPRINT("「The sale price is high, but it takes much more time and effort to cut down those, so you may want to avoid them if you're still new to it.」", FLAG:594)
+		CALL DQPRINT("「You can also split the【Wood Logs】you get and turn them into【Timber】, but I don't recommend it because the value will decrease.」", FLAG:594)
+		CALL DQPRINT("「Also, it's a lot of work and there won't be many people to help, but if two people work on it, you'll be able to cut it down faster.」", FLAG:594)
+		CALL DQPRINT("「You can borrow【Lumberjack's Primer】from the bookstore in your village to help you accumulate experience.」", FLAG:594)
+		CALL DQPRINT("「I was also told that a certain man in the village will make special furniture for you that will improve your quality of life.」", FLAG:594)
+		CALL DQPRINT("「He may be rude and it's quite expensive, but he's a master of his trade. Bring him the required【Lumber】to get a so much needed discount.」", FLAG:594)
+		CALL DQPRINT("「Additionally, the Mountain area has a sawmill that specializes on producing【Lumber】at a cheap price. You may want to visit them.」", FLAG:594)
+		チュート行数保管 += 18
+	;罠猟について
+	CASE 217
+		CALL DQPRINT("「You can【Set a Trap】where nature is rich and animals are abundant.」", FLAG:594)
+		CALL DQPRINT("「There are three types of traps, used to catch different things. They can be purchased via mail order.」", FLAG:594)
+		CALL DQPRINT("「Small traps catch small animals, large ones catch large ones, and medium traps are all-purpose.」", FLAG:594)
+		CALL DQPRINT("「The amount of meat acquired depends on the trap as well, so use appropriate ones.」", FLAG:594)
+		CALL DQPRINT("「When setting a trap, you can see info on the area.」", FLAG:594)
+		CALL DQPRINT("「Trapping where there are lots of tracks, and many fresh tracks, increases the expected results.」", FLAG:594)
+		CALL DQPRINT("「Once the trap has been set, it's just to wait. Make sure to check back every few days.」", FLAG:594)
+		CALL DQPRINT("「However, traps have a durability level, and if left too long they will break.」", FLAG:594)
+		CALL DQPRINT("「Traps can be reused if they're picked up before they break, so if a trap isn't catching anything, don't get cocky and retreive it.」", FLAG:594)
+		CALL DQPRINT("「Further, in order to preserve the wildlife, each person is only allowed to use three traps at once.」", FLAG:594)
+		CALL DQPRINT("「There are also some mythical animals...or rather monsters is more accurate, that are confirmed to exist.」", FLAG:594)
+		CALL DQPRINT("「You can even choose to become a hunter of rare beasts and catch a variety of prey.」", FLAG:594)
+		CALL DQPRINT("「It takes some luck... No, it's up to the animals, but there's no harm in trying so give it a shot!」", FLAG:594)
+		チュート行数保管 += 13
+	;贈り物について
+	CASE 218
+		CALL DQPRINT("「While on a date, you can visit a【Souvenir Shop】to purchase a gift for your partner.」", FLAG:594)
+		CALL DQPRINT("「Everyone has their own preferences, some gifts will be loved, and others not so much.」", FLAG:594)
+		CALL DQPRINT("「Use the『Abilities』screen to find out what someone might like.」", FLAG:594)
+		CALL DQPRINT("「The gifts sold depend on the region, so choose an appropriate one.」", FLAG:594)
+		CALL DQPRINT("「Also, be careful with window shopping, the clerk might get angry.」", FLAG:594)
+		CALL DQPRINT("「If the gift is really well received, it'll become a favorite.」", FLAG:594)
+		CALL DQPRINT("「If they get a favorite, they will start carrying it around, constantly thinking about you.」", FLAG:594)
+		CALL DQPRINT("「However, on the way home, you might also get a gift.」", FLAG:594)
+		CALL DQPRINT("「Make sure to check the【Gift Collection】where they're carefully stored.」", FLAG:594)
+		CALL DQPRINT("「You can even write a review for every gift, even if it doesn't do anything.」", FLAG:594)
+		チュート行数保管 += 10
+	;虫捕りについて
+	CASE 220
+		CALL DQPRINT("「If you purchase a『Bug Catching Set』, you can【Catch Bugs】and set【Insect Traps】.」", FLAG:594)
+		CALL DQPRINT("「Both can be done while going outside.」", FLAG:594)
+		CALL DQPRINT("「When you【Catch Bugs】, you start by looking for them.」", FLAG:594)
+		CALL DQPRINT("「Improved『Foraging Lv』means you can find rare bugs.」", FLAG:594)
+		CALL DQPRINT("「The bugs you can find depend on time and place, so be sure to visit different places at different times.」", FLAG:594)
+		CALL DQPRINT("「On some days, you might not find anything though.」", FLAG:594)
+		CALL DQPRINT("「With an【Insect Trap】, you can catch things regardless of skill, luck, or hour of day.」", FLAG:594)
+		CALL DQPRINT("「Many kinds of bait can be chosen, and the bug caught depends on the type and quality.」", FLAG:594)
+		CALL DQPRINT("「After setting a trap, come back the next day and check if anything has been caught.」", FLAG:594)
+		CALL DQPRINT("「Caught bugs will be stored in the【Bug Box】, once 6 have been caught, they can be used as materials.」", FLAG:594)
+		CALL DQPRINT("「You can check the【Bug Box】in your【Items】.」", FLAG:594)
+		CALL DQPRINT("「Further, bugs you've caught can be used to fight other bugs.」", FLAG:594)
+		CALL DQPRINT("「One last thing, there are no bugs out during the winter, so you cannot【Catch Bugs】nor set【Insect Traps】.」", FLAG:594)
+		チュート行数保管 += 13
+	;ムシバトルについて
+	CASE 221
+		CALL DQPRINT("「Bug Battles are blood-filled wars between bugs for fun.」", FLAG:594)
+		CALL DQPRINT("「It takes place in bug-catching areas, fought with 2-4 players, you can even have team games.」", FLAG:594)
+		CALL DQPRINT("「Before battle, fighters show each other their『Bug Box』and choose three bugs.」", FLAG:594)
+		CALL DQPRINT("「Once the battle begins, you can only watch as the bugs fight on their own.」", FLAG:594)
+		CALL DQPRINT("「Once a bug dies, you can choose a new one to fight, but that's about it.」", FLAG:594)
+		CALL DQPRINT("「If all the chosen insects die, the game is lost, and the winner is declared.」", FLAG:594)
+		CALL DQPRINT("「Don't worry, once the battle is over the insects' wounds will heal.」", FLAG:594)
+		CALL DQPRINT("「It can be a lot of fun with many people, but one-on-one fights are more direct.」", FLAG:594)
+		CALL DQPRINT("「Fight hard and become an Insect Champion! Let's Bug Battle♪」", FLAG:594)
+		チュート行数保管 += 9
+	;ムシバトルの極意
+	CASE 222
+		CALL DQPRINT("「More info you say... Oh well, I'll explain it in length then.」", FLAG:594)
+		CALL DQPRINT("「First of all, HP is stamina, if it goes to 0 it's a Ｋ.Ｏ. There's no such thing as defense.」", FLAG:594)
+		CALL DQPRINT("「ATK is attack power, and is the base damage you will deal to the opponent.」", FLAG:594)
+		CALL DQPRINT("「SPD is speed, the faster you are, the earlier you can act.」", FLAG:594)
+		CALL DQPRINT("「Also, if you are faster, you might get a chance to dodge an attack, and the faster you are the more likely it is.」", FLAG:594)
+		CALL DQPRINT("「All bugs are different, but if two bugs are of the same species, but one is stronger, it will have higher stats.」", FLAG:594)
+		CALL DQPRINT("「If there's a [★] next to its name, it's a stronger version. The order is White → Yellow → Orange.」", FLAG:594)
+		CALL DQPRINT("「There are also『Ｇ-Type』and『Ｘ-Type』bugs.」", FLAG:594)
+		CALL DQPRINT("「『Ｇ-Type』have higher HP and ATK, while『Ｘ-TYPE』have higher SPD and skill activation chance.」", FLAG:594)
+		CALL DQPRINT("「There are those with『Ｇ-Type』and『Ｘ-Type』characteristics, called『ＧＸ-Type』, but good luck finding one.」", FLAG:594)
+		CALL DQPRINT("「There are 5 attributes: Red, Green, Blue, White, and Black, with the relation being Red＞Green＞Blue＞Red.」", FLAG:594)
+		CALL DQPRINT("「Black and White match each other. A better match means more damage, while a worse match means less.」", FLAG:594)
+		CALL DQPRINT("「Some insects have more than one type, making attribute matching more important.」", FLAG:594)
+		CALL DQPRINT("「Bugs also have perferred terrain, which correlates to where they can be found.」", FLAG:594)
+		CALL DQPRINT("「The location where the battle is fought corresponds to the terrain. Fighting on preferred terrain increases ability values.」", FLAG:594)
+		CALL DQPRINT("「Many bugs have skills, and some have multiple of them.」", FLAG:594)
+		CALL DQPRINT("「There are two types of skills,『Attack Skills』and『Passive Skills』.」", FLAG:594)
+		CALL DQPRINT("「『Poison Strike』,『Sleeping Powder』, and『Critical Strike』are all『Attack Skills』that can activate when attacking.」", FLAG:594)
+		CALL DQPRINT("「『Attack Skills』are divided into those that cause status effects, and those that increase damage.」", FLAG:594)
+		CALL DQPRINT("「There are many『Passive Skills』, some trigger by chance, others by conditions, while some are constant.」", FLAG:594)
+		CALL DQPRINT("「Even bugs that seem weak can have powerful skills, so look closely!」", FLAG:594)
+		CALL DQPRINT("「Lastly, the status effects.」", FLAG:594)
+		CALL DQPRINT("「Poison/Venom: Will lose health at the end of the turn. 1/4 of total health for poison, and 1/2 for venom.」", FLAG:594)
+		CALL DQPRINT("「Paralysis: Speed is cut in half, and skill activation is set to 0%.」", FLAG:594)
+		CALL DQPRINT("「Sleep: Skips this turn, 50% chance to wake up on subsequent turns.」", FLAG:594)
+		CALL DQPRINT("「Confusion: Half the damage dealt is dealt to the attacker.」", FLAG:594)
+		CALL DQPRINT("「Slow: Cuts speed in half, and damage taken is multiplied by x1.5.」", FLAG:594)
+		CALL DQPRINT("「Stench: Attack is cut in half.」", FLAG:594)
+		CALL DQPRINT("「Terrain+/Season+/Leader: ATK and SPD multiplied by 1.2. Skill activation is multiplied by x1.5.」", FLAG:594)
+		CALL DQPRINT("「Uplift/Counter+: ATK and SPD multiplied by x1.5.」", FLAG:594)
+		CALL DQPRINT("「Haze: Nullifies damage once, then disappears.」", FLAG:594)
+		CALL DQPRINT("「Mimic: When targeted by an attacker, 1/2 chance to change the target.」", FLAG:594)
+		CALL DQPRINT("「That's all. After giving it some thought, just slap a tough bug on the enemy!」", FLAG:594)
+		チュート行数保管 += 33
+	CASE 996
+		IF FLAG:チュートログ == 0
+			CALL DQPRINT("「Well, it sure is a lot of information.」")
+			FLAG:チュートログ = 2
+			CALL DQPRINT("「... How about this? What? It's just an application of my power over dreams.」", FLAG:チュートログ)
+			CLEARLINE 1
+		ELSE
+			CALL DQPRINT("「Hou Hou, So you prefer it simple.」", FLAG:チュートログ)
+			CLEARLINE 1
+			FLAG:チュートログ = 0
+			;TODO astro fighter sunred reference...?
+			;nah, it's an old saying for things being very easy/smooth, ちょちょいのちょい variation is used much more commonly nowadays
+			CALL DQPRINT("「That's but a sleepwalk for me. Fufu, how about this then?」")
+		ENDIF
+	;行数の関係でログ残し処理の対象外とする
+	CASE 997
+		SIF FLAG:チュート文速度 > -6
+			FLAG:チュート文速度 -= 2
+		$LOOP_SpeedTest
+		CALL DQPRINT("「Ah...... Well, how about this then?」")
+		CALL ASK_M("A little faster",FLAG:チュート文速度 > -8,"A little slower",FLAG:チュート文速度 < 6,"It's fine the way it is",1)
+		SELECTCASE RESULT
+			CASE 0
+				CLEARLINE 4
+				IF FLAG:チュート文速度 == -7
+					CALL DQPRINT("「I'm fairly certain I'm speaking as fast as I can muster, going any faster is beyond my capabilities...」")
+					CALL DQPRINT("「Eh? You find my attitude stand-offish?」")
+					CALL DQPRINT("「I beg your pardon, but it's by design. Oh yes.」")
+				ELSE
+					FLAG:チュート文速度 = MAX(FLAG:チュート文速度 - 2, -7)
+					GOTO LOOP_SpeedTest
+				ENDIF
+			CASE 1
+				CLEARLINE 4
+				FLAG:チュート文速度 += 2
+				GOTO LOOP_SpeedTest
+			CASE 2
+				CLEARLINE 4
+				CALL DQPRINT("「What a demanding person you are.」")
+		ENDSELECT
+	CASE 998
+		SELECTCASE RAND:7
+			CASE 0
+				CALL DQPRINT("「You seem pretty sleepy.」", FLAG:594)
+				CALL DQPRINT("「Ahh... My stories are a bit long so it can't be helped I guess.」", FLAG:594)
+				CALL DQPRINT("「But how can you fall asleep in the middle of a dream?」", FLAG:594)
+				チュート行数保管 ++
+			CASE 1
+				CALL DQPRINT("「Rechecking and reconfirming are fundamental.」", FLAG:594)
+				CALL DQPRINT("「Look everywhere you can for any kind of information.」", FLAG:594)
+			CASE 2
+				CALL DQPRINT("「I'm speaking very slowly you say?」", FLAG:594)
+				CALL DQPRINT("「But the book said it's part of the『Authentic Performance』.」", FLAG:594)
+				CALL DQPRINT("「But if that's not good enough, how do you want me to sound? Like, Beep Beep?」", FLAG:594)
+				チュート行数保管 ++
+			CASE 3
+				CALL DQPRINT("「Do you want me to sing you a lullaby?」", FLAG:594)
+				CALL DQPRINT("「... Because you're not going to fit any more in your head? I see.」", FLAG:594)
+			CASE 4
+				CALL DQPRINT("「Eh? Having a beautiful woman by your side as you sleep is as good as you thought?」", FLAG:594)
+				CALL DQPRINT("「... Just make sure not to mix this up with a nightmare.」", FLAG:594)
+				CALL DQPRINT("「For I am the venerable nightmare eater.」", FLAG:594)
+				チュート行数保管 ++
+			CASE 5
+				CALL DQPRINT("「Why do you think you wake up on time every morning?」", FLAG:594)
+				CALL DQPRINT("「...Fufu, I'll leave it to your imagination.」", FLAG:594)
+			CASEELSE
+				CALL DQPRINT("「...Haa, Why I have a job like this?」", FLAG:594)
+				CALL DQPRINT("「It's because it's in a dream. So saying meta things is kinda fine here.」", FLAG:594)
+		ENDSELECT
+		チュート行数保管 += 2
+	CASE 999
+		CALL TUTORIAL_BONUS()
+		GOTO TUTORIALEND
+	CASEELSE
+		CLEARLINE 1
+		CALL TUTORIAL_BONUS()
+		GOTO LOOP01
+ENDSELECT
+
+;ここでチュート行数の追加と、ログ表示時のクリアライン
+SIF FLAG:チュートログ != 0
+	CLEARLINE チュート行数保管
+
+FLAG:チュート文累計 += チュート行数保管
+CALL TUTORIAL_BONUS()
+GOTO LOOP01
+
+$TUTORIALEND
+CALL DQPRINT("「Oya? You're going back?」")
+SELECTCASE RAND:2
+	CASE 0
+		CALL DQPRINT("「... Sleep well, have a good n- No wait I mean good day.」", 1)
+	CASE 1
+		CALL DQPRINT("「Well then... Take care. I hope you have a good awakening.」", 1)
+ENDSELECT
+PRINTL 
+RESETCOLOR
+RESETBGCOLOR
+;消去行数は今のところ固定（最初～））
+CLEARLINE 17
+PRINTL 
+RETURN
+
+;-------------------------------------------------
+;ド○クエっぽくテキストを流す
+;ARGS ""で括って文字列を入れる
+;ARG:0	0 = クリックしたら消える（省略時）
+;		1 = 消えない（改行つき）
+;		2 = 灰色にして残す(改行つき) FLAG:594を利用
+;ARG:1 テキスト表記・１文字あたりwait時間 省略可
+;-------------------------------------------------
+@DQPRINT(ARGS, ARG:0 = 0, ARG:1)
+#DIM 文字数
+#DIM 検索数
+
+LOCAL:0 = 0
+
+IF ARG:1 == 0
+	ARG:1 = 8 + FLAG:チュート文速度
+ENDIF
+STRLENFORM %ARGS%
+文字数 = RESULT:0
+検索数 = 文字数 + 1
+
+FOR LOCAL:0, 0, 検索数
+	IF LOCAL:0 == 文字数
+		IF ARG:0
+			PRINTFORM %ARGS%
+		ELSE
+			REUSELASTLINE %ARGS%
+		ENDIF
+		WAIT
+	ELSE
+		SUBSTRING ARGS, 0, LOCAL:0
+		REUSELASTLINE %RESULTS:0%
+		;Custom code, cheating past the god-intended wait
+		SIF !FLAG:TUTORIAL_INITIAL_D
+			TWAIT ARG:1, 1
+	ENDIF
+NEXT
+IF ARG:0 == 0
+	REUSELASTLINE 
+ELSEIF ARG:0 == 2
+	CLEARLINE 1
+	CALL COLORMESSAGE(@"%ARGS%", 0x696969, 1)
+ENDIF
+
+;-------------------------------------------------
+;チュートリアル読破ボーナス贈呈
+;-------------------------------------------------
+@TUTORIAL_BONUS()
+#DIM ボーナス内容
+#DIM 授与個数
+
+ボーナス内容 = 0
+
+IF FLAG:591 >= TB_TOTALLINES()
+	FLAG:592 ++
+	ボーナス内容 = FLAG:592
+ENDIF
+
+SIF ボーナス内容
+	TWAIT 2500, 1
+SELECTCASE ボーナス内容
+	CASE 1
+		CALL DQPRINT("「Thank you for listening to me in your dream.」")
+		CALL DQPRINT("「It's just my appreciation, but please accept it.」")
+	CASE 2
+		CALL DQPRINT("「We've talked a lot. Here's a little gift.」")
+		CALL DQPRINT("「Eh? Why you can take with you something you got in a dream?」")
+		CALL DQPRINT("「That's nothing, I'm the manager of dreams, something like that won't stop me.」")
+	CASE 3
+		CALL DQPRINT("「You're an extremely good listener, or maybe you're just serious about this.」")
+		CALL DQPRINT("「Even so, I guess you're the type that gets fired up from receiving a gift, right? Fufu♪」")
+	CASE 4
+		CALL DQPRINT("「Thank you so much for the company you have given me.」")
+		CALL DQPRINT("「Maybe you've just started feeling like the world of dreams is your home.」")
+		CALL DQPRINT("「Now then, I have a special gift for today. A prototype pillow that helps you sleep better, still in the trial phase.」")
+		CALL DQPRINT("「It might not be as relaxing as the world of dreams, but please try it out!」")
+		CALL DQPRINT("「Ah, And please give me feedback once you're used it♪」")
+	CASE 5 ;addition custom code, notify when the pillow is at max boost
+		CALL DQPRINT("「Oya... It seems that you've been consulting these entries to a significant degree.」")
+		CALL DQPRINT("「Is it something that helps you sleep? Reading a lot before you go to bed?」")
+		CALL DQPRINT("「No shame in it, really. I'm always ready to reiterate as much as you want me to.」")
+		CALL DQPRINT("「That said, I'd like to congratulate you. With what, you may ask?」")
+		CALL DQPRINT("「The pillow that I gifted you, it seems to have absorbed a lot of energy after spending so much time here.」")
+		CALL DQPRINT("「It's an interesting turn of events, something I never anticipated to say the least...」")
+		CALL DQPRINT("「What does it mean? Simply put, you will find your dreams a lot sweeter, and you will sleep like a baby... most of the time.」")
+		CALL DQPRINT("「That is all. Well, have fun now. Until we meet again～」")
+ENDSELECT
+
+IF ボーナス内容
+	SELECTCASE ボーナス内容
+		CASE 4
+			授与個数 = 1
+			
+		CASEELSE
+			授与個数 = 3
+	ENDSELECT
+	IF ITEM:TB_ITEM() + 授与個数 > 99
+		ITEM:TB_ITEM() = 99
+	ELSE
+		ITEM:TB_ITEM() += 授与個数
+	ENDIF
+	IF ボーナス内容 == 4
+		CALL COLORMESSAGE(@"%PARSE("You")% received %ITEMNAME_TR(TB_ITEM())%!", C_YELLOW, 2, 1)
+	ELSE
+		CALL COLORMESSAGE(@"%PARSE("You")% received {授与個数} %ITEMNAME_TR(TB_ITEM())%!", C_YELLOW, 2, 1)
+	ENDIF
+	CLEARLINE 1
+ENDIF
+
+;-------------------------------------------------
+;チュートリアル読破ボーナスと累計行数対応一覧
+;あとあと拡張する……かも？
+;-------------------------------------------------
+@TB_TOTALLINES()
+#FUNCTION
+
+SELECTCASE FLAG:592
+	CASE 0
+		RETURNF 150
+	CASE 1
+		RETURNF 200
+	CASE 2
+		RETURNF 250
+	CASE 3
+		RETURNF 300
+	CASE 4 ;addition custom code
+		RETURNF 1600
+	CASEELSE
+		RETURNF 999999
+ENDSELECT
+
+;-------------------------------------------------
+;チュートリアル読破ボーナス進行度と授与アイテム対応一覧
+;あとあと拡張する……かも？
+;-------------------------------------------------
+@TB_ITEM()
+#FUNCTION
+
+SELECTCASE FLAG:592
+	CASE 1	;睡眠薬
+		RETURNF 252
+	CASE 2	;薬酒
+		RETURNF 59
+	CASE 3	;ダークマター
+		RETURNF 639
+	CASE 4	;スイート安眠枕
+		RETURNF 404
+	CASE 5 ;addition custom code
+		RETURNF 514
+ENDSELECT
+

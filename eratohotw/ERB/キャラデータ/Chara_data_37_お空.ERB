@@ -1,0 +1,156 @@
+﻿@CHARAMOVE_DATA_37(ARG, ARG:2)
+LOCAL = 37
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+		;土日はお燐と一緒
+		IF YOUBI_MATCH(DAY, "土日")
+			RESULT:1 = [[お燐]]
+			RESULT:2 = [[お空]]
+		ENDIF
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;裏庭が好き
+			CASE P923裏庭
+				RETURN 5
+			;入らない部屋
+			CASE P904大広間, P916物置, P918こいし私室, P919さとり私室, P920書斎, P925バラ園, P930旧血の池地獄
+				RETURN -100
+			CASE P936勇儀の家, P937空き屋, P938鬼の溜まり場, P940パルスィの家, P941ヤマメの家, P942キスメの家, P943あばら屋
+				RETURN -100
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE 間欠泉地下センター
+				RETURN 1
+			CASE 幻想風穴, 地獄の深道, 旧地獄街道, 地霊殿, 灼熱地獄跡
+				RETURN 1
+		ENDSELECT
+	;引力設定
+	CASE 8
+		;仕事終わりに出歩く,確率6分の4,6分の1でお燐にくっつく
+		IF YOUBI_MATCH(DAY, "月火水木金") && INRANGE(TIME, 780, 1140)
+			SELECTCASE CFLAG:LOCAL:今日の運勢 % 6
+			CASE 1
+				TCVAR:LOCAL:引力点 = P923裏庭
+			CASE 2
+				TCVAR:LOCAL:引力点 = P933酒場
+			CASE 3
+				TCVAR:LOCAL:引力点 = P945川岸
+			CASE 4
+				TCVAR:LOCAL:引力点 = TCVAR:[[お燐]]:引力点
+			CASEELSE
+				TCVAR:LOCAL:引力点 = 0
+			ENDSELECT
+		;休日はまれにさとり様にくっつく
+		ELSEIF CFLAG:LOCAL:今日の運勢 % 10 == 0 && !CFLAG:[[さとり]]:うふふ && SHIRAHU([[さとり]])
+			TCVAR:LOCAL:引力点 = CFLAG:[[さとり]]:現在位置
+		ENDIF
+ENDSELECT
+
+@EXIST_キャラデータ37
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ37(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "お空")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（ズボン＋フード）セット")
+
+CASE "普段着：外衣"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("外衣", "マント"))
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "リボン"))
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "靴"))
+CASE "普段着：靴下"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "靴下"))
+CASE "普段着：スカート"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("スカート", "スカート"))
+CASE "普段着：上半身上着２"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("上半身上着２", "ブラウス"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "【CAUTION！】と描かれた")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "プリントショーツ(核)")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "プリントブラ")
+CASE "固有下着着用条件"
+	SIF !RAND:(1 + (2 * 勝負下着判定([[お空]])))
+		CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 2)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "卵/スパイス/鍋物/ガッツリ/濃厚/温かい/野趣/家庭的/豪快/サクサク/地底風/甘い/甘い/辛い/辛い/ゆでたまご/ゆでたまご/ゆでたまご/")
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "淡白/冷たい/すっぱい/すっぱい/鳥肉/鳥肉/鳥肉/")
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "地獄風/地底風/大火力/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "朱/混沌/かっこいい/パワフル/壮大/" + "火/日/鳥/弾/" * 3 + "地霊の/業火の/核熱の/地底の/霊知の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "繊細/知的/" + "闇/書物/" * 3)
+
+;農民関連
+;アホの子キャラから「ウドの大木」という言葉を連想
+;さらに地底在住という立地は白ウドの栽培に適している
+;貶す意図はありませんしお空ちゃんがキライなわけでもありません
+;地獄跡へ続く穴に横穴でも掘って栽培？
+CASE "農民：説明"
+	CALLF MAKE_STR(V_NAME, "ウド農家")
+CASE "農民：作物"
+	CALLF MAKE_STR(V_NAME, "白ウド")
+CASE "農民：畑の種類"
+	CALLF MAKE_STR(V_NAME, "ウド畑")
+CASE "農民：畑のマップ"
+	CALLF MAKE_STR(V_NAME, "地底")
+
+CASE "農民：マップID"
+	CALLF MAKE_INT(V_NAME, 9)
+CASE "農民：場所ID"
+	CALLF MAKE_INT(V_NAME, 927)
+CASE "農民：報酬"
+	CALLF MAKE_INT(V_NAME, 400)
+CASE "農民：金利"
+	CALLF MAKE_INT(V_NAME, 3)
+ENDSELECT
+
+;-------------------------------------------------
+;固有料理設定
+;DISH_NAME          料理名
+;RESULTS            料理の種類（軽食/主食/デザート）
+;CALL 材料設定("")  材料の指定。"汎用"を入れると自動で汎用食材になる
+;DISH_TASTE         味の設定
+;DISH_COMMENT       （任意）一行コメント
+;DISH_TIME          （任意）調理にかかる時間
+;DISH_MAXLIMIT      （任意）料理の持続時間
+;-------------------------------------------------
+@SPECIAL_MENU_37
+DISH_NAME = 核熱メルトダウンステーキ
+RESULTS = 主食
+CALL 材料設定("獣肉")
+DISH_TASTE = 洋食/ステーキ/肉料理/獣肉/スパイス/辛い/ガッツリ/濃厚/温かい/豪華/野趣/豪快/豪快/豪快/大火力/地底風/
+DISH_COMMENT = 核融合で調理したグレートなステーキ。やけどに注意。
+RETURN 1

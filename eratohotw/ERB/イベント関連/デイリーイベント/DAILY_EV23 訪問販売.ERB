@@ -1,0 +1,555 @@
+﻿@DAILY_CONDITION_EV23
+SIF GETBIT(FLAG_DAILY_EV23, 1)
+	RETURN -1
+SIF ITEM:ミラダの石 > 0
+	RETURN -1
+SIF RAND:15 > 0
+	RETURN -1
+SIF MONEY < DAILY_EV23_ミラダ_底値 && !GETBIT(FLAG_DAILY_EV23, 4)
+	RETURN -1
+CALL DAILY_EV23
+RETURN 1
+
+
+
+@DAILY_EV23
+#DIMS リソース名
+IF !GETBIT(FLAG_DAILY_EV23, 0)
+	SETBIT FLAG_DAILY_EV23, 0
+	PRINTFORML The day has ended, and you are about to go to sleep when you hear a voice coming from the door.
+	PRINTFORMW 「Excuse me～」
+	PRINTFORML Who could it be at this hour?
+	PRINTFORMW You rub the sleep from your eyes and go out to greet whoever it is.
+	PRINTFORML There you see...
+	CALL ASK_YN("A bunny door-to-door salesgirl with twintails","A bunny door-to-door salesgirl with short boyish hair")
+	FLAG_DAILY_EV23_販売員 = RESULT + 1
+	CALL PRINT_IMAGE_EV23("服_通常")
+	PRINTFORML 「Nice to meet you～」
+	PRINTFORML 「I've come to introduce an amazing new product～」
+	PRINTFORML It's an adorable girl with rabbit ears that bob up and down.
+	CALL ASK_M("Send her away", 1, "Hear her out", 1)
+	IF !RESULT
+		SETBIT FLAG_DAILY_EV23, 1
+		PRINTFORML We do not accept door-to-door salesmen.
+		PRINTFORML 「Is that soー At least hear me outー」
+		PRINTFORMW Ignoring the salesgirl who keeps going, %PARSE("you shut")% the door properly, %PARSE("lock")% it, and %PARSE("go")% back to sleep.
+		RETURN
+	ENDIF
+	SETBIT FLAG_DAILY_EV23, 2
+	PRINTFORMW You're a bit interested in what it could be so you decide to hear her explanation.
+	CALL DAILY_EV23_SALESTALK(0)
+	FONTBOLD
+	PRINTFORMW 「However!」
+	PRINTFORM 「Just for today, the price is lowered to 
+	CALL COLORMESSAGE(@"\\{DAILY_EV23_ミラダ_安値}", C_RED, 0, 1)
+	PRINTFORMW !」
+	FONTREGULAR
+	PRINTFORM 「This is Gensokyo, so uncommon 
+	CALL COLORMESSAGE("special sale", C_RED, 0, 1)
+	PRINTFORML  is common sense!!」
+	PRINTFORM 「This 
+	CALL COLORMESSAGE("unprecedented price", C_RED, 0, 1)
+	PRINTFORMW  is a once in a lifetime chance!」
+	FONTBOLD
+	PRINTFORML 「So, customer!」
+	PRINTFORM 「
+	CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+	PRINTFORMW  which promises to give you a fulfilling sexlife!!!」
+	PRINTFORML 「Don't you want to buy one!?」
+	FONTREGULAR
+	PRINTFORML 　Funds: %金額表示(MONEY)%
+	CALL ASK_M("Not interested!", 1, "Too expensive!", 1, "Must have!", MONEY >= DAILY_EV23_ミラダ_安値)
+	SELECTCASE RESULT
+	CASE 0
+		$IRANAI
+		PRINTFORML 「... Is that so.」
+		PRINTFORMW 「Than you for your time!」
+		PRINTFORML 「Here, have some samples of our products.」
+		PRINTFORMW 「Use them however you like.」
+		;ウコン、ローション、コンドームセット
+		CALL GET_ITEM("ウコンドリンク", 1, 1)
+		CALL GET_ITEM("ローション", 1, 1)
+		CALL GET_ITEM("コンドーム", 1, 1)
+		PRINTFORMW 「Well then, excuse me.」
+		PRINTFORMW The salesgirl gives a deep, polite bow before departing.
+		RETURN
+	CASE 1
+		PRINTFORMW 「T- Too much!?」
+		PRINTFORML 「Maaー I guess it is a bit much.」
+		PRINTFORM 「We hear from our customers that it's 
+		CALL COLORMESSAGE("effective but expensive", C_YELLOW, 0, 1)
+		PRINTFORMW  quite often.」
+		PRINTFORM 「Even so we aim to deliver this 
+		CALL COLORMESSAGE("amazing item", C_YELLOW, 0, 1)
+		PRINTFORML  to as many as possible.」
+		PRINTFORM 「So today, you can 
+		CALL COLORMESSAGE("get off super cheap", C_RED, 0, 1)
+		PRINTFORML . Yep.」
+		PRINTFORMW 「I wonder if I'll get scolded for doing something like this on a whim...」
+		PRINTFORMW 「............」
+		PRINTFORMW 「...... I got it.」
+		FONTBOLD
+		PRINTFORM 「
+		CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+		PRINTFORM  
+		CALL COLORMESSAGE(@"that normally costs a whopping \\{DAILY_EV23_ミラダ_定価}", C_RED, 0, 1)
+		PRINTFORML !!!」
+		PRINTFORM 「Add to that, a 
+		CALL COLORMESSAGE("set of 3 Lotions", C_YELLOW, 0, 1)
+		PRINTFORMW !!」
+		PRINTFORMW 「And add to that!」
+		PRINTFORM 「This here 
+		CALL COLORMESSAGE("set of 10 condoms", C_YELLOW, 0, 1)
+		PRINTFORML  as a free extra!」
+		PRINTFORM 「With this 
+		CALL COLORMESSAGE("Mirada relief set", C_D_PINK, 0, 1)
+		PRINTFORM , getting a 
+		CALL COLORMESSAGE("sex friends", C_RED, 0, 1)
+		PRINTFORMW  by tomorrow will be easy!」
+		PRINTFORM 「The price is... 
+		CALL COLORMESSAGE(@"\\{DAILY_EV23_ミラダ_底値}", C_RED, 0, 1)
+		PRINTFORML !!! Not a penny less!!!」
+		PRINTFORM 「Now, hurry up, obtain 
+		CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+		PRINTFORM , 
+		CALL COLORMESSAGE("Gan Gan", C_RED, 0, 1)
+		CALL HPH_PRINT(@"HPH")
+		CALL COLORMESSAGE("An An", C_RED, 0, 1)
+		CALL HPH_PRINT(@"HPH")
+		PRINTFORMW  The clock is ticking!」
+		FONTREGULAR
+		PRINTFORML 　Funds: %金額表示(MONEY)%
+		CALL ASK_M("Unnecessary!", 1, "Must have!", 1)
+		SIF !RESULT
+			GOTO IRANAI
+		MONEY -= DAILY_EV23_ミラダ_底値
+		;ラブローション3本セット、コンドーム10個セット
+		CALL GET_ITEM("ローション", 3, 1)
+		CALL GET_ITEM("コンドーム", 10, 1)
+	CASE 2
+		MONEY -= DAILY_EV23_ミラダ_安値
+	ENDSELECT
+	SETBIT FLAG_DAILY_EV23, 3
+	;ここでミラダ入手
+	CALL GET_ITEM("ミラダの石", 1, 1)
+	FONTBOLD
+	PRINTFORMW 「Thank you for purchasing!」
+	FONTREGULAR
+	CALL PRINT_IMAGE_EV23("服_笑顔")
+	CALL ASK_M("Time to go to sleep", 1, "How about a trial test?", 1)
+	IF !RESULT
+		$START_SLEEP
+		PRINTFORML 「Farewell then. I would be happy if you bought something again.」
+		PRINTFORMW %PARSE("You see")% the salesgirl off before going to bed, %PARSE("your",1)% heart swelling with anticipation as %PARSE("you fall",1)% asleep.
+		RETURN
+	ENDIF
+	PRINTFORMW ... By the way, how do you use it?
+	PRINTFORMW 「I didn't think of that, please excuse me.」
+	PRINTFORML 「You think of the face of a person, while holding it in your hand with all your might...」
+	PRINTFORMW 「Then it will start to shine!」
+	PRINTFORML %PARSE("You imagine")% the face of the salesgirl in front %PARSE("of you",1)% while grasping it firmly... And the stone begins to shine.
+	PRINTFORMW Ahh, so that's how it works.
+	$USE_NOW
+	ITEM:ミラダの石 --
+	SETBIT FLAG_DAILY_EV23, 4
+	PRINTFORML 「Ohh～! Thank you for the immediate use!」
+	PRINTFORMW 「Who's your favorite? Are you aiming for some big-shot? The Hakurei Miko? The gap Youkai?」
+	PRINTFORMW 「... Eh? ME!? ... You can't do that～ I'll get in trouble～」
+	CALL PRINT_IMAGE_EV23("服_赤面")
+	PRINTFORMW 「Ah! Don't do that! Don't grope my breasts!」
+	PRINTFORML 「Customer!? Please don't thrust your face in under my skirt...!?」
+	CALL HPH_PRINT("「S-Stop... Even if it's dirty you're licking it with your tongue... AnnHPH...... Don't lick it so muchHPH」", "W")
+	PRINTFORML 　.
+	PRINTFORML 　.
+	PRINTFORML 　.
+	;custom code
+	LOCALS = lost in a state of lust-fueled confusion to a door-to-door salesgirl after trying out the Stone of Mirada.
+	CALL SET_DOUTEILOSS_MASTER(LOCALS)
+	CALL SET_FIRSTKISS_MASTER(LOCALS)
+	PRINTFORMW 
+	PRINTFORML 「Customer, you really can't do this stuff you know～?」
+	PRINTFORMW 「I am angry you know. Are you listening?」
+	CALL PRINT_IMAGE_EV23("裸_LOVE")
+	PRINTFORMW 「Come on! ...... I must go to other houses too you know, even if I do it's not like we'll never meet again.」
+	PRINTFORMW 「... It was terrific, and felt amazing. But I can't forgive you... I just can't.」
+	PRINTFORML 「Say it once more. Then I'll forgive you.」
+	IF GETBIT(TALENT:MASTER:性別, 1)
+		PRINTFORML 「Also please let me use the shower. I'm covered in the smell of semen.」
+	ELSE
+		PRINTFORML 「Also please let me use the shower. I'm covered in the smell of juice.」
+	ENDIF
+	WAIT
+	CALL PRINT_IMAGE_EV23("服_赤面")
+	CALL HPH_PRINT("「Very well then, I must be going. You'll make me happy if you decide to buy againHPH」", "W")
+	PRINTFORMW %PARSE("You have")% become the rabbit Youkai door-to-door salesgirl's sex friend.
+	RETURN
+ELSE
+	PRINTFORML The day has ended, and %PARSE("you are")% about to go to sleep when %PARSE("you hear",1)% a voice coming from the door again.
+	PRINTFORMW 「Excuse me～」
+	PRINTFORML Who could it be at this hour?
+	PRINTFORMW You rub the sleep from your eyes and go out to greet whoever it is.
+	IF GETBIT(FLAG_DAILY_EV23, 4)
+		CALL PRINT_IMAGE_EV23("服_LOVE")
+		CALL HPH_PRINT("「Ehehe. I've come againHPH」", "L")
+	ELSE
+		CALL PRINT_IMAGE_EV23("服_笑顔")
+		PRINTFORM 「Once again, here comes the door-to-door salesgirl of 
+		CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+		PRINTFORML ～」
+	ENDIF
+	PRINTFORMW It's the adorable salesgirl with rabbit ears that bob up and down.
+	PRINTFORML 「So, how are you～?」
+
+	IF !GETBIT(FLAG_DAILY_EV23, 3)
+		PRINTFORM 「This time I'll show you what 
+		CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+		PRINTFORML  can really do!」
+	ELSE
+		PRINTFORM 「Do you know what 
+		CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+		PRINTFORML  can do?」
+		SIF GETBIT(FLAG_DAILY_EV23, 4)
+			CALL HPH_PRINT("「... Then again you've already used me to see what it does～ EheheHPH」", "L")
+	ENDIF
+	WAIT
+
+	$MIRADA_2ND
+	PRINTFORML 　Funds: %金額表示(MONEY)%
+	CALL ASK_M("Come again later", 1, "Not needed", 1, "Buy it", MONEY >= DAILY_EV23_ミラダ_底値, "Push her down!", GETBIT(FLAG_DAILY_EV23, 4))
+	SELECTCASE RESULT
+	CASE 0
+		IF GETBIT(FLAG_DAILY_EV23, 4)
+			PRINTFORML 「... Ehh?」
+			PRINTFORML 「Ehh!? Isn't this a bit too much!? You're just dumping me!?」
+			CALL ASK_M("Do not come again", 1, "Just joking", 1)
+			SIF !RESULT
+				GOTO MOUKONAI
+			PRINTFORML 「Come on. Don't scare me like that～」
+			PRINTFORML 「So give me an honest answer, what will you do?」
+			GOTO MIRADA_2ND
+		ELSE
+			$MOUKONAI
+			SETBIT FLAG_DAILY_EV23, 1
+			PRINTFORML 「Ah, is that so.」
+			PRINTFORMW The salesgirl departs with a heavy heart.
+		ENDIF
+	CASE 1
+		GOTO IRANAI
+	CASE 2
+		CALL GET_ITEM("ミラダの石", 1, 1)
+		CALL PRINT_IMAGE_EV23("服_笑顔")
+		FONTBOLD
+		PRINTFORMW 「Thank you for purchasing!」
+		FONTREGULAR
+		IF MONEY < DAILY_EV23_ミラダ_安値
+			PRINTFORML 「... Are～?」
+			PRINTFORM 「Uhh～ Customer? The price for this item is 
+			CALL COLORMESSAGE(@"\\{DAILY_EV23_ミラダ_安値}", C_RED, 0, 1)
+			PRINTFORMW  but...」
+			PRINTFORML 「Hmm... Ah, it can't be helped.」
+			PRINTFORM 「This time I'll sell it for just 
+			CALL COLORMESSAGE(@"\\{DAILY_EV23_ミラダ_底値}", C_RED, 0, 1)
+			PRINTFORML .」
+			PRINTFORMW 「We have a special relationship so, that's fine, right?」
+			MONEY -= DAILY_EV23_ミラダ_底値
+		ELSE
+			MONEY -= DAILY_EV23_ミラダ_安値
+		ENDIF
+		IF GETBIT(FLAG_DAILY_EV23, 4)
+			CALL PRINT_IMAGE_EV23("服_赤面")
+			PRINTFORMW 「Is the customer satisfied with just shopping～?」
+			CALL ASK_M("Yes", 1, "No", 1)
+			IF !RESULT
+				PRINTFORML 「Are～? Is customer tired?」
+				PRINTFORMW 「In that case I'll excuse myself for today.」
+				PRINTFORMW The rabbit Youkai salesgirl looks a bit disappointed as she leaves.
+				RETURN
+			ELSE
+				CALL HPH_PRINT(@"「Fufu. Isn't that right～HPH」", "L")
+				PRINTFORMW 「... Please be gentle with me.」
+				GOTO DO_H
+			ENDIF
+		ENDIF
+		CALL ASK_M("Time to go to sleep", 1, "... Let's try the stone on the salesgirl", 1)
+		SIF !RESULT
+			GOTO START_SLEEP
+		PRINTFORML %PARSE("You imagine")% the face of the salesgirl in front %PARSE("of you",1)% while grasping it firmly... And the stone begins to shine.
+		GOTO USE_NOW
+	CASE 3
+		CALL PRINT_IMAGE_EV23("服_LOVE")
+		PRINTDATAL
+			DATA 「Oh no, I'm being ravished～」
+			DATA 「Come on～ Doing stuff like this so suddenly～」
+			DATA 「Uhya!? Aren't you greedy～」
+			DATA 「I came here for work so please buy something～」
+			DATA 「Yes yes. Please wait with that stuff until I've gotten to the futon～」
+		ENDDATA
+		CALL ASK_M("Silence her with a kiss", 1, "Give her a tip（\\3000）", MONEY >= 3000, "Give her a tip(10CM)", MONEY:2 >= 10)
+		SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW 「Nnー!?」
+			PRINTDATAW
+				DATALIST
+					DATA 「............」
+					DATA 「Ah! Don't do that... This isn't nearly enough. Hora, let's kiss some more～」
+				ENDLIST
+				DATA 「Dodging the issue like that... Ahh, don't just grope my breasts so suddenly, you know how sensitive they are.」
+				DATA 「...... I'm still not used to this. It's still a bit too much, so don't go too far.」
+				DATA 「...... Customer, you're making light the sexual desires of a rabbit. Even I don't know what I'll do...」
+			ENDDATA
+		CASE 1, 2
+			SIF RESULT == 1
+				MONEY -= 3000
+			SIF RESULT == 2
+				MONEY:2 -= 10
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMW 「...... Uwaah, is that money? That's fine～ This will give you what you can get.」
+			CASE 1
+				PRINTFORML 「Uhh... I don't do this for money you know?」
+				PRINTFORMW 「Your technique is just too terrible!」
+			CASE 2
+				PRINTFORML 「Hmm... Rather than getting money directly...」
+				PRINTFORMW 「Let's get lunch some time...」
+				PRINTFORMW 「......"Your voice was too quiet for me to hear"? ... Okay, I see. Let's just go do it.」
+			ENDSELECT
+		ENDSELECT
+		$DO_H
+		PRINTFORML 　.
+		PRINTFORML 　.
+		PRINTFORML 　.
+		PRINTFORMW 
+		[SKIPSTART]
+		;思案中
+		SELECTCASE RAND:3
+		CASE 0
+			SIF !GETBIT(TALENT:MASTER:性別, 0)
+				GOTO ERO_SCENE_BASIC
+			SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML ……ふぅ
+				CALL HPH_PRINT("「……ふぅHPH」", "W")
+				PRINTFORML 「あー、萎んでいってしまいます」
+				PRINTFORMW 「出し終わったらふにゃふにゃですね？」
+				PRINTFORMW 「ふふ。えへへ。この感触も独特ですよね～。ぷるぷるして柔らかくて面白いです」
+				PRINTFORMW 人のちんこで遊ぶな
+			CASE 1
+				PRINTFORMW 「……きゃぁ！？」
+				PRINTFORML 「なんで股間から顔の方まで精液飛んでくるんですか～。元気が良すぎです！このエロ魔神！」
+				CALL HPH_PRINT("「\"すごく気持ちよかった\"じゃないですよ、バカHPH」", "W")
+				PRINTFORML 「やだぁ、髪にかかってるし～。ニオイ取れないんですよ？わかってるんですか？」
+				PRINTFORMW 「ああ、もう！変なこと言わないでください！少しは反省しろー！！」
+			CASE 2
+				PRINTFORML 「こらこら」
+				PRINTFORMW 「何度言ったらわかるんですか？ナマはダメなんですって……」
+				PRINTFORML 「ほら、ゴムつけてあげますから」
+				CALL HPH_PRINT("「……はい、いいですよ。きてくださいHPH」", "W")
+			CASE 3
+				PRINTFORML 「いつも思うんですけど、お客さまってすごい量を出しますよね」
+				PRINTFORMW 「なにか秘訣とかあるんですか？」
+				PRINTFORMW 「日々の掃除とおぱんつ様？……何ですかそれ？意味わかんないですよ」
+			ENDSELECT
+		CASE 1
+			SIF !GETBIT(TALENT:MASTER:性別, 1)
+				GOTO ERO_SCENE_BASIC
+			SELECTCASE GET_TALENTNAME(GETNUM(TALENT, "バストサイズ"), TALENT:MASTER:バストサイズ)
+			CASE "巨乳", "爆乳"
+				PRINTFORML ……ふにふに
+				PRINTFORMW 「うーん、お客さまっておっぱい大きいですよねぇ」
+				PRINTFORML ……ふにふに
+				CALL HPH_PRINT("「いいなぁ、ずーっと触ってたくなっちゃうHPH」", "W")
+			CASEELSE
+				GOTO ERO_SCENE_BASIC
+			ENDSELECT
+		CASE 2
+			GOTO ERO_SCENE_BASIC
+			;なんとなく作ったが判定をあんま詰めれてない
+			;販売員さんは身を引く
+			PRINTFORML 販売員と連れ立ってあなたの部屋まで移動しようとしたが、そこには先客がいた
+			PRINTFORML 
+			PRINTFORML 「ちょっとー、あれ誰なんですか～？」
+			PRINTFORML 
+			PRINTFORML 「……え？お子さん？」
+			PRINTFORML 「……え？奥様？」
+			PRINTFORML 「……え？恋人？」
+			PRINTFORML 
+			PRINTFORML 「うわ、最低！浮気者！女の敵！」
+			PRINTFORML 「私と遊んでる場合じゃないじゃないですか！」
+			PRINTFORML 
+			PRINTFORML 「ほらほら、構ってあげないと寂しくて泣いちゃいますよ？」
+			PRINTFORML 「私のことはいいですから。ちゃんと可愛がってあげてくださいね」
+			PRINTFORML 
+			PRINTFORML 「私はバレないうちに失礼します」
+			PRINTFORML 「あとはごゆっくり」
+			WAIT
+			RETURN
+		CASEELSE
+			;特に条件が無いパターンはこっち
+			$ERO_SCENE_BASIC
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 「……実はですね」
+				PRINTFORML 「今日は急ぎの用事が入ってしまいまして。すぐに帰らなきゃいけないんです」
+				PRINTFORML 「ですので、一回だけしかできないです。ごめんなさい」
+				PRINTFORML 「はい、この場で。立ったままでしましょう。時間無いですから」
+				PRINTFORML 「一回したらおしまいですよ？」
+				PRINTFORML 「次に来たときはたっぷりお相手してさしあげますから。ええ、早くしてください」
+			CASE 1
+				;未実装分岐
+				;濃密なエロやっぱ書けなかった
+				PRINTFORML 「今日はですね。ここが最後の営業先なんです」
+				PRINTFORML 「時間作ろうと思って頑張っちゃいました。褒めてください。えへへ」
+				PRINTFORML 「……たくさんしましょうね？」
+				WAIT
+				PRINTFORML 　・
+				PRINTFORML 　・
+				PRINTFORML 　・
+				PRINTFORMW 
+				RETURN
+			CASE 2
+				PRINTFORML ……ちゅ
+				PRINTFORMW 「お客さまはズルいです。このタイミングでちゅーをするのは反則です」
+				PRINTFORML ……ちゅ
+				PRINTFORMW 「えへへ。お返し♪」
+				PRINTFORML ……ちゅ
+				PRINTFORMW 「やんっ！お返しのお返しなんてダメですよぅ」
+				PRINTFORMW ……ちゅっ、ちゅっ、ちゅっ、ちゅっ
+			CASE 3
+				PRINTFORML 「……あっ……あぁっ……いやぁ」
+				PRINTFORMW 「乳首、弱いですからぁ……そんな、ずうっとコリコリされたらっ……」
+				PRINTFORML 「うぅんっ……変になっひゃってます、からぁ……ああぁ」
+				PRINTFORMW 「も、お願いですから……あっ！……ゆるひてっ！……いじめないでくらさいよお」
+			CASE 4
+				PRINTFORML 「ちょちょちょ！まって！ちょっとまって！」
+				PRINTFORMW 「すとっぷ！すとーっぷ！」
+				PRINTFORML 「どこ触ってんですか！？そこはお尻の穴ですよ！？」
+				PRINTFORMW 「それはダメです。そんなのはダメです。そんなことの許可は出せません」
+				PRINTFORML 「普通にしましょうよ。普通がいいんですよ」
+				PRINTFORMW 「まったくもう。油断も隙もないですね、お客さまったら」
+			ENDSELECT
+		ENDSELECT
+		WAIT
+		PRINTFORML 　・
+		PRINTFORML 　・
+		PRINTFORML 　・
+		PRINTFORMW 
+		[SKIPEND]
+		CALL PRINT_IMAGE_EV23("裸_LOVE")
+		PRINTFORML 「It's such a shame I've got to go.」
+		CALL HPH_PRINT(@"「Thank you very much. It was very enjoyableHPH」", "W")
+		PRINTFORML 「I don't know when it'll be, but I'll be sure to return. Please wait warmly.」
+		PRINTFORMW 「Now then, if you'll excuse me.」
+		PRINTFORMW The salesgirl departs reluctantly.
+	ENDSELECT
+ENDIF
+
+@PRINT_IMAGE_EV23(ARGS)
+#DIMS リソース名
+リソース名 = 立ち絵_%ARGS%_MOB_イナバ_{FLAG_DAILY_EV23_販売員}
+CALL 画像表示(リソース名, 0, 0, 0, 100)
+CALL ピクセル自動改行(デフォルトキャラ画像横幅)
+CALL 画像描画終了
+
+
+;他関数から呼ぶために分離。内容は変えてません
+@DAILY_EV23_SALESTALK(ARG)
+PRINTFORM 「By the way dear customer, would you be interested in doing 
+CALL COLORMESSAGE("Ecchi", C_H_PINK, 0, 1)
+PRINTFORML  stuff?」
+PRINTFORMW 「You like it don't you～ That's why this product exists, to allow you to be satisfied!」
+PRINTFORMW 「I will now introduce this amazing product!」
+PRINTFORM 「Jajaaーn! It's 
+CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+PRINTFORML !」
+PRINTFORMDW Saying that, the salesgirl takes out a suspicious sparkling crystal.
+PRINTFORML 「There really are a lot of attractive women in Gensokyo.」
+PRINTFORML 「The unattainable miko, and the beautiful and clever goddesses.」
+PRINTFORMW 「The proud and bewitching great Youkai, the pure fairies, it's hard to pick just one.」
+PRINTFORMW 「... There are also more easygoing rabbit Youkai～ Ehehe」
+PRINTFORM 「Customer would like to do 
+CALL COLORMESSAGE("Aahh-stuff", C_H_PINK, 0, 1)
+PRINTFORM  and 
+CALL COLORMESSAGE("Nhaa-things", C_H_PINK, 0, 1)
+PRINTFORMW  with the woman %HE_SHE(MASTER)% likes, right?」
+FONTBOLD
+PRINTFORM 「Falling in 
+CALL COLORMESSAGE("love", C_H_PINK, 0, 1)
+PRINTFORML  is nice but polygamy can be rather tricky.」
+PRINTFORM 「But you want it! Complete monopoly! It is the destiny of all young girls to 
+CALL COLORMESSAGE("fall in love", C_H_PINK, 0, 1)
+PRINTFORMW !」
+FONTREGULAR
+PRINTFORM 「Loving this girl, loving that girl... Triangle, square, keep going and you'll make a polygon of love, a muddled 
+CALL COLORMESSAGE("pandemonium of passion", C_D_RED, 0, 1)
+PRINTFORMW .」
+PRINTFORM 「You'll be favorite snack of 
+CALL COLORMESSAGE("The Green Eyed Monster", C_GREEN, 0, 1)
+PRINTFORML ～ Scary scary～」
+PRINTFORM 「The 
+CALL COLORMESSAGE("jealously-filled suspense thriller", C_D_RED, 0, 1)
+PRINTFORM  will be far from a 
+CALL COLORMESSAGE("dream fantasy harem", C_H_PINK, 0, 1)
+PRINTFORMW .」
+FONTBOLD
+PRINTFORML 「I want to have sex more easily!」
+PRINTFORM 「
+CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+PRINTFORMW  will grant that dream without any problems!」
+FONTREGULAR
+PRINTFORM 「
+CALL COLORMESSAGE("Love", C_H_PINK, 0, 1)
+PRINTFORM  is difficult, but 
+CALL COLORMESSAGE("Sex Friends", C_RED, 0, 1)
+PRINTFORML  shouldn't be too difficult～」
+PRINTFORML 「To begin with, it might be impossible due to hatred.」
+PRINTFORM 「If so, start out with gentleness kindness and soon enough your partner will fall in 
+CALL COLORMESSAGE("love", C_H_PINK, 0, 1)
+PRINTFORMW .」
+PRINTFORML 「You get it, you get it! That's the problem!」
+FONTBOLD
+PRINTFORM 「If you want to ensure a bodily relationship, ensure 
+CALL COLORMESSAGE("reliability", C_YELLOW, 0, 1)
+PRINTFORML  does not get too high!」
+PRINTFORM 「
+CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+PRINTFORMW  will solve that problem completely!」
+PRINTFORM 「All with 
+CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+PRINTFORML 」
+FONTREGULAR
+PRINTFORM 「Once you have used it, the target's center for sexual desire will be altered so the thought of you having 
+CALL COLORMESSAGE("sexual charm", C_RED, 0, 1)
+PRINTFORMW  will get imprinted!」
+PRINTFORM 「They see you and 
+CALL COLORMESSAGE("Doki!", C_RED, 0, 1)
+PRINTFORM  Your eyes meet and 
+CALL COLORMESSAGE("Doki!", C_RED, 0, 1)
+PRINTFORM  Your hands touch and 
+CALL COLORMESSAGE("Doki!", C_RED, 0, 1)
+PRINTFORM  The 
+CALL COLORMESSAGE("Doki Doki", C_RED, 0, 1)
+PRINTFORML  doesn't stop!」
+FONTBOLD
+PRINTFORM 「In addition, increase in 
+CALL COLORMESSAGE("reliability", C_YELLOW, 0, 1)
+PRINTFORM  will be suppressed, and from there it's a straight line to 
+CALL COLORMESSAGE("Sex Friends", C_RED, 0, 1)
+PRINTFORMW !!」
+PRINTFORMW 「Such an amazing item, where can I get one!?」
+FONTREGULAR
+PRINTFORML 「Then the question starts to become about money.」
+PRINTFORM 「A 
+CALL COLORMESSAGE("good thing", C_YELLOW, 0, 1)
+PRINTFORM  costs 
+CALL COLORMESSAGE("good money", C_YELLOW, 0, 1)
+PRINTFORML , as always, it's a constant in the outside world, it's a constant in Gensokyo.」
+PRINTFORM 「It's 
+CALL COLORMESSAGE("worth more than the cost", C_M_GREEN, 0, 1)
+PRINTFORMW  as it makes sweet-talking incredibly easy.」
+PRINTFORM 「To tell you the truth, 
+CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+PRINTFORML  is made from rare and precious materials.」
+PRINTFORML 「It takes the combined efforts of several skilled magicians a lot of time and money to make just one.」
+PRINTFORM 「Because of that, it costs 
+CALL COLORMESSAGE(@"\\{DAILY_EV23_ミラダ_定価}", C_RED, 0, 1)
+PRINTFORMW  via normal means...」

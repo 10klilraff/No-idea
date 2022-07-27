@@ -1,0 +1,164 @@
+﻿;-------------------------------------------------
+;おみくじ
+;日常系コマンド、レベル1
+;-------------------------------------------------
+;LOCAL
+@COM434
+VARSET LOCAL
+
+IF !GETBIT(FLAG:999, 0)
+
+	PRINTFORML There's a note on the side of the offertory box.
+	PRINTFORML ┌─────────┐
+	PRINTFORML ｜　　　　　　　　　｜
+	PRINTFORML ｜　　 Omikuji　　　｜
+	PRINTFORML ｜　　　　　　　　　｜
+	PRINTFORML ｜　　　　　　　　　｜
+	PRINTFORML ｜　　　　　　　　　｜
+	PRINTFORML ｜　　1 per day 　　｜
+	PRINTFORML ｜　　　 \\200 　　　｜
+	PRINTFORML ｜　 Insert here　　｜
+	PRINTFORML ｜　　　　　　　　　｜
+	PRINTFORML └─────────┘
+	PRINTFORMW 
+	PRINTFORMW ...
+	PRINTFORMW Where to put it in is obvious, but, where the hell does it come out?
+
+	SETBIT FLAG:999, 0
+
+ENDIF
+
+IF GETBIT(FLAG:999, 1)
+	PRINTFORML Omikuji can only be done once a day.
+	RETURN -1
+ENDIF
+
+IF MONEY < 200
+	PRINTFORML After checking %PARSE("your",1)% wallet, %PARSE("you")% don't seem to have enough money.
+	RETURN -1
+ENDIF
+
+PRINTFORML 1 Omikuji costs \\200. Draw one?
+PRINTFORML [1] Try it
+PRINTFORML [0] Never mind
+PRINTFORML 
+INPUT
+SIF !RESULT
+	RETURN -1
+
+MONEY -= 200
+TIME += 2
+SETBIT FLAG:999, 1
+
+SELECTCASE RAND:15
+	CASE 0 TO 6
+		PRINTL Clap Clap
+		PRINTFORML %PARSE("You insert")% the money and %PARSE("clap your",1)% hands in prayer.
+		PRINTW ......
+		PRINTL Something comes fluttering down...
+		PRINTFORMW %PARSE("You pick")% it up, seems to be an Omikuji slip.
+	CASE 7 TO 11
+		PRINTL Ring Ring
+		PRINTFORMW %PARSE("You insert")% the money and ring the bell......
+		PRINTW Suddenly Omikuji flies out of the offertory box!
+	CASE 12 TO 13
+		PRINTW ......
+		PRINTW ...
+		PRINTW I... I'll tell you what I saw just now!
+		PRINTW 『I put in money to get my Omikuji and suddenly I find myself holding the slip.』
+		PRINTW I- I'm not sure what happened, I don't understand it at all...
+		PRINTW Something probably happened with my head...
+		PRINTW I am completely sure it wasn't something like time stop, super speed, or hypnotism.
+		PRINTW I think I just saw something even scarier...
+	CASE 14
+		PRINTW （Gong）
+		PRINTFORML Something hits %PARSE("you")% in the back of %PARSE("your",1)% head.
+		PRINTFORML %PARSE("You turn")% around, and %PARSE("see")% something with a piece of paper wrapped around it.
+		PRINTW It turns out to be the Omikuji...
+		PRINTW ... Please don't wrap it around a rock.
+ENDSELECT
+
+PRINTFORMW %PARSE("You get")% (?) the Omikuji and %PARSE("check your",1)% fortune.
+PRINTW ...
+CALL FORTUNE
+
+;当たり、キャッシュバックによる返金処理
+IF GETBIT(FLAG:999, 10)
+	PRINTL ......
+	PRINTW ...
+
+	SELECTCASE RAND:15
+		CASE 0 TO 4
+			PRINTW There's something strange written at the end of it.
+			PRINTL ┌─・─Cut here─・─┐
+			PRINTL ｜　　　　　　　　　　｜
+			PRINTL ｜   Gensokyo-wide    ｜
+			PRINTL ｜  Gift Certificate  ｜
+			PRINTL ｜　　　　　　　　　　｜
+			PRINTL ｜　　　　　  \200　　｜
+			PRINTL ｜　　　　　　　　　　｜
+			PRINTL ｜　Cash is fine too　｜
+			PRINTL ｜ No expiration date ｜
+			PRINTL └──────────┘
+			PRINTW Is it really okay that these are gift coupons?
+		CASE 5 TO 6
+			PRINTL *Swoosh*
+			PRINTFORMW %PARSE("You hear")% the sound of wind and hide.
+			PRINTL *Tap Tap*
+			PRINTFORMW It sounds like someone hitting something, and when %PARSE("you look",1)% up the money %PARSE("you",1)% just put in is lying on the ground.
+			PRINTL What was that?
+		CASE 7 TO 11
+			PRINTL Ring Ring♪    ○彡
+			PRINTFORMW The money %PARSE("you")% just put in the offertory box comes flying out.
+		CASE 12 TO 13
+			PRINTW ......
+			PRINTW ...
+			PRINTW I... I'll tell you what happened just now!
+			PRINTW 『I read the Omikuji, and suddenly find myself holding the money again.』
+			PRINTW I- I'm not sure what happened, I don't understand it at all...
+			PRINTW Something probably happened with my head...
+			PRINTW I am completely sure it wasn't something like time stop, super speed, or hypnotism.
+			PRINTW I think I just saw something even scarier...
+		CASE 14
+			PRINTW （Gong）
+			PRINTFORML Something hits %PARSE("you")% in the back of %PARSE("your",1)% head.
+			PRINTFORML %PARSE("You turn")% around, and %PARSE("see")% it's the money %PARSE("you",1)% just donated.
+			PRINTW Is it okay to use this money to pay tomorrow as well?
+	ENDSELECT
+	
+	MONEY += 200
+	CLEARBIT FLAG:999, 10
+ENDIF
+
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+;おみくじ
+@COM_ABLE434
+;一括管理
+SIF GLOBAL_COMABLE(434)
+	RETURN RESULT
+SIF !TFLAG:100
+	RETURN 0
+;気力0では不可
+SIF BASE:MASTER:気力 <= 0
+	RETURN 0
+;賽銭箱（おみくじの代金入れも兼ねている）でないと引けない
+SIF !OMIKUJI_SPOT(CFLAG:MASTER:現在位置)
+	RETURN 0
+SIF CFLAG:MASTER:現在位置 != P3賽銭箱
+	RETURN 0
+;停止中は不可
+SIF FLAG:70 == 1
+	RETURN 0
+RETURN 1
+
+@OMIKUJI_SPOT(ARG)
+#FUNCTION
+;博麗神社の賽銭箱
+SIF ARG == GET_MAP_REPLACEMENT(3)
+	RETURNF 1
+RETURNF 0

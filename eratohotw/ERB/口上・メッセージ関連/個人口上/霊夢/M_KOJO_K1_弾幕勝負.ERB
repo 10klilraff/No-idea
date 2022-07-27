@@ -1,0 +1,315 @@
+﻿;added, original content + some lines from J
+
+;==================================================
+;弾幕勝負
+;==================================================
+;
+@M_KOJO_MESSAGE_COM_K1_DANMAKU(ARGS, 相手残機)
+#DIM 相手残機
+;全体の流れ
+;①【戦闘前】→②ダイスロールとプレイヤー選択肢、ハンデをつけた場合は【ハンデ口上】→③対応スキルが発動した場合【スキル口上】→④被弾判定、キャラが被弾したなら【被弾口上】→
+;どちらかの残機が0になっていなければ②に戻る→⑤【戦闘後口上】
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;戦闘前
+	;ハンデをつけることができ、数値が大きいほどあなたが不利になる　数値が負ならあなたが有利に
+	;キャラの能力に関わらずクッソ強くしたり弱くしたりできる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘前"
+		HANDICAP_FIXED = 0
+		HANDICAP_RAND = 0
+		IF MARK:反発刻印 || CFLAG:ブチギレ
+			PRINTFORML 「Are you digging up your own grave, perhaps?」
+			PRINTFORML 「Challenging me while I'm in this mood...」
+			PRINTFORML 「Don't tell me I didn't warn you.」
+			PRINTFORMDL Reimu gets serious!
+			HANDICAP_FIXED += 300
+			HANDICAP_RAND += 100 * ABL:戦闘能力
+		ELSEIF CFLAG:弾幕勝負勝利
+			PRINTFORML 「Hmm... You've already beaten me once, though.」
+			PRINTFORMDL Reimu says, giving you a wry smile.
+			PRINTDATAL
+				DATAFORM 「I suppose this is one way to get back at you.」
+				DATAFORM 「Fufu... I need to know your habits better to have a chance at beating you!」
+				DATAFORM 「But don't think... you can defeat me as easily as before!」
+				DATAFORM 「Perhaps the first time was just a fluke... Let's find out!」
+			ENDDATA
+			HANDICAP_RAND += 100 * ABL:戦闘能力
+		ELSEIF ABL:MASTER:戦闘能力 >= ABL:戦闘能力
+			PRINTFORML 「What, could it be that you feel confident about your abilities as of late?」
+			PRINTFORML 「Sorry to break it to you, but I think you're flying a little too close to the sun.」
+			PRINTFORML 「Don't worry, I'll pull you down soon enough where you belong. Let's begin!」
+			PRINTDATAL
+				DATAFORM 「Oh, one more thing. Just promise me you won't give up so easily.」
+				DATAFORM 「If you can beat me, then you're on your way to becoming the next "Best Danmaku Fighter in Gensokyo"!」
+				DATAFORM 「Hey, why don't we both make some new Spell Cards while we're at it?」
+			ENDDATA
+			PRINTFORMDL Reimu had years to perfect this stuff... You grit your teeth and prepare for the worst!
+		ELSE
+			IF ABL:MASTER:戦闘能力 < 2
+				IF FIRSTTIME("DanmakuWeak")
+					PRINTFORML 「Oh, name... Can't you fly yet? I make it a rule not to accept challenges from humans specifically for this very reason...」
+					PRINTFORML 「Well, don't worry about that! As long as you can dodge my Danmaku, you'll be fine! Okay then, let's do this!」
+				ELSE
+					PRINTDATAL
+						DATAFORM 「About Spell Cards though... Eh, you don't have one?」
+						DATAFORM 「You need to be stronger than this. Let's get started!」
+						DATAFORM 「I still think you need a Spell Card or two of your own. I'll help you make them sometime.」
+					ENDDATA
+				ENDIF
+			ELSE
+				PRINTDATAL
+					DATAFORM 「Indeed, that's a good call... let's see what you can do!」
+					DATAFORM 「Here I come! Can you keep up with me?」
+					DATAFORM 「Just give me a minute to get ready... Okay, all set, let's go!」
+					DATAFORM 「You're on, come at me. Try not to hurt yourself.」
+					DATAFORM 「I could use some exercise... Maybe you'll entertain me?」
+					DATAFORM 「I won't go easy on you, but... please remember to be careful, okay?」
+				ENDDATA
+			ENDIF
+		ENDIF
+		PRINTFORML 
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;ハンデ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "ハンデ"
+		;ハンデつけなかったら表示されないので無記入でよい
+		PRINTFORML 
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中TARGET被弾時口上
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" 
+		;別に一律で「やられたー」だけでもいいよ
+		IF MARK:反発刻印 || CFLAG:ブチギレ
+			SELECTCASE 相手残機
+				CASE 2
+					PRINTFORML 「This is not going to last. I'm sure you're on your last legs already.」
+					PRINTFORML 「Meanwhile, I still have a lot of room to feel composed about this.」
+					PRINTFORML 「If you give up now, you'll get away with just a couple of bruises, you know?」
+				CASE 1
+					PRINTFORML 「Sigh... I hate to do this, but you're forcing my hand here.」
+					PRINTFORML 「Dream Land "Great Duplex Barrier"!」
+					PRINTFORML 「And... a little help from the divine... There.」
+					PRINTFORML 「Let's go, last stand!」
+					PRINTFORMDL For a moment, you could swear you just saw Reimu's eyes flash red...
+					HANDICAP_FIXED += 1000
+				CASE 0
+					PRINTFORML 「Uugh... Unbelievable... You must've cheated somehow...」
+					PRINTFORML 「How can a regular human without an ability do this well against me?」
+					PRINTFORML 「Or perhaps... You had one all along to begin with?」
+					PRINTFORMDL You gulp.
+			ENDSELECT
+			RETURN 1
+		ENDIF
+		
+		SELECTCASE 相手残機
+			;残り残機3が表示されるのは【洽覧深識】持ちのみ
+			CASE 3
+			CASE 2
+				SELECTCASE RAND:5
+					CASE 0
+						PRINTFORML 「%CAPITALIZE(FSYN("ow"))%! ...I see you improved your skills at least.」
+					CASE 1
+						PRINTFORML 「Fufu, looks like you got some skill!」
+						PRINTFORML 「Let's see how long you can keep up!」
+					CASE 2
+						PRINTFORML 「It's just another fluke, isn't it?」
+						PRINTFORML 「Your wondrous luck seems to outshine my own. I'll address this shortly!」
+					CASE 2
+						PRINTFORML 「Ugh... That does it then!」
+						PRINTFORML 「Let me demonstrate the massive gap between our abilities!」
+					CASE 3
+						PRINTFORML 「I was just surprised before, since I never expected you to go toe to toe with me.」
+						PRINTFORML 「Now, I'm ready.」
+					CASE 4
+						PRINTFORML 「I see... It's my fault I didn't take you seriously to begin with.」
+						PRINTFORML 「Shall we take it up a notch? Fall into the gap of my boundary!」
+				ENDSELECT
+			CASE 1
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Up for a real fight, huh?」
+						PRINTFORML 「I'll show you one...」
+					CASE 1
+						PRINTFORML 「Now, I'll show you...」
+						PRINTFORML 「My true boundary.」
+					CASE 2
+						PRINTFORML 「...I'm getting ticked off. And let me tell you, making me mad is your greatest mistake.」
+						PRINTFORML 「I'll definitely have to teach you a bit of a lesson today.」
+				ENDSELECT
+			CASE 0
+				PRINTFORMDL %BREAKENG(@"Reimu leaves you no openings, suppressing you with a great amount of bullets and Danmaku without giving you a room to breathe.")%
+				PRINTFORMDL You decide to try a different approach.
+				PRINTFORMDL You concentrate and shoot a barrage of Danmaku, aiming for the weak points on Reimu's body.
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【残忍酷薄】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "残忍酷薄"
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【乾坤一擲】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "乾坤一擲"
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 「I'll beat you! You can't escape from my barrage!」
+			CASE 1
+				PRINTFORML 「Have a good look at my signature technique!」
+				PRINTFORML 「Spirit Sign "Fantasy Seal"!!!」
+			CASE 2
+				PRINTFORML 「I'm going to mix in some Spell Cards now, get ready!」
+			CASE 3
+				PRINTFORMDL You beg Reimu to go a bit easier on you and stop shooting so much Danmaku.
+				PRINTFORML 「Why? This is fun!」
+				PRINTFORMDL Reimu keeps firing, and you feel like you're in trouble.
+			CASE 4
+				PRINTFORML 「What's the matter, %CALLNAME:MASTER%? If you're not going to dodge those, you won't last long!」
+				PRINTFORMDL "Th-That's... Not fair! Don't attack while I'm defenseless!"
+				PRINTFORML 「Oops, sorry. I guess I should have warned you earlier...」
+				PRINTFORMDL Reimu smirks.
+				PRINTFORML 「Let's try that again, shall we?」
+				PRINTFORMDL She says, only to renew her attack once more!
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【怪力乱神】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "怪力乱神"
+		
+	ENDIF
+	
+	;-------------------------------------------------
+	;戦闘後
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" 
+		PRINTFORML 
+		;残り残機4が表示されうるのは【洽覧深識】持ちのみ
+		;残機が1以上ならあなたの負け、0の場合はあなたの勝利
+		IF 相手残機 > 0 && !CFLAG:弾幕勝負勝利 && FIRSTTIME("DanmakuDefeat")
+			PRINTFORML 「That's it, you're done.」
+			PRINTFORMDL Reimu stops attacking and gets down to you as you sit on the ground, defeated.
+			PRINTFORML 「Can you stand? Good...」
+			PRINTFORML 「Tasting defeat from Gensokyo's finest... Perhaps this will set certain things in motion and get you a lot stronger by the end?」
+			PRINTFORML 「In any case, I'm looking forward to it.」
+			PRINTFORML 「Feel free to ask me if you want to train more. But be aware, I never hold back.」
+			RETURN 1
+		ENDIF
+		
+		IF (MARK:反発刻印 || CFLAG:ブチギレ)
+			IF 相手残機 > 0
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMDL Reimu circles around you, her face a picture of annoyance.
+						PRINTFORML 「Hmph... You're no fun.」
+					CASE 1
+						PRINTFORMDL You get thoroughly defeated by Reimu...
+						PRINTFORML 「Aaah～... You're so much weaker than I expected... I should've known!」
+						PRINTFORML 「I hate wasting time with losers. Come back when you become a little bit stronger.」
+						PRINTFORML 「No, scratch that. A *LOT* more stronger. Then we'll play some more.」
+					CASE 2
+						PRINTFORML 「You know, I prefer not to exterminate people who aren't enemies.」
+						PRINTFORML 「But if you don't learn your manners soon, I might have to change my mind.」
+				ENDSELECT
+				PRINTFORMDL Reimu scoffs and flies off somewhere...
+				CALL GETOUT(TARGET)
+			ELSE
+				PRINTFORML 「...Ughhh.」
+				PRINTFORMDL Reimu glares at you, rubbing her sore bum.
+				PRINTFORML 「...You must be feeling really proud of yourself right now.」
+				PRINTFORML 「Fine then. This isn't the first time I got beat.」
+				PRINTFORML 「But let me tell you something. There are... much scarier people than me out there.」
+				PRINTFORMW 「Try not to make enemies with them, or you might find yourself on the receiving end of what you did to me today.」
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		SELECTCASE 相手残機
+			CASE 4
+				PRINTFORML 
+			CASE 3
+				PRINTDATAL
+					DATAFORM 「You're not strong enough! You should learn to pick your battles, %CALLNAME:MASTER%!」
+					DATAFORM 「...Well, I guess you're getting better at Danmaku. Still, it's only natural for a beginner to lose.」
+					DATAFORM 「\@ RAND:2 ? Are you feeling unwell? # What's wrong with you?\@ You're going to hurt yourself at this rate.」
+					DATAFORM 「Humans rely too much on what they see...\n　You should learn how to get a good feel on Danmaku, then you will be able to dodge with your eyes closed.」
+					DATAFORM 「Still weak as always... Well, I hope this was a good lesson for you.」
+				ENDDATA
+			CASE 2
+				PRINTDATAL
+					DATAFORM 「You don't have to make such a big turn to avoid them. Dodge gradually!」
+					DATAFORM 「Don't let the amount of bullets fool you!」
+					DATAFORM 「Don't fire so many Danmaku at once! You're making yourself too predictable!」
+					DATAFORM 「The trick is to get close enough to dodge, and then dodge little by little.」
+					DATAFORM 「Once you master Grazing, you will be unstoppable.」
+					DATAFORM 「Trying to avoid them all at once is what gets you hit... And that's why you're still weak.」
+				ENDDATA
+				PRINTFORMDL Reimu gives you an advice, but you still can't shake off a certain air of superiority about her...
+			CASE 1
+				PRINTFORML 「That's it! a foregone conclusion! Never mess with a Shrine Maiden ever again!」
+				PRINTFORML （Phew... That was a bit too close to comfort.）
+				PRINTFORMDL Reimu seems very flustered for some reason...
+			CASE 0
+				PRINTFORML 「%SPLIT_G("Agyaaaaaaaahhhh:Uwaaaaghhh:Kyaaaaaahhh")%?!」
+				PRINTFORMDL Reimu lets out an unnatural squeal before plummeting to the ground.
+				PRINTFORMDL "Farewell, Reimu."
+				PRINTFORMDL "I'll pray your soul rests in peace."
+				PRINTFORML 「Don't just kill me off like that!」
+
+				IF !CFLAG:弾幕勝負勝利 ;after first win
+					WAIT
+					PRINTFORML 「Uuughhh... It's been a while since I've tasted defeat in Danmaku.」
+					PRINTFORML 「You've gone against me so many times, I guess it's expected that you'll score a win against me once.」
+					PRINTFORML 「I will definitely keep this in mind and train even harder for a rematch.」
+					PRINTFORML 「Don't let this get into your head however, conceit is what going to undo you if you get careless.」
+				ENDIF
+		ENDSELECT
+		
+		IF TALENT:恋慕 && !(MARK:反発刻印 || CFLAG:ブチギレ)
+			PRINTFORMDL You finish up the game, and decide to reward Reimu by giving her a kiss on the cheek.
+			PRINTFORMDL "Thanks for playing, Reimu."
+			PRINTFORMDL She stares at you, dumbfounded, but then hugs you tightly.
+			PRINTFORML 「You're welcome.」
+			PRINTFORML 「\@ 相手残機 == 0 ? I guess this makes me feel a bit better... But I won't lose next time! # Don't take it personally. You still have a lot of room to grow, I'm sure of it.\@」
+			PRINTFORMDL \@ 相手残機 == 0 ? Reimu blushes as you hold her in your arms and pat her head # It's easy for her to say, you think\@...
+		ENDIF
+	ENDIF
+RESETCOLOR
+ENDIF
+RETURN 1
+

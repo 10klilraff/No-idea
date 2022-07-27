@@ -1,0 +1,1664 @@
+﻿;-------------------------------------------------
+;300,会話
+;-------------------------------------------------
+;会話
+@MESSAGE_COM300
+IF TCVAR:会話不能
+	RETURN
+ENDIF
+;Custom code, replaced with custom function
+CALL CONVERSATION()
+RETURN
+IF TCVAR:泥酔
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%に話し掛けてみたが、%CALLNAME:TARGET%は呂律が回っておらず何を言っているかも聴き取れない
+	PRINTFORML ほとんど会話にならなかった…
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%と
+	IF CFLAG:ブチギレ > 0
+		IF TALENT:恋人
+			PRINTDATA
+				DATAFORM 素直になれない調子で
+				DATAFORM やや意地を張って見せながら
+				DATAFORM あえて謝罪を後回しにして
+				DATAFORM 機嫌を伺いつつ
+				DATAFORM 心の底では謝りつつ
+			ENDDATA
+		ELSE
+			PRINTDATA
+				DATAFORM 機嫌を伺いつつ
+				DATAFORM ぎこちない雰囲気で
+				DATAFORM 後ろめたい気持ちで
+				DATAFORM あえて悪びれずに
+				DATAFORM 一方的に
+			ENDDATA
+		ENDIF
+	ELSEIF CFLAG:TARGET:20 > 0 && CFLAG:TARGET:350 == 49
+		IF TALENT:恋慕
+			PRINTDATA
+				DATAFORM お酌し合いながら
+				DATAFORM 笑顔を交わしながら
+				DATAFORM 大笑いしながら
+				DATAFORM リラックスした雰囲気で
+				DATAFORM やや大胆な話題について
+			ENDDATA
+		ELSEIF ABL:親密 >= 5
+			PRINTDATA
+				DATAFORM お酌し合いながら
+				DATAFORM お互いを気にしながら
+				DATAFORM 冗談を飛ばして笑いあいつつ
+				DATAFORM リラックスした雰囲気で
+				DATAFORM あえて距離を保ちつつ
+			ENDDATA
+		ELSE
+			PRINTDATA
+				DATAFORM ちびちびと飲みながら
+				DATAFORM 少しだけ親しげに
+				DATAFORM の交友を深めるべく
+				DATAFORM 場の雰囲気の勢いに乗って
+				DATAFORM 普段とは違う雰囲気で
+			ENDDATA
+		ENDIF
+	ELSEIF CFLAG:TARGET:添い寝中
+		PRINTDATA
+			DATAFORM 指先を絡ませながら
+			DATAFORM 寄り添って
+			DATAFORM 少し恥ずかしそうに
+			DATAFORM 抱き合いながら
+			DATAFORM じゃれ合いながら
+			DATAFORM 頬に手を添えて
+			DATAFORM 布団の中で
+		ENDDATA
+	ELSEIF CHK_DATENOW(CFLAG:TARGET:デート中)
+		IF TALENT:恋慕
+			PRINTDATA
+				DATAFORM デート先について
+				DATAFORM 隣りを歩きながら
+				DATAFORM 少し照れながら
+				DATAFORM じゃれ合いながら
+				DATAFORM 微笑みを交わしながら
+			ENDDATA
+		ELSE
+			PRINTDATA
+				DATAFORM 世間
+				DATAFORM 出掛け先について
+				DATAFORM たわいない
+				DATAFORM 取るに足らない
+				DATAFORM 歩きながら
+			ENDDATA
+		ENDIF
+	ELSEIF TALENT:恋慕
+		PRINTDATA
+			DATAFORM 指先を絡ませながら
+			DATAFORM 隣りあって
+			DATAFORM 少し照れながら
+			DATAFORM \@ TIME >= 360 && TIME <= 1080 ? 昼の光の中で # 夜の静けさの中で \@
+			DATAFORM じゃれ合いながら
+			DATAFORM 微笑みを交わしながら
+		ENDDATA
+	ELSE
+		PRINTDATA
+			DATAFORM 世間
+			DATAFORM とりとめのない
+			DATAFORM 下らない
+			DATAFORM たわいない
+			DATAFORM 取るに足らない
+			DATAFORM 少し
+			DATAFORM 上を向いて
+		ENDDATA
+	ENDIF
+	PRINTFORML 話をした
+	IF TFLAG:193 == 1
+		PRINTFORML 楽しい時間が流れた…
+	ELSEIF TFLAG:193 == 2
+		PRINTDATA
+		;		DATAFORM 新たな異変の
+			DATAFORM 大げさな
+			DATAFORM 取って置きの
+			DATAFORM 思いがけない
+			DATAFORM 気になっていた
+		ENDDATA
+		PRINTFORML 話に%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 達 # \@は大いに盛り上がった…
+	ELSEIF TFLAG:193 == -1
+		PRINTFORML 会話が途切れると気まずい空気が流れた…
+	ELSEIF TFLAG:193 == -2
+		PRINTFORML 話が噛み合わない…
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;301,お茶を淹れる
+;-------------------------------------------------
+@MESSAGE_COM301
+IF TFLAG:193 == 1 && ABL:[[美鈴]]:親密 >= 7 && !RAND:5
+	PRINTFORML %PARSE("You mimic")% Meiling as %PARSE("you brew",1)% a cup of tea.
+	CALL COLORMESSAGE("*Clink*　To To To...",C_YELLOW,1)
+ELSE
+	PRINTFORML %PARSE("You")%\@ CFLAG:TARGET:行動 == 5 ?%" "%%PARSE("offer")% to take a break and#\@ %PARSE("serve")% some tea to %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ?%" "%and the others # \@...
+ENDIF
+IF TFLAG:193 == 1
+	PRINTFORML %CALLNAME:TARGET% and %PARSE("you")% \@ CFLAG:TARGET:行動 == 5 ? enjoy the break while drinking tea # enjoy %THIRD_PERSON?"them"#"your"%selves over tea \@...
+ELSEIF TFLAG:193 == -1
+	PRINTFORML ... But it seems it doesn't fit %CALLNAME:TARGET%'s palate at all.
+ENDIF
+
+;-------------------------------------------------
+;302,スキンシップ
+;-------------------------------------------------
+@MESSAGE_COM302
+;IF CFLAG:MASTER:現在位置 == 13 || CFLAG:MASTER:現在位置 == 24 || CFLAG:MASTER:現在位置 == 30 || CFLAG:MASTER:現在位置 == 39
+IF BATHCHECK(CFLAG:MASTER:現在位置) && IN_HOME(CFLAG:MASTER:現在位置)
+	IF TALENT:恋人 && !RAND:2
+		PRINTFORML %PARSE("You have")% %CALLNAME:TARGET% wash your back.
+	ELSE
+		PRINTFORML %PARSE("You decide")% to wash %CALLNAME:TARGET%'s back.
+	ENDIF
+ELSEIF CHK_DATENOW(CFLAG:TARGET:デート中) && CFLAG:MASTER:現在位置 != OMANEKIBEYA()
+	PRINTFORML %PARSE("You engage")% %CALLNAME:TARGET% in some skinship\@ (CFLAG:TARGET:現在位置 % 100) % 10 ? %" "%while walking #  \@.
+ELSEIF CFLAG:TARGET:350 == 49
+	PRINTFORML %PARSE("You show")% some back-bone and engage %CALLNAME:TARGET% in some skinship.
+ELSE
+	PRINTFORML %PARSE("You engage")% %CALLNAME:TARGET% in some skinship.
+ENDIF
+IF TFLAG:193 == 1
+	PRINTFORML %CALLNAME:TARGET% seems to enjoy it...
+ELSEIF TFLAG:193 == -1
+	PRINTFORML ... %PARSE("You")% got a bit too over-familiar...
+ENDIF
+TFLAG:400 = RAND:2
+SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+	CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+
+;-------------------------------------------------
+;303,謝る
+;-------------------------------------------------
+@MESSAGE_COM303
+IF TFLAG:193 == -2 || TFLAG:193 == 2
+	PRINTFORML %PARSE("You try")% to apologize for %PARSE("your",1)% impoliteness, and %PARSE("give")% %CALLNAME:TARGET% a box of cakes.
+ELSE
+	PRINTFORML %PARSE("You try")% to apologize to %CALLNAME:TARGET% for %PARSE("your",1)% impoliteness.
+ENDIF
+IF TFLAG:193 == 1
+	PRINTFORML %CALLNAME:TARGET% smiles and accepts %PARSE("your")% apologies...
+ELSEIF TFLAG:193 == 2
+	PRINTFORML %CALLNAME:TARGET% lets bygones be bygones.
+	PRINTFORMW %CALLNAME:TARGET% has lost a hate mark!
+ELSEIF TFLAG:193 == 0
+	PRINTFORML %CALLNAME:TARGET% reluctantly accepts %PARSE("your")% apology...
+ELSEIF TFLAG:193 == -2
+	PRINTFORML %CALLNAME:TARGET% doesn't accept the box of cakes...
+	PRINTFORML %CALLNAME:TARGET% isn't ready to forgive %PARSE("you",5)% yet...
+ELSE
+	IF TALENT:度胸 < 0
+		PRINTFORML But %CALLNAME:TARGET% is still crying...
+	ELSE
+		PRINTFORML But %CALLNAME:TARGET% is still angry...
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;304,仕事手伝い
+;-------------------------------------------------
+@MESSAGE_COM304
+IF FLAG:70
+	IF CFLAG:TARGET:350 == 46
+		PRINTFORML %PARSE("You try")% to play with the completely motionless %CALLNAME:TARGET%.
+		PRINTL ... What the hell are you even doing?
+	ELSEIF CFLAG:TARGET:350 == 41 || TCVAR:手伝えない == 2
+		PRINTFORML %PARSE("You try")% helping %CALLNAME:TARGET% with their work when time is stopped.
+		PRINTFORML But this isn't really the type of work where timestopping helps.
+	ELSE
+		PRINTFORML %PARSE("You help")% %CALLNAME:TARGET% with their work while time was stopped.
+		IF TFLAG:193 == 1
+			PRINTFORML Feels like a lot of progress was made.
+		ELSEIF TFLAG:193 == -1
+			PRINTFORML Feels like not a whole lot was accomplished...
+		ENDIF
+	ENDIF
+ELSE
+	IF CFLAG:TARGET:350 == 46
+		PRINTFORML %PARSE("You join")% %CALLNAME:TARGET% in playing.
+	ELSE
+		PRINTFORML %PARSE("You help")% %PNAME(TARGET)% with work.
+		IF TFLAG:193 == 1
+			PRINTFORML A lot of progress was made.
+		ELSEIF TFLAG:193 == -1
+			PRINTFORML It seems %PARSE("you weren't")% much help...
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;305,膝枕してもらう
+;-------------------------------------------------
+@MESSAGE_COM305
+PRINTFORML %PARSE("You receive")% a lap pillow from %PNAME(TARGET)%.
+IF TFLAG:193 == -5
+	PRINTFORML As %PARSE("you place your")% head on %CALLNAME:TARGET%'s lap, %HE_SHE(TARGET)% screams like a crushed frog.
+	PRINTFORML %PARSE("You panic")% and %PARSE("move")% %PARSE("your",1)% head away immediately.
+ELSEIF ABL:TARGET:親密 > 5
+	SIF TALENT:TARGET:妊娠
+		PRINTFORML %PARSE("You listen")% to the sound of %PARSE("your",1)% child in %PNAME(TARGET)%'s stomach...
+	PRINTFORML %CALLNAME:TARGET% caresses %PARSE("your")% head gently while staring affectionately at %PARSE("you",5)%...
+ELSEIF ABL:TARGET:親密 > 2
+	PRINTFORML %CALLNAME:TARGET% caresses %PARSE("your")% head gently...
+ELSE
+	PRINTFORML %CALLNAME:TARGET% sits completely motionless in silence, not moving a muscle...
+ENDIF
+TFLAG:400 = RAND:2
+SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+	CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+
+;-------------------------------------------------
+;306,お腹を撫でる
+;-------------------------------------------------
+@MESSAGE_COM306
+PRINTFORM %PARSE("You caress")% %PNAME(TARGET)%'s 
+IF TALENT:TARGET:妊娠
+	PRINTFORM pregnant belly.
+ELSEIF 充填率(TARGET,1) > 30
+	PRINT belly full of semen.
+ELSE
+	PRINT belly.
+ENDIF
+PRINTFORML 
+IF !FLAG:70
+	IF TFLAG:193 == 1
+		PRINTFORML %CALLNAME:TARGET% puts %HIS_HER(TARGET)% hand around %PARSE("yours",1)%...
+	ELSEIF TFLAG:193 == -1
+		PRINTFORML %CALLNAME:TARGET% looks uncomfortable...
+	ELSE
+		PRINTFORML %CALLNAME:TARGET% looks a bit puzzled...
+	ENDIF
+	TFLAG:400 = RAND:2
+	SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+		CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+ENDIF
+
+;-------------------------------------------------
+;307,頬をつまむ
+;-------------------------------------------------
+@MESSAGE_COM307
+IF FLAG:70 == 1
+	PRINTFORML %PARSE("You reach")% %PARSE("your",1)% hands towards %CALLNAME:TARGET%'s face...
+	PRINTFORML %PARSE("You pinch")% %CALLNAME:TARGET% cheeks while time is frozen...
+ELSEIF CFLAG:TARGET:睡眠
+	PRINTFORML %PARSE("You pinch")% %CALLNAME:TARGET%'s cheeks while %HE_SHE(TARGET)% is sleeping.
+	PRINTFORML %CALLNAME:TARGET% turns %HIS_HER(TARGET)% head in discomfort...
+ELSE
+	PRINTFORM %PARSE("You reach")% your hands towards %CALLNAME:TARGET%'s face\@ CFLAG:TARGET:添い寝中 ? %" "%as you lay in bed together # \@, and pinch and pull %HIS_HER(TARGET)% cheeks
+	IF TARGET == (NO:14)
+		PRINTDATA
+			DATAFORM , making a funi-funi noise...
+			DATAFORM , making a puni-puni noise...
+			DATAFORM , making a muni-muni noise...
+			DATAFORM , making a guni-guni noise...
+			DATAFORM , making a gui-gui noise...
+		ENDDATA
+	ELSE
+		PRINTL ...
+	ENDIF
+	IF TALENT:恋慕
+		PRINTFORML %CALLNAME:TARGET% turns away, wanting to hide %HIS_HER(TARGET)% embarrassing face...
+	ELSEIF ABL:親密 > 5
+		PRINTFORML %CALLNAME:TARGET% reaches %HIS_HER(TARGET)% hands towards %PARSE("your")% cheeks as well...
+	ELSEIF ABL:従順 >= 5
+		PRINTFORML %CALLNAME:TARGET% looks extremely embarrassed, but allows %PARSE("you")% to continue until it was over...
+	ELSE
+		PRINTFORML %CALLNAME:TARGET% puffs her cheeks, and %HE_SHE(TARGET)% brushes %PARSE("your")% hand away...
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;308,頬をつつく
+;-------------------------------------------------
+@MESSAGE_COM308
+IF CFLAG:TARGET:睡眠
+	PRINTFORML %PARSE("You poke")% %TNAME(TARGET)%'s cheek while %HE_SHE(TARGET)% is sleeping.
+	IF TFLAG:193 == 1
+		PRINTFORML %CALLNAME:TARGET% smiles warmly...
+	ELSEIF TFLAG:193 == -1
+		PRINTFORML %CALLNAME:TARGET% dislikes it and rolled over...
+	ENDIF
+ELSE
+	PRINTFORML %PARSE("You poke")% %TNAME(TARGET)%'s cheek as the two of %PARSE("you",4)% lay in bed together.
+	IF TFLAG:193 == 1
+		PRINTFORML %CALLNAME:TARGET% grins and starts poking back...
+	ELSEIF TFLAG:193 == -1
+		PRINTFORML %CALLNAME:TARGET% puffs %HIS_HER(TARGET)% cheeks, and brushes %PARSE("your")% hand away...
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;309,頭を撫でる
+;-------------------------------------------------
+@MESSAGE_COM309
+IF FLAG:70 == 1
+	PRINTFORML %PARSE("You reach")% %PARSE("your",1)% hand onto %PNAME(TARGET)%'s head and %PARSE("stroke")% it.
+	PRINTFORML %PNAME(TARGET, 1, 1)% offers no resistance as time is stopped...
+ELSEIF CHK_DATENOW(CFLAG:TARGET:デート中) && CFLAG:MASTER:現在位置 != OMANEKIBEYA()
+	PRINTFORML %PARSE("You pat")% %PNAME(TARGET)%'s head \@ TFLAG:デート道中 ? as %PARSE("you",2)% walk together # as %PARSE("you",2)% cuddle \@.
+	SELECTCASE TFLAG:193
+		CASE 1
+			PRINTFORML %CALLNAME:TARGET% relaxes and closes %HIS_HER(TARGET)% eyes...
+		CASE 0
+			IF ABL:親密 > 5
+				PRINTFORML Though %CALLNAME:TARGET% seems embarrassed, %HE_SHE(TARGET)% stands still as %PARSE("you pat")% %HIM_HER(TARGET)%...
+			ELSE
+				PRINTFORML %CALLNAME:TARGET% blushes and brushes away %PARSE("your")% hand...
+			ENDIF
+		CASE -1
+			PRINTFORML ... %PARSE("you")% got a bit too over-familiar...
+	ENDSELECT
+ELSEIF CFLAG:TARGET:睡眠
+	PRINTFORML %PARSE("You pat")% %PNAME(TARGET)%'s head as %HE_SHE(TARGET)% sleeps.
+	IF ABL:親密 > 5
+		PRINTFORML %CALLNAME:TARGET% smiles at the pleasant touch...
+	ELSE
+		PRINTFORML %CALLNAME:TARGET% doesn't seem to like %PARSE("your")% pats...
+	ENDIF
+ELSE
+	PRINTFORML %PARSE("You pat")% %TNAME(TARGET)%'s head \@ CFLAG:TARGET:添い寝中 ?as %PARSE("you",3)% two lie in bed together#gently\@. 
+	SELECTCASE TFLAG:193
+		CASE 1
+			PRINTFORML %CALLNAME:TARGET% relaxes and closes %HIS_HER(TARGET)% eyes...
+		CASE 0
+			IF ABL:親密 > 5
+				PRINTFORML Though %CALLNAME:TARGET% seems embarrassed, %HE_SHE(TARGET)% stands still as %PARSE("you")% pat %HIM_HER(TARGET)%...
+			ELSE
+				PRINTFORML %CALLNAME:TARGET% blushes and brushes away %PARSE("your")% hand...
+			ENDIF
+		CASE -1
+			PRINTFORML ... %PARSE("you")% got a bit too over-familiar...
+	ENDSELECT
+ENDIF
+;-------------------------------------------------
+;331,お茶を淹れる（薬入り）
+;-------------------------------------------------
+@MESSAGE_COM331
+#DIM DYNAMIC 人数Ａ
+#DIM DYNAMIC 人数Ｂ
+#DIM DYNAMIC 加減
+VARSET LOCAL
+VARSET LOCALS
+IF TCVAR:TARGET:媚薬 == 210
+	LOCALS = aphrodisiacs
+ELSEIF TCVAR:TARGET:利尿剤 == 210
+	LOCALS = diuretics
+ELSEIF TCVAR:TARGET:惚れ薬 == 210
+	LOCALS = love potions
+ELSEIF TCVAR:TARGET:睡眠薬強度 == 2
+	LOCALS = sleeping pills
+ELSE
+	LOCALS = drugs
+ENDIF
+IF !RAND:2
+	人数Ａ = CHARANUM - 1
+	人数Ｂ = 0
+	加減 = -1
+ELSE
+	人数Ａ = 1
+	人数Ｂ = CHARANUM
+	加減 = 1
+ENDIF
+
+PRINTFORML %PARSE("You")%\@ CFLAG:TARGET:行動 == 5 ?%" "%%PARSE("offer")% to take a break and#  \@ %PARSE("serve")% freshly brewed tea laced with %LOCALS% to %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ?%" "%and the others # \@...
+FOR LOCAL,人数Ａ,人数Ｂ,加減
+	SIF LOCAL == TARGET
+		CONTINUE
+	IF CFLAG:LOCAL:現在位置 == CFLAG:MASTER:現在位置 && (TCVAR:LOCAL:媚薬 == 210 || TCVAR:LOCAL:利尿剤 == 210 || TCVAR:LOCAL:惚れ薬 == 210 || (TCVAR:LOCAL:睡眠薬強度 == 2 && TCVAR:LOCAL:睡眠薬お茶使用))
+		PRINTFORML %CALLNAME:LOCAL% greatly enjoys drinking the tea.
+		LOCAL:1 ++
+		IF LOCAL:1 > 4 && GET_TARGETNUM() > 5
+			PRINTFORML %PARSE("You were")% too busy serving drinks to see if everyone actually drank it.
+			BREAK
+		ENDIF
+	ENDIF
+	IF CFLAG:LOCAL:現在位置 == CFLAG:MASTER:現在位置 && (TCVAR:LOCAL:媚薬 != 210 && TCVAR:LOCAL:利尿剤 != 210 && TCVAR:LOCAL:惚れ薬 != 210 && (TCVAR:LOCAL:睡眠薬強度 != 2 || !TCVAR:LOCAL:睡眠薬お茶使用))
+		IF TCVAR:LOCAL:睡眠薬強度 >= 2
+			PRINTFORML %CALLNAME:LOCAL% yawns and turns down the tea.
+		ELSE
+			PRINTFORML %CALLNAME:LOCAL% things the quality is poor and doesn't drink it.
+		ENDIF
+		LOCAL:2 ++
+		IF LOCAL:2 > 4 && GET_TARGETNUM() > 5
+			PRINTFORML %PARSE("You were")% too busy serving drinks to see if everyone actually drank it.
+			BREAK
+		ENDIF
+	ENDIF
+NEXT
+PRINTL
+IF TFLAG:193 == 1
+	PRINTFORML %PARSE("You")% and %CALLNAME:TARGET% \@ CFLAG:TARGET:行動 == 5 ? enjoy %PARSE("your",2)% break while drinking tea # enjoy %THIRD_PERSON?"them"#"your"%selves over tea \@...
+ELSEIF TFLAG:193 == -1
+	PRINTFORML ... But it seems it doesn't fit %CALLNAME:TARGET%'s palate, so %HE_SHE(TARGET)% doesn't drink it.
+ELSE
+	PRINTFORML %CALLNAME:TARGET% greatly enjoys drinking the tea.
+ENDIF
+LOCAL:1 = 0
+PRINTL 
+FOR LOCAL,人数Ａ,人数Ｂ,加減
+	IF CFLAG:LOCAL:現在位置 == CFLAG:MASTER:現在位置 && (TCVAR:LOCAL:媚薬 == 210 || TCVAR:LOCAL:利尿剤 == 210 || TCVAR:LOCAL:惚れ薬 == 210)
+		LOCAL:1 ++
+		IF LOCAL:1 > 4 && GET_TARGETNUM() > 5
+			PRINTFORML %PARSE("You")% can't see if it worked on everyone.
+			BREAK
+		ENDIF
+		PRINTFORM %CALLNAME:LOCAL%
+		IF TCVAR:LOCAL:媚薬 == 210
+			PRINTFORML 's cheeks blush and %HE_SHE(LOCAL)% lets out a quiet moan.
+		ELSEIF TCVAR:LOCAL:利尿剤 == 210
+			PRINTFORML  starts rubbing %HIS_HER(LOCAL)% thighs together, looking distressed.
+		ELSEIF TCVAR:LOCAL:惚れ薬 == 210
+			PRINTFORML  starts looking over at %PARSE("you")% with an entranced look on %HIS_HER(LOCAL)% face.
+		ELSEIF TCVAR:LOCAL:睡眠薬強度 == 2
+			PRINTFORML  stifles a yawn, fighting the drowsiness.
+		ENDIF
+	ENDIF
+NEXT
+
+;-------------------------------------------------
+;333,愚痴を聞く
+;-------------------------------------------------
+@MESSAGE_COM333
+PRINTFORML %PARSE("You listen")% to %CALLNAME:TARGET%'s complaints.
+SELECTCASE TFLAG:193
+	CASE 1
+		PRINTFORML It seems the chat just made the anger resurface...
+	CASE 2
+		PRINTFORML Looks like %CALLNAME:TARGET% let it all out.
+	CASE 3
+		PRINTFORML Listening attentively as %CALLNAME:TARGET% spits it all out, %PARSE("you receive")% a thanks.
+	CASE 4
+		PRINTFORML %CALLNAME:TARGET% comes up with increasingly unreasonable things to complain about...
+	CASE 5
+		PRINTFORML \@THIRD_PERSON?%CALLNAME:MASTER% isn't#You're not\@ not even sure what %HE_SHE(TARGET)%'s trying to say.
+		PRINTFORML But listening to the rambling of a drunkard seems pointless...
+	CASE 6
+		PRINTFORML %PARSE("You sit")% and %PARSE("nod")%, making vague agreeing noises, when %CALLNAME:TARGET% suddenly bursts out in laughter.
+		PRINTFORML %PARSE("You don't")% get why, but it seems it was fun. %PARSE("You")% must've done something right at least.
+ENDSELECT
+
+;-------------------------------------------------
+;334,杯を交わす
+;-------------------------------------------------
+@MESSAGE_COM334
+IF CFLAG:TARGET:妊娠自覚状態 == 1
+	PRINTFORML With %CALLNAME:TARGET% being pregnant and abstaining from alcohol, %PARSE("you serve")% %HIM_HER(TARGET)% some food instead, and eat together.
+ELSEIF TALENT:TARGET:酒耐性 == -2
+	PRINTFORML With %CALLNAME:TARGET% being a poor drinker, %PARSE("you serve")% some food instead, and eat together.
+ELSE
+	PRINTFORML %PARSE("You pour")% some sake into %CALLNAME:TARGET%'s cup, and you drink together.
+ENDIF
+SELECTCASE TFLAG:193
+	CASE 1
+		PRINTFORML %CALLNAME:TARGET% enjoys it...
+	CASE -1
+		PRINTFORML There isn't too much talking going on...
+ENDSELECT
+
+;-------------------------------------------------
+;335,介抱する
+;-------------------------------------------------
+@MESSAGE_COM335
+PRINTFORML %PARSE("You look")% after %CALLNAME:TARGET%.
+SELECTCASE TFLAG:193
+	CASE 1
+		PRINTFORML %PARSE("You manage")% to help %CALLNAME:TARGET% sober up a bit.
+	CASE -1
+		PRINTFORML %PARSE("You")% can't really help %CALLNAME:TARGET%...
+ENDSELECT
+
+;-------------------------------------------------
+;336,膝枕する
+;-------------------------------------------------
+@MESSAGE_COM336
+PRINTFORML %PARSE("You give")% %CALLNAME:TARGET% a lap pillow.
+
+SELECTCASE ABL:TARGET:親密
+	CASE IS < 5
+		PRINTFORML %CALLNAME:TARGET% looks rather uncomfortable...
+	CASE 5 TO 9
+		PRINTFORML %CALLNAME:TARGET% looks rather embarrassed...
+	CASEELSE
+		PRINTFORML %CALLNAME:TARGET% smiles warmly...
+ENDSELECT
+
+IF TFLAG:193 > 0
+	PRINTFORML Seems it was rather comfortable, as %CALLNAME:TARGET% dozed off.
+	PRINTFORML %PARSE("You end")% up watching %CALLNAME:TARGET%'s sleeping face quietly until %HE_SHE(TARGET)% wakes up.
+ENDIF
+
+TFLAG:400 = RAND:2
+SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+	CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+
+;-------------------------------------------------
+;337,子供とふれあう (related to CASE 14 in ANOTHER_TALK.ERB)
+;-------------------------------------------------
+@MESSAGE_COM337
+#DIM CHARA
+#DIM CHILDNUM
+#DIMS 子供の名前
+;自立後
+IF TFLAG:描写中の子供 > 1000
+	CHARA = TFLAG:描写中の子供 % 1000
+	CHILDNUM = TFLAG:描写中の子供 / 1000
+;育児中
+ELSE
+	CHARA = TFLAG:描写中の子供
+	CHILDNUM = TALENT:CHARA:育児中
+ENDIF
+子供の名前 = %CHILDNAME:CHARA:CHILDNUM%
+
+SELECTCASE CHILD_ACT:CHARA:CHILDNUM
+CASE "睡眠"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You reach")% out to the sleeping %子供の名前%.
+		PRINTFORML But %CALLNAME:CHARA% swats %PARSE("your",1)% hand away...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You")% gently %PARSE("brush")% the sleeping %子供の名前%.
+		PRINTFORML %CALLNAME:CHARA% watches anxiously...
+	ELSE
+		IF CFLAG:CHARA:出産経過日 < CHILD_語彙
+			PRINTFORML %PARSE("You")% gently %PARSE("brush")% the sleeping %子供の名前%'s cheek.
+			PRINTDATA
+				DATAFORM %子供の名前% is breathing quietly in %HIS_HER_CHILD(CHARA,,CHILDNUM)% sleep.
+				DATAFORM %子供の名前% breathes warmly on %PARSE("your")% hand.
+				DATAFORM %子供の名前% looks happy.
+				DATAFORM %子供の名前%'s soft skin soothes %PARSE("you")%.
+				DATAFORM %子供の名前% tries to suckle on %PARSE("your")% finger.
+				DATAFORM %CALLNAME:CHARA% puts %HIS_HER(CHARA)% hand over %PARSE("yours")% and smiles.
+				DATAFORM %CALLNAME:CHARA% and %PARSE("you")% share in a moment of warm love.
+			ENDDATA
+			PRINTL 
+		ELSE
+			PRINTFORML %PARSE("You")% gently %PARSE("brush")% the sleeping %子供の名前%.
+			PRINTFORML %子供の名前% breathes calmly.
+		ENDIF
+	ENDIF
+CASE "起床"
+	IF CFLAG:CHARA:出産経過日 < CHILD_語彙
+		IF TFLAG:193 == -1
+			PRINTFORML %PARSE("You reach")% out to play with %子供の名前%.
+			PRINTFORML But %CALLNAME:CHARA% swats %PARSE("your",1)% hand away...
+		ELSEIF TFLAG:193 == 1
+			PRINTFORML %PARSE("You cuddle")% with %子供の名前% who is slowly waking up.
+			PRINTFORML %CALLNAME:CHARA% watches anxiously...
+		ELSE
+			PRINTFORML %PARSE("You nurse")% the newly awoken and crying %子供の名前%.
+			PRINTDATA
+				DATAFORM %子供の名前% seems hungry...
+				DATAFORM %子供の名前% seems to want to breast feed...
+				DATAFORM %子供の名前% seems to want %CALLNAME:CHARA%...
+			ENDDATA
+			PRINTL 
+		ENDIF
+	ELSE
+		PRINTFORML %PARSE("You say")% good morning to %子供の名前%.
+		IF TFLAG:193 == -1
+			PRINTFORML %子供の名前% replies drowsily.
+		ELSEIF TFLAG:193 == 1
+			PRINTFORML %子供の名前% returns the greeting cheerfully.
+		ELSE
+			PRINTDATA
+				DATAFORM %子供の名前% returns the greeting cheerfully.
+				DATAFORM %子供の名前% leans against %PARSE("you",5)%.
+				DATAFORM %子供の名前% replies drowsily.
+				DATAFORM %子供の名前% jumps to %HIS_HER_CHILD(CHARA,,CHILDNUM)% feet and greets %PARSE("you",5)% back.
+				DATAFORM %子供の名前% yawns and returns the greeting.
+			ENDDATA
+			PRINTL 
+		ENDIF
+	ENDIF
+CASE "入浴"
+	IF CFLAG:CHARA:出産経過日 < CHILD_語彙
+		;このへん状況的にありえるのだろうか……？
+		IF TFLAG:193 == -1
+			PRINTFORML %PARSE("You try")% to wash %子供の名前%.
+			PRINTFORML %CALLNAME:CHARA% swats %PARSE("your",1)% hand away...
+		ELSEIF TFLAG:193 == 1
+			PRINTFORML %PARSE("You wash")% %子供の名前%.
+			PRINTFORML %CALLNAME:CHARA% watches anxiously...
+		ELSE
+			PRINTFORML %PARSE("You wash")% %子供の名前%.
+			PRINTDATA
+				DATAFORM %子供の名前% seems ticklish.
+				DATAFORM %子供の名前% stares at %PARSE("you",5)%.
+				DATAFORM %子供の名前% looks at %CALLNAME:CHARA% anxiously.
+				DATAFORM %子供の名前% splashes with %HIS_HER_CHILD(CHARA,,CHILDNUM)% hands and feet.
+				DATAFORM %子供の名前% is relaxed.
+			ENDDATA
+			PRINTL 
+		ENDIF
+	ELSE
+		IF TFLAG:193 == -1
+			PRINTFORML %PARSE("You try")% to wash %子供の名前%.
+			PRINTFORML %CALLNAME:CHARA% swats %PARSE("your",1)% hand away...
+		ELSEIF TFLAG:193 == 1
+			PRINTFORML %PARSE("You wash")% %子供の名前%.
+			PRINTFORML %CALLNAME:CHARA% watches anxiously...
+		ELSE
+			PRINTFORML %PARSE("You wash")% %子供の名前%.
+			PRINTDATA
+				DATAFORM %子供の名前% seems ticklish.
+				DATAFORM %子供の名前% seems to be enjoying it.
+				DATAFORM %子供の名前% is playing with the soap bubbles and having fun.
+				DATAFORM Imitating %PARSE("you")%, %子供の名前% helps %PARSE("you",5)% wash off as well.
+			ENDDATA
+			PRINTL 
+		ENDIF
+	ENDIF
+CASE "食事"
+	IF CFLAG:CHARA:出産経過日 < CHILD_離乳
+		IF TFLAG:193 == -1
+			PRINTFORML %PARSE("You reach")% out to %子供の名前%.
+			PRINTFORML %CALLNAME:CHARA% hides %子供の名前% behind %HIM_HER(CHARA)%self and glares at %PARSE("you",5)%...
+		ELSEIF TFLAG:193 == 1
+			PRINTFORML %PARSE("You reach")% out to pat %子供の名前%'s head.
+			PRINTFORML %CALLNAME:CHARA% looks at %PARSE("you",5)% sharply, hiding %子供の名前% behind %HIM_HER(CHARA)%...
+		ELSE
+			PRINTFORML %PARSE("You")% gently %PARSE("brush")% the suckling %子供の名前%...
+			PRINTDATA
+				DATAFORM %子供の名前% is deeply engrossed...
+				DATAFORM %子供の名前% sucks slowly...
+				DATAFORM %子供の名前% is quiet...
+				DATAFORM %CALLNAME:CHARA% smiles bashfully.
+				DATAFORM %CALLNAME:CHARA% holds %子供の名前% with love, cradling %HIM_HER_CHILD(CHARA,,CHILDNUM)% gently...
+				DATAFORM %CALLNAME:CHARA% is radiating with motherhood...
+			ENDDATA
+			PRINTL 
+		ENDIF
+	ELSEIF CFLAG:CHARA:出産経過日 < CHILD_語彙
+		IF TFLAG:193 == -1
+			PRINTFORML %PARSE("You try")% to eat next to %子供の名前%.
+			PRINTFORML %CALLNAME:CHARA% looks at %PARSE("you",5)% sharply, hiding %子供の名前% behind %HIM_HER(CHARA)%...
+		ELSEIF TFLAG:193 == 1
+			PRINTFORML %PARSE("You eat")% next to %子供の名前%.
+			PRINTFORML %CALLNAME:CHARA% watches anxiously...
+		ELSE
+			PRINTFORML %PARSE("You eat")% with %CALLNAME:CHARA% and %子供の名前%.
+			PRINTDATA
+				DATAFORM %子供の名前% holds %HIS_HER_CHILD(CHARA,,CHILDNUM)% mouth open innocently as food is brought in.
+				DATAFORM %子供の名前% occasionally tries eating the food from the spoon on %HIS_HER_CHILD(CHARA,,CHILDNUM)% own.
+				DATAFORM %子供の名前% chews as if savoring it.
+				DATAFORM %子供の名前% holds %HIS_HER_CHILD(CHARA,,CHILDNUM)% mouth open as if waiting for food.
+				DATAFORM %CALLNAME:CHARA% slowly brings the food to %子供の名前%'s mouth.
+				DATAFORM %CALLNAME:CHARA% goes "aahhh" as %HE_SHE(CHARA)% feeds %子供の名前%.
+				DATAFORM %CALLNAME:CHARA% opens and closes her mouth to get %子供の名前% to mimic her.
+			ENDDATA
+			PRINTL 
+		ENDIF
+	ELSE
+		IF TFLAG:193 == -1
+			PRINTFORML %PARSE("You try")% to eat next to %子供の名前%.
+			PRINTFORML %CALLNAME:CHARA% looks at %PARSE("you",5)% sharply, hiding %子供の名前% behind %HIM_HER(CHARA)%...
+		ELSEIF TFLAG:193 == 1
+			PRINTFORML %PARSE("You eat")% next to %子供の名前%.
+			PRINTFORML %子供の名前% eats while looking at %PARSE("you",5)% curiously.
+		ELSE
+			PRINTFORML %PARSE("You eat")% together with %子供の名前%.
+			PRINTDATA
+				DATAFORM %子供の名前% stuffs %HIS_HER_CHILD(CHARA,,CHILDNUM)% face with food.
+				DATAFORM %子供の名前% takes %HIS_HER_CHILD(CHARA,,CHILDNUM)% meal slowly.
+				DATAFORM %子供の名前% eats everything but %HIS_HER_CHILD(CHARA,,CHILDNUM)% favorite, saving it for last.
+				DATAFORM %子供の名前% tells %PARSE("you")% what %HIS_HER_CHILD(CHARA,,CHILDNUM)% favorite food is.
+				DATAFORM %子供の名前% is casually trying to leave the food behind...
+				DATAFORM %子供の名前% asks %PARSE("you")% what %PARSE("you're",1)% eating.
+				DATAFORM %CALLNAME:MASTER% teaches %子供の名前% some table manners.
+				DATAFORM %CALLNAME:MASTER% teaches %子供の名前% how to hold chopsticks.
+				DATAFORM %CALLNAME:MASTER% teaches %子供の名前% about different tastes.
+			ENDDATA
+			PRINTL 
+		ENDIF
+	ENDIF
+CASE "玩具"
+	IF CFLAG:CHARA:出産経過日 < CHILD_自立前
+		IF TFLAG:193 <= 1
+			PRINTFORML %PARSE("You")% and %子供の名前% play with some toys.
+			PRINTFORML %子供の名前% is full of innocent joy.
+		ELSE
+			PRINTFORML %PARSE("You")% and %子供の名前% play with some toys.
+			PRINTDATA
+				DATAFORM %子供の名前% seems to be enjoying it.
+				DATAFORM %子供の名前% bangs toys into each other.
+				DATAFORM %子供の名前% rolls a toy around.
+				DATAFORM %子供の名前% is enjoying it immensely.
+				DATAFORM %子供の名前% throws a toy around.
+			ENDDATA
+			PRINTL 
+		ENDIF
+	ELSE
+		IF TFLAG:193 <= 1
+			PRINTFORML %PARSE("You have")% a chat with %子供の名前%.
+			PRINTFORML %PARSE("You")% quickly run out of things to say...
+		ELSE
+			PRINTFORML %PARSE("You have")% a chat with %子供の名前%.
+			PRINTFORML %子供の名前% reminisces about an old toy. 
+		ENDIF
+	ENDIF
+CASE "お絵かき"
+	PRINTFORML %PARSE("You draw")% a bit with %子供の名前%.
+	PRINTDATA
+		DATAFORM %子供の名前% draws a picture of %CALLNAME:CHARA%.
+		DATAFORM %子供の名前% draws a picture of %PARSE("you")%.
+		DATAFORM %子供の名前% draws a picture of a Youkai.
+		DATAFORM %子供の名前% draws a picture of a fruit.
+		DATAFORM %子供の名前% draws a picture of an animal.
+		DATAFORM %子供の名前% draws a picture of a mountain.
+		DATAFORM %子供の名前% draws a picture of a house.
+		DATAFORM %子供の名前% draws a picture of %HIM_HER_CHILD(CHARA,,CHILDNUM)%self.
+	ENDDATA
+	PRINTL 
+CASE "遊び"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You try")% to play with %子供の名前%.
+		PRINTFORML %子供の名前% seems to want to play alone...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You play")% with %子供の名前%.
+		PRINTFORML %子供の名前% is full of innocent joy.
+	ELSE
+		PRINTFORML %PARSE("You")% and %子供の名前% play a game of make-believe Danmaku.
+		PRINTDATA
+			DATAFORM %子供の名前% is in high spirits.
+			DATAFORM %子供の名前% is coming up with a special attack spell card.
+			DATAFORM %子供の名前% mimics %CALLNAME:CHARA%'s Danmaku.
+			DATAFORM %子供の名前% pretends to grace.
+			DATAFORM %子供の名前% asks which one is stronger between %CALLNAME:CHARA% and %PARSE("you")%.
+			DATAFORM %子供の名前% throws a ball at %PARSE("you")%.
+			DATAFORM %子供の名前% runs up and hugs %PARSE("you")%, calling it a physical attack.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "勉強"
+	PRINTFORML %PARSE("You help")% %子供の名前% study.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% sits quietly at %HIS_HER_CHILD(CHARA,,CHILDNUM)% desk.
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% thanks %PARSE("you")% and continues studying diligently.
+	ELSE
+		PRINTDATA
+			DATAFORM %子供の名前% asks about some things %HE_SHE_CHILD(CHARA,,CHILDNUM)% doesn't understand.
+			DATAFORM %子供の名前% goes through the questions without problem.
+			DATAFORM %子供の名前% fills %HIS_HER_CHILD(CHARA,,CHILDNUM)% notebook in no time.
+			DATAFORM The two of %PARSE("you",4)% work hard but manage to solve it.
+			DATAFORM %PARSE("You")% solved a question even %PARSE("you",1)% didn't understand at first.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "読書"
+	PRINTFORML %PARSE("You talk")% about books with %子供の名前%.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% just reads one while ignoring %PARSE("you",5)%.
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% contributes little to the conversation.
+	ELSE
+		PRINTDATA
+			DATAFORM %子供の名前% tells %PARSE("you")% about %HIS_HER_CHILD(CHARA,,CHILDNUM)% favorite characters.
+			DATAFORM %子供の名前% speaks passionately about %HIS_HER_CHILD(CHARA,,CHILDNUM)% favorite scenes.
+			DATAFORM %子供の名前% points out a funny thing about a story.
+			DATAFORM %子供の名前% asks %PARSE("you")% a couple of questions.
+			DATAFORM %子供の名前% asks %PARSE("you")% how some things are pronounced.
+			DATAFORM %子供の名前% tells %PARSE("you")% about %HIS_HER_CHILD(CHARA,,CHILDNUM)% thoughts on one.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "料理"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You try")% to help %子供の名前% cook.
+		PRINTFORML %子供の名前% ignores %PARSE("you")% and works in silence...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You help")% %子供の名前% cook.
+		PRINTFORML %子供の名前% continues cooking with a strange look on %HIS_HER_CHILD(CHARA,,CHILDNUM)% face.
+	ELSE
+		PRINTFORML %PARSE("You help")% %子供の名前% cook.
+		PRINTDATA
+			DATAFORM %子供の名前% learns how to read recipes.
+			DATAFORM %子供の名前% learns how to use the tools.
+			DATAFORM %子供の名前% learns how to cook.
+			DATAFORM %子供の名前% learns how to peel.
+			DATAFORM %PARSE("You do")% the dangerous things for %子供の名前%.
+			DATAFORM %子供の名前% learns the names of different ingredients.
+			DATAFORM %子供の名前% learns about flavoring.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "絵描き"
+	PRINTFORML %PARSE("You talk")% to %子供の名前% about painting.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% ignores %PARSE("you")% and paints instead...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% contributes little to the conversation.
+	ELSE
+		PRINTDATA
+			DATAFORM %子供の名前% tells %PARSE("you")% what %HE_SHE_CHILD(CHARA,,CHILDNUM)% wants to paint.
+			DATAFORM %子供の名前% tells %PARSE("you")% what %HE_SHE_CHILD(CHARA,,CHILDNUM)% is painting.
+			DATAFORM %子供の名前% asks %PARSE("you")% how to draw Youkai.
+			DATAFORM %子供の名前% asks %PARSE("you")% how to draw animals.
+			DATAFORM %子供の名前% asks what %PARSE("you")% think %HE_SHE_CHILD(CHARA,,CHILDNUM)% should draw.
+			DATAFORM %子供の名前% asks %PARSE("you")% about the outside world.
+			DATAFORM %子供の名前% tells %PARSE("you")% about a thing %HE_SHE_CHILD(CHARA,,CHILDNUM)% saw in %HIS_HER_CHILD(CHARA,,CHILDNUM)% dream.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "歌唱"
+	IF GROUPMATCH(1, MUSIC_ABLE(30), MUSIC_ABLE(31), MUSIC_ABLE(32), MUSIC_ABLE(33), MUSIC_ABLE(34), MUSIC_ABLE(35))
+		PRINTFORML %PARSE("You play")% along to %子供の名前%'s song.
+	ELSE
+		PRINTFORML %PARSE("You sing")% together with %子供の名前%.
+	ENDIF
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% starts singing alone...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% sings along awkwardly.
+	ELSE
+		PRINTDATA
+			DATAFORM %子供の名前% sings with great enthusiasm.
+			DATAFORM %子供の名前% raises %HIS_HER_CHILD(CHARA,,CHILDNUM)% voice and begins singing.
+			DATAFORM %子供の名前% sings while putting on a performance.
+			DATAFORM %子供の名前% tries to sing just like %PARSE("you")%.
+			DATAFORM %子供の名前% sings and dances.
+			DATAFORM %子供の名前% smiles as %HE_SHE_CHILD(CHARA,,CHILDNUM)% sings.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "掃除"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You try")% to help %子供の名前% clean.
+		PRINTFORML %子供の名前% ignores %PARSE("you")% and works in silence...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You help")% %子供の名前% clean.
+		PRINTFORML %子供の名前% has a strange look on %HIS_HER_CHILD(CHARA,,CHILDNUM)% face as %HE_SHE_CHILD(CHARA,,CHILDNUM)% cleans.
+	ELSE
+		PRINTFORML %PARSE("You help")% %子供の名前% clean.
+		PRINTDATA
+			DATAFORM %子供の名前% sorts out some junk from important things.
+			DATAFORM %子供の名前% looks for a lost pencil.
+			DATAFORM %子供の名前% goes through the trash.
+			DATAFORM %子供の名前% goes through the room with a damp rag...
+			DATAFORM %子供の名前% learns how to clean efficiently.
+			DATAFORM %子供の名前% learns how to use a broom and dustpan.
+			DATAFORM %子供の名前% learns how to dust.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "支度"
+	PRINTFORML %PARSE("You")% and %子供の名前% talk about the temple school.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% ignores %PARSE("you")% and works in silence...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% contributes little to the conversation.
+	ELSE
+		PRINTFORML %子供の名前% tells %PARSE("you")% about today's schedule.
+	ENDIF
+CASE "登校"
+	PRINTFORML %PARSE("You say")% take care to %子供の名前%.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% does not respond to %PARSE("you")%...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% replies quietly.
+	ELSE
+		PRINTFORML %子供の名前% replies with energy.
+	ENDIF
+CASE "授業"
+	PRINTFORML %PARSE("You watch")% in on %子供の名前%'s class.
+	PRINTDATA
+		DATAFORM %子供の名前% talks to a classmate.
+		DATAFORM %子供の名前% plays with a classmate.
+		DATAFORM %子供の名前% solves a problem.
+		DATAFORM %子供の名前% asks a question to teacher.
+		DATAFORM %子供の名前% raises %HIS_HER_CHILD(CHARA,,CHILDNUM)% hand firmly.
+		DATAFORM %子供の名前% stands in front of everyone else.
+		DATAFORM %子供の名前% looks out the window at the scenery.
+		DATAFORM %子供の名前% reads aloud.
+		DATAFORM %子供の名前% does math.
+		DATAFORM %子供の名前% listens to the teacher.
+		DATAFORM %子供の名前% is lost in thought.
+		DATAFORM %子供の名前% is being scolded...
+		DATAFORM %子供の名前% is sleeping...
+	ENDDATA
+	PRINTL 
+CASE "帰宅"
+	PRINTFORML %PARSE("You say")% welcome back to %子供の名前%.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% does not respond to %PARSE("you")%...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% replies quietly.
+	ELSE
+		PRINTFORML %子供の名前% replies with energy.
+	ENDIF
+;仕事と散歩は自立後
+CASE "仕事"
+	PRINTFORML %PARSE("You speak")% with %子供の名前%.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% doesn't seem to be paying attention to what %PARSE("you say")%...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% doesn't seem to be agreeing with %PARSE("you")%...
+	ELSE
+		PRINTDATA
+			DATAFORM %子供の名前% seems delighted to see %PARSE("you")%.
+			DATAFORM %子供の名前% seems happy to see %PARSE("you")% and hugs %PARSE("you",5)%.
+			DATAFORM %子供の名前% wants %PARSE("you")% to come visit more often.
+			DATAFORM %子供の名前% asks about some rumors concerning %PARSE("you")%.
+			DATAFORM %子供の名前% asks how %PARSE("you're")% doing.
+			DATAFORM %子供の名前% and %PARSE("you")% make some small talk.
+			DATAFORM %子供の名前% and %PARSE("you")% talk about recent going-ons.
+			DATAFORM %子供の名前% talks about how %HIS_HER_CHILD(CHARA,,CHILDNUM)% life is going.
+			DATAFORM %子供の名前% seems to be doing well at work.
+			DATAFORM %子供の名前% curiously asks what %PARSE("you're")% working on.
+			DATAFORM %子供の名前% speaks about the hardships and comfort of living alone.
+			DATAFORM %子供の名前% talks about %HIS_HER_CHILD(CHARA,,CHILDNUM)% boss %HE_SHE_CHILD(CHARA,,CHILDNUM)% respects.
+			DATAFORM %子供の名前% tells %PARSE("you")% about %HIS_HER_CHILD(CHARA,,CHILDNUM)% dreams for the future.
+			DATAFORM %子供の名前% tells %PARSE("you")% how busy %HE_SHE_CHILD(CHARA,,CHILDNUM)% is at work.
+			DATAFORM %子供の名前% tells %PARSE("you")% how hard-working %HE_SHE_CHILD(CHARA,,CHILDNUM)% is at work.
+			DATAFORM %子供の名前% tells %PARSE("you")% how rewarding %HIS_HER_CHILD(CHARA,,CHILDNUM)% work is.
+			DATAFORM %子供の名前% tells %PARSE("you")% about %HIS_HER_CHILD(CHARA,,CHILDNUM)% current work conditions.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "散歩"
+	PRINTFORML %PARSE("You speak")% with %子供の名前%.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% doesn't seem to be paying attention to what %PARSE("you say")%...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% doesn't seem to be agreeing with %PARSE("you")%...
+	ELSE
+		PRINTDATA
+			DATAFORM %子供の名前% seems delighted to see %PARSE("you")%.
+			DATAFORM %子供の名前% seems happy to see %PARSE("you")% and hugs him.
+			DATAFORM %子供の名前% wants %PARSE("you")% to come visit more often. 
+			DATAFORM %子供の名前% asks %PARSE("you")% to play with %HIM_HER_CHILD(CHARA,,CHILDNUM)%.
+			DATAFORM %子供の名前% asks about some rumors concerning %PARSE("you")%.
+			DATAFORM %子供の名前% asks how %PARSE("you're")% doing.
+			DATAFORM %子供の名前% and %PARSE("you")% make some small talk.
+			DATAFORM %子供の名前% and %PARSE("you")% talk about recent going-ons.
+			DATAFORM %子供の名前% talks about how %HIS_HER_CHILD(CHARA,,CHILDNUM)% life is going.
+			DATAFORM %子供の名前% and %PARSE("you")% talk about %PARSE("your",2)% memories.
+			DATAFORM %子供の名前% asks %PARSE("you")% how %PARSE("you",1)% and %CALLNAME:CHARA% fell in love.
+			DATAFORM %子供の名前% talks about people %HE_SHE_CHILD(CHARA,,CHILDNUM)% has started caring about.
+			DATAFORM %子供の名前% tells about %HIS_HER_CHILD(CHARA,,CHILDNUM)% recent hobbies.
+			DATAFORM %子供の名前% and %PARSE("you")% have a heated discussion about Danmaku.
+			DATAFORM %子供の名前% tells %PARSE("you")% about a book %HE_SHE_CHILD(CHARA,,CHILDNUM)% recently read.
+			DATAFORM %子供の名前% tells %PARSE("you")% about %HIS_HER_CHILD(CHARA,,CHILDNUM)% dreams for the future.
+			DATAFORM %子供の名前% shares %HIS_HER_CHILD(CHARA,,CHILDNUM)% memories of %CALLNAME:CHARA%.
+			DATAFORM %子供の名前% asks how %CALLNAME:CHARA% is doing.
+			DATAFORM %子供の名前% tells %PARSE("you")% about a friend of %HIS_HERS_CHILD(CHARA,,CHILDNUM)%.
+			DATAFORM %子供の名前% tells %PARSE("you")% about %HIS_HER_CHILD(CHARA,,CHILDNUM)% work.
+			DATAFORM %子供の名前% tells %PARSE("you")% about some original recipes.
+			DATAFORM %子供の名前% talks about how %HE_SHE_CHILD(CHARA,,CHILDNUM)% yearns to visit the outside world.
+			DATAFORM %子供の名前% confides in %PARSE("you")% %HIS_HER_CHILD(CHARA,,CHILDNUM)% worries about the differences between the races.
+			DATAFORM %子供の名前% tells %PARSE("you")% about %HIS_HER_CHILD(CHARA,,CHILDNUM)% recent troubles.
+			DATAFORM %子供の名前% and %PARSE("you")% talk about %PARSE("your",2)% family.
+			DATAFORM %子供の名前% teaches %PARSE("you")% the secret of living alone.
+			DATAFORM %子供の名前% tells %PARSE("you")% to take care of %PARSE("your",1)% body.
+			DATAFORM %子供の名前% wants to meet with %CALLNAME:CHARA% as well.
+			DATAFORM %子供の名前% asks %PARSE("you")% a question %HE_SHE_CHILD(CHARA,,CHILDNUM)%'s been wondering about for a long time.
+			DATAFORM %子供の名前% asks %PARSE("you")% about %HIS_HER_CHILD(CHARA,,CHILDNUM)% birth.
+		ENDDATA
+		PRINTL 
+	ENDIF
+;以降はその他の行動,一部はCHARAと同室限定
+CASE "幼児期_抱かれる", "幼児期_眠たそう", "幼児期_大人しい"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You reach")% out for %子供の名前%.
+		PRINTFORML %CALLNAME:CHARA% swats %PARSE("your")% hand away...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You hold")% %子供の名前% close while gently caressing %HIM_HER_CHILD(CHARA,,CHILDNUM)%.
+		PRINTFORML %CALLNAME:CHARA% watches anxiously...
+	ELSE
+		PRINTFORML %PARSE("You hold")% %子供の名前% close while gently caressing %HIM_HER_CHILD(CHARA,,CHILDNUM)%.
+		PRINTDATA
+			DATAFORM %子供の名前% is happy and excited.
+			DATAFORM %子供の名前% smiles happily.
+			DATAFORM %子供の名前% reaches out %HIS_HER_CHILD(CHARA,,CHILDNUM)% arm and grasps %PARSE("yours")%.
+			DATAFORM %子供の名前% is smiling and laughing.
+			DATAFORM %子供の名前% lies still with closed eyes.
+			DATAFORM %子供の名前% follows the movements of %PARSE("your")% hand.
+			DATAFORM %子供の名前% is looking sleepy.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "幼児期_こちらを見る", "幼児期_何かを訴える"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You reach")% out for %子供の名前%.
+		PRINTFORML %CALLNAME:CHARA% swats %PARSE("your")% hand away...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You embrace")% %子供の名前%, cuddling %HIM_HER_CHILD(CHARA,,CHILDNUM)%.
+		PRINTFORML %CALLNAME:CHARA% watches anxiously...
+	ELSE
+		PRINTFORML %PARSE("You embrace")% %子供の名前%, cuddling %HIM_HER_CHILD(CHARA,,CHILDNUM)%.
+		PRINTDATA
+			DATAFORM %子供の名前% stares at %PARSE("you")%.
+			DATAFORM %子供の名前% grasps %PARSE("your")% hand.
+			DATAFORM %子供の名前% is about to start crying...
+			DATAFORM %子供の名前% is in a bad mood...
+			DATAFORM %CALLNAME:CHARA% laughs at the situation.
+			DATAFORM %CALLNAME:CHARA% shows %PARSE("you")% a way to pacify %子供の名前%.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "幼児期_何かを目で追う"
+	PRINTFORML %PARSE("You follow")% %子供の名前%'s line of sight to find...nothing...
+CASE "幼児期_あやされる"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You reach")% out to play with %子供の名前%.
+		PRINTFORML %CALLNAME:CHARA% swats %PARSE("your")% hand away...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You embrace")% %子供の名前%, cuddling %HIM_HER_CHILD(CHARA,,CHILDNUM)%.
+		PRINTFORML %CALLNAME:CHARA% watches anxiously...
+	ELSE
+		PRINTFORML %PARSE("You imitate")% %CALLNAME:CHARA% and play with %子供の名前%.
+		PRINTDATA
+			DATAFORM %子供の名前% is giggling and laughing.
+			DATAFORM %子供の名前% waves happily.
+			DATAFORM %子供の名前% expresses %HIS_HER_CHILD(CHARA,,CHILDNUM)% joy with %HIS_HER_CHILD(CHARA,,CHILDNUM)% whole body.
+			DATAFORM %子供の名前% is happy.
+			DATAFORM %CALLNAME:CHARA% laughs at the situation.
+			DATAFORM %CALLNAME:CHARA% joins in and plays with %子供の名前%.
+		ENDDATA
+		PRINTL 
+	ENDIF
+
+CASE "幼少期_会話"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You strain your")% ears to hear but %CALLNAME:CHARA% glares at %PARSE("you",5)%...
+	ELSE
+		PRINTFORML %PARSE("You join")% in on the conversation.
+		PRINTDATA
+			DATAFORM %子供の名前% talks happily.
+			DATAFORM %子供の名前% talks a bit hesitantly.
+			DATAFORM %子供の名前% talks about %PARSE("you")%.
+			DATAFORM %子供の名前% talks about %CALLNAME:CHARA%.
+			DATAFORM %子供の名前% asks %PARSE("you")% two some questions.
+			DATAFORM %子供の名前% tells %PARSE("you")% what %HE_SHE_CHILD(CHARA,,CHILDNUM)% thinks.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "幼少期_教わる", "幼少期_しつけられる"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You strain your")% ears to hear but %CALLNAME:CHARA% glares at %PARSE("you",5)%...
+	ELSE
+		PRINTFORML %PARSE("You peep")% in on the two of them.
+		PRINTDATA
+			DATAFORM %CALLNAME:CHARA% is teaching decorum.
+			DATAFORM %CALLNAME:CHARA% is teaching good and evil.
+			DATAFORM %CALLNAME:CHARA% is explaining how rules work.
+			DATAFORM %CALLNAME:CHARA% is teaching %子供の名前% the name of things.
+			DATAFORM %CALLNAME:CHARA% is teaching %子供の名前% language.
+			DATAFORM %CALLNAME:CHARA% is getting flustered by a barrage of earnest questions...
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "幼少期_親子遊び"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You try")% to join in on the fun but %CALLNAME:CHARA% just glares at %PARSE("you",5)%...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You join")% in and play with the two.
+		PRINTFORML %子供の名前% seems to be enjoying it.
+	ELSE
+		PRINTFORML %PARSE("You join")% in and play with the two.
+		PRINTDATA
+			DATAFORM %子供の名前% seems to be enjoying it.
+			DATAFORM %子供の名前% is running around energetically.
+			DATAFORM %子供の名前% clings to %CALLNAME:CHARA%.
+			DATAFORM %子供の名前% runs around and avoids %PARSE("you")%.
+			DATAFORM The three of %PARSE("you",4)% have a peaceful time together...
+			DATAFORM The three of %PARSE("you",4)% laugh together, and the air is filled with happiness...
+			DATAFORM The three of %PARSE("you",4)% hold hands and share in familial love...
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "幼少期_一人遊び", "幼少期_はしゃぐ", "幼少期_うろちょろ", "幼少期_うずうず", "幼少期_遊ぼう", "幼少期_ぺたぺた", "幼少期_かまって"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You try")% to play with %子供の名前%.
+		PRINTFORML %子供の名前% is too shy and hides...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You play")% with %子供の名前%.
+		PRINTFORML %子供の名前% is full of innocent joy.
+	ELSE
+		PRINTFORML %PARSE("You play")% with %子供の名前%.
+		PRINTDATA
+			DATAFORM %子供の名前% is in high spirits.
+			DATAFORM %子供の名前% is smiling and laughing.
+			DATAFORM %子供の名前% looks like %HE_SHE_CHILD(CHARA,,CHILDNUM)%'s having fun.
+			DATAFORM %子供の名前% is jumping with joy.
+			DATAFORM %子供の名前% hugs %PARSE("you")%.
+			DATAFORM %子供の名前% clings to %PARSE("your")% arm.
+			DATAFORM %子供の名前% climbs up %PARSE("your")% body.
+			DATAFORM %子供の名前% plays with %PARSE("your")% face.
+			DATAFORM %子供の名前% has a lot of fun as %PARSE("you")% pretend to be a horse.
+			DATAFORM %子供の名前% has a lot of fun as %PARSE("you",2)% play charades.
+			DATAFORM %子供の名前% has a lot of fun playing thumb-wrestling.
+			DATAFORM %子供の名前% has a lot of fun playing a rhythm game.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "幼少期_大人しい", "幼少期_考え事", "幼少期_眠そう", "幼少期_見つめる"
+	PRINTFORML %PARSE("You have")% a talk with %子供の名前%.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% doesn't seem interested...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% responds with a faltering tone.
+	ELSE
+		PRINTDATA
+			DATAFORM %子供の名前% asks %PARSE("you")% some questions.
+			DATAFORM %子供の名前% asks %parse("you")% a difficult question.
+			DATAFORM %子供の名前% asks %PARSE("you")% about %CALLNAME:CHARA%.
+			DATAFORM %子供の名前% tells %PARSE("you")% about things %HE_SHE_CHILD(CHARA,,CHILDNUM)% likes.
+			DATAFORM %子供の名前% tells %PARSE("you")% about things %HE_SHE_CHILD(CHARA,,CHILDNUM)% dislikes.
+			DATAFORM %子供の名前% tells %PARSE("you")% what %HE_SHE_CHILD(CHARA,,CHILDNUM)% likes about %CALLNAME:CHARA%.
+			DATAFORM %子供の名前% tells %PARSE("you")% some riddles.
+			DATAFORM %子供の名前% plays some word games with %PARSE("you")%.
+			DATAFORM %子供の名前% tells %PARSE("you")% what %HE_SHE_CHILD(CHARA,,CHILDNUM)% thinks.
+		ENDDATA
+		PRINTL 
+	ENDIF
+
+CASE "自立前_会話", "自立前_笑い合う"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You strain your")% ears to hear but %CALLNAME:CHARA% glares at %PARSE("you",5)%...
+	ELSE
+		PRINTFORML %PARSE("You join")% in on the conversation.
+		PRINTDATA
+			DATAFORM %子供の名前% talks happily.
+			DATAFORM %子供の名前% is speaking fluently.
+			DATAFORM %子供の名前% talks about %PARSE("you")%.
+			DATAFORM %子供の名前% talks about %CALLNAME:CHARA%.
+			DATAFORM %子供の名前% asks %PARSE("you")% two some questions.
+			DATAFORM %子供の名前% talks about a friend.
+			DATAFORM %子供の名前% is using words %PARSE("you don't")% know where %HE_SHE_CHILD(CHARA,,CHILDNUM)% got...
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "自立前_教わる", "自立前_しつけられる"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You strain your")% ears to hear but %CALLNAME:CHARA% glares at %PARSE("you",5)%...
+	ELSE
+		PRINTFORML %PARSE("You peep")% in on the two of them.
+		PRINTDATA
+			DATAFORM %CALLNAME:CHARA% is lecturing a bit angrily.
+			DATAFORM %CALLNAME:CHARA% is teaching how to do chores.
+			DATAFORM %CALLNAME:CHARA% is teaching how to work.
+			DATAFORM %CALLNAME:CHARA% is explaining what matters.
+			DATAFORM %CALLNAME:CHARA% is explaining the more difficult parts of language.
+			DATAFORM %CALLNAME:CHARA% is teaching history.
+			DATAFORM %CALLNAME:CHARA% is explaining about different races.
+			DATAFORM %CALLNAME:CHARA% is teaching how to play with Danmaku.
+			DATAFORM %CALLNAME:CHARA% is asking some difficult questions.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "自立前_ひそひそ話"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You strain your")% ears and try to listen.
+		PRINTFORML %CALLNAME:CHARA% quickly hides %子供の名前%...
+	ELSE
+		PRINTFORML %PARSE("You peep")% in on the two of them.
+		PRINTDATA
+			DATAFORM %子供の名前% and %CALLNAME:CHARA% smile and wave at %PARSE("you")%.
+			DATAFORM %子供の名前% and %CALLNAME:CHARA% laugh and point at %PARSE("you")%.
+			DATAFORM %子供の名前% and %CALLNAME:CHARA% grin and fall over.
+			DATAFORM %子供の名前% hurriedly hides something...
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "自立前_文句", "自立前_主張"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You strain your")% ears to hear but %CALLNAME:CHARA% glares at %PARSE("you",5)%...
+	ELSE
+		PRINTFORML %PARSE("You listen")% to %子供の名前%'s opinion.
+		PRINTDATA
+			DATAFORM %子供の名前% has something %HE_SHE_CHILD(CHARA,,CHILDNUM)% wants to do.
+			DATAFORM %子供の名前% complains about some house rules.
+			DATAFORM %子供の名前% wants the curfew to be extended.
+			DATAFORM %子供の名前% wants %HIS_HER_CHILD(CHARA,,CHILDNUM)% own room.
+			DATAFORM %子供の名前% has something %HE_SHE_CHILD(CHARA,,CHILDNUM)% wants %PARSE("you")% to buy.
+			DATAFORM %子供の名前% thinks %HE_SHE_CHILD(CHARA,,CHILDNUM)%'s lost something.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "自立前_教えて"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You strain your")% ears to hear but %CALLNAME:CHARA% glares at %PARSE("you",5)%...
+	ELSE
+		PRINTFORML %PARSE("You listen")% to %子供の名前%.
+		PRINTDATA
+			DATAFORM %子供の名前% asks %PARSE("you")% what certain words mean.
+			DATAFORM %子供の名前% asks %PARSE("you")% about something that happened long ago.
+			DATAFORM %子供の名前% asks %PARSE("you")% how to make good food.
+			DATAFORM %子供の名前% asks %PARSE("you")% how to draw well.
+			DATAFORM %子供の名前% asks %PARSE("you")% how to use instruments.
+			DATAFORM %子供の名前% asks %PARSE("you")% the most efficient way to clean.
+			DATAFORM %子供の名前% asks %PARSE("you")% how to get better at Danmaku.
+			DATAFORM %子供の名前% asks %PARSE("you")% about tool usage.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "自立前_手伝い"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You try")% to sneak a peek at the two, but %CALLNAME:CHARA% just glares at %PARSE("you",5)%.
+	ELSE
+		PRINTFORML %PARSE("You peep")% in on the two of them.
+		PRINTDATA
+			DATAFORM %CALLNAME:CHARA% praises %子供の名前%.
+			DATAFORM %CALLNAME:CHARA% teaches %子供の名前% the basics.
+			DATAFORM %子供の名前% is working hard to help.
+			DATAFORM %子供の名前% is happily helping out.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "自立前_一人遊び"
+	IF TFLAG:193 == -1
+		PRINTFORML %PARSE("You try")% to play with %子供の名前%.
+		PRINTFORML %子供の名前% is too shy and hides...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %PARSE("You play")% with %子供の名前%.
+		PRINTFORML %子供の名前% is full of innocent joy.
+	ELSE
+		PRINTFORML %PARSE("You play")% with %子供の名前%.
+		PRINTDATA
+			DATAFORM %子供の名前% is in high spirits.
+			DATAFORM %子供の名前% is smiling and laughing.
+			DATAFORM %子供の名前% looks like %HE_SHE_CHILD(CHARA,,CHILDNUM)%'s having fun.
+			DATAFORM %子供の名前% has a lot of fun playing a guessing game.
+			DATAFORM %子供の名前% has a lot of fun as %PARSE("you",2)% play charades.
+			DATAFORM %子供の名前% has a lot of fun playing thumb-wrestling.
+			DATAFORM %子供の名前% has a lot of fun playing a rhythm game.
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASE "自立前_考え事", "自立前_眠そう", "自立前_話したい", "自立前_気にする", "自立前_遠慮", "自立前_睨む"
+	PRINTFORML %PARSE("You have")% a chat with %子供の名前%.
+	IF TFLAG:193 == -1
+		PRINTFORML %子供の名前% just nods along uninterested...
+	ELSEIF TFLAG:193 == 1
+		PRINTFORML %子供の名前% seems a bit embarrassed.
+	ELSE
+		PRINTDATA
+			DATAFORM %子供の名前% asks %PARSE("you")% some questions.
+			DATAFORM %子供の名前% asks %PARSE("you")% a difficult question.
+			DATAFORM %子供の名前% asks %PARSE("you")% about %CALLNAME:CHARA%.
+			DATAFORM %子供の名前% tells %PARSE("you")% some riddles.
+			DATAFORM %子供の名前% plays some word games with %PARSE("you")%.
+			DATAFORM %子供の名前% tells %PARSE("you")% about a friend.
+			DATAFORM %子供の名前% tells %PARSE("you")% what's been going on at the temple school.
+			DATAFORM %子供の名前% tells %PARSE("you")% something that's bothering %HIM_HER_CHILD(CHARA,,CHILDNUM)%.
+			DATAFORM %子供の名前% asks %PARSE("you")% what %CALLNAME:CHARA% is good at cooking.
+			DATAFORM %子供の名前% talks about playing with Danmaku.
+			DATAFORM %子供の名前% tells %PARSE("you")% about %HIS_HER_CHILD(CHARA,,CHILDNUM)% dreams for the future.
+			DATAFORM %子供の名前% tells %PARSE("you")% what's popular at the temple school right now.
+			DATAFORM %子供の名前% asks about one of %PARSE("your")% secrets.
+			DATAFORM %子供の名前% is using words %PARSE("you don't")% know where %HE_SHE_CHILD(CHARA,,CHILDNUM)% got...
+		ENDDATA
+		PRINTL 
+	ENDIF
+CASEELSE
+	PRINTFORML Exception Thrown!
+	PRINTFORML %CHILD_ACT:CHARA:CHILDNUM%
+	THROW
+ENDSELECT
+PRINTFORML 
+SIF TFLAG:描写中の子供 < 1000
+	PRINTFORML Child's Affection +1(%子供の名前%)
+
+;-------------------------------------------------
+;352,告白する
+;-------------------------------------------------
+@MESSAGE_COM352
+IF TFLAG:193
+	PRINTFORML %PARSE("You steel")% %PARSE("yourself")% and %PARSE("confess")% %PARSE("your",1)% love to %CALLNAME:TARGET%...
+ELSE
+	PRINTFORML %PARSE("You try")% to confess to %CALLNAME:TARGET%, but can't even form basic words...
+ENDIF
+
+;-------------------------------------------------
+;353,イタズラする
+;-------------------------------------------------
+@MESSAGE_COM353
+PRINTFORML %PARSE("You approach")% %CALLNAME:TARGET% very slowly so as to not wake %HIM_HER(TARGET)% up...
+
+;-------------------------------------------------
+;354,添い寝する
+;-------------------------------------------------
+@MESSAGE_COM354
+PRINTFORML %PARSE("You lay")% down next to %CALLNAME:TARGET%...
+IF CFLAG:TARGET:衰弱 || CFLAG:TARGET:お招き
+	PRINTFORML %CALLNAME:TARGET% moves over a bit...
+ELSE
+	PRINTFORML %CALLNAME:TARGET% wakes up and welcomes %PARSE("you",5)% warmly.
+ENDIF
+
+;-------------------------------------------------
+;355,時間停止
+;-------------------------------------------------
+@MESSAGE_COM355
+IF !RAND:5
+	PRINTFORML ＺＡ・ＷＡＲＵＤＯ！！ ＴＯＫＩ ＷＯ ＴＯＭＡＲＥ！
+ELSEIF !RAND:5
+	PRINTFORML ＺＡ・ＷＡＲＵＤＯ！！ ＴＯＭＡＲＥＩ！ ＴＯＫＩ ＷＯ！
+ELSE
+	PRINTFORML ＴＨＥ・ＷＯＲＬＤ！！　ＳＴＯＰ・ＴＩＭＥ！
+ENDIF
+
+;-------------------------------------------------
+;360,身を任せる
+;-------------------------------------------------
+@MESSAGE_COM360
+SELECTCASE TCVAR:20
+;	;谷間を見せる
+;	CASE 27
+;		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の谷間をじっくりと視姦した……
+	;キス
+	CASE 30
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("close")% %PARSE("your",1)% eyes and %PARSE("press")% %PARSE("your",1)% lips against %CALLNAME:TARGET%'s...
+	;前から抱きつく
+	CASE 32
+		IF TALENT:TARGET:体型 > TALENT:PLAYER:体型
+			PRINTFORML %CALLNAME:TARGET% buries %PARSE("your")% face in %HIS_HER(TARGET)% chest, making %PARSE("you",5)% inhale %HIS_HER(TARGET)% sweet scent...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("press")% %PARSE("yourself")% against %CALLNAME:TARGET%'s body, feeling %HIS_HER(TARGET)% warmth...
+		ENDIF
+	;胸を揉ませる
+	CASE 33
+		PRINTFORML %CALLNAME:TARGET% guides %PARSE("your")% hands to %HIS_HER(TARGET)% chest, and %PARSE("you",1)% %PARSE("begin")% caressing %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+	;スカートの中を見せる
+	CASE 35
+;		PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の形の良い尻をじっくりと観賞した……
+		SIF ONGOING()
+			PRINTL ...
+		IF TEQUIP:TARGET:50 == MASTER
+			PRINTFORML %PARSE("You watch")% closely as %CALLNAME:TARGET% shows off where %PARSE("you",2)% are connected...
+		ELSEIF !EQUIP:下半身下着２
+			PRINTFORML %PARSE("You watch")% closely as %CALLNAME:TARGET% raises %HIS_HER(TARGET)% skirt and %PARSE("catch")% a glimpse of %HIS_HER(TARGET)% genitals, wantonly exposed...
+		ELSE
+			PRINTFORML %PARSE("You watch")% closely as %CALLNAME:TARGET% flaunts %HIS_HER(TARGET)% %PANTSNAME(EQUIP:下半身下着２, TARGET)%...
+		ENDIF
+	;おねだり
+	CASE 40 TO 49
+		;実行不可
+;		PRINTFORML 
+	;手淫,胸愛撫
+	CASE 50, 58
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("stare")% into %ONGOING_G(TARGET)% eyes while yielding to the pleasure...
+	;フェラチオ、クンニ,乳首吸い
+	CASE 51, 59
+		IF ONGOING()
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("watch")% %ONGOING_P(TARGET)% service %PARSE("you",5)%, choosing to surrender to the pleasure...
+		ELSE
+			PRINTFORML %PARSE("You watch")% %ONGOING_P(TARGET)% as %HE_SHE(TARGET)% services %PARSE("you",5)%, choosing to surrender to the pleasure...
+		ENDIF
+	;素股、貝合わせ,乳合わせ,挿入される
+	CASE 52, 74, 80, 83, 84, 90
+		PRINTFORML %ONGOING_NAME(MASTER)% surrender to %ONGOING_P(TARGET)%, the two of %PARSE("you",4)% indulging in pleasure...
+	;パイズリ
+	CASE 53
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("enjoy")% %ONGOING_G(TARGET)%'s paizuri while caressing %HIS_HER(TARGET)% head...
+		IF TALENT:TARGET:恋慕 || TALENT:TARGET:思慕
+			PRINTFORML %CALLNAME:TARGET% smiles in delight and begins servicing with even more strength...
+		ELSEIF TALENT:TARGET:愛欲 || TALENT:TARGET:セフレ
+			PRINTFORML %CALLNAME:TARGET% smiles bitterly, and begins assaulting %PARSE("you")% even more violently...
+		ELSE
+			PRINTFORML %CALLNAME:TARGET% smiles bashfully as %HE_SHE(TARGET)% services %PARSE("your")% penis...
+		ENDIF
+	;足コキ
+	CASE 54
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("yield")% to %ONGOING_P(TARGET)% while breathing heavily...
+	;アナル愛撫,アナル舐め
+	CASE 55, 56
+		IF ONGOING()
+			PRINTFORML as %PARSE("your",1)% face turns red with shame from enjoying %PARSE("your",1)% anus getting caressed...
+		ELSE
+			PRINTFORML %PARSE("Your")% face turns red as %PARSE("you enjoy your",1)% anus getting caressed...
+		ENDIF
+	;指挿入
+	CASE 57
+		IF TALENT:PLAYER:処女 && TALENT:PLAYER:処女 != -1
+			IF ONGOING()
+				PRINTL .
+			ELSE
+			ENDIF
+			PRINTFORML Despite flinching at first, %PARSE("you entrust")% %PARSE("yourself")% to %CALLNAME:TARGET%...
+		ELSE
+			IF ONGOING()
+				PRINTFORML , the two of you staring at each other while you submit to the pleasure...
+			ELSE
+				PRINTFORML %PARSE("You")% and %CALLNAME:TARGET% stare at each other as %PARSE("you submit",1)% to the pleasure...
+			ENDIF
+		ENDIF
+	;ディープキス
+	CASE 60
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("entangle")% %PARSE("your",1)% tongue with %CALLNAME:TARGET%\@ TALENT:TARGET:恋慕 ? 's in a love-filled kiss... # 's... \@
+	;クンニ強制,アナル奉仕
+	CASE 70, 72
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("service")% %CALLNAME:TARGET% with %PARSE("your",1)% tongue...
+	;フェラチオ強制
+	CASE 71
+		IF ONGOING()
+			PRINTL .
+		ENDIF
+		PRINTFORML %PARSE("You do")% as instructed and %PARSE("suck")% on %CALLNAME:TARGET%'s %TINKO(TARGET)%...
+	;ぱふぱふ
+	CASE 73
+		;Custom code
+		IF ONGOING_NIPPLES()
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML , %PARSE("your",1)% face getting enveloped by the %OPPAI_DESCRIPTION_TR(TARGET)%...
+			CASE 1
+				PRINTFORML , %PARSE("your",1)% face sandwiched the %OPPAI_DESCRIPTION_TR(TARGET)%...
+			CASEELSE
+				PRINTFORML , %PARSE("your",1)% face getting smothered by the %OPPAI_DESCRIPTION_TR(TARGET)%...
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML %PARSE("Your")% face gets enveloped by %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%, and %PARSE("you",1)% %PARSE("cherish")% the moment...
+			CASE 1
+				PRINTFORML %PARSE("Your")% face gets sandwiched between %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%, and %PARSE("you",1)% %PARSE("enjoy")% the fragrance...
+			CASEELSE
+				PRINTFORML %PARSE("Your")% face gets smothered by %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%...
+		ENDSELECT
+		ENDIF
+	;強制アソコ愛撫
+	CASE 76
+		SIF ONGOING()
+			PRINTL ...
+		IF TALENT:TARGET:処女
+			PRINTFORML %PARSE("You do")% as instructed and %PARSE("finger")% %CALLNAME:TARGET% carefully...
+		ELSE
+			PRINTFORML %PARSE("You do")% as instructed and %PARSE("finger")% %CALLNAME:TARGET% until %HE_SHE(TARGET)%'s satisfied...
+		ENDIF
+	;乳を吸わせる
+	CASE 77
+		;Custom code, would normally make a _TR, but it feels overkill for such a small part, it's not restructuring anything
+		IF ONGOING()
+			PRINTFORML ...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("enjoy")% the sensation of %CALLNAME:TARGET%'s %NIPPLE_DESCRIPTION(TARGET)%...
+		ENDIF
+	;85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ
+	CASE 85,87 TO 89
+		PRINTFORML %ONGOING_P(TARGET)% moves %HIS_HER(TARGET)% waist frantically, servicing %PARSE("you")%...
+	;だいしゅきホールド
+	CASE 86
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("decide")% to let go and %PARSE("enjoy")% the feeling of %CALLNAME:TARGET%'s insides.
+		PRINTFORML The sound of hips colliding and %CALLNAME:TARGET%'s moans can be heard far away...
+	CASEELSE
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("give")% %PARSE("yourself")% to %CALLNAME:TARGET%...
+ENDSELECT
+
+;-------------------------------------------------
+;361,抵抗する
+;-------------------------------------------------
+@MESSAGE_COM361
+SELECTCASE TCVAR:20
+	;キス
+	CASE 30
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("shut")% %PARSE("your",1)% eyes and %PARSE("turn")% %PARSE("your",1)% nose up...
+	;後ろから抱きつく,前から抱きつく
+	CASE 31, 32
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("twist")% and %PARSE("turn")% under %CALLNAME:TARGET%...
+	;胸を揉ませる
+	CASE 33
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("blush")% as %PARSE("you",1)% %PARSE("try")% to free %PARSE("your",1)% arms...
+	;股間をまさぐる,手淫
+	CASE 34, 50
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("try")% to endure the pleasure...
+	;スカートの中を見せる
+	CASE 35
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("pretend")% to be bored...
+	;後ろから胸もみもみ,胸愛撫,乳首吸い
+	CASE 36, 58, 59
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("twist")% and %PARSE("turn")%, trying to resist...
+	;おねだり
+	CASE 40 TO 49
+		IF BASE:PLAYER:気力 <= MAXBASE:PLAYER:気力 / 3 || BASE:PLAYER:精力 <= MAXBASE:PLAYER:精力 / 3
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("give")% in from exhaustion...
+		ELSEIF CFLAG:MASTER:性格傾向 == 2
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("say")% that it isn't good enough...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("try")% to endure...
+		ENDIF
+	;フェラチオ、クンニ
+	CASE 51
+		IF TALENT:MASTER:汚臭耐性 < 0
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("say")% %CALLNAME:TARGET% should stop because it's dirty...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("try")% desperately to endure the pleasure...
+		ENDIF
+	;素股、貝合わせ,乳合わせ,挿入される,挿入する
+	CASE 52, 74, 80, 83, 84, 85, 87 TO 89, 90
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("try")% desperately to endure the pleasure...
+	;パイズリ
+	CASE 53
+		IF TALENT:TARGET:バストサイズ < 0 || ABL:TARGET:胸 < 2
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("try")% to endure the paizuri while staring at %CALLNAME:TARGET% with a bitter smile.
+			PRINTFORM 
+			IF CFLAG:TARGET:性格傾向 == 1 || CFLAG:TARGET:性格傾向 == 3
+				PRINTFORML Some tears started forming in the corner of %HIS_HER(TARGET)% eyes...
+			ELSEIF CFLAG:TARGET:性格傾向 == 2
+				PRINTFORML %CALLNAME:TARGET% seems vexed but continues servicing...
+			ELSE
+				PRINTFORML %CALLNAME:TARGET% apologizes a bit disappointed...
+			ENDIF
+		ELSE
+			PRINTFORML %PARSE("Your")% face contorts as %PARSE("you",1)% %PARSE("try")% to endure the pleasure...
+		ENDIF
+	;足コキ
+	CASE 54
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("clench")% %PARSE("your",1)% teeth and stare defiantly at %CALLNAME:TARGET%...
+	;アナル愛撫,アナル舐め
+	CASE 55, 56
+		IF TALENT:MASTER:汚臭耐性 < 0
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("say")% %CALLNAME:TARGET% should stop because it's dirty...
+		ELSEIF TALENT:MASTER:痛覚 > 0
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("complain")% that it hurts...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("try")% frantically to endure the pleasure...
+		ENDIF
+	;指挿入
+	CASE 57
+		IF TALENT:PLAYER:処女 && TALENT:PLAYER:処女 != -1
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("try")% frantically to hide %PARSE("your",1)% secret place from %CALLNAME:TARGET%...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("try")% to endure the pleasure...
+		ENDIF
+	;ディープキス
+	CASE 60
+		IF TALENT:MASTER:汚臭耐性 < 0
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("shudder")% as saliva enters %PARSE("your",1)% mouth, staring defiantly at %CALLNAME:TARGET%...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("focus")% on resisting and not moving %PARSE("your",1)% tongue...
+		ENDIF
+	;クンニ強制
+	CASE 70
+		IF TALENT:MASTER:汚臭耐性 < 0
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("try")% to turn away from %CALLNAME:TARGET%'s secret place...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("service")% %CALLNAME:TARGET% devoid of any enthusiasm...
+		ENDIF
+	;フェラチオ強制,アナル奉仕
+	CASE 71, 72
+		IF TALENT:MASTER:汚臭耐性 < 0
+			PRINTFORML %PARSE("your")% face contorts as %PARSE("you",1)% fight back the nausea...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("service")% %CALLNAME:TARGET% devoid of any enthusiasm...
+		ENDIF
+	;ぱふぱふ
+	CASE 73
+		IF TALENT:TARGET:バストサイズ < 0
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("smile")% bitterly at %CALLNAME:TARGET% and %PARSE("tell")% %HIM_HER(TARGET)% not to push %HIM_HER(TARGET)%self...
+			PRINTFORM 
+			IF CFLAG:TARGET:性格傾向 == 1 || CFLAG:TARGET:性格傾向 == 3
+				PRINTFORML Some tears start forming in the corner of %CALLNAME:TARGET%'s eyes...
+			ELSEIF CFLAG:TARGET:性格傾向 == 2
+				PRINTFORML %CALLNAME:TARGET% seems vexed as %HE_SHE(TARGET)% puts more force into it...
+			ELSE
+				PRINTFORML %CALLNAME:TARGET% apologizes a bit disappointed...
+			ENDIF
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("shake")% %PARSE("your",1)% head...
+		ENDIF
+	;タワシ洗い
+	CASE 75
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("pretend")% to be bored...
+	;強制アソコ愛撫
+	CASE 76
+		IF TALENT:TARGET:処女
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("caress")% %CALLNAME:TARGET% carefully, trying not to hurt %HIM_HER(TARGET)%...
+		ELSEIF TALENT:MASTER:汚臭耐性 < 0
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("shudder")% as love juice drips down %PARSE("your",1)% arm, and %PARSE("begin")% fingering %CALLNAME:TARGET% mechanically...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("caress")% %CALLNAME:TARGET% unenthusiastically and awkwardly...
+		ENDIF
+	;乳を吸わせる
+	CASE 77
+		PRINTFORML %PARSE("You suck")% on %CALLNAME:TARGET%'s nipples unenthusiastically, barely licking them...
+	;尻ズリ
+	CASE 78
+		IF TALENT:MASTER:汚臭耐性 < 0
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("feel")% repulsed at the strange sensation...
+		ELSE
+			PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("grumble")% that it just feels a bit different...
+		ENDIF
+	;だいしゅきホールド
+	CASE 86
+		PRINTFORML Feeling %PARSE("yourself")% close to cumming, %PARSE("you tense your")% body, trying to endure.
+		PRINTFORML The resistance proves futile, and %CALLNAME:TARGET% utters a「sorry」before starting to milk out %PARSE("your",1)% semen...
+	CASEELSE
+		PRINTFORML %ONGOING_NAME(MASTER)% %PARSE("resist")%...
+ENDSELECT
+
+;-------------------------------------------------
+;363,読み聞かせ
+;-------------------------------------------------
+@MESSAGE_COM363
+IF CFLAG:TARGET:添い寝中
+	PRINTFORML %PARSE("You read")% a book while in \@ INROOM(CFLAG:MASTER:現在位置) == 2 ? bed # the futon \@...
+;		SIF CFLAG:TARGET:睡眠
+;			PRINTFORML %CALLNAME:TARGET%は寝息をたてている…
+;ELSEIF CFLAG:MASTER:現在位置 == 9
+ELSEIF TALENT:MASTER:体型 > TALENT:TARGET:体型 && INROOM(CFLAG:MASTER:現在位置)
+	PRINTFORML %PARSE("You decide")% to read a book with %CALLNAME:TARGET% in %PARSE("your",1)% lap...
+ELSE
+	PRINTFORML %PARSE("You decide")% to read a book to %CALLNAME:TARGET%.
+ENDIF
+
+;-------------------------------------------------
+;364,豆まき
+;-------------------------------------------------
+@MESSAGE_COM364
+PRINTFORM %PARSE("You throw")% beans at %CALLNAME:TARGET%
+SIF TFLAG:193 > 1
+	PRINT  along with everyone else
+PRINTL .
+PRINTW ...
+PRINTW ......
+PRINTW ......... It feels like good fortune will come soon!
+
+
+
+;-------------------------------------------------
+;368,自由行動に付き合う
+;-------------------------------------------------
+@MESSAGE_COM368
+TRYCALLFORM 自由行動内容_{Activity_Type:TARGET}(TARGET, "付き合う")

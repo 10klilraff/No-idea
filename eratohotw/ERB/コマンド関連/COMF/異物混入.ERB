@@ -1,0 +1,117 @@
+﻿;COMF413 料理を作る.erbに統合されました＠料理改良パッチ
+[SKIPSTART]
+@MIX_MENU
+PRINTL Add something extra?
+{
+CALL ASK_M(
+	"No",  1,
+	"Change seasoning", !GET_OPTION_COOKING("自動味付け設定"),
+	"Add something stimulating",  GET_OPTION_COOKING("異物混入可能"),
+	"Prescribe some medicine",  GET_OPTION_COOKING("薬物混入可能") && MAX(ITEM:媚薬, ITEM:利尿剤, ITEM:惚れ薬, ITEM:睡眠薬) > 0
+	)
+}
+SELECTCASE RESULT
+CASE 0
+	RETURN
+CASE 1
+	CALL MANUAL_SEASONING
+CASE 2
+	CALL MIXTURE_SPICE
+CASE 3
+	CALL MIXTURE_DRUG
+ENDSELECT
+RETURN RESULT
+
+
+
+@AUTO_SEASONING
+#DIM AUTO_TASTE
+SIF TCVAR:MASTER:308
+	RETURN
+TCVAR:MASTER:308 = (GET_OPTION_COOKING("自動味付け設定") - 10)
+
+
+
+@MANUAL_SEASONING
+PRINTL How much seasoning should be used?
+CALL ASK_M("Normal amount",  1, "Lots of seasoning", 1, "Mild seasoning",  1)
+SELECTCASE RESULT
+CASE 2
+	PRINTFORML %PARSE("You give")% it a light seasoning.
+CASE 1
+	PRINTFORML %PARSE("You give")% it a lot seasoning.
+CASE 0
+	PRINTFORML %PARSE("You give")% it a normal amount of season, fitting %PARSE("your",1)% palate perfectly.
+ENDSELECT
+SIF RESULT
+	TCVAR:MASTER:308 = RESULT
+RETURN RESULT
+
+
+
+@MIXTURE_SPICE
+#DIM CONST BIT_MIX_SPICE = 0, 3, 4, 5, 6
+PRINTL Select something to put in.
+{
+CALL ASK_M(
+	"Never mind",  1,
+	"Extra hot『DEATH』sauce", 1,
+	"Super sweet saccharin",  1,
+	"Plenty of wasabi",  1,
+	"Concentrated lemon juice",  1)
+}
+SIF RESULT
+	SETBIT TCVAR:MASTER:308, BIT_MIX_SPICE:RESULT
+SELECTCASE RESULT
+CASE 0
+	RETURN
+CASE 1
+	PRINTFORML %PARSE("You sprinkle")% some『DEATH』on the %DISHNAME_TR(DISHNAME)%.
+	PRINTFORML It gets dyed a bright red habanero pepper-like color.
+CASE 2
+	PRINTFORML %PARSE("You sprinkle")% some white powdered saccharin on the %DISHNAME_TR(DISHNAME)%.
+	PRINTFORML It's hard to tell from looking at it, but it's 300 times sweeter than sugar.
+CASE 3
+	PRINTFORML %PARSE("You put")% a mountain of freshly grated wasabi on top on the %DISHNAME_TR(DISHNAME)%.
+	PRINTFORML The acidic aroma prickles %PARSE("your",1)% nose.
+CASE 4
+	PRINTFORML %PARSE("You sprinkle")% some concentrated lemon juice on top of the %DISHNAME_TR(DISHNAME)%.
+	PRINTFORML It's hard to tell from looking at it, but it's got to be incredibly sour now.
+ENDSELECT
+RETURN 1
+
+
+
+@MIXTURE_DRUG
+#DIM CONST BIT_MIX_DRUG = 0, 21, 22, 23, 24
+PRINTL Select something to put in.
+{
+CALL ASK_M(
+	"Never mind",       1,
+	"Aphrodisiac",   ITEM:媚薬   > 0,
+	"Diuretic", ITEM:利尿剤 > 0,
+	"Love Potion", ITEM:惚れ薬 > 0,
+	"Sleeping Pills", ITEM:睡眠薬 > 0)
+}
+SIF RESULT
+	SETBIT TCVAR:MASTER:308, BIT_MIX_DRUG:RESULT
+SELECTCASE RESULT
+CASE 0
+	RETURN
+CASE 1
+	PRINTFORML %PARSE("You take")% out some aphrodisiac from %PARSE("your",1)% pocket and %PARSE("mix")% it into the %DISHNAME_TR(DISHNAME)%...
+	ITEM:媚薬 --
+CASE 2
+	PRINTFORML %PARSE("You take")% out some diuretic medicine from %PARSE("your",1)% pocket and %PARSE("mix")% it into the %DISHNAME_TR(DISHNAME)%...
+	ITEM:利尿剤 --
+CASE 3
+	PRINTFORML %PARSE("You take")% out a love potion from %PARSE("your",1)% pocket and %PARSE("mix")% it into the %DISHNAME_TR(DISHNAME)%...
+	ITEM:惚れ薬 --
+CASE 4
+	PRINTFORML %PARSE("You take")% out some sleeping pills from %PARSE("your",1)% pocket and %PARSE("mix")% them into the %DISHNAME_TR(DISHNAME)%...
+	ITEM:睡眠薬 --
+ENDSELECT
+RETURN 1
+[SKIPEND]
+
+

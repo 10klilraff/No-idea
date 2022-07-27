@@ -1,0 +1,2055 @@
+﻿;-------------------------------------------------
+; eraTheWorld proto用 天子口上（キャラクターの名前を入れる、下にコンセプトなど一言あれば入れる）
+;-------------------------------------------------
+;
+;**** 注意天 ****************************************************************
+;この口上を導入し、初対面イベントを発生させると絶壁になります
+;更新が非常に遅いです。期待しないでお待ちください
+;絶壁にします
+;純愛？そんなことより陵辱だ！
+;絶壁になりました
+;
+;
+;
+;
+;
+;
+;
+;※※※※※※他者による修正、加筆、改変についての但し書き※※※※※※
+;前提としてオリジナル作者以外が手を入れる場合は、オリジナル作者の許可を求めること
+;オリジナル作者とコンタクトが取れない場合には以下の但し書きに従ってUPできるかどうか判断してください。
+
+;------ ｷﾘﾄﾘ ｶｲｼ -----------
+;eraTheWorld proto4.07パッチ取り込み用 Ver1.13
+;テンプレートの使い方
+;初めに置換コマンド等により K34 を K(キャラNo) に変更して下さい  
+;キャラNoはCSVフォルダのCharaファイルを参照　例(霧雨 魔理沙の場合)：K34 =置換=> K11
+;
+;------ ｷﾘﾄﾘ ｵﾜﾘ -----------
+
+;**** Copyright ****************************************************************
+;本口上の修正について（許可する行為のみ残してください）
+;【誤字・脱字修正】【分岐条件・erb構文に関する修正】【本体Ver・Rev変更対応】【フラグの管理・修正】
+
+;本口上の加筆・改変について（許可する行為のみ残してください）
+;【未記入部位加筆】【ランダム分岐加筆】【記入済部位加筆】【記入済部位削除】【記入済部位コメントアウト】
+
+;本口上に対するメンテナンス禁止時限について（設定しない場合、未設定のみ残してください）
+;【未設定】【設定：期間 YY-MM-DDからYY-MM-DDまでオリジナル作者のみ修正可】【期限延長 有】
+
+;本口上に対するその他但し書き
+;【 】【 】
+;******************************************************************************
+;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;CFLAG:34:1001　パンツ剥ぎ取りカウント
+;CFLAG:34:1002  謎の快感・絶頂カウント
+;CFLAG:34;1003　時姦堕ちフラグ
+;CFLAG:34:1004  時姦膣内射精カウント
+;TCVAR:34:350   パンツ剥ぎ取り重複阻止フラグ
+;TCVAR:34:351   時姦膣射カウント爆上げ抑制フラグ
+;******************************************************************************
+
+;PS 寅の人
+;オリジナル作者と連絡が取れない場合、上記Copyrightに従い加筆改変を行って下さい
+;また本体処理・他口上処理等に干渉する異常処理がある場合でオリジナル作者による修正が
+;行われない・もしくは困難な場合、Copyrightに関わらず有志による修正を許可します
+;その際は元処理を削除せずコメントアウトし修正処理を挿入して下さい
+
+;### 口上存在判定 ###################################
+@M_KOJO_K34(ARG)
+;別人版を作成する際はこのテンプレではなく別人版用口上テンプレをご利用ください
+
+;口上存在判定です、けしてコメントアウトしないでください
+;他の処理は一切行わないように
+RETURN 1
+
+;### 口上基本フラグ設定 #############################
+@M_KOJO_FLAGSETTING_K34
+;基本フラグ設定はここで行ってください
+;共通の口上フラグは必要な箇所のコメントアウトを外してご利用ください
+;口上専用フラグはご自由に
+;Xにはキャラ番号を入れてください
+
+;眠姦口上有、時間停止口上有、なりきりに1を入れると、それぞれ時間停止時、眠姦時、なりきり時にコマンド口上が読み込まれるように
+;入れないと時間停止時、眠姦時、なりきり時は一切喋りません
+;CFLAG:X:眠姦口上有 = 0
+;Custom code, enables timestop text
+CFLAG:34:時間停止口上有 = 1
+;CFLAG:X:なりきり口上有 = 0
+
+;破瓜キャンセル口上有に1を入れると、@M_KOJO_EVENT_KX_LOST_VIRGIN_STOPでキャンセルの成否を操作できます
+;CFLAG:X:破瓜キャンセル口上有 = 0
+
+;口上内抱き寄せ判定_初回と口上内抱き寄せ判定_通常に1を入れると、M_KOJO_EVENT_KX_PERMISSIONで押し倒しの成否を操作できます
+;CFLAG:X:口上内抱き寄せ判定_初回 = 0
+;CFLAG:X:口上内抱き寄せ判定_通常 = 0
+
+;押し倒し禁止に1を入れると、自分から押し倒してこなくなります
+;以下は恋慕かセフレがつくまで押し倒してこなくなる使用例
+;IF !TALENT:X:恋慕 && !TALENT:X:セフレ
+;	CFLAG:X:押し倒し禁止 = 1
+;ELSE
+;	CFLAG:X:押し倒し禁止 = 0
+;ENDIF
+
+;来訪不能に1を入れると、来訪してこなくなります
+;以下は面識があるまで来訪してこなくなる使用例
+;IF !CFLAG:X:面識
+;	CFLAG:X:来訪不能 = 1
+;ELSE
+;	CFLAG:X:来訪不能 = 0
+;ENDIF
+
+;### 口上色判定 ###################################
+@M_KOJO_COLOR_K34
+SETCOLOR 60, 180, 255
+;ここでSETCOLORすることで口上に色を付けられます
+;例：SETCOLOR 0xC07070
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"ENCOUNTER"系イベント（エクストラ構文）
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_ENCOUNTER_K34
+;初対面、挨拶のタイミング
+;TALENTの変更はここでどうぞ。
+SELECTCASE CFLAG:MASTER:現在位置
+CASE 1 TO 3,5,11,20 TO 24
+	PRINTL 
+	PRINTL 
+	PRINTFORML 　　　　　　　　　  Being in heaven, control the land
+	PRINTL 
+	PRINTW 
+	PRINTFORML 　　　　　　　　　 Being in earth, remove its keystones
+	PRINTL 
+	PRINTW 
+	PRINTFORML 　　　　　　　　And lay bare the scarlet hearts of people
+	PRINTL 
+	PRINTW 
+	PRINTFORMDL A booming voice suddenly comes from nowhere, scaring you half to death. You look around for the owner, but don't see anyone...
+	PRINTFORMDL After craning your neck for a minute, you're about to start walking again, when...
+	PRINTFORMDL Boom!
+	PRINTFORMDL Something big falls and lands right in front of you, and you fall on your ass in surprise!
+	PRINTFORML 「Nice to meet you, new resident of the shrine.」
+	PRINTFORMDL A girl stands imperiously on top of the big rock that suddenly fell from the sky. She looks down at you as she greets you...
+	PRINTFORML 「I'm a member of the Hinanawi clan who live in the heavens.」
+	PRINTFORML 「That means I am a celestial being.」
+	PRINTFORML 「I used to be very much indebted to the maiden of this shrine...」
+	PRINTFORML 「No, rather, I sometimes visit this shrine because the maiden of this shrine is indebted to me...」
+	PRINTFORMDW This girl introduces herself unilaterally without even paying attention to you... It catches you off guard.
+	PRINTFORMDL She certainly has beauty befitting a celestial being.
+	PRINTFORMDL Her long cerulean hair shines like the blue sky, her ruby-red eyes draw your gaze like magnets...
+	PRINTFORMDL Her slender, girlish arms, her smooth, delicate fingers, her beautiful lips as she speaks...
+	PRINTFORMDL Her body isn't necessarily glamorous, but it has a kind of pure, empyrean beauty that enhances the image of a goddess made flesh.
+	PRINTFORMDW All in all, she projects the image of an ideal, perfected girl who should never be defiled, and you find yourself...
+	PRINTL 
+	PRINTFORMDL An uncontrollable feeling of lust washes over you, and you activate your time stop ability.
+	PRINTFORMDL The girl who had been singing her words in a high-pitched voice stops moving, and even the rustling of the trees stops.
+	PRINTFORMDL The whole world stops.
+	PRINTFORMDL You sluggishly stand up, approach the girl still on top of her rock, and unceremoniously reach out your hand to her unspoiled body...
+	PRINTFORMDL You slowly run your fingers over the skin of this supposedly celestial girl...
+	PRINTFORMDL Her cheeks are soft and puckered, and her skin is smooth to the touch.
+	PRINTFORMDL Her breasts are small, you can tell that even through her clothes, but they look so good on her that you can't complain.
+	PRINTFORMDL You twirl her silky hair around your finger, pondering for a while...
+	PRINTFORMDL Is there really any difference between a celestial and a human, or a youkai...?
+	PRINTFORMDL This girl may be here just to satisfy her sexual desires or her need for companionship, like everybody else...
+	PRINTFORMDL You forcibly suppresses the carnal desire in your chest and sit back down in front of her as though you were always there.
+	PRINTFORMDW Time resumes...
+	PRINTL 
+	PRINTFORML 「...In other words, this shrine is effectively my shrine. Do you understand?」
+	PRINTFORMDL As time flows again, the girl concludes her little speech, then she turns her gaze to you for the first time.
+	PRINTFORMDL Sitting there on the ground, you do your best to look flustered, and ask her name...
+	PRINTFORMDL The girl momentarily diverts her gaze...
+	PRINTFORML 「I'm a member of the Hinanawi clan who live in the heavens, and my name is Tenshi.」
+	PRINTFORMDL Then she repeats the line you had just heard a little bit ago, though she adds her first name.
+	PRINTFORMDL ...Did she just forget to tell you her name the first time around? 
+	PRINTFORMDL You wonder if you've caught a glimpse of the true nature of the girl who calls herself Tenshi...
+	PRINTFORMDL Though, even if this girl is just putting up a facade to look good, it wouldn't tarnish her beauty in the slightest.
+	PRINTFORMDW You think about how you might humiliate Tenshi, who hasn't even realized that she's been groped...
+CASE 4,6 TO 10,12 TO 19,52
+	PRINTFORML 「Nice to meet you, new resident of the shrine.」
+	PRINTFORMDL You can't help but be taken aback by the sudden greeting from a girl you've never seen before.
+	PRINTFORML 「I'm a member of the Hinanawi clan who live in the heavens, and my name is Tenshi.」
+	PRINTFORML 「That means I am a celestial being.」
+	PRINTFORMDL You've heard that celestial beings are people who have renounced all worldly desires and have transcended humanity.
+	PRINTFORMDL Well, that explains her inhuman beauty, at least.
+	PRINTFORML 「I used to be very much indebted to the maiden of this shrine...」
+	PRINTFORML 「No, rather, I sometimes visit this shrine because the maiden of this shrine is indebted to me...」
+	PRINTFORMDW The girl who calls herself Tenshi doesn't pay any attention to your stunned face and just keeps on introducing herself in a one-sided manner.
+	PRINTFORMDL Her long cerulean hair shines like the blue sky, her ruby-red eyes draw your gaze like magnets...
+	PRINTFORMDL Her slender, girlish arms, her smooth, delicate fingers, her beautiful lips as she speaks...
+	PRINTFORMDL Her body isn't necessarily glamorous, but it has a kind of pure, empyrean beauty that enhances the image of a goddess made flesh.
+	PRINTFORMDL She's like a perfected work of art, and you're so distracted that you start to zone out as Tenshi keeps droning on.
+	PRINTFORML 「...In other words, this shrine is effectively my shrine. Do you understand?」
+	PRINTFORMDL Tenshi's story finally ends, and she looks at you for the first time.
+	PRINTFORMDL You hurriedly make eye contact with her and return her greeting.
+	PRINTFORMDL Tenshi seems to be satisfied with the servile expression on your face, and walks right past you.
+	PRINTFORMDW You watch her back as she recedes into the distance and ponder how you might disgrace that beautiful, empyrean body...
+CASEELSE
+	PRINTFORML 「Hmm?」
+	PRINTFORMDL A girl, whom you've never met before, stares at you intently.
+	PRINTFORMDL Being scrutinized so closely by such an inhumanly beautiful girl makes you uncharacteristically nervous...
+	PRINTFORML 「Are you perhaps the new resident of the shrine?」
+	PRINTFORMDL Still nervous, you manage to respond and confirm her question.
+	PRINTFORML 「I see... I'm a member of the Hinanawi clan who live in the heavens, and my name is Tenshi.」
+	PRINTFORML 「That means I am a celestial being.」
+	PRINTFORMDL You've heard that celestial beings are people who have renounced all worldly desires and have transcended humanity.
+	PRINTFORMDL Well, that explains her inhuman beauty, at least.
+	PRINTFORML 「I used to be very much indebted to the maiden of this shrine...」
+	PRINTFORML 「No, rather, I sometimes visit this shrine because the maiden of this shrine is indebted to me...」
+	PRINTFORML 「I'm sure we'll have more opportunities to meet in the future, so I look forward to the next occasion.」
+	PRINTFORMDL It's certainly nice to meet her, but is it just your imagination or does she seem less than friendly?
+	PRINTFORMDL After her self-introduction, Tenshi passes you by as if she's not interested in you anymore.
+	PRINTFORMDW You watch her back as she walks away and begin to make plans to play with that wonderful body...
+ENDSELECT
+;「まな板にしようぜ！」「かなりまな板だよコレ！」
+TALENT:34:105 = -2
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"SP_EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;デート帰りにファーストKISS（合意も付く）
+;==================================================
+@M_KOJO_SPEVENT_K34_1(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTFORMW 「...」
+	PRINTFORMDW While the two of you are on you way home, the atmosphere so quiet that it seems like you can't say anything.
+	PRINTFORMDW But, it's not an awkward silence. It's a somewhat reassuring silence.
+	PRINTFORMW 「C-Can I talk to you for a second?」
+	PRINTFORMDW Tenshi, walking next to you, suddenly breaks the quiet.
+	PRINTFORMDW As you open your mouth to reply...
+	PRINTFORMW 「Mmmn...」
+	PRINTFORMDW Without warning, Tenshi hugs you and kisses you on the lips.
+	PRINTFORMDW Stunned by the suddenness of the situation, you pull your mouth away...
+	PRINTFORMW 「Th-That was for what you did today! Th-There's no deep meaning! It doesn't mean anything at all!」
+	PRINTFORMDW And with that, Tenshi runs off...
+	;キスをキャンセルしたい場合は以下を開放
+	;TCVAR:キスキャンセル = 1
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰りに告白（恋人が付く）
+;==================================================
+@M_KOJO_SPEVENT_K34_2(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_2(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;告白内容
+	;この告白内容表示後に受けるかどうかの選択分が表示されます
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORMW 「I want to know, %CALLNAME:MASTER%...」
+		PRINTFORMDW Tenshi stands there, with a different expression on her face than usual.
+		PRINTFORMDW She stares straight at you with a serious gaze.
+		PRINTFORMW 「Do you have...someone you like?」
+		PRINTFORMDW You tell her you do.
+		PRINTFORMW 「...I see...」
+		PRINTFORMW 「But, let me tell you this.」
+		PRINTFORMW 「I, I like you %CALLNAME:MASTER%, that's all I can say!」
+		PRINTFORMDW Tenshi confesses her feelings honestly.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白オッケー（恋人が付く）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORMDW You tell Tenshi to listen carefully to what you have to say.
+		PRINTFORMDW You tell her that the person you like is a very cute girl, and her name is “Tenshi”.
+		PRINTFORMW 「...What?」
+		PRINTFORMDW You repeat yourself: There's someone you like. Her name is Tenshi. You feel the same way about her.
+		PRINTFORMW 「...I swear, you dummy...」
+		PRINTFORMDW She starts to cry, as the tension shatters.
+		PRINTFORMW 「Nghhh... Sob...」
+		PRINTFORMDW You steal Tenshi's lips before she can react.
+		PRINTFORMW 「―――――――!?」
+		PRINTFORMDW Tenshi looks surprised for an instant, but then surrenders her body into your hands...
+		PRINTFORMW 「Nm, Chu... %RANDKISS("kiss")%... Puahー」
+		PRINTFORMW 「%CALLNAME:MASTER%, I love you... Don't let go of my hand...」
+		PRINTFORMDW You tell her you'll never let go...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰り
+;==================================================
+@M_KOJO_SPEVENT_K34_3(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_3(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印消去イベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印2>1レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印3>2レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;部屋で遭遇
+;==================================================
+@M_KOJO_EVENT_K34_1(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて一緒に入る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて出て行った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;朝起きたとき（おはよう口上）
+;==================================================
+@M_KOJO_EVENT_K34_2(ARG,ARG:1)
+CALL MESSAGE_GOODMONING(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常起床（定時になって起きる等）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;添い寝起床
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 2
+		;PRINTFORMW 
+		;RETURN 1
+	;ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;夜寝るとき（おやすみ口上）
+;==================================================
+@M_KOJO_EVENT_K34_3(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;自室に帰る（定時になって寝る）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;眠そうにしている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;睡眠中（起きていないので会話というよりは寝言？）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;イタズラ中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;衰弱中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERがダウン（部屋まで運ばれる）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;移動時すれちがい
+;==================================================
+@M_KOJO_EVENT_K34_4(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;立ち止まった
+	;この後遭遇口上に接続
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;軽く会釈して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無視して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;他者介入でムード変化
+;==================================================
+@M_KOJO_EVENT_K34_5(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;霊夢が入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;る～ことが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を目撃した
+;==================================================
+@M_KOJO_EVENT_K34_6(ARG,ARG:1)
+;口上主はTARGET
+;ARGに情事相手
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を目撃した（馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;負けじと参加（馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;気まずそうに立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERに誘われて参加
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG:1 == 4
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を見られた
+;==================================================
+@M_KOJO_EVENT_K34_7(ARG,ARG:1)
+;口上主はTARGET
+;ARGに目撃者
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を見られた（目撃者の馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が負けじと参加（目撃者の馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERに誘われて目撃者も参加
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG:1 == 4
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;目撃した情事を問い詰める
+;==================================================
+@M_KOJO_EVENT_K34_8(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERだけ問い詰め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;二人とも説教
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;弱みを握った
+;==================================================
+@M_KOJO_EVENT_K34_9(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;同じ場所に居てパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;遠距離移動中にパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;押し倒した
+;==================================================
+@M_KOJO_EVENT_K34_10(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERを押し倒した（開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;なだめられた（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;浴場で遭遇
+;==================================================
+@M_KOJO_EVENT_K34_11(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目が合った（追い出されない）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;寝床に忍び込み
+;==================================================
+@M_KOJO_EVENT_K34_12(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;寝床に侵入
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕・衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される（衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;お仕事中
+;==================================================
+@M_KOJO_EVENT_K34_13(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;仕事開始（職場へ移動する）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;業務中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;仕事終了
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;食事系
+;==================================================
+@M_KOJO_EVENT_K34_14(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;持っていた食物を食べられた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == -1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;MASTERが押し倒した
+;==================================================
+@M_KOJO_EVENT_K34_15(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;未実装（押し倒しコマンドに統合？
+	;MASTERが押し倒した（ウフフ開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;逢瀬終了（ウフフ終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;添い寝する
+;==================================================
+@M_KOJO_EVENT_K34_16(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;添い寝を始めた（開始時）(存在せず
+	;記入チェック
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;添い寝を終了した（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;時止め終了時
+;==================================================
+@M_KOJO_EVENT_K34_17(ARG,ARG:1)
+;口上主はTARGET
+;排他と明記されていないモノは状況によっては連続で表示されるので注意
+;ARGに射精状況
+;ARG:1に射精状態
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ARG=1～3は排他
+	;謎の快感
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;絶頂回数カウント
+		LOCAL:4 = 0
+		LOCAL:4 += EX:34:50
+		LOCAL:4 += EX:34:51
+		LOCAL:4 += EX:34:52
+		LOCAL:4 += EX:34:53
+		;絶頂箇所判定
+		LOCAL:5 = 0
+		SIF EX:34:50 > 0
+			LOCAL:5 += 1
+		SIF EX:34:51 > 0
+			LOCAL:5 += 1
+		SIF EX:34:52 > 0
+			LOCAL:5 += 1
+		SIF EX:34:53 > 0
+			LOCAL:5 += 1
+		IF CFLAG:34:1002 == 0
+			PRINTFORML 「―――Wh!?」
+			PRINTFORMDL Tenshi is confused by the sensation suddenly coursing through her body...
+			IF LOCAL:5 > 1
+				PRINTFORMDL Still trembling with pleasure, she hugs her body and scans her surroundings in distress.
+			ELSEIF EX:34:50 > 0 || EX:34:51 > 0
+				PRINTFORMDL She holds her crotch, convulsing in response to the zinging pleasure, and looks around in distress.
+			ELSEIF EX:34:52 > 0
+				PRINTFORMDL She tries to protect her anus, twitching in response to the zinging pleasure, and looks around in distress.
+			ELSEIF EX:34:53 > 0
+				PRINTFORMDL She holds her breasts and squirms in response to the zinging pleasure, while looking around in distress.
+			ENDIF
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:34:350 == 0
+					IF CFLAG:34:1001 == 0
+						PRINTFORML 「Wha!? Oh no...」
+						PRINTFORMDL And then, Tenshi pales when she realizes that she's not wearing any panties anymore, but...
+						PRINTFORMDW She instantly composes herself so that others won't notice.
+					ELSEIF CFLAG:34:1001 < 10
+						PRINTFORML 「Oh no...」
+						PRINTFORMDL And then, Tenshi suddenly notices that her panties are gone again, despite the fact she'd definitely been wearing them all day...
+						PRINTFORMDW Tenshi's face pales, but she quickly calms her demeanor so that nobody will notice.
+					ELSEIF CFLAG:34:1001 < 20
+						PRINTFORML 「Ugh...」
+						PRINTFORMDL And then, Tenshi suddenly realizes that the mysterious phenomenon of her vanishing panties has happened again...
+						PRINTFORMDW She's confused about more than just the loss of her underwear, but she quickly calms down to hide her discomfort.
+					ELSEIF CFLAG:34:1001 == 100
+						PRINTFORML 「...」
+						PRINTFORMDL At the same time, Tenshi notices that her panties have suddenly disappeared.
+						PRINTFORMDL She instantly recognizes it as yet another occurrence of the same phenomenon that's been troubling her for a long time now.
+						PRINTFORMDW Overcome by a sense of resignation, she acts as though nothing has happened.
+					ENDIF
+					TCVAR:34:350 = 1
+					CFLAG:34:1001 += 1
+					CFLAG:34:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「What on earth was that just now...」
+			PRINTFORMDW Tenshi chalks it up to her imagination and tries to shake off the sickening feeling.
+		ELSEIF CFLAG:34:1002 < 250
+			PRINTFORML 「―――Wh!?」
+			PRINTFORMDL Tenshi suddenly feels an intense pleasure coursing through her body again...
+			IF LOCAL:5 > 1
+				PRINTFORMDL Still trembling with pleasure, she hugs her body and scans her surroundings in alarm.
+			ELSEIF EX:34:50 > 0 || EX:34:51 > 0
+				PRINTFORMDL She holds her crotch, convulsing in response to the zinging pleasure, and looks around in alarm.
+			ELSEIF EX:34:52 > 0
+				PRINTFORMDL She tries to protect her anus, twitching in response to the zinging pleasure, and looks around in alarm.
+			ELSEIF EX:34:53 > 0
+				PRINTFORMDL She holds her breasts and squirms in response to the zinging pleasure, while looking around in alarm.
+			ENDIF
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:34:350 == 0
+					IF CFLAG:34:1001 == 0
+						PRINTFORML 「Wha!? Oh no...」
+						PRINTFORMDL And then, Tenshi pales when she realizes that she's not wearing any panties anymore, but...
+						PRINTFORMDW She instantly composes herself so that others won't notice.
+					ELSEIF CFLAG:34:1001 < 10
+						PRINTFORML 「Again...」
+						PRINTFORMDL At the same time, she notices the phenomenon of her missing underwear happened again...
+						PRINTFORMDW Tenshi's face pales, but she quickly calms her demeanor so that nobody will notice.
+					ELSEIF CFLAG:34:1001 < 20
+						PRINTFORML 「Ugh...」
+						PRINTFORMDL And then, Tenshi suddenly realizes that the mysterious phenomenon of her vanishing panties has happened again...
+						PRINTFORMDW She feels a growing hatred for the criminal that's doing this to her, but she keeps her face calm so that others won't notice.
+					ELSEIF CFLAG:34:1001 == 100
+						PRINTFORML 「...」
+						PRINTFORMDL At the same time, she notices that her panties have gone missing again.
+						PRINTFORMDL Even though she's given up on trying to stop it, she wonders what could happen if the situation continues to escalate...
+						PRINTFORMDW Tenshi can't help but feel apprehensive...
+					ENDIF
+					TCVAR:34:350 = 1
+					CFLAG:34:1001 += 1
+					CFLAG:34:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「I can't believe that keeps happening...」
+			PRINTFORMDW Tenshi knows it's not just her imagination, but it's so outrageous she can't help but be incredulous.
+		ELSEIF CFLAG:34:1002 < 400
+			PRINTFORML 「――Nhah!」
+			PRINTFORMDL She shudders as a sudden wave of stimulus shoots through her body.
+			PRINTFORMDL Her mind tottering, Tenshi is on the brink of accepting the rush of pleasure...
+			PRINTFORMD She desperately tries to hold back the unconscious urge to play with her
+			IF LOCAL:5 > 1
+				PRINTFORMD self
+			ELSEIF EX:34:50 > 0 || EX:34:51 > 0
+				PRINTFORMD  slit
+			ELSEIF EX:34:52 > 0
+				PRINTFORMD  butthole
+			ELSEIF EX:34:53 > 0
+				PRINTFORMD  titties
+			ENDIF
+			PRINTFORMDW ...
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:34:350 == 0
+					IF CFLAG:34:1001 == 0
+						PRINTFORMDL She notices that her panties have gone missing again...
+						PRINTFORMDL But to Tenshi, it seems like a trivial matter.
+						PRINTFORMDW She doesn't get upset, and just goes back to behaving like normal.
+					ELSEIF CFLAG:34:1001 < 10
+						PRINTFORMDL She realizes that her panties have vanished again, as they are wont to do lately...
+						PRINTFORMDL But to Tenshi, it seems like a trivial matter.
+						PRINTFORMDW She doesn't get upset, and just goes back to behaving like normal.
+					ELSEIF CFLAG:34:1001 < 20
+						PRINTFORMDL As usual, she notices that her panties are missing.
+						PRINTFORMDL However, for Tenshi, that has just become a part of her daily life.
+						PRINTFORMDW She doesn't feel anything unusual, and just goes back to behaving like normal.
+					ELSEIF CFLAG:34:1001 == 100
+						PRINTFORMDL As a matter of course, she takes note of the fact that her panties are gone.
+						PRINTFORMDL However for Tenshi, that's just common sense by now.
+						PRINTFORMDW She just goes back to behaving like normal as though nothing had happened.
+					ENDIF
+					TCVAR:34:350 = 1
+					CFLAG:34:1001 += 1
+					CFLAG:34:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「Phew, ...Fufu!」
+			PRINTFORMDW She imagines when the next time will come, with a thin smile...
+		ELSEIF CFLAG:34:1003 == 0
+			PRINTFORML 「―――Mnh%UNICODE(0x2665)%」
+			PRINTFORMDL When Tenshi feels that same pleasure suddenly attacking her, she now fully embraces it.
+			PRINTFORML 「Haah%UNICODE(0x2665)% Haah%UNICODE(0x2665)% It came...again...%UNICODE(0x2665)%」
+			PRINTFORMDL Rather, she looks forwards to this pleasure, and when she's ambushed by it, she feels no shame or humiliation.
+			PRINTFORMDL She has to desperately restrain herself from starting to masturbate on the spot...
+			PRINTFORMD Tenshi just returns to her routine, enjoying the feeling of her 
+			IF LOCAL:5 > 1
+				PRINTFORMD tingling body
+			ELSEIF EX:34:50 > 0
+				PRINTFORMD throbbing clitoris
+			ELSEIF EX:34:51 > 0
+				PRINTFORMD clenching vagina
+			ELSEIF EX:34:52 > 0
+				PRINTFORMD twitching anus
+			ELSEIF EX:34:53 > 0
+				PRINTFORMD tingling titties
+			ENDIF
+			;PRINTFORMD 
+			IF CFLAG:291 == 1
+				PRINTFORMD , without any interest in her missing panties
+				TCVAR:34:350 = 1
+				CFLAG:34:1001 += 1
+			ENDIF
+			PRINTFORMDW ...
+			CFLAG:34:1003 = 1
+		ELSE
+			PRINTFORML 「―――Mnh%UNICODE(0x2665)%」
+			PRINTFORMDL Tenshi's body trembles in ecstasy as she basks in the pleasure she had been waiting for, hoping for...
+			PRINTFORMD She returns to her routine with a flushed face
+			IF CFLAG:291 == 1
+				PRINTFORMD , without any interest in her missing panties
+				TCVAR:34:350 = 1
+				CFLAG:34:1001 += 1
+			ENDIF
+			PRINTFORMDW ...
+		ENDIF
+		CFLAG:34:1002 += LOCAL:4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;絶頂回数カウント
+		LOCAL:4 = 0
+		LOCAL:4 += EX:34:50
+		LOCAL:4 += EX:34:51
+		LOCAL:4 += EX:34:52
+		LOCAL:4 += EX:34:53
+		IF CFLAG:34:1002 == 0
+			PRINTFORML 「Nnmu――!?」
+			PRINTFORMDL Tenshi hurriedly closes her mouth to stop her voice from leaking out in in response to the intense pleasure suddenly running through her body.
+			PRINTFORMDL She fights to hold back from slumping down on the spot, and endures until the thrilling sensations subside...
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:34:350 == 0
+					IF CFLAG:34:1001 == 0
+						PRINTFORML 「Wha!? Oh no...」
+						PRINTFORMDL And then, Tenshi pales when she realizes that she's not wearing any panties anymore, but...
+						PRINTFORMDW She instantly composes herself so that others won't notice.
+					ELSEIF CFLAG:34:1001 < 10
+						PRINTFORML 「Oh no...」
+						PRINTFORMDL And then, Tenshi suddenly notices that her panties are gone again, despite the fact she'd definitely been wearing them all day...
+						PRINTFORMDW Tenshi's face pales, but she quickly calms her demeanor so that nobody will notice.
+					ELSEIF CFLAG:34:1001 < 20
+						PRINTFORML 「Ugh...」
+						PRINTFORMDL At the same time, she notices that the underwear she had been wearing has disappeared...
+						PRINTFORMDW She's confused about more than just the loss of her underwear, but she quickly calms down to hide her discomfort.
+					ELSEIF CFLAG:34:1001 == 100
+						PRINTFORML 「...」
+						PRINTFORMDL At the same time, Tenshi notices that her panties have suddenly disappeared.
+						PRINTFORMDL She instantly recognizes it as yet another occurrence of the same phenomenon that's been troubling her for a long time now.
+						PRINTFORMDW Overcome by a sense of resignation, she acts as though nothing has happened.
+					ENDIF
+					TCVAR:34:350 = 1
+					CFLAG:34:1001 += 1
+					CFLAG:34:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「What? What was that just now...」
+			PRINTFORMDW Tenshi doesn't seem to understand what had happened to her...
+		ELSEIF CFLAG:34:1002 < 250
+			PRINTFORML 「Mnoh―――%UNICODE(0x2665)%」
+			PRINTFORMDL Tenshi feels that shocking unexpected pleasure start to stab through her body again, and collapses on the spot...
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:34:350 == 0
+					IF CFLAG:34:1001 == 0
+						PRINTFORML 「Wha!? Oh no...」
+						PRINTFORMDL And then, Tenshi pales when she realizes that she's not wearing any panties anymore, but...
+						PRINTFORMDW She instantly composes herself so that others won't notice.
+					ELSEIF CFLAG:34:1001 < 10
+						PRINTFORML 「Again...」
+						PRINTFORMDL At the same time, she notices the phenomenon of her missing underwear happened again...
+						PRINTFORMDW Tenshi's face pales, but she quickly calms her demeanor so that nobody will notice.
+					ELSEIF CFLAG:34:1001 < 20
+						PRINTFORML 「Ugh...」
+						PRINTFORMDL And then, Tenshi suddenly realizes that the mysterious phenomenon of her vanishing panties has happened again...
+						PRINTFORMDW She feels a growing hatred for the criminal that's doing this to her, but she keeps her face calm so that others won't notice.
+					ELSEIF CFLAG:34:1001 == 100
+						PRINTFORML 「...」
+						PRINTFORMDL At the same time, she notices that her panties have gone missing again.
+						PRINTFORMDL Even though she's given up on trying to stop it, she wonders what could happen if the situation continues to escalate...
+						PRINTFORMDW Tenshi can't help but feel apprehensive...
+					ENDIF
+					TCVAR:34:350 = 1
+					CFLAG:34:1001 += 1
+					CFLAG:34:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「Ugh, Why... Like this...」
+			PRINTFORMDW Tenshi is getting really worried about this situation, which keeps happening over and over...
+		ELSEIF CFLAG:34:1002 < 400
+			PRINTFORML 「―――Naaahh%UNICODE(0x2665)%」
+			PRINTFORMDL Tenshi shudders as a sudden wave of stimulus shoots through her body.
+			PRINTFORMDL Her mind tottering, she's on the brink of accepting the rush of pleasure...
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:34:350 == 0
+					IF CFLAG:34:1001 == 0
+						PRINTFORMDL She notices that her panties have gone missing...
+						PRINTFORMDL But to Tenshi, it seems like a trivial matter.
+						PRINTFORMDW She doesn't get upset, and just goes back to behaving like normal.
+					ELSEIF CFLAG:34:1001 < 10
+						PRINTFORMDL Just like before, she realizes that her panties have vanished again...
+						PRINTFORMDL But to Tenshi, it seems like a trivial matter.
+						PRINTFORMDW She doesn't get upset, and just goes back to behaving like normal.
+					ELSEIF CFLAG:34:1001 < 20
+						PRINTFORMDL As usual, she notices that her panties are missing.
+						PRINTFORMDL But for Tenshi, that's becoming a part of her daily life.
+						PRINTFORMDW She doesn't feel anything unusual, and just goes back to behaving like normal.
+					ELSEIF CFLAG:34:1001 == 100
+						PRINTFORMDL Of course, she takes note of the fact that her panties are gone.
+						PRINTFORMDL But for Tenshi, that's just common sense by now.
+						PRINTFORMDW She just goes back to behaving like normal as though nothing had happened.
+					ENDIF
+					TCVAR:34:350 = 1
+					CFLAG:34:1001 += 1
+					CFLAG:34:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「This%UNICODE(0x2665)%――It feels good%UNICODE(0x2665)%」
+			PRINTFORMDW Nearly overcome by the pleasure, Tenshi murmurs in ecstasy...
+		ELSEIF CFLAG:34:1003 == 0
+			PRINTFORML 「―――Ah%UNICODE(0x2665)% It%UNICODE(0x2665)% Caame～%UNICODE(0x2665)%」
+			PRINTFORMDL When Tenshi feels that same pleasure suddenly attacking her, she now fully embraces it.
+			PRINTFORML 「Haah%UNICODE(0x2665)% Haah%UNICODE(0x2665)% It came...again...%UNICODE(0x2665)%」
+			PRINTFORMDL Rather, she looks forwards to this pleasure, and when she's ambushed by it, she feels no shame or humiliation.
+			PRINTFORMDL She has to desperately restrain herself from starting to masturbate on the spot...
+			PRINTFORMD After catching her breath, she returns to her daily routine, 
+			IF CFLAG:291 == 1
+				PRINTFORMD paying no heed to her missing panties, 
+				TCVAR:34:350 = 1
+				CFLAG:34:1001 += 1
+			ENDIF
+			PRINTFORMDW and eagerly awaits the next rush of pleasure...
+			CFLAG:34:1003 = 1
+		ELSE
+			PRINTFORML 「―――Ah%UNICODE(0x2665)% Eek%UNICODE(0x2665)% Fuaa%UNICODE(0x2665)%」
+			PRINTFORMDL Tenshi's body trembles and her hips twerk in ecstasy from the pleasure she had been hoping for...
+			PRINTFORMD After catching her breath, she returns to her daily routine, 
+			IF CFLAG:291 == 1
+				PRINTFORMD paying no heed to her missing panties, 
+				TCVAR:34:350 = 1
+				CFLAG:34:1001 += 1
+			ENDIF
+			PRINTFORMDW and eagerly awaits the next rush of pleasure...
+		ENDIF
+		CFLAG:34:1002 += LOCAL:4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;パンツ紛失
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		;一日一回
+		SIF TCVAR:34:350 == 1
+			RETURN 1
+		LOCAL:3 = 0
+			FOR LOCAL,1,CHARANUM
+			SIF CFLAG:LOCAL:同室
+				LOCAL:3 ++
+		NEXT
+		IF CFLAG:34:1001 == 0
+			PRINTFORMDL Feeling uncomfortably breezy, Tenshi searches her waist with her hands and finds that the underwear she was supposed to be wearing are gone.
+			PRINTFORML 「Wh...what...?」
+			PRINTFORMD Her face pale, she instantly turns a sharp gaze on her surroundings to search for the miscreant responsible...
+			IF LOCAL:3 == 1
+				PRINTFORMDL 
+				PRINTFORMDL Noticing your presence, Tenshi turns her glare on you.
+				PRINTFORMDL You greet her amiably and give her your best innocent expression, while she gives you a probing gaze...
+				PRINTFORML 「...I'm sorry, it was nothing.」
+				PRINTFORMDW But there's no evidence to identify you as the culprit, so she ends the conversation with her suspicions about you unanswered...
+				CALL CHANGE_CFLAG(2, 34, -200)
+				CALL CHANGE_CFLAG(4, 34, -50)
+			ELSE
+				PRINTFORMDL 
+				PRINTFORMDL However, there are too many people around, so it's impossible to identify the culprit.
+				PRINTFORMDL You greet her amiably and give her your best innocent expression, and she turns her suspicious eyes to you...
+				PRINTFORML 「...I'm sorry, it's nothing.」
+				PRINTFORMDL But, she concludes that it's impossible for you to be the criminal, seemingly deceived.
+				PRINTFORMDL Tenshi suppresses the vulnerable feeling in her lower body and tries to act as though nothing's wrong.
+				PRINTFORMDW You smile inwardly at her obvious discomfort...
+				CALL CHANGE_CFLAG(2, 34, -50)
+				CALL CHANGE_CFLAG(4, 34, -20)
+			ENDIF
+			CFLAG:34:1001 += 1
+		ELSEIF CFLAG:34:1001 < 10
+			PRINTFORMDL Feeling uncomfortably breezy, Tenshi searches her waist with her hands and finds that the underwear she was supposed to be wearing are gone.
+			PRINTFORML 「A-Again?」
+			IF LOCAL:3 == 1
+				PRINTFORMDL Tenshi glares daggers at you when she sees that there's no sign of anyone else around...
+				PRINTFORML 「...」
+				PRINTFORMDL You can't stand the stare and eventually try to start a conversation with her.
+				PRINTFORML 「...I'm sorry, it was nothing.」
+				PRINTFORMDW Although she may not be sure, it seems that Tenshi's suspicions about you have grown...
+				CFLAG:34:1001 += 2
+				CALL CHANGE_CFLAG(2, 34, -200)
+				CALL CHANGE_CFLAG(4, 34, -50)
+			ELSE
+				PRINTFORMDL Doing your best impression of a clueless idiot, you once again approach the alarmed Tenshi with an oblivious expression on your face...
+				PRINTFORML 「...I'm sorry, it's nothing.」
+				PRINTFORMDW Perhaps because the same thing has already happened before, Tenshi's suspicions about you seem to have grown a little...
+				CFLAG:34:1001 += 1
+				CALL CHANGE_CFLAG(2, 34, -50)
+				CALL CHANGE_CFLAG(4, 34, -20)
+			ENDIF
+		ELSEIF CFLAG:34:1001 < 20
+			PRINTFORMDL Tenshi notices that the underwear she was wearing seem to be gone, but she no longer feels the need to double-check.
+			IF LOCAL:3 == 1
+				PRINTFORMDL She stares inquiringly at you...
+				PRINTFORMDL You can't stand the stare and eventually try to start a conversation with her.
+				PRINTFORML 「Can I help you?」
+				PRINTFORMDL When she counters with a question, it seems to all but say that she thinks you're acting suspiciously...
+				PRINTFORMDW This time, you deceitfully end the conversation as quickly as possible...
+				CFLAG:34:1001 += 2
+				CALL CHANGE_CFLAG(2, 34, -300)
+				CALL CHANGE_CFLAG(4, 34, -70)
+			ELSE
+				PRINTFORMDL She scrutinizes everyone around...
+				PRINTFORMDL Eventually, her eyes settle on you with an inquiring gaze.
+				PRINTFORMDL You can't stand the stare and eventually try to start a conversation with her.
+				PRINTFORML 「Can I help you?」
+				PRINTFORMDL When she counters with a question, it seems to all but say that she thinks you're acting deceptive...
+				PRINTFORMDW This time, you deceitfully end the conversation as quickly as possible...
+				CFLAG:34:1001 += 1
+				CALL CHANGE_CFLAG(2, 34, -150)
+				CALL CHANGE_CFLAG(4, 34, -40)
+			ENDIF
+		ELSEIF CFLAG:34:1001 == 100
+			PRINTFORMDL Even though her underwear has vanished, Tenshi shows no signs of getting upset.
+			PRINTFORMDW Instead, she acts as if nothing had happened.
+				CALL CHANGE_CFLAG(2, 34, -500)
+				CALL CHANGE_CFLAG(4, 34, -200)
+		ELSE
+			PRINTFORMDL The sudden disappearance of her underwear was no longer an unusual occurrence for Tenshi.
+			PRINTFORMDL She's already given up on identifying the culprit, and has no choice but to solemnly accept the situation.
+			IF TARGET == 34
+				PRINTFORMDL However, she has no intention of showing her weakness to the most suspicious person in front of her.
+				PRINTFORMDL She represses all her agitation and keeps on conversing with you as usual.
+				PRINTFORMDW Seeing Tenshi in such a helpless state makes your lust burn even hotter...
+			ELSE
+				PRINTFORMDL So, noticing the gaze of the most suspicious person in the room, Tenshi suppresses the urge to confront you and pretends everything's fine.
+				PRINTFORMDL For your part, you pretend not to notice her agitated glances.
+				PRINTFORMDW Seeing Tenshi in such a helpless state makes your lust burn even hotter...
+			ENDIF
+				CALL CHANGE_CFLAG(2, 34, -500)
+				CALL CHANGE_CFLAG(4, 34, -200)
+			CFLAG:34:1001 = 100
+		ENDIF
+		TCVAR:34:350 = 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚口内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;精液中毒低精飲
+		IF ARG:1 == 1
+		;精液中毒低吐き出し
+		ELSEIF ARG:1 == 2
+		;精液中毒低手で覆う
+		ELSEIF ARG:1 == 3
+		;精液中毒高精飲
+		ELSEIF ARG:1 == 4
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚顔面射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;精液経験ありぬぐい取り
+		IF ARG:1 == 1
+		;精液経験なしぬぐい取り
+		ELSEIF ARG:1 == 2
+		;顔射精液舐めとり
+		ELSEIF ARG:1 == 3
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚手淫射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;ぬぐい取り
+		IF ARG:1 == 1
+		;舐めとり
+		ELSEIF ARG:1 == 2
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚アナル射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;Ａ感覚0
+		IF ARG:1 == 1
+		;ソレ以外
+		ELSEIF ARG:1 == 2
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚処女喪失】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		;膣内射精済みの場合スキップ
+		SIF CFLAG:34:286 == 2
+			RETURN 1
+		;時姦堕ち済み
+		IF CFLAG:34:1003 == 1
+			PRINTFORML 「―――Ngh...!」
+			PRINTFORMDL That sudden ambush came again, but this time it was different. Unlike the usual pleasure, Tenshi was confused by the sharp pain in her nethers.
+			PRINTFORMDL However, to Tenshi's body and spirit, which have been unknowingly trained, the pain is not a big deal.
+			PRINTFORMDW She doesn't spare any thought to what pain was, and goes back to her routine, hoping that pleasure would soon follow...
+		ELSE
+			PRINTFORML 「―――Eek! Ngh...!!」
+			PRINTFORMDL Tenshi groans inaudibly as an intense pain suddenly stabs through her gut.
+			PRINTFORML 「What...? Was that...?」
+			PRINTFORMDL She realizes that the pain is originating from her groin....
+			PRINTFORMDW But she has no idea what's causing the pain, and is just confused by it...
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚膣内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		;非処女膣内射精ピルなし
+		IF ARG:1 == 1
+			;時姦堕ち済み
+			;地の文と噛み合わせが悪いのはご愛嬌
+			IF CFLAG:34:1003 == 1
+				IF CFLAG:34:1004 == 0
+					PRINTFORML 「Is this warm feeling... semen?」
+					PRINTFORMDL Having already embraced these ambushes that make her feel so good, Tenshi's not shocked when semen suddenly materializes in her vagina.
+					PRINTFORMDL For her, it was only a signal that she was about to receive even more pleasure.
+					PRINTFORMDL She can't help but laugh at the prospect of more exciting sensations than ever before...
+					PRINTFORMW 「Hah%UNICODE(0x2665)%, Huhu%UNICODE(0x2665)%, Huhuhuhuhu...%UNICODE(0x2665)%」
+				ELSEIF CFLAG:34:1004 < 10
+					PRINTFORMDL Tenshi doesn't seem to care about the semen \@ CFLAG:34:291 == 1 ? flowing down her thighs # staining her underwear \@...
+				ELSEIF CFLAG:34:1004 < 35
+					PRINTFORMD Tenshi 
+					IF 充填率(34,1) >= 100
+						PRINTFORMD cradles her painfully swollen belly, stuffed to the absolute limit with cum,
+					ELSEIF 充填率(34,1) >= 60
+						PRINTFORMD isn't bothered by the sperm \@ CFLAG:34:291 == 1 ? overflowing from her cleft and painting her thighs white # spilling into her undies, turning them into a smelly cumrag \@, 
+					ELSE
+						PRINTFORMD doesn't seem to care about the semen \@ CFLAG:34:291 == 1 ? flowing down her thighs # staining her underwear \@, 
+					ENDIF
+					PRINTFORMDW  and coos softly to herself with a lustful smile.
+				ENDIF
+			ELSE
+				IF CFLAG:34:1004 == 0
+					PRINTFORML 「This feeling... It can't be...」
+					PRINTFORMDL Tenshi turns pale when she notices a warm sensation in her vagina that absolutely should not be there...
+					PRINTFORMDW She has no way to confirm it here, so she just walks around speechlessly...
+				ELSEIF CFLAG:34:1004 < 10
+					PRINTFORML 「Urk... Again... This warm feeling...」
+					PRINTFORMDL Tenshi suddenly notices that semen-like sensation in her pussy again, but there's still nothing she can do about it...
+					PRINTFORMDW She just does her best to act like nothing is wrong, and hopes nobody notices...
+				ELSEIF CFLAG:34:1004 < 25
+					PRINTFORML 「No, I can't take it...」
+					PRINTFORMDL Tenshi suddenly notices that semen-like sensation in her pussy again, and she fights back the urge to cry out...
+					PRINTFORMDW She just does her best to act like nothing is wrong, and hopes nobody notices...
+				ELSEIF CFLAG:34:1004 < 35
+					PRINTFORML 「...Ick, Ugh...」
+					PRINTFORMDL Once again feeling that unexpected warmth of cum in her cunny, Tenshi decides to ignore it, painfully aware that she's just giving up.
+					PRINTFORMDW She tries to conceal her distress from everyone around...but to you, who knows the score, Tenshi looks hilariously humiliated.
+				ENDIF
+			ENDIF
+		;非処女膣内射精ピルあり
+		ELSEIF ARG:1 == 2
+		;処女膣内射精
+		ELSEIF ARG:1 == 3
+			;時姦堕ち済み
+			;地の文と噛み合わせが悪いのはご愛嬌
+			IF CFLAG:34:1003
+				;無自覚処女喪失時
+				IF EX:34:7 == 1
+					PRINTFORML 「―――Ngh...!」
+					PRINTFORMDL That sudden ambush came again, but this time it was different. Unlike the usual pleasure, Tenshi was confused by the sharp pain in her nethers.
+					PRINTFORML 「...What is it? This...」
+					PRINTFORMDL Furthermore, she notices a strange warm, sticky sensation  \@ CFLAG:34:291 == 1 ? on her thighs # in her underwear \@...
+					PRINTFORMDL However, to Tenshi's body and subconscious, which have been unknowingly trained, the pain and even this strange new feeling are not a big deal.
+					PRINTFORMDL Tenshi's conscious mind doesn't know the true nature of the pain or the strange feeling, but to her intuition and instinct?
+					PRINTFORMDL To them, these new "sensations" are a signal that new, more intense pleasures are on the way... 
+					PRINTFORMDL Tenshi bursts into hysterical laughter in anticipation of more exciting sensations than ever before...
+					PRINTFORMW 「Hah%UNICODE(0x2665)%, Huhu%UNICODE(0x2665)%, Huhuhuhuhu...%UNICODE(0x2665)%」
+				ELSE
+					IF CFLAG:34:1004 == 0
+						PRINTFORML 「...What is it? This...」
+						PRINTFORMDL Tenshi is puzzled by the unusual new sensation that suddenly comes from her nethers.
+						PRINTFORMDL For some reason, she doesn't feel disgusted by the warm, slimy feeling flooding her slit.
+						PRINTFORMDL Rather, Tenshi's body and subconscious, which have been unknowingly trained, realize that this "feeling" is something that gives pleasure...
+						PRINTFORMDL Tenshi bursts into hysterical laughter in anticipation of more exciting sensations than ever before...
+						PRINTFORMW 「Hah%UNICODE(0x2665)%, Huhu%UNICODE(0x2665)%, Huhuhuhuhu...%UNICODE(0x2665)%」
+					ELSEIF CFLAG:34:1004 < 10
+						PRINTFORML 「――Hmnh%UNICODE(0x2665)%」
+						PRINTFORMDL Tenshi lets out a moan as a warm, slimy feeling suddenly fills her pussy...
+						PRINTFORMDW However, her voice is not filled with disgust, but instead with sweet anticipation...
+					ELSEIF CFLAG:34:1004 < 35
+						PRINTFORML 「――Aaah%UNICODE(0x2665)%」
+						PRINTFORMDL Tenshi lets out a moan as a warm, slimy feeling suddenly fills her pussy...
+						PRINTFORMDW However, her voice is not filled with disgust, but instead with lusty excitement...
+						IF 充填率(34,1) >= 100
+							PRINTFORMD She trembles ecstatically, basking in the feel of the sperm 
+						ELSEIF 充填率(34,1) >= 60
+							PRINTFORMD \@ CFLAG:34:291 == 1 ? overflowing from her cleft and painting her thighs white # spilling into her undies, turning them into a smelly cumrag \@
+						ELSE
+							PRINTFORMD \@ CFLAG:34:291 == 1 ? flowing down her thighs # staining her underwear \@
+						ENDIF
+						PRINTFORMDW ...
+					ENDIF
+				ENDIF
+			ELSE
+				;無自覚処女喪失時
+				IF EX:34:7 == 1
+					PRINTFORML 「―――Hiik! Ngh...!!」
+					PRINTFORMDL Tenshi groans under her breath as an intense pain suddenly stabs through her gut.
+					PRINTFORML 「Wh-What was that...? This is...!?」
+					PRINTFORMDL Furthermore, she notices a strange sticky feeling \@ CFLAG:34:291 == 1 ? between her thighs # in her underwear \@, and her mind starts to panic...
+					PRINTFORMDL But there's no way she can take off her clothes to check out in public like this, so she's at a loss for what to do.
+					PRINTFORMDL Leering internally, you call out to her with an unconcerned expression on your face...
+					PRINTFORML 「――!! It's n-nothing, I'm p-perfectly fine thanks!」
+					PRINTFORMDW Tenshi pulls herself together and desperately tries to cover up the pain and humiliation by acting normal...
+				ELSE
+					IF CFLAG:34:1004 == 0
+						PRINTFORML 「――Eh? ...What is this feeling?」
+						PRINTFORMDL Tenshi shouts in consternation as a strange sticky feeling suddenly appears around her groin.
+						PRINTFORMDL But there's no way she can take off her clothes to check out in public like this, so she's at a loss for what to do.
+						PRINTFORMDL Leering internally, you call out to her with an unconcerned expression on your face...
+						PRINTFORML 「――Ah... It's n-nothing, thanks for asking...」
+						PRINTFORMDW Tenshi pulls herself together and tries to cover up her disgust and humiliation by acting normal...
+					ELSEIF CFLAG:34:1004 < 10
+						PRINTFORML 「Ugh... Again... This feeling...」
+						PRINTFORMDL Tenshi moans as the strange sticky feeling appears around her crotch again...
+						PRINTFORML 「Just what is...this...」
+						PRINTFORMDW Tenshi pretends everything's fine while inwardly cursing this "sensation", which makes her restless in away she's never felt before...
+					ELSEIF CFLAG:34:1004 < 25
+						PRINTFORML 「Not this again, I can't take it anymore...」
+						PRINTFORMDL That strange hot, sticky feeling appears in her groin once more, making Tenshi want to cry out...
+						PRINTFORMDW But, her pride as a celestial being forbids her to give in to some unknown entity, and she barely manages to hold on...
+					ELSEIF CFLAG:34:1004 < 35
+						PRINTFORML 「...Ick, Uuu...」
+						PRINTFORMDL Once again feeling that unexpected sticky feeling around her crotch, Tenshi decides to ignore it, painfully aware that she's just giving up.
+						PRINTFORMDW She tries to conceal her distress from everyone around, but to you, who knows the score, Tenshi looks hilariously humiliated.
+					ENDIF
+				ENDIF
+			ENDIF
+		ENDIF
+		;一日3カウントまで
+		IF TCVAR:34:351 == 3
+			RETURN 1
+		ELSE
+			CFLAG:34:1004 += 1
+			TCVAR:34:351 += 1
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;ナマでやらせろ時
+;==================================================
+@M_KOJO_EVENT_K34_18(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;避妊要求台詞
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断ったのに粘られて切れた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日以外許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;神社暮らしを承認して貰う
+;==================================================
+@M_KOJO_EVENT_K34_19(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;認められる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;認められない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;帰宅時
+;==================================================
+@M_KOJO_EVENT_K34_20(ARG,ARG:1)
+;口上主はLOCALS or RESULT
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;デート中帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;陥落素質取得時
+;==================================================
+@M_KOJO_EVENT_K34_21(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORMW (I swear, no matter when, no matter where, I can't forget about %HIM_HER(MASTER,,1)%...)
+		PRINTFORMW (It doesn't matter if I'm banished from the heavens...)
+		PRINTFORMW (Forever... I want to be with %HIM_HER(MASTER,,1)% always...)
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMW （What's going on? My heart just will not slow down...）
+		PRINTFORMW （I should be treating that person just like any other mortal, but I'm so conscious of %HIM_HER(MASTER,,1)%...）
+		PRINTFORMW （Could it be the case, that this is what it feels like to fall in love with someone...?）
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛欲取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛人取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;セフレ取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;調教終了時に自慰
+;==================================================
+@M_KOJO_EVENT_K34_22(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;浴場連れだし
+;==================================================
+@M_KOJO_EVENT_K34_23(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;断られた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;一緒に入ってくれた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;懐妊
+;==================================================
+@M_KOJO_EVENT_K34_24(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;出産
+;==================================================
+@M_KOJO_EVENT_K34_25(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1

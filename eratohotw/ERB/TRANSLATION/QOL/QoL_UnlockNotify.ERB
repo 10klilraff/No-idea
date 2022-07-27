@@ -1,0 +1,376 @@
+﻿@EVENTTURNEND
+#LATER
+FOR LOCAL,0,CHARANUM
+	CALL UNLOCK_COND_NOTIFY(LOCAL)
+NEXT
+
+@UNLOCK_COND_NOTIFY(ARG)
+SETCOLOR C_YELLOW
+SELECTCASE ARG 
+	CASE [[小鈴]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) ;suzu, connected to other qol with suzunaan
+			PRINTFORML You can now borrow two books at once from Kosuzu!
+			PRINTFORML You can now borrow a strange, rare book from Kosuzu!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+		IF ABL:ARG:親密 >= 10 && !GETBIT(nUnlockCond:ARG:0, 1)
+			PRINTFORML You can now borrow three books at once from Kosuzu!
+			SETBIT nUnlockCond:ARG:0, 1
+		ENDIF
+	CASE [[霊夢]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Reimu, you can now log in the Hakurei Shrine Grove!
+			PRINTFORML After befriending Reimu, you can now open the stall at Hakurei Shrine grounds!
+			PRINTFORML After befriending Reimu, you can now set traps at Hakurei Shrine grounds!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+		
+	CASE [[妹紅]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 0)
+			PRINTFORML After befriending Mokou, you can now log in the Bamboo Forest!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 0
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 1) && !GETBIT(nUnlockCond_general, 6)
+			PRINTFORML After befriending Mokou, you can now set traps in the Bamboo Forest!
+			SETBIT nUnlockCond:ARG:0, 1
+			SETBIT nUnlockCond_general, 6
+		ENDIF
+		
+	CASE [[鈴仙]]
+		IF TALENT:ARG:恋慕 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 5)
+			PRINTFORML After seducing Reisen, you can now access the inner sanctum at Eientei!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 5
+		ENDIF
+	CASE [[てゐ]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 0)
+			PRINTFORML After befriending Tewi, you can now log in the Bamboo Forest!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 0
+		ENDIF
+		IF TALENT:ARG:恋慕 && !GETBIT(nUnlockCond:ARG:0, 1) && !GETBIT(nUnlockCond_general, 5)
+			PRINTFORML After seducing Tewi, you can now access the inner sanctum at Eientei!
+			SETBIT nUnlockCond:ARG:0, 1
+			SETBIT nUnlockCond_general, 5
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 2) && !GETBIT(nUnlockCond_general, 6)
+			PRINTFORML After befriending Tewi, you can now set traps in the Bamboo Forest!
+			SETBIT nUnlockCond:ARG:0, 2
+			SETBIT nUnlockCond_general, 6
+		ENDIF
+	CASE [[輝夜]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 0)
+			PRINTFORML After befriending Kaguya, you can now log in the Bamboo Forest!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 0
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 1) && !GETBIT(nUnlockCond_general, 2)
+			PRINTFORML After befriending Kaguya, you can now open the stall at Eientei!
+			SETBIT nUnlockCond:ARG:0, 1
+			SETBIT nUnlockCond_general, 2
+		ENDIF
+		IF TALENT:ARG:恋慕 && !GETBIT(nUnlockCond:ARG:0, 2) && !GETBIT(nUnlockCond_general, 5)
+			PRINTFORML After seducing Kaguya, you can now access the inner sanctum at Eientei!
+			SETBIT nUnlockCond:ARG:0, 2
+			SETBIT nUnlockCond_general, 5
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 3) && !GETBIT(nUnlockCond_general, 6)
+			PRINTFORML After befriending Kaguya, you can now set traps in the Bamboo Forest!
+			SETBIT nUnlockCond:ARG:0, 3
+			SETBIT nUnlockCond_general, 6
+		ENDIF
+	CASE [[永琳]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 0)
+			PRINTFORML After befriending Eirin, you can now log in the Bamboo Forest!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 0
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 1) && !GETBIT(nUnlockCond_general, 2)
+			PRINTFORML After befriending Eirin, you can now open the stall at Eientei!
+			SETBIT nUnlockCond:ARG:0, 1
+			SETBIT nUnlockCond_general, 2
+		ENDIF
+		IF TALENT:ARG:恋慕 && !GETBIT(nUnlockCond:ARG:0, 2) && !GETBIT(nUnlockCond_general, 5)
+			PRINTFORML After seducing Eirin, you can now access the inner sanctum at Eientei!
+			SETBIT nUnlockCond:ARG:0, 2
+			SETBIT nUnlockCond_general, 5
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 3)
+			PRINTFORML After befriending Eirin, %HE_SHE(ARG)% shared a secret mixing recipe with you!
+			PRINTFORML [Lunar Incense] and [Peerless Patriot's Elixir] have been unlocked!
+			SETBIT nUnlockCond:ARG:0, 3
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 4) && !GETBIT(nUnlockCond_general, 6)
+			PRINTFORML After befriending Eirin, you can now set traps in the Bamboo Forest!
+			SETBIT nUnlockCond:ARG:0, 4
+			SETBIT nUnlockCond_general, 6
+		ENDIF
+	CASE [[文]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 1)
+			PRINTFORML After befriending Aya, you can now log in the Youkai Mountain Summit!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 1
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 1) && !GETBIT(nUnlockCond_general, 3)
+			PRINTFORML After befriending Aya, you can now open the stall at the Youkai Mountain Summit!
+			SETBIT nUnlockCond:ARG:0, 1
+			SETBIT nUnlockCond_general, 3
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 2) && !GETBIT(nUnlockCond_general, 7)
+			PRINTFORML After befriending Aya, you can now set traps at the Youkai Mountain Summit!
+			SETBIT nUnlockCond:ARG:0, 2
+			SETBIT nUnlockCond_general, 7
+		ENDIF
+	CASE [[はたて]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 1)
+			PRINTFORML After befriending Hatate, you can now log in the Youkai Mountain Summit!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 1
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 1) && !GETBIT(nUnlockCond_general, 3)
+			PRINTFORML After befriending Hatate, you can now open the stall at the Youkai Mountain Summit!
+			SETBIT nUnlockCond:ARG:0, 1
+			SETBIT nUnlockCond_general, 3
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 2) && !GETBIT(nUnlockCond_general, 7)
+			PRINTFORML After befriending Hatate, you can now set traps at the Youkai Mountain Summit!
+			SETBIT nUnlockCond:ARG:0, 2
+			SETBIT nUnlockCond_general, 7
+		ENDIF
+	CASE [[幽香]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Yuuka, you can now forage in the Garden of the Sun!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+		
+	CASE [[天子]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Tenshi, you can now forage in Heaven!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 1)
+			PRINTFORML After befriending Tenshi, you can now open the stall in Heaven!
+			SETBIT nUnlockCond:ARG:0, 1
+		ENDIF
+		
+	CASE [[白蓮]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Byakuren, you can now open the stall at the Myouren Temple grounds!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+		
+	CASE [[にとり]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Nitori, you can now open the stall at the Genbu Ravine!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+		
+	CASE [[早苗]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 4)
+			PRINTFORML After befriending Sanae, you can now open the stall at the Moriya Shrine grounds!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 4
+		ENDIF
+	CASE [[神奈子]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 4)
+			PRINTFORML After befriending Kanako, you can now open the stall at the Moriya Shrine grounds!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 4
+		ENDIF
+	CASE [[諏訪子]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0) && !GETBIT(nUnlockCond_general, 4)
+			PRINTFORML After befriending Suwako, you can now open the stall at the Moriya Shrine grounds!
+			SETBIT nUnlockCond:ARG:0, 0
+			SETBIT nUnlockCond_general, 4
+		ENDIF
+	CASE [[正邪]]
+		IF TALENT:ARG:恋慕 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After seducing Seija, you can now access her hideout at the Youkai Mountain Foot!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+		
+	;recipes
+	CASE [[阿求]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Akyuu, %HE_SHE(ARG)% shared a secret mixing recipe with you!
+			PRINTFORML [Overnight Kushinada] has been unlocked!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+	CASE [[メディスン]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Medicine, %HE_SHE(ARG)% shared a secret mixing recipe with you!
+			PRINTFORML [Gassing Garden] and [Poison Body] have been unlocked!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+	CASE [[魔理沙]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Marisa, %HE_SHE(ARG)% shared a secret mixing recipe with you!
+			PRINTFORML [Powerful Drug] has been unlocked!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+	CASE [[チルノ]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Cirno, %HE_SHE(ARG)% shared a secret mixing recipe with you!
+			PRINTFORML [Icicle Bomb] has been unlocked!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+	CASE [[布都]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Futo, %HE_SHE(ARG)% shared a secret mixing recipe with you!
+			PRINTFORML [Taiyi's Live Coals] has been unlocked!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+	CASE [[紫]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Yukari, %HE_SHE(ARG)% shared a secret mixing recipe with you!
+			PRINTFORML [Bewitching Bait] has been unlocked!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+	CASE [[パチュリー]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Patchouli, %HE_SHE(ARG)% shared a secret mixing recipe with you!
+			PRINTFORML [Philosopher's Stone] has been unlocked!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+	CASE [[成美]]
+		IF ABL:ARG:親密 >= 5 && !GETBIT(nUnlockCond:ARG:0, 0)
+			PRINTFORML After befriending Narumi, %HE_SHE(ARG)% shared a secret mixing recipe with you!
+			PRINTFORML [Bullet Golem] has been unlocked!
+			SETBIT nUnlockCond:ARG:0, 0
+		ENDIF
+ENDSELECT
+RESETCOLOR
+
+;check if the conditions still apply after reload
+@EVENTLOAD
+#LATER
+
+FOR LOCAL, 1, CHARANUM-1
+	SELECTCASE LOCAL
+		CASE [[小鈴]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+			SIF ABL:LOCAL:親密 < 10 && GETBIT(nUnlockCond:LOCAL:0, 1)
+				CLEARBIT nUnlockCond:LOCAL:0, 1
+		CASE [[霊夢]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[妹紅]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 1)
+				CLEARBIT nUnlockCond:LOCAL:0, 1
+		CASE [[鈴仙]]
+			SIF !TALENT:LOCAL:恋慕 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[てゐ]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+			SIF !TALENT:LOCAL:恋慕 && GETBIT(nUnlockCond:LOCAL:0, 1)
+				CLEARBIT nUnlockCond:LOCAL:0, 1
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 2)
+				CLEARBIT nUnlockCond:LOCAL:0, 2
+		CASE [[輝夜]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 1)
+				CLEARBIT nUnlockCond:LOCAL:0, 1
+			SIF !TALENT:LOCAL:恋慕 && GETBIT(nUnlockCond:LOCAL:0, 2)
+				CLEARBIT nUnlockCond:LOCAL:0, 2
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 3)
+				CLEARBIT nUnlockCond:LOCAL:0, 3
+		CASE [[永琳]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 1)
+				CLEARBIT nUnlockCond:LOCAL:0, 1
+			SIF !TALENT:LOCAL:恋慕 && GETBIT(nUnlockCond:LOCAL:0, 2)
+				CLEARBIT nUnlockCond:LOCAL:0, 2
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 3)
+				CLEARBIT nUnlockCond:LOCAL:0, 3
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 4)
+				CLEARBIT nUnlockCond:LOCAL:0, 4
+		CASE [[文]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 1)
+				CLEARBIT nUnlockCond:LOCAL:0, 1
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 2)
+				CLEARBIT nUnlockCond:LOCAL:0, 2
+		CASE [[はたて]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 1)
+				CLEARBIT nUnlockCond:LOCAL:0, 1
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 2)
+				CLEARBIT nUnlockCond:LOCAL:0, 2
+		CASE [[幽香]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[天子]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 1)
+				CLEARBIT nUnlockCond:LOCAL:0, 1
+		CASE [[白蓮]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[にとり]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[早苗]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[神奈子]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[諏訪子]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[正邪]]
+			SIF !TALENT:LOCAL:恋慕 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		
+		CASE [[阿求]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[メディスン]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[魔理沙]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[チルノ]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[布都]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[紫]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[パチュリー]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+		CASE [[成美]]
+			SIF ABL:LOCAL:親密 < 5 && GETBIT(nUnlockCond:LOCAL:0, 0)
+				CLEARBIT nUnlockCond:LOCAL:0, 0
+	ENDSELECT
+NEXT
+SIF ABL:[[妹紅]]:親密 < 5 && ABL:[[てゐ]]:親密 < 5 && ABL:[[輝夜]]:親密 < 5 && ABL:[[永琳]]:親密 < 5 && GETBIT(nUnlockCond_general, 0)
+	CLEARBIT nUnlockCond_general, 0
+SIF ABL:[[文]]:親密 < 5 && ABL:[[はたて]]:親密 < 5 && GETBIT(nUnlockCond_general, 1)
+	CLEARBIT nUnlockCond_general, 1
+SIF ABL:[[輝夜]]:親密 < 5 && ABL:[[永琳]]:親密 < 5 && GETBIT(nUnlockCond_general, 2)
+	CLEARBIT nUnlockCond_general, 2
+SIF ABL:[[文]]:親密 < 5 && ABL:[[はたて]]:親密 < 5 && GETBIT(nUnlockCond_general, 3)
+	CLEARBIT nUnlockCond_general, 3
+SIF ABL:[[早苗]]:親密 < 5 && ABL:[[神奈子]]:親密 < 5 && ABL:[[諏訪子]]:親密 < 5 && GETBIT(nUnlockCond_general, 4)
+	CLEARBIT nUnlockCond_general, 4
+SIF !TALENT:[[てゐ]]:恋慕 && !TALENT:[[輝夜]]:恋慕 && !TALENT:[[永琳]]:恋慕 && GETBIT(nUnlockCond_general, 5)
+	CLEARBIT nUnlockCond_general, 5
+SIF ABL:[[妹紅]]:親密 < 5 && ABL:[[てゐ]]:親密 < 5 && ABL:[[輝夜]]:親密 < 5 && ABL:[[永琳]]:親密 < 5 && GETBIT(nUnlockCond_general, 6)
+	CLEARBIT nUnlockCond_general, 6
+SIF ABL:[[文]]:親密 < 5 && ABL:[[はたて]]:親密 < 5 && GETBIT(nUnlockCond_general, 7)
+	CLEARBIT nUnlockCond_general, 7

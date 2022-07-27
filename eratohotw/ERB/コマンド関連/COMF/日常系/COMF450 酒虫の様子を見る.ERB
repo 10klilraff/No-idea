@@ -1,0 +1,90 @@
+﻿;-------------------------------------------------
+;酒虫の様子を見る
+;日常系コマンド、レベル1
+;-------------------------------------------------
+@COM450
+#DIM 醸造量
+;FLAG:酒虫 水の種類、50超えると酒のアイテム番号
+
+VARSET LOCAL
+
+;Custom code
+PRINTFORML %PARSE("You look")% into the jar with the Sake Bug.
+PRINTFORML The jar is filled with %STR_TR(7000 + FLAG:酒虫)%...
+DRAWLINE
+;com custom code
+[SKIPSTART]
+PRINTFORML [0] Do nothing
+IF TFLAG:水汲み && ITEM:(FLAG:酒虫) < 99
+	;Custom code
+	PRINTFORML [1] Replace it with %STR_TR(TFLAG:水汲み + 7000)%
+ELSE
+	IF ITEM:(FLAG:酒虫) == 99
+		PRINTFORM [1] Can't carry more %STR:(7000 + FLAG:酒虫)%
+	ELSE
+		PRINTPLAIN [1] Can't take it out without putting something back in
+	ENDIF
+	PRINTL 
+ENDIF
+SIF ITEM:どぶろく >= 5 && FLAG:酒虫 == 1 && DAY:10 < 3
+	PRINTFORML [2] Add Unrefined Sake (adds 5 portions)
+;それ以上手を加えても中身が変化しない場合は表示させないように
+SIF BASE:MASTER:8 >= 2400 && (FLAG:酒虫 < 51 || FLAG:酒虫 == 51)
+	PRINTFORML [3] Time Controlling Sake Brewing (Uses 2400 TSP)
+INPUT
+[SKIPEND]
+{
+	CALL ASK_M("Do nothing",1,
+	@"Replace it with \@ TFLAG:水汲み ? %STR_TR(TFLAG:水汲み + 7000)% # water\@\@ !TFLAG:水汲み ? %" "%(Fetch water first)#\@\@ ITEM:(FLAG:酒虫) >= 99 ? %" "%(99 item limit reached)#\@",TFLAG:水汲み && ITEM:(FLAG:酒虫) < 99,
+	@"Add Unrefined Sake (adds 5 portions)\@ ITEM:どぶろく < 5 ? %" "%(Not enough Unrefined Sake)#\@\@ FLAG:酒虫 != 1 ? %" "%(Must be filled with Plain Water)#\@\@ DAY:10 >= 3 ? %" "%(Sake is too ripe)#\@",ITEM:どぶろく >= 5 && FLAG:酒虫 == 1 && DAY:10 < 3,
+	@"Time Controlling Sake Brewing (Uses 2400 TSP)\@ BASE:MASTER:8 < 2400 ? %" "%(Not enough TSP)#\@\@ FLAG:酒虫 > 51 ? %" "%(Must be filled with water or Unrefined Sake)#\@", BASE:MASTER:8 >= 2400 && (FLAG:酒虫 < 51 || FLAG:酒虫 == 51))
+}
+;---------------------------
+IF RESULT == 1 && TFLAG:水汲み && ITEM:(FLAG:酒虫) < 99
+	;Custom code
+	PRINTFORML %PARSE("You bail")% out %STR_TR(7000 + FLAG:酒虫)% from the jar and %PARSE("replace")% it with %STR_TR(TFLAG:水汲み + 7000)%.
+	;酒ができてた場合
+	IF FLAG:酒虫 > 50
+		醸造量 = 醸造できた量(FLAG:酒虫)
+		PRINTFORML %PARSE("You receive")% {醸造量} %STR_TR(7000 + FLAG:酒虫)%.
+		ITEM:(FLAG:酒虫) += 醸造量
+		SIF ITEM:(FLAG:酒虫) > 99
+			ITEM:(FLAG:酒虫) = 99
+	ENDIF
+	DAY:10 = 0
+	FLAG:酒虫 = TFLAG:水汲み
+	TFLAG:水汲み = 0
+ELSEIF RESULT == 2 && ITEM:どぶろく >= 5 && FLAG:酒虫 == 1 && DAY:10 < 3
+	PRINTFORML %PARSE("You pour")% Unrefined Sake into the jar.
+	PRINTFORML This way it should brew a bit faster...
+	DAY:10 += 3
+	ITEM:どぶろく-= 5
+;それ以上手を加えても中身が変化しない場合は表示させないように
+ELSEIF RESULT == 3 && BASE:MASTER:8 >= 2400 && (FLAG:酒虫 < 51 || FLAG:酒虫 == 51)
+	PRINTFORML %PARSE("You apply")% %PARSE("your",1)% time-manipulating ability to hasten time inside the jar.
+	DAY:10 += 1
+	BASE:MASTER:8 -= 2400
+ELSE
+	RETURN -1
+ENDIF
+TIME += 5
+RETURN 1
+
+
+;酒虫の様子を見る
+@COM_ABLE450
+;停止中は不可
+SIF FLAG:70 == 1
+	RETURN 0
+;移動実行判定
+SIF !TFLAG:100
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(450)
+	RETURN RESULT
+;台所
+SIF CFLAG:MASTER:現在位置 != 拠点_酒虫
+	RETURN 0
+SIF CFLAG:うふふ
+	RETURN 0
+RETURN 1

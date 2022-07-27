@@ -1,0 +1,124 @@
+﻿;DAILY_EV7 for Yuugi's dialogue special
+;changes: disable yuugi if she's preggo, or disabled; add dialogue lines
+
+@DAILY_EV7_EDIT
+#DIM 人数
+#DIM YUGI
+VARSET LOCAL
+YUGI = !RAND:4
+SIF (TALENT:[[勇儀]]:妊娠 + TALENT:[[勇儀]]:育児中) || CFLAG:[[勇儀]]:出禁 || !CFLAG:[[勇儀]]:面識
+	YUGI = 0
+IF YUGI
+	LOCALS = Yuugi and the others
+ELSE
+	LOCALS = the Oni
+ENDIF
+人数 = 1 + RAND:5
+PRINTFORML %PARSE("You are")% about to go to sleep, when {人数} drunk Oni come stumbling in!
+IF YUGI
+	PRINTFORML Yuugi also comes in...
+	CALL SPTALK, [[勇儀]], "笑顔", 0, @"「Hey, what's up %MASTERNAME:64%?/　We're coming in, s'cuse us for intrusion!」", 1
+ENDIF
+PRINTFORMW It seems they intend to stay here and keep drinking...
+PRINTFORML 
+;他の選択肢は後で
+;ASK_M("受け入れる","酒を渡して出て行ってもらう","ぶちのめす")
+PRINTFORML %PARSE("You invite")% %LOCALS% in under duress.
+PRINTFORML They show no restraint, spreading out sake and snacks before getting started.
+SIF YUGI
+	CALL SPTALK, [[勇儀]], "笑顔", 0, @"「C'mooon, don't be so fussy about it! Just a little drink!/　You gotta get used to that if you wanna live here in the underground!」", 1
+LOCAL:1 = 1
+FOR LOCAL,0,人数
+	LOCAL:1 += RAND:3
+NEXT
+SIF YUGI
+	LOCAL:1 += RAND:3 + RAND:3
+
+FOR LOCAL,0,LOCAL:1
+	PRINTFORMW ...
+	PRINTFORMW ......
+	PRINTFORML %PARSE("You are")% forced to drink.
+	SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMW It's surprisingly normal sake.
+			LOCAL:2 = 200
+		CASE 1
+			PRINTFORMW It's a pretty strong sake.
+			LOCAL:2 = 400
+		CASE 2
+			PRINTFORMW This is strong as hell!
+			LOCAL:2 = 700
+	ENDSELECT
+	PRINTFORMW 
+	;added tolerance talent effect
+	SELECTCASE TALENT:MASTER:酒耐性
+		CASE 3
+			LOCAL:2 = MULTIPLY(LOCAL:2, 33)
+		CASE 2
+			LOCAL:2 = MULTIPLY(LOCAL:2, 50)
+		CASE 1
+			LOCAL:2 = MULTIPLY(LOCAL:2, 75)
+		CASE -1
+			LOCAL:2 = MULTIPLY(LOCAL:2, 150)
+		CASE -2
+			LOCAL:2 = MULTIPLY(LOCAL:2, 200)
+	ENDSELECT
+	IF TALENT:MASTER:酒耐性 > 1
+		PRINTFORML However, your heightened alcohol tolerance does help with the things a bit...
+	ELSEIF TALENT:MASTER:酒耐性 < 0
+		PRINTFORML Your poor alcohol tolerance is only making things worse!
+	ENDIF
+	
+	BASE:MASTER:酒気 += LOCAL:2
+	IF YUGI
+		CALL SPTALK, [[勇儀]], "笑顔", 0, @"「%SPLIT_G("Drink, drink, drink:Send it, send it, send it:Down the hatch, let's gooooooooooo:Keep drinking till ya drop, hahaha:AHAHAHA")%!!!」", 1
+		CALL CHANGE_CFLAG(2,[[勇儀]],3)
+		CALL CHANGE_CFLAG(4,[[勇儀]],1)
+	ENDIF
+	IF BASE:MASTER:酒気 > MAXBASE:MASTER:酒気
+		PRINTFORML 「Kupaaah!」
+		PRINTFORML %PARSE("You breathe",1)% out!
+		YOGORE:(CFLAG:MASTER:初期位置) += 1500
+		BASE:MASTER:気力 -= 500
+		MAXBASE:MASTER:酒気 += 3
+		PRINTFORMW \@YUGI?%LOCALS%#The Oni\@ laugh uncontrollably...
+		IF BASE:MASTER:気力 < 0
+			PRINTFORMW %PARSE("You collapse")%!
+			IF YUGI
+				CALL SPTALK, [[勇儀]], "笑顔", 0, @"「Hahaha, too strong for ya, eh %MASTERNAME:64%?/　Oh crap, %HE_SHE(MASTER)%'s totally out!/　Oh well, happens with everyone! Let's keep going you guys!」", 1
+				WAIT
+			ENDIF
+			BASE:MASTER:気力 -= 1000
+			LOCAL:3 ++
+			BREAK
+		ELSE
+			BASE:MASTER:酒気 /= 2
+		ENDIF
+	ELSEIF BASE:MASTER:酒気 > MAXBASE:MASTER:酒気 * 3 / 4
+		PRINTFORMW %PARSE("You start")% feeling a bit ill...
+		IF YUGI
+			CALL SPTALK, [[勇儀]], "通常", 0, @"「Oi oi, don't puke your guts just yet!/　We still have ways to go before this is over!/　C'mon, pull yourself together!」", 1
+			WAIT
+		ENDIF
+	ENDIF
+NEXT
+
+IF !LOCAL:3
+	PRINTFORML %PARSE("You manage")% to endure the alcohol harassment!
+	IF YUGI
+		CALL SPTALK, [[勇儀]], "笑顔", 0, @"「Whoa, you did it %MASTERNAME:64%! I'm impressed!/　To think a human can drink this much without passing out, well done!」", 1
+		WAIT
+		CALL CHANGE_CFLAG(2,[[勇儀]],150)
+		CALL CHANGE_CFLAG(4,[[勇儀]],100)
+	ENDIF
+	MAXBASE:MASTER:酒気 += 20
+ENDIF
+CFLAG:MASTER:徹夜 = 1
+YOGORE:(CFLAG:MASTER:初期位置) += 1000
+MAXBASE:MASTER:酒気 = LIMIT(MAXBASE:MASTER:酒気,1500,3000)
+PRINTFORML Once dawn breaks %LOCALS% leave.
+PRINTFORML They leave \@THIRD_PERSON?a hungover %CALLNAME:MASTER%#you\@ with a large collection of empty bottles\@ LOCAL:3? %" "%and the stench of vomit# \@.
+SIF YUGI
+	CALL SPTALK, [[勇儀]], "通常", 0, @"「Well, we better get going. See ya later!」", 1
+PRINTW 
+RETURN 1

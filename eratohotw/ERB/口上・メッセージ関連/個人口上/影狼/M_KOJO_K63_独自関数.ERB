@@ -1,0 +1,1867 @@
+﻿
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;スキンシップ
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@KAGEROU_SKINSHIP
+SIF CFLAG:1001
+	RETURN RAND:10
+PRINTL [0]Hold hands [1]Pat cheeks [2]Touch ears [3]Tickle chin [4]Touch hair [98]Pick random
+PRINTL [5]Rub shoulders [6]Stroke her back [7]Nudge side [8]Tickle nose [9]Pat Pat [99]Pick random every time
+DRAWLINE
+PRINTFORML [999] 影狼さんの秘密
+INPUT
+SELECTCASE RESULT
+CASE 0 TO 9
+	RETURN RESULT
+CASE 98
+	RETURN RAND:10
+CASE 99
+	CFLAG:1001 = 1
+	PRINTW （To reset this option, pray together at the shrine）
+	PRINTL 
+	RETURN RAND:10
+;手入力で人狼ゲームを呼び出せます
+CASE 999
+	CALL K63_SECRET
+CASE 100
+	RETURN 100
+CASEELSE
+ENDSELECT
+RESTART
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;くんくん影狼
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@KUNKUN_KAGEROU
+#LOCALSIZE キャラクタ数上限
+#DIM LOCAL_ID
+;一緒に作った料理は食べない
+IF FLAG:20 && !TCVAR:353
+	PRINTFORMW 「Mu! This smells like %DISHNAME_TR()%!」
+	PRINTL 
+	PRINTFORMDL Kagerou grabs the %DISHNAME_TR()% from you faster than you can react.
+	PRINTFORMDW And wolfs it down in an instant.
+	;EVENTCOMENDからコピペ。変更があったら対応の事。
+	IF DISH_DRG
+		CALL MESSAGE_EAT_DISH_DRG(TARGET)
+		WAIT
+	ENDIF
+	;CALL KOJO_MESSAGE_SEND("EVENT",14,TARGET,-1,-1)
+	CALL 食事(TARGET)
+	CALL RESET_DISH
+ELSE
+	CALLF FUNC_FISHER_YATES_SHAFFLE(LOCAL, CHARANUM)
+	;影狼ちゃんとモブ娘とMASTERは抽選対象から外します
+	ARRAYREMOVE LOCAL, FINDELEMENT(LOCAL, 63), 1
+	ARRAYREMOVE LOCAL, FINDELEMENT(LOCAL, MASTER), 1
+	ARRAYREMOVE LOCAL, FINDELEMENT(LOCAL, RANDOM_CHARANUM), 1
+	;FUNC_FISHER_YATES_SHAFFLE内で-1で初期化されるのでこれで全配列対象処理になる
+	;場所判定がよくわからんことになってたのでとりあえず近場のキャラ？にしてみるよ
+	FOR LOCAL_ID, 0, FINDELEMENT(LOCAL, -1)
+		;同じマップにいるキャラ限定
+		SIF GET_MAPID(CFLAG:(LOCAL:LOCAL_ID):現在位置) != GET_MAPID(CFLAG:63:現在位置)
+			CONTINUE
+		;同じ場所のキャラは除外
+		SIF CFLAG:(LOCAL:LOCAL_ID):現在位置 == CFLAG:63:現在位置
+			CONTINUE
+		PRINTFORMW 「Kon Kon... This is %CALLNAME:(LOCAL:LOCAL_ID)%'s scent.」
+		BREAK
+	NEXT
+ENDIF
+RETURN 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;影狼は特殊なので、関数化
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@影狼起床
+;満月の日
+SELECTCASE DAY:3
+CASE 15
+	;満月の下
+	IF MOON_WATCH(DAY:3) == 9
+		;しかも中秋の名月
+		SELECTCASE DAY:2
+		CASE 3
+			PRINTFORMW 「Ara, %CALLNAME:MASTER%......」
+			PRINTFORMW 「Tonight is......the harvest moon......」
+			PRINTFORMW 「Umm, Will you look at the moon with me...?」
+			PRINTFORML 「I-I'm really embarrassed, but if it's %CALLNAME:MASTER%, then...」
+			PRINTFORMW 「I'd like you to see, my bare form......」
+			PRINTFORMW 「And if you'd like, umm......」
+			PRINTFORMW 「No, first off, let's just watch the moon together!」
+			BASE:63:理性 = 0
+			TCVAR:発情 = 1
+		;普通の満月
+		CASEELSE
+			PRINTFORMW 「Ara,%CALLNAME:MASTER%......」
+			PRINTFORMW 「Look, tonight is a full moon.」
+			PRINTFORML 「It's embarrassing, but if it's %CALLNAME:MASTER% then...」
+			PRINTFORMW 「I want you, to look at me now......」
+			PRINTFORMW 「Fufu, I never thought something like this would happen, it's a mysterious feeling.」
+			BASE:63:理性 = 0
+			TCVAR:発情 = 1
+		ENDSELECT
+	;まだ昼で晴れてない
+	ELSEIF TIME:2 >=1 && TIME:2 <= 4 && TIME:5 > 1
+		PRINTFORMW 「Ara, %CALLNAME:MASTER%, good morning.」
+		PRINTFORMW 「Umm...... Tonight is a full moon......」
+		PRINTFORMW 「I'm not sure how the weather will turn out, but...」
+		PRINTFORMW 「If it clears up will you go moon-viewing with me?」
+		CALL K63_ASK_OTSUKIMI
+	;まだ昼
+	ELSEIF TIME:2 >=1 && TIME:2 <= 4
+		PRINTFORMW 「Ara, %CALLNAME:MASTER%, good morning.」
+		PRINTFORMW 「Umm...... Tonight is a full moon......」
+		PRINTFORMW 「I'm not sure how the weather will turn out, but...」
+		PRINTFORMW 「Let's hope it clears up.」
+	;夜だけど晴れてない
+	ELSEIF TIME:5 > 1
+		;中秋の名月
+		SELECTCASE DAY:2
+		CASE 3
+			PRINTFORMW 「Ara, %CALLNAME:MASTER%...」
+			PRINTFORMW 「Even though it's finally the harvest moon, what unfortunate weather......」
+			PRINTFORMW 「Hey %CALLNAME:MASTER%, if it clears up will you go moon-viewing with me?」
+			CALL K63_ASK_OTSUKIMI
+		;普通の満月
+		CASEELSE
+			PRINTFORMW 「Ara, %CALLNAME:MASTER%, good evening.」
+			PRINTFORMW 「Even though it's a full moon, what unfortunate weather......」
+			PRINTFORML 「...... Well, this is a physiological cycle, so...」
+			PRINTFORMW 「I can still shapeshift, and even now some fur is......」
+			PRINTFORMW 「Hey, where are you looking!」
+		ENDSELECT
+	;夜で晴れてるけど室内（秋）
+	ELSEIF DAY:2 == 3
+		PRINTFORMW 「Ara, %CALLNAME:MASTER%......」
+		PRINTFORMW 「Tonight is......the harvest moon......」
+		PRINTFORMW 「Umm, Will you go moon-viewing with me...?」
+		PRINTFORML 「It, it's quite embarrassing, but if it's %CALLNAME:MASTER%, then...」
+		PRINTFORMW 「I don't mind showing you my bare form......」
+		PRINTFORMW 「And if you'd like......」
+		PRINTFORMW 「No, first let's just watch the moon together!」
+	;夜で晴れてるけど室内
+	ELSE
+		PRINTFORMW 「Ah... %CALLNAME:MASTER%......」
+		PRINTFORMW 「Hey, tonight is a full moon.」
+		PRINTFORML 「It's embarrassing, but if it's %CALLNAME:MASTER%, then...」
+		PRINTFORMW 「Right now, I wonder if it's fine to be seen......」
+		PRINTFORMW 「But, after......」
+		PRINTFORMW 「No, it's nothing!」
+	ENDIF
+;それ以外の日
+CASEELSE
+	SELECTCASE TIME:2
+	;朝は寝てるんで死に分岐ですが
+	CASE 1,2
+		PRINTFORMW 「Good morning～...」
+		PRINTFORMW 「You're so lively this early......」
+		PRINTFORMW 「I'm not good with mornings......」
+	;昼
+	CASE 3,4
+		PRINTFORMW 「Ara %CALLNAME:MASTER%, good morning!」
+		PRINTFORMW 「Noon is the beginning of the day, after all.」
+	SIF TIME:0 < 901
+		PRINTFORMW 「......Fuwaa～... Sleepy......」
+	;夜は分岐
+	CASE 5,6,7
+		SELECTCASE TIME:0
+		;19～22時
+		CASE 1140 TO 1320
+			SELECTCASE TIME:3
+			;18時以降起き
+			CASE 1080 TO 1320
+				PRINTFORMW 「Ara %CALLNAME:MASTER%, good morning!」
+				PRINTFORMW 「Fufu, You're a night owl, after all.」
+				PRINTFORMW 「You're not pushing yourself to meet me, right?」
+				PRINTFORML 「I-I'm happy, but that's not good for your health.」
+				PRINTFORMW 「Keep it in moderation and treat your body kindly.」
+			;朝～昼起き
+			CASEELSE
+				PRINTFORMW 「Ara %CALLNAME:MASTER%, good morning!」
+				PRINTFORMW 「Fufu, When the sun sets the night begins.」
+			ENDSELECT
+		;22～28時
+		CASEELSE
+			SELECTCASE TIME:3
+			;22～27時起き
+			CASE 1320 TO 1440,0 TO 180
+				PRINTFORMW 「Ara %CALLNAME:MASTER%, good morning!」
+				PRINTFORMW 「Fufu, You're a night owl, after all.」
+				PRINTFORMW 「You're not pushing yourself to meet me, right?」
+				PRINTFORMW 「I-I'm happy, but it's really not good to be waking up this late.」
+				PRINTFORMW 「Even I try to get up around noon.」
+			CASEELSE
+				PRINTFORMW 「Ara %CALLNAME:MASTER%, good morning!」
+				PRINTFORMW 「It's gotten pretty late.」
+				PRINTFORMW 「From here on is the time of the Youkai, so it'd be better if %CALLNAME:MASTER% didn't walk around too much.」
+			ENDSELECT
+		ENDSELECT
+	ENDSELECT
+ENDSELECT
+TCVAR:350 = 1
+RETURN 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;お天気影狼
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@OTENKI_KAGEROU(ARG)
+SELECTCASE ARG
+;春
+CASE 1
+	SELECTCASE TIME:2
+	;昼
+	CASE 3,4
+		SELECTCASE TIME:7
+		;虹
+		CASE 1
+		RETURN 110
+		CASEELSE
+			SELECTCASE TIME:5
+			;晴れ
+			CASE 0,1
+				RETURN 111
+			;曇り
+			CASE 2,3
+				RETURN 112
+			;雨と霧
+			CASE 4,6,7
+				RETURN 113
+			;大雨
+			CASE 5
+				RETURN 114
+			ENDSELECT
+		ENDSELECT
+	;夜
+	CASE 5 TO 7
+		SELECTCASE TIME:7
+		;虹
+		CASE 1
+			RETURN 120
+		CASEELSE
+			SELECTCASE TIME:5
+			;晴れ
+			CASE 0,1
+				RETURN 121
+			;曇り
+			CASE 2,3
+				RETURN 122
+			;雨と霧
+			CASE 4,6,7
+				RETURN 123
+			;大雨
+			CASE 5
+				RETURN 124
+			ENDSELECT
+		ENDSELECT
+	ENDSELECT
+;夏
+CASE 2
+	SELECTCASE TIME:2
+	;昼
+	CASE 3,4
+		SELECTCASE TIME:7
+		;虹
+		CASE 1
+			RETURN 210
+		CASEELSE
+			SELECTCASE TIME:5
+			;晴れ
+			CASE 0,1
+				RETURN 211
+			;曇り
+			CASE 2,3
+				RETURN 212
+			;雨と霧
+			CASE 4,6,7
+				RETURN 213
+			;大雨
+			CASE 5
+				RETURN 214
+			ENDSELECT
+		ENDSELECT
+	;夜
+	CASE 5 TO 7
+		SELECTCASE TIME:7
+		;虹
+		CASE 1
+			RETURN 220
+		CASEELSE
+			SELECTCASE TIME:5
+			;晴れ
+			CASE 0,1
+				RETURN 221
+			;曇り
+			CASE 2,3
+				RETURN 222
+			;雨と霧
+			CASE 4,6,7
+				RETURN 223
+			;大雨
+			CASE 5
+				RETURN 224
+			ENDSELECT
+		ENDSELECT
+	ENDSELECT
+;秋
+CASE 3
+	SELECTCASE TIME:2
+	;昼
+	CASE 3,4
+		SELECTCASE TIME:7
+		;虹
+		CASE 1
+			RETURN 310
+		CASEELSE
+			SELECTCASE TIME:5
+			;晴れ
+			CASE 0,1
+				RETURN 311
+			;曇り
+			CASE 2,3
+				RETURN 312
+			;雨と霧
+			CASE 4,6,7
+				RETURN 313
+			;大雨
+			CASE 5
+				RETURN 314
+			ENDSELECT
+		ENDSELECT
+	;夜
+	CASE 5 TO 7
+		SELECTCASE TIME:7
+		;虹
+		CASE 1
+			RETURN 320
+		CASEELSE
+			SELECTCASE TIME:5
+			;晴れ
+			CASE 0,1
+				RETURN 321
+			;曇り
+			CASE 2,3
+				RETURN 322
+			;雨と霧
+			CASE 4,6,7
+				RETURN 323
+			;大雨
+			CASE 5
+				RETURN 324
+			ENDSELECT
+		ENDSELECT
+	ENDSELECT
+;冬
+CASE 4
+	SELECTCASE TIME:2
+	;昼
+	CASE 3,4
+		SELECTCASE TIME:7
+		;虹
+		CASE 1
+			RETURN 410
+		;ダイヤモンドダスト
+		CASE 2
+			RETURN 419
+		CASEELSE
+			SELECTCASE TIME:5
+			;晴れ
+			CASE 0,1
+				RETURN 411
+			;曇り
+			CASE 2,3
+				RETURN 412
+			;雨と霧
+			CASE 4,6,7
+				RETURN 413
+			;大雨
+			CASE 5
+				RETURN 414
+			;雪系
+			CASE 8,10,11,12,13
+				RETURN 415
+			;吹雪
+			CASE 9
+				RETURN 416
+			ENDSELECT
+		ENDSELECT
+	;夜
+	CASE 5 TO 7
+		SELECTCASE TIME:7
+		;虹
+		CASE 1
+			RETURN 420
+		;ダイヤモンドダスト
+		CASE 2
+			RETURN 429
+		CASEELSE
+			SELECTCASE TIME:5
+			;晴れ
+			CASE 0,1
+				RETURN 421
+			;曇り
+			CASE 2,3
+				RETURN 422
+			;雨と霧
+			CASE 4,6,7
+				RETURN 423
+			;大雨
+			CASE 5
+				RETURN 424
+			;雪系
+			CASE 8,10,11,12,13
+				RETURN 425
+			;吹雪
+			CASE 9
+				RETURN 426
+			ENDSELECT
+		ENDSELECT
+	ENDSELECT
+ENDSELECT
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;草の根と雑談
+;会ってない日の一日の終了時にランダム呼び出し
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+@草の根と雑談
+#DIMS 会話相手
+;会ってない日の一日の終了時にランダム呼び出し
+SIF CFLAG:[[わかさぎ姫]]:最後に会った日 == DAY && CFLAG:[[蛮奇]]:最後に会った日 == DAY
+	RETURN 1
+IF CFLAG:[[わかさぎ姫]]:最後に会った日 == DAY
+	会話相手 = 蛮奇
+	LOCAL = [[蛮奇]]
+ELSEIF CFLAG:[[蛮奇]]:最後に会った日 == DAY
+	会話相手 = 姫
+	LOCAL = [[わかさぎ姫]]
+ELSEIF !RAND:2
+	会話相手 = 姫
+	LOCAL = [[わかさぎ姫]]
+ELSE
+	会話相手 = 蛮奇
+	LOCAL = [[蛮奇]]
+ENDIF
+
+
+PRINTFORMW 影狼は草の根の仲間と雑談している
+
+CALL 画像セット(@"顔絵_服_通常_{[[影狼]]}", 0, 0, 100, 0, 0, "", "デフォルト顔絵")
+CALL 画像セット(@"顔絵_服_通常_{LOCAL}", 0, 0, 100, 0, 0, "", "デフォルト顔絵")
+CALL 画像一斉表示("左", 0, 1)
+PRINTFORML 
+IF TALENT:恋慕 && !RAND:2
+	IF TALENT:育児中
+		IF CFLAG:出産経過日 > CHILD_就学
+			IF !RAND:2
+				PRINTFORMW 「ほら、%会話相手%お姉ちゃんに挨拶しなさい」
+				PRINTFORMW 「いい子ね」
+			ELSEIF !RAND:2
+				PRINTFORMW 「うちの子もだいぶ手がかからなくなって助かるわー」
+				PRINTFORMW 「%会話相手%にはお世話になったわね」
+			ELSE
+				PRINTFORMW 「%SHOW_CHILDNAME(63)%は元気にしてるわよ」
+				PRINTFORMW 「%CALLNAME:MASTER%が寺子屋に行かせるって言いだしたときはどうなる事かと思ったけど、うまくやってるみたい」
+			ENDIF
+		ELSEIF CFLAG:出産経過日 > CHILD_語彙
+			IF !RAND:3
+				PRINTFORMW 「あーこら騒がないの！もう！」
+				PRINTFORMW 「ごめんね%会話相手%、子供って難しいわ」
+			ELSEIF !RAND:2
+				PRINTFORMW 「大きくなったでしょ？もう話せるのよ」
+				PRINTFORMW 「ほら、%会話相手%お姉ちゃんって呼んでみて？」
+			ELSE					
+				PRINTFORMW 「%SHOW_CHILDNAME(63)%はいい子にしてた？」
+				PRINTFORMW 「今日は預かっててくれてありがとね、%会話相手%」
+			ENDIF
+		ELSE
+			IF !RAND:2
+				PRINTFORMW 「ふふ、可愛いでしょ」
+				PRINTFORMW 「%SHOW_CHILDNAME(63)%は%会話相手%のこと好きみたいね」
+			ELSEIF !RAND:2
+				PRINTFORMW 「それでね%会話相手%、その%TEXTR("妖精/兎/人間/")%が…」
+				PRINTFORMW 「あーどうしたの%SHOW_CHILDNAME(63)%！？お腹空いたのかな？」
+			ELSE
+				PRINTFORMW 「やっぱり育児って大変よ」
+			ENDIF
+		ENDIF
+	ELSE
+		IF !RAND:3
+			PRINTFORMW 「それでね%会話相手%、そのとき%CALLNAME:MASTER%が…」
+		ELSEIF !RAND:2
+			PRINTFORMW 「へー、それ今度%CALLNAME:MASTER%に%TEXTR("作ってもらおう/やってもらおう/聞いてみよう/")%かしら」
+		ELSE
+			PRINTFORMW 「わかるわー、%CALLNAME:MASTER%もそういうタイプだし」
+		ENDIF
+	ENDIF
+ELSEIF TALENT:思慕 && !RAND:2
+	IF 会話相手 == "姫"
+		PRINTFORMW 「ねえ姫、その、深い意味はないんだけど」
+		PRINTFORMW 「妖怪と人間の交際ってアリだと思う？　特に深い意味はないんだけど」
+	ELSE
+		PRINTFORML 「ねえ蛮奇、人間についてちょっと聞きたいことがあるんだけど…」
+		PRINTFORMW 「%TEXTR("そっかぁ/…ふーん、そうなんだ/へー、変なの/…引くわー/")%」
+	ENDIF
+ELSE
+	IF INRANGE(DAY:3,10,14)
+		PRINTFORMW 「満月が近くて毛の処理が大変なのよ」
+	ELSEIF !RAND:3
+		PRINTFORMW 「今度また一緒に人里にでも行かない？」
+	ELSEIF !RAND:2
+		PRINTFORMW 「あれ美味しいわよねー」
+	ELSE
+		PRINTFORMW 「%会話相手%は最近どう？」
+	ENDIF
+ENDIF
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+;お月見イベントを切り出し
+;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+@K63_ASK_OTSUKIMI
+CALL ASK_YN("晴れたらね","ちょっと忙しい")
+;《月霧/Moonmist》
+IF !RESULT
+	PRINTFORMW 「Really!?」
+	PRINTFORML 「Then it can't be helped......」
+	PRINTFORMW 「It's time to use that spellcard I've been keeping in reserve!」
+	PRINTL 
+	PRINTFORMDW Kagerou rummages through her clothes for a bit, then takes out a strange spellcard and begins to chant.
+	PRINTFORMDL In the next instant, a glittering silver mist envelops the surroundings.
+	PRINTFORMDW Then, the glittering light swirls, and with a snap, clears away to reveal the figure of Kagerou.
+	PRINTFORMDW It takes you a few moments to realize the sun is now shining brilliantly in the clear sky.
+	PRINTL
+	PRINTFORMW 「Fufufu...keep this a secret from everyone♪」
+	PRINTFORMW 「Now then, let's enjoy the moon viewing.」
+	TIME:5 = 1
+ELSE
+	PRINTFORMW 「...... I see...」
+	PRINTFORMW 「Well, the weather's like this... Sorry for saying useless things.」
+	PRINTFORMW 「Ah, I don't really mind, so don't worry about it.」
+ENDIF
+
+@K63_OTSUKIMI_TALK
+SELECTCASE MOON_WATCH(DAY:3)
+;新月
+CASE 1
+	PRINTFORMW 「Tonight's a new moon, so no matter how long you search you won't see it.」
+	PRINTFORMW 「But look, in exchange you can see the starry sky so clearly.」
+	SIF TALENT:恋慕
+		PRINTFORMW 「When I'm with %CALLNAME:MASTER%, even the moonless nights are so beautiful.」
+;二日月
+CASE 2
+	PRINTFORMW 「Ah, We just caught the moon setting.」
+	PRINTFORMW 「Surprisingly, that's more unusual than seeing a new moon, isn't it?」
+;三日月
+CASE 3
+	PRINTFORMW 「Look, a gorgeous crescent moon!」
+	PRINTFORMW 「The full moon is also nice, but there's a sexy charm to a crescent moon, isn't there?」
+	SIF TALENT:恋慕
+		PRINTFORMW 「Fufu, It almost seems like the night sky is smiling.」
+;四～七日月
+CASE 4
+	PRINTFORMW 「Today's moon is～...」
+	PRINTFORMW 「It's technically not called a crescent moon, but the shape is close enough.」
+;上弦
+CASE 5
+	PRINTFORMW 「What a lovely half-moon.」
+	PRINTFORMW 「Ummm...... The right side is lit, so... It's a waxing moon.」
+;九～十二日月
+CASE 6
+	PRINTFORMW 「Ara, The moon is so clear tonight.」
+	PRINTFORMW 「It's gotten quite large, the full moon should be soon.」
+	SIF TALENT:恋慕
+		PRINTFORMW 「It's round like mochi, so it's mochizuke (望月)...... Sorry, I didn't say anything!!」
+;十三夜
+CASE 7
+	;秋の十三夜
+	IF DAY:2 == 3
+		PRINTFORMW 「The thirteenth moon is so pretty～」
+		PRINTFORMW 「It's not a full moon so I can enjoy it to my heart's content!」
+		IF TALENT:恋慕
+			PRINTW 「A-After all... See, I, Because I transform...」
+			PRINTW 「Dealing with all the hair is really troublesome...」
+		ELSE
+			PRINTW 「Ah, no, it's nothing...」
+		ENDIF
+	;普通の十三夜
+	ELSE
+		PRINTFORMW 「Tonight's the thirteenth night, isn't it.」
+		PRINTFORMW 「Look, you can see an elliptical moon.」
+		PRINTFORMW 「It's not fall, but the thirteenth night is still the thirteenth night, right?」
+	ENDIF
+;待宵
+CASE 8
+		PRINTFORMW 「Today's the 14th moon.」
+		PRINTFORMW 「In other words, tomorrow's the full moon!」
+		PRINTFORMW 「............」
+		PRINTFORMW 「Now I'm all nervous......」
+;満月（挨拶の段階で恋慕が前提）
+CASE 9
+	IF TALENT:恋慕
+		;中秋の名月
+		SELECTCASE DAY:2
+		CASE 3
+			PRINTFORMDW You decided to view the full moon with Kagerou
+			PRINTL
+			$FULLMOON_INPUT_LOOP_01
+			PRINTL [0] The moon is so pretty.
+			PRINTL [1] Between the clouds of	a cool autumn's passing breeze		A fleeting beauty
+			PRINTL [2] Let's eat some dango!
+			INPUT
+			SELECTCASE RESULT
+			;I love you
+			CASE 0
+				PRINTFORMW 「Ahaha, I already know.」
+				PRINTFORMW 「Geez, It's because so can say things like that so brazenly.」
+				PRINTFORMW 「I'm happy, thank you...」 
+				PRINTFORMW 「Me too, I... %CALLNAME:MASTER%...」
+				IF TALENT:63:恋人
+					PRINTFORMW 「I like you... I love you...」
+					CALL MUTUAL_KISS
+				ELSE
+					PRINTFORMW 「No, it's nothing...」
+				ENDIF
+				TIME += 10
+				SOURCE:情愛 += 200
+				EXP:63:愛情経験 += 1
+				CFLAG:63:4 += (ABL:MASTER:話術技能)
+				DOWNBASE:気力 -= 60
+			;和歌クイズ
+			CASE 1
+				$FULLMOON_INPUT_LOOP_02
+				PRINTL 
+				PRINTL [0] That, with drifting autumn wind　Gracefully float in the sky
+				PRINTL [1] No doubt I shall remember fondly　The bright moon of this dark night
+				PRINTL [2] The moon would chance to stay　And here's the dawn of day
+				INPUT
+				SELECTCASE RESULT
+				CASE 0
+					PRINTFORMW 「Beautiful～♪」
+					PRINTFORMW 「This really is the perfect scene to compose a tanka.」
+					PRINTFORMW 「The full moon really brings out the essence of wabisabi, doesn't it.」
+					SOURCE:歓楽 += 100
+					SOURCE:情愛 += 50
+					EXP:MASTER:会話経験 += (ABL:MASTER:話術技能) * 2
+					CFLAG:63:4 += (ABL:MASTER:話術技能) * 2
+					DOWNBASE:気力 -= 160
+				CASEELSE
+					PRINTFORMW 「............Umm......」
+					PRINTFORMW 「I, I understand what you're saying. Yeah...」
+					PRINTFORMW 「Why don't we play 100 poems by 100 poets next time, okay? %CALLNAME:MASTER%.」
+					SOURCE:歓楽 += 30
+					EXP:MASTER:会話経験 += 1
+					DOWNBASE:気力 += 40
+				ENDSELECT
+				TIME += 10
+				;月より団子
+				;団子は室内でしか食べられないが、縁側は室内かつ月見できるのでおすすめじゃぞ
+			CASE 2
+				PRINTFORML 「Geez, so %CALLNAME:MASTER% prefers dango over flowers...」
+				PRINTFORMW 「No, dango over the moon, in this case.」
+				PRINTFORMW 「Well! Fine! I want to eat them too!」
+				PRINTFORMW 「After all a moon-viewing party needs sake and snacks～♪」
+				;雑穀は使わない。影狼が持参してくれているのだろう
+				;料理システムは改変がくるかもいれないので要チェック
+				CALL 料理生成("月見団子", [[影狼]])
+				SOURCE:歓楽 += 100 + (ABL:MASTER:料理技能) * 20
+				EXP:MASTER:料理経験 += 1
+				EXP:63:料理経験 += 1
+				DOWNBASE:MASTER:体力 += 50
+				DOWNBASE:MASTER:気力 += 100
+				TIME += 20
+			CASEELSE
+				GOTO FULLMOON_INPUT_LOOP_01
+			ENDSELECT
+		;普通の満月
+		CASEELSE
+			PRINTFORMW 「Fufu... Isn't it a lovely full moon......」
+			PRINTFORMW 「Don't worry. I won't suddenly transform and eat you.」
+			PRINTFORMW 「Ah, See, at my sleeves, it's already......」
+			PRINTFORMW 「You know... Ah! Wait, stop! Don't look!」
+			PRINTFORML 「Really now...」
+			PRINTFORMW 「Other than that... Right, inside of me a violent nature arises and tries to take hold of me.」
+			PRINTFORML 「Nowadays I can keep it under control, but...」
+			PRINTFORMW 「In the past I just moved on instinct, attacking humans and livestock.」
+			PRINTFORML 「Ahaha. Originally Youkai were those kinds of existences.」
+			PRINTFORMW 「It's okay if you become afraid of me from here on.」
+			PRINTFORMW 「...... But still, I don't want %CALLNAME:MASTER% to think of me like that......」
+			PRINTFORML 「The times have changed. Even though humans and Youkai are enemies, there's a chance they can live together...」
+			PRINTFORMW 「Since we've finally been able to get along like this.」
+			PRINTFORMW 「If possible, I'd like %CALLNAME:MASTER% to stay by my side, even if we happen to fight sometimes......」
+		ENDSELECT
+		PRINTL
+		PRINTFORMW 「I never thought it'd be this fun to watch the full moon together with %CALLNAME:MASTER%.」
+		PRINTFORMW 「Right now I'm, so happy......」
+		TIME += 10
+		SOURCE:歓楽 += 100
+		SOURCE:情愛 += 100
+		SOURCE:露出 += 100
+		SOURCE:恐怖 += 50
+		SOURCE:達成 += 10
+		SOURCE:逸脱 += 10
+		EXP:63:愛情経験 += 1
+		DOWNBASE:気力 -= 100
+		BASE:63:体力 += 100
+		CFLAG:63:信頼度 += (ABL:MASTER:話術技能)
+		BASE:63:ムード = MAXBASE:63:ムード
+		BASE:63:理性 = 0
+		TCVAR:発情 = 1
+		;恋慕じゃない
+	ELSE
+		PRINTFORMW 「Today's a circular moon, the full moon.」
+		PRINTFORMW 「Aah...... How enchanting......」
+		TCVAR:発情 = 1
+	ENDIF
+;十六夜
+CASE 10
+	PRINTFORMW 「Tonight is the 16th moon.」
+	PRINTFORMW 「It's written as "juu-roku" but read as "izayoi".」
+	PRINTFORMW 「...uuu! Just hearing that brought up bad memories......」
+	SIF TALENT:恋慕
+		PRINTFORMW 「No, it's just...... I was once totally defeated by a maid with that name......」
+;十七～二十二夜（ここかはら住み込みしないと見られない）
+CASE 11
+	PRINTFORMW 「Ara, The moon has come out.」
+	PRINTFORMW 「Now that the full moon has passed, it will get smaller. The 20th moon is a half-moon again.」
+	PRINTFORMW 「When morning arrives it fades away, which is a little depressing.」
+;下弦
+CASE 12
+	PRINTFORMW 「Tonight is a pretty waning crescent.」
+	PRINTFORMW 「Right when it reaches its zenith is when it vanishes, which is pretty sad...」
+	PRINTFORMW 「It's that kind of moon.」
+;二十四～二十九夜
+CASE 13
+	PRINTFORMW 「In the past they were kind of ambivalent about whether it was worth staying up for such a late moon.」
+	PRINTFORMW 「When you compare it to waiting for the new moon, it's kind of eerie.」
+;三十夜（寝ずに起きてないと見られない。死に分岐？）
+CASE 14
+	PRINTFORMW 「Ara Ara, Another precious last day of the month.」
+	SELECTCASE DAY:2
+	CASE 1
+		PRINTFORMW 「It's the last day of the month. It's nearly summer～」
+	CASE 2
+		PRINTFORMW 「It's the last day of the month. It's nearly fall～」
+	CASE 3
+		PRINTFORMW 「It's the last day of the month. It's nearly winter～」
+	CASE 4
+		PRINTFORMW 「It's the last day of the month. It's nearly a new year～」
+	ENDSELECT
+ENDSELECT
+TCVAR:351 = 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;挨拶
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@K63_GREETING
+IF FLAG:住み込みキャラ == 63
+	SELECTCASE TIME:2
+	;朝は寝てるんで死に分岐ですが
+	CASE 1,2
+		PRINTFORMW 「Good morning～...」
+		PRINTFORMW 「You're so lively this early......」
+		PRINTFORMW 「I'm not good with mornings......」	;昼
+	CASE 3,4
+		PRINTFORMW 「Ara %CALLNAME:MASTER%, good morning!」
+		PRINTFORMW 「Noon is the beginning of the day, after all.」
+	SIF TIME:0 < 901
+		PRINTFORMW 「......Fuwaa～...Sleepy......」
+	;夜は分岐
+	CASE 5 TO 7
+		SELECTCASE TIME:0
+		;19～22時
+		CASE 1140 TO 1320
+			SELECTCASE TIME:3
+			;18時以降起き
+			CASE 1080 TO 1320
+				PRINTFORMW 「Ara %CALLNAME:MASTER%, good morning!」
+				PRINTFORMW 「Fufu, You're a night owl, after all.」
+				PRINTFORMW 「You're not pushing yourself to meet me, right?」
+				PRINTFORML 「I-I'm happy, but that's not good for your health.」
+				PRINTFORMW 「Keep it in moderation and treat your body kindly.」
+			;朝～昼起き
+			CASEELSE
+				PRINTFORMW 「Ara %CALLNAME:MASTER%, good evening!」
+				PRINTFORMW 「Fufu, When the sun sets the night begins.」
+			ENDSELECT
+		;22～28時
+		CASEELSE
+			SELECTCASE TIME:3
+			;22～27時起き
+			CASE 1320 TO 1440,0 TO 180
+				PRINTFORMW 「Ara %CALLNAME:MASTER%, good morning!」
+				PRINTFORMW 「Fufu, You're a night owl, after all.」
+				PRINTFORMW 「You're not pushing yourself to meet me, right?」
+				PRINTFORMW 「I-I'm happy, but it's really not good to be waking up this late.」
+				PRINTFORMW 「Even I try to get up around noon.」
+			CASEELSE
+				PRINTFORMW 「Ara %CALLNAME:MASTER%, good evening!」
+				PRINTFORMW 「It's gotten pretty late.」
+				PRINTFORMW 「From here on is time of the Youkai, so it'd be better if %CALLNAME:MASTER% didn't walk around too much.」
+			ENDSELECT
+		ENDSELECT
+	ENDSELECT
+ELSEIF DAY - CFLAG:最後に会った日 >= 5
+	LOCAL = DAY - CFLAG:最後に会った日
+	IF TALENT:恋慕
+		PRINTFORML {LOCAL}日も会えなくて寂しかったわ
+		PRINTFORMW ねえ、%CALLNAME:MASTER%はこの{LOCAL}日間、ちょっとでも私に会いたいと思ったこと、あった？
+	ELSE
+		PRINTFORML {LOCAL}日ぶりね
+	ENDIF
+ELSE
+	SELECTCASE TIME:2
+	;朝は寝てるんで死に分岐ですが
+	CASE 1,2
+		PRINTFORMW 「Good morning～...」
+		PRINTFORMW 「You're so lively this early......」
+		PRINTFORMW 「I'm not good with mornings......」
+	;昼
+	CASE 3,4
+		PRINTFORMW 「Ara, good morning!」
+		PRINTFORMW 「Eh? It's already noon?」
+		PRINTFORMW 「For me, noon is the beginning of the day!」
+	;夜は分岐
+	CASE 5,6,7
+		SELECTCASE TIME:0
+		;19～22時
+		CASE 1140 TO 1320
+			PRINTFORMW 「Good evening～!」
+			PRINTFORMW 「Fufufu... The sun has completely set, from hereout is the time of the Youkai......」
+			PRINTFORMW 「Are you about to go to sleep?」
+		;22～28時
+		CASEELSE
+			PRINTFORMW 「Even though it's this late, good evening～!」
+			PRINTFORMW 「The night is getting long, it's no longer the time of humans.」
+			PRINTFORMW 「There's no way you just woke up, right......」
+		ENDSELECT
+	ENDSELECT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;ふるまうでも使うので関数化
+@MOGUMOGU_KAGEROU
+;恋慕
+IF TALENT:[[影狼]]:恋慕
+;吟味前
+		SELECTCASE DISHNAME
+		;最初に例外群
+		;"義大莉而鳥苗鳥肉"はこっちに移動
+		CASE "モッツァレラチーズとトマトのサラダ", "ドーピングコンソメスープ", "義大莉而鳥苗鳥肉"
+			$KINDAN
+			PRINTFORMW 「Hey %CALLNAME:MASTER%, is this really okay?」
+			PRINTFORMW 「It's strange...or rather, abnormal......」
+			PRINTFORMW 「Is, Is this really safe to eat, I wonder......」
+		CASE "ギンギー料理"
+			PRINTFORMW 「I'm just asking, but...what is this?」
+			PRINTL
+			PRINTFORMW Gingy Dish.
+			PRINTL
+			PRINTFORMW 「The ingredients...?」
+			PRINTL
+			PRINTFORMW Gingy.
+			PRINTL
+			PRINTFORMW 「............」
+		
+		;お魚系、天麩羅は唯一、魚料理がつかないので先に分岐
+		;まー、TASTEにはついてないが内実は想像にまかせるということで
+		CASE "天ぷら"
+			$OSAKANA
+			PRINTFORMW 「It's been a while since I've had seafood.」
+			PRINTFORMW 「I wonder if it's because it's rare in Gensokyo?」
+		;主食肉
+		;カエル料理もこの区分だが……
+		;だってこの娘、蛙肉だろうが喜んで食いそうなんだもん
+		CASE "ハンバーグ", "しゃぶしゃぶ", "生姜焼き", "ステーキ", "油淋鶏", "カエルのから揚げ", "カエルカレー", "カエルのソテー", "カエルの塩焼き", "ジビエ料理"
+			IF TCVAR:[[影狼]]:料理評価値 >= 700
+				CALL K63_DEVOUR
+			ELSE
+				PRINTFORMW 「Meat is the best～♪」
+				PRINTFORMW 「I usually just have it raw, but.」
+				IF TCVAR:[[影狼]]:353
+					PRINTFORMW 「Food made with %CALLNAME:MASTER% is so much better♪」
+				ELSE
+					PRINTFORMW 「%CALLNAME:MASTER%'s cooking is so much better♪」
+				ENDIF
+			ENDIF
+		;軽食肉
+		CASE "ハンバーガー", "シウマイ", "肉まん"
+			$ONIKU
+			PRINTFORMW 「%DISHNAME_TR()% is easy to eat.」
+			PRINTFORMW 「It's got meat in it, so it's doubly good.」
+		[SKIPSTART]
+		;仕様変更とともに闇に消えたっぽいのでコメントアウト
+		CASE 79
+			PRINTFORMW 「もぐもぐ」
+			PRINTFORMW 「もぐもぐ」
+			PRINTFORMW 「もぐもぐ」
+			PRINTFORMW 「あらっ、もうなくなちゃった」
+		;おでん
+		CASE 86
+			PRINTFORMW 「温かくていいわね～♪」
+			PRINTFORMW 「じゃあさっそく私は……」
+		[SKIPEND]
+		
+		CASEELSE
+			IF STRCOUNT(DISH_TASTE, ESCAPE("ローター/"))
+				PRINTFORMW 「Is, Is this really safe to eat, I wonder......」
+			ELSEIF STRCOUNT(DISH_TASTE, ESCAPE("麺類/"))
+				IF TCVAR:[[影狼]]:353
+					PRINTFORMW 「たまごたまご……」
+					PRINTFORMW 「ほら、これで月見%DISHNAME%！」
+				ELSE
+					PRINTFORMW 「美味しそうな%DISHNAME%ね」
+					PRINTFORMW 「あら、たまごは入れないの？」
+				ENDIF
+				;月見ラーメンって何だ
+			ELSEIF STRCOUNT(DISH_TASTE, ESCAPE("魚料理/"))
+				GOTO OSAKANA
+			ELSEIF STRCOUNT(DISH_TASTE, ESCAPE("肉料理/"))
+				GOTO ONIKU
+			ELSEIF STRCOUNT(DISH_TASTE, ESCAPE("デザート/"))
+				PRINTFORMW 「お肉も好きだけど、こういうデザートも大好物よ♪」
+				PRINTFORMW 「狼なのに変？」
+				PRINTFORMW 「分かってないわねぇ%CALLNAME:MASTER%」
+				PRINTFORMW 「私は狼女、狼である前に女なの！」
+			ELSEIF STRCOUNT(DISH_TASTE, ESCAPE("野菜/"))
+				PRINTFORMW 「ウ…やっぱり菜食は苦手だわ……」
+				PRINTFORMW 「食べられなくはないけれど…」
+				PRINTFORMW 「ちゃんと消化できるか心配ね……」
+			ELSEIF STRCOUNT(DISH_TASTE, ESCAPE("軽食/"))
+			ENDIF
+		ENDSELECT
+	PRINTL
+ENDIF
+
+;吟味後（調味料は一緒に作らない時のみ）
+;おいしくなかった
+IF TFLAG:193 == -1
+	PRINTFORMW 「Uuーーnn, this time was a little...how do I put it...」
+ELSEIF TASTE_REACTION("辛い")
+	PRINTFORMW 「Gyaa!!」
+	PRINTFORMW 「What is this! Hot! Water! Water!」
+ELSEIF TASTE_REACTION("甘い")
+	PRINTFORMW 「Uee!!」
+	PRINTFORMW 「What is this...? What did you put in this to make it like this......?」
+ELSEIF TASTE_REACTION("わさび")
+	PRINTFORMW 「Hyaaーーー!!」
+	PRINTFORMW 「W-Why'd you put wasabi in this......」
+	PRINTFORMW 「And you put in way too much...... Water......」
+ELSEIF TASTE_REACTION("すっぱい")
+	PRINTFORMW 「Nnnーー!?」
+	PRINTFORMW 「T-This isn't rotten, right......?」
+;おいしい
+ELSEIF TALENT:[[影狼]]:恋慕
+	PRINTFORMW 「Thank you for the meal.」
+	;一緒に作った
+	IF TCVAR:[[影狼]]:353 > 0
+		SELECTCASE RAND:5
+		CASE 0
+			PRINTFORMW 「Something you cook yourself really does have a different taste.」
+			PRINTFORMW 「And since I can eat with %CALLNAME:MASTER%, it's extra delicious♪」
+		CASE 1
+		;お腹いっぱいじゃない時もあるけど
+			PRINTFORMW 「Fuuー I'm full!」
+			PRINTFORMW 「%CALLNAME:MASTER% is good at cooking, huh.」
+		CASE 2
+			PRINTFORMW 「Even though it took all that trouble to make...」
+			PRINTFORMW 「When it's time to eat it's gone in a moment.」
+		CASE 3
+		;イベントあるかもね
+			PRINTFORMW 「Which reminds me, what's %CALLNAME:MASTER%'s favorite dish?」
+			PRINTFORMW 「...Umm, Next time can we make that together?」
+		CASE 4
+			PRINTFORMW 「It was delicious～♪」
+			PRINTFORMW 「Ah, Let me handle the cleanup, please.」
+		ENDSELECT
+		CFLAG:1004 += 5
+	;作ってない
+	ELSEIF TFLAG:193 == 1
+		PRINTFORMW 「……！！」
+		PRINTFORMW 「これ、すっごく美味しいわ！」
+		CFLAG:1004 += 5
+	ELSE
+		PRINTFORMW 「%CALLNAME:MASTER%'s cooking was delicious～」
+		CFLAG:1004 += 3
+	ENDIF
+;恋慕じゃない
+ELSEIF TFLAG:193 == 1
+	PRINTFORMW 「……！！」
+	PRINTFORMW 「これ、すっごく美味しいわ！」
+	CFLAG:1004 += 5
+ELSE
+	PRINTFORMW 「Thank you for the meal.」
+	PRINTFORMW 「It was delicious!」
+	PRINTFORMW 「You're pretty skilled, aren't you.」
+	CFLAG:1004 += 3
+ENDIF
+TCVAR:[[影狼]]:353 = 0
+RETURN 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;寝ながら考えた暇つぶし人狼ゲーム
+;推理もくそもないクソゲー
+;いつか怪盗を加えた真ワンナイト人狼にしたい
+;これちゃんとプログラミングできてたらすごいっすね
+;影狼と人狼ゲームをやるのが夢です
+;気が向いたらパターンを増やす予定。実質無限に書ける
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@ERATOHO_JINROU_GAME
+PRINTFORMW Hello. I'll be your host, Izayoi Sakuya.
+PRINTFORML eratohoWerewolf is a game we often play at the Scarlet Devil Mansion.
+PRINTFORMW Or in other words, under our original rules.
+PRINTFORMW Do you need an explanation of the rules?
+$JINROU_FIRSTTIME_INPUT_LOOP
+PRINTL  [0] Explain!
+PRINTL  [1] No, let's play!
+INPUT
+IF !RESULT
+	PRINTL 
+	PRINTFORML First, the 4 players will be randomly assigned roles between Villager, Werewolf, and Fortune teller.
+	PRINTFORMW You only know your own role. At least one or two of your companions will be werewolves.
+	PRINTFORMW The fortune teller can look at any other player and reveal their position.
+	PRINTFORMW In addition, the werewolves know who their allies are. If they are alone, they will know that as well.
+	PRINTL 
+	PRINTFORML After that, the dawn game starts.
+	PRINTFORMW After arguments, a vote will be held on who to hang (kill).
+	PRINTFORML The player(s) with the most votes will be hung.
+	PRINTFORMW If everyone receives one vote, then nobody will be hung.
+	PRINTL 
+	PRINTFORMW If a werewolf is hung, then the villagers all win (the fortune teller is a villager).
+	PRINTFORMW If a werewolf is not hung, then all the werewolves win.
+	PRINTFORMW That is all. Well, you're smart so I'm sure you'll figure it out.
+	PRINTFORMW It's all nonsense, but as long as you have fun it's fine.
+	PRINTFORMW I tried to capture the mood of the original, but since it turned out as a kus○ge, I apologize in advance.
+ELSEIF RESULT == 1
+ELSE
+	GOTO JINROU_FIRSTTIME_INPUT_LOOP
+ENDIF
+
+PRINTFORMW Then, have a good day.
+PRINTL
+PRINTFORMW Positions will now be selected.
+PRINTL 
+SELECTCASE RAND:10
+;あなた＆影狼：村人　霊夢＆魔理沙：人狼
+CASE 0,1
+	PRINTFORMW You are a villager.
+	PRINTFORMW Dawn breaks.
+	PRINTL 
+	PRINTFORMW Reimu「Then we'll start with the fortune teller, you there?」
+	PRINTFORMW Marisa「I'm the fortune teller. I look at %CALLNAME:MASTER%. Villager.」
+	PRINTFORMW Kagerou「Wait wait, stop with the lies. I'm the fortune teller!」
+	PRINTFORMW Kagerou「I look at Reimu. Reimu is a werewolf. So that means these two are werewolves.」
+	PRINTFORMW Kagerou「Understand? %CALLNAME:MASTER%? I'm hanging Reimu.」
+	PRINTFORMW Reimu「If you're a werewolf then you should tell better lies.」
+	PRINTFORMW Reimu「%CALLNAME:MASTER%, Marisa, if you're villagers then you should hang her.」
+	PRINTFORMW Marisa「Even if you didn't say so, I'd hang that fake fortune teller in this situation.」
+	CALL JINROU_TOUHYOU
+	SELECTCASE RESULT
+	CASE 1
+		PRINTFORMW Reimu ２ votes　Kagerou ２ votes.　Both were hung.
+		PRINTFORMW Reimu and Marisa were werewolves. You and Kagerou win.
+		PRINTFORMW Kagerou「Uuu... You believed in me... Thank you, %CALLNAME:MASTER%.」
+		CASE 2
+		PRINTFORMW Reimu １ vote　Marisa １ vote　Kagerou ２ votes. Kagerou was hung.
+		PRINTFORMW Kagerou was the fortune teller. You and Kagerou lose.
+		PRINTFORMW Kagerou「Why, %CALLNAME:MASTER%! I said Reimu! Idiot!」
+		CASE 3
+		PRINTFORMW Reimu１ vote　Kagerou３ votes. Kagerou was hung.
+		PRINTFORMW Kagerou was the fortune teller. You and Kagerou lose.
+		PRINTFORMW Kagerou「Uuu... How mean, %CALLNAME:MASTER%......」
+	ENDSELECT
+
+;あなた＆霊夢：村人　魔理沙＆影狼：人狼
+CASE 2
+	PRINTFORMW You are a villager.
+	PRINTFORMW Dawn breaks.
+	PRINTL 
+	PRINTFORMW Reimu「Then we'll start with the fortune teller, you there?」
+	PRINTFORMW Marisa「I'm the fortune teller. I look at %CALLNAME:MASTER%. Villager.」
+	PRINTFORMW Reimu「Too bad, I'm the fortune teller. I see that %CALLNAME:MASTER% is a villager.」
+	PRINTFORMW Kagerou「Mumu... Which do you think is the real one, %CALLNAME:MASTER%?」
+	PRINTFORMW Reimu「You're an outsider so sorry, but there's no need to even think about it.」
+	PRINTFORMW Marisa「Eh? What are you talking about?」
+	PRINTFORMW Reimu「Okay voteー」
+	PRINTFORMW Kagerou「Wait, that's going too fast!」
+	CALL JINROU_TOUHYOU
+	SELECTCASE RESULT
+	CASE 1
+		PRINTFORMW Reimu ３ votes　Marisa １ vote. Reimu was hung.
+		PRINTFORMW Reimu was the fortune teller. Kagerou was a werewolf. You and Reimu lose.
+		PRINTFORMW Kagerou「Hehehe. That method was too heavy-handed～」
+	CASE 2
+		PRINTFORMW Reimu ２ votes　Marisa ２ votes.　Both were hung.
+		PRINTFORMW Marisa and Kagerou were werewolves. You and Reimu win.
+		PRINTFORMW Kagerou「Achaー We were seen through～」
+	CASE 3
+		PRINTFORMW Reimu ２ votes　Marisa １ vote　Kagerou １ vote.　Reimu was hung.
+		PRINTFORMW Reimu was the fortune teller. Kagerou was a werewolf. You and Reimu lose.
+		PRINTFORMW Kagerou「%CALLNAME:MASTER% is so easy～♪」
+	ENDSELECT
+
+;あなた＆魔理沙：村人　霊夢＆影狼：人狼
+CASE 3
+	PRINTFORMW You are a villager.
+	PRINTFORMW Dawn breaks.
+	PRINTL 
+	PRINTFORMW Reimu「Then we'll start with the fortune teller, you there?」
+	PRINTFORMW Marisa「I'm the fortune teller. I look at %CALLNAME:MASTER%. Villager.」
+	PRINTFORMW Reimu「Sorry, but I'm the fortune teller. I see that %CALLNAME:MASTER%'s a villager.」
+	PRINTFORMW Kagerou「Eh!? Stop that! You're both werewolves, aren't you!? I'm the fortune teller!」
+	PRINTFORMW Marisa「Who do you look at?」
+	PRINTFORMW Kagerou「... %CALLNAME:MASTER%, the villager...」
+	PRINTFORMW Reimu「Why is everyone only looking at %CALLNAME:MASTER%.」
+	PRINTFORMW Marisa「'Cuz you two were waiting to see what would happen. %CALLNAME:MASTER%, I'm gonna' hang Reimu.」
+	PRINTFORMW Kagerou「Hmph, I don't want to hear that from a werewolf. I'm hanging Marisa.」
+	PRINTFORMW Reimu「That's my line. I'm hanging Kagerou.」
+	CALL JINROU_TOUHYOU
+	SELECTCASE RESULT
+	CASE 1
+		PRINTFORMW Reimu ２ votes　Marisa ２ votes.　Both were hung.
+		PRINTFORMW Reimu and Kagerou were werewolves. You and Marisa win.
+		PRINTFORMW Kagerou「Kuu～... Saw through it, Huh...」
+	CASE 2
+		PRINTFORMW Reimu １ vote　Marisa ３ votes.　Marisa was hung.
+		PRINTFORMW Marisa was the fortune teller. You and Marisa lose.
+		PRINTFORMW Kagerou「Too bad♪ Thanks for believing me♪」
+	CASE 3
+		PRINTFORMW Reimu １ vote　Marisa ２ votes　Kagerou １ vote.　Marisa was hung.
+		PRINTFORMW Marisa was the fortune teller. You and Marisa lose.
+		PRINTFORMW Kagerou「Fufu, We confused you pretty well, huh?」
+	ENDSELECT
+
+;あなた＆影狼：人狼　霊夢＆魔理沙：村人
+CASE 4,5
+	PRINTFORMW You are a werewolf.
+	PRINTFORMW Kagerou is also a werewolf.
+	PRINTL 
+	PRINTFORMW Dawn breaks.
+	PRINTFORMW Reimu「Then we'll start with the fortune teller, you there?」
+	PRINTFORMW Marisa「I'm the fortune teller. I look at %CALLNAME:MASTER%. Werewolf.」
+	CALL JINROU_TAIKOU
+	SELECTCASE RESULT
+	CASE 0
+		PRINTFORMW Kagerou「Wait wait, will you stop lying? I'm the fortune teller.」
+		IF RAND:2
+			PRINTFORMW Kagerou「I look at Reimu. Reimu is a werewolf. In other words, those two are werewolves.」
+			PRINTFORMW Kagerou「Okay? %CALLNAME:MASTER%? I'm hanging Reimu!」
+			PRINTFORMW Reimu「If you're a werewolf then do a better job of lying.」
+			PRINTFORMW Reimu「%CALLNAME:MASTER%, give up, I'm hanging her.」
+			PRINTFORMW Marisa「Even if you didn't say so, I'd hang that fake fortune teller in this situation.」
+			CALL JINROU_TOUHYOU
+			SELECTCASE RESULT
+			CASE 1
+				PRINTFORMW Reimu ２ votes　Kagerou ２ votes.　Both were hung.
+				PRINTFORMW Kagerou was a werewolf. You and Kagerou lose.
+			CASE 2
+				PRINTFORMW Reimu　１ vote　Marisa　１ vote　Kagerou　２ votes.　Kagerou was hung.
+				PRINTFORMW Kagerou was the fortune teller. You and Kagerou lose.
+			CASE 3
+				PRINTFORMW Reimu １ vote　Kagerou　３ votes.　Kagerou was hung.
+				PRINTFORMW Kagerou was the fortune teller. You and Kagerou lose.
+			ENDSELECT
+			PRINTFORMW Kagerou「Huh? Ah, If I get hung we lose...」
+			PRINTFORMW Kagerou「Sorry! %CALLNAME:MASTER%!」
+		ELSE
+			PRINTFORMW Kagerou「I look at Reimu. Reimu is a villager!」
+			PRINTFORMW Kagerou「Just because you're friends doesn't mean you can trust Marisa～!」
+			PRINTFORMW Reimu「No, rather because it's Marisa that I can't trust her.」
+			PRINTFORMW Reimu「But still, you're a wolf woman, so...」
+			PRINTFORMW Marisa「Ha ha ha! Well, that's normal.」
+			PRINTFORMW Marisa「Of course I'll hang Kagerou.」
+			CALL JINROU_TOUHYOU
+			SELECTCASE RESULT
+			CASE 1
+				IF RAND:2
+					PRINTFORMW Reimu １ vote　Marisa ２ votes　Kagerou １ vote.　Marisa was hung.
+					PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+					PRINTFORMW Kagerou「Fuー That was close! Fufufu... How'd you like the acting of a real werewolf♪」
+				ELSE
+					PRINTFORMW Reimu １ vote　Marisa １ vote　Kagerou ２ votes.　Kagerou was hung.
+					PRINTFORMW Kagerou was a werewolf. You and Kagerou lose.
+					PRINTFORMW Kagerou「Ku... As expected, the Hakurei Miko's intuition is too strong...」
+				ENDIF
+			CASE 2
+				IF RAND:2
+					PRINTFORMW Marisa ３ votes　Kagerou １ vote.　Marisa was hung.
+					PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+					PRINTFORMW Kagerou「Fuー That was close! Fufufu... How'd you like the acting of a real werewolf♪」
+				ELSE
+					PRINTFORMW Marisa ２ votes　Kagerou ２ votes.　Both were hung.
+					PRINTFORMW Kagerou was a werewolf. You and Kagerou lose.
+					PRINTFORMW Kagerou「Ku... As expected, the Hakurei Miko's intuition is too strong...」
+				ENDIF
+			CASE 3
+				IF RAND:2
+					PRINTFORMW Marisa ２ votes　Kagerou ２ votes.　Both were hung.
+				ELSE
+					PRINTFORMW Marisa １ vote　Kagerou ３ votes.　Kagerou was hung.
+				ENDIF
+					PRINTFORMW Kagerou was a werewolf. You and Kagerou lose.
+					PRINTFORMW Kagerou「Hey, %CALLNAME:MASTER%! Why'd you vote to hang me?! Idiot!」
+				ENDSELECT
+		ENDIF
+	CASE 10
+		PRINTFORMW Reimu「Hmーm. Which is the real one?」
+		PRINTFORMW Kagerou「Just because you're friends doesn't mean you can trust Marisa～!」
+		PRINTFORMW Reimu「No, rather it's because it's Marisa that I don't trust her.」
+		PRINTFORMW Marisa「Oi Oi! That shouldn't apply here either!」
+		PRINTFORMW Marisa「Anyway, of course I'll hang %CALLNAME:MASTER%.」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_01(RESULT)
+	CASE 11
+		PRINTFORMW Reimu「Hmーm. Well, %CALLNAME:MASTER% is a fake.」
+		PRINTFORMW Marisa「That's right. Let's hang 'em.」
+		PRINTFORMW Kagerou「Eh! Wait!」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_02(RESULT)
+	CASE 20
+		PRINTFORMW Marisa「Eh? I'm the fortune teller though.」
+		PRINTFORMW Reimu「Well, %CALLNAME:MASTER% was like this, so.」
+		PRINTFORMW Kagerou「Eh! Wait!」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_02(RESULT)
+	CASE 21
+		PRINTFORMW Marisa「Hou. Interesting, you picking a fight with me?」
+		PRINTFORMW Kagerou「Hmーm, Which one's the real one （stare）」
+		PRINTFORMW Reimu「Both are normally pretty suspicious...」
+		PRINTFORMW Marisa「Kagerou looks like she gets along with %CALLNAME:MASTER% pretty well.」
+		PRINTFORMW Marisa「You're not allowed to play favorites here, you know?」
+		PRINTFORMW Kagerou「Eh! Is, Is that right, well, I'll show you the intuition of a real werewolf...」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_01(RESULT)
+	CASE 30
+		PRINTFORMW Kagerou「I, I see. I wonder which is the real one...」
+		PRINTFORMW Reimu「Both are normally pretty suspicious...」
+		PRINTFORMW Marisa「Kagerou looks like she gets along with %CALLNAME:MASTER% pretty well.」
+		PRINTFORMW Marisa「You're not allowed to play favorites here, you know?」
+		PRINTFORMW Kagerou「Eh! Is, Is that right, well, I'll show you the intuition of a real werewolf...」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_01(RESULT)
+	CASE 31
+		PRINTFORMW Kagerou「What was that!? Hmph, I hate you, %CALLNAME:MASTER%!」
+		PRINTFORMW Reimu「Ara Ara, Even though you two are so close usually, how rare.」
+		PRINTFORMW Kagerou「Eh!? That's...not true...right?」
+		PRINTFORMW Marisa「Ha Ha Ha! Well, we're playing seriously right now, so it can't be helped.」
+		PRINTFORMW Marisa「Anyway, of course I'll hang %CALLNAME:MASTER%.」
+		PRINTFORMW Reimu（If %CALLNAME:MASTER% was serious, I wonder who I should hang...）
+		CALL JINROU_TOUHYOU
+		SELECTCASE RESULT
+		CASE 1
+			IF CFLAG:1:信頼度 >= 2500
+				PRINTFORMW %CALLNAME:MASTER% １ vote　Reimu １ vote　Marisa ２ votes.　Marisa was hung.
+				PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+				PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! Have you been working on your werewolf skills?」
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW %CALLNAME:MASTER% １ vote　Reimu １ vote　Marisa ２ votes.　Marisa was hung.
+					PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+					PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! You might have the makings of a werwolf yourself!」
+				CASE 1
+					PRINTFORMW %CALLNAME:MASTER% １ vote　Reimu １ vote　Marisa １ vote　Kagerou １ vote.　Nobody was hung.
+					PRINTFORMW You and Kagerou were werewolves. You and Kagerou win.
+					PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! You might have the makings of a werewolf yourself!」
+				CASE 2
+					PRINTFORMW %CALLNAME:MASTER% ２ votes　Reimu １ vote　Marisa １ vote.　%CALLNAME:MASTER% was hung.
+					PRINTFORMW %CALLNAME:MASTER% was a werewolf. You and Kagerou lose.
+					PRINTFORMW Kagerou「Ara, Too bad. I guess %CALLNAME:MASTER%'s not suited to be a werewolf after all.」
+				ENDSELECT
+			ENDIF
+		CASE 2
+			IF CFLAG:1:信頼度 >= 2500
+				PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ３ vote.　Marisa was hung.
+				PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+				PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! Have you been working on your werewolf skills?」
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ３ votes.　Marisa was hung.
+					PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+					PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! You might have the makings of a werewolf yourself!」
+				CASE 1
+					PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ２ votes　Kagerou １ vote.　Marisa was hung.
+					PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+					PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! You might have the makings of a werewolf yourself!」
+				CASE 2
+					PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa ２ votes.　Both were hung.
+					PRINTFORMW %CALLNAME:MASTER% was a werewolf. You and Kagerou lose.
+					PRINTFORMW Kagerou「Ara, Too bad. I guess %CALLNAME:MASTER%'s not suited to be a werewolf after all.」
+				ENDSELECT
+			ENDIF
+		CASE 3
+			IF CFLAG:1:信頼度 >= 2500
+				PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ２ votes　Kagerou １ vote.　Marisa was hung.
+				PRINTFORMW Marisa was the fortune teller.You and Kagerou win.
+				PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! Have you been working on your werewolf skills?」
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ２ votes　Kagerou １ vote.　Marisa was hung.
+					PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+					PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! You might have the makings of a werewolf yourself!」
+				CASE 1
+					PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa １ vote　Kagerou ２ votes.　Kagerou was hung.
+					PRINTFORMW Kagerou was a werewolf. You and Kagerou lose.
+					PRINTFORMW Kagerou「Eh!? %CALLNAME:MASTER%! Why'd you vote for me?! Idiot!」
+				CASE 2
+					PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa １ vote　Kagerou １ vote.　%CALLNAME:MASTER% was hung.
+					PRINTFORMW %CALLNAME:MASTER% was a werewolf. You and Kagerou lose.
+					PRINTFORMW Kagerou「Ara, Too bad. I guess %CALLNAME:MASTER%'s not suited to be a werewolf after all.」
+				ENDSELECT
+			ENDIF
+		ENDSELECT
+	ENDSELECT
+
+;あなた：人狼　霊夢＆魔理沙＆影狼：村人
+CASE 6,7
+	PRINTFORMW You are a werewolf.
+	PRINTFORMW You have no allies.
+	PRINTL 
+	PRINTFORMW Day breaks
+	PRINTFORMW Reimu「Then we'll start with the fortune teller, you there?」
+	PRINTFORMW Marisa「I'm the fortune teller. I look at %CALLNAME:MASTER%. Werewolf.」
+	CALL JINROU_TAIKOU
+	SELECTCASE RESULT
+	CASE 0
+		PRINTFORMW Kagerou「...Huh?」
+		PRINTFORMW Marisa「Hey Reimu, isn't this...」
+		PRINTFORMW Reimu「Sorry %CALLNAME:MASTER%, your death is guaranteed.」
+		PRINTFORMW Kagerou「Ahaha... Sorry, %CALLNAME:MASTER%...」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_05(RESULT)
+		PRINTFORMW Kagerou「If you're alone and discovered, you have to defend yourself.」
+	CASE 10
+		PRINTFORMW Reimu「Hmーm, Which one.」
+		PRINTFORMW Kagerou「Doesn't it feel like Marisa is always a fortune teller?」
+		PRINTFORMW Marisa「It can't be helped. I keep drawing it.」
+		PRINTFORMW Reimu「The boy who cried wolf.」
+		PRINTFORMW Marisa「Girl.」
+		PRINTFORMW Kagerou「Ahaha, You guys are so funny.」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_04(RESULT)
+	CASE 11
+		PRINTFORMW Reimu「Haah!?」
+		PRINTFORMW Marisa「Ou, Reimu, hang 'em.」
+		PRINTFORMW Kagerou「Arara. %CALLNAME:MASTER%, you have to calm down and think these things through.」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_05(RESULT)
+		PRINTFORMW Kagerou「If only %CALLNAME:MASTER% hadn't made Marisa an enemy.」
+	CASE 20
+		PRINTFORMW Marisa「Eh.」
+		PRINTFORMW Kagerou「You did it now, %CALLNAME:MASTER%.」
+		PRINTFORMW Reimu「Toーhyoー」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_05(RESULT)
+		PRINTFORMW 影狼「%CALLNAME:MASTER%は魔理沙を敵にしなきゃ」
+	CASE 21
+		PRINTFORMW Marisa「Oh? Tryin' to pin the blame on me, huh?」
+		PRINTFORMW Reimu「Both are suspicious, Huh...」
+		PRINTFORMW Kagerou「Eh～  No way, %CALLNAME:MASTER% is trying to trick me...」
+		PRINTFORMW Marisa「What, you like him or something?」
+		PRINTFORMW Kagerou「Why did it jump to that!」
+		PRINTFORMW Reimu「You're suspicious too.」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_04(RESULT)
+	CASE 30
+		PRINTFORMW Kagerou「Ara, Thank you, %CALLNAME:MASTER%.」
+		PRINTFORMW Reimu「We still don't know, huh.」
+		PRINTFORMW Marisa「You, even though you're a wolf woman you're getting tricked by the werewolf.」
+		PRINTFORMW Kagerou「I, I understand that much!」
+		PRINTFORMW Reimu「I wonder...」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_04(RESULT)
+	CASE 31
+		PRINTFORMW Kagerou「Eh!?」
+		PRINTFORMW Reimu「Straight to hell.」
+		PRINTFORMW Marisa「Well there's always next time, %CALLNAME:MASTER%.」
+		CALL JINROU_TOUHYOU
+		CALL JINROU_PATTERN_05(RESULT)
+		PRINTFORMW Kagerou「If the werewolf is found out by two people, you'll lose you know?」
+	ENDSELECT
+
+;あなた＆霊夢＆魔理沙：村人　影狼：人狼
+;台詞が違うだけで全部同じじゃねーか！
+CASE 8,9
+	PRINTFORMW You are the fortune teller.
+	CALL JINROU_URANAI_01
+	PRINTL
+	PRINTFORMW Dawn breaks.
+	PRINTFORMW Reimu「Then we'll start with the fortune teller, you there?」
+	SELECTCASE RESULT
+	CASE 1
+		CALL JINROU_URANAI_00
+		IF RESULT
+			PRINTFORMW Kagerou「Fufufu, You won't be able to trick me that easily.」
+			PRINTFORMW Kagerou「I'm the fortune teller. Too bad, but I look at %CALLNAME:MASTER% and see he's a werewolf.」
+			PRINTFORMW Marisa「It's fishy that you went second.」
+			PRINTFORMW Kagerou「Even if you say that, when else could I go!」
+			PRINTFORMW Reimu「Right. %CALLNAME:MASTER% could be pretending in order to trick me.」
+			PRINTFORMW Marisa「Oh? Is that so?」
+			PRINTFORMW Kagerou「Why won't you believe me～!」
+			PRINTFORMW Marisa「Sorry, sorry. You're an actual werewolf so I was being a bit biased.」
+			PRINTFORMW Reimu「%CALLNAME:MASTER%'s also plenty suspicious...」
+			CALL JINROU_TOUHYOU
+			CALL JINROU_PATTERN_03(RESULT)
+
+		;パターンが膨大になるので現在未実装。といいつつちょっと書いた。
+		ELSE
+			PRINTW
+			PRINTFORMW Marisa「They're not... Huh?」
+			PRINTFORMW Kagerou「In other words...」
+			PRINTFORMW Reimu「Two people are werewolves...」
+			PRINTFORMW Marisa「Isn't this pure luck then!」
+			PRINTFORMW Kagerou「Occasionally this can be interesting, too.」
+			PRINTFORMW Reimu「Well, just go with your intuition for these things.」
+		ENDIF
+	CASE 2
+		CALL JINROU_URANAI_00
+		IF RESULT
+			PRINTFORMW Kagerou「Fufufu, You won't be able to trick me that easily.」
+			PRINTFORMW Kagerou「I'm the fortune teller. Too bad, but I look at %CALLNAME:MASTER% and see he's a werewolf.」
+			PRINTFORMW Marisa「It's fishy that you went second.」
+			PRINTFORMW Kagerou「Even if you say that, when else could I go!」
+			PRINTFORMW Reimu「Right. %CALLNAME:MASTER% could be pretending in order to trick Marisa.」
+			PRINTFORMW Marisa「Oh? Is that so?」
+			PRINTFORMW Kagerou「Why won't you believe me～!」
+			PRINTFORMW Marisa「Sorry, sorry. You're an actual werewolf so I was being a bit biased.」
+			PRINTFORMW Reimu「%CALLNAME:MASTER%'s also plenty suspicious...」
+			CALL JINROU_TOUHYOU
+			CALL JINROU_PATTERN_03(RESULT)
+		ELSE
+		ENDIF
+	CASE 3
+		CALL JINROU_URANAI_00
+		IF RESULT
+			PRINTFORMW Kagerou「Fufufu, You won't be able to trick me that easily.」
+			PRINTFORMW Kagerou「I'm the fortune teller. Too bad, but I look at %CALLNAME:MASTER% and see he's a werewolf.」
+			PRINTFORMW Marisa「It's fishy that you went second.」
+			PRINTFORMW Kagerou「Even if you say that, when else could I go!」
+			PRINTFORMW Reimu「Both of them are guilty, so it's a 50-50 chance here.」
+			PRINTFORMW Marisa「Will we find a kitten or a tiger...」
+			PRINTFORMW Reimu「We'll find a wolf.」
+			CALL JINROU_TOUHYOU
+			CALL JINROU_PATTERN_03(RESULT)
+		ELSE
+		ENDIF
+	ENDSELECT
+ENDSELECT
+RETURN 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;投票
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@JINROU_TOUHYOU
+PRINTL 
+PRINTL Vote for someone to hang.
+PRINTL  [1] Reimu
+PRINTL  [2] Marisa
+PRINTL  [3] Kagerou
+INPUT
+SIF INRANGE(RESULT, 1, 3)
+	RETURN RESULT
+RESTART
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;対抗占い師
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@JINROU_TAIKOU
+#DIM CHECK_CHARA
+PRINTL 
+PRINTL Pretend to be a fortune teller?
+PRINTL  [0] Yes
+PRINTL  [1] No
+INPUT
+IF !RESULT
+	DO
+		PRINTL Select someone to look at.
+		PRINTL  [1] Reimu
+		PRINTL  [2] Marisa
+		PRINTL  [3] Kagerou
+		INPUT
+		CHECK_CHARA = RESULT
+	LOOP !INRANGE(CHECK_CHARA, 1, 3)
+	DO
+		PRINTL Select something to see.
+		PRINTL  [0] Villager
+		PRINTL  [1] Werewolf
+		INPUT
+		SIF INRANGE(RESULT, 0, 1)
+			RETURN (CHECK_CHARA * 10 + RESULT)
+	LOOP 1
+ELSE
+	RETURN 0
+ENDIF
+RETURN 0
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;占い師
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@JINROU_URANAI_01
+$JINROU_URANAI_INPUT_LOOP_1
+PRINTL 
+PRINTL Select someone to look at.
+PRINTL  [1] Reimu
+PRINTL  [2] Marisa
+PRINTL  [3] Kagerou
+INPUT
+SELECTCASE RESULT
+CASE 1
+	PRINTW Reimu is a villager.
+	RETURN 1
+CASE 2
+	PRINTW Marisa is a villager.
+	RETURN 2
+CASE 3
+	PRINTW Kagerou is a werewolf!
+	RETURN 3
+CASEELSE
+	GOTO JINROU_URANAI_INPUT_LOOP_1
+ENDSELECT
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@JINROU_URANAI_00
+PRINTL 
+PRINTL Announce yourself as the fortune teller?
+PRINTL  [0] Yes
+PRINTL  [1] No
+INPUT
+IF !RESULT
+	RETURN 1
+ELSE
+	PRINTW ... Sorry, the pattern for no fortune teller hasn't been added yet.
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;あなた＆影狼：人狼　霊夢＆魔理沙：村人の勝利パターン
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@JINROU_PATTERN_01(ARG)
+SELECTCASE ARG
+CASE 1
+	IF CFLAG:1:信頼度 >= 2500
+		PRINTFORMW %CALLNAME:MASTER% １ vote　Reimu １ vote　Marisa ２ votes.　Marisa was hung.
+		PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+		PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! Have you been working on your werewolf skills?」
+	ELSE
+		IF RAND:2
+			PRINTFORMW %CALLNAME:MASTER% １ vote　Reimu １ vote　Marisa ２ votes.　Marisa was hung.
+			PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+			PRINTFORMW Kagerou 「Nice play, %CALLNAME:MASTER%! You might have the makings of a werewolf yourself!」
+		ELSE
+			PRINTFORMW %CALLNAME:MASTER% ２ votes.　Reimu １ vote　Marisa １ vote.　%CALLNAME:MASTER% was hung.
+			PRINTFORMW %CALLNAME:MASTER% was a werewolf. You and Kagerou lose.
+			PRINTFORMW Kagerou「Ara, Too bad. I guess %CALLNAME:MASTER%'s not suited to be a werewolf after all.」
+		ENDIF
+	ENDIF
+CASE 2
+	IF CFLAG:1:信頼度 >= 2500
+		PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ３ votes.　Marisa was hung.
+		PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+		PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! Have you been working on your werewolf skills?」
+	ELSE
+		IF RAND:2
+			PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ３ votes.　Marisa was hung.
+			PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+			PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! You might have the makings of a werewolf yourself!」
+		ELSE
+			PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa ２ votes.　Both were hung.
+			PRINTFORMW %CALLNAME:MASTER% was a werewolf. You and Kagerou lose.
+			PRINTFORMW Kagerou「Ara, Too bad. I guess %CALLNAME:MASTER%'s not suited to be a werewolf after all.」
+		ENDIF
+	ENDIF
+CASE 3
+	IF CFLAG:1:信頼度 >= 2500
+		PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ２ votes　Kagerou １ vote.　Marisa was hung.
+		PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+		PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! Have you been working on your werewolf skills?」
+	ELSE
+		IF RAND:2
+			PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ２ votes　Kagerou １ vote.　Marisa was hung.
+			PRINTFORMW Marisa was the fortune teller. You and Kagerou win.
+			PRINTFORMW Kagerou「Nice play, %CALLNAME:MASTER%! You might have the makings of a werewolf yourself!」
+		ELSE
+			PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa １ vote　Kagerou １ vote　%CALLNAME:MASTER% was hung.
+			PRINTFORMW %CALLNAME:MASTER% was a werewolf. You and Kagerou lose.
+			PRINTFORMW Kagerou「Ara, Too bad. I guess %CALLNAME:MASTER%'s not suited to be a werewolf after all.」
+		ENDIF
+	ENDIF
+ENDSELECT
+RETURN 1
+
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;あなた＆影狼：人狼　霊夢＆魔理沙：村人の敗北パターン
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@JINROU_PATTERN_02(ARG)
+SELECTCASE ARG
+CASE 1
+	PRINTFORMW %CALLNAME:MASTER% ２ votes　Reimu １ vote　Marisa １ vote.　%CALLNAME:MASTER% was hung.
+	PRINTFORMW %CALLNAME:MASTER% was a werewolf. You and Kagerou lose.
+CASE 2
+	PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa ２ votes.　Both were hung.
+	PRINTFORMW %CALLNAME:MASTER% was a werewolf. You and Kagerou lose.
+CASE 3
+	PRINTFORMW %CALLNAME:MASTER% ２ votes　Kagerou １ vote.　%CALLNAME:MASTER% was hung.
+	PRINTFORMW %CALLNAME:MASTER% was a werewolf. You and Kagerou lose.
+ENDSELECT
+PRINTFORMW Kagerou「Come onー What are you doing, %CALLNAME:MASTER%～!」
+RETURN 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;あなた＆霊夢＆魔理沙：村人　影狼：人狼の通常パターン
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@JINROU_PATTERN_03(ARG)
+SELECTCASE ARG
+CASE 1
+	IF CFLAG:1:信頼度 >= 2500 && CFLAG:11:信頼度 >= 2500
+		PRINTFORMW %CALLNAME:MASTER% １ vote　Reimu １ vote　Kagerou ２ votes.　Kagerou was hung.
+		PRINTFORMW Kagerou was the only werewolf. You, Reimu, and Marisa win.
+		PRINTFORMW Kagerou「Uwah! Everyone's so mean～!」
+	ELSE
+		SELECTCASE RAND:4
+		CASE 0
+			PRINTFORMW %CALLNAME:MASTER% １ vote　Reimu １ vote　Kagerou ２ votes.　Kagerou was hung.
+			PRINTFORMW Kagerou was the only werewolf. You, Reimu, and Marisa win.
+			PRINTFORMW Kagerou「Uwah! Everyone's so mean～!」
+		CASE 1,2
+			PRINTFORMW %CALLNAME:MASTER% ２ votes　Reimu １ vote　Kagerou １ vote.　%CALLNAME:MASTER% was hung.
+			PRINTFORMW %CALLNAME:MASTER% was the fortune teller. You, Reimu, and Marisa lose.
+			PRINTFORMW Kagerou「Ah ha ha! You should've voted against me! Ah ha ha!」
+		CASE 3
+			PRINTFORMW %CALLNAME:MASTER% ３ votes　Reimu １ vote.　%CALLNAME:MASTER% was hung.
+			PRINTFORMW %CALLNAME:MASTER% was the fortune teller. You, Reimu, and Marisa lose.
+			PRINTFORMW Kagerou「Fufuーn♪ This is because you're so suspicious normally.」
+		ENDSELECT
+	ENDIF
+CASE 2
+	IF CFLAG:1:信頼度 >= 2500 && CFLAG:11:信頼度 >= 2500
+		PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa １ vote　Kagerou ２ votes.　Kagerou was hung.
+		PRINTFORMW Kagerou was the only werewolf. You, Reimu, and Marisa win.
+		PRINTFORMW Kagerou「Uwah! Everyone's so mean～!」
+	ELSE
+		SELECTCASE RAND:4
+		CASE 0
+			PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa １ vote　Kagerou ２ votes.　Kagerou was hung.
+			PRINTFORMW Kagerou was the only werewolf. You, Reimu, and Marisa win.
+			PRINTFORMW Kagerou「Uwah! Everyone's so mean～!」
+		CASE 1,2
+			PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa１ vote　Kagerou１ vote.　%CALLNAME:MASTER% was hung.
+			PRINTFORMW %CALLNAME:MASTER% was the fortune teller. You, Reimu, and Marisa lose.
+			PRINTFORMW Kagerou「Ah ha ha! You should've voted against me! Ah ha ha!」
+		CASE 3
+			PRINTFORMW %CALLNAME:MASTER% ３ votes　Marisa １ vote.　%CALLNAME:MASTER% was hung.
+			PRINTFORMW %CALLNAME:MASTER% was the fortune teller. You, Reimu, and Marisa lose.
+			PRINTFORMW Kagerou「Fufuーn♪ This is because you're so suspicious normally.」
+		ENDSELECT
+	ENDIF
+CASE 3
+	IF CFLAG:1:信頼度 >= 2500 && CFLAG:11:信頼度 >= 2500
+		PRINTFORMW %CALLNAME:MASTER%１ vote　Kagerou３ vote　Kagerou was hung.
+		PRINTFORMW Kagerou was the only werewolf. You, Reimu, and Marisa win.
+		PRINTFORMW Kagerou「Uwah! Everyone's so mean～!」
+	ELSE
+		SELECTCASE RAND:4
+		CASE 0
+			PRINTFORMW %CALLNAME:MASTER% １ vote　Kagerou ３ votes.　Kagerou was hung.
+			PRINTFORMW Kagerou was the only werewolf. You, Reimu, and Marisa win.
+			PRINTFORMW Kagerou「Uwah! Everyone's so mean～!」
+		CASE 1,2
+			PRINTFORMW %CALLNAME:MASTER% ２ votes　Kagerou ２ votes.　Both were hung.
+			PRINTFORMW Kagerou was the only werewolf. You, Reimu, and Marisa win.
+			PRINTFORMW Kagerou「Hmーm, I wonder if I was too big of a disadvantage......」
+		CASE 3
+			PRINTFORMW %CALLNAME:MASTER% ３ votes　Kagerou １ vote.　%CALLNAME:MASTER% was hung.
+			PRINTFORMW %CALLNAME:MASTER% was the fortune teller. You, Reimu, and Marisa lose.
+			PRINTFORMW Kagerou「Fufuーn♪ This is because you're so suspicious normally.」
+		ENDSELECT
+	ENDIF
+ENDSELECT
+RETURN 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;あなた：人狼　の勝ちパターン
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@JINROU_PATTERN_04(ARG)
+SELECTCASE ARG
+CASE 1
+	SELECTCASE RAND:4
+	CASE 0
+		PRINTFORMW %CALLNAME:MASTER% １ vote　Reimu １ vote　Marisa ２ votes.　Marisa was hung.
+		PRINTFORMW Marisa was the fortune teller. You win.
+		PRINTFORMW 「Muu... So %CALLNAME:MASTER%'s also a liar......」
+	CASE 1
+		PRINTFORMW %CALLNAME:MASTER% ２ votes　Reimu １ vote　Marisa １ vote.　%CALLNAME:MASTER% was hung.
+		PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+		PRINTFORMW 「That was dangerous.... I was nearly tricked by %CALLNAME:MASTER%...」
+	CASE 2
+		PRINTFORMW %CALLNAME:MASTER% ２ votes　Reimu １ vote　Marisa １ vote.　%CALLNAME:MASTER% was hung.
+		PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+		PRINTFORMW 「Fufuhn, There's no way you're gonna pull one over on me.」
+	CASE 3
+		PRINTFORMW %CALLNAME:MASTER% ３ votes　Reimu １ vote.　%CALLNAME:MASTER% was hung.
+		PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+		PRINTFORMW 「Ahaha, Too bad♪ It's because you're always doing suspicious stuff.」
+	ENDSELECT
+CASE 2
+	SELECTCASE RAND:4
+	CASE 0
+		PRINTFORMW %CALLNAME:MASTER% １ vote　Marisa ３ votes.　Marisa was hung.
+		PRINTFORMW Marisa was the fortune teller. You win.
+		PRINTFORMW 「Muu... So %CALLNAME:MASTER%'s also a liar......」
+	CASE 1
+		PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa ２ votes.　Both were hung.
+		PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+		PRINTFORMW 「That was dangerous.... I was nearly tricked by %CALLNAME:MASTER%...」
+	CASE 2
+		PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa ２ votes.　Both were hung.
+		PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+		PRINTFORMW 「Fufuhn, There's no way you're gonna pull one over on me.」
+	CASE 3
+		PRINTFORMW %CALLNAME:MASTER% ３ votes　Marisa １ vote.　%CALLNAME:MASTER% was hung.
+		PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+		PRINTFORMW 「Ahaha, Too bad♪ It's because you're always doing suspicious stuff.」
+	ENDSELECT
+CASE 3
+	SELECTCASE RAND:4
+	CASE 0
+		PRINTFORMW %CALLNAME:MASTER%１ vote　Marisa ２ votes　Kagerou １ vote.　Marisa was hung.
+		PRINTFORMW Marisa was the fortune teller. You win.
+		PRINTFORMW 「Muu... So %CALLNAME:MASTER%'s also a liar......」
+	CASE 1
+		PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa １ vote　Kagerou １ vote.　%CALLNAME:MASTER% was hung.
+		PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+		PRINTFORMW 「That was dangerous.... I was nearly tricked by %CALLNAME:MASTER%...」
+	CASE 2
+		PRINTFORMW %CALLNAME:MASTER% ２ votes　Marisa １ vote　Kagerou １ vote.　%CALLNAME:MASTER% was hung.
+		PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+		PRINTFORMW 「Fufuhn, There's no way you're gonna pull one over on me.」
+	CASE 3
+		PRINTFORMW %CALLNAME:MASTER% ３ votes　Kagerou １ vote.　%CALLNAME:MASTER% was hung.
+		PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+		PRINTFORMW 「Ahaha, Too bad♪ It's because you're always doing suspicious stuff.」
+	ENDSELECT
+ENDSELECT
+RETURN 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;あなた：人狼　の負けパターン
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@JINROU_PATTERN_05(ARG)
+SELECTCASE ARG
+CASE 1
+	PRINTFORMW %CALLNAME:MASTER% ３ votes　Reimu １ vote.　%CALLNAME:MASTER% was hung.
+	PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+CASE 2
+	PRINTFORMW %CALLNAME:MASTER% ３ votes　Marisa １ vote.　%CALLNAME:MASTER% was hung.
+	PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+CASE 3
+	PRINTFORMW %CALLNAME:MASTER% ３ votes　Kagerou １ vote.　%CALLNAME:MASTER% was hung.
+	PRINTFORMW %CALLNAME:MASTER% was a werewolf. You lose.
+ENDSELECT
+RETURN 1
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;デイリーイベントの発生
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+@K63_職場見学
+TCVAR:354 = 1
+;通い狼発生済み
+SIF !GETBIT(FLAG_DAILY_EV28, 0)
+	RETURN
+;前回から10日以上経ってないと駄目
+SIF DAY - FLAG_DAILY_EV29_LASTTIME < 10
+	RETURN
+SIF MARK:[[影狼]]:反発刻印
+	RETURN
+SIF ABL:[[わかさぎ姫]]:親密 < 2 || ABL:[[蛮奇]]:親密 < 2
+	RETURN
+
+;初回
+IF !GETBIT(FLAG_DAILY_EV29, 0)
+	PRINTFORML 「蛮奇は人里の料理屋で人間のふりして働いてるらしいのよね」
+	PRINTFORML 「姫と行ってみたいんだけど、やっぱりちょっと怖くって……%CALLNAME:MASTER%がエスコートしてくれない？」
+	CALL ASK_YN("喜んで","ちょっと無理")
+	IF !RESULT
+		CALL SPTALK, [[影狼]], "笑顔", 0, @"「本当？じゃあ今夜、人里からちょっと離れたところで待ち合わせね！」", 1 
+		CALL COLORMESSAGE(@"一日の終了時にイベントが発生します（実際に移動する必要はありません）",C_YELLOW,2)
+		CFLAG:[[影狼]]:1005 = 1
+		CALL KIGEN_CHANGE(TARGET,100,1)
+	ELSE
+		PRINTFORML 「そう…気が変わったら教えてね」
+	ENDIF
+ELSE
+	PRINTFORML 「そうそう、また例の店に行きたいんだけど、今夜都合つく？」
+	CALL ASK_YN("大丈夫","今夜は無理")
+	IF !RESULT
+		CALL SPTALK, [[影狼]], "笑顔", 0, @"「じゃあ今夜、いつもの場所でね」", 1 
+		CALL COLORMESSAGE(@"一日の終了時にイベントが発生します（実際に移動する必要はありません）",C_YELLOW,2)
+		CFLAG:[[影狼]]:1005 = 1
+		CALL KIGEN_CHANGE(TARGET,100,1)
+	ELSE
+		PRINTFORML 「じゃあまた日を改めて、ね」
+	ENDIF
+ENDIF
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+;━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+@K63_DEVOUR
+IF !RAND:2
+	PRINTFORML 「ガフッ！ガフッ！ガフッ！ガフッ！」
+	PRINTFORML 影狼はすごい勢いで貪り食っている……
+ELSE
+	PRINTFORML ﾊﾞｷｯ!ﾎﾞﾘ､ﾎﾞﾘｯ､ﾐｼｯ…ﾊﾞｷｯ!
+	PRINTFORML 影狼は骨ごと噛み砕いて食べている……
+ENDIF
+IF !TALENT:恋慕
+	PRINTFORMW あんな白い服をよく汚さないでいられるものだ
+	RETURN
+ENDIF
+CALL ASK_YN("味わって食え","これも食べなよ")
+IF !RESULT
+	PRINTFORMW 「あ……ちょっと我を忘れてたわね」
+	RETURN
+ENDIF
+PRINTFORML 「いいの！？ありがとー！」
+CALL ASK_YN("どうぞどうぞ","あーん")
+IF !RESULT
+ELSEIF EYEWITNESS()
+	PRINTFORMW 「えっ」
+	PRINTFORMW 「見られながらはちょっと恥ずかしいかなって……」
+ELSEIF FIRSTTIME("あーん")
+	PRINTFORMW 「じ、自分で食べられるから！」
+	PRINTFORMW 「そんな顔しないでよ……わかったわよもう、あーん」
+	PRINTFORMW 「……おいひい」
+	CALL JUEL_UP_SPECIAL([[影狼]],"恥情","露出癖",2,1)
+ELSE
+	PRINTFORMW 「しょ、しょうがないわね」
+	CALL JUEL_UP_SPECIAL([[影狼]],"恥情","露出癖",2,1)
+ENDIF
+CALL RECOVER_PERMIL(MASTER, -100, "体力", 0, "Shared a meal")
+CALL RECOVER_PERMIL([[影狼]], 100, "体力", 0, "Got meal")
+CFLAG:1004 += 1
+
+@K63_SECRET
+IF !TALENT:[[影狼]]:思慕 && !TALENT:[[影狼]]:恋慕
+	PRINTFORMW 思慕以上で解禁されます
+	RETURN
+ENDIF
+CALL COLORMESSAGE(@"【イベント】",C_GREEN,1)
+PRINTFORML 他のキャラと同じ部屋で寝ていない場合、たまにお土産を持って夜訪ねてきます。義理堅いので食事をあげたりすると発生率が上がります
+PRINTFORML 人里の長屋に住んでいる場合特殊分岐あり
+PRINTFORML 現在の発生確率補正値{CFLAG:[[影狼]]:1004}
+PRINTFORML 
+PRINTFORML わかさぎ姫、赤蛮奇の親密が２以上で特殊イベント発生
+PRINTFORML 
+
+CALL COLORMESSAGE(@"【コマンド】",C_GREEN,1)
+PRINTFORML 薬入りのお茶は飲まない
+PRINTFORML 発情時、一部の日常コマンドが失敗するが欲求不満と潤滑が上がる
+PRINTFORML 採集時、低確率で追加でアイテムを獲得することがある
+PRINTFORML 一部地域で採集に補正がかかる
+
+PRINTFORML 
+CALL COLORMESSAGE(@"【うふふ】",C_GREEN,1)
+IF !TALENT:[[影狼]]:恋慕
+	PRINTFORML 恋慕取得後に開示されます
+ELSE
+PRINTFORML 反発があるとき、怒っているときは押し倒せない
+PRINTFORML 【習得遅い】だが、一部経験が伸びやすくなっているのでＶと舌技能の成長は早い
+SIF TALENT:[[影狼]]:Ｂ感度 < 0
+PRINTFORML Ｂ強絶頂で【Ｂ鈍感】消去可能
+SIF TALENT:[[影狼]]:自己愛 < 0
+PRINTFORML 奉仕系コマンドを使っていくと【抑圧】消去可能
+SIF TALENT:[[影狼]]:自己愛 == 0
+PRINTFORML 親密と愛情経験が高いとうふふ終了時【解放】を取得可能
+ENDIF
+PRINTFORMW 

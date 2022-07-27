@@ -1,0 +1,2742 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;日常系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;300,会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_300
+;コマンド共通メッセージ(TRAIN_MESSAGE) 
+;削除すると「～話をした。」とかが消えます
+IF CFLAG:ブチギレ && !FLAG:70
+	PRINTFORML 
+	PRINTFORML 「...」
+	PRINTFORMDL Mamizou looks away from you %SPLIT_G("sullenly:with an angry expression")%.
+	RETURN 1
+ELSE
+	CALL TRAIN_MESSAGE
+ENDIF
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_300_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_300_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF 陥落状態() >= 4
+		IF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2) && (!TALENT:70:恋慕 || !TALENT:70:恋人) ;if suzu isn't involved romantically yet to make more sense
+			SELECTCASE RAND:2
+				CASE 0
+					SETCOLOR 0xEE827C
+					PRINTFORML 『You look like a happy couple, as always.』
+					SETCOLOR 0xF4A460
+					PRINTFORML 「Fufu, love is the spice of life, ya know.」
+					PRINTFORMDW Mamizou happily snuggles up to you.
+					SETCOLOR 0xEE827C
+					PRINTFORML 『It sounds so romantic. I wish I were cut out for it!』
+					SETCOLOR 0xF4A460
+					PRINTFORML 「Oh, you'll find a partner if ya just dress up a little. They won't be as good as mine, though.」
+					PRINTFORMDW Kosuzu looks at the two of you flirting with a hint of envy.
+				CASE 1
+					PRINTFORML 「Haven't ya ever thought about looking for love, little lady?」
+					PRINTFORMDL Seeing Mamizou with her arm wrapped around yours, Kosuzu gives her an awkward smile.
+					SETCOLOR 0xEE827C
+					PRINTFORMW 『Ah, I haven't really given it much thought. Besides, I'm sure no one would be interested in a bookworm like me.』
+					SETCOLOR 0xF4A460
+					PRINTFORML 「Hmm, not with that attitude. Ya miss all the shots ya don't take.」
+					SETCOLOR 0xEE827C
+					PRINTFORML 『Mmmー, there are just so many other interesting things to do.』
+					PRINTFORMDW But even as she says this, Kosuzu looks at the two of you with a hint of envy.
+					SETCOLOR 0xF4A460
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Fufu, I'm sure I'm just boring ya prattling on like this.」
+					PRINTFORMDL You earnestly tell her you find her stories enthralling.
+					PRINTFORML 「Mmm, ya smooth little devil. I'm flattered.」
+					PRINTFORMDW Mamizou blushes a little, and you feel your heart leap in your chest.
+				CASE 1
+					PRINTFORML 「Ahh, so you've heard my stories. ... No way I'd actually do that. No, seriously.」
+					PRINTFORMDL You resist the urge to ask her to elaborate, and you only offer a knowing smile.
+					PRINTFORML 「Hmph, ya don't believe me, do ya? I was just trying to make a chance to escape.」
+					PRINTFORMDW Seeing her get so defensive, you wonder if she's really telling the truth.
+				CASE 2
+					PRINTFORML 「Fufu, even with a long life, I never thought I'd bag myself another partner.」
+					PRINTFORMDL Mamizou smiles, but there's a shadow of sadness to it.
+					PRINTFORML 「Mmm? What's with that worried look? Something on my face?」
+					PRINTFORMDW You tell her it's nothing and instead return her smile.
+			ENDSELECT
+		ENDIF
+	ELSEIF 陥落状態() >= 2
+		IF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+			SELECTCASE IFRAND("0TO1", 1, "D0", TALENT:70:恋慕 || TALENT:70:恋人) ;remove if suzu involved romantically to make more sense
+				CASE 0
+					SETCOLOR 0xEE827C
+					PRINTFORML 『Ah, hello, are you looking for something today?』
+					SETCOLOR 0xF4A460
+					PRINTFORML 「Fufu, it's a date, ya jealous? Ya should settle down with someone, too.」
+					PRINTFORMDW Mamizou wraps her arms around yours, and Kosuzu just gives her an awkward smile.
+				CASE 1
+					CALL PRINT_DIALOGUE, @"Ah, Kosuzu. \@ ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 == 213)) ? Ya going somewhere, all dressed up like that? # It's rare to meet ya outside like this. Where ya headed? \@"
+					SETCOLOR 0xEE827C
+					PRINTFORML 『Ah, hello. I'm just going out to a friend's house for a bit. \@ ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 == 213)) ? Do you need something first, though? #  \@』
+					PRINTFORMDW Seeing the two of them chatting so casually, you feel a little left out.
+					SETCOLOR 0xF4A460
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Fufu, meeting ya was one of the good things that happened in my life.」
+					PRINTFORMDW Feeling your cheeks get warm, you stammer out a vague reply.
+				CASE 1
+					PRINTFORML 「Mmm, I think Gensokyo's been treating me alright.」
+					PRINTFORMDW Mamizou seems to be enjoying herself, and before long you find yourself smiling too.
+				CASE 2
+					PRINTFORML 「Moving here was definitely the right choice.」
+					PRINTFORMDW Mamizou speaks softly, and she has a distant look in her eyes.
+			ENDSELECT
+		ENDIF
+	[SKIPSTART]
+	ELSEIF 陥落状態() == 1
+		IF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+			SELECTCASE RAND:2
+				CASE 0
+				CASE 1
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+				CASE 1
+				CASE 2
+			ENDSELECT
+		ENDIF
+	[SKIPEND]
+	ELSE
+		IF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+			SELECTCASE RAND:2
+				CASE 0
+					SETCOLOR 0xEE827C
+					PRINTFORML 『Ah, I've found some unusual books lately. Are you interested?』
+					SETCOLOR 0xF4A460
+					PRINTFORMW 「Hmm, maybe I'll \@ CFLAG:MASTER:現在位置 == 280 ? take a look. # go and take a look. \@」
+				CASE 1
+					SETCOLOR 0xEE827C
+					PRINTFORML 『Hello, you two seem to be getting along, as always.』
+					SETCOLOR 0xF4A460
+					PRINTFORMW 「Fufu, do we now? I wonder.」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「Hmm, Gensokyo's a pretty interesting place.」
+				CASE 1
+					PRINTFORMW 「The outside world? It's not that strange, really.」
+				CASE 2
+					PRINTFORMW 「Honestly, outside Gensokyo, humans are scarier than youkai.」
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;301,お茶を淹れる
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_301
+IF CFLAG:ブチギレ && !FLAG:70
+	PRINTFORML 
+	PRINTFORML 「...」
+	PRINTFORMDL Mamizou looks away from you %SPLIT_G("sullenly:with an angry expression")%.
+	RETURN 1
+ELSE
+	CALL TRAIN_MESSAGE
+ENDIF
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_301_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_301_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF GETBIT(CFLAG:1690,4)
+		IF 陥落状態() >= 4
+			PRINTFORML 「Sniff, Sniff. Hmm, looks clean this time.」
+			PRINTFORMDL Mamizou smirks at you, and you bow your head in apology.
+			PRINTFORML 「I'm not really that upset. Fufu, giving ya a hard time is pretty fun, though.」
+			PRINTFORMDW You drop your shoulders in shame.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Hmm, seems like there's nothing in it this time.」
+			PRINTFORMDW Mamizou giggles softly, and you feel a cold sweat on your back.
+		ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「Ya didn't spike this time, did ya?」
+		ENDIF
+	ELSE
+		IF TFLAG:193 < 0
+			PRINTFORMW 「Aren't ya the diligent one.」
+		ELSEIF 陥落状態() >= 4
+			PRINTFORML 「Mmm, delicious. Love really is the best spice.」
+			PRINTFORMDL You tell her you made it just to see her smile, and she pouts at you.
+			PRINTFORML 「Ya can keep the sappy stuff to yourself.」
+			PRINTFORMDW Mamizou is clearly trying to hide her embarrassment with anger, and you give her a little smirk.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Mmm, this is pretty good. Full points.」
+			PRINTFORMDW Mamizou greedily drains her teacup, and her satisfaction fills you with pride.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「Mmm, it's good. Makes me want some snacks, though.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;302,スキンシップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_302
+IF CFLAG:ブチギレ && !FLAG:70
+	PRINTFORML 
+	PRINTFORML 「...」
+	PRINTFORMDL Mamizou looks away from you %SPLIT_G("sullenly:with an angry expression")%.
+	RETURN 1
+ELSE
+	CALL TRAIN_MESSAGE
+ENDIF
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_302_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_302_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF BATHROOM()
+		IF 陥落状態() >= 4
+			PRINTFORML 「Mmm, can ya wash down here, too?」
+			PRINTFORMDL Mamizou turns around, spreads her legs and %FSYN("vagina")% with her fingers, and jiggles her breasts.
+			PRINTFORML 「You'd better clean every last nook and cranny, ya hear? Fwaa! Fufu, bathing together sure is fun.」
+			PRINTFORMDW Trying to control your desires, you clean every corner of Mamizou's body.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Nn... Fufu, having someone to wash your back is pretty handy.」
+			PRINTFORMDW The two of you smile playfully at each other as you run bathwater down Mamizou's back.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「... You'd better not try anything funny.」
+		ENDIF
+	ELSEIF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+		SIF ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 != 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 != 213))
+			PRINTFORMDL The two of you happen to run into Kosuzu.
+		IF 陥落状態() >= 4
+			SETCOLOR 0xEE827C
+			PRINTFORML 『The two of you always look like you're having fun.』
+			SETCOLOR 0xF4A460
+			PRINTFORML 「Fufu, this is just what couples do. Isn't that right, %MASTERNAME%?」
+			PRINTFORMDW Mamizou laughs playfully, and you nod in assent.
+			SETCOLOR 0xEE827C
+			PRINTFORML 『I wish I had someone I could say that to, myself.』
+			SETCOLOR 0xF4A460
+			PRINTFORML 「Seems like books are more your type of lover.」
+			PRINTFORMDW You smile awkwardly at Mamizou's and Kosuzu's playful exchange.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Hey, quit it, not in front of Kosuzu.」
+			SETCOLOR 0xEE827C
+			PRINTFORML 『Although you don't seem to be minding it too much...』
+			PRINTFORMDW Kosuzu laughs impishly at Mamizou, who pouts in response.
+			SETCOLOR 0xF4A460
+		ELSEIF 陥落状態() == 1
+		ELSE
+			SETCOLOR 0xEE827C
+			PRINTFORML 『The two of you sure do get along well.』
+			SETCOLOR 0xF4A460
+			PRINTFORMW 「This oaf just can't behave in public. C'mon, cut it out.」
+		ENDIF
+	ELSEIF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Fufu, showing off our relationship like this is oddly entertaining.」
+			PRINTFORMDL Mamizou rubs up against you flirtatiously, drawing disapproving looks from others around you.
+			PRINTFORML 「C'mon, let's enjoy each other.」
+			PRINTFORMDW Ignoring the people around you, you slide your hand around her waist, and she rubs her cheeks against yours.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Haa... Don't cling to me like that in public, blockhead.」
+			PRINTFORMDW Despite her complaints, Mamizou makes no effort to separate from you.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORML 「... You'd better behave yourself in public.」
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+			PRINTFORML 「... We're a couple, ya don't have to be so shy, ya know?」
+			PRINTFORMDL Giving her a weak smile, you continue to stick to light body caresses only.
+			PRINTFORML 「Ya know, if that's all you're going to do, I'll push ya down myself.」
+			PRINTFORMDW That's the idea, you think to yourself, as you laugh together.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Fufu, aren't ya adorable, clinging to me like that.」
+			PRINTFORMDW Mamizou smiles at you as she accepts the physical contact.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「Let's keep some friendly distance, don't cling to me so much.」
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;303,謝る
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_303
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_303_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_303_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF TFLAG:193 < 0
+		IF 陥落状態() >= 4
+			PRINTFORML 「Just how much of a good-for-nothing can ya be? Even your lover's got her limits.」
+			PRINTFORMDL Even as she complains, Mamizou approaches you and wraps her arms around yours.
+			PRINTFORML 「... If you're really sorry, prove it to me.」
+			PRINTFORMDW Mamizou closes her eyes and sticks out her lips at you, and you move in to kiss her.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Fine, fine. Just behave from now on.」
+			PRINTFORMDW Mamizou laughs a little, and you bow your head one last time in apology.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「Well, just don't do it again.」
+		ENDIF
+	ELSEIF TFLAG:193 == 0
+		IF 陥落状態() >= 4
+			PRINTFORML 「Even for a couple like us, there are lines ya just don't cross.」
+			PRINTFORMDL Mamizou lightly bonks you on the head, and flicks you on the forehead.
+			PRINTFORML 「But it looks like you've learned your lesson, so I'll let ya off the hook this time.」
+			PRINTFORMDW You breathe a sigh of relief, to which Mamizou lets out a sigh of exasperation.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Haa... Don't think I'll let ya off so easily the next time.」
+			PRINTFORMDW You internally breathe a deep sigh of relief, and you bow your head one last time in apology.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「... Just don't do it again.」
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+			PRINTFORML 「Ya think ya can treat me however ya like, just because we're a couple?」
+			PRINTFORMDL You can only bow your head low in apology before Mamizou's fury.
+			PRINTFORML 「If ya think a half-assed apology like that's gonna cut it, you've got another thing coming.」
+			PRINTFORMDW You continue to apologize while sweating bullets, but Mamizou doesn't seem to be having any of it.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Ya think ya can just do as ya please, as long as ya apologize afterwards?」
+			PRINTFORMDW Mamizou snorts in disdain and turns away from you.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「... I'm not forgiving ya. Not yet.」
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;304,仕事を手伝う
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_304
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_304_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_304_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;305,膝枕してもらう
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_305
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_305_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_305_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF ABL:TARGET:親密 > 5
+		IF 陥落状態() >= 4
+			PRINTFORML 「Fufufu, patting your head in my lap like this. We're just missing a kiss to be typical little lovebirds.」
+			PRINTFORMDL Mamizou slowly brings her face closer to yours, and whispers.
+			PRINTFORML 「Hmm? What do ya think?」
+			PRINTFORMDW You wait expectantly for a sweet lover's kiss, but instead she kisses you on the tip of your nose.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「... Hmm, is it really that comfortable?」
+			PRINTFORMDW Looking at Mamizou gazing down at you in her lap, you fervently agree.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「Mmm? Fufu, maybe just this once.」
+		ENDIF
+	ELSEIF ABL:TARGET:親密 > 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Fufu, like a little child.」
+			PRINTFORMDL Your expression naturally loosens into a smile at the comfort of her lap as she softly caresses your head.
+			PRINTFORML 「I guess this kind of thing isn't so bad every once a while.」
+			PRINTFORMDW Mamizou smiles playfully as she continues to pat your head.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Fufu, you're just adorable.」
+			PRINTFORMDW Mamizou seems like she's enjoying herself as she gently caresses your head.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「What a shameless fella. Come here, then.」
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 2
+			PRINTFORML 「Wh-What's this, all of a sudden...」
+			PRINTFORMDW Mamizou's thighs are a little stiff from nervousness.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「H-How's this?」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;306,お腹を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_306
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_306_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_306_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;307,頬をつまむ
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_307
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_307_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_307_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;308,頬をつつく
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_308
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_308_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_308_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;309,頭を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_309
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_309_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_309_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF CFLAG:TARGET:睡眠
+		IF 陥落状態() >= 4
+			PRINTFORML 「Mmm... Zzz... Ehehehe...」
+			PRINTFORMDL As you gently pat her head, Mamizou's expression loosens into a smile.
+			PRINTFORML 「Zzz... %MASTERNAME%... Love ya...」
+			PRINTFORMDW Her relaxed expression and cute sleep talking make your pulse quicken.
+		ELSE
+			PRINTFORML 「Zzz... More... Zzz...」
+			PRINTFORMDW Encouraged by her happy expression and quiet sleep talking, you continue to gently pat her head.
+		ENDIF
+	ELSEIF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+		SIF ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 != 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 != 213))
+			PRINTFORMDL The two of you happen to run into Kosuzu.
+		IF ABL:親密 > 5
+			IF 陥落状態() >= 4
+				PRINTFORML 「... This ain't really a public activity.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『But you look so happy and calm.』
+				PRINTFORMDL Kosuzu giggles, and Mamizou gives her a wry smile.
+				SETCOLOR 0xF4A460
+				PRINTFORML 「Only because it's %CALLNAME:MASTER%.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『Fufu, what a wonderful relationship.』
+				PRINTFORMDW Seeing the two of them laughing together, before long you find yourself smiling too.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「I thought I told ya to behave... How shameless can ya get?」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『But you look so happy about it. How wonderful...』
+				PRINTFORMDW Mamizou sighs in exasperation and gives you a dirty look.
+				SETCOLOR 0xF4A460
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSEIF ABL:親密 > 2
+			IF 陥落状態() >= 2
+				PRINTFORML 「Ya little whelp, ya having fun embarrassing me in public?」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『You seem happy about it, though. The two of you sure do get along well.』
+				PRINTFORMDW Her true feelings having been exposed by Kosuzu, Mamizou turns away in embarrassment.
+				SETCOLOR 0xF4A460
+			;ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORML 「Quit it blockhead, not in front of Kosuzu.」
+				SETCOLOR 0xEE827C
+				PRINTFORMW 『Ah, don't mind me.』
+				SETCOLOR 0xF4A460
+			ENDIF
+		ELSE
+			PRINTFORML 「Quit it, stupid!」
+			SETCOLOR 0xEE827C
+			PRINTFORMW 『You shouldn't tease your date like that.』
+			SETCOLOR 0xF4A460
+		ENDIF
+	ELSEIF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2
+		IF ABL:親密 > 5
+			IF 陥落状態() >= 4
+				PRINTFORML 「I thought I told ya to quit it, silly.」
+				PRINTFORMDL Mamizou sighs in exasperation, but then laughs playfully.
+				PRINTFORML 「Fufu, aren't ya just hopeless.」
+				PRINTFORMDW The two of you blithely ignore the quiet complaints around you.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Hey, people can see us.」
+				PRINTFORMDW You ignore the cold stares around you and continue to pat Mamizou's head.
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSEIF ABL:親密 > 2
+			IF 陥落状態() >= 2
+				PRINTFORML 「Hey, I thought I told ya to cut that out in public.」
+				PRINTFORMDW Despite her complaints, Mamizou doesn't make any efforts to stop you, so you continue patting her head.
+			ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORMW 「Hey, quit it. There are people around...」
+			ENDIF
+		ELSE
+			PRINTFORMW 「We're in public! Behave!」
+		ENDIF
+	ELSE
+		IF ABL:親密 > 5
+			IF 陥落状態() >= 4
+				PRINTFORML 「Fufu, lovey-dovey things like this is surprisingly nice.」
+				PRINTFORMDL You tilt your head a little at Mamizou.
+				PRINTFORML 「Nah, it's nothing. Keep going, ok?」
+				PRINTFORMDW The two of you exchange a warm smile.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Hmm, this is nice and all, but I can't shake an odd feeling of defeat.」
+				PRINTFORMDW Right after saying this, Mamizou starts to pat you on the head, too.
+			;ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORMW 「Fufu, I guess this is nice every once in a while.」
+			ENDIF
+		ELSEIF ABL:親密 > 2
+			IF 陥落状態() >= 2
+				PRINTFORML 「Hey, whaddaya think you're doing?」
+				PRINTFORMDW Despite her complaints, Mamizou's expression loosens into a smile.
+			;ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORMW 「Hmph, don't forget I'm your elder...」
+			ENDIF
+		ELSE
+			PRINTFORMW 「... What's this, all of a sudden? Don't touch me so casually.」
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;310,尻を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_310
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_310_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_310_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF CFLAG:TARGET:睡眠 == 1
+		IF 陥落状態() >= 4
+			PRINTFORML 「Zzz... Mmm... That feels...nice....」
+			PRINTFORMDL Spurred on by her sleep talking, you put more strength into it.
+			PRINTFORMDL You enjoy the supple elasticity under your fingers as you vigorously rub Mamizou's ass.
+			PRINTFORMW 「... Zzz... %MASTERNAME%...」
+		ELSE
+			PRINTFORML 「Zzz...? ...Per...vert...」
+			PRINTFORMDW Inflamed by her sleep talking, you enjoy rubbing her ass to your heart's content.
+		ENDIF
+	ELSEIF CFLAG:うふふ == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Fufu, does my butt really feel that nice?」
+			PRINTFORMDL You nod in assent as you fully enjoy the supple feeling of her ass under your fingers.
+			PRINTFORML 「Afuu... Hey... That's being a little...frisky, don't ya think?」
+			PRINTFORMDW Mamizou seems to be enjoying the sensation, and you start moving your hand in an even more obscene fashion.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Fwaa! Mmm... Fufu, isn't this fun.」
+			PRINTFORMDW The two of you exchange suggestive smiles.
+		;ELSEIF 陥落状態() == 1
+		ENDIF
+	ELSEIF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+		SIF ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 != 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 != 213))
+			PRINTFORMDL The two of you happen to run into Kosuzu.
+		IF FIRSTTIME("310A")
+			SETCOLOR 0xEE827C
+			PRINTFORML 『Ara, what's the matter?』
+			SETCOLOR 0xF4A460
+			PRINTFORMW 「Ah, Ahahaha, nothing at all. Nothing ya need to worry your little head about.」
+			PRINTFORMDL Giving Kosuzu a forced laugh, she elbows you painfully in the ribs.
+			PRINTFORMDL Ignoring her, you continue to rub her ass, until she finally leans in close to your ear.
+			PRINTFORMW 「... Ya want to be dinner?」
+			PRINTFORMDL Mamizou's voice is a low growl, and you instinctively pull your hand away.
+			PRINTFORML 『Ah, lover's talk, is it? How dreamy.』
+			PRINTFORMDW Mamizou hastily tries to explain to Kosuzu, whose eyes are sparkling with interest, and you can only smile weakly.
+			SETCOLOR 0xF4A460
+		ELSEIF ABL:親密 > 5
+			IF 陥落状態() >= 4
+				PRINTFORML 「Fuu, Haa... Stop, I-I'm beggin' ya...」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『... Ah, I-I'll go and prepare some tea.』
+				PRINTFORMDW Mamizou's face is flushed red, her body occasionally quivering, and even Kosuzu is starting to blush a little.
+				SETCOLOR 0xF4A460
+				PRINTFORML 「Ah, N-No, it's nothing, ya don't, have to worry... Fuu...」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『U-Umm, sorry, I need to, uh, do something.』
+				PRINTFORMDW As soon as Kosuzu disappears around the corner, you really start to get into enjoying Mamizou's ass.
+				SETCOLOR 0xF4A460
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Nn, Fuu... H-Hey, stop that... Nnn...」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『Are you feeling okay? You look like you have a fever.』
+				PRINTFORMDW While Mamizou tries to deflect Kosuzu's concerns, you slowly savor her round, supple ass.
+				SETCOLOR 0xF4A460
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSEIF ABL:親密 > 2
+			IF 陥落状態() >= 4
+				PRINTFORML 「If ya don't behave, you're going to regret it.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『Ara, is something wrong?』
+				SETCOLOR 0xF4A460
+				PRINTFORMW 「Ahh, i-i-i-it's nothing, nothing at all.」
+				PRINTFORMDL As Mamizou hastily tries to deflect Kosuzu's questioning, she painfully twists your hand and shoves it away.
+				SETCOLOR 0xEE827C
+				PRINTFORML 『Hmm, well, as long as you're getting along.』
+				PRINTFORMDW Kosuzu offers an awkward smile, and you return it while trying to ignore the pain in your hand.
+				SETCOLOR 0xF4A460
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Quit it, idiot.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『Umm, is something wrong?』
+				PRINTFORMDW As Mamizou hastily tries to deflect Kosuzu's questioning, she brushes your hand away.
+				SETCOLOR 0xF4A460
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSE
+			SETCOLOR 0xEE827C
+			PRINTFORML 『Ara, is something wrong?』
+			SETCOLOR 0xF4A460
+			PRINTFORMW 「Ah, No, nothing's wrong. Q-Quit it, blockhead.」
+		ENDIF
+	ELSEIF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2
+		IF FIRSTTIME("310B")
+			PRINTFORML 「Hyaa! Wh-Whaddaya think you're doing in public?!」
+			PRINTFORMDL Mamizou yelps a little as you lightly brush your hand against her ass, and she glares at you.
+			PRINTFORMDW You tell her it's just too shapely and beautiful, and you couldn't help yourself.
+			PRINTFORML 「... "Shapely", my ass...」
+			PRINTFORMDL Her ears are burning red, and she looks down to avoid your gaze.
+			PRINTFORMW 「Ya horny little...」
+		ELSEIF ABL:親密 > 5
+			IF 陥落状態() >= 4
+				PRINTFORML 「... Ya really want to get everyone's attention, huh?」
+				PRINTFORMDL The more you rub and grope Mamizou's supple ass, the more uneven her breathing becomes.
+				PRINTFORML 「Fufu, alright then. Let's make our relationship clear to everyone.」
+				PRINTFORMDW As Mamizou whispers this, she glues herself to your body.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Fufu, ya little perv. Ya really want to get things started in public like this?」
+				PRINTFORMDW Despite her complaints, she sticks out her ass to you.
+			;ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORMW 「... People are going to see us.」
+			ENDIF
+		ELSEIF ABL:親密 > 2
+			IF 陥落状態() == 1
+				PRINTFORML 「H-Hey! Whaddaya think you're doing, out in public?!」
+				PRINTFORMDW Mamizou's flustered expression just excites you even more.
+			ELSE
+				PRINTFORMW 「Hii! Wh-Whaddaya think you're doing, out in public?!」
+			ENDIF
+		ELSE
+			PRINTFORMW 「... Ya got a few screws loose? Whaddaya think you're doing?」
+		ENDIF
+	ELSE
+		IF ABL:親密 > 5
+			IF 陥落状態() >= 4
+				PRINTFORML 「Nguh... Fufu, aren't ya adorable, Afuu...」
+				PRINTFORMDL As you grope Mamizou's ass, she begins to let out sweet little moans.
+				PRINTFORML 「Fwaa! H-Hey, not so hard, Ahh!」
+				PRINTFORMDW You start moving your hands even more intensely, and Mamizou starts moving her own hips into your hand.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Kuh, Nn... Fufu, ya little rascal.」
+				PRINTFORMDW She chastises you playfully as she starts sticking out her own ass against your hand.
+			;ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORMW 「Nn, Afuu... Oh, you.」
+			ENDIF
+		ELSEIF ABL:親密 > 2
+			IF 陥落状態() == 1
+				PRINTFORML 「Hey, cut it out...」
+				PRINTFORMDW Mamizou brushes your hand away, but there's a certain reluctance to it...
+			ELSE
+				PRINTFORMW 「Hey, don't touch me like that so casually.」
+			ENDIF
+		ELSE
+			PRINTFORMW 「... Don't touch a lady like that. Learn some manners.」
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;311,抱き付く
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_311
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_311_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_311_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF CFLAG:TARGET:睡眠
+		IF ABL:親密 >= 8
+			IF 陥落状態() >= 4
+				PRINTFORML 「Zzz... Nn... Love ya... Zzz...」
+				PRINTFORMDL Mamizou whispers some sweet sleep talking with her face buried in your chest, and your pulse quickens.
+				PRINTFORML 「Zzz... No... Don't, let go...」
+				PRINTFORMDW She seems to be calling out for something in her sleep, and you comfort her by gently patting her head.
+			ELSE
+				PRINTFORML 「Zzz... Nnn... Love...ya...」
+				PRINTFORMDW Mamizou nuzzles up against your face, and you feel yourself blushing.
+			ENDIF
+		ELSEIF ABL:親密 >= 4
+			IF 陥落状態() >= 4
+				PRINTFORML 「Zzz... Nn... Love ya... Zzz...」
+				PRINTFORMDL Mamizou reaches out and wraps her arms around your back.
+				PRINTFORML 「Don't let go... Zzz...」
+				PRINTFORMDW Her sweet tone causes your pulse to quicken.
+			ELSE
+				PRINTFORML 「Mmm... Hug me... Zzz...」
+				PRINTFORMDW Her childish sleep talking is in stark contrast to her usual demeanor, and you can hear your heartbeat pounding in your ears.
+			ENDIF
+		ENDIF
+	ELSEIF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+		SIF ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 != 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 != 213))
+			PRINTFORMDL The two of you happen to run into Kosuzu.
+		IF FIRSTTIME("311A")
+		ELSEIF ABL:親密 >= 8
+			IF 陥落状態() >= 4
+				PRINTFORML 「This can't be a good example for Kosuzu, but...」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『Ah, Uh, Umm...』
+				IF TALENT:MASTER:体型 < 0
+					PRINTFORMD As you tightly embrace Mamizou, she gives you a light kiss on your forehead.
+				ELSE
+					PRINTFORMD As you tightly embrace Mamizou, she gives you a light kiss on the base of your neck.
+				ENDIF
+				SETCOLOR 0xF4A460
+				PRINTFORML 「Fufu, don't look at me, %HE_SHE(MASTER)% started it.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『Ah, Umm, P-Please try to restrain yourselves in public...』
+				PRINTFORMDW Seeing Kosuzu blushing so furiously, Mamizou finally lets go of you and gives her a quick apology.
+				SETCOLOR 0xF4A460
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「What a shameless little child...」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『A-Ah, Doing that in public is a little...』
+				PRINTFORMDW As Mamizou glues herself to you and nuzzles her face against yours, Kosuzu gives the two of you a wry smile.
+				SETCOLOR 0xF4A460
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSEIF ABL:親密 >= 4
+			IF 陥落状態() >= 4
+				PRINTFORML 「Hey, cut it out, ya little devil.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『But aren't you secretly happy about it? Fufu, the two of you are such a perfect match.』
+				PRINTFORMDW Kosuzu giggles a little, and Mamizou looks away with a slight blush.
+				SETCOLOR 0xF4A460
+				PRINTFORML 「... I can't believe how much I've fallen for %HIM_HER(MASTER,,1)%.」
+				PRINTFORMDL Not wanting to be outdone, you respond that you've fallen for her even more.
+				SETCOLOR 0xEE827C
+				PRINTFORMW 『Ahaha, you really are a perfect match.』
+				SETCOLOR 0xF4A460
+			ELSEIF GETBIT(CFLAG:1,0) || 陥落状態() >= 2
+				PRINTFORML 「... Heey～, we're in public, ya know?」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『You don't look so unhappy, though.』
+				PRINTFORMDW Mamizou blushes a little and looks away in embarrassment.
+				SETCOLOR 0xF4A460
+			ELSE
+				PRINTFORML 「Can't ya restrain yourself, at least in front of Kosuzu?」
+				SETCOLOR 0xEE827C
+				PRINTFORMW 『You look happy about it, though.』
+				SETCOLOR 0xF4A460
+			ENDIF
+		ELSE
+			IF 陥落状態() >= 2
+				PRINTFORML 「Quit it, ya blockhead!」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『You don't look so unhappy, though.』
+				PRINTFORMDW Kosuzu's words makes Mamizou start sulking a little, and she forcefully wriggles out of your grasp.
+				SETCOLOR 0xF4A460
+			;ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORML 「Hey, quit it! Lemme go! Gah!」
+				SETCOLOR 0xEE827C
+				PRINTFORMW 『Fufu, it's rare to see you so flustered.』
+				SETCOLOR 0xF4A460
+			ENDIF
+		ENDIF
+	ELSEIF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2
+		IF FIRSTTIME("311B")
+			PRINTFORML 「Quit it, ya dunce.」
+			PRINTFORMDL With a disapproving expression, Mamizou forcefully pushes you away.
+			PRINTFORML 「Doing something like that in public... You youngsters these days just don't know the meaning of shame.」
+			PRINTFORMDL Mamizou complains up a storm, but she has a slight playful smirk on her lips.
+			PRINTFORMDL You feel like pointing that out would just be stirring up the hornets' nest, so you reluctantly separate from her a little.
+		ELSEIF ABL:親密 >= 8
+			IF 陥落状態() >= 4
+				PRINTFORML 「... Fufu, to think your shamelessness would rub off on me like this.」
+				PRINTFORMDL Mamizou laughs playfully as she tightly returns your embrace.
+				PRINTFORML 「... Love ya, dear.」
+				PRINTFORMDW She whispers into your ear, and your pulse quickens dramatically.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Fufu, I'm not gonna let ya have all the fun, you're so warm and soft.」
+				PRINTFORMDW The two of you hug each other tightly for a while, smiling and laughing together.
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSEIF ABL:親密 >= 4
+			IF 陥落状態() >= 4
+				PRINTFORML 「Am I really so fun to hug that you'd do this in public? What a needy child.」
+				PRINTFORMDL "Of course", you answer without missing a beat, temporarily catching Mamizou off-guard.
+				PRINTFORML 「... How shameless can ya get.」
+				PRINTFORMDW Mamizou looks adorable as she laughs while blushing furiously.
+			ELSEIF 陥落状態() == 1
+				PRINTFORML 「Doing things like this with so many people around...」
+				PRINTFORMDW Mamizou tries to gives you an exasperated look, but can't quite hide a smile.
+			ELSE
+				PRINTFORMW 「Even though I told ya not to... What a needy little child.」
+			ENDIF
+		ELSE
+			PRINTFORMW 「Wh-Whaddaya think you're doing, lemme go!」
+		ENDIF
+	ELSE
+		IF ABL:親密 >= 8
+			IF 陥落状態() >= 4
+				PRINTFORML 「Am I really that comfortable to hug?」
+				PRINTFORMDL "Of course", you answer while embracing her tighter.
+				PRINTFORML 「Answering with such a straight face, I'm gonna... Ah～, Never mind.」
+				PRINTFORMDW You protest that she can't just leave you hanging like that, but she only smiles warmly in response.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Was this part of your plan from the start?」
+				PRINTFORMDW Giggling like a little girl, she tightly returns your hug.
+			;ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORMW 「... Fufu, this is nice, too.」
+			ENDIF
+		ELSEIF ABL:親密 >= 4
+			IF 陥落状態() >= 4
+				PRINTFORML 「Well, I guess we're lovers, after all.」
+				PRINTFORMDL Mamizou gives you a bit of an exasperated smile, but looks happy nonetheless.
+				PRINTFORML 「Although hugging so tightly like this feels a bit weird.」
+				PRINTFORMDW Despite her complaints, she doesn't seem eager to separate.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Fufu, you're so needy. Here, get your fill.」
+				PRINTFORMDW Giving you a wry smile, Mamizou relaxes her body and accepts your hug.
+			;ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORMW 「... Such a needy child.」
+			ENDIF
+		ELSE
+			IF 陥落状態() == 1
+				PRINTFORML 「Hey, this is embarrassing, lemme go.」
+				PRINTFORMDW You ignore her complaints and keep hugging her for a while.
+			ELSE
+				PRINTFORMW 「Hey, quit being so clingy.」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;312,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_312
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_312_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_312_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF !GETBIT(CFLAG:1,0) && TFLAG:193 != 99 && !(CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2))
+		IF ABL:親密 >= 5
+			PRINTFORML 「Nnn... Whaddaya think you're doing, ya big oaf?」
+			PRINTFORMDL Unlike her usual reaction, she looks at you with a slack, slightly pleading expression.
+			PRINTFORML 「If you're going to do this... You're ready for what comes after, are ya?」
+			PRINTFORMDW You shiver a little in anticipation, half from fear.
+		ELSE
+			PRINTFORML 「...Nn? Mmm!? Wh-Wh-Whaddaya think you're doing!」
+			PRINTFORMDL Her eyes wide in shock, she panics and flails around, hastily pushing you away.
+			PRINTFORML 「K-K-Kissing me all of a sudden, have ya lost your marbles?!」
+			PRINTFORMDW She shouts and hurls abuse at you, but she can't hide a little smile.
+		ENDIF
+	ELSEIF CFLAG:TARGET:睡眠
+		IF 陥落状態() >= 4
+			PRINTFORML 「Zzz... %NAME:MASTER%... More...」
+			PRINTFORMDL Hearing her not only call out your name, but urge you for more, you feel a warmth in your chest.
+			PRINTFORML 「Zzz... %RANDLIPS(,"kiss")%...」
+			PRINTFORMDW Her lips relax at your touch, and you continue to kiss her over and over.
+		ELSE
+			PRINTFORML 「Nnn... Zzz... Mmm...」
+			PRINTFORMDW Mamizou makes a blissful expression even while sleeping, and you naturally begin to smile too.
+		ENDIF
+	ELSEIF CFLAG:TARGET:添い寝中
+		IF ABL:親密 >= 8
+			IF 陥落状態() >= 4
+				PRINTFORML 「Fufu, how are my lips? Aren't they sweet?」
+				PRINTFORMDL "Of course", you respond, and Mamizou giggles at you.
+				PRINTFORML 「What a silver-tongued little devil, I'm flattered.」
+				PRINTFORMDW Mamizou sidles up to you and gives you a satisfied smile, and you feel your pulse quicken.
+			ELSE
+				PRINTFORML 「Fufu, is this what ya wanted? %RANDLIPS(,"kiss")%!」
+				PRINTFORMDW You start to feel a little embarrassed against Mamizou's enthusiasm.
+			ENDIF
+		ELSEIF ABL:親密 >= 5
+			IF 陥落状態() >= 4
+				PRINTFORML 「Geh... This is a bit, how do I say...」
+				PRINTFORMDL Mamizou pouts a little and mutters.
+				PRINTFORML 「I don't hate it, or anything, but it's kind of embarrassing...」
+				PRINTFORMDW She grumbles a bit, but gives you a soft, warm look.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Nn... Ya really get your rocks off teasing me like that, huh?」
+				PRINTFORMDW She tries to give you a disapproving glare, but can't hide a soft smile on her lips.
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ENDIF
+	ELSEIF TFLAG:193 == 99
+		PRINTFORML 「... What're ya trying to pull, idiot?」
+		PRINTFORMDW Mamizou pushes you away with inhuman strength, forcefully separating you from her.
+	ELSEIF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+		SIF ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 != 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 != 213))
+			PRINTFORMDL The two of you happen to run into Kosuzu.
+		IF FIRSTTIME("312A")
+			SETCOLOR 0xEE827C
+			PRINTFORML 『...』
+			PRINTFORMDL You shamelessly savor Mamizou's lips as you glance over at Kosuzu, who is standing frozen with a blank expression.
+			SETCOLOR 0xF4A460
+			PRINTFORML 「... Ya...blockheaded ape!!」
+			PRINTFORMDW As soon as you separate, Mamizou slaps you across the face with all her strength.
+			SETCOLOR 0xEE827C
+			PRINTFORML 『Ah, Umm, Ma'am...』
+			SETCOLOR 0xF4A460
+			PRINTFORML 「What the hell do ya think you're doing?! That ain't something ya show off in public!」
+			PRINTFORMDL Mamizou is blushing to the tips of her ears, and her voice is rushed and uneven.
+			PRINTFORMW 「Or are ya telling me ya think so little of kisses that you'd just casually do them anywhere?!」
+			SETCOLOR 0xEE827C
+			PRINTFORML 『... Umm, I think that's not quite it...』
+			PRINTFORMDL Kosuzu suddenly speaks up, and Mamizou turns to her.
+			PRINTFORML 『It seemed more like %HE_SHE(MASTER)% just couldn't hold in %HIS_HER(MASTER)% passion, or something...』
+			PRINTFORMDW As you nod in agreement with Kosuzu, Mamizou shoots you a dirty look.
+			PRINTFORML 『And, umm, it seemed like you weren't really all that upset up about it, either...』
+			SETCOLOR 0xF4A460
+			PRINTFORML 「Hmph... Doesn't anyone around here have a shred of decency?」
+			PRINTFORMDW Mamizou crosses her arms and pouts, but she sidles up to you anyway.
+			SETBIT CFLAG:1904,2
+		ELSEIF ABL:欲望 >= 5 && RAND:2 == 0
+			IF 陥落状態() >= 4
+				PRINTFORML 「%RANDLIPS(,"kiss")%...」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『WahーWahーWah』
+				PRINTFORMDW Kosuzu's face is deep red with embarrassment, but she can't take her eyes off the two of you.
+				PRINTFORML 「Nnn... You can be downright devilish sometimes, can't ya?」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『A-Amazing...』
+				PRINTFORMDW Kosuzu's expression is a mixture of shock and yearning, and Mamizou gives her a guilty smile as she gently pats her head.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「%RANDLIPS(,"kiss")%... What a nice treat.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『... Kisses are, incredible...』
+				PRINTFORMDW Kosuzu's face is beet red as she gazes at the two of you intently.
+				SETCOLOR 0xF4A460
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSEIF ABL:親密 >= 5
+			IF 陥落状態() >= 4
+				PRINTFORML 「Mmm... Fuu... Didn't I tell ya to behave in front of the little miss?」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『... Kisses sure look amazing. If I only had someone to experience it with...』
+				PRINTFORMDW Kosuzu looks at the two of you with eager eyes, and you give her a little smile before stealing Mamizou's lips again.
+				SETCOLOR 0xF4A460
+				PRINTFORML 「H-Hey! Mmm... Fuu.. Nn...」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『Wow...』
+				PRINTFORMDW Mamizou tries to restrain you but ends up caving to desire, as Kosuzu look on with envy.
+				SETCOLOR 0xF4A460
+			ELSEIF 陥落状態() >= 2
+				SETCOLOR 0xEE827C
+				PRINTFORML 『... Wow, how amazing...』
+				SETCOLOR 0xF4A460
+				PRINTFORML 「Nn... Fuu, Ya little blockhead.」
+				PRINTFORMDW As soon as your lips part, Mamizou gives you a thump on the head.
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSE
+			IF 陥落状態() >= 4
+				PRINTFORML 「%RANDLIPS(,"kiss")%... This little imp, I swear.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『That sure seems nice...』
+				SETCOLOR 0xF4A460
+				PRINTFORMW 「Hmm? If ya wanna kiss someone so bad, I can loan %HIM_HER(MASTER,,1)% to ya.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『A-Ahaha, You shouldn't really say things you don't mean...』
+				PRINTFORML Kosuzu and Mamizou laugh together.
+				PRINTFORMW For some reason, Kosuzu seems to be staring at Mamizou's lips...
+				SETCOLOR 0xF4A460
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Nnn... What am I going to do with this blockhead.」
+				SETCOLOR 0xEE827C
+				PRINTFORML 『You seem pretty happy, though. That sure seems nice...』
+				PRINTFORMDW For a second, you consider teasing Kosuzu a little.
+				SETCOLOR 0xF4A460
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ENDIF
+	ELSEIF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2
+		IF FIRSTTIME("312B")
+			PRINTFORMDL As your lips press against Mamizou's, she stands frozen like a statue.
+			PRINTFORML 「C-C-C-C-C-C-C-C--!!!」
+			PRINTFORMDL "What is she, a chicken?" You think, just as she wallops you on the top of your head with her fist.
+			PRINTFORML 「Cretin! Buffoon! Ape! What do ya think you're doing in public?! I can't take ya anywhere!」
+			PRINTFORMDL As Mamizou shouts, people start eyeing the two of you dubiously.
+			PRINTFORML 「... Idiot.」
+			PRINTFORMDL Suddenly aware of her outburst, she mutters in embarrassment and looks downwards.
+			PRINTFORMDL You see her surreptitiously stroking her lips with her fingers. 
+			SETBIT CFLAG:1903,2
+		ELSEIF ABL:欲望 >= 5 || TCVAR:20 == 60
+			IF 陥落状態() >= 4
+				PRINTFORML 「%RANDLIPS(,"kiss")%... Mmm, your tongue is so sweet and amazing.」
+				PRINTFORMDL A thin, silver bridge of saliva connects the two of you as your lips part, and Mamizou giggles mischievously.
+				PRINTFORML 「Wanna go another round? It's fun riling up the crowd.」
+				PRINTFORMDW Ignoring the disapproving scowls around you, you start another deep kiss.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「%RANDLIPS(,"kiss")%... Fufu, Ya little devil, not a care in the world who sees us, eh?」
+				PRINTFORMDW Ignoring the shocked stares around you, you intertwine your tongue with Mamizou's again.
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSEIF ABL:親密 >= 5
+			IF 陥落状態() >= 4
+				PRINTFORML 「%RANDLIPS(,"kiss")%... Fufu, aren't you adorable.」
+				PRINTFORMDL Though it was just a light kiss, Mamizou embraces you tightly.
+				PRINTFORML 「Fufu, Lettin' ya have all the fun's no fair.」
+				PRINTFORMDW As soon as she says this, she dives in and presses her lips against yours.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Nnn... Ya know people can see us, right?」
+				PRINTFORMDW Mamizou grumbles, but her lips relax into a smile.
+			;ELSEIF 陥落状態() == 1
+			ELSE
+				PRINTFORMW 「%RANDLIPS(,"kiss")%... What am I going to do with ya.」
+			ENDIF
+		ELSE
+			IF 陥落状態() == 1
+				PRINTFORML 「Nnn... You've got some nerve, doing that in public.」
+				PRINTFORMDW Mamizou look away in embarrassment.
+			ELSE
+				PRINTFORMW 「Nnn... Hey, whaddaya think you're doing, out in public.」
+			ENDIF
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+			IF ABL:欲望 >= 5 || TCVAR:20 == 60
+				PRINTFORML 「%RANDLIPS(,"kiss")%... %FSYN("lips_over")%!」
+				PRINTFORMDL After thoroughly exploring each other's mouths, an ecstatic smile creeps onto Mamizou's lips.
+				PRINTFORML 「What a luscious little treat. Fufu, I think I'll go for seconds.」
+				PRINTFORMDW As soon as she says this, Mamizou once again invades your mouth with her tongue.
+			ELSEIF ABL:親密 >= 5
+				PRINTFORML 「Nnn... %FSYN("lips_over")%... Fufu, kisses always make me so happy.」
+				PRINTFORMDL Mamizou blushes a little as she whispers, and you tell her they make you happy too.
+				PRINTFORML 「... Fufu, Let's see ya prove it, then.」
+				PRINTFORMDW Rising to her challenge, you immediately move in for another kiss.
+			ENDIF
+		ELSEIF 陥落状態() >= 2
+			IF ABL:欲望 >= 5 || TCVAR:20 == 60
+				PRINTFORML 「%RANDLIPS(,"kiss")%... %FSYN("lips_over")%. Fufu, delicious.」
+				PRINTFORMDW Mamizou smiles at you, and you press your lips against her smile once again.
+			ELSEIF ABL:親密 >= 5
+				PRINTFORML 「Nn... Fuu... This is kinda embarrassing...」
+				PRINTFORMDW You can't help but agree, and this time you give her a light kiss on her cheek instead.
+			ELSE
+				PRINTFORML 「Mmm!? Wh-What're ya doing, all of a sudden...」
+				PRINTFORMDW Mamizou mutters some complaints as she hastily moves away from you.
+			ENDIF
+		;ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;313,胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_313
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_313_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_313_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:TARGET:睡眠 == 1
+		IF ABL:Ｂ感覚 <= 1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Nnn...」
+				PRINTFORMDL Mamizou furrows her brow a little and wriggles her body.
+				PRINTFORML 「Zzz... Nnn...」
+				PRINTFORMDW Seeing Mamizou's slight discomfort, you quietly remove your hand.
+			ELSE
+				PRINTFORML 「Nnn...」
+				PRINTFORMDW Mamizou squirms a little, as if she's trying to pull away from you.
+			ENDIF
+		ELSEIF ABL:Ｂ感覚 <= 3
+			IF 陥落状態() >= 4
+				PRINTFORML 「Zzz... Nn... Ah...」
+				PRINTFORMDL Mamizou's body convulses a little, her body stiffening against your hand.
+				PRINTFORML 「Zzz... Fuu... Nnn...」
+				PRINTFORMDW A peaceful smile forms on her lips.
+			ELSE
+				PRINTFORML 「Nnn... Fuu...」
+				PRINTFORMDW Mamizou releases a sweet sigh, and you hear your heart pounding in your ears.
+			ENDIF
+		ELSE
+			IF 陥落状態() >= 4
+				PRINTFORML 「Zzz... Nn... %MASTERNAME%, love you...」
+				PRINTFORMDL While you are leisurely enjoying Mamizou's softness, her words send a jolt through your body.
+				PRINTFORML 「Love, you... So... More...」
+				PRINTFORMDW Mamizou unconsciously moves her hand onto yours, and you swallow hard.
+			ELSE
+				PRINTFORML 「Zzz... Nnn... More...」
+				PRINTFORMDW Mamizou smiles and mumbles as saliva trickles out the corner of your mouth, and you keep eagerly sliding her fingers over her breasts.
+			ENDIF
+		ENDIF
+[SKIPSTART]
+	ELSEIF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+		SIF ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 != 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 != 213))
+			PRINTFORMDL The two of you happen to run into Kosuzu.
+		IF !GETBIT(CFLAG:1904,3)
+			SETBIT CFLAG:1904,3
+		ELSEIF 陥落状態() >= 4
+		ELSEIF GETBIT(CFLAG:1,0) || 陥落状態() >= 2
+		ELSE
+		ENDIF
+[SKIPEND]
+	ELSEIF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2
+		IF !GETBIT(CFLAG:1903,3)
+			PRINTFORMDL Wanting to thoroughly enjoy the soft sensation, you put renewed strength into your hands.
+			PRINTFORMDL An instant later, Mamizou's own hand is intersecting your face with renewed strength.
+			PRINTFORML 「... This ain't the place to be fondling me, ya horny ape.」
+			PRINTFORMDL You lightly bow to Mamizou in apology, who is pouting and sulking, and you tell her you just couldn't handle her cuteness.
+			PRINTFORML 「Huh? Cute? Ya ain't fooling me with that song and dance.」
+			PRINTFORMDW Despite her grumbling, Mamizou is blushing a little with happiness.
+			SETBIT CFLAG:1903,3
+		ELSEIF ABL:Ｂ感覚 <= 1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Nn, Wh-Where do ya think you're putting your hands, in public?」
+				PRINTFORMDL Mamizou looks away in embarrassment, and you just smile while continuing your ministrations.
+				PRINTFORML 「Hey, cut it out, we may be lovers but this is a little...」
+				PRINTFORMDW Even as she spits out complaints, her mouth is curving into a smile.
+			ELSEIF GETBIT(CFLAG:1,0) || 陥落状態() >= 2
+				PRINTFORML 「Is this really the time and place, ya moron?」
+				PRINTFORMDW Mamizou looks upset, but she doesn't seem to be trying to stop you.
+			ENDIF
+		ELSEIF ABL:Ｂ感覚 <= 3
+			IF 陥落状態() >= 4
+				PRINTFORML 「Haa, Haa... Nn... What're, ya... doing, ya lecher... Kuh!」
+				PRINTFORMDL You leisurely move your hands across her breasts, enjoying their soft texture.
+				PRINTFORML 「At least, wait until we're somewhere private, Afuu... Seriously, cut it out...」
+				PRINTFORMDW You think to yourself how adorable Mamizou looks as she blushes furiously and tries to look away.
+			ELSEIF 陥落状態() >= 2
+				PRINTFORML 「Nnkuh, Ya, little lecher, Fwaaa, Pervert, Nn... Haa, Haa!」
+				PRINTFORMDW As your hands massage your breasts, sweet sighs start to mix in with her complaints.
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSE
+			IF 陥落状態() >= 4
+				PRINTFORML 「Fwaa! Nnkuh! More, harder!」
+				PRINTFORMDL Mamziou suddenly moves to tear off her own clothes, and you hastily restrain her.
+				PRINTFORML 「What, don't ya want to touch them raw? Then you'd better not make them feel lonely, ya hear?」
+				PRINTFORMDW She jiggles her breasts around, beginning to moan loudly.
+			ELSEIF GETBIT(CFLAG:1,0) || 陥落状態() >= 2
+				PRINTFORML 「Ahh, Kuh... Fufu, more, won't ya?」
+				PRINTFORMDW Mamizou's voice and face are slack with bliss, and the two of you forget you're in public as you intensify your movements.
+			ENDIF
+		ENDIF
+	ELSE
+		IF ABL:Ｂ感覚 <= 1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Nnn... Ya sure do love my tits, don't ya?」
+				PRINTFORMDL Mamizou teases you lightly as you fondle her breasts.
+				PRINTFORML 「... Fufu, that tickles a little.」
+				PRINTFORMDW Laughing a little, Mamizou relaxes her body and leans against you.
+			ELSEIF GETBIT(CFLAG:1,0)
+				PRINTFORML 「Nn... That tickles.」
+				PRINTFORMDW Even though she complains, Mamizou doesn't make any effort to stop you.
+			ENDIF
+		ELSEIF ABL:Ｂ感覚 <= 3
+			IF 陥落状態() >= 4
+				PRINTFORML 「Nnn... This feels better than I expected.」
+				PRINTFORMDL You gently fondle her breasts as if supporting them, and Mamizou begins to smile playfully.
+				PRINTFORML 「Fwaa, Nn... Fufu, what an adorable little child you are.」
+				PRINTFORMDW She starts patting your head as she says this, and you can't help but break into a smile.
+			ELSEIF GETBIT(CFLAG:1,0)
+				PRINTFORML 「Fuu... Fufu, aren't my tits first-class?」
+				PRINTFORMDW You nod eagerly as Mamizou giggles at you, and you savor the soft feeling under your fingers.
+			ENDIF
+		ELSE
+			IF 陥落状態() >= 4
+				PRINTFORML 「Fwaa! Nnn, Ahh! There, more, more!」
+				PRINTFORMDL Her face goes slack and her eyes lose focus as she layers her own hands on top of yours.
+				PRINTFORML 「Fwaa, Ahh... The way ya move your fingers, I can't get enough!」
+				PRINTFORMDW You smile as you enjoy the feeling of her supple breasts under your fingers.
+			ELSEIF GETBIT(CFLAG:1,0)
+				PRINTFORML 「Ahh, Nnahh! This feeling, is unbelievable... Fwaa!!」
+				PRINTFORMDW You stretch and wriggle your fingers in rhythm, and the supple texture along with her seductive cries makes your body grow hotter.
+			ENDIF
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;314,アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_314
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_314_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_314_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FIRSTTIME(SELECTCOM) && EXP:Ａ経験 == 0 && !CFLAG:10 && ((GET_TARGETNUM() == 1 && !TFLAG:400) || GET_TARGETNUM() < 2)
+		PRINTFORML 「Hyaaah!?」
+		PRINTFORMDL You slip a finger into her asscrack, and Mamizou gives a startled shriek.
+		PRINTFORML 「Y-Y-Y-Y-Ya filthy pervert!」
+		PRINTFORMDW Her entire face blushing a deep crimson, she wallops you over the head.
+		PRINTFORML 「Th-That's dirty! It ain't where fingers go!」
+		IF GETBIT(CFLAG:1961,0)
+			PRINTFORMDL You give her a wry smile as you remind her she's done it herself, to you.
+		ELSE
+			PRINTFORMDL You boldly declare that there isn't a single unclean part on her body.
+		ENDIF
+		PRINTFORML 「Th-Th-Th-Th-That ain't the problem here, ya moron!」
+		PRINTFORMDW Still blushing furiously, Mamizou hastily look away.
+		PRINTFORMDL But there's a faint trace of a smile on her lips.
+		IF GETBIT(CFLAG:1961,0)
+			PRINTFORML 「... Ya really wanted to get me back, did ya?」
+		ELSE
+			PRINTFORML 「... Do ya really mean that?」
+		ENDIF
+		PRINTFORMDL You smile in response to her hesitant question.
+		PRINTFORML 「... Haa... Fine, do as ya please.」
+		PRINTFORMDW She exhales a deep sigh of exasperation, but she still laughs a little.
+	ELSEIF FIRSTTIME(SELECTCOM) && !GETBIT(CFLAG:1961,0) && !CFLAG:10 && ((GET_TARGETNUM() == 1 && !TFLAG:400) || GET_TARGETNUM() < 2)
+		PRINTFORML 「... D-Don't laugh, okay? Something like that's mighty embarrassing...」
+		PRINTFORMDL Mamizou's face is beet red as she mutters.
+		PRINTFORML 「... But, uh, I'm still kinda excited about the thought of ya fiddling with me down there...」
+		PRINTFORMDL Hearing those words, your lust starts to overflow.
+		PRINTFORMW 「So...go ahead, okay?」
+	ELSEIF FIRSTTIME(SELECTCOM) && !CFLAG:10 && ((GET_TARGETNUM() == 1 && !TFLAG:400) || GET_TARGETNUM() < 2)
+		PRINTFORML 「Fuu, whatever, do as ya please.」
+		PRINTFORMDW Mamizou grumbles, but she still seems a little happy.
+	ELSEIF CFLAG:うふふ == 2 && (TCVAR:20 == 72 || TEQUIP:シックスナイン)
+		IF 陥落状態() >= 4
+			PRINTFORML 「Nnn... Ahh... There, more, deeper, all the way!」
+			PRINTFORMDL At Mamizou's vulgar urging, you stick your tongue deep into her anus.
+			PRINTFORML 「Fwaaah! Nnnah! Fuu, Hyahhh!!」
+			PRINTFORMDW Her anus constricts painfully around your tongue, practically cutting off the circulation, as you continue servicing her.
+		ELSEIF GETBIT(CFLAG:1,0) || 陥落状態() >= 2
+			PRINTFORML 「Fwaah! Nn, Ahh... How perverted do ya have to be, to want to lick somewhere like that...」
+			PRINTFORMDW You can feel Mamizou's gaze judging you, and you just smile awkwardly in return.
+		ENDIF
+	ELSE
+[SKIPSTART]
+		IF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+			SIF ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 != 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 != 213))
+				PRINTFORMDL The two of you happen to run into Kosuzu.
+			IF FIRSTTIME("314A")
+			ELSEIF 陥落状態() >= 4
+			ELSEIF 陥落状態() >= 2
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSE
+[SKIPEND]
+		IF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2
+			IF FIRSTTIME("314B")
+				PRINTFORML 「Hyaahhh!!」
+				PRINTFORMDL You lightly stroke Mamizou's asscrack with your finger, and she immediately lets out a high-pitched shriek, attracting dubious glances.
+				PRINTFORML 「Wh-Wh-Wh-Wh-Wh-What do ya think you're touching!」
+				PRINTFORMDL Mamizou's face is deep red as she shouts, and you unconsciously reply that it's not your fault.
+				PRINTFORMDL You tell her she's just so beautiful that you naturally reached out, and she elbows you painfully in the ribs.
+				PRINTFORMW 「Ya dumb ape! Don't ya try and smooth-talk me.」
+			ELSEIF ABL:Ａ感覚 <= 1
+				IF 陥落状態() >= 4
+					PRINTFORML 「H-Hey, quit it. Not here...」
+					PRINTFORMDL Mamizou complains but doesn't seem to resist, so instead you start caressing her anus even more intensely.
+					PRINTFORML 「Kuh... Y-Ya little... You're gonna regret this.」
+					PRINTFORMDW Mamizou's flustered, blushing figure is so cute that it just makes you want to tease her more.
+				ELSEIF 陥落状態() >= 2
+					PRINTFORML 「Kuh... Wh-Whaddaya think you're doing, in a place like this?」
+					PRINTFORMDW Ignoring her embarrassment, you continue stealthily rubbing around her anus.
+				;ELSEIF 陥落状態() == 1
+				ENDIF
+			ELSEIF ABL:Ａ感覚 <= 3
+				IF 陥落状態() >= 4
+					PRINTFORML 「Q-Quit it... Ah, no, seriously, Nn...」
+					PRINTFORMDL Mamizou's shoulders are quivering as you wriggle your finger around her anus.
+					PRINTFORML 「I s-said, stop... P-People are watching...」
+					PRINTFORMDW You enjoy watching Mamizou shake and fidget more depending on how many people are around.
+				ELSEIF 陥落状態() >= 2
+					PRINTFORML 「H-Hey... Cut that out, Nn, Ahh... Seriously now, quit it...」
+					PRINTFORMDW Mamizou complains weakly, but she can't stop the occasional sweet moan from escaping her lips.
+				;ELSEIF 陥落状態() == 1
+				ENDIF
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「Kahhh! ...Nn, Ah... Y-Ya pervy little... Fwaa!!」
+					PRINTFORMDL Some nearby people are occasionally glancing your way.
+					PRINTFORML 「Y-Ya moron, people are, looking, Hyah, Nnahh～」
+					PRINTFORMDW You smile at Mamizou who is blushing furiously as she furtively glances around, and you slowly stick your finger in deeper.
+				ELSEIF 陥落状態() >= 2
+					PRINTFORML 「... Nn, Kuh, do ya really want to get caught doing this in public?」
+					PRINTFORMDW You wriggle and swirl your finger around, telling Mamizou you want others to see this cute side of her.
+				;ELSEIF 陥落状態() == 1
+				ENDIF
+			ENDIF
+		ELSE
+			IF ABL:Ａ感覚 <= 1
+				IF 陥落状態() >= 4
+					PRINTFORML 「I know we're lovers, but, Nn... That's kinda dirty.」
+					PRINTFORMDL Mamizou is squirming and jumping a little as she mutters.
+					PRINTFORML 「It ain't a matter of feeling good or not...」
+					PRINTFORMDW She has a disapproving frown, but doesn't make any real effort to stop you.
+				ELSEIF 陥落状態() >= 2
+					PRINTFORML 「Hey, quit it or I'm gonna get angry.」
+					PRINTFORMDW Mamizou gives you a disapproving glare...
+				;ELSEIF 陥落状態() == 1
+				ENDIF
+			ELSEIF ABL:Ａ感覚 <= 3
+				IF 陥落状態() >= 4
+					PRINTFORML 「Y-Ya horny little... Fwaaa... N-No, that wasn't because it felt good, or anything...」
+					PRINTFORMDL Mamizou's face is flushed crimson, and she's sticking out her ass as if encouraging you.
+					PRINTFORML 「Nn, I said, quit it... I'm begging ya, stop... Hii!」
+					PRINTFORMDW Seeing Mamizou sigh and squeal in an imploring tone, you smirk and keep working your fingers.
+				ELSEIF 陥落状態() >= 2
+					PRINTFORML 「Kuh... That place, is a bit... Fwaa... Nn...」
+					PRINTFORMDW Mamizou is fidgeting and twitching, but she doesn't try to escape.
+				;ELSEIF 陥落状態() == 1
+				ENDIF
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「Fwaah! That place, is, Ahhh! That's dirty～～!!」
+					PRINTFORMDL Mamizou lets out a blissful cry as you bury your finger all the way to the base into her greedy anus.
+					PRINTFORML 「This is, your fault! That I've, become this perverted!!」
+					PRINTFORMDW You think to yourself that she looks adorable, with unfocused eyes rolling upwards and her mouth drooling in pleasure.
+				ELSEIF 陥落状態() >= 2
+					PRINTFORML 「Ahyaaa! Nnahh! Your finger's, deep inside, Fwaaaa!!」
+					PRINTFORMDW Mamizou lets out ecstatic cries as her body twitches and convulses from the anal pleasure.
+				;ELSEIF 陥落状態() == 1
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;315,クリ愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_315
+IF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2 && !FLAG:70
+	PRINTFORMD You \@ TCVAR:20 != 34 ? also start # start \@
+	IF ABL:Ｃ感覚 <= 1
+		PRINTFORMDL  lightly stroking Mamizou's crotch over her clothes, stealthily so others won't notice...
+	ELSEIF ABL:Ｃ感覚 <= 3
+		PRINTFORMDL  firmly rubbing Mamizou's crotch over her clothes, stealthily so others won't notice...
+	ELSE
+		PRINTFORMDL  vigorously fingering Mamizou's crotch over her clothes, stealthily so others won't notice...
+	ENDIF
+	IF ABL:Ｃ感覚 <= 1
+		PRINTFORMDL Mamizou fidgets a little at the ticklish sensation...
+	ELSEIF ABL:Ｃ感覚 <= 4
+		PRINTFORMDL Mamizou starts panting a little at your caress...
+	ELSE
+		PRINTFORMDL Mamizou surrenders to your touch with a drunk, lustful expression...
+	ENDIF
+ELSE
+	CALL TRAIN_MESSAGE
+ENDIF
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_315_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_315_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FIRSTTIME(SELECTCOM) && ((GET_TARGETNUM() == 1 && !TFLAG:400) || GET_TARGETNUM() < 2)
+		PRINTFORML 「Hii... Kuh.... Don't, be so rough, down there.」
+		PRINTFORMDL Mamizou's body twitches and shakes a little.
+		PRINTFORML 「Ah, I don't, hate it... It's just, really sensitive, there.」
+		PRINTFORMDW You smile and begin moving your fingers more carefully.
+	ELSE
+[SKIPSTART]
+		IF CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+			SIF ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 != 220) || (MAIN_MAP == 2 && CFLAG:MASTER:現在位置 != 213))
+				PRINTFORMDL The two of you happen to run into Kosuzu.
+			IF FIRSTTIME("315A")
+			ELSEIF 陥落状態() >= 4
+			ELSEIF 陥落状態() >= 2
+			;ELSEIF 陥落状態() == 1
+			ENDIF
+		ELSE
+[SKIPEND]
+		IF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2
+			IF FIRSTTIME("315B")
+				PRINTFORML 「Wha, Wh-Wh-Whaddaya think you're doing?!」
+				PRINTFORMDL Hissing at you in a suppressed voice, Mamizou grabs your arm and pulls it to her chest.
+				PRINTFORMDL She pulls out a large pouch from somewhere and discreetly tries to cover her crotch with it.
+				PRINTFORML 「Just because we're a couple doesn't mean ya can get away with anything!」
+				PRINTFORMDL Mamizou blushes furiously as she mutters this, and you deny all responsibility.
+				PRINTFORMDL You tell her it's her fault for being too cute, and she glares at you while pouting.
+				PRINTFORML 「B-But we're in public... Nn, why are you still moving your fingers～」
+				PRINTFORMDL You can't help but smile at her clearly aroused voice.
+				PRINTFORML 「... Ya big oaf...」
+				PRINTFORMDW Pouting with tears in her eyes, she relaxes her bodies and leans against you.
+			ELSEIF ABL:Ｃ感覚 <= 1
+				IF 陥落状態() >= 4
+					PRINTFORML 「Nn, Q-Quit it, ya moron.」
+					PRINTFORMDL Mamizou grabs your arm to try and look more natural to the surrounding crowd.
+					PRINTFORML 「I said, Nn, not in... Kuh... Not in public.」
+					PRINTFORMDW Mamizou keeps grumbling but doesn't seem to resist very much.
+				ELSEIF 陥落状態() >= 2
+					PRINTFORML 「Kuh... In a place like this, ya shameless little...」
+					PRINTFORMDW As Mamizou glares you with a pout, you return an apologetic look, but you keep moving your fingers anyway.
+				;ELSEIF 陥落状態() == 1
+				ENDIF
+			ELSEIF ABL:Ｃ感覚 <= 4
+				IF 陥落状態() >= 4
+					PRINTFORML 「... Haa, Haa... Nnn... Haa... Q-Quit it, already...」
+					PRINTFORMDL You completely ignore Mamizou's grumbling, which is mixed with hot gasps and pants.
+					PRINTFORML 「Hyaah! Guh... Haa... S-Stop, I'm begging ya...」
+					PRINTFORMDW Her words are betrayed by her lustful tone, and you only increase the strength of your movements.
+				ELSEIF 陥落状態() >= 2
+					PRINTFORML 「Fwaa! Quit it, I said, Nngahh!!」
+					PRINTFORMDW The more you move your fingers, the more Mamizou bucks and twitches, so you start putting in more strength.
+				;ELSEIF 陥落状態() == 1
+				ENDIF
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「Nnkuh... Haa, Ah, Nn... Fwaa... That's, good...」
+					PRINTFORMDL With her mouth open and slack, Mamizou turns a lustful gaze to you.
+					PRINTFORML 「More... Do it, harder...」
+					PRINTFORMDW Having completely forgotten her surroundings, Mamizou begs you, and you start fingering her crotch even more vigorously.
+				ELSEIF 陥落状態() >= 2
+					PRINTFORML 「Haa, Haa... Nn... Ya little, pervert... I told ya not to, in public...」
+					PRINTFORMDW Mamizou tries to complain, but her eyes are starting to unfocus from the pleasure, and she unconsciously bucks her hips.
+				;ELSEIF 陥落状態() == 1
+				ENDIF
+			ENDIF
+		ELSE
+			IF ABL:Ｃ感覚 <= 1
+				IF 陥落状態() >= 4
+;「ん……ふぅ……、まだ、それほど、きもちよくは、んくっ」
+;そう言いつつも、マミゾウの腰は自然と前に突き出されてくる
+;「く、ふ、……ふふ……じゃが、%MASTERNAME%がしてくると思うと、うれしい、のう、んっ」
+;その言葉に、笑みを浮かべて%CALLNAME:MASTER%は秘処を何度も撫でさすった
+				ELSEIF 陥落状態() >= 2
+;「あふっ、ん……、はぁ……、まだ、まだじゃな」
+;どこか楽しげな表情で、マミゾウが腰を突き出してきた
+				ELSEIF 陥落状態() == 1
+				ENDIF
+			ELSEIF ABL:Ｃ感覚 <= 4
+				IF 陥落状態() >= 4
+;「」
+				ELSEIF GETBIT(CFLAG:1,0) || 陥落状態() >= 2
+				ENDIF
+;					PRINTFORML %CALLNAME:TARGET%は愛撫に熱い吐息を漏らし始めている…
+			ELSE
+				IF 陥落状態() >= 4
+				ELSEIF GETBIT(CFLAG:1,0) || 陥落状態() >= 2
+				ENDIF
+;					PRINTFORML %CALLNAME:TARGET%はトロンとした表情になってされるがままになっている…
+			ENDIF
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;316,指挿入れ
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_316
+IF (GET_TARGETNUM() == 1 && TFLAG:400) || GET_TARGETNUM() >= 2 && !FLAG:70
+	PRINTFORMD You \@ TCVAR:20 == 34 ? also stick # stick \@
+	PRINTFORMD  your hand under Mamizou's skirt, and
+	IF ABL:Ｖ感覚 < 1
+		PRINTD  slowly insert your finger into her
+	ELSEIF ABL:Ｖ感覚 <= 4
+		PRINTD  insert your finger into her
+	ELSE
+		PRINTD  bury your finger into her
+	ENDIF
+	IF PALAM:潤滑 > PALAMLV:3
+		PRINTFORMDL  sopping wet %FSYN("vagina")%...
+	ELSEIF PALAM:欲情 > PALAMLV:3
+		PRINTFORMDL  hot %FSYN("vagina")%...
+	ENDIF
+	IF ABL:Ｖ感覚 < 1
+		PRINTFORMDL %CALLNAME:TARGET%'s body stiffens at the unusual sensation...
+	ELSEIF ABL:Ｖ感覚 <= 4
+		PRINTFORMDL %CALLNAME:TARGET% starts panting at your touch...
+	ELSE
+		PRINTFORMDL %CALLNAME:TARGET% starts greedily thrusting her hips into your fingers while drooling at the mouth...
+	ENDIF
+ELSE
+	CALL TRAIN_MESSAGE
+ENDIF
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_316_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_316_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;317,Ｖ腰を振る
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_317
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_317_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_317_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;318,Ａ腰を振る
+;==================================================
+;@M_KOJO_MESSAGE_COM_K69_318
+;CALL TRAIN_MESSAGE
+;CALL M_KOJO_MESSAGE_COM_K69_318_1
+;RETURN RESULT
+
+;@M_KOJO_MESSAGE_COM_K69_318_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+;LOCAL = 0
+;-------------------------------------------------
+;IF LOCAL
+
+;ENDIF
+;RETURN 1
+;==================================================
+;330,スカートめくり
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_330
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_330_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_330_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;331,お茶を淹れる（薬入り）
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_331
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_331_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_331_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193 < 0
+		IF 陥落状態() >= 4
+			PRINTFORML 「Hmm, this tastes funny... Ya trying to drug your own lover?」
+			PRINTFORMDL Mamizou gives you a withering look, and a chill runs down your spine.
+			PRINTFORML 「If ya wanna get in my pants, just do it the honest way, ya hear? This is just sad.」
+			PRINTFORMDW She thrusts the teacup back at you, and you reluctantly dispose of it.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「... Hmph, resorting to tricks like this, that's just sad.」
+			PRINTFORMDW Mamizou glares at you as she hands back the teacup, and you take it while sweating bullets.
+		ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「Ya need to learn some shame.」
+		ENDIF
+		SETBIT CFLAG:1690,4
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() >= 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;332,お酒をふるまう
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_332
+IF CFLAG:MASTER:現在位置 == CFLAG:55:現在位置 && (MAIN_MAP == 1 || (MAIN_MAP != 1 && (CFLAG:MASTER:現在位置 == 130 || CFLAG:MASTER:現在位置 == 140))) && !FLAG:70
+	PRINTFORML 
+	PRINTFORMDW Byakuren furrows her brow in disapproval as Mamizou accepts the sake from you.
+	RETURN 0
+ELSEIF !CFLAG:ブチギレ
+	CALL TRAIN_MESSAGE
+ELSE
+	PRINTFORML 
+	PRINTFORML 「...」
+	PRINTFORMDW Mamizou looks away from you %SPLIT_G("sullenly:with an angry expression")%.
+	RETURN 1
+ENDIF
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_332_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_332_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	[SKIPSTART]
+	;宴会
+	IF GET_TARGETNUM() > 3
+		;moved to 334
+	;その他
+	ELSE
+	[SKIPEND]
+		IF 陥落状態() >= 4
+			PRINTFORML 「Here, an indirect kiss.」
+			PRINTFORMDL Mamizou hands you her sake cup, and you chuckle a little as you drink from it too.
+			PRINTFORML 「Mmm? ...%RANDLIPS(,"kiss")%...」
+			PRINTFORMDW You move your lips to hers, forcefully sharing the sake between the two of you.
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「Fufu, trying to get me drunk so ya can ravish me, eh?」
+			PRINTFORMDW You hastily deny the accusation, and for some reason Mamizou seems a little disappointed as she chuckles.
+		;ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORMW 「Mmm, sake? Thanks.」
+		ENDIF
+	;ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;334,杯を交わす added
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_334
+IF !CFLAG:ブチギレ
+	CALL TRAIN_MESSAGE
+ELSE
+	PRINTFORML 
+	PRINTFORML 「...」
+	PRINTFORMDW Mamizou looks away from you %SPLIT_G("sullenly:with an angry expression")%.
+	RETURN 1
+ENDIF
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_334_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_334_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML 
+	IF 陥落状態() >= 4 && TFLAG:193 >= 1 ;critical success
+		PRINTFORML 「Fufu, ya wanna drink? Then c'mere.」
+		PRINTFORMDL Mamizou drains the sake cup into her mouth, and then without swallowing, presses her lips onto yours.
+		PRINTFORML 「%RANDLIPS(,"kiss")%...」
+		PRINTFORMDW You share the sake with a kiss, and only then do the two of you notice all of the blushing guests around you...
+		CALL MUTUAL_KISS
+	ELSEIF 陥落状態() >= 2 || TFLAG:193 >= 1
+		PRINTFORML 「The more the merrier at these banquets, eh?」
+		PRINTFORMDW You enthusiastically agree with Mamizou.
+	;ELSEIF 陥落状態() == 1
+	ELSEIF TFLAG:193 == 0
+		PRINTFORMW 「Fufu, drinking with everyone like this ain't so bad every once in a while.」
+	ELSE ;added, fail
+		PRINTFORMW 「Sorry, but I really wanted to %SPLIT_G("spend this time in my own company:drink alone")%. Is that alright with ya?」
+		PRINTFORMDW Mamizou treats you dismissively, and turns back to her drink.
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;350,押し倒す（時姦時イタズラする
+;TFLAG:194 (0=成功 1=人目がある　2=野外は嫌でござりまする　3=多人数プレイは勘弁　4=合意があってもムードが足りぬ）
+;TCVAR:抱き寄せ初回　1=普通に合意ゲット　2=先にキスぐらいしろよ　3=媚薬or発情には勝てなかったよお…　4=悔しい…刻印さえなければﾋﾞｸﾋﾞｸﾝ
+;5=強引に迫られると断れぬ(素質臆病持ち専用) 6=まんざらでもない　7=駄目　8=論外
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_350
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_350_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_350_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;351,連れ出す
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_351
+;連れ出しにはTRAIN_MESSAGEが無い
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_351_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_351_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;352,告白する
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_352
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_352_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_352_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;353,イタズラする
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_353
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_353_1
+ENDIF
+CALL M_KOJO_MESSAGE_COM_K69_353_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_353_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;354,添い寝する（相手は起きて布団に招く感じ）
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_354
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_354_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_354_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF 陥落状態() >= 4
+		IF CFLAG:衰弱
+			PRINTFORML 「Nnn... Zzz...」
+			PRINTFORMDL Mamizou is sleeping soundly. She must have been exhausted.
+			PRINTFORML 「Zzz... Mmm...」
+			PRINTFORMDW Still, she unconsciously reaches out to you, and you gently embrace her.
+		ELSE
+			PRINTFORML 「Fufu, aren't ya adorable. Do ya really want to be with me that badly?」
+			PRINTFORMDL You happily nod without any hesitation.
+			PRINTFORML 「... Can't ya act even a little embarrassed?」
+			PRINTFORMDW Instead, it's Mamizou who starts blushing a little.
+		ENDIF
+	ELSE
+		IF CFLAG:衰弱
+			PRINTFORML 「... Zzz... Nnn...」
+			PRINTFORMDL You cuddle up next to Mamizou's sleeping figure.
+		ELSE
+			PRINTFORML 「What, is it that comfortable next to me?」
+			PRINTFORMDW Mamizou beckons you closer with her hand, and you snuggle in next to her with a smile.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;355,時止め（地の文の改変程度に留めるべき
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_355
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_355_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_355_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;360,身を任せる
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_360
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_360_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_360_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;363,読み聞かせ（[幼稚]持ち）
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_363
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_363_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_363_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;364,豆まき(萃香、勇儀、スカーレット姉妹用
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_364
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_364_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_364_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;365,守矢神社へ移動(早苗、神奈子、諏訪子用
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_365
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_365_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_365_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;402,就寝（添い寝時）
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_402
+;就寝にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K69_402_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_402_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;403,休憩
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_403
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_403_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_403_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;405,出掛ける(同行時デートに出掛ける
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_405
+;出掛けるにTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K69_405_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_405_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;410,掃除
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_410
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_410_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_410_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;411,戦闘訓練
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_411
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_411_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_411_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;412,勉強
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_412
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_412_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_412_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;413,料理
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_413
+;料理にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K69_413_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_413_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;414,食事
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_414
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_414_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_414_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;415,食事をふるまう
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_415
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_415_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_415_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;416,演奏する(凍結中？
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_416
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_416_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_416_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;417,昼寝をする
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_417
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_417_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_417_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;421,願掛けする
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_421
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_421_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_421_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;431,お風呂でくつろぐ
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_431
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_431_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_431_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;440,待つ
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_440
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_440_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_440_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;441,授業を受ける(慧音専用？
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_441
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_441_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_441_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;442,伐採する
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_442
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_442_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_442_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;デート系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+[SKIPSTART]
+;現状未実装
+;==================================================
+;600,デート会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_600
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_600_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_600_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;601,デートスキンシップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_601
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_601_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_601_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;602,デートキス
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_602
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_602_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_602_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;603,手を繋ぐ
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_603
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_603_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_603_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;604,散策する
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_604
+;散策するにはTRAIN_MESSAGEが無い
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_604_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_604_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	DRAWLINE
+	;Custom code
+	PRINTFORMDL You arrive at %STR_TR(6000 + (CFLAG:MASTER:現在位置 / 10))%.
+	IF FIRSTTIME("604A") && CFLAG:MASTER:現在位置 == CFLAG:70:現在位置 && ((MAIN_MAP != 2 && CFLAG:MASTER:現在位置 == 220) || MAIN_MAP == 2)
+		PRINTFORML 「Hey, I'm coming in.」
+		SETCOLOR 0xEE827C
+		;todo - logical inconsistency if she saw you before?
+		PRINTFORML 『Ah, welcome... Ara, I haven't seen the two of you together before.』
+		SETCOLOR 0xF4A460
+		IF 陥落状態() >= 4
+			PRINTFORML 「Fufu, we're a proper couple.」
+			SETCOLOR 0xEE827C
+			PRINTFORML 『Ah, how wonderful.』
+		ELSEIF 陥落状態() >= 2
+			PRINTFORML 「We're good friends.」
+			SETCOLOR 0xEE827C
+			PRINTFORML 『I'm glad you get along well.』
+		ELSEIF 陥落状態() == 1
+		ELSE
+			PRINTFORML 「We're just acquaintances.」
+			SETCOLOR 0xEE827C
+			PRINTFORML 『Hmm, it seems like more than that...』
+		ENDIF
+		SETCOLOR 0xF4A460
+		PRINTFORMDL You quickly bow your greetings, and Mamizou and Kosuzu begin chatting away amicably.
+		PRINTFORML 「Fufu, there's always something interesting here. Go and look around, too.」
+		SETCOLOR 0xEE827C
+		PRINTFORML 『I hope for your future patronage, too.』
+		PRINTFORMDL Seeing Kosuzu giving you her best business smile, you smile back and give her another quick bow.
+		SETCOLOR 0xF4A460
+		SETBIT CFLAG:1904,0
+	ELSEIF CFLAG:MASTER:現在位置 == 280
+		SETCOLOR 0xEE827C
+		PRINTFORML 『Welcome. Ah, I managed to find a peculiar book today.』
+		SETCOLOR 0xF4A460
+		PRINTFORML 「Oho, you've got my attention.」
+		PRINTFORMDL Suddenly finding yourself with nothing to do, you just watch Mamizou and Kosuzu chat for a while.
+	ELSE
+		PRINTFORML 「Strolling about and just taking in the sights is nice, too.」
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;605,寄り道する
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_605
+;寄り道するにはTRAIN_MESSAGEが無い
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_605_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_605_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;610,食事に誘う
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_610
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_610_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_610_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;613,お金稼ぎする
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_613
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_613_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_613_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;614,食材の買い出し
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_614
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+IF FLAG:70
+ELSE
+	CALL M_KOJO_MESSAGE_COM_K69_614_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_614_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;615,お弁当を食べる
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_615
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_615_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_615_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;617,甘味処に誘う
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_617
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_617_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_617_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;618,花屋
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_618
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_618_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_618_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;620,鈴奈庵
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_620
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_620_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_620_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;436,読書 custom code, edited
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_436
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_436_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_436_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;698,部屋に入る
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_698
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_698_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_698_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;699,外に出る
+;==================================================
+@M_KOJO_MESSAGE_COM_K69_699
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K69_699_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K69_699_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;派生コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;60,耳かき
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K69_60
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K69_60_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K69_60_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;61,抱き枕
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K69_61
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K69_61_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K69_61_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;62,デコちゅー
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K69_62
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K69_62_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K69_62_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;63,もっとキスする
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K69_63
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K69_63_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K69_63_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;80,手を引く
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K69_80
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K69_80_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K69_80_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1

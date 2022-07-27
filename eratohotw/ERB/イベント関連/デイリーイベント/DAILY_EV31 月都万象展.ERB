@@ -1,0 +1,160 @@
+﻿@DAILY_CONDITION_EV31
+;前日にお知らせ。
+IF (DAY:2 == 3 && DAY:3 == 13)
+	RETURN 1
+	CALL DAILY_EV31
+ELSE
+	RETURN -1
+ENDIF
+
+
+@DAILY_EV31
+CALL M_KOJO_COLOR_K62
+IF MAIN_MAP == 4
+	PRINTFORMDW During the nighttime, you look at a parchment that has the words Lunar Capital Expo written on it.
+	PRINTFORMDW It's a flier, advertising this upcoming event.
+	IF TALENT:62:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+		PRINTFORMDL Yesterday...
+		PRINTFORML 「My husband... If you don't mind, can you listen to one of Kaguya's selfish requests?」
+		PRINTFORMDW Kaguya says with a little reserve, handing you a flier.
+		PRINTFORMDL It details an event called the Lunar Capital Expo, an exhibition of various objects originating from the moon.
+		PRINTFORMDL 
+		IF 拠点_大家 == 62 || 拠点_大家 == 72
+			PRINTFORML 「I would really like for you to accompany me in hosting the Expo on the 14th.」
+			SIF CFLAG:62:1106 == 1
+				PRINTFORMDW It's already that time of year? No wonder you've seen Kaguya bustling about at home.
+			SIF CFLAG:62:1106 == 0
+				PRINTFORMDW You thought she was just rearranging the storeroom at home, but apparently it was for this.
+		ELSE
+			PRINTFORML 「I would really like for you to accompany me in hosting the Expo on the 14th.」
+			SIF CFLAG:62:1106 == 1
+				PRINTFORMDW So it's that time of the year already. You had thought the inabas of Eientei were busier than usual recently.
+			SIF CFLAG:62:1106 == 0
+				PRINTFORMDW You had thought the inabas of Eientei were busier than usual recently, so that's what that was about.
+		ENDIF
+		PRINTFORML 「Will you be busy, then...?」
+		PRINTFORMDW Kaguya thought that you were refusing, you reply that isn't the case.
+		PRINTFORMDW She smiles, relieved.
+		PRINTFORMDL 
+		PRINTFORML 「Of course, you won't be working for free... I'll be sure to pay you well.」
+		PRINTFORMDW Kaguya just really wants to host it with her beloved husband, she says, looking up to you.
+		PRINTFORMDW Whether on purpose or not, she really know how to use her looks to her advantage.
+		PRINTFORMDL 
+		PRINTFORMDW It seems that the expo will be held on the 14th at 13:00 in front of Eientei.
+		PRINTFORMDW Well, what shall you do?
+	ELSEIF TALENT:62:恋慕
+		PRINTFORMDL The other day...
+		PRINTFORML 「Aah, I forgot to mention something to you, %CALLNAME:MASTER%.」
+		PRINTFORMDW Kaguya says, appearing out of nowhere.
+		PRINTFORMDL She looks to be in pretty good spirits, a cheerful smile on her face.
+		PRINTFORMDW Then, handing you a piece of parchment, she begins to speak,
+		PRINTFORMDL 
+		IF 拠点_大家 == 62 || 拠点_大家 == 72
+			PRINTFORML 「I'm hosting the Lunar Capital Expo on the 14th. I'd like your assistance, %CALLNAME:MASTER%.」
+			SIF CFLAG:62:1106 == 1
+				PRINTFORMDW It's already that time of year? No wonder you've seen Kaguya bustling about at home.
+			SIF CFLAG:62:1106 == 0
+				PRINTFORMDW You remember her messing around in the storeroom recently. Apparently it was for this reason.
+		ELSE
+			PRINTFORML 「I'm hosting the Lunar Capital Expo on the 14th. I'd like your assistance, %CALLNAME:MASTER%.」
+			SIF CFLAG:62:1106 == 1
+				PRINTFORMDW So it's that time of the year already. You had thought the inabas of Eientei were busier than usual recently.
+			SIF CFLAG:62:1106 == 0
+				PRINTFORMDW You had thought the inabas of Eientei were busier than usual recently, so that's what that was about.
+		ENDIF
+		PRINTFORML 「Do you have...plans that day?」
+		PRINTFORMDW Kaguya thought that you were refusing, you reply that isn't the case.
+		PRINTFORMDW Kaguya smiles, relieved.
+		PRINTFORMDL 
+		PRINTFORMW 「Of course, I'll pay you as well.」
+		PRINTFORMW 「Reisen and the others are always trying to escape, so it'll be hard without your help.」
+		PRINTFORMW 「I don't really trust to leave everything to the inabas either.」
+		PRINTFORMW 「Also, I'll take this opportunity to show you some really nice artifacts.」
+		PRINTFORMW 「Aside from money... I might even pay you with some of those items.」
+		PRINTFORMDW Think about it, okay? She says, walking away and leaving behind the flier.
+		PRINTFORMDL 
+		PRINTFORMDW It seems that the expo will be held on the 14th at 13:00 in front of Eientei.
+		PRINTFORMDW Well, what shall you do?
+	ELSEIF TALENT:62:思慕
+		PRINTFORMDL The other day...
+		PRINTFORML 「Ah, here you are. I forgot to mention something to you.」
+		PRINTFORMDW Kaguya says, appearing out of nowhere.
+		PRINTFORMDL She looks to be in pretty good spirits, a cheerful smile on her face.
+		PRINTFORMDW Then, handing you a piece of parchment, she begins to speak,
+		PRINTFORMDL 
+		IF 拠点_大家 == 62 || 拠点_大家 == 72
+			PRINTFORML 「I'm hosting the Lunar Capital Expo on the 14th. I'd like your assistance, %CALLNAME:MASTER%.」
+			PRINTFORMDW You remember her messing around in the storeroom recently. Apparently it was for this reason.
+			PRINTFORML 「Of course, if you have other plans that day, then I won't force you.」
+			PRINTFORMDW Kaguya thought that you were refusing, you reply that isn't the case.
+		ELSE
+			PRINTFORML 「I'm hosting the Lunar Capital Expo on the 14th. I'd like your assistance, %CALLNAME:MASTER%.」
+			PRINTFORMDW You had thought the inabas of Eientei were busier than usual recently, so that's what that was about.
+			PRINTFORML 「Of course, if you have other plans that day, then I won't force you.」
+			PRINTFORMDW Kaguya thought that you were refusing, you reply that isn't the case.
+		ENDIF
+		PRINTFORMDL 
+		PRINTFORMW 「Of course, if you help out then you'll be compensated.」
+		PRINTFORMW 「Reisen and the others are prone to escape and I'd be too busy myself.」
+		PRINTFORMW 「I don't really trust to leave everything to the inabas either.」
+		PRINTFORMW 「Besides, I'm sure you might also have some interest in the never-before-seen curiosities and masterpieces of the moon.」
+		PRINTFORMW 「Apart from the money, I might even pay you with some of those items as well.」
+		PRINTFORMDW Having said that, she starts walking away, telling you to think about her offer.
+		PRINTFORMDW She left the flier behind for you.
+		PRINTFORMDL 
+		PRINTFORMDW It seems that the expo will be held on the 14th at 13:00 in front of Eientei.
+		PRINTFORMDW Well, what shall you do?
+	ELSE
+		PRINTFORMDL The other day...
+		PRINTFORML 「Oh, it's convenient that you're here, %CALLNAME:MASTER%. I was on my way to the bamboo forest.」
+		PRINTFORMDW Kaguya says, appearing out of nowhere.
+		PRINTFORMDL She looks to be in pretty good spirits, a cheerful smile on her face.
+		PRINTFORMDW Then, handing you a piece of parchment, she begins to speak,
+		PRINTFORMDL 
+		IF 拠点_大家 == 62 || 拠点_大家 == 72
+			PRINTFORML 「I'm hosting the Lunar Capital Expo on the 14th. You're free right? I'd like your help.」
+			PRINTFORMDW An abrupt request, as expected from a former princess.
+			PRINTFORML 「I'm housing you, aren't I? This is the least you could for me in return.」
+			PRINTFORMDW Your expression gave your line of thinking away, and Kaguya crosses her arms.
+		ELSE
+			PRINTFORML 「I'm hosting the Lunar Capital Expo on the 14th. I'd like your help.」
+			PRINTFORMDW An abrupt request, as expected from a former princess.
+			PRINTFORML 「Oh my, what an unpleasant response. Even though I personally went out of my way to invite you.」
+			PRINTFORMDW Your expression gave your line of thinking away, and Kaguya crosses her arms.
+		ENDIF
+		PRINTFORMDL 
+		PRINTFORMW 「Of course, it wouldn't be free labor. You'll be compensated accordingly for your work.」
+		PRINTFORMW 「The rabbits are prone to escape and I'd be too busy myself.」
+		PRINTFORMW 「I don't really trust to leave everything to the inabas, afterall.」
+		PRINTFORMW 「Besides, I'm sure you might also have some interest in the never-before-seen curiosities and masterpieces of the moon.」
+		PRINTFORMW 「Apart from the money, I might even pay you with some of those items as well.」
+		PRINTFORMDW Having said that, she starts walking away, telling you to think about her offer.
+		PRINTFORMDW She left the flier behind for you.
+		PRINTFORMDL 
+		PRINTFORMDW It seems that the expo will be held on the 14th at 13:00 in front of Eientei.
+		PRINTFORMDW Well, what shall you do?
+	ENDIF
+ELSE
+	IF TALENT:62:恋人 || TALENT:62:恋慕 || TALENT:62:思慕
+		PRINTFORMDL During the night, you look at the parchment Kaguya gave to you.
+		PRINTFORMDW It was the flier that advertises the upcoming Lunar Capital Expo occurring in front of Eientei.
+		PRINTFORMDL 
+		PRINTFORMDW True to its name, the expo would exhibit various artifacts originating from the Lunar Capital.
+		PRINTFORMDW %BREAKENG(@"It seems that a lot of people are going to attend, and with Reisen and the others prone to avoid going, it would just be left to Kaguya and the rabbits.")%
+		PRINTFORMDW It appears that it's going to be held on the 14th at 13:00, and Kaguya really wants you to come help.
+		PRINTFORMDW The pay looks to be pretty good, and of course there's also having her gratitude.
+		PRINTFORMDW Maybe it'll be a good idea to keep it in mind.
+	ELSE
+		PRINTFORMDL During the night, you examine a piece of parchment.
+		PRINTFORMDW It was the flier that advertises the upcoming Lunar Capital Expo occurring in front of Eientei.
+		PRINTFORMDL 
+		PRINTFORMDW The expo would be displaying items from the Lunar Capital.
+		PRINTFORMDW For the wealthy and intellectual, it is said that it'll be an extravagant event.
+		PRINTFORMDW It appears that it's going to be held on the 14th at 13:00, and if there's work for you to do there as well, it seems.
+		PRINTFORMDW The pay must surely be good if it's coming from the princess of Eientei. Having her gratitude would be nice too.
+		PRINTFORMDW Maybe it'll be a good idea to keep it in mind.
+	ENDIF
+ENDIF
+RESETCOLOR
+CFLAG:62:1106 = 1
+RETURN 1

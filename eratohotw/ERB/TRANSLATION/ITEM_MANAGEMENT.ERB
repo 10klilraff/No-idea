@@ -1,0 +1,24 @@
+﻿;----------------------------------------------
+; Contains functions related to operations on ITEM
+; For now only has ITEM_GRANT, a wrapper for receiving items
+;----------------------------------------------
+
+;----------------------------------------------
+; Grant item within a limit
+; ARG = itemnumber, ARG:1 = amount, ARG:2 = limit
+; Default limit is 99
+;----------------------------------------------
+@ITEM_GRANT(ARG,ARG:1,ARG:2 = 99)
+#DIM itemamount,1
+itemamount = ITEM:ARG
+IF itemamount > ARG:2
+	PRINTFORML There is no room for {ARG:1}×%ITEMNAME_TR(ARG)%.
+ELSEIF (itemamount + ARG:1) > ARG:2
+	LOCAL:0 = (itemamount + ARG:1) - ARG:2
+	PRINTFORML %PARSE("You receive")% {ARG:2 - itemamount}×%ITEMNAME_TR(ARG)%.
+	PRINTFORML There is no room for {LOCAL}×%ITEMNAME_TR(ARG)%.
+	ITEM:ARG = ARG:2
+ELSE
+	PRINTFORML %PARSE("You receive")% {ARG:1}×%ITEMNAME_TR(ARG)%.
+	ITEM:ARG += ARG:1
+ENDIF

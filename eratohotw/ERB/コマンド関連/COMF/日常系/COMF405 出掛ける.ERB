@@ -1,0 +1,83 @@
+﻿;-------------------------------------------------
+;出掛ける
+;日常系コマンド、レベル1
+;-------------------------------------------------
+@COM405
+VARSET LOCAL
+FOR LOCAL,1,CHARANUM
+	IF CFLAG:(LOCAL):同行
+		LOCAL:1 ++
+		SIF CFLAG:LOCAL:衰弱 || BASE:LOCAL:気力 == 0
+			LOCAL:2 ++
+		SIF !CHARA_HOLIDAY(LOCAL) && BASE:LOCAL:仕事量
+			LOCAL:3 ++
+		SIF CFLAG:LOCAL:態度 < 1 && CAN_IRAI_CHARA_GO_TOGATHER(LOCAL)
+			LOCAL:4 ++
+	ENDIF
+NEXT
+
+IF NEMUKE() >= 720
+	DRAWLINE
+	PRINTFORML %PARSE("You feel")% too sleepy, and %PARSE("decide")% not to go out.
+	RETURN -1
+ELSEIF LOCAL:1 > 1
+	DRAWLINE
+	PRINTL Can't bring more than one person when going out.
+	RETURN -1
+ELSEIF LOCAL:2 || BASE:MASTER:気力 == 0
+	DRAWLINE
+	PRINTFORML %PARSE("You feel")% too tired, and %PARSE("decide")% not to go out. \@ BASE:MASTER:気力 == 0 ? (ENE is 0) # (Partner too tired)\@
+	RETURN -1
+ELSEIF LOCAL:3 && FESTIVAL() == ""
+	DRAWLINE
+	PRINTFORML The one accompanying %PARSE("you")% couldn't go out because it is a work day.
+	RETURN -1
+ELSEIF LOCAL:4
+	DRAWLINE
+	PRINTFORML %PARSE("You are")% told to hurry up and get the request done first...
+	RETURN -1
+ELSEIF TIME:5 == 9 || TIME:5 == 5
+	DRAWLINE
+	PRINTL The weather is too poor to leave.
+	RETURN -1
+ELSEIF TALENT:MASTER:100 < -4 
+	DRAWLINE
+	PRINTL It's too dangerous to go out with such a small body.
+	RETURN -1
+ENDIF
+IF !CHK_ENTRANCE(CFLAG:MASTER:現在位置, MAIN_MAP)
+	PRINTFORML Go to %NAME_FROM_PLACE(ENTRANCE)% first.
+	CALL SKIP_MOVE(CFLAG:MASTER:現在位置, ENTRANCE)
+ENDIF
+LOCAL:3 = 0
+DRAWLINE
+CALL OTHERREGIONS("出掛ける")
+LOCAL:2 = RESULT
+LOCAL = 0
+IF LOCAL:2 == MAIN_MAP || LOCAL:2 == 100
+	FLAG:デート相手 = 0
+	RETURN -1
+ENDIF
+RETURN 1
+
+@COM_ABLE405
+SIF !TFLAG:100
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(405)
+	RETURN RESULT
+;お持ち帰り中は不可
+SIF TFLAG:運搬
+	RETURN 0
+SIF CFLAG:MASTER:添い寝中
+	RETURN 0
+SIF CFLAG:うふふ == 2
+	RETURN 0
+SIF CFLAG:MASTER:イタズラ
+	RETURN 0
+;参道設定
+;SIF !CHK_ENTRANCE(CFLAG:MASTER:現在位置, MAIN_MAP)
+;	RETURN 0
+SIF !AT_HOME(MASTER)
+	RETURN 0
+RETURN 1

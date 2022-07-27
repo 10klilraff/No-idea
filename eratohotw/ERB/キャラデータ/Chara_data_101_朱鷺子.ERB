@@ -1,0 +1,90 @@
+﻿@CHARAMOVE_DATA_101(ARG, ARG:2)
+LOCAL = 101
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;自宅によく居る
+			CASE P541朱鷺子の棲み処
+				RETURN 5
+			;魔理沙家,アリス家,エレン家,妖怪の棲み処
+			CASE P510霧雨魔法店 TO P515魔理沙宅・倉庫, P521人形の館・アリスの部屋 TO P531人形の館・空き部屋
+				RETURN -100
+			CASE P535エレン宅・寝室 TO P537エレン宅・風呂, P542リグルの棲み処, P543ルーミアの棲み処, P544成美の小屋
+				RETURN -100
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE 霧の湖, 正門, 大図書館
+				RETURN 1
+			CASE 森の入り口, 香霖堂, 古木の大樹
+				RETURN 1
+			CASE 麓の樹海, 玄武の沢, 大蝦蟇の池
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+ENDSELECT
+
+@EXIST_キャラデータ101
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ101(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "朱鷺子")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（ズボン）セット")
+
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "靴"))
+CASE "普段着：靴下"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "靴下"))
+CASE "普段着：スカート"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("スカート", "スカート"))
+CASE "普段着：上半身上着２"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("上半身上着２", "ブラウス"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "白地に淡い紅を引いた")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "朱鷺色パンツ")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "朱鷺色ブラ")
+CASE "固有下着着用条件"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 2)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "野菜/虫肉/和食/葉物/あっさり/淡白/質素/野趣/家庭的/とろとろ/甘い/甘い/すっぱい/すっぱい/")
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "辛い/辛い/卵/卵/卵/" + "鳥肉/謎料理/" * 5)
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "薄味/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "赤/秩序/かわいい/シンプル/和風/シック/繊細/知的/" + "鳥/書物/" * 3 + "知恵の/知識の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "ポップ/パワフル/威厳/" + "刃物/弾/小手/" * 3)
+ENDSELECT
+

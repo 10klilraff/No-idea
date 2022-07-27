@@ -1,0 +1,115 @@
+﻿;process the effect of the lover item you receive from Nue
+;concept: gives bonus to stealth when having sex outside, helps out in danmaku when dodging sometimes (gets distracted!), and can be used to disguise panties on you once per day
+;won't work against Nue herself, Mamizou is quite familiar with it, and good fighters can sense illusions in danmaku
+@Add_SeedOfUnknownForm(ARGS, ARG, ARG:1)
+#DIM nInit
+#DIM nDiff
+SIF !ITEM:498 && ARGS != "dialogue" ;正体不明のタネ item is required
+	RETURN 0
+SELECTCASE ARGS
+	CASE "init"
+		;note that init is not cleared and is kept in memory
+		nInit = BASE:MASTER:潜伏率
+	CASE "proc"
+		;get difference
+		nDiff = ABS(nInit - BASE:MASTER:潜伏率)
+		IF nInit > BASE:MASTER:潜伏率 ;stealth lowered
+			BASE:MASTER:潜伏率 = nInit ;revert the value
+			BASE:MASTER:潜伏率 -= MULTIPLY(nDiff, RAND(60, 81)) ;lower the stealth decrease by 20-40%
+		ELSE
+			BASE:MASTER:潜伏率 = nInit ;revert the value
+			BASE:MASTER:潜伏率 += MULTIPLY(nDiff, RAND(130, 151)) ;increase the stealth increase by 30-50%
+		ENDIF
+		CALL COLORMESSAGE(@"The Seed of Unknown Form helps you stay hidden!",C_GREEN,1,1)
+	CASE "danmaku"
+		SIF !PERCENT(20)
+			RETURN 0
+		CALL COLORMESSAGE(@"Seed of Unknown Form springs into action to help you dodge!",C_YELLOW,1,1)
+		IF ARG == [[ぬえ]]
+			CALL COLORMESSAGE(@"But Nue sees through her own Seed of Unknown Form!",C_RED,1,1)
+			RETURN 0
+		ELSEIF ARG == [[マミゾウ]] && RAND:2
+			CALL COLORMESSAGE(@"But Mamizou sees through the trick %HE_SHE(ARG)%'s so familiar with!",C_RED,1,1)
+			RETURN 0
+		ELSEIF ABL:ARG:戦闘能力 >= 5 && !RAND:3
+			CALL COLORMESSAGE(@"But %CALLNAME:ARG% sees through the illusion thanks to %HIS_HER(ARG)% combat experience!",C_RED,1,1)
+			RETURN 0
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					ARG:1 = MULTIPLY(ARG:1, 50)
+					LOCALS = half
+				CASE 1
+					ARG:1 = MULTIPLY(ARG:1, 67)
+					LOCALS = third
+				CASE 2
+					ARG:1 = MULTIPLY(ARG:1, 75)
+					LOCALS = quarter
+			ENDSELECT
+			CALL COLORMESSAGE(@"%CALLNAME:ARG% gets distracted and misses %LOCALS% of %HIS_HER(ARG)% attacks thanks to the Seed of Unknown Form!",C_GREEN,1,1)
+			RETURN ARG:1
+		ENDIF
+	CASE "panties"
+		SIF TFLAG:SeedUsed
+			RETURN 0
+		CALL COLORMESSAGE("However, you use Seed of Unknown Form to disguise your haul!",C_GREEN,1,1)
+		IF ARG == [[ぬえ]]
+			CALL COLORMESSAGE("...But Nue is not fooled by her own trick!",C_RED,2,1)
+			RETURN 0
+		ELSEIF ARG == [[マミゾウ]] && RAND:2
+			CALL COLORMESSAGE(@"Mamizou sees through the trick %HE_SHE(ARG)%'s so familiar with, but chuckles meaningfully and lets you get away with it.",C_YELLOW,1,1)
+		ELSE
+			CALL COLORMESSAGE(@"%CALLNAME:ARG% is extremely confused, but lets you go after a moment of hesitation...",C_GREEN,1,1)
+		ENDIF
+		CALL COLORMESSAGE(@"%HE_SHE(ARG, 1)% probably won't fall for the same trick twice, at least not at the same day.",C_GREEN,2,1)
+		TFLAG:SeedUsed = 1
+		RETURN 1
+	CASE "dialogue"
+		;activate in 300,会話
+		SIF TARGET != [[ぬえ]]
+			RETURN 0
+		SIF CFLAG:ブチギレ || MARK:反発刻印
+			RETURN 0
+		;SIF !( (TALENT:恋人 && TALENT:恋慕) || ABL:親密 < 15 )
+		;	RETURN 0
+		SIF CFLAG:1300 < 3 ;after knowing nue's form
+			RETURN 0
+		SIF ITEM:498 ;got the item
+			RETURN 0
+		PRINTFORMW 「Hey, %MASTERNAME:41%...」
+		PRINTFORMDW Nue suddenly pulls you by your sleeve, looking somewhat hesitant.
+		PRINTFORMDW She must be wanting some attention away from prying eyes, you think.
+		PRINTFORMDW You nod with a smile and take her behind the corner as you start fondling her gently.
+		PRINTFORMW 「Aah, w-wait, it's not that... I just wanted to talk with you, it won't take long.」
+		PRINTFORMDW You look at her, confused. She seems uncertain, but clearly ready to muster her resolve.
+		PRINTFORMW 「You know, I've been thinking... I never had the chance to thank you properly for everything you've done to me, right?」
+		PRINTFORMDW That's weird. You've been both pleased with wonderful time you got to spend together, so what is this all about?
+		PRINTFORMDW Her words fill you with anxiety. It sounds a lot like some kind of farewell speech...
+		PRINTFORMW 「Ah, no, don't worry, I'm not trying to break up, or anything like that... Rather, it's the opposite, really.」
+		PRINTFORMDW Nue smiles as she takes the little green snake from her arm and presents it to you.
+		PRINTFORMW 「%MASTERNAME:41%... Allow me to impart something very important.」
+		PRINTFORMW 「You saw it before, right? The very first time we met. My Seed of Unknown Form.」
+		PRINTFORMW 「This is a part of my ability, a part of me... I want it to be with you, always.」
+		PRINTFORMW 「After you uncovered my true form, I think you deserve to have it.」
+		PRINTFORMW 「So here, take it!」
+		PRINTFORMDW You nod and gratefully accept her gift.
+		PRINTFORMDW Seeing that, Nue quickly cheers up and smiles happily.
+		PRINTFORMW 「Ehehe～」
+		PRINTFORMW 「Now it's certain! I did promise that we will be together forever, remember?」
+		PRINTFORMDW The snake in your hands suddenly comes alive and slithers under your sleeve!
+		PRINTFORMDW You start panicking and try to catch it, but it always manages to escape your grip!
+		PRINTFORMW 「Relax, %MASTERNAME:41%... Let it be.」
+		PRINTFORMW 「You trust me, right?」
+		PRINTFORMDW You look into her eyes, and after a moment of consideration, you decide to trust Nue.
+		PRINTFORMW 「That's better...」
+		PRINTFORMW 「It carries my power, and you... will be able to use it.」
+		PRINTFORMW 「You might find it helpful once in a while, whooo knows♪」
+		PRINTFORMDW Nue leans closer and snuggles up to you.
+		PRINTFORMW 「It's all about tricking people after all, and you're pretty good at it at this point.」
+		PRINTFORMW 「Go and spread my glory, %MASTERNAME:41%♪ I'm sure you won't be disappointed!」
+		PRINTFORMDW You hug her back and pat her on the head.
+		PRINTFORMW 「I love you, %MASTERNAME:41%♪」
+		CALL COLORMESSAGE("Received [Seed of Unknown Form]!",C_YELLOW,2,1)
+		ITEM:498 ++
+		RETURN 1
+ENDSELECT

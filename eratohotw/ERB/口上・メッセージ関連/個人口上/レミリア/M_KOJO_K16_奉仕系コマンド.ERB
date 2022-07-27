@@ -1,0 +1,431 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;奉仕系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;80,手淫
+;==================================================
+@M_KOJO_MESSAGE_COM_K16_80
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K16_80_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K16_80_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		IF TALENT:無知
+			PRINTFORMW 「What is this? Is it okay to touch this?」
+			PRINTFORMDW  Remilia touches your penis.
+			PRINTFORML 「Being fine with a reward such as this, you're a strange one...」
+		ELSE
+			PRINTFORML 「Fuu... Fufuu... It's trembling...」
+			PRINTFORMW 「... Wanting me to touch this disgusting thing... You're quite the impertinent one...%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:無知
+		PRINTFORML 「You want it again with the hand?」
+		IF TALENT:恋慕
+			SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「I understand%UNICODE(0x2764)%」
+				PRINTFORMW 「Hora! Hurry up and release your white stuff!」
+			CASE 1
+				PRINTFORML 「Is it not yet time? Hurry up and let it all out!」
+			ENDSELECT
+		ELSE
+			PRINTFORML 「Is it really fine just like this?」
+			SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「It seems I have to hold...this.」
+			CASE 1
+				PRINTFORMW 「I suppose it can't be helped... Is this fine?」
+			ENDSELECT
+		ENDIF
+	ELSE
+		PRINTFORML 「You want me to use my hand?」
+		IF TALENT:恋慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Fine...」
+				PRINTFORMW 「I'll be watching %CALLNAME:MASTER%'s reactions closely%UNICODE(0x2764)%」
+			CASE 1
+				PRINTFORML 「Fuufuu... Wanting me to fap this disgusting thing...%UNICODE(0x2764)%」
+				PRINTFORMW 「Horaa%UNICODE(0x2764)% Release your useless semen%UNICODE(0x2764)%」
+			CASE 2
+				PRINTFORML 「Touching this foul thing...%UNICODE(0x2764)%」
+				SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「You want to violate me with this don't you... You'll need to be harder than this...%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORML 「Rubbing just the tip...」
+					PRINTFORMW 「It's different from the usual...%UNICODE(0x2764)%」
+				ENDSELECT
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Fufuu... It seems to be a bit big for my hand...%UNICODE(0x2764)%」
+			CASE 1
+				PRINTFORML 「Are you satisfied with just my hand...?」
+			CASE 2
+				PRINTFORML 「Hora... All that built-up semen... Won't you release it all...%UNICODE(0x2764)%?」
+			ENDSELECT
+		RETURN 1
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;81,フェラチオ
+;==================================================
+@M_KOJO_MESSAGE_COM_K16_81
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K16_81_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K16_81_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;技巧不足
+	;技量が低いときにこそ[無知]が活きる気がします
+	;ELSEIF ABL:舌 < 2
+	
+	;勃起しきってない
+	ELSEIF BASE:MASTER:勃起 < 1000
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「... Well well, what's this I wonder?」
+				PRINTFORML 「Is it because I'm licking it like this that it becoming hard? It is isn't it?」
+				PRINTFORMW 「Aaah, Mu...Nh... Yes, just like that...\@ TALENT:恋慕 ? %UNICODE(0x2764)% # \@」
+			CASE 1
+				PRINTFORML 「... I, Remilia, am serving you, you know? I expect an appropriate response.」
+				PRINTFORMDW Remilia faces up to glare at you while forcefully tracing her tongue around the length of the glans.
+		ENDSELECT
+	;恋慕
+	ELSEIF TALENT:恋慕 && RAND:2
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Nn, Churu, Kupuu... Kuchuru, Uuh...」
+				PRINTFORMDL Remilia puts the tip of your penis in her mouth and starts licking it.
+				PRINTFORMDL Disregarding the saliva that's overflowing from the edge of her lips, Remilia continues giving service with complete concentration.
+				PRINTFORMDL Without any hesitation, Remilia pleasures you.
+				PRINTFORML 「...Mugu, Chuu, Haah... It really is... so stiff...」
+				PRINTFORMW 「For you to find me so attractive... You really won't stop at anything...%UNICODE(0x2764)%」
+			CASE 1
+				PRINTFORML 「...」
+				PRINTFORMDL Remilia suddenly stops moving and you feel something hard being pressed against your penis.
+				PRINTFORML 「... This, this is the fang of a vampire that's about to partake of the blood of its prey.」
+				PRINTFORMW 「I wonder if you realize just how scary the situation you're in right is...」
+				PRINTFORML 
+				PRINTFORML 「... Just a little joke, haha.」
+				PRINTFORMDL Remilia gives a little laugh and then continues servicing you with her mouth.
+				PRINTFORMDL Occasionally, a sharp yet gentle feeling grazes the edge of the head, giving a tingling sensation.
+				PRINTFORMW 「Kuchuu, Gupuu, Churu... I wonder if I should tell you if I ever pull out my fangs.」
+			CASE 2
+				PRINTFORML 「Myuu, Chuu... Kupuu... Feew gud?...」
+				PRINTFORML 「...Pupuu, Kohaa... Feel good?」
+				PRINTFORMDL The sight of Remilia trying to maintain her image makes you laugh a little bit. 
+				PRINTFORMDL Trying not to say anything, you stroke Remilia's head.
+				PRINTFORMW 「...Uuhー...」
+		ENDSELECT
+		RETURN 1
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「%TEXTR("Just as always, what/Fuu... What/What")% an amazing smell...」
+				;精液中毒高い
+				IF ABL:精液中毒 > 4 && RAND:2
+					PRINTFORML 「Making me, Nnh...%UNICODE(0x2764)%do this... kind of service, it's... Nh... Mu, Chuu...%UNICODE(0x2764)%insulting...%UNICODE(0x2764)%」
+					PRINTFORMDW Remilia joyfully licks your penis and rubs her thighs together...
+				ELSEIF TALENT:恋慕 && RAND:2
+					PRINTFORML 「Even so, that part of you, I think it's cute...」
+					PRINTFORMW 「It's quite strange...」
+				ELSE
+					PRINTFORML 「Making me lick this thing, what an awful person... Nh, Chuu...」
+					PRINTFORMDL Remilia sucks on the tip while simultaneously insulting you. She suddenly starts using her whole tongue to squeeze the tip.
+					PRINTFORMDL Her soft tongue strokes the weak spots under the frenulum, sending a wave of pleasure that causes you to let out a small moan.
+					PRINTFORMW 「Maa, from your reactions it seems you're enjoying this. \@ TALENT:恋慕 ? %UNICODE(0x2764)% # \@」
+				ENDIF
+			CASE 1
+				PRINTFORML 「Nh, Chuu, Chuuku... Puah... Honestly, what unreasonable behavior...」
+				IF ABL:精液中毒 > 4 && RAND:2
+					;精液中毒高い
+					PRINTFORML 「Pressing this thing against my tongue... Nh, Reruu...」
+					PRINTFORML 「Your overflowing dew... Nkuu..., I'll swallow it all...」
+					PRINTFORML 「I can feel your excitement, Fuu, Nn...%UNICODE(0x2764)% I feel it plenty inside my mouth... Chuuku...%UNICODE(0x2764)%You bully...%UNICODE(0x2764)%」
+					PRINTFORML 「In the end... %UNICODE(0x2764)%Chuu, Repu... %UNICODE(0x2764)%Like that... %UNICODE(0x2764)%」
+					PRINTFORMDW Remilia talks as if she's in a delirium, continuing her fellatio with an ecstatic expression...
+				ELSEIF TALENT:恋慕
+					PRINTFORML 「If it wasn't you I was doing this to, I would have bitten down long ago... Haah, Mu...%UNICODE(0x2764)%」
+					PRINTFORMDW Ignoring the seriousness of what she said, Remilia's tongue dances and moves around without pause and you start to feel even better.
+				ELSE
+					PRINTFORMDL Remilia continues her mouth service as it swells slightly.
+				ENDIF
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;82,パイズリ
+;==================================================
+@M_KOJO_MESSAGE_COM_K16_82
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K16_82_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K16_82_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;83,素股
+;==================================================
+@M_KOJO_MESSAGE_COM_K16_83
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K16_83_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K16_83_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;84,泡踊り
+;==================================================
+@M_KOJO_MESSAGE_COM_K16_84
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K16_84_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K16_84_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;85,足扱き
+;==================================================
+@M_KOJO_MESSAGE_COM_K16_85
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K16_85_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K16_85_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;88,バキュームフェラ
+;==================================================
+@M_KOJO_MESSAGE_COM_K16_88
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K16_88_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K16_88_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

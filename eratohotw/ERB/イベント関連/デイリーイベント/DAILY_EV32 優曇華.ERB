@@ -1,0 +1,320 @@
+﻿@DAILY_CONDITION_EV32
+SIF TALENT:MASTER:性別 != 2
+	RETURN -1
+SIF CFLAG:62:1106 == 8
+	RETURN -1
+;嫉妬未満の恋慕は回数減でなるべく煩わしさを減らす。
+SIF CFLAG:62:1106 == 3 && RAND:2 > 0
+	RETURN -1
+SIF MAIN_MAP == 4 && RAND:10 > 0
+	RETURN -1
+SIF MAIN_MAP != 4 && RAND:20 > 0
+	RETURN -1
+CALL DAILY_EV32
+RETURN 1
+
+
+@DAILY_EV32
+CALL M_KOJO_COLOR_K62
+;あなたへの好きで輝く優曇華。好意というあなたへの執着が穢れとなって花開く的な。
+IF TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4
+	PRINTFORMDW A lunar udonge decorates the rear garden of Eientei, its seven-colored jewels in full bloom.
+	PRINTFORMDL The flowers that sprout only after absorbing a considerable amount of impurity, it has a radiance that was incomparable to any other treasures.
+	PRINTFORMDL 
+	PRINTFORML 「How beautiful...」
+	PRINTFORMDW Kaguya examines it, a smile on her face, as she tends to the other bonsai.
+	PRINTFORMDL There was no longer a need to be overly attached to anything else.
+	PRINTFORMDW For this udonge will continue to show its brilliance unto eternity, just as the love between the two of you.
+	PRINTFORMDL 
+	PRINTFORMDL It doesn't bother her, no matter what partner you take.
+	PRINTFORMDL %BREAKENG(@"For no matter which partner you take, there are only so many people you can eventually return to, and Kaguya believes that you will always return to her.")%
+	PRINTFORMDL With that peace in her mind, Kaguya happily accepts the jealousy she feels as one of the many ways to enjoy the rest of eternity.
+	PRINTFORMW 「...Fufu, I wonder if the udonge is starting to grow more branches as well.」
+	PRINTFORMDW Just as her future is now bright, so is the udonge's shine.
+	PRINTFORMDW Absorbing the impurity that is love.
+	CFLAG:62:1106 = 8
+ELSEIF TALENT:62:恋人 && (CFLAG:62:1106 == 6 || CFLAG:62:1106 == 7) 
+	PRINTFORMDW In the gardens behind Eientei, there was a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also used to look worn down and dead.
+	PRINTFORMDL Of course, this was all in the past.
+	PRINTFORMDW Now, the udonge bears exceptionally beautiful seven-colored jewels as its fruits, all adorning its branches.
+	PRINTFORMDL 
+	PRINTFORMDL As Kaguya examines the brilliantly beautiful jewels, a specific person's face comes to her mind.
+	PRINTFORMDW Rather than cherishing the sight of the udonge, she focuses on that face, placing her hand over her racing heart.
+	PRINTFORMDL 
+	IF CFLAG:1105 > 90
+		PRINTFORMW 「...Please wait, just a little more time, my dear husband.」
+		PRINTFORMDW Kaguya whispers, her expression full of obsessive love.
+		PRINTFORMDW Thinking about the almost-finished elixir, thinking about what may come in the unending eternity, Kaguya's cheeks lifts into a smile.
+	ELSEIF CFLAG:1105 > 70
+		PRINTFORML 「It was a little hard to gather the materials for the elixir here, but we managed to obtain quite a bit.」
+		PRINTFORMDW Kaguya's cheeks lifts into a smile, speaking to the plant as if she were reporting to it.
+		PRINTFORML 「...Fufu, I can hardly wait for the day my dear husband truly becomes mine.」
+		PRINTFORMDW Her expression full of obsessive love, Kaguya continues smiling beautifully.
+	ELSEIF CFLAG:1105 > 50
+		PRINTFORML 「Eirin has allowed it. She said that if Kaguya insists, then...」
+		PRINTFORMDW Kaguya's cheeks lifts into a smile, speaking to the plant as if she were reporting to it.
+		PRINTFORML 「...My dear husband, I know that you will forgive me.」
+		PRINTFORMDW "After all, you love Kaguya so very much", she adds.
+		PRINTFORMDW Her expression full of obsessive love, Kaguya smiles beautifully.
+	ELSEIF CFLAG:1105 > 30
+		PRINTFORML 「Eirin refused my request... But, if she won't, then what is Kaguya to do?」
+		PRINTFORMDW Kaguya turns her gaze downward, her voice trembling.
+		PRINTFORMDW She could not imagine a world without that person, a world where she spends eternity without you.
+	ELSEIF CFLAG:1105 > 0
+		PRINTFORML 「I wonder if my dear husband enjoys making Kaguya so jealous.」
+		PRINTFORMDW When Kaguya saw you spending time with another woman, a violent storm of jealousy raged inside of her.
+		PRINTFORMDW She trusts you, and she doesn't doubt your feelings for her, yet she still feels envy.
+		PRINTFORMDW She slaps her own cheeks, saying that jealousy is not a good virtue for a wife.
+		PRINTFORML 「But...」
+		PRINTFORMDW It's possible, that you could get serious with that woman, that you could want to spend the rest of your days with her.
+		PRINTFORMDW The sudden thought brings a chill to her whole body, her eyes beginning to water up.
+		PRINTFORMDW The udonge's jewel begins to shine abruptly.
+	ELSE
+		PRINTFORML 「Fufu, it's so pretty today as well...」
+		PRINTFORMDW "This is the jewel that %HE_SHE(MASTER)% and I raised", Kaguya thought to herself.
+		PRINTFORMDW No matter how much she looks at it, she never grows tired of it.
+	ENDIF
+	CFLAG:62:1106 = 7
+ELSEIF TALENT:62:恋人
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also used to look worn down and dead.
+	PRINTFORMDL Of course, this was all in the past.
+	PRINTFORMDW Now, the udonge bears exceptionally beautiful seven-colored jewels as its fruits, all adorning its branches.
+	PRINTFORMDL 
+	PRINTFORMDL The brightly colored jewels are just like the ones on the jeweled hourai branch that Kaguya possessed.
+	PRINTFORMDW However, the udonge's jewels shone much more beautifully than Kaguya's.
+	PRINTFORML 「My dear husband, is this what it means to wait for something to bear fruit?」
+	PRINTFORMDW Kaguya says vaguely.
+	PRINTFORMDL 
+	PRINTFORMDL The impurity that Kaguya now holds――the love that she feels for her beloved has caused the jewels to bloom forth.
+	PRINTFORMDL Her appearance, her figure while gazing it is incomparably more beautiful than any treasure.
+	PRINTFORML 「So beautiful...」
+	PRINTFORMDW "This is the jewel that %HE_SHE(MASTER)% and I raised", Kaguya thought to herself.
+	PRINTFORMDW No matter how much she looks at the jewels, she never grows tired of it.
+	CFLAG:62:1106 = 6
+ELSEIF TALENT:62:恋慕 && CFLAG:62:好感度 > 20000 && (CFLAG:62:1106 == 4 || CFLAG:62:1106 == 5)
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also used to look worn down and dead.
+	PRINTFORMDL Of course, this was all in the past.
+	PRINTFORMDW Now, the udonge bears exceptionally beautiful seven-colored jewels as its fruits, all adorning its branches.
+	PRINTFORMDL 
+	PRINTFORMDL As Kaguya examines the brilliantly beautiful jewels, a specific person's face comes to her mind.
+	PRINTFORMDW Rather than cherishing the sight of the udonge, she focuses on that face, placing her hand over her racing heart.
+	PRINTFORMDL 
+	IF CFLAG:1105 > 90
+		PRINTFORMW 「...Please wait, just a little more time, my dear husband.」
+		PRINTFORMDW Kaguya whispers, her expression full of obsessive love.
+		PRINTFORMDW Thinking about the almost-finished elixir, thinking about what may come in the unending eternity, Kaguya's cheeks lifts into a smile.
+	ELSEIF CFLAG:1105 > 70
+		PRINTFORML 「It was a little hard to gather the materials for the elixir here, but we managed to obtain quite a bit.」
+		PRINTFORMDW Kaguya's cheeks lifts into a smile, speaking to the plant as if she were reporting to it.
+		PRINTFORML 「...Fufu, I can hardly wait for the day my dear husband truly becomes mine.」
+		PRINTFORMDW Her expression full of obsessive love, Kaguya continues smiling beautifully.
+	ELSEIF CFLAG:1105 > 50
+		PRINTFORML 「Eirin has allowed it. She said that if Kaguya insists, then...」
+		PRINTFORMDW Kaguya's cheeks lifts into a smile, speaking to the plant as if she were reporting to it.
+		PRINTFORML 「...My dear husband, I know that you will forgive me.」
+		PRINTFORMDW "After all, you love Kaguya so very much", she adds.
+		PRINTFORMDW Her expression full of obsessive love, Kaguya smiles beautifully.
+	ELSEIF CFLAG:1105 > 30
+		PRINTFORML 「Eirin refused my request... But, if she won't, then what is Kaguya to do?」
+		PRINTFORMDW Kaguya turns her gaze downward, her voice trembling.
+		PRINTFORMDW She could not imagine a world without that person, a world where she spends eternity without you.
+	ELSEIF CFLAG:1105 > 0
+		PRINTFORML 「You are the one to blame. You...are the one to...」
+		PRINTFORMDW You are at fault for making me love you so.
+		PRINTFORMDW Whenever she sees her beloved spending time with another woman, an intense jealousy washes over her.
+		PRINTFORMDW Envy, just pure unfiltered jealousy — as if responding to that emotion, the udonge's jewels shines brightly.
+	ELSE
+		PRINTFORML 「You... Have you really come to love me?」
+		PRINTFORMDW "If that's the case, then why do you forsake me?"
+		PRINTFORMDW Kaguya does not want her beloved to abandon her.
+	ENDIF
+	CFLAG:62:1106 = 5
+ELSEIF TALENT:62:恋慕 && CFLAG:62:好感度 > 20000
+;蓬莱の薬フラグON。これだけ可愛がったなら責任取ってね状態な姫様。
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also used to look worn down and dead.
+	PRINTFORMDL Of course, this was all in the past.
+	PRINTFORMDW Now, the lunar udonge bears some jewels along its branches.
+	PRINTFORMDL 
+	PRINTFORMDL The brightly colored jewels are just like the ones on the jeweled hourai branch that Kaguya possessed.
+	PRINTFORMDW However, the udonge's jewels shone much more beautifully than Kaguya's.
+	PRINTFORML 「...How in the world did this udonge bear fruit?」
+	PRINTFORMDW Kaguya asks vaguely.
+	PRINTFORMDL 
+	PRINTFORMDL Kaguya's love grows stronger, more obsessive, much more so than any other towards her beloved.
+	PRINTFORMDL She couldn't bear to imagine a life without them, she didn't even want to think of that.
+	PRINTFORMDL Yet despite her strong sentiments, it is inevitable that her beloved will one day die.
+	PRINTFORMDW Then, the love she has will never be fully realized, never to be accepted, never to bear fruit.
+	PRINTFORMDW Eternally unanswered.
+	PRINTFORMDL 
+	PRINTFORML 「...Why must you eventually leave me?」
+	PRINTFORMDW "――If only you could spend eternity with me as well."
+	PRINTFORMDW Kaguya's eyes water up as she mutters without much thought.
+	CFLAG:62:1106 = 4
+ELSEIF TALENT:62:恋慕 && CFLAG:62:1106 == 3
+;基本的に大体の人にとって攻略なので、あまり出ないように。
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also looked worn down and dead.
+	PRINTFORMDL Of course, this was all in the past.
+	PRINTFORMDW Now, the lunar udonge bears some jewels along its branches.
+	PRINTFORMDL 
+	PRINTFORMDL The brightly colored flowers are similar to the ones on the jeweled hourai branch that Kaguya possessed.
+	PRINTFORMDW However the udonge's seems to radiate a more beautiful shine to them than Kaguya's.
+	PRINTFORMDL Kaguya's obsession towards one person is surely the reason for the blossoming of the jewels.
+	PRINTFORMDW For the princess, impurity accumulates from her affection towards her beloved.
+	PRINTFORMDL 
+	PRINTFORMDL The flowers will continue to grow until one day they bear the jewel-like fruits.
+	PRINTFORMDL As if to make a statement towards the love in Kaguya's heart.
+	PRINTFORMDW A love towards one of a mortal fate――a statement towards that which could undermine the length of eternity.
+	PRINTFORMDL 
+	PRINTFORML 「...I love you.」
+	PRINTFORMDW Kaguya whispers words that would never be heard.
+	PRINTFORMDL She plays with the udonge's blossoms with her fingertips, keeping her eyes downcast.
+ELSEIF TALENT:62:恋慕
+;セフレ愛欲は個人的に一線引いてる感じ。
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also looked worn down and dead.
+	PRINTFORMDL Of course, this was all in the past.
+	PRINTFORMDW Now, the lunar udonge bears some jewels along its branches.
+	PRINTFORMDL 
+	PRINTFORMDL The brightly colored jewels are similar to the ones on the jeweled hourai branch that Kaguya possessed.
+	PRINTFORMDW However the udonge's seems to radiate a more beautiful shine to them than Kaguya's.
+	PRINTFORMDL There was no more room for doubt that the flowers were growing.
+	PRINTFORMDW The attachment to life, the connection she has to this moment in time, is only towards one person in particular.
+	PRINTFORMDL 
+	PRINTFORMDL The day before they had bloomed, she had ascertained that they were surely going to.
+	PRINTFORMDL She couldn't do anything about it, she had fallen so in love with you.
+	PRINTFORMDW A love towards one of a mortal fate――a statement towards that which could undermine the length of eternity.
+	PRINTFORMDL 
+	PRINTFORML 「...I love you.」
+	PRINTFORMDW Kaguya whispers words that would never be heard.
+	PRINTFORMDL She plays with the udonge's blossoms with her fingertips, keeping her eyes downcast.
+	CFLAG:62:1106 = 3
+ELSEIF TALENT:62:思慕 && CFLAG:62:1106 == 2
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also looked worn down and dead.
+	PRINTFORMDL Of course, this was all in the past.
+	PRINTFORMDW Now, there were some obvious changes happening.
+	PRINTFORMDL 
+	PRINTFORMDL %BREAKENG(@"At the end of the branches were seven buds, each of them having their own seven different colors, reminding her of the colors of her own jeweled hourai branch.")%
+	PRINTFORMDW It makes Kaguya want to see them bloom, but at the same time, she does not.
+	PRINTFORMDL 
+	PRINTFORMDL "I wonder what feelings I'll have for them once this udonge blooms", she thinks to herself.
+	PRINTFORMDW It was strange and a little scary to try to imagine that.
+	PRINTFORMDL She hates tedium and seeks for change, yet change is in itself a temporary event.
+	PRINTFORMDW It isn't good for Kaguya, who lives eternally, to be caught up in all of these small changes.
+	PRINTFORMDW The moment she feels pain, that is the instant that the pain will be brought along with her unto eternity.
+	PRINTFORMDL 
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「...Perhaps we shouldn't meet any more.」
+		CASE 1
+			PRINTFORMW 「...I must be careful.」
+		CASE 0
+			PRINTFORMW 「...How careless of me.」
+	ENDSELECT
+	PRINTFORMDW Even as she says this, she knew somehow that her own feet would inevitably bring their paths to cross.
+	PRINTFORMDL Whenever she sees you, there's always the urge to rush over, naturally with a smile on her face.
+	PRINTFORMDW Kaguya is quite aware of it.
+ELSEIF TALENT:62:思慕
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also looked worn down and dead.
+	PRINTFORMDL Of course, this was all in the past.
+	PRINTFORMDW Now, there were some obvious changes happening.
+	PRINTFORMDL 
+	PRINTFORML 「...A bud, hm?」
+	PRINTFORMDL Some buds are forming at the tips of the branches.
+	PRINTFORMDW Each of them having their own contrasting colors, reminding Kaguya of the colors of her own jeweled hourai branch.
+	PRINTFORMDL 
+	PRINTFORMDW Seeing the once never-changing udonge show such sudden transformation, only one person's face comes to mind.
+	PRINTFORMDW Certainly, there is an attachment being formed.
+	PRINTFORMDW The udonge's bright buds are like a statement to Kaguya's inner emotions.
+	PRINTFORMDL 
+	PRINTFORML 「...Is the source of the impurity coming from you?」
+	PRINTFORMDW While asking no one in particular, she strokes the bud with her fingertips.
+	PRINTFORMDW However, if this really is impurity, then the concept that the Lunarians hate could be something quite beautiful, indeed.
+	PRINTFORMDW Of course, the reason why Kaguya came down to the Earth in the first place was due to an interest to the impurity they hated so.
+	PRINTFORMDL 
+	PRINTFORML 「How beautiful...」
+	PRINTFORMDW Kaguya continues to stare at the buds.
+	CFLAG:62:1106 = 2
+ELSEIF CFLAG:62:好感度 > 800 && CFLAG:62:1106 == 1
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also looked worn down and dead.
+	PRINTFORMDL Although, there is a certain fun to imagining what it would look like if it were adorned with its seven-colored jewels.
+	PRINTFORMDW Recently Kaguya's been tending to the bonsai trees more often.
+	PRINTFORMDL 
+	PRINTFORMDW There are small traces of change happening to the udonge, so Kaguya takes time to examine the branches every day.
+	PRINTFORMDL Since it blooms by absorbing the Earth's impurity, the changes must be due to that.
+	PRINTFORMDL Impurity is the dealings of attachment, life, and death.
+	PRINTFORMDL Kaguya wonders if there had been any recent changes in her, the udonge's caretaker, that had caused the defilement.
+	PRINTFORMDW A particular person's face comes to mind.
+	PRINTFORMDL 
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMW 「...It couldn't be.」
+		CASE 1
+			PRINTFORMW 「As if I'd have an attachment to a mortal...」
+		CASE 0
+			PRINTFORMW 「Well, they are an impure being, after all...」
+	ENDSELECT
+	PRINTFORMDW Kaguya laughs dryly whenever she remembers that person's face as she looks at the udonge.
+ELSEIF CFLAG:62:好感度 > 800
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also looked worn down and dead.
+	PRINTFORMDL Although, there is a certain fun to imagining what it would look like if it were adorned with its seven-colored jewels.
+	PRINTFORMDW Recently Kaguya's been tending to the bonsai trees more often.
+	PRINTFORMDL 
+	PRINTFORMDW %BREAKENG(@"Though it had been quite some time since Eientei had been freed from the shackles of an eternal land, the udonge still had shown no signs of change.")%
+	PRINTFORMDL It must have been affected by the impurities of the mortals that dwelled on this land, though there was little to none of that nearby.
+	PRINTFORMDL %BREAKENG(@"Whether it be ten, twenty, a hundred, or even a thousand years from now  — it would be better to care for normal bonsai than to wait for the udonge.")%
+	PRINTFORMDL She had originally potted it to stave off boredom, yet if it doesn't need any maintenance nor labor, then it's just as uninteresting.
+	PRINTFORMDW The other bonsai were much better at entertaining her.
+	PRINTFORMDL 
+	PRINTFORML 「...Oh, my.」
+	PRINTFORMDW However, the appearance of the udonge today was slightly different.
+	PRINTFORMDW A bump had started to form by the tips of the udonge's branches.
+	PRINTFORMDL 
+	PRINTFORMW 「...I wonder if it's going to turn into a bud?」
+	PRINTFORMDW Kaguya says as she smiles.
+	CFLAG:62:1106 = 1
+ELSE
+	PRINTFORMDW In the gardens behind Eientei, there is a potted withered tree without a single sign of foliage, flowers, or fruit.
+	PRINTFORMDL Flora that originated from the Lunar Capital — the lunar udonge. A plant that blooms and grows by absorbing impurities.
+	PRINTFORMDL Though it had a rustic yet elegant simplicity to it, it also looked worn down and dead.
+	PRINTFORMDL There is a certain fun to imagining what it would look like if it were adorned with its seven-colored jewels.
+	PRINTFORMDW Recently Kaguya's been tending to the bonsai trees more often.
+	PRINTFORMDL 
+	PRINTFORMDW %BREAKENG(@"Though it had been quite some time since Eientei had been freed from the shackles of an eternal land, the udonge still had shown no signs of change.")%
+	PRINTFORMDL It must have been affected by the impurities of the mortals that dwelled on this land, though there was little to none of that nearby.
+	PRINTFORMDL %BREAKENG(@"Whether it be ten, twenty, a hundred, or even a thousand years from now  — it would be better to care for normal bonsai than to wait for the udonge.")%
+	PRINTFORMDL She had originally potted it to stave off boredom, yet if it doesn't need any maintenance nor labor, then it's just as uninteresting.
+	PRINTFORMDW The other bonsai were much better at entertaining her.
+	PRINTFORMDL 
+	SELECTCASE RAND:4
+		CASE 3
+			PRINTFORMW 「Where shall I cut...?」
+		CASE 2
+			PRINTFORMW 「Oh, some bugs had gotten to it.」
+		CASE 1
+			PRINTFORMW 「Hmm, if you look at it from below...」
+		CASE 0
+			PRINTFORMW 「The branches are improving.」
+	ENDSELECT
+	PRINTFORMDW Kaguya is not caring for the unchanging udonge, instead looking after the other bonsai.
+ENDIF
+RESETCOLOR
+RETURN 1

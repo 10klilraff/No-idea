@@ -1,0 +1,140 @@
+﻿@CHARAMOVE_DATA_112(ARG, ARG:2)
+LOCAL = 112
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;綿月亭には行かない
+			CASE P1020綿月亭・門 TO P1044応接間
+				RETURN -100
+			;静かの海は渡らない
+			CASE P1001槐安通路 TO P1015砂浜
+				RETURN -100
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE 迷いの小道, 斜角の竹林, 永遠亭
+				RETURN 1
+			CASE 静かの海
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+ENDSELECT
+
+@EXIST_キャラデータ112
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ112(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "純狐")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（襦袢）セット")
+
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "冕冠"))
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "靴"))
+CASE "普段着：靴下"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "靴下"))
+CASE "普段着：着物"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("着物", "着物"))
+CASE "普段着：その他１"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("その他１", "帯"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "ヒップラインを美しく支える")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "ガードルショーツ")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "レースブラ")
+CASE "固有下着着用条件"
+	SIF !RAND:(3 - (2 * 勝負下着判定([[純狐]])))
+		CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 0)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 1)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "カエル/肉料理/卵/中華/汁物/あっさり/芸術的/上品/鮮やか/とろとろ/地獄風/しょっぱい/しょっぱい/すっぱい/すっぱい/")
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "野趣/甘い/甘い/虫肉/虫肉/虫肉/謎料理/謎料理/謎料理/謎料理/謎料理/" + "月都風/月見/" * 10)
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "純化した味/得意料理＊中華＊/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "白/美しい/シンプル/大陸風/シック/威厳/" + "光/宝石/" * 3 + "ユリの/神霊の/純粋な/殺意の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "ポップ/ロリータ/マニアック/" + "黄/安物/生体品/" * 3 + "月/海神の/" * 10)
+ENDSELECT
+
+;IMAGE_I112_特殊服装(CHARA)-------------------------------------------------------------------
+;キャラクター特有の服装表示条件
+;エフェクトを共有する服装差分はこちらで指定する
+;使用時注意点:
+;	RESULTSに特殊服装を格納すること
+;	書式は %服装%%特殊服装% 適宜"_"等入れること
+;-------------------------------------------------------------------------------------------
+@IMAGE_I112_特殊服装(CHARA)
+#DIM CHARA
+VARSET RESULTS
+
+IF CFLAG:CHARA:差し替え適用
+	;差し替え画像
+	IF CHECK_NUDE(CHARA)
+		;裸
+		IF FLAG:立ち絵種類
+			;顔絵
+		ELSE
+			;立ち絵
+		ENDIF
+	ELSE
+		;服
+		IF FLAG:立ち絵種類
+			;顔絵
+		ELSE
+			;立ち絵
+		ENDIF
+	ENDIF
+ELSE
+	;通常画像
+	IF CHECK_NUDE(CHARA)
+		;裸
+		IF FLAG:立ち絵種類
+			;顔絵
+		ELSE
+			;立ち絵
+		ENDIF
+	ELSE
+		;服
+		IF CFLAG:CHARA:衣装一時変更 == 55 || CFLAG:CHARA:基本服装セット == 55
+			IF FLAG:立ち絵種類
+				;顔絵
+				RESULTS = _バニー
+			ELSE
+				;立ち絵
+				RESULTS = _バニー
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+

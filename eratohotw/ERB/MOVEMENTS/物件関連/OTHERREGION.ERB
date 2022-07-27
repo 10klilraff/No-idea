@@ -1,0 +1,186 @@
+﻿;-----------------------------------------------------------
+;おでかけ関数
+;ARGS    呼び出し元の関数,"出掛ける"or"散策する"
+;-----------------------------------------------------------
+@OTHERREGIONS(ARGS)
+#DIM 現在地点
+#DIM 所要時間
+#DIM 現在地MAPID
+#DIM 目的地MAPID
+#DIM ANIMATION_SEED
+#DIM 仮デート相手
+#DIM 時間停止ジャンプ
+;拠点のマップ表示をリセットしておく
+TFLAG:マップ切り替え = 0
+
+ANIMATION_SEED = 0
+
+;Map Animation Code
+$MAPANIMATION
+LINESTART = LINECOUNT
+SIF ANIMATERECOLOREDMAPS && !FLAG:70
+	ANIMATION_SEED ++
+
+IF RECOLOREDMAPS
+	CALL DRAW_COLOREDMAP(ANIMATION_SEED, "GLOBAL")
+ELSE
+	CALL FIELDMAP
+ENDIF
+;先にデート相手だけ決定しておく,三人以上には対応してません
+仮デート相手 = 0
+FOR LOCAL, 1, CHARANUM
+	IF CFLAG:LOCAL:同行
+		仮デート相手 = LOCAL
+		BREAK
+	ENDIF
+NEXT
+
+PRINTL Select a destination.
+現在地MAPID = GET_MAPID(CFLAG:MASTER:現在位置)
+FOR 目的地MAPID, 0, MAXHOME
+	IF 目的地MAPID == 現在地MAPID
+		PRINTPLAINFORM [{目的地MAPID, 3}] - %GET_MAPNAME(目的地MAPID), 28, LEFT%
+		CALL COLORMESSAGE(@"You are here　 ", C_GREEN, 3)
+	ELSE
+		IF FLAG:時間停止 || (GETBIT(FLAG:瞬間移動, 0) && !FLAG:デート相手 && !仮デート相手)
+			所要時間 = TIME_REQUIRED(現在地MAPID, 目的地MAPID) * 3
+			LOCALS = TSP　
+		ELSE
+			所要時間 = TIME_REQUIRED(現在地MAPID, 目的地MAPID)
+			LOCALS = min　
+		ENDIF
+		PRINTFORM [{目的地MAPID, 3}] - %GET_MAPNAME(目的地MAPID), 28, LEFT%Time: {所要時間, 3} %LOCALS%
+	ENDIF
+	SIF 目的地MAPID % 2 == 0
+		PRINTL 
+NEXT
+SIF 目的地MAPID % 2 == 1
+	PRINTL 
+PRINT [100] - Return
+SIF 同行人数() == 0
+	PRINTFORM %BL(37)%[ 99] - Time Stop
+;Map Animation Code
+IF ANIMATERECOLOREDMAPS && !FLAG:70
+	CURRENTREDRAW
+	ORIREDRAW = RESULT
+	REDRAW ORIREDRAW
+	TINPUT ANIMATERECOLOREDMAPS,1234,0,""
+ELSE
+	INPUT
+ENDIF
+
+;戻る
+IF RESULT == 100
+	RETURN RESULT
+;時間停止
+ELSEIF RESULT == 99 && 同行人数() == 0
+	IF FLAG:時間停止
+		FLAG:時間停止 = 0
+		RESETBGCOLOR
+	ELSE
+		FLAG:時間停止 = 1
+		SETBGCOLOR C_THE_WORLD
+	ENDIF
+;帰宅
+ELSEIF RESULT == MAIN_MAP
+	IF FLAG:時間停止 && FLAG:デート相手
+		PRINTFORMW Returning home from date during Time Stop is not possible, please resume time.
+	ELSE
+		CALL 外出先から帰宅
+		SIF RESULT == -1 ;qol custom code
+			RETURN 100
+		RETURN MAIN_MAP
+	ENDIF
+ELSEIF RESULT == 1234
+	REDRAW 0
+	CLEARLINE LINECOUNT - LINESTART
+	GOTO MAPANIMATION
+ELSEIF INRANGE(RESULT, 0, MAXHOME - 1) && RESULT != 現在地MAPID
+	目的地MAPID = RESULT
+	所要時間 = TIME_REQUIRED(現在地MAPID, 目的地MAPID)
+	時間停止ジャンプ = 0
+	IF ARGS == "出掛ける"
+		;一人でお出掛け
+		IF 同行人数() == 0
+			IF (FLAG:時間停止 || GETBIT(FLAG:瞬間移動, 0)) && BASE:MASTER:TSP >= 所要時間 * 3
+				時間停止ジャンプ = 1
+			ELSE
+				PRINTL If TSP is used, it's possible to move there without spending time.
+				PRINTL Use TSP?
+				CALL ASK_M("No", 1, @"Yes (TSP {所要時間 * 3})", BASE:MASTER:TSP >= 所要時間 * 3)
+				SIF RESULT == 1
+					時間停止ジャンプ = 1
+			ENDIF
+			CALL SET_DATE(目的地MAPID, 0, 所要時間, 時間停止ジャンプ)
+			RETURN 目的地MAPID
+		;二人でデート
+		ELSEIF 同行人数() == 1
+			PRINTFORML Leaving for a date to %GET_MAPNAME(目的地MAPID)%.
+			CALL SET_DATE(目的地MAPID, 仮デート相手, 所要時間)
+			RETURN 目的地MAPID
+		;三人以上※未実装
+		ELSE
+		ENDIF
+	ELSEIF ARGS == "散策する"
+		IF FLAG:デート相手
+			PRINTFORML Heading to %GET_MAPNAME(目的地MAPID)%.
+		ELSEIF FLAG:時間停止
+			IF BASE:MASTER:TSP < 所要時間 * 3
+				PRINTW Not enough TSP!
+				RESTART
+			ELSE
+				時間停止ジャンプ = 1
+			ENDIF
+		ELSEIF GETBIT(FLAG:瞬間移動, 0) && BASE:MASTER:TSP >= 所要時間 * 3
+			時間停止ジャンプ = 1
+		ENDIF
+		CALL SET_DATE(目的地MAPID, FLAG:デート相手, 所要時間, 時間停止ジャンプ)
+		RETURN 目的地MAPID
+	ENDIF
+ENDIF
+RESTART
+
+@HappenToChild
+#DIM YOME
+#DIM CHILDNUM
+SIF RAND:2
+	RETURN
+SIF FLAG:70
+	RETURN
+CALL PickRandGrownChild
+YOME = RESULT
+CHILDNUM = RESULT:1
+VARSET RESULT
+SIF YOME <= 0
+	RETURN
+;自立後の子供描写が発生しないときに発生する
+SIF BETWEENTIME(CFLAG:YOME:起床時間, CFLAG:YOME:就寝時間)
+	RETURN
+SIF CHILD_AREA:YOME:CHILDNUM / 100 != CFLAG:MASTER:デート中
+	RETURN
+SIF FLAG:日替わりイベント >= 800 || FLAG:日替わりイベント % 10 == YOME % 10
+	RETURN
+LOCALS = %CHILDNAME:YOME:CHILDNUM%
+PRINTFORMW When going out, you pass by %LOCALS%.
+IF CHILD_LOVE:YOME:CHILDNUM < 0
+	PRINTFORMW %LOCALS% doesn't seem to notice you...
+ELSEIF CHILD_LOVE:YOME:CHILDNUM < 200
+	PRINTFORMW %LOCALS% gives you a light nod.
+ELSE
+	IF FLAG:デート相手 != YOME && FLAG:デート相手
+		PRINTDATA
+			DATAFORM %LOCALS% seems to dislike your going out with someone other than %CALLNAME:YOME%...
+			DATAFORM %LOCALS% stares daggers at %CALLNAME:(FLAG:デート相手)%...
+			DATAFORM %LOCALS% complains to you in disgust.
+			DATAFORM %LOCALS% gives you a disdainful look.
+		ENDDATA
+	ELSE
+		PRINTDATA
+			DATAFORM %LOCALS% waves at %PARSE("you")% in greeting.
+			DATAFORM %LOCALS% is so happy to see %PARSE("you")% %HE_SHE_CHILD(YOME,,CHILDNUM)% gives %PARSE("you",5)% a hug...
+			DATAFORM %LOCALS% sees %PARSE("you")% off with a dignified smile.
+			DATAFORM %LOCALS% calls out %PARSE("your")% name loudly...
+		ENDDATA
+	ENDIF
+	PRINTW 
+ENDIF

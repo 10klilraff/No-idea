@@ -1,0 +1,188 @@
+﻿;--------------------------------------------------
+;地点名変更関数
+;--------------------------------------------------
+@MAP_PLACENAME_8(ARG)
+#FUNCTIONS
+IF GET_MAPID(ARG) == MAIN_MAP
+	SELECTCASE ARG
+		CASE P842比那名居邸物置 ;qol custom code
+			IF CFLAG:MASTER:初期位置 == ARG
+				RETURNF "Hinanawi Residence・" + CALLNAME:MASTER + "'s Room"
+			ELSE
+				RETURNF "Hinanawi Residence・Storeroom"
+			ENDIF
+	
+		CASE P823空室
+			IF CFLAG:MASTER:初期位置 == ARG
+				RETURNF CALLNAME:MASTER + "'s Room"
+			ELSE
+				RETURNF "Vacant Room"
+			ENDIF
+		CASE SUMIKOMI_ROOM
+			;※このマップでは未実装
+			IF FLAG:住み込みキャラ
+				RETURNF CALLNAME:(FLAG:住み込みキャラ) + "'s Room"
+			ELSE
+				RETURNF "Vacant Room"
+			ENDIF
+		CASE MINROOM() TO (MAXROOM - 1)
+			RETURNF STR_TR(ARG + 8000)
+		CASE OMANEKIBEYA()
+			RETURNF OMANEKI_PLACE()
+		CASE SUKIMA()
+			RETURNF "Gap Space"
+		CASE MAXROOM
+			RETURNF "Foothills"
+		CASEELSE
+			RETURNF "Unknown"
+	ENDSELECT
+ELSE
+	RETURNF "Beyond the Mountaintop"
+ENDIF
+
+;--------------------------------------------------
+;場所ARGがどのエリアにあるか
+;表示するマップの番号と連動（TFLAG:マップ切り替え）
+;ARG     場所ID
+;--------------------------------------------------
+@MAP_AREASELECT_8(ARG)
+#FUNCTION
+SELECTCASE ARG
+	;天界
+	CASE P830玄雲海, P832有頂天街, P833桃園
+		RETURNF 3
+	;守矢神社
+	CASE P811境内 TO P826廊下
+		RETURNF 2
+	;比那名居邸
+	CASE P831比那名居邸前, P834比那名居邸土間 TO P842比那名居邸物置
+		RETURNF 4
+	;妖怪の山・山頂
+	CASEELSE
+		RETURNF 1
+ENDSELECT
+
+;--------------------------------------------------
+;内部構造がある場所の内部の判定
+;TFLAG:マップ切り替え  内部察知が必要なマップ番号
+;                P_ID  表示ボタンの場所ID
+;                Q_ID  判定する内部の場所ID,必ずP_IDと一致した数値も含める
+;--------------------------------------------------
+@GETMAP_BUILDING_8(P_ID, Q_ID)
+#FUNCTION
+#DIM P_ID
+#DIM Q_ID
+IF TFLAG:マップ切り替え == 1
+	SELECTCASE P_ID
+		;天界
+		CASE P830玄雲海
+			SELECTCASE Q_ID
+			CASE P830玄雲海 TO P842比那名居邸物置
+				RETURNF 1
+			ENDSELECT
+		;守矢神社
+		CASE P811境内
+			SELECTCASE Q_ID
+			CASE P811境内 TO P826廊下
+				RETURNF 1
+			ENDSELECT
+	ENDSELECT
+ELSEIF TFLAG:マップ切り替え == 3
+	SELECTCASE P_ID
+		;比那名居邸
+		CASE P831比那名居邸前
+			SELECTCASE Q_ID
+			CASE P831比那名居邸前, P834比那名居邸土間 TO P842比那名居邸物置
+				RETURNF 1
+			ENDSELECT
+	ENDSELECT
+ENDIF
+RETURNF 0
+
+;--------------------------------------------------
+;移動制限設定
+;ARG    場所ID
+;CHARA  移動するキャラID
+;RETURNF 1=移動できる,0=移動できない
+;TFLAG:移動不能メッセージ   ↓の@MAP_CANNOT_WORD用の設定
+;--------------------------------------------------
+@MAP_CAN_MOVE_8(ARG, CHARA)
+#FUNCTION
+#DIM CHARA
+SELECTCASE ARG
+	;誰かが住んでないと入れない
+	CASE P823空室
+		IF !PRIVATEROOM:(ARG % 100) && CFLAG:MASTER:初期位置 != ARG
+			TFLAG:移動不能メッセージ = 999
+			RETURNF 0
+		ENDIF
+ENDSELECT
+RETURNF 1
+
+;--------------------------------------------------
+;移動不能時に表示されるメッセージ
+;--------------------------------------------------
+@MAP_CANNOT_WORD_8(ARG)
+RETURN
+SELECTCASE TFLAG:移動不能メッセージ
+	CASE 1
+		PRINTFORMW ※ここにメッセージを入れる。行数+1のCLEARLINEをする
+		CLEARLINE 2
+ENDSELECT
+REUSELASTLINE
+
+;-----------------------------------------
+;拠点専用の情景描写
+;WAITはかけないように
+;-----------------------------------------
+@MAP_UNIQUEMESSAGE_8
+IF WITH_MOB()
+	RETURN 1
+ELSE
+	SELECTCASE CFLAG:MASTER:現在位置
+		;索道駅
+		CASE P803索道駅
+			IF INRANGE(TIME, 540, 1020)
+				PRINTFORML An unenthusiastic kappa stands at the reception desk for the cableway.
+			ELSE
+				PRINTFORML The cableway station is closed.
+			ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;-----------------------------------------
+;拠点の場所IDをお出かけマップ上の場所IDに置換する関数
+;ARG      対象の場所ID（拠点マップ）
+;RETURNF  差し替え場所ID（お出かけマップ）
+;-----------------------------------------
+@MAP_SEARCH_REPLACEMENT_8(ARG)
+#FUNCTION
+SELECTCASE ARG
+	CASE P830玄雲海 TO P842比那名居邸物置
+		RETURNF 天界
+	CASE P801山頂入り口, P802橋, P803索道駅, P806滝の裏 TO P809はたて宅
+		RETURNF 九天の滝
+	CASE P805頂上, P851久侘歌の小屋 TO P854龍宅
+		RETURNF 絶景の丘
+	CASE P814湖畔
+		RETURNF 山の湖
+	CASE P804守矢神社鳥居, P811境内, P813社務所, P815庭
+		RETURNF 守矢神社境内
+	CASE P855虹龍洞, P856百々世の住処
+		RETURNF 虹龍洞
+	CASEELSE
+		RETURNF 守矢神社本殿
+ENDSELECT
+RETURNF 0
+
+;--------------------------------------------------
+;マップの紹介文
+;--------------------------------------------------
+@マップ紹介_8
+;とりあえず5行
+PRINTFORML This map includes both the Moriya Shrine, the dwellings of the Tengu, and heaven.
+PRINTFORML It's a bit remote compared to the rest of Gensokyo, but with the cableway to the Human Village it has better access now.
+PRINTFORML The Moriya Lottery can be good for getting items and dating, be prepared to stake much on probability though.
+PRINTFORML There are multiple foraging points, and depending on the season and foraging skill, many materials can be found.
+PRINTFORML In addition to fishing and brewing with water from the lake, there are many people to help out with work - days pass fast here.

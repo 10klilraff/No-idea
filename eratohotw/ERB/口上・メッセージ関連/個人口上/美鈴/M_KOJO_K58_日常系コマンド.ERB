@@ -1,0 +1,2627 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;日常系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;300,会話
+;TFLAG:193(1=大成功 0=成功 -1=失敗 -2=大失敗（TARGETがMASTERより教養が4以上高い)
+;TCVAR:302(0=会話可能 1>=非恋慕時会話不能)
+;MARK:反発刻印(3以上=会話不能)(4以上はバグ
+;TCVAR:泥酔(1=通常成功or大失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_300
+;コマンド共通メッセージ(TRAIN_MESSAGE) 
+;削除すると「～話をした。」とかが消えます
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+CALL M_KOJO_MESSAGE_COM_K58_300_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_300_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;ここに口上書いて下さい
+	;大成功
+	IF TFLAG:193 == 1
+		IF TALENT:恋慕 || TALENT:愛欲
+			PRINTFORML 「Ahahahaha♪ And then, what happened next?」 
+			PRINTFORML 「... Pffahahaha!」 
+			PRINTFORMDL Meiling laughs uproariously while wiping away some tears. 
+			PRINTFORMDW %PARSE("You get")% carried away and %PARSE("begin")% laughing as well.
+		ELSEIF TALENT:思慕 || TALENT:セフレ
+			PRINTFORML 「...Eeh～!? That's a pretty good one～♪」
+			PRINTFORML 「Nah～ I really mean it, I don't get bored when %CALLNAME:MASTER% is around...%UNICODE(0x2665)%」
+			PRINTFORML 「Ah, that reminds me, the other day...」
+			PRINTFORMDW From looking at her face, it's clear Meiling truly enjoys speaking with %PARSE("you")%.
+		ELSE
+			PRINTFORML 「Pffh...! Well said, %CALLNAME:MASTER%!」
+			PRINTFORML 「I couldn't help myself from laughing.」
+			PRINTFORMDW Looking at Meiling's smile, %PARSE("you feel")% like the distance between the two%THIRD_PERSON?""#" of you"% has decreased a bit.
+		ENDIF
+	;失敗
+	ELSEIF TFLAG:193 == -1
+		IF TALENT:恋慕 || TALENT:愛欲
+			PRINTFORML 「... Ha! To fuss about such things now...!」
+			PRINTFORMDW Meiling tries to save it! But, things still got a bit awkward...
+		ELSEIF TALENT:思慕 || TALENT:セフレ
+			PRINTFORML 「That story was very interesting, Un.」
+			PRINTFORMDW ... Not speaking when one doesn't have something to say is probably for the best.
+		ELSE
+			PRINTFORMW 「Ahaha, there's no need to force yourself to talk.」
+		ENDIF
+	;通常
+	ELSEIF TALENT:恋慕
+		IF TALENT:恋人
+			PRINTFORMD Meiling  
+			IF CHK_DATENOW(CFLAG:TARGET:デート中) 
+				PRINTFORMDL laughs at %PARSE("your")% joke while pinning %PARSE("your",1)% arm to her chest. 
+			ELSEIF CFLAG:TARGET:添い寝中 
+				PRINTFORMDL smiles at %PARSE("your")% joke and moves in a bit closer. 
+			ELSEIF BATHROOM() 
+				PRINTFORMDL loosens up a bit at %PARSE("your")% joke. 
+			ELSE 
+				PRINTFORMDL looks as if she trusts everything %PARSE("you say")%. 
+			ENDIF 
+		ELSE 
+			PRINTFORMD Meiling  
+			IF CHK_DATENOW(CFLAG:TARGET:デート中) 
+				PRINTFORMDL answers %PARSE("your")% question while entwining her fingers with %PARSE("yours",1)%. 
+			ELSEIF CFLAG:TARGET:添い寝中 
+				PRINTFORMDL smiles at %PARSE("your")% joke as she lays under the cover. 
+			ELSEIF BATHROOM() 
+				PRINTFORMDL blushes as %PARSE("you speak")% with her. 
+			ELSE 
+				PRINTFORMDL smiles happily as %PARSE("you speak")%. 
+			ENDIF
+		ENDIF
+		
+		SELECTCASE RAND:5
+		CASE 0
+			;季節分岐
+			SELECTCASE DAY:2
+			;春
+			CASE 1
+				SELECTCASE RAND:4
+				CASE 0
+					PRINTFORML 「Uu～n, hearing %CALLNAME:MASTER%'s voice is always comforting...%UNICODE(0x2665)%」 
+					PRINTFORML 「When I mean comforting, it's enough to make me fall asleep... ZZZ...」 
+					PRINTFORMDL To see if she's really fallen asleep, %PARSE("you decide")% to blow lightly in her ear. 
+					PRINTFORMW 「Hiyaa!? It tickles! Ah- St- Hiyaan～」 
+				CASE 1
+					PRINTFORML 「Everything is so leisurely this time of year, it's the perfect season to start new challenges.」 
+					PRINTFORML 「If there's anything %CALLNAME:MASTER% would like to try, feel free to ask me.」 
+					PRINTFORMW 「It's always nice working with someone when improving oneself.」 
+				CASE 2
+					PRINTFORML 「There are so many beautiful flower blooms to enjoy this time of year.」 
+					PRINTFORML 「It's as if you can just breathe in and smell the breath of life itself...」 
+					PRINTFORML 「... Eh? Wait, you say I smell even better than that? Come one, what kind of line is that...」 
+					PRINTFORMDW Meiling turns away while blushing, her cheeks dyed a bit red. 
+				CASEELSE
+					PRINTFORML 「Spring must have this energy that makes people want to fall asleep.」 
+					PRINTFORML 「So when White Fairy-san comes by saying spring has come, it's like saying it's time for me to sleep...」 
+					PRINTFORMDW Meiling closes her eyes while muttering about something silly. 
+				ENDSELECT
+			;夏
+			CASE 2
+				SELECTCASE RAND:6
+				CASE 0
+					PRINTFORML 「Ahhー It's hot～ Hong Meiling done for today due to heat...」 
+					PRINTFORMDL What would that make you then? 
+					PRINTFORMW 「Nn～ Hmm... Uhh... What should I do?」 
+				CASE 1
+					PRINTFORML 「This time of year it's always so nice when Cirno and the others come to the lake and playー」 
+					PRINTFORMW 「... It's because it gets cold, honestly...」 
+				CASE 2
+					PRINTFORML 「Since it's summer, working up a good sweat is always fun.」 
+					PRINTFORML 「This is the best time to exercise with all your strength, it feels so good.」 
+					PRINTFORMW 「The strain on the body combined with the heat... What do you mean overkill?」 
+				CASE 3
+					PRINTFORML 「Standing guard under the blazing sun, it's almost like an ascetic buddhist practice to train your fortitude.」 
+					PRINTFORMW 「The heat just growing stronger and stronger... Huh? Just hearing that made you feel hot?」 
+				CASE 4
+					PRINTFORML 「Aaa, guess it's time for another incident soon～」 
+					PRINTFORML 「Ojousama usually has some form of banquet around this time.」 
+					PRINTFORMW 「When I hear stuff like that I want to join them too...」 
+				CASEELSE
+					PRINTFORML 「The night sky during summer is a perfect place for Danmaku.」 
+					PRINTFORML 「Well, they might as well be firework displays at this point～」 
+					PRINTFORMW 「I've heard there are special Fairy-san for that though.」 
+				ENDSELECT
+			;秋
+			CASE 3
+				SELECTCASE RAND:4
+				CASE 0
+					PRINTFORML 「It's starting to get pretty cold.」 
+					PRINTFORMDL Meiling rubs her hands together. 
+					PRINTFORMW 「As the seasons change it's easy to catch a cold, so be careful.」 
+				CASE 1 
+					PRINTFORML 「Speaking of autumn, it's a good season for going out, %CALLNAME:MASTER%.」 
+					PRINTFORML 「Autumn-leaf viewing on the Youkai Mountain, going to the spa in Old Hell... Roasted sweet potatoes...」 
+					PRINTFORMDW ... Feels like it changed from excursion to appetite half-way through... 
+				CASE 2 
+					PRINTFORML 「The area surrounding Scarlet Devil Mansion looks amazing when it takes on the colors of autumn.」 
+					PRINTFORML 「Fallen leaves covering the path to the gate, it's just so nice.」 
+					PRINTFORMW 「... Cleaning it is a pain though.」 
+				CASEELSE 
+					PRINTFORML 「Moon viewing this time of year is so nice.」 
+					PRINTFORMW 「It's said there are Moon-people living up there, how... Surreal? 」 
+				ENDSELECT
+			;冬
+			CASE 4
+				SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML 「In cold weather like this it's possible to harden oneself and grow accustomed.」 
+					PRINTFORML 「This is because moving your body warms you up.」 
+					PRINTFORML 「... So I would assume %CALLNAME:MASTER% wouldn't have any problems with cold...」 
+					PRINTFORMDW Saying that, Meiling starts blushing a bit. 
+				CASE 1 
+					PRINTFORML 「Did you play Oshikura Manku when you were a kid?」 
+					PRINTFORML 「No-no, I saw some children in the village to that, I'm fine.」 
+					PRINTFORML 「But there's a similar thing we could do to warm up... Wanna do it? Fufu～」 
+					PRINTFORMDW ... Doing that with Meiling would be far from child's play... 
+				CASE 2 
+					PRINTFORML 「If you wash your face in the morning is so refreshing, right?」 
+					PRINTFORML 「Cold water during winter just feels...」 
+					PRINTFORMW 「An Ｍ? Nono- Why would you even say that. I just like how cleansing it feels...」 
+				CASE 3 
+					PRINTFORML 「I have lots of time to think about if there's a way to heat up when standing in front of the gate...」 
+					PRINTFORML 「... Wha-! With the Kappa's technology my dream of a mobile outdoors kotatsu might not just be a dream...!!」 
+					PRINTFORMDW Meiling has started talking about something ridiculous again. 
+				CASEELSE 
+					PRINTFORML 「The stillness when it snows is so precious in the otherwise loud Gensoyko...」 
+					PRINTFORML 「Sometimes it even piles up against the windows of the mansion.」 
+					PRINTFORML 「Now that I think about it, aahhh, getting rid of the snow will be a pain...」 
+					PRINTFORMDW Meiling looks as though she reached enlightenment before having her dreams crushed. 
+				ENDSELECT
+			ENDSELECT
+		CASEELSE
+			SELECTCASE RAND:12
+			CASE 0
+				PRINTFORML 「... And that's how the Scarlet Devil Mansion was saved... Ehem...」
+				PRINTFORMW 「Yeah, that's really what happened, why are you looking at me like that～!」
+			CASE 1
+				PRINTFORML 「Applying Qigong with good intentions increases Yang and strengthens your body, but if you do it too much...」
+				PRINTFORMW 「You will start shouting『I am a genius!』and such...」
+			CASE 2
+				PRINTFORML 「What kind of Youkai I am? I told you it's a secret.」
+				PRINTFORML 「As for why, it's because it's cool!」
+				PRINTFORMDW Meiling clenches her fist in a pose as she says that.
+			CASE 3
+				PRINTFORML 「Naturally the dragon on my star refers to an eastern one.」
+				PRINTFORMW 「But western dragons are also pretty cool～...」
+			CASE 4
+				PRINTFORML 「Remilia-Ojousama recommended me a book the other day that I found rather amusing.」
+				PRINTFORMW 「%CALLNAME:MASTER%, would you like to read it as well?」
+			CASE 5
+				PRINTFORML 「The rainbow colors of the Danmaku are vivid and vibrant, Aaa, today I'm in great shape.」
+				PRINTFORML 「If I'm feeling off, the colors will be too, they don't become mulberry but...」
+				PRINTFORMW 「%CALLNAME:MASTER%, is there even a color like that?」
+			CASE 6
+				PRINTFORML 「Hee～ So there's stuff like that too...」
+				PRINTFORML 「But %CALLNAME:MASTER% will be safe. I'm sure of it.」
+				PRINTFORMDW Meiling puffs her chest out in pride for some reason while %PARSE("you")% just %PARSE("laugh")% bitterly and %PARSE("carry")% on the conversation...
+			CASE 7
+				PRINTFORML 「Sakuya-san can do cooking, cleaning, and laundry, and she's great at throwing knives at me, she truly is the epitome of stylish.」
+				PRINTFORMW 「%CALLNAME:MASTER%'s cleaning \@ABL:MASTER:清掃技能 >= 4?is also something I admire, naturally#can surely improved a lot by learning from her\@.」
+			CASE 8
+				PRINTFORML 「Yeah yeah, and then...」
+				PRINTFORML 「What!? Again, so...」
+				PRINTFORML 「Ahaha, you're hopeless♪」
+				PRINTFORMDW Meiling really seems to be enjoying talking with %PARSE("you")%...
+			CASE 9
+				PRINTFORML 「Oh right, listen to this～ %CALLNAME:MASTER%～」
+				PRINTFORML 「The other day, I was getting punished, and I...」
+				PRINTFORMDL Finding Meiling's form when she hangs her head strangely adorable, %PARSE("you")% just %PARSE("nod")% along and %PARSE("respond")% with half-answers.
+				PRINTFORML 「...Mmm? Are you listening %CALLNAME:MASTER%?」
+				PRINTFORMW 「I've been speaking to you all this time and you haven't been listening...」
+			CASE 10
+				PRINTFORML 「Ahh～ A lot of things happen around that time, for one it's when Ojousama goes to bed.」
+				PRINTFORML 「When Yang increases during the early hours my duty of protecting the mansion begins.」
+				PRINTFORMW 「... No, I've been protecting it very diligently recently, haven't I? I'm trying my hardest...」
+			CASEELSE
+				PRINTFORML 「Even water can wear through stone... Keep going at it, constant effort is the secret to success.」
+				PRINTFORML 「...... Even distance between two people can be reduced with enough distance～」
+				PRINTFORMDW %PARSE("You smile")% as Meiling mutters something philosophical to herself.
+			ENDSELECT
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		PRINTFORMD Meiling 
+			IF CHK_DATENOW(CFLAG:TARGET:デート中)
+				PRINTFORMDL speaks with %PARSE("you")%, looking forward to some fun.
+			ELSEIF CFLAG:TARGET:添い寝中
+				PRINTFORMDL turns over and speaks with %PARSE("you")%.
+			ELSEIF BATHROOM()
+				PRINTFORMDL leans in close to %PARSE("you")%.
+			ELSE
+				PRINTFORMDL gives %PARSE("you")% a faint smile.
+			ENDIF
+		SELECTCASE RAND:3
+			CASE 0
+				SELECTCASE RAND:6
+					CASE 0
+						PRINTFORML 「Hee～, that's...」
+						PRINTFORML 「Fufu, you've got some pretty good ones, %CALLNAME:MASTER%♪」
+						PRINTFORMW 「In return I'll tell you about some stuff that's been going around here recently...」
+					CASE 1
+						PRINTFORML 「... I wouldn't say this to the people living at the Scarlet Devil Mansion, but...」
+						PRINTFORMW 「I still don't understand how Charisma trading works... What is it anyway?」
+					CASE 2
+						PRINTFORML 「Sakuya-san's skill at housework can only be described as amazing.」
+						PRINTFORMW 「Ability aside, her thoroughness leaves not a trace behind.」
+					CASE 3
+						PRINTFORML 「Yes, in fact, around that time the Scarlet Devil Mansion was affected by one incident after the other but...!」
+						PRINTFORMW 「... Eh? Come on, don't tell me you've heard it before～」
+					CASE 4
+						PRINTFORML 「I often meet the fairies when I work here.」
+						PRINTFORMW 「It's all well and good. But sometimes they end up making a bit too much noise.」
+					CASEELSE
+						PRINTFORML 「... How do I get Sakuya-san do stop throwing knives...」
+						PRINTFORML 「It hurts～... Especially when pulling it out...」
+						PRINTFORMDL  ... But if you work hard it shouldn't be a problem, right?
+						PRINTFORMW 「Right～...」
+				ENDSELECT
+			CASEELSE
+				PRINTDATAW
+					DATAFORM 「Ahaha, that one was pretty good. My turn...」
+					DATAFORM 「Eeeh? That's when you're supposed to attack without hesitation.」
+					DATAFORM 「Aaa～ In Gensokyo this stuff happens... I feel you.」
+					DATAFORM 「A healthy body hosts a healthy mind... But I think people misuse that phrase a lot.」
+					DATAFORM 「Whatever you do, remember that your body is your temple, so don't push yourself too hard.」
+					DATAFORM 「... Explosion? I didn't cause any explosion... It could've been my sparring you heard.」
+					DATAFORM 「Flan-Ojousama is usually pretty normal... Ah sorry that's not relevant.」
+					DATAFORM 「Nah, both me and the hobgoblins clean my room... Ahaha!」
+					DATAFORM 「So I rushed over instantly, but it turns out I wasn't my name they called...」
+					DATAFORM 「I still haven't gotten used to the sensation of suddenly finding a knife sticking out of me...」
+				ENDDATA
+		ENDSELECT
+	ELSE
+		PRINTFORMDL Meiling responds to %PARSE("your")% conversation by saying some empty words.
+		PRINTDATAW
+			DATAFORM 「I see, so it's like that.」
+			DATAFORM 「Haha, that was pretty funny!」
+			DATAFORM 「Gensokyo really has no shortage of topics does it...」
+			DATAFORM 「Aaa～ Sometimes you've got to become a warrior!」
+			DATAFORM 「Unun, peace is the best.」
+			DATAFORM 「When you're tired sleep and meals are important. Very important!」
+			DATAFORM 「The type of Danmaku varies from person to person.」
+			DATAFORM 「Asking someone if they're listening halfway through telling a story is a bit...」
+			
+			DATAFORM 「The other day, this thing happened at the gate...」
+			DATAFORM 「Nah, why wouldn't I want to be under the sun?」
+			DATAFORM 「Ah, you thought so too? But this is...」
+			DATAFORM 「And just when I'm thinking "I hope no one shows up", then...」
+			DATAFORM 「Sometimes strange things come by... They're pretty reckless.」
+			DATAFORM 「It feels nice to greet people properly.」
+			DATAFORM 「Even now she comes by at times to borrow books until she dies...」
+			DATAFORM 「Eeee～ How stylish, how elegant, yes-yes...」
+			DATAFORM 「Instantly stabbing someone with knives, no one does that...」
+		ENDDATA
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;301,お茶を淹れる
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_301
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_301_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_301_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		IF TFLAG:193 == 1
+			PRINTFORML 「Ehehe, Arigatougozaimasu♪」
+			PRINTFORML 「...! This tea is so good that you can make money off it at this point.」
+			PRINTFORMDL Meiling looks ecstatic as she sips the tea.
+			PRINTFORML 「...Fuiiー This is supreme bliss...」
+			PRINTFORMDW Meiling's entire body seems to dissolve, filled with new energy...
+		ELSEIF TFLAG:193 == -1
+			PRINTFORML 「Then, Itadakimasu.」
+			PRINTFORML 「... Hey. This taste isn't rich enough...」
+			PRINTFORMDW Meiling puts it lightly, but it clearly doesn't fit her palate at all.
+		ELSE
+			IF RAND:2
+				PRINTFORML 「Ehehe, Arigatougozaimasu♪」
+				PRINTFORML 「Yes, come here, %CALLNAME:MASTER%'s tea～」
+				PRINTFORMDL %PARSE("You pour")% some hot water and %PARSE("make")% some more tea, before handing it over to Meiling.
+				PRINTFORML 「...Fuhh... Nahー It was pretty good this time.」
+				PRINTFORMW 「I want to relax and drink tea with %CALLNAME:MASTER% like this forever...」
+			ELSE
+				PRINTFORML 「Then, Itadakimasu♪」
+				PRINTFORML 「...Haah. %CALLNAME:MASTER%'s tea making skill is the best in Gensokyo.」
+				PRINTFORMDL %PARSE("You pour your")% own share while laughing at her exaggerated expression.
+				PRINTFORML 「It's not exaggerated. For me this is the best in Gensokyo%UNICODE(0x2665)%」
+				PRINTFORMDW Meiling closes her eyes in delight as she brings the cup to her lips.
+			ENDIF
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF TFLAG:193 == 1
+			PRINTFORML 「%CALLNAME:MASTER%'s tea is so delicious～」
+			PRINTFORML 「ZuZuZu... Un. Second helping please.」
+			PRINTFORMDL ... If she drinks that much there has to be a toilet nearby.
+			PRINTFORML 「I'm fine. Hora, give me another helping♪」
+			PRINTFORMDW Meiling smiles as she asks for another cup, and %PARSE("you")% can't help but oblige.
+		ELSEIF TFLAG:193 == -1
+			PRINTFORML 「Ah, Doumo Doumo.」
+			PRINTFORML 「.....Eh? Aa, it's rather tasty...?」
+			PRINTFORMDW Her cracking smile tells %PARSE("you")% something else...
+		ELSE
+			IF RAND:2
+				PRINTFORML 「Aa, that's just the right amount.」
+				PRINTFORML 「It's truly amazing... Arigatougozaimasu♪」
+				PRINTFORMDL Meiling smiles as %PARSE("you give")% her the cup.
+				PRINTFORML 「Iyaa, %CALLNAME:MASTER% can't ever stop making tea...」
+				PRINTFORMDW Meiling savors the aroma while mumbling something to herself.
+			ELSE
+				PRINTFORML 「Uu～n, that smells nice～」
+				PRINTFORML 「I do make myself tea from time to time.」
+				PRINTFORML 「But as expected it can't be compared with %CALLNAME:MASTER%'s♪」
+				PRINTFORMDW Meiling looks happy as she sips the tea.
+			ENDIF
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF TFLAG:193 == 1
+			PRINTFORML 「Ah, Arigatougozaimasu.」
+			PRINTFORML 「...Mmm～♪ It's really tasty. Zuzuzu...」
+			PRINTFORMDW It seems the tea was brewed well.
+		ELSEIF TFLAG:193 == -1
+			PRINTFORML 「Tea? Thank you.」
+			PRINTFORML 「... Wait, this taste is too thin, haha.」
+			PRINTFORMDW Meiling stares doubtfully at the tea %PARSE("you")% made...
+		ELSE
+			IF RAND:2
+				PRINTFORML 「Ohh, how thoughful～」
+				PRINTFORML 「Well then, itadakimasu... Fuu.」
+				PRINTFORMDW Meiling takes a short rest as she enjoy the tea %PARSE("you")% brewed...
+			ELSE
+				PRINTFORML 「Sakuya-san's black tea is a masterpiece, but %PARSE("your")% tea...」
+				PRINTFORML 「... Un, it's delicious♪」
+				PRINTFORMDW Meiling nods in satisfaction.
+			ENDIF
+		ENDIF
+	ELSE
+		IF TFLAG:193 == 1
+			PRINTFORML 「Ooh, arigatougozaimasu.」
+			PRINTFORML 「...! It's got a nice aroma to it.」
+			PRINTFORMDW Meiling seems to enjoy the tea as she sips.
+		ELSEIF TFLAG:193 == -1
+			PRINTFORML 「Tea? Thanks.」
+			PRINTFORML 「...... Umm, isn't it a bit bitter?」
+			PRINTFORMDW Meiling stares at the tea %PARSE("you")% made with a sour look on her face...
+		ELSE
+			PRINTFORML 「Tea? Arigatougozaimasu.」
+			PRINTFORML 「Fuah, let's take a small break...」
+			PRINTFORMDW Meiling enjoys the tea wholeheartedly.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;302,スキンシップ
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_302
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_302_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_302_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF BATHROOM()
+		IF TALENT:恋人
+			PRINTDATA
+				DATALIST
+					DATAFORM 「Mu～～uu～～......」
+					DATAFORM Meiling gathers the foam on her and starts creating something...
+					DATAFORM 「Alright, done, %CALLNAME:MASTER%, %CALLNAME:MASTER%, look!」
+					DATAFORM 
+					DATAFORM 「It's a reverse Mount Fuji（Doyaa）!!」
+					DATAFORM 
+					DATAFORM ... Soap and hot water floats around in her large cleavage...
+					DATAFORM 「Fufun, This time I'll make... Fuyan!?」
+					DATAFORM %PARSE("You thrust your")% face into her soft chest, the soap making them look like clouds.
+					DATAFORM 「Nuwaー! I put ef- Ah, Stop rubbing your face against them...%UNICODE(0x2665)%」
+				ENDLIST
+				DATALIST
+					DATAFORM 「Fufufu, It's important to not let resentment build up.」
+					DATAFORM Meiling puts both her hands together and make a water gun, shooting water in the bathtub.
+					DATAFORM 「Byuuー Byuuー How's thatー! Fuhahaー!」
+					DATAFORM %PARSE("You start")% shooting back, firing at Meiling's erogenous zones...
+					DATAFORM 
+					DATAFORM 「Uhyaan, How cruel...%UNICODE(0x2665)% Not! Where to aim... Aan%UNICODE(0x2665)%」
+					DATAFORM 「Ahi, As expected I'd lose at Danmaku, run away! Run awayー! Mogabogo...」
+					DATAFORM Noticing the disadvantage, Meiling quickly escapes into the water...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Hora Hora, Wash your body properly～」
+					DATAFORM It seems Meiling wants to wash %PARSE("your")% body.
+					DATAFORM Two soft bulges presses against %PARSE("your",1)% back, creating foam as they rub against %PARSE("you",5)%...
+					DATAFORM 
+					DATAFORM 「Fun Fun Fu～n♪ I will wash every corner of your body～...?」
+					DATAFORM Her two slippery hands close in on %PARSE("your",1)% crotch.
+					DATAFORM 「That's an important place, so we'll have to clean it thoroughly...♪」
+					DATAFORM 「Right around here, especially... Haaー Haaー... Ah.」
+					DATAFORM She pokes %PARSE("your")% length lightly, prodding it as it twitches...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Mhh? You want to wash me back?」
+					DATAFORM 「Alright, please make me squeaky clean! Beauty comes from the insideee?!」
+					DATAFORM Since %PARSE("you have")% gotten permission, %PARSE("you",1)% quickly %PARSE("slip")% %PARSE("your",1)% arms past her.
+					DATAFORM 「Wahyaa!? M-My armpits, washing them, s-stop! Ahya, Hyaa, T-Time out!」
+					DATAFORM 「Aaann, I thought you'd go for my breasts or something...」
+					DATAFORM %PARSE("You wash")% Meiling's back diligently, enjoying her reactions...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Wanting to wash my body... It's obvious what you want you know～? Fufu.」
+					DATAFORM 「Fine then...」
+					DATAFORM 「Just make sure to clean me properly...」
+					DATAFORM Meiling spreads her legs before %PARSE("you")%, water dripping down her exposed garden.
+					DATAFORM Her face changes from a mocking grin to an entranced smile...
+					DATAFORM 「Until the soap has permeated my body, you're not allowed to stop rubbing me, okay...?」
+					DATAFORM Both %PARSE("your",1)% hands covered in foam, %PARSE("you take")% her up on her double entendre...
+				ENDLIST
+			ENDDATA
+		ELSEIF TALENT:恋慕
+			PRINTDATA
+				DATALIST
+					DATAFORM 「Errr... I'll clean your back.」
+					DATAFORM Meiling's entire body seems to blush as she gets behind %PARSE("you")% and begins washing %PARSE("your",1)% back.
+					DATAFORM 「Ehehe... This feels pretty nice, doesn't it?」
+					DATAFORM %PARSE("You nod")%, enjoying Meiling's dedication...
+					DATAFORM 「... Sometimes it feels like you protect me, I want to protect you too...」
+					DATAFORM 「So I'll cover your back... Ehehe♪」
+				ENDLIST
+				DATALIST
+					DATAFORM 「Angle of fire, che～ck. Water pressure, che～ck... Fire!」
+					DATAFORM Meiling puts both her hands together and make a water gun, shooting water in the bathtub.
+					DATAFORM She hits %PARSE("your")% face with a 'Pichuu', over and over.
+					DATAFORM 「Fu Fu Fuー Second rank fireー!」
+					DATAFORM %PARSE("You start")% shooting back at Meiling.
+					DATAFORM 「Nebu, Now you've done itー! Ahaha...」
+					DATAFORM A peaceful round of Danmaku unfolds in the bathroom...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Hey, where are you grabbing...?」
+					DATAFORM 「Hiyan, It's dangerous if you slip♪」
+					DATAFORM 「If we do that here, won't we overheat?」
+				ENDLIST
+				DATALIST
+					DATAFORM 「You want to, wash my body...?」
+					DATAFORM 「... Fine, %CALLNAME:MASTER%, nothing ecchi, okay?」
+					DATAFORM Meiling blushes, but doesn't seem to hate the idea...
+					DATAFORM 「Nshyo... Hora, Here, spread them please.... Ha... Ha...」
+					DATAFORM 「Ah, Please be gentle, okay...?」
+					DATAFORM The two of %PARSE("you",4)% begin washing every corner of each other's bodies...
+				ENDLIST
+				DATALIST
+					DATAFORM 「So this is one of those shower stools huh...」
+					DATAFORM There's a large stool with a huge hole in it in the bathtub...
+					DATAFORM ...
+					DATAFORM 「I know what it is, yes, please don't stare at me with sparkling eyes...」
+					DATAFORM 「Hora, That's... Please just... An... Nnhaa....%UNICODE(0x2665)%」
+					DATAFORM As Meiling sits down on the stool, %PARSE("you")% immediately %PARSE("begin")% washing her private through the hole...
+					DATAFORM 「Aah, It's so slippery... Please just wash me, alright...?」
+					DATAFORM %PARSE("You nod")% immediately, but %PARSE("continue")% sliding %PARSE("your",1)% hand between her cheeks...
+				ENDLIST
+			ENDDATA
+		ELSE
+			PRINTDATA
+				DATALIST
+					DATAFORM 「Having someone scrub your back feels surprisingly good～...」
+					DATAFORM Meiling relaxes her shoulders and sighs...
+					DATAFORM Although she was shy at first, she doesn't seem to mind anymore.
+					DATAFORM 「Uhehe, Ah, Press a bit harder there...」
+					DATAFORM %PARSE("You apply")% a bit more pressure as instructed, and she gasps in delight...
+				ENDLIST
+				DATALIST
+					DATAFORM 「You want to me to wash at the same time?」
+					DATAFORM 「I don't mind but... It's a bit embarrassing...」
+					DATAFORM Meiling gets behind %PARSE("you")% and begins washing herself diligently.
+					DATAFORM 「...Hora Hora, Don't try looking over.」
+					DATAFORM Mingling with the aroma of the soap, %PARSE("you",1)% can still smell a bit of Meiling's scent from behind %PARSE("you",5)%...
+				ENDLIST
+				DATALIST
+					DATAFORM 「There there, how does that feel...?」
+					DATAFORM Meiling plays around with bubbles on %PARSE("your")% back.
+					DATAFORM It tickles each time her finger traces along %PARSE("your",1)% spine.
+					DATAFORM 「Ehen, The dragon is complete... It looks a bit like a tattoo.」
+					DATAFORM 「Eh? You want to do me too? No no no, I... Uhyan!」
+					DATAFORM Turning %PARSE("yourself")% around, %PARSE("you begin")% painting with bubbles on Meiling's back...
+				ENDLIST
+			ENDDATA
+		ENDIF
+	ELSE
+		IF TALENT:恋人
+				;メモ書き・マッサージ胸揉み派生、柔軟腰すり、美鈴からの下腹部気功あて、整体密着
+			PRINTDATA
+				DATALIST
+					DATAFORM 「Ehehe... Got you.」
+					DATAFORM %PARSE("You try")% sniffing Meiling's hair, but she dodges out of the way.
+					DATAFORM 「Uri Uri... Uーn, I don't mind %CALLNAME:MASTER%'s scent...」
+					DATAFORM As revenge, she rubs her cheeks against %PARSE("yours",1)% instead.
+					DATAFORM 「...Ara. %CALLNAME:MASTER% can't bear it either...? Fufu.」
+					DATAFORM Her braids tickle %PARSE("you")% each time they brush against %PARSE("you",5)%...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Mumumu... Tei♪」
+					DATAFORM As %PARSE("you poke")% Meiling lightly, she strikes %PARSE("your",1)% chest lightly with her fist.
+					DATAFORM %PARSE("You return",1)% the favor, and %PARSE("begin")% poking her even more.
+					DATAFORM 「Are you continuing～? Ei, Nu, Ho, Ahaha.」
+					DATAFORM 「Ah, Chyo, Take this, An♪」
+					DATAFORM %PARSE("You",3)% two smile as %PARSE("you",2)% flirt...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Ah... Uun...」
+					DATAFORM Seductive moans slip out of Meiling as %PARSE("you caress")% her body affectionately.
+					DATAFORM 「Haa, Stop doing that %CALLNAME:MASTER%, it's too lewd... Hiuu...」
+					DATAFORM 「I'm sorry, I'm sorry... I surrender so please just... Ann%UNICODE(0x2665)%」
+					DATAFORM %PARSE("You punish")% Meiling thoroughly for saying such rude things...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Haa... Fuu, Nnuu...」
+					DATAFORM 「Just, if %CALLNAME:MASTER%... ...%UNICODE(0x2665)%」
+					DATAFORM %PARSE("You stroke")% Meiling's supple thighs, slowly and gently.
+					DATAFORM 「If you want something, just say it, please...?」
+					DATAFORM She says so, but the lust in her eyes as she looks at %PARSE("you")% tells %PARSE("you",5)% something different...
+				ENDLIST
+			ENDDATA
+		ELSEIF TALENT:恋慕
+			PRINTDATA
+				DATALIST
+					DATAFORM Nestling %PARSE("your",1)% head into Meiling's neck, %PARSE("you blow")% warm air onto her bare skin.
+					DATAFORM 「Fuaa, Don't breathe on me like that...」
+					DATAFORM Pleased with the reaction, %PARSE("you draw")% closer to her ear instead.
+					DATAFORM 「Ah- Wh- That's my weak spot... Fuaa...」
+				ENDLIST
+				DATALIST
+					DATAFORM 「Even if I'm a girl, I can still train by body so it's firm all over.」
+					DATAFORM Squishing a soft bit of Meiling's stomach, she puts her hand on %PARSE("yours")%.
+					DATAFORM 「That part isn't stiff yet... I'm still a girl so...%UNICODE(0x2665)%」
+					DATAFORM Guiding %PARSE("your",1)% hand up and down her front, Meiling brushes her tense parts with %PARSE("your",1)% hand.
+					DATAFORM 「... How does it feel?」
+					DATAFORM Meiling stares at %PARSE("you")% defiantly, her eyes slightly wet...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Haa... Touching that's... Ah...」
+					DATAFORM 「...Nnhh... Do you really like touching my body that much...?」
+					DATAFORM Asks Meiling as she looks up at %PARSE("you")%.
+					DATAFORM The lust to tease her begins welling up inside %PARSE("you",5)%...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Ehehe, That tickles...」
+					DATAFORM %PARSE("You bury your")% face in Meiling's hair.
+					DATAFORM Every time %PARSE("you rub your",1)% face against it, a sweet scent washes over %PARSE("you",5)%.
+					DATAFORM 「Just... Is it really that good...?」
+					DATAFORM Meiling blushes, but still looks a bit happy...
+				ENDLIST
+			ENDDATA
+		ELSEIF TALENT:思慕
+			IF TFLAG:193 == -1
+				PRINTFORML 「Wait, where do you think you're touching, stop it already...」
+				PRINTFORMDL %PARSE("You try")% to put %PARSE("your",1)% arm around her waist, put Meiling quickly escapes.
+				PRINTFORML 「Keep that up and I'll get angry!」
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Ahh, Nnn, it tickles.」
+						PRINTFORMDL Meiling's body shivers as %PARSE("you trace your")% finger from her shoulder to her neck.
+						PRINTFORMDL Ignoring her complaints, %PARSE("you keep")% tracing further and further down.
+						PRINTFORML 「Wait, moving your hand like that is a bit lewd, but...?」
+						PRINTFORML 「... Nnn, Fuu, I'll become angry if you don't finish...」
+						PRINTFORMDW %PARSE("You watch")% Meiling's face closely, as it turns more and more red...
+					CASE 1
+						PRINTFORMDL %PARSE("You offer")% a massage, and Meiling turns her body.
+						PRINTFORML 「I'll take you up on that offer.... Aa～ This is niceー」
+						PRINTFORMDL Slowly more and more of her body gets massaged.
+						PRINTFORML 「Ah, that spot... Nnn, Ahh, Nhaa, Ah...」
+						PRINTFORMDW Over time, Meiling starts letting out seductive moans...
+					CASEELSE
+						PRINTFORML 「Fufun, you're 1000 years too early to find a gap in my defences!」
+						PRINTFORMDL You stand in front of Meiling, stretch your arms out, and begin tickling Meiling's sides.
+						PRINTFORML 「Ahiya!? T-This, stop... Hya, Hyaa!?」
+						PRINTFORML 「W-What this is foul play...!? Fua, Ahahahaha!」
+						PRINTFORMDW Meiling twists her waist trying to get away, but you don't relent your attack...
+				ENDSELECT
+			ENDIF
+		ELSE
+			IF TFLAG:193 == -1
+				PRINTFORML 「Wait, where do you think you're touching, stop it already...」
+				PRINTFORMDL %PARSE("You try")% to put %PARSE("your",1)% arm around her waist, put Meiling quickly escapes.
+				PRINTFORML 「Keep that up and I'll get angry.」
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Muu～ It tickles!」
+						PRINTFORML 「%CALLNAME:MASTER%, you don't stop your bad habits even if someone gets angry, do you?」
+						PRINTFORMDW Meiling pouts and objects, but looks adorable.
+					CASEELSE
+						PRINTFORML 「You want to touch?」
+						PRINTFORML 「Fufu, it's because I've tempered my body!」
+						PRINTFORMDL Meiling puts her hands on her hips proudly, but as %PARSE("you poke")% her, her skin turns out to be soft.
+						PRINTFORMW 「Ah, that's a bit... Ehh...」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+	PRINTW 
+ENDIF
+RETURN 1
+;==================================================
+;303,謝る
+;TFLAG:193(2=菓子折成功 1=大成功 0=成功 -1=失敗 -2=菓子折失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_303
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_303_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_303_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193 == 2
+		IF TALENT:恋慕
+			PRINTFORML 「... I like serious people, be sure to remember that.」
+			PRINTFORML 「So from here on, make sure to be careful, okay?」
+			PRINTFORMDW %PARSE("You sigh")% in relief as Meiling's face softens.
+		ELSE
+			PRINTFORML 「... I understand, Haa. I'll forgive you.」
+			PRINTFORML 「Your apology feels genuine.」
+			PRINTFORMDW Finally free after the awkward moment ends, relief washes over %PARSE("you")%.
+		ENDIF
+	ELSEIF TFLAG:193 == 1
+		IF TALENT:恋慕
+			PRINTFORML 「I get it, Un. Let's make up.」
+			PRINTFORML 「Staying like this forever is something only a fool would do.」
+			PRINTFORMDW Seeing Meiling smiling brightly, it seems everything has gone back to normal.
+		ELSE
+			PRINTFORML 「Yes, I'll forgive you... I was also being a bit stubborn.」
+			PRINTFORML 「So let's make peace, %CALLNAME:MASTER%!」
+			PRINTFORMDW Grasping Meiling's stretched out hand, it seems the conflict has been resolved.
+		ENDIF
+	ELSEIF TFLAG:193 == 0
+		IF TALENT:恋慕
+			PRINTFORML 「Muu, as you can see, I am pretty angry!」
+			PRINTFORML 「Isn't there something you should say?」
+			PRINTFORMDL Meiling's cheeks are red as she asks %PARSE("you")% the question.
+			PRINTFORMDL %PARSE("You say",1)% a simple sorry.
+			PRINTFORML 
+			PRINTFORMW 「... Good enough.」
+			PRINTFORML 「Honestly, it doesn't feel right to stay mad at you...」
+			PRINTFORML 「So then, I forgive you♪」
+			PRINTFORMDW %PARSE("You sigh")% in relief upon seeing Meiling's smiling face.
+		ELSEIF TALENT:思慕
+			PRINTFORML 「... Well? What is it?」
+			PRINTFORMDL Meiling folds her arms and glares at %PARSE("you")%...
+			PRINTFORMDL %PARSE("You lower")% %PARSE("your",1)% head, and %PARSE("offer")% a sincere apology.
+			PRINTFORML 
+			PRINTFORMW 「... Fine, but you don't have to go that far...」
+			PRINTFORMDW Meiling sighs deeply, and the tense air starts to dissipate.
+		ELSE
+			PRINTFORML 「............」
+			PRINTFORMDL To ask forgiveness from the seething Meiling, %PARSE("you lower")% %PARSE("your",1)% head.
+			PRINTFORML 
+			PRINTFORMW 「... Fine. It's fine, please raise your head.」
+			PRINTFORMDW Although her face still seems a bit stiff, it looks like %PARSE("you have")% been forgiven for now.
+		ENDIF
+	ELSEIF TFLAG:193 == -1
+		IF TALENT:恋慕
+			PRINTFORML 「Muu, as you can see, I am pretty angry!」
+			PRINTFORML 「Isn't there something you should say?」
+			PRINTFORMDL Meiling's cheeks are red as she asks %PARSE("you")% the question.
+			PRINTFORMDL %PARSE("You say",1)% a simple sorry.
+			PRINTFORML 
+			PRINTFORMW 「... Not good enough. I can't forgive you yet.」
+			PRINTFORMDW After Meiling finishes talking, she turns away from %PARSE("you")%...
+		ELSEIF TALENT:思慕
+			PRINTFORML 「... Well? What is it?」
+			PRINTFORMDL Meiling folds her arms and glares at %PARSE("you")%...
+			PRINTFORMDL %PARSE("You lower")% %PARSE("your",1)% head, and %PARSE("offer")% a sincere apology.
+			PRINTFORML 
+			PRINTFORMW 「... Are you truly reflecting on your actions?」
+			PRINTFORML 「You're not showing it...」
+			PRINTFORMDW Unfortunately it seems she's not going to forgive %PARSE("you")% yet.
+		ELSE
+			PRINTFORML 「............」
+			PRINTFORMDL To ask forgiveness from the seething Meiling, %PARSE("you lower your")% head.
+			PRINTFORML 
+			PRINTFORMW 「...... I'm sorry but, I can't forgive you yet.」
+			PRINTFORMDW Meiling stares at %PARSE("you")% like one would an enemy, as she gives %PARSE("you",5)% her response.
+		ENDIF
+	ELSEIF TFLAG:193 == -2
+		PRINTFORML 「Even if you do that I won't forgive you.」
+		PRINTFORMW 「This isn't something you can do away with just with a few words.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;304,仕事を手伝う
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;CFLAG:350(仕事内容(JOB_仕事内容.ERB参照のこと
+;TCVAR:手伝えない(=2 手伝っても早くは終わらない、時間停止中不可 永琳の診察等)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_304
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_304_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_304_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && FIRSTTIME(SELECTCOM)
+	PRINTFORMW 「You want to... Help me? With gatekeeping? Uhh...」
+	PRINTFORML 「I should say no...」
+	PRINTFORMDW Meiling stares at %PARSE("you")%, unsure of what to do.
+	PRINTFORML 「Alright, first of all you've got to stand guard while also conversing.」
+	PRINTFORMDW %PARSE("You follow")% Meiling's instructions and %PARSE("start")% helping her.
+	RETURN 1
+ENDIF
+;-------------------------------------------------
+IF LOCAL
+	;時間停止中
+	IF FLAG:70
+		PRINTDATAD
+			DATALIST
+				DATAFORM While time is stopped, %PARSE("you walk")% around the perimeter of the gate.
+				DATAFORM You make a full sweep without finding anything out of the ordinary.
+				DATAFORM ............ It's kind of lonely though.
+			ENDLIST
+			DATALIST
+				DATAFORM While time is stopped, %PARSE("you enter")% the main gate.
+				DATAFORM And spend some time looking after the courtyard garden.
+			ENDLIST
+			DATALIST
+				DATAFORM You stand completely motionless before the gate next to Meiling, not moving a muscle.
+				DATAFORM ... But after a while, %PARSE("you start")% moving a bit.
+				DATAFORM For now, there doesn't seem to be any suspicious people around.
+			ENDLIST
+		ENDDATA
+		PRINTL 
+	ELSEIF ABL:欲望 >= 5 && PALAM:欲情 >= PALAMLV:7
+		IF TALENT:恋人 || TALENT:恋慕
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML 「...Hee? Ah, You want to help me?」
+					PRINTFORML 「Er, Then... Ha, Let's patrol together...」
+					PRINTFORMDL %PARSE("You nod")%, Meiling panting as she presses her body against %PARSE("you",5)%.
+					PRINTFORML 「Over there... Isn't that a suspicious person?」
+					PRINTFORMDL It might be a bad idea to get caught like this.
+					PRINTFORMDW But %PARSE("you don't")% mind as Meiling rubs against %PARSE("you",5)%...
+				CASE 1
+					PRINTFORML 「Ano, %CALLNAME:MASTER%...」
+					PRINTFORML 「After work is finished, could you take me somewhere?」
+					PRINTFORMDL Meiling whispers softly in %PARSE("your")% ear.
+					PRINTFORML 「I want a reward from %CALLNAME:MASTER% for holding out～...」
+					PRINTFORML 「For example, your hard and warm...?」
+					PRINTFORMDW Meiling looks up in %PARSE("your")% eyes, her eyes full of want...
+				CASE 2
+					PRINTFORML 「Muu～... Patience... Patience...」
+					PRINTFORMDL Meiling mutters something over and over while rubbing her thighs together...
+					PRINTFORML 「... Excuse me, I've got to run to the toilet... No. Never mind.」
+					PRINTFORML 「Ona... No, %CALLNAME:MASTER% will be troubled if I leave to do that...」
+					PRINTFORMDW %PARSE("You look")% at Meiling's state as %PARSE("you continue",1)% guarding the gate...
+				CASE 3
+					PRINTFORML 「Pushing inside... Could you help me take care of the garden?」
+					PRINTFORMDL Says Meiling as she hands over some tools.
+					PRINTFORML 「Yes, the flowers are delicate though, so be gentle, okay...?」
+					PRINTFORML 「Now then, it's over here... Fu...nn...」
+					PRINTFORMDL Meiling sticks her ass out provocatively as she tends to the garden.
+					PRINTFORMDW %PARSE("You hold")% back the urge to assault her and %PARSE("begin")% helping her...
+				CASEELSE
+					PRINTFORML 「... Now then, why don't we try training while guarding...?」
+					PRINTFORML 「Since I'm a gatekeeper, I have to be able to repel...attacks...」
+					PRINTFORMDL Meiling pants as she speaks, clinging to %PARSE("you")%.
+					PRINTFORML 「Hora, Ha, At times like these, wrap your arms around me like this... Ha...」
+					PRINTFORMDW Meiling's eyes look slightly bloodshot as she lectures %PARSE("you",5)%...
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML 「Ha, Wanting to help me guarding the gate, how nice...」
+					PRINTFORML 「... But please, don't get too close, okay...?」
+					PRINTFORMDL Meiling takes a step away from %PARSE("you")%.
+					PRINTFORMDW She pretends as if her nipples aren't visibly erect...
+				CASE 1
+					PRINTFORML 「...Aah～ Is work already over～... Fu...」
+					PRINTFORMDL Meiling begins moving suddenly, her body overcome with desire.
+					PRINTFORML 「Ha, Sei, Fuu.... Nnn...! What is it?」
+					PRINTFORMDL Every time her clothes rub against her crotch, she lets out a moan.
+					PRINTFORMDL Meiling pushes her arms and legs out as if to drive away all evil thoughts.
+					PRINTFORMDW But to %PARSE("you")% it just looks like an obscene performance...
+				CASE 2
+					PRINTFORML 「Oh right, if you help me with the garden I'll be saved...」
+					PRINTFORMDL Meiling thanks %PARSE("you")% awkwardly, her legs unsteady as she leads %PARSE("you",5)%.
+					PRINTFORML 「Yes, here are the tools...」
+					PRINTFORML 「You do that part, I'll do this part...」
+					PRINTFORMDW Meiling stares occasionally at the petals in the flowers, her hands frozen in action...
+				CASE 3
+					PRINTFORML 「Ha... Yes...?」
+					PRINTFORMDL %PARSE("You distract")% Meiling from the tedium of gatekeeping by talking with her.
+					PRINTFORML 「He, Is that so...」
+					PRINTFORMDW But Meiling is delirious, just answering yes...
+				CASEELSE
+					PRINTFORML 「Fuu, Fuu...」
+					PRINTFORMDL The two of %PARSE("you",4)% guard the gate, sweeping the area around it.
+					PRINTFORMDL Meiling swings her ass unconsciously, her soft behind swaying enchantingly.
+					PRINTFORML 「... What are you staring at...?」
+					PRINTFORMDW As %PARSE("you see")% her blushing face, the desire to tease her wells up in %PARSE("you",5)%...
+			ENDSELECT
+		ENDIF
+	;通常
+	ELSE
+		IF TALENT:恋人
+			IF TFLAG:193 == 1
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Ooh! As expected of %CALLNAME:MASTER%～」
+						PRINTFORMDL Meiling watches %PARSE("you")% as %PARSE("you repel",1)% an intruder, her eyes sparkling.
+						PRINTFORML 「You've made me fall in love you all over, Fufu♪」
+						PRINTFORML 「Well then, as a reward from me... Nchuu.」
+						PRINTFORMDW Meiling's soft lips touch %PARSE("your")% cheek, and all of a sudden %PARSE("you feel",1)% more motivated to work..
+					CASEELSE
+						PRINTFORMDL %PARSE("You deal")% with some visitors successfully.
+						PRINTFORMW 「Iyaa, Having %CALLNAME:MASTER% really saved me.」
+				ENDSELECT
+			ELSEIF TCVAR:K58C_居眠りフラグ == 1
+				PRINTFORML 「Guu～ Supi～ Guu～ Supi～...」
+				PRINTFORMDL Meiling is nodding off, a magnificent, large bubble expanding and shrinking as she snores.
+				PRINTFORMDL Thinking of her wellbeing, %PARSE("you")% regretfully %PARSE("poke")% the giant bubble, a loud pop sound is heard as it breaks.
+				PRINTFORML 「Uhiyaa!? What is it!? Are we under attack!?」
+				PRINTFORMDW Jumping to her feet, Meiling looks around, carefully scanning her surrounding...
+			ELSE
+				SELECTCASE RAND:5
+					CASE 0
+						PRINTFORML 「Fun Fun Fuーn, Working together with %CALLNAME:MASTER%～♪」
+						PRINTFORMDL Meiling is in high spirits as she guards the gate.
+						PRINTFORMW 「With me and %CALLNAME:MASTER% here, any opponent can be beatenー!」
+					CASE 1
+						PRINTFORML 「Ooh, %CALLNAME:MASTER%'s help counts invaluable～」
+						PRINTFORML 「So I guess it's time for me to go find somewhere to rest...」
+						PRINTFORML 「Alright, I won't, sorry.」
+						PRINTFORML 「... With %CALLNAME:MASTER% standing next to me I feel safe enough to fall asleep even standing up...」
+						PRINTFORMDW Even if she says that she can't help herself... Looks like she fell asleep...
+					CASE 2
+						PRINTFORML 「Well then, we'll stay here for a while♪」
+						PRINTFORMDL Meiling smiles as %PARSE("you offer")% to help her.
+						PRINTFORML ... And what about work?  %PARSE("You ask",1)%.
+						PRINTFORML 「Ehehe, We'll share the workload...」
+						PRINTFORMDW Grabbing %PARSE("your",1)% hand, Meiling laughs as she smiles, %PARSE("your",2)% fingers entangling...
+					CASE 3
+						PRINTFORML 「Then, let's check customers who come to visit together.」
+						PRINTFORML 「The number of people coming have increased, so you're helping me a lot, really.」
+						PRINTFORMDW %PARSE("You answer")% it's no problem, and %PARSE("begin")% guarding the gate with Meiling.
+					CASEELSE
+						PRINTFORML 「Ah, There's also some light gardening to do.」
+						PRINTFORMDL %PARSE("You")% and Meiling take care of the flower beds together.
+						PRINTFORML 「～♪～♪」
+						PRINTFORMDW Meiling hums a tune as she tends to the garden, and %PARSE("you")% can't help but break out a smile.
+				ENDSELECT
+			ENDIF
+		ELSEIF TALENT:恋慕
+			IF TFLAG:193 == 1
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Ohh! As expected of %CALLNAME:MASTER%～」
+						PRINTFORMDL Meiling praises %PARSE("you")% after she sees %PARSE("you",5)% apprehend an intruder.
+						PRINTFORML 「But if %CALLNAME:MASTER% does too well I'll be out of a job.」
+						PRINTFORML 「... So could you just, please take it a bit easier? Fufu.」
+						PRINTFORMDW She laughs a bit happily though.
+					CASEELSE
+						PRINTFORMDL %PARSE("You deal")% with some visitors successfully.
+						PRINTFORMW 「Iyaa～ Having %CALLNAME:MASTER% really saved me.」
+				ENDSELECT
+			ELSEIF TCVAR:K58C_居眠りフラグ == 1
+				PRINTFORML 「Uu～n... Munya Munya.」
+				PRINTFORML 「Ah, If I'm together with %CALLNAME:MASTER% I won't fall asleep.」
+				PRINTFORML 「Alright, I'll be fine, I'll be fine～～.... Guu...」
+				PRINTFORMDW With a speed bordering on a special ability, Meiling places her head on %PARSE("your")% shoulder and immediately falls asleep.
+			ELSE
+				SELECTCASE RAND:5
+					CASE 0
+						PRINTFORML 「Ehehe, Let's stand watch together～」
+						PRINTFORMDL %PARSE("You")% and Meiling stand near the gate.
+						PRINTFORMW 「Thank you for the help♪」
+					CASE 1
+						PRINTFORML 「Err, Come a bit closer, a bit more, stop there...」
+						PRINTFORML 「A bit... Ah, Right there! This is perfect!」
+						PRINTFORMDL %PARSE("You",3)% two stand on either side of the gate, and Meiling appears ecstatic.
+						PRINTFORML 「I knew it, it works a lot better when we stand on either side like this! It just feels right.」
+						PRINTFORMDW Meiling is rather worked up as she talks about something...
+					CASE 2
+						PRINTFORMDL %PARSE("You")% and Meiling scan the surrounding area while playing Shiritori.
+						PRINTFORMW 「If we keep talking like this there's no way I'll fall asleep～... So, next is...」
+					CASE 3
+						PRINTFORML 「Then, let's check customers who come to visit together.」
+						PRINTFORML 「The number of people coming have increased, so you're helping me a lot, really.」
+						PRINTFORMDW %PARSE("You answer")% it's no problem, and %PARSE("begin")% guarding the gate with Meiling.
+					CASEELSE
+						PRINTFORML 「Anyway, what do you think of guarding the gate at the Scarlet Devil Mansion...?」
+						PRINTFORMDL Meiling asks %PARSE("you")% a question suddenly.
+						PRINTFORML 「Or perhaps you come here just for me～? Or something. Ahaha♪」
+						PRINTFORMDL She laughs, her eyes telling you it's a joke, but %PARSE("you respond",1)%, saying it's something like that.
+						PRINTFORML 「Wh-... H-Hey, saying stuff like that's...」
+						PRINTFORMDW Meiling stammers, her face completely red and utterly adorable...
+				ENDSELECT
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF TFLAG:193 == 1
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Oohhー Nice work!」
+						PRINTFORMDL When %PARSE("you pin")% down an intruder trying to climb the wall, Meiling rushes over and beats them up in no time.
+						PRINTFORML 「Nice save. You're getting pretty good at this♪」
+						PRINTFORMW 「The clever ones can be pretty difficult～」
+					CASEELSE
+						PRINTFORMDL %PARSE("You deal")% with some visitors successfully.
+						PRINTFORMW 「Dealing with guests elegantly feels so good～」
+				ENDSELECT
+			ELSEIF TCVAR:K58C_居眠りフラグ == 1
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Munya... Suuu...」
+						PRINTFORMDL Despite %PARSE("your")% standing next to her, Meiling is sound asleep.
+						PRINTFORMDL As soon as the thought of playing a prank on her enters %PARSE("your",1)% mind, she wakes up.
+						PRINTFORML 「Nya! Some evil intent...!?」
+						PRINTFORML 「...Are? Must have imagined it...」
+						PRINTFORMDW It seems she can still function as a gatekeeper...
+					CASEELSE
+						PRINTFORMDL As %PARSE("you stand")% watch next to the gate, %PARSE("you",1)% can hear someone sleeping on the other side.
+						PRINTFORML 「...Uu, Supahー... Guu... Uu, Supahー... Guu...」
+						PRINTFORMDL When %PARSE("you call")% out to her, she responds reflexively with her eyes shut.
+						PRINTFORML 「Naa... This is a move meant to catch the opponent off guard, big jab... Zzz...」
+						PRINTFORMDW ... She has got to be sleeping...
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:5
+					CASE 0
+						PRINTFORML 「You have so much free time... You don't even need to help me.」
+						PRINTFORMDL Meiling says it in an earnest voice, so you pretend to walk away.
+						PRINTFORML 「W- Wait don't leave...! Thank you so much for helping me!」
+						PRINTFORMDW Saying %PARSE("you",1)% can't leave in that case, %PARSE("you return")% to the gate satisfied...
+					CASE 1
+						PRINTFORML 「When I'm in the middle of concentrating it's dangerous to approach, please call out to me instead.」
+						PRINTFORML 「For example... For example when one of Sakuya-san's knifes comes flying by.」
+						PRINTFORML 「That'll be %CALLNAME:MASTER%'s duty for now. Please?」
+						PRINTFORMW ... Despite feeling something was off, %PARSE("you give")% a quick nod in reply.
+					CASE 2
+						PRINTFORML 「So, when I'm checking visitors, please keep track of the surroundings.」
+						PRINTFORML 「Basically I'll mostly be dealing with people who want to go the casino or deal with Charisma.」
+						PRINTFORMDW %PARSE("You do")% as instructed and %PARSE("assist")% Meiling...
+					CASE 3
+						PRINTFORML 「Nn, Yo, Ho, Ho...」
+						PRINTFORMDL To not get stiff from standing still for too long, Meiling does light exercises from time to time.
+						PRINTFORMDW %PARSE("You decide")% to imitate her movements.
+					CASEELSE
+						PRINTFORML 「Un-un, everything is calm today!」
+						PRINTFORML 「So I'll be nodding off, as long as %PARSE("you don't")% have questions...」
+						PRINTFORMDW After delivering a light chop with %PARSE("your",1)% hand to Meiling's head, %PARSE("you continue")% working...
+				ENDSELECT
+			ENDIF
+		ELSE
+			IF TFLAG:193 == 1
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Oohhー Nice work!」
+						PRINTFORMDL When %PARSE("you spot")% an intruder trying to climb the wall Meiling rushes over and beats them up in no time.
+						PRINTFORML 「You noticed it was a suspicious person right away.」
+						PRINTFORMW 「Thanks for the help, repelling him took no time this way.」
+					CASEELSE
+						PRINTFORMDL %PARSE("You deal")% with some visitors successfully.
+						PRINTFORMW 「Hee, you're doing pretty well.」
+				ENDSELECT
+			ELSEIF TCVAR:K58C_居眠りフラグ == 1
+				PRINTFORMDL As %PARSE("you stand")% watch next to the gate, %PARSE("you",1)% can hear someone sleeping on the other side.
+				PRINTFORML 「...Uu, Supahー... Guu... Uu, Supahー... Guu...」
+				PRINTFORMDL When %PARSE("you call")% out to her, she responds reflexively with her eyes shut.
+				PRINTFORML 「Naa... This is a move meant to catch the opponent off guard, big jab... Zzz...」
+				PRINTFORMDW ... She has got to be sleeping...
+			ELSE
+				SELECTCASE RAND:5
+					CASE 0
+						PRINTFORML 「For now it's fine to just stand here and accept visitors.」
+						PRINTFORMW 「Just by there being someone here works fine to prevent crime.」
+					CASE 1
+						PRINTFORML 「It's so peaceful～」
+						PRINTFORMDL Two people stand firmly in front of the gate.
+						PRINTFORMW 「... Wanna do shiritori?」
+					CASE 2
+						PRINTFORML 「When I'm checking visitors, make sure to keep watch over the surroundings.」
+						PRINTFORML 「Basically I'll mostly be dealing with people who want to go the casino or deal with Charisma.」
+						PRINTFORMDW %PARSE("You do")% as instructed and %PARSE("assist")% Meiling...
+					CASE 3
+						PRINTFORML 「Nn, Yo, Ho, Ho...」
+						PRINTFORMDL To not get stiff from standing still for too long, Meiling does light exercise from time to time.
+						PRINTFORMDW %PARSE("You decide")% to imitate her movements.
+					CASEELSE
+						PRINTFORML 「If you find a suspicious person, don't hestitate...」
+						PRINTFORMW （Nodding off in front of %CALLNAME:MASTER% wouldn't be good... But I'm so tired...）
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;305,膝枕してもらう
+;TFLAG:193(-5=MASTERがTARGETよりも巨体の場合(TALENT:MASTER:体型 > TALENT:体型 + 2) 1=大成功 0=成功 -1=失敗)(-5以外は地の文分岐無し)
+;ABL:親密(6以上=顔をのぞき込みながら頭を撫でてくれる 3以上=ただ頭を撫でてくれる 2以下=縮こまっている)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_305
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_305_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_305_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		SELECTCASE RAND:12
+			CASE 0 to 2
+				PRINTFORML 「Yes yes, come here then please♪」
+				PRINTFORML 「You're welcome to use my lap anytime.」
+				PRINTFORMDL Meiling beckons %PARSE("you")%, her entire face beaming with a smile.
+				PRINTFORMDL %PARSE("You smile")% contently as a sense of safety seems to cover %PARSE("your",1)% entire body.
+				PRINTFORMW 「Ehehe... I'm so happy...%UNICODE(0x2665)%」
+			CASE 3 to 4
+				PRINTFORML 「How does it feel?」
+				PRINTFORMDL Asks Meiling, her face calm.
+				PRINTFORMDL %PARSE("You answer")% it's the best, and slowly a smile begins creeping in.
+				PRINTFORML 「Ehehe, Is that so, Un Un♪」
+				PRINTFORML 「But no matter what, it's a special seat exclusively for %CALLNAME:MASTER%'s use♪」
+				PRINTFORMDW Resting %PARSE("your",1)% head, %PARSE("you savor")% the sensation...
+			CASE 5 to 6
+				PRINTFORML 「Fufu. When I do this you look a bit like a child.」
+				PRINTFORML 「Ehehe... It's so cute♪」
+				PRINTFORMDL Meiling laughs warmly, and %PARSE("you decide")% to appear as an innocent child.
+				PRINTFORMDL Turning %PARSE("yourself")% over, %PARSE("you bury your")% face between her thighs and %PARSE("begin")% rubbing %PARSE("your",1)% face against her crotch.
+				PRINTFORML 「...Nnhh, Hey... You're quite the perverted child～ ...Funyaa!?」
+				PRINTFORMW 「Aan, Don't breast warm air there! It's absolutely forbidden...!」
+			CASE 7 to 8
+				PRINTFORML 「Fuu... Nnn... Ano, %CALLNAME:MASTER%...?」
+				PRINTFORMDL %PARSE("You look")% up at Meiling, and she pats %PARSE("your",1)% sleeping face gently.
+				PRINTFORMDL Of course %PARSE("you're",1)% awake, merely pretending to be asleep.
+				PRINTFORML 「By the way, what do you do when you feel yourself running out of patience...?」
+				PRINTFORML 「For instance, if I were to...」
+				PRINTFORMDL Meiling blows in %PARSE("your")% ear, making %PARSE("your",1)% entire body twitch as it tickles.
+				PRINTFORMDW %PARSE("You",3)% two continue playing %PARSE("your",2)% game of chicken...
+			CASE 9 to 10
+				PRINTFORML 「...Nnn～～...」
+				PRINTFORMDL After staring at %PARSE("you")% with a serious gaze, Meiling bends her torso over.
+				PRINTFORML 「Breast Sign・Visions of Oppai.」
+				PRINTFORMDL %PARSE("your",1)% entire body tenses up as you get enveloped by her enormous breasts.
+				PRINTFORMDL The supple texture mixes with the scent of a girl...
+				PRINTFORML 「Oya Oya, It seems my charm won over you, Ｋ.Ｏ～」
+				PRINTFORMDW Meiling sits up while laughing boldly, as %PARSE("you admit")% defeat...
+			CASEELSE
+				;失敗版。
+				PRINTFORML 「...Nnn～～...」
+				PRINTFORMDL After staring at %PARSE("you")% with a serious gaze, Meiling bends her torso over.
+				PRINTFORML 「Breast Sign・Visions of Oppai.」
+				PRINTFORMDL %PARSE("your",1)% entire body tenses up as you get enveloped by her enormous breasts.
+				PRINTFORMDL The supple texture mixes with the scent of a girl, almost suffocating %PARSE("you",5)%... Suffocating... Ah, This is bad...
+				PRINTFORMDL Held underneath Meiling's breasts, %PARSE("you enjoy")% it as much as %PARSE("you",1)% can, but %PARSE("tap")% out as %PARSE("you begin",1)% losing consciousness...
+				PRINTFORML 「Oya Oya, It seems my charm won over you, Ｋ.Ｏ......Oya?」
+				PRINTFORML 「Ababa, %CALLNAME:MASTER%, please wake up, %CALLNAME:MASTER%!?」
+				PRINTFORMDW As consciousness returns to %PARSE("you")%, she seems to just have enjoyed giving %PARSE("you",5)% a lap pillow... Sort of.
+		ENDSELECT
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:10
+			CASE 0 to 3
+				PRINTFORMDL Pon Pon, Meiling pats her lap and invites %PARSE("you")%.
+				PRINTFORML 「Hora, %CALLNAME:MASTER%. Come here please♪」
+				PRINTFORMDL Nestled in under Meiling's breasts, a sense of security washes over %PARSE("you",5)%...
+				PRINTFORML 「Ehehe... Do you want to be pampered even more...?」
+				PRINTFORMDL Each time Meiling looks down on %PARSE("you")%, her braids brush against %PARSE("your",1)% face, tickling %PARSE("you",5)%.
+				PRINTFORMDW %PARSE("You rest")% easily in Meiling's lap, enjoying the experience...
+			CASE 4 to 6
+				PRINTFORML 「Fufu, Where are you looking?」
+				PRINTFORMDL %PARSE("You stare")% at the enormous breasts before %PARSE("you",5)%, as Meiling calls out to %PARSE("you",5)%.
+				PRINTFORML 「Sometimes you act like such a baby...」
+				PRINTFORMDL %PARSE("Your",1)% eyes hazy with tiredness, Meiling begins looking like a mirage.
+				PRINTFORMDW Resting %PARSE("your",1)% head on her thighs, %PARSE("you begin")% rubbing %PARSE("your",1)% head against her...
+			CASE 7 to 8
+				PRINTFORML 「Does it feel good?」
+				PRINTFORMDL Asks Meiling, her face calm.
+				PRINTFORMDL %PARSE("You answer")% it's pretty okay, and Meiling puts a finger on %PARSE("your",1)% lips.
+				PRINTFORML 「Should I play a prank on this lying mouth～...?」
+				PRINTFORML 
+				PRINTFORMDL Correcting %PARSE("yourself")%, %PARSE("you say")% it's the best as %PARSE("you grab",1)% her finger and %PARSE("put")% it in %PARSE("your",1)% mouth, wrapping %PARSE("your",1)% tongue around it.
+				PRINTFORML 「Ee!? What are you... Just...」
+				PRINTFORML 「Don't act like a spoiled child... Nn...」
+				PRINTFORMDW Meiling looks drunk on pleasure, savoring the sensation as %PARSE("you lick")% her finger...
+			CASEELSE
+				PRINTFORML 「Fufu... If you want to sleep, go right ahead.」
+				PRINTFORMDL Meiling runs her fingers through %PARSE("your")% hair lovingly.
+				PRINTFORMDL %PARSE("You close your",1)% eyes softly, and soon after %PARSE("hear")% something...
+				PRINTFORML 「... %CALLNAME:MASTER% will stay in my heart forever...」
+				PRINTFORMW 「... But this is where %CALLNAME:MASTER% belongs...」
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:9
+			CASE 0 to 2
+				PRINTFORML 「You seem to be enjoying it. My lap pillow is unbeatable.」
+				PRINTFORML 「... It's quite popular with Flan-Ojousama, for one.」
+				PRINTFORMDL It seems to be common, as Meiling gives %PARSE("you")% a lap pillow without delay.
+				PRINTFORMDL Doing this seems to awaken some maternal instincts in her...
+				PRINTFORML 「Alright, come here...」
+				PRINTFORMDW %PARSE("You are")% invited, and %PARSE("put")% %PARSE("your",1)% head on her thighs...
+			CASE 3 to 5
+				PRINTFORML 「So uhh... Is it comfortable?」
+				PRINTFORMDL Says Meiling, a bit embarrassed.
+				PRINTFORMDL %PARSE("You answer")% that it's okay, to which Meiling responds by pulling on %PARSE("your",1)% cheeks.
+				PRINTFORML 「Muu～ I won't forgive you if that's the answerー」
+				PRINTFORMDW %PARSE("You correct")% %PARSE("your",1)% answer, and the assault stops, then between the two mountains a smiling face can be seen...
+			CASE 6 to 7
+				PRINTFORML 「Uhh... Just...」
+				PRINTFORML 「... Stop staring at my breasts, okay?」
+				PRINTFORMDL With such an incredible view before one's eyes, looking away is just impossible.
+				PRINTFORML 「Please don't be difficult...」
+				PRINTFORMDW Meiling turns her face away in embarrassment, but she seems a bit happy.
+			CASEELSE
+				PRINTFORML 「No, well, this is still way too embarrassing...」
+				PRINTFORMDL Meiling blushes slightly as she mumbles something.
+				PRINTFORMDL %PARSE("You ask")% her why she does it, then.
+				PRINTFORML 「N- No particular reason...」
+				PRINTFORML 
+				PRINTFORMDL ... Despite saying that, Meiling appears to be even more embarrassed as she begins fidgeting.
+				PRINTFORML 「Hiyaa! S- Stop t- tickling me...!」
+				PRINTFORMDW Meiling is flustered, and her face beet red...
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:7
+			CASE 0 to 2
+				PRINTFORML 「Uhh...? A lap pillow?」
+				PRINTFORML 「... Asking that brazenly is pretty impressive...」
+				PRINTFORMDL Meiling is a bit bewildered...
+				PRINTFORML 「... Please don't do anything weird.」
+				PRINTFORMDW Fidgeting nervously, Meiling sits still as %PARSE("you rest your")% head in her lap.
+			CASE 3 to 5
+				PRINTFORML 「So uhh... Is it comfortable?」
+				PRINTFORMDL Says Meiling a bit embarrassed.
+				PRINTFORMDL Not bad, \@THIRD_PERSON?answers %CALLNAME:MASTER%#you answer\@, and Meiling begins scratching her head in confusion...
+				PRINTFORMW 「I- Is that so. Well that's good I guess...」
+			CASEELSE
+				PRINTFORML 「Err... To be frank, this is way too embarrassing...」
+				PRINTFORMDL As %PARSE("you rest your")% head on Meiling's knees, her face burns red.
+				PRINTFORML 「Uuu... Why did I allow this...」
+				PRINTFORMDW Enjoying the soft pillow, %PARSE("you rest")% easy...
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;306,お腹を撫でる
+;TFLAG:193(1=ABL:親密6以上かつ妊娠時 0=成功 -1=ABL:親密5以下)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_306
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_306_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_306_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時間停止中
+	IF FLAG:70
+		IF TALENT:妊娠
+			IF CFLAG:無自覚妊娠
+				PRINTFORMDW Each time %PARSE("you pat")% her stomach, the fact that %PARSE("you're",1)% the only one that knows she's carrying %PARSE("your",1)% child wells up inside %PARSE("you",5)%...
+			ELSE
+				PRINTFORMDW Recalling how %PARSE("you",1)% seeded her, %PARSE("you feel")% a sense of conquest through %PARSE("your",1)% hand as %PARSE("you stroke your",1)% prize...
+			ENDIF
+		ELSEIF 充填率(TARGET,1) > 30
+			PRINTFORMDL %PARSE("You recall")% the sense of conquest as %PARSE("you stroke",1)% the bulge on Meiling's stomach.
+			PRINTFORMDW Caressing it carefully, %PARSE("you nod",1)% to %PARSE("yourself")%...
+		ENDIF
+	;通常
+	ELSE
+		IF TALENT:妊娠
+			IF TFLAG:193 == 1
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「It'd be nice if he grew up to be healthy. \@ CFLAG:身に覚え_母 == 1 && !CFLAG:無自覚妊娠 ? Our baby # This child \@...」
+						PRINTFORMDW Meiling holds her hands above yours, when you suddenly feel a kick...
+					CASE 1
+						PRINTFORML 「He's growing little by little, %CALLNAME:MASTER%.」
+						PRINTFORMDL As %PARSE("you touch")% Meiling's stomach, just how much she has grown dawns on %PARSE("you",5)%.
+						PRINTFORMW 「I think this is that weight of life thing, or whatever it was called.」
+					CASEELSE
+						PRINTFORML 「Thank you for the attention...」
+						PRINTFORMDL %PARSE("You're")% moved as Meiling utters those words.
+						PRINTFORMW 「There is life dwelling in there... Treat it carefully.」
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「... Don't be so rough please.」
+						PRINTFORMDW Asks Meiling, and %PARSE("you begin")% caressing her as gently as %PARSE("you",1)% can...
+					CASEELSE
+						PRINTFORML 「... A bit harder please.」
+						PRINTFORMDW %PARSE("You withdraw your")% hands, worried about Meiling.
+				ENDSELECT
+			ENDIF
+		ELSEIF 充填率(TARGET,1) > 30
+		;\@ TCVAR:自覚 ?  #  \@
+			IF TCVAR:無理矢理
+				PRINTFORML 「...! Forcibly cumming inside me as you want, really...!」
+				PRINTFORMDW Meiling grabs %PARSE("your")% hand in an almost crushing grip as %PARSE("you pat",1)% her stomach...
+			ELSEIF TALENT:恋慕
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Patting me like that, \@ TCVAR:種付けられ自覚 ?I guess you want to pour even more inside, Baka...#my stomach feels hot for some reason...\@」
+						PRINTFORMDW Meiling stares up at you as she mutters something, putting her hand on top of yours..
+					CASE 1
+						PRINTFORML 「Haaa... \@ TCVAR:種付けられ自覚 ?Even from outside, I can feel %CALLNAME:MASTER%'s energy inside me#For some reason, I can feel %CALLNAME:MASTER%'s energy inside me \@...」
+						PRINTFORML 「It feels warm, calming me down... Haa...」
+						PRINTFORMDW Contrasting her words, moans slip out from Meiling's lips...
+					CASEELSE
+						PRINTFORML 「Hyan, It tickles when you knead me like that...」
+						PRINTFORMDL So Meiling says, but her words light a fire in %PARSE("you")% instead.
+						PRINTFORML 「Nnn!? S- Stop! You're not allowed to fondle me like that... Hiyaa!」
+						PRINTFORMW \@ TCVAR:種付けられ自覚 ?「What would you do if it spilled out... Fuaa...」#（If I leak semen in front of %CALLNAME:MASTER%... Aah...）\@
+				ENDSELECT
+			ELSEIF TALENT:愛欲 || TALENT:セフレ || TALENT:ヤリマン
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「Under your palm, inside there... Hiu...」
+						PRINTFORMDL Meiling fidgets romantically as you stroke her stomach.
+						PRINTFORML 「... I can't calm down as \@ TCVAR:種付けられ自覚 ?a certain someone poured lots of semen#someone came\@ inside me, holding it all in is just...」
+						PRINTFORMDW Wanting her to be even more disordered, you begin patting her with more strength...
+					CASE 1
+						PRINTFORML 「\@ TCVAR:種付けられ自覚 ?You came so much inside me...#Aren't you fondling me a bit lewdly...?\@」
+						PRINTFORMDL Meiling breathes roughly as you pat her sensitive stomach..
+					CASE 2
+						PRINTFORML 「\@ TCVAR:種付けられ自覚 ?Oya Oya, Are you feeling a sense of conquest?#... Is this an invitation?\@」
+						PRINTFORMDW Meiling giggles, her eyes full of want...
+					CASEELSE
+						PRINTFORML 「\@ TCVAR:種付けられ自覚 ?Aaan, Have you still not shot enough inside me?#Shouldn't you go a bit lower, or a bit higher...?\@」
+						PRINTFORML 「Is this some kind of denial play?」
+						PRINTFORMDW Meiling places her hand on %PARSE("yours")%, matching %PARSE("your",1)% movement as %PARSE("you stroke",1)% her stomach...
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Nnnhh, Wait, my stomach...」
+						PRINTFORMDL Meiling moans as %PARSE("you caress")% her stomach, her womb pumped full of semen.
+						PRINTFORMW 「I- It's because you're stroking my stomach so weirdly...」
+					CASE 1
+						PRINTFORMDL Meiling stays quiet as %PARSE("you caress")% her stomach.
+						PRINTFORML 「I- It tickles around there...」
+						PRINTFORMW （I- I have to make sure nothing spills out...）
+					CASEELSE
+						PRINTFORML 「Uu, Kku... Could you stop fondling my stomach...?」
+						PRINTFORMDL You ask why that is, and Meiling blushes and turns away.
+						PRINTFORML 「\@ TCVAR:種付けられ自覚 ?Y-You know why, and still you... Fuu...#N- No real reason you know... Nnn...\@」
+						PRINTFORMDW While making fun of the semen-filled Meiling, you caress her stomach softly...
+				ENDSELECT
+			ENDIF
+		;のーまる
+		ELSE
+			IF TALENT:恋慕
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「It's embarrassing, but, I feel calm when %CALLNAME:MASTER% strokes me...」
+						PRINTFORML 「Or perhaps, you want to have children? %CALLNAME:MASTER%♪」
+						PRINTFORMDW Meiling giggles as %PARSE("you fondle")% her tight stomach.
+					CASE 1
+						PRINTFORML 「Fu, Haa, Hoo... Ahaha, It tickles, s-stop!」
+						PRINTFORMDL Meiling steps in place, trying to dodge as %PARSE("you stroke")% her stomach.
+						PRINTFORMDL %PARSE("You start",1)% caressing her with zeal.
+						PRINTFORMW 「Yes Yes. That's enough... Uhiyaa, Sto-ahaha!」
+					CASE 2
+						PRINTFORML 「... Inside there, just below the navel, is the core of your spirit, an important place for Qiqong.」
+						PRINTFORML 「Well, the median line is also important, but is also a weak spot.」
+						PRINTFORML 「No, I don't mean it's weak to erotic stuff... But right around there is also...」
+						PRINTFORMDW Meiling begins lecturing %PARSE("you")% as %PARSE("you stroke",1)% her stomach...
+					CASEELSE
+						PRINTFORML 「Uーn, Are you attracted by my stomach?」
+						PRINTFORMDW Meiling is completely at %PARSE("your")% mercy as %PARSE("you pet",1)% her stomach.
+				ENDSELECT
+			ELSEIF ABL:親密 >= 6
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「Nn? You're interested in my abdominal muscles?」
+						PRINTFORML 「They're not rock hard, since they've also got to be flexible.」
+						PRINTFORMDW As %PARSE("you touch")% Meiling's stomach, %PARSE("you",1)% can feel her muscles tense up a bit.
+					CASE 1
+						PRINTFORML 「W- I'm a bit ticklish, but...」
+						PRINTFORMDW You decide to play a prank on Meiling and tickle her, but she quickly gets away.
+					CASE 2
+						PRINTFORML 「... What is it? Do you want a lecture on abdominal breathing?」
+						PRINTFORMDW As Meiling talks, every breath is accompanied by her stomach rising and falling beautifully.
+					CASEELSE
+						PRINTFORML 「Why do you want to touch my stomach?」
+						PRINTFORMDW Meiling tilts her head in confusion...
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「Stop, why are you touching my stomach?」
+					CASE 1
+						PRINTFORMW 「... What are you doing?」
+					CASEELSE
+						PRINTFORMW 「Don't just carelessly touch other people's stomachs.」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;307,頬をつまむ
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文分岐無し
+	;以下は先に書いた条件が優先される
+	;TALENT:恋慕(受け入れつつ笑顔でやり返す
+	;ABL:親密(6以上=おずおずとやり返す
+	;ABL:従順(5以上=されるがまま
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_307
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_307_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_307_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時間停止中
+	IF FLAG:70
+	;睡眠中
+	ELSEIF CFLAG:睡眠
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Auu... Showwy for sweeping...」
+				PRINTFORML 「...Zzz...」
+				PRINTFORMDW It seems she has nodded off and is sleeping. This is sowing bad karma...
+			CASE 1
+				PRINTFORML 「Muga, Fuah...」
+				PRINTFORML 「...Ehehehehe... Guuu...」
+				PRINTFORMDW Why is she laughing...
+			CASEELSE
+				PRINTFORML 「Munya... As the strongest gate keeper, this much is...」
+				PRINTFORML 「...Kikanyu, Kikanyawa... Munya Munya...」
+				PRINTFORMDW She seems to be fighting someone in her dream...
+		ENDSELECT
+	;通常
+	ELSE
+		IF TALENT:恋慕
+			PRINTDATA
+				DATALIST
+					DATAFORM 「Nyufufui... I'll pay you back.」
+					DATAFORM 「Uu～n, Punyu Punyu... Fuehehe.」
+					DATAFORM Meiling pulls on %PARSE("your")% cheeks adorably.
+				ENDLIST
+				DATALIST
+					DATAFORM 「Aa, MuUuu～...Ei.」
+					DATAFORM Enjoying her soft cheeks, yours are also caught.
+					DATAFORM 「Ehehe～ I'll get back at you～」
+					DATAFORM %PARSE("You",2)% keep smiling as %PARSE("you",2)% pull on each other's cheeks...
+				ENDLIST
+				DATALIST
+					DATAFORM 「Nnyu? Nmumumumu.」
+					DATAFORM As %PARSE("you pull")% on Meiling's cheeks, they puff up and become red.
+					DATAFORM 「Myuoー Hoo, Fumyuu!」
+					DATAFORM 「...Ahaha. Are you laughingー?」
+					DATAFORM The two of %PARSE("you",4)% keep pulling on each other's cheeks, and eventually %PARSE("you",2)% burst out laughing...
+				ENDLIST
+			ENDDATA
+		ELSEIF ABL:親密 > 5
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Mui. Moououou～」
+					PRINTFORML 「Nobiru～ Nyabiru～」
+					PRINTFORMDL Meiling's reactions are fun, so %PARSE("you keep")% going.
+					PRINTFORML 「Muoー In- In return...」
+					PRINTFORMDW Meiling mounts a counterattack, grabs both %PARSE("your")% cheeks, and begins pulling on them...
+				CASEELSE
+					PRINTFORML 「Funyi, ouu～...」
+					PRINTFORML 「If you keep going my cheeks might fall offー... Miyuu...」
+					PRINTFORMDL %PARSE("You play")% with Meiling's cheeks to the sound of her noises.
+					PRINTFORMW 「Ehehe, that you like this so much...」
+			ENDSELECT
+		ELSEIF ABL:従順 >= 5
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Fumyu... Uhh... Ehh...」
+					PRINTFORML 「... P- Pleashe shtop.」
+					PRINTFORMDW Meiling doesn't know how to react, but seems to be enjoying it a bit.
+				CASEELSE
+					PRINTFORML 「Aauー」
+					PRINTFORML 「Nyu-nyu-nyu... Shtop～」
+					PRINTFORMDW Meiling says "shtop" quite a lot of times before it's over...
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Funyugu, Stop it, Futtefua.」
+					PRINTFORML 「... Muii, My cheeks aren't toys～...」
+				CASEELSE
+					PRINTFORML 「Muooー, Nyuni Furufu...」
+					PRINTFORML 「Fumuu!... It tickles...」
+					PRINTFORMDL Her cheeks have swollen up completely...
+			ENDSELECT
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;308,頬をつつく
+;添い寝中or睡眠中限定
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_308
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_308_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_308_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;睡眠中
+	IF CFLAG:睡眠
+	;通常
+	ELSE
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;309,頭を撫でる
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;ABL:親密(6以上=通常成功時分岐
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_309
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_309_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_309_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時間停止中
+	IF FLAG:70
+	;睡眠中
+	ELSEIF CFLAG:睡眠
+	;通常
+	ELSE
+		SELECTCASE TFLAG:193
+		CASE 1
+			IF TALENT:恋慕
+				PRINTFORML 「Nfufu... Aahh～」
+				PRINTFORMW 「Aaa... I want you to stroke me forever～...」
+			ELSEIF ABL:親密 > 5
+				PRINTFORML 「Nn～ The way %CALLNAME:MASTER% caresses is so soothing...」
+				PRINTFORMW 「I wonder why... Nnn...」
+			ELSE
+				PRINTFORML 「Huh, surprising that you would know a move that could calm people this much.」
+				PRINTFORMW 「Un-Un, it's not that bad... Fuu...」
+			ENDIF
+		CASE 0
+			IF TALENT:恋慕
+				PRINTFORML 「Nn... This feels good....」
+				PRINTFORMW 「Ehehe, having you stroke me like this feels soo good... Fuuaa...」
+			ELSEIF ABL:親密 > 5
+				PRINTFORML 「Mmuuu～ You look so happy when you pat me I don't want to stop you.」
+				PRINTFORMW 「... Eh? I'm feeling good too? You must be imagining it, yeah, it's just your imagination.」
+			ELSE
+				PRINTFORML 「Hey now, I'm not a child, so it's a bit embarrassing...」
+				PRINTFORML 「Stop it, I must constantly be on guard...」
+				PRINTFORML 「... No way, did you just find a chink in my defense? Hmmm...」
+				PRINTFORMDW Meiling blushes a bit, while %PARSE("you groan")% to %PARSE("yourself")%.
+			ENDIF
+		CASE -1
+			IF ABL:親密 > 5
+				PRINTFORML 「Aaa～ Please don't do that right now.」
+				PRINTFORMW 「There is a time and place for that, but not now, Un-Un.」
+			ELSE
+				PRINTFORML 「Don't touch women's head and hair so recklessly.」
+				PRINTFORMW 「Even if you're on good terms, there are many who dislike it.」
+			ENDIF
+		ENDSELECT
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;331,お茶を淹れる（薬入り）
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_331
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_331_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_331_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;332,お酒をふるまう
+;TFLAG:193(0=下戸飲み成功 -1=下戸飲み失敗 -2=下戸飲み大失敗 -5=下戸飲みあきらめ)
+;TFLAG:194(51=どぶろく 52=清酒 53=鬼殺し)
+;ALCOHOL_TASTE(TFLAG:194)(15以上=気に入る 9以下=口に合わない)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_332
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_332_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_332_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;333,愚痴を聞く
+;TFLAG:193(6=大成功(酔い) 5=成功(酔い) 4=失敗(酔い) 3=大成功 2=成功 1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_333
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_333_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_333_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	SELECTCASE TFLAG:193
+		CASE 6
+		;大成功（酔い）
+		CASE 5
+		;成功（酔い）
+		CASE 4
+		;失敗（酔い）
+		CASE 3
+		;大成功
+		CASE 2
+		;成功
+		CASE 1
+		;失敗
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;334,杯を交わす
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;CFLAG:妊娠自覚状態(1=食事)
+;TALENT:酒耐性(-2=食事)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_334
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_334_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_334_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	SELECTCASE TFLAG:193
+		CASE 1
+		;大成功
+		CASE 0
+		;成功
+		CASE -1
+		;失敗
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;335,介抱する
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_335
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_335_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_335_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	SELECTCASE TFLAG:193
+		CASE 1
+		;大成功
+		CASE 0
+		;成功
+		CASE -1
+		;失敗
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;336,膝枕する
+;ABL:親密(4以下=居心地悪げ 9以下=恥ずかしげ それ以上=幸せそう
+;TIME_PROGRESS(TFLAG:膝枕した)(44以下=失敗
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_336
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_336_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_336_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193 > 0
+	;寝ちゃった
+	ELSE
+	;それ以外
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;350,押し倒す（時姦時イタズラする
+;TFLAG:194 (0=成功 1=人目がある　2=野外は嫌でござりまする　3=多人数プレイは勘弁　4=合意があってもムードが足りぬ）
+;TCVAR:抱き寄せ初回　1=普通に合意ゲット　2=先にキスぐらいしろよ　3=媚薬or発情には勝てなかったよお…　4=悔しい…刻印さえなければﾋﾞｸﾋﾞｸﾝ
+;5=強引に迫られると断れぬ(素質臆病持ち専用) 6=まんざらでもない　7=駄目　8=論外
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_350
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_350_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_350_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;351,連れ出す
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_351
+;連れ出しにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K58_351_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_351_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;TARGET連れ出し
+	IF CFLAG:同行 == 60
+	;TARGET以外連れ出し(TARGET同行中のみ
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;352,告白する
+;FLAG:甲斐性無(1=失敗)
+;TFLAG:193 (1=成功 0=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_352
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_352_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_352_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;353,イタズラする
+;FLAG:甲斐性無(1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_353
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_353_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_353_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;354,添い寝する（相手は起きて布団に招く感じ）
+;CFLAG:衰弱(1以上=起きない
+;CFLAG:お招き(0以外=起きない
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_354
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_354_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_354_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;355,時止め（地の文の改変程度に留めるべき
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_355
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_355_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_355_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;360,身を任せる
+;TCVAR:20(27=谷間を見せる 32=前から抱きつく 35=スカートの中を見せる 53=パイズリ 73=ぱふぱふ 77=乳を吸わせる 85=Ｖ挿入する 86=だいしゅきホールド 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_360
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_360_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_360_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;363,読み聞かせ（[幼稚]持ち専用）
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文分岐無し
+;CFLAG:添い寝中(1=布団orベッドの中で本を読む
+;MASTERがTARGETより大柄の場合、膝の上にTARGETを乗せる
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_363
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_363_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_363_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;364,豆まき(萃香、勇儀、スカーレット姉妹用
+;TFLAG:193(豆まきに参加してる人数
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_364
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_364_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_364_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;365,守矢神社へ移動(早苗、神奈子、諏訪子用
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_365
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_365_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_365_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;402,就寝
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_402
+;就寝にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K58_402_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_402_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;403,休憩
+;CFLAG:TARGET:睡眠(1=TARGETが寝てる隣で休憩
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_403
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_403_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_403_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;405,出掛ける(同行時デート
+;条件が厄介なので、COMF405 出掛ける.ERBを参照のこと
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_405
+;出掛けるにTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K58_405_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_405_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;TARGETとデート
+	IF CFLAG:同行
+	;TARGET以外とデート
+	ELSEIF CFLAG:MASTER:同行
+	;お出かけお見送り
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;410,掃除
+;FLAG:70(1=時間停止中
+;TFLAG:193(0=見てるだけ 1=一緒に掃除)
+;TFLAG:194(3=汚れ高 2=汚れ中 1=汚れ低 0=汚れ最小
+;OUTROOF(CFLAG:現在位置)(野外掃除（冬は雪かき
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_410
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_410_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_410_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;411,戦闘訓練
+;TFLAG:194(3=夏の昼間 2=ヤバい天気 1=悪天候 0=屋内or通常天気
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_411
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_411_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_411_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+;	PRINTDATAL
+;		DATAFORM 「鍛錬は継続が肝要。続けていれば大抵の事は成せるものですよ」
+;		DATAFORM 「気力を保つコツは、普段から己の内側に気を配る事から始まります」
+;		DATAFORM 「」
+;	ENDDATA
+;	PRINTFORMW 
+ENDIF
+RETURN 1
+;==================================================
+;412,勉強
+;ABL:教養(ABL:MASTER:教養より大=MASTERが教えてもらう ABL:MASTER:教養より小=TARGETが教えてもらう
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_412
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_412_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_412_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;413,料理
+;TFLAG:194(100以上=禁断のメニュー 3=デザート 2=主食 1=軽食
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_413
+;TFLAG:194が100以上の場合のみ
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_413_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_413_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+ENDIF
+RETURN 1
+;==================================================
+;414,食事を取る
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;TFLAG:194(1=ノーパンしゃぶしゃぶ 2=禁断のメニュー 31=ドーピングコンソメスープ 30=モッツァレラチーズとトマトのサラダ 34=ギンギー料理
+;TCVAR:MASTER:308(bit0=濃い味 bit1=薄味 bit3=激辛 bit4=激甘 bit5=わさび bit6=激酸っぱ
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_414
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_414_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_414_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;415,食事をふるまう
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;TCVAR:MASTER:308(bit0=濃い味 bit1=薄味 bit3=激辛 bit4=激甘 bit5=わさび bit6=激酸っぱ
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_415
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_415_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_415_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;416,演奏する
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;TFLAG:使用楽器(1=キーボード 2=ピアノ 3=ギター 4=トランペット 5=ヴァイオリン)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_416
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_416_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_416_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;417,昼寝をする
+;TFLAG:193(0=MASTERを抱き枕にして寝ている 1=MASTERの膝を枕にして寝ている 2=寝顔にキスされた 3=寝顔をのぞき込まれた 4=MASTERが膝枕されてる 5=秘処orペニス揉み
+;CFLAG:添い寝中(1=一緒に寝ている
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_417
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_417_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_417_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;421,願掛けする
+;条件が複雑なので、COMF421 願掛け.ERBおよび、EVENT_MESSAGE_COM400.ERBの願掛けするの項を参照のこと
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_421
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_421_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_421_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;422～430は、特殊コマンドなのでテンプレでは対応しません
+;==================================================
+
+;==================================================
+;431,お風呂でくつろぐ
+;TFLAG:209(4=人里の銭湯で番台ちゃんを怒らせている 1=銭湯に入った
+;TFLAG:211(4=地底の温泉で番台妖怪を怒らせている 1=温泉に入った
+;TFLAG:194(1=連続入浴不可(表示しない可能性あり？
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_431
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_431_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_431_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;432,お風呂でくつろぐ
+;表示タイミングは入浴後なので、お風呂上がりでの
+;TFLAG:209(4=人里の銭湯で番台ちゃんを怒らせている 1=銭湯に入った
+;TFLAG:211(4=地底の温泉で番台妖怪を怒らせている 1=温泉に入った
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_432
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_432_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_432_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;440,待つ
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_440
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_440_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_440_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;441,授業を受ける(慧音専用
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_441
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_441_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_441_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;442,伐採する（未実装
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_442
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_442_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_442_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;442以降のコマンドは、実行しても口上はおそらく表示されないのでテンプレでもスルー
+;==================================================
+
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;デート系コマンド
+;デート系口上は文字通り外出先で発生
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+[SKIPSTART]
+;現状未実装
+;==================================================
+;600,デート会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_600
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_600_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_600_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;601,デートスキンシップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_601
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_601_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_601_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;602,デートキス
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_602
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_602_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_602_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;603,手を繋ぐ
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(失敗でもふりほどかれたりはしません
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_603
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_603_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_603_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;604,散策する
+;デート中の場合、CFLAG:現在位置に移動先の場所が既に入ってる
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_604
+;散策するにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K58_604_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_604_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;605,寄り道する
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文無し
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_605
+;寄り道するにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K58_605_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_605_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;610,食事に誘う
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_610
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_610_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_610_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;613,お金稼ぎする（オミットされました
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_613
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_613_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_613_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;614,食材の買い出し
+;TFLAG:193(1=購入＆デート経験アップ 0=購入 -1=非購入)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_614
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_614_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_614_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;615,お弁当を食べる
+;実行可能場所　お地蔵通り,枝垂れ柳の下,霧の湖,玄武の沢,大蝦蟇の池,絶景の丘,山の湖,天界
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;ABL:料理技能(2未満=微妙な出来 4未満=そこそこ美味しい 4以上=絶品)
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_615
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_615_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_615_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;617,甘味処に誘う
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文分岐は大成功のみ追加
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_617
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_617_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_617_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;618,花屋（口上は表示されない模様？
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_618
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_618_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_618_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;620,鈴奈庵
+;TFLAG:193(1=貸し出しOK 0=貸し出し不可
+;ITEM:10X (X=1戦術指南書 X=2調理指南書 X=3字引 X=4御伽草子
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_620
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_620_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_620_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;436,読書 custom code, edited
+;TFLAG:193(選択肢文学(1=忍殺(文学？) 2=失敗 3=文学),選択肢実用書(4=失敗 5=実用書),選択肢エッチな本(6=薄い高い本 7=保健体育 8=カーマスートラ))
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_436
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_436_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_436_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;698,部屋に入る
+;TARGETの部屋に入る場合のみ表示
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_698
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_698_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_698_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;699,外に出る
+;==================================================
+@M_KOJO_MESSAGE_COM_K58_699
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K58_699_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K58_699_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;派生コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;60,耳かき
+;前ターン膝枕後スキンシップコマンド
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(失敗するのはTARGET
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K58_60
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K58_60_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K58_60_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;61,抱きまくら
+;(TARGET睡眠時間or衰弱)添い寝中、前ターン抱きつく後就寝コマンド
+;分岐無し
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K58_61
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K58_61_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K58_61_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;62,デコちゅー
+;前ターン頭撫で後キスする
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文分岐無し
+;ABL:欲望(5以上=物足りない
+;ABL:親密(5以上=照れる
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K58_62
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K58_62_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K58_62_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;63,もっとキスする
+;前ターンキスする後キスする
+;分岐条件はEVENT_MESSAGE_COM500.ERB参照
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K58_63
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K58_63_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K58_63_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;80,手を引く
+;デート出発後目的地に着くまでの間
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K58_80
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K58_80_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K58_80_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;Custom code, without this then all generic text is skipped for coms where Meiling has a reaction.
+;SOURCEやNOWEXを使ってSELECTCOMに依存しない口上があってもいいんじゃない
+@M_KOJO_MESSAGE_COM_K58_00
+;性交処女喪失をRETURN 100して
+;IF RESULT == 100 でまとめるとか
+;苦痛や快楽のSOURCEをトリガーとして汎用あえぎ口上を作るとか
+;いろいろ利用方法は考えられますが適当にやってください

@@ -1,0 +1,1172 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;性交系コマンド (note that most actions are divided between standing/normal versions)
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;60,正常位
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_60
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_60_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_60_1
+
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You start having your way with Seija in a \@ TFLAG:193 ? standing%" "%#\@missionary position during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("vagina")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF !FLAG:70 && LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			CALL K97_DEFLOWER()
+		ELSE
+			PRINTFORMW 「Hmm... This reminds me, this'll be my first time taking you in like this, huh?」
+			PRINTFORMW 「Well, fine by me, bring it on! If it's with you, I mean.」
+			PRINTFORMW 「And hey, c'mon, keep me steady if we're gonna do it while standing!」
+			PRINTFORMDW Seija says before you steadily push your %TINKO()% inside her %FSYN("vagina")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			LOCALS = Look_You_Just keep cumming... a whole bunch for me!_Come on, quit stirring me up so much_%GROAN()%!_%FSYN("hii")%!_You %K97_IDIOT()%... %SPLIT_G("You still wanna keep cumming:You're still not satisfied")%?_You're really dying to %SPLIT_G("knock me up:impregnate me")%, huh
+		ELSE
+			LOCALS = Hurry up and come already_Your face is too close_You've got... quite a bit of endurance there, I give you that_You still... wanna cum even more?_%GROAN()%!_Why are you so persevering when it comes to this stuff
+		ENDIF
+	ELSE
+		LOCALS = Hurry up and cum already_%GROAN()%_You little_Why you_You_Oh, you_Kuhh_Kuahh_%FSYN("hii")%!_Fueehh_Look... can't you just hurry up and..._Why can't you just..._Quit wasting time and...\@ TALENT:恋慕 ? _That better impregnate me_Make sure that knocks me up_Hope that's gonna give me a baby #\@
+	ENDIF
+;-------------------------------------------------
+;正常位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+ELSEIF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			CALL K97_DEFLOWER()
+		ELSE
+			PRINTFORMW 「This is kinda... a bit too ordinary of you.」
+			PRINTFORMW 「Well, not that I mind...」
+			PRINTFORMW 「Just don't get too rough on me, I don't wanna get smashed.」
+			PRINTFORMDW Seija says before you steadily push your %TINKO()% inside her %FSYN("vagina")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			LOCALS = You're... coming way too much_How much juice you still got there, geez_So rough_How intense_Kuhh_Nghaa_Fwaah_%GROAN()%_%FSYN("hii")%_You still... want to cum some more?!_You... wanna keep going?!_You little_Why you_You_Are you... enjoying it this much?_Is it that... pleasurable?
+		ELSE
+			LOCALS = Nkuhh_Fwaahh_Nghaa_Kuhh_Fuuhhh_%GROAN()%_%FSYN("hii")%_It's coming... so deep inside me_Nhaa
+		ENDIF
+	ELSE
+		LOCALS = Look the other way_You're too close_Stop pushing so much_Panting so hard_Is it that good_You're... so heavy_So wild
+	ENDIF
+ENDIF
+
+FOR LOCAL, 0, 2
+	CALL K97_SEX_VOICE(LOCALS)	
+NEXT
+PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+RETURN 1
+
+;==================================================
+;61,後背位
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_61
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_61_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_61_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You start having your way with Seija as you take her from behind during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("vagina")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			CALL K97_DEFLOWER()
+		ELSE
+			PRINTFORMW 「Hmph, so you mean... you wanna actually have your way with me, huh?」
+			PRINTFORMW 「Go on then, what's the hold up? Hump away if ya will.」
+			PRINTFORMW 「Just like a monkey you are!」
+			PRINTFORMDW Seija says before you steadily push your %TINKO()% inside her %FSYN("vagina")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		IF TCVAR:102
+			LOCALS = Hngh_Kuh_Fwahh_Fuahh_You're still at it, huh_Still cummin', aren'tcha?_You still... haven't had enough?_Still not satisfied, really?_Is it that good?_Are you enjoying yourself that much?
+		ELSE
+			LOCALS = You little_Why you_You_Oh you_Hnnkuhh_You're still_Not stopping_%FSYN("hii")%_Keep... it coming_Keep... going_Don't... stop
+		ENDIF
+	ELSE
+		LOCALS = Nhaa_Fwaah_Fuahh_Kuhh_Hyaah_You're... too rough_You're... so intense_Nghaa_%GROAN()%_%FSYN("hii")%_Aahnn_Guh_Ack_Gaahh
+	ENDIF
+;-------------------------------------------------
+;後背位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+ELSEIF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			CALL K97_DEFLOWER()
+		ELSE
+			PRINTFORMW 「Hmph, so you're into that kind of thing, eh?」
+			PRINTFORMW 「Sure, I don't have a problem with that.」
+			PRINTFORMW 「Just make sure... you'll make it feel good for me, y'hear?」
+			PRINTFORMDW Seija says before you steadily push your %TINKO()% inside her %FSYN("vagina")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			LOCALS = Aaahhh_You don't have to push yourself so hard_No need to pump me so hard_Still... not enough?_Did that feel good...?_Well, enjoyed yourself...?
+		ELSE
+			LOCALS = Not done yet..._Still... at it_Nhaaa_Fuwaahh_Fwaahhh_%FSYN("hii")%_Hyaahh_Do me... more
+		ENDIF
+	ELSE
+		LOCALS = Nghaa_Fuhh_Kuhh_Fwaah_Fuwaahh_Nhaa_Hyaahh_%GROAN()%
+	ENDIF
+ENDIF
+
+FOR LOCAL, 0, 2
+	CALL K97_SEX_VOICE(LOCALS)	
+NEXT
+PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+RETURN 1
+
+;==================================================
+;62,正常位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_62
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_62_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_62_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You start having your way with Seija's %FSYN("ass")% in a \@ TFLAG:193 ? standing%" "%#\@missionary position during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("anus")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			CALL K97_DEFLOWER_A()
+		ELSE
+			PRINTFORMW 「...Nghh...!」
+			PRINTFORMW 「Ulp! ...No, stop, don't shove it in... without warning!」
+			PRINTFORMDW Despite Seija's sharp remark, you still continue to steadily push your %TINKO()% inside her %FSYN("anus")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			LOCALS = %GROAN()%_%GROAN()%_Guhh_Guahhh_Urk!_Ulp!_Do you really like... doing me in the ass that much...?!_You're... clearly overdoing it!_You're cumming... way too much from this!_You just came already_You came just a moment ago already
+		ELSE
+			LOCALS = Still at it_Not stopping_Ghaa_Nguhh_Guahh_%GROAN()%_Gaahhh_%FSYN("hii")%_Not over... yet
+		ENDIF
+	ELSE
+		LOCALS = %GROAN()%_%GROAN()%_Guhh_Guahhh_Urk!_Ulp!_Gaaahhh_Kuhh_Nghaa_Uuuhh_%FSYN("hii")%
+	ENDIF
+;-------------------------------------------------
+;正常位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+ELSEIF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			CALL K97_DEFLOWER_A()
+		ELSE
+			PRINTFORMW 「...Wait, where are you...」
+			PRINTFORMW 「Urk! ...So you really were aiming for my ass!」
+			PRINTFORMW 「...Oh, you...」
+			PRINTFORMDW Despite Seija's sharp remark, you still continue to steadily push your %TINKO()% inside her %FSYN("anus")%...
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			LOCALS = Guhh_My %FSYN("ass")%...!_Guahhh!_Just how much... are you planning to cum in here_How much you got in there... seriously
+		ELSE
+			LOCALS = Nguhh_Guhh_Ghaa!_Gah_%FSYN("hii")%
+		ENDIF
+	ELSE
+		LOCALS = %GROAN()%_%GROAN()%_Guhh_Guahhh_Urk!_Ulp!_Kuhh_Ghaa_Gah
+	ENDIF
+ENDIF
+
+FOR LOCAL, 0, 2
+	CALL K97_SEX_VOICE_A(LOCALS)	
+NEXT
+PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+RETURN 1
+
+;==================================================
+;63,後背位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_63
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_63_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_63_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You start having your way with Seija's %FSYN("ass")% from behind during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("anus")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			CALL K97_DEFLOWER_A()
+		ELSE
+			PRINTFORMW 「...You want me to lean on the wall?」
+			PRINTFORMW 「Wait... Are you stickin' it in my ass?!」
+			PRINTFORMDW Despite Seija's sharp remark, you still continue to steadily push your %TINKO()% inside her %FSYN("anus")%...
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			LOCALS = %GROAN()%_Agh_My %FSYN("ass")%!_Guahh_Your %SPLIT_G(@"%SEMEN()%:stuff")%'s gonna %FSYN("leak")% from my %FSYN("ass")%_More anal..._Guhh
+		ELSE
+			LOCALS = %GROAN()%_Nguhh_Guhh_Ghaaa_Gahh_Urk_Ulp_Highh_Aagh
+		ENDIF
+	ELSE
+		LOCALS = %GROAN()%_Gahh_Urk_Ulp_Ghaa_Kuhh_Nghaa_Iigh_Guhh_Uuu
+	ENDIF
+;-------------------------------------------------
+;後背位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+ELSEIF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			CALL K97_DEFLOWER_A()
+		ELSE
+			PRINTFORMW 「...Get on all fours, you say...」
+			PRINTFORMW 「Urk! In my ass, huh... Ya pervert.」
+			PRINTFORMDW Despite Seija's sharp remark, you still continue to steadily push your %TINKO()% inside her %FSYN("anus")%...
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			LOCALS = %GROAN()%_Guhhh_It's in my %FSYN("anal")%!_Urk_Ulp_So much_That's a lot_My %FSYN("ass")%... is full of your stuff..._Filling up... my %FSYN("ass")% like this
+		ELSE
+			LOCALS = %GROAN()%_Guh_Urk_Ulp_Guhhh_Fwaah_Fuah_Ghaa_Gahh_%FSYN("hii")%
+		ENDIF
+	ELSE
+		LOCALS = %GROAN()%_Fuhh_Guahh_Guhh_Ghaa_Urk_Ulp_Gaahh_Guh_Kuhh
+	ENDIF
+ENDIF
+
+FOR LOCAL, 0, 2
+	CALL K97_SEX_VOICE_A(LOCALS)	
+NEXT
+PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+RETURN 1
+
+;==================================================
+;64,逆レイプ (disabled action, author thought this was Seija raping player, but it's not)
+;partially salvaged in M_KOJO_MESSAGE_COUNTER_K97_88
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_64
+CALL TRAIN_MESSAGE
+;CALL M_KOJO_MESSAGE_COM_K97_64_1
+;added
+CALL K97_REVERSE_FUCK
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_64_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;調教者が処女
+		IF TCVAR:PLAYER:破瓜 == 1
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:PLAYER:100 == TARGET
+		;前回射精した
+		IF TCVAR:PLAYER:102
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;65,騎乗位
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_65
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_65_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_65_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You make Seija straddle you as you start having your way with her during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("vagina")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 「So you want me to get on top and ride you, huuh...」
+			PRINTFORMW 「Very well. You'll take the blame for whatever happens though.」
+			;added
+			PRINTFORMW 「I've never done this, so who knows.」
+		ELSE
+			PRINTFORMW 「I don't really mind, even if we go that far.」
+			PRINTFORMW 「Better hurry up and get that dick hard and ready!」
+		ENDIF
+		PRINTFORMDW Seija says before she straddles you and slowly lowers herself on your %TINKO()%, pushing it inside her %FSYN("vagina")%...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			LOCALS = Kuhh_Don't get too cocky just cuz I'm doing all the work!_I'm gonna have ya... come some more for me_We're gonna keep going... Cum some more for me!_Kuh_C'mon, keep letting out that stuff! Orrah!!!
+		ELSE
+			LOCALS = You little_Why you_You_I'm gonna squeeze ya dry, y'hear... We'll keep going!_You'll dump every drop inside me, so... I ain't stopping yet!_Urk_Ulp_Quit struggling_I'm gonna make you cum your brains out alright_I'm gonna empty your balls, so give it up!_%FSYN("hii")%_Still at it_So intense_How rough
+		ENDIF
+	ELSE
+		LOCALS = Hey, enjoying yourself there?_There, how's that? You like it?_Does this feel good? C'mon, tell me_Aaahhh_This stuff... is actually_Kuhh_Urk_Ulp_So intense...!_So rough...!_Nghaa_Kuhh_Doing it in this position is actually pretty fun_Fuhhn_I'm gonna make ya cum alright_Nkuhh!_Say, are you secretly a maso or somethin'?_Do you prefer... to take it, rather that do it?_You little_Why you_You sure like this position, eh?_C'mon, entertain me some more_Hey, quit basking in pleasure and do your part
+	ENDIF
+	
+	FOR LOCAL, 0, 2
+		CALL K97_SEX_VOICE(LOCALS)	
+	NEXT
+	PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+ENDIF
+RETURN 1
+
+;==================================================
+;66,騎乗位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_66
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_66_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_66_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You make Seija straddle you as you start having your way with her %FSYN("ass")% during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("anus")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			CALL K97_DEFLOWER_A()
+		ELSE
+			PRINTFORMW 「...Hmph... I don't mind the cowgirl position, but...」
+			PRINTFORMW 「...It's the ass stuff... That I have qualms about.」
+			PRINTFORMDW Seija says before she straddles you and slowly lowers herself on your %TINKO()%, pushing it inside her %FSYN("anus")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			LOCALS = %GROAN()%_Guhh_You can still... keep cumming, right?!_There's still some more... left in the tank, ain't that right?!_It ain't over yet...!_Don't think we're stoppin' now!_Orrah...! Keep it coming like you wanna get my ass pregnant!
+		ELSE
+			LOCALS = %GROAN()%_Guh_We'll do it... here this time_It's my turn... this time_Fwaahh_Fuahh_Not yet...!_Again...!_Ghaa_Gahh_%FSYN("hii")%_This shit's tight, man_This is gettin' nuts
+		ENDIF
+	ELSE
+		LOCALS = %GROAN()%_Fuhh_Guhh_Ghaa_Gahh_This is...!_This...!_It's...!_At this rate...!_If this keeps up...!_Ain't that... a bit too damn intense?!_You little_Why you_Oh you_Not yet...!_Not like this...!_It ain't over till I say it's over!_This is rather...!_So tight...!_How rough...!
+	ENDIF
+	
+	FOR LOCAL, 0, 2
+		CALL K97_SEX_VOICE_A(LOCALS)	
+	NEXT
+	PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+ENDIF
+RETURN 1
+
+;==================================================
+;67,対面座位
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_67
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_67_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_67_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You make Seija sit on your lap as you start having your way with her during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("vagina")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			CALL K97_DEFLOWER()
+		ELSE
+			PRINTFORMW 「Hoo, so you wanna do it face to face, huh?」
+			PRINTFORMW 「Here goes nothing then... Hnn...」
+			PRINTFORMDW Seija says before you steadily push your %TINKO()% inside her %FSYN("vagina")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			LOCALS = Nghaa_Kuhh_Not yet_Still not done_Keep it... coming!_Gimme some... more!_Let out more... don't stop!_Kuahh_Khaa_You still wanna cum?_You still got something in there?
+		ELSE
+			LOCALS = You... likin' this?_Are you... into this?_You... don't you know, this is...!_Nguhh_Hurry up already...!_Quit eyeballin' me... so much!_Don't stare so hard... you weirdo!
+		ENDIF
+	ELSE
+		LOCALS = Kuhh_Fuuhh_From the front... like this!_This is_This_It's_You little_Why you_Urk_Ulp_You_Nghaa_Kuh_%FSYN("hii")%...!_I'm not blushing, alright?!
+	ENDIF
+
+	FOR LOCAL, 0, 2
+		CALL K97_SEX_VOICE(LOCALS)	
+	NEXT
+	PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+ENDIF
+RETURN 1
+
+;==================================================
+;68,背面座位
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_68
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_68_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_68_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You make Seija sit on your lap as you start having your way with her from behind during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("vagina")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			CALL K97_DEFLOWER()
+		ELSE
+			PRINTFORMW 「Oh, that's...」
+			PRINTFORMW 「At least make it feel good for me like it should, will ya...」
+			PRINTFORMDW Seija says before you steadily push your %TINKO()% inside her %FSYN("vagina")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			LOCALS = Just how much are you gonna...?!_Urk_Ulp_%FSYN("hii")%...!_Like this...?_Is this...?
+		ELSE
+			LOCALS = You little_Why you_You_Nguhh_This is_This_Nghaa_This stuff's..._Doing it like this...!
+		ENDIF
+	ELSE
+		LOCALS = Urk_Ulp_%FSYN("hii")%!_Hyaahh_So rough_How intense_Fwaah_Fuahh_Kuhh_Kuh_Nghh
+	ENDIF
+
+	FOR LOCAL, 0, 2
+		CALL K97_SEX_VOICE(LOCALS)	
+	NEXT
+	PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+ENDIF
+RETURN 1
+
+;==================================================
+;69,対面座位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_69
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_69_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_69_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You make Seija sit on your lap as you start having your way with her %FSYN("ass")% during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("anus")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			CALL K97_DEFLOWER_A()
+		ELSE
+			PRINTFORMW 「...Hmph... So you wanna jam into my pooper while we sit and stare each other in the eye?」
+			PRINTFORMW 「Sounds good enough for me...」
+			PRINTFORMDW Seija says before you steadily push your %TINKO()% inside her %FSYN("anus")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			LOCALS = %GROAN()%_Urk_Ulp_Guhh_Agh_Kuhh_Guhh_Ghaa
+		ELSE
+			LOCALS = %GROAN()%_Urk_Ulp_Guhh_Ghaa_Gahh_Fuhh_%FSYN("hii")%
+		ENDIF
+	ELSE
+		LOCALS = %GROAN()%_Urk_Ulp_Guhh_Uuu_Guahh_Ghaa_Aghh_Kuhh_Khaa_Ugh_So rough!_How intense!
+	ENDIF
+
+	FOR LOCAL, 0, 2
+		CALL K97_SEX_VOICE_A(LOCALS)	
+	NEXT
+	PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+ENDIF
+RETURN 1
+
+;==================================================
+;70,背面座位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_70
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_70_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_70_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You make Seija sit on your lap as you start having your way with her %FSYN("ass")% from behind during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("vagina")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			CALL K97_DEFLOWER_A()
+		ELSE
+			PRINTFORMW 「Hmph... Just hold me tight then, a'ight?」
+			PRINTFORMW 「...I'm gonna break your dick with my asshole, just you wait...!」
+			PRINTFORMDW Seija says before you steadily push your %TINKO()% inside her %FSYN("anus")%...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			LOCALS = %GROAN()%_Guhh_You still... wanna keep coming...?_Kuhh_So much of your stuff_That's a ton_Again_Not yet, huh_Not enough
+		ELSE
+			LOCALS = %GROAN()%_Guhh_Still at it_Not yet_Fuhh_This time, we_What's in store for this one_%FSYN("hii")%_Nghaa
+		ENDIF
+	ELSE
+		LOCALS = %GROAN()%_Guhh_Uuhh_Ghaa_Uuu_Aghh!_Aguhh_Kuhh_Guh_Gahh_You little...!_Why you...!_You...!_Khhh
+	ENDIF
+	
+	FOR LOCAL, 0, 2
+		CALL K97_SEX_VOICE_A(LOCALS)	
+	NEXT
+	PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+ENDIF
+RETURN 1
+
+;==================================================
+;71,二穴挿し
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_71
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_71_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_71_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;考えうる分岐が多すぎるので地の文の大まかな分岐だけ
+	;連続
+	IF PREVCOM == SELECTCOM
+		PRINTFORMW 
+		RETURN 0
+	;主人V挿入→助手A挿入
+	ELSEIF TCVAR:100 == MASTER
+		PRINTFORMW 
+		RETURN 0
+	;主人A挿入→助手V挿入
+	ELSEIF TCVAR:101 == MASTER
+		PRINTFORMW 
+		RETURN 0
+	;助手V挿入→主人A挿入
+	ELSEIF TCVAR:100 == ASSI
+		PRINTFORMW 
+		RETURN 0
+	;助手A挿入→主人V挿入
+	ELSEIF TCVAR:101 == ASSI
+		PRINTFORMW 
+		RETURN 0
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;72,挿入Ｇスポット責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_72
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_72_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_72_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You %FSYN("thrust")% your %TINKO()% as deep as possible inside Seija's %FSYN("vagina")% as you start %FVERB("ing")% her deeply during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("vagina")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「Wait... not there! Not like this...!!!」
+		PRINTFORMW 「Hnn... Guhh! Aaaghhh...!!!」
+		PRINTFORMDW Seija protests as you steadily push your %TINKO()% inside her %FSYN("vagina")%...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			LOCALS = %GROAN()%_Hnnghh_Just how much_How long are you gonna_Aaaghhh_You %K97_IDIOT()%!_Kuhh_That spot...!_That place...!_Not there...!_Urk_Ulp
+		ELSE
+			LOCALS = You little_Why you_You_Hnnghh_Nghh_%FSYN("hii")%_This is_This_It's_That's_Urk_Ulp
+		ENDIF
+	;the same as in M_KOJO_MESSAGE_SCOM_K97_6_1
+	ELSE
+		LOCALS = That's_There_Huh_Ough_Gahh_Haah_Uhhh_Urk_Ulp_...?!_...?!_...?!_...?!_So deep_So intense_So hard_%GROAN()%
+	ENDIF
+	
+	FOR LOCAL, 0, 2
+		CALL K97_SEX_VOICE(LOCALS)
+	NEXT
+	PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+ENDIF
+RETURN 1
+
+;==================================================
+;73,挿入子宮口責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_73
+CALL TRAIN_MESSAGE
+;CALL M_KOJO_MESSAGE_COM_K97_73_1
+;edit: the lower case is disabled anyways, replace it with a very similar case
+CALL M_KOJO_MESSAGE_SCOM_K97_7_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_73_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+			PRINTFORMW 「ん…そんなに深く…」
+			PRINTFORMDW Seija says before you steadily push your %TINKO()% inside her %FSYN("vagina")%...
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			PRINTFORM
+		ELSE
+			PRINTFORM
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORM
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORM
+	;それ以外
+	ELSE
+		PRINTFORM
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;74,Ｓ状結腸責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_74
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_74_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_74_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You make Seija straddle you as you start %FVERB("ing")% her ass during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("anus")%...
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「...Wait, that's... way too deep!」
+		PRINTFORMDW Seija says as you push your %TINKO()% inside her %FSYN("anus")% all the way in...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			LOCALS = %GROAN()%_Guhh_Are you tryin' to... get my %FSYN("ass")% pregnant?_Wanna knock my %FSYN("ass")% up or something?_Kuhh_It's goin' so deep_So deep_It's goin'... so deep back in there again
+		ELSE
+			LOCALS = %GROAN()%_Guhh_Guhh_That spot_There_Fuhh_Again_Not yet_%FSYN("hii")%_Not there
+		ENDIF
+	;基本セット
+	ELSE
+		LOCALS = That's_There_Huh_Ough_Gahh_Ghaa_Haah_Uhhh_Kuhh_Urk_Ulp_...?!_...?!_...?!_...?!_%GROAN()%_%GROAN()%
+	ENDIF
+	
+	FOR LOCAL, 0, 2
+		PRINTFORMW 「%MOAN("l" + (TALENT:恋慕 || ( MARK:不埒刻印 == 3 && !RAND:3) ? ":m" # ""),, (TALENT:恋慕 ? RAND(3,7) # RAND(2, 4 + (ABL:Ａ感覚 >= 3) * 2 )), "name:charname_" + LOCALS)%...%SPLIT_G("!:?!:!!!:::")%」
+	NEXT
+	PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+ENDIF
+RETURN 1
+;==================================================
+;75,膣裏責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_75
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_75_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_75_1
+;時姦中
+IF FLAG:70
+	PRINTFORMDW You make Seija straddle you as you start %FVERB("ing")% her ass during time stop.
+	PRINTFORMDW You steadily slide your %TINKO()% in and out of her %FSYN("anus")%...
+ENDIF
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「...Wait, no, not there...!」
+		PRINTFORMDW Seija protests as you push your %TINKO()% inside her %FSYN("anus")% all the way in...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			LOCALS = %GROAN()%_My %FSYN("ass")% is makin' you... cum way too much_You're cumming way too much... in my %FSYN("ass")%_Kuhh_Urk_Ulp_So tight_So rough_Aaghh_Guhh_It's goin' so deep... again_All the way down... again
+		ELSE
+			LOCALS = %GROAN()%_Guhh_That spot_There_Fuhh_Guahh_So much... again_Buckets of your stuff... again_%FSYN("hii")%_Wait, that's_Nooo, not like this
+		ENDIF
+	ELSE
+		LOCALS = That's_There_Huh_Ough_Gahh_Ghaa_Haah_Uhhh_Kuhh_Urk_Ulp_...?!_...?!_...?!_...?!_%GROAN()%_%GROAN()%_You little..._How dare you..._Son of a..._You piece of..._Uuu..._So deep_Too damn deep
+	ENDIF
+	
+	FOR LOCAL, 0, 2
+		PRINTFORMW 「%MOAN("l" + (TALENT:恋慕 || ( MARK:不埒刻印 == 3 && !RAND:3) ? ":m" # ""),, (TALENT:恋慕 ? RAND(3,7) # RAND(2, 4 + (ABL:Ａ感覚 >= 3) * 2 )), "name:charname_" + LOCALS)%...%SPLIT_G("!:?!:!!!:::")%」
+	NEXT
+	PRINTFORMDW %SPLIT_G(@"Seija %FSYN("pant:s")% and wheezes during the act:The intense action is making Seija gasp and groan")%.
+ENDIF
+RETURN 1
+;==================================================
+;77,小人オナホ(針妙丸用？
+;==================================================
+@M_KOJO_MESSAGE_COM_K97_77
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_77_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K97_77_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 0
+		ELSE
+			PRINTFORMW 
+			RETURN 0
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 0
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 0
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 0
+	ENDIF
+ENDIF
+RETURN 1

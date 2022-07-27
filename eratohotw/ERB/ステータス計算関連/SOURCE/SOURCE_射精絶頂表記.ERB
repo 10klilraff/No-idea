@@ -1,0 +1,159 @@
+﻿@射精絶頂表記(ARG)
+#DIM Ｃ絶頂回数
+#DIM Ｖ絶頂回数
+#DIM Ａ絶頂回数
+#DIM Ｂ絶頂回数
+#DIM Ｍ絶頂回数
+#DIM 同時絶頂補正
+#DIM 改行判定
+#DIM 接続判定
+#DIMS 名前表記
+
+IF ARG == MASTER
+	;custom code
+	名前表記 = (%CALLNAME:MASTER%)
+ELSE
+	名前表記 = (%CALLNAME:ARG%)
+ENDIF
+
+;●---絶頂の表記---●
+IF NOWEX:ARG:五重絶頂
+	同時絶頂補正 = 16
+ELSEIF NOWEX:ARG:四重絶頂
+	同時絶頂補正 = 8
+ELSEIF NOWEX:ARG:三重絶頂
+	同時絶頂補正 = 4
+ELSEIF NOWEX:ARG:二重絶頂
+	同時絶頂補正 = 2
+ELSE
+	同時絶頂補正 = 1
+ENDIF
+
+Ｃ絶頂回数 = NOWEX:ARG:Ｃ絶頂 / 同時絶頂補正
+Ｖ絶頂回数 = NOWEX:ARG:Ｖ絶頂 / 同時絶頂補正
+Ａ絶頂回数 = NOWEX:ARG:Ａ絶頂 / 同時絶頂補正
+Ｂ絶頂回数 = NOWEX:ARG:Ｂ絶頂 / 同時絶頂補正
+Ｍ絶頂回数 = NOWEX:ARG:Ｍ絶頂 / 同時絶頂補正
+
+SETCOLOR C_PINK
+改行判定 = 0
+LOCALS:0 = 
+LOCALS:1 = 
+LOCALS:2 = 
+IF Ｃ絶頂回数 > 2
+	LOCALS:2 += "Ｃ"
+ELSEIF Ｃ絶頂回数 > 1
+	LOCALS:1 += "Ｃ"
+ELSEIF Ｃ絶頂回数 > 0
+	LOCALS:0 += "Ｃ"
+ENDIF
+IF Ｖ絶頂回数 > 2
+	LOCALS:2 += "Ｖ"
+ELSEIF Ｖ絶頂回数 > 1
+	LOCALS:1 += "Ｖ"
+ELSEIF Ｖ絶頂回数 > 0
+	LOCALS:0 += "Ｖ"
+ENDIF
+IF Ａ絶頂回数 > 2
+	LOCALS:2 += "Ａ"
+ELSEIF Ａ絶頂回数 > 1
+	LOCALS:1 += "Ａ"
+ELSEIF Ａ絶頂回数 > 0
+	LOCALS:0 += "Ａ"
+ENDIF
+IF Ｂ絶頂回数 > 2
+	LOCALS:2 += "Ｂ"
+ELSEIF Ｂ絶頂回数 > 1
+	LOCALS:1 += "Ｂ"
+ELSEIF Ｂ絶頂回数 > 0
+	LOCALS:0 += "Ｂ"
+ENDIF
+IF Ｍ絶頂回数 > 2
+	LOCALS:2 += "Ｍ"
+ELSEIF Ｍ絶頂回数 > 1
+	LOCALS:1 += "Ｍ"
+ELSEIF Ｍ絶頂回数 > 0
+	LOCALS:0 += "Ｍ"
+ENDIF
+IF LOCALS:0 != "" || LOCALS:1 != "" || LOCALS:2 != ""
+	PRINT 《
+	接続判定 = 0
+	IF LOCALS:2 != ""
+		PRINTFORM Very Strong %LOCALS:2% Orgasm
+		接続判定 = 1
+	ENDIF
+	IF LOCALS:1 != ""
+		IF 接続判定
+			PRINT /
+		ENDIF
+		PRINTFORM Strong %LOCALS:1% Orgasm
+		接続判定 = 1
+	ENDIF
+	IF LOCALS:0 != ""
+		IF 接続判定
+			PRINT /
+		ENDIF
+		PRINTFORM %LOCALS:0% Orgasm
+	ENDIF
+	PRINT 》
+	改行判定 = 1
+ENDIF
+SIF SYNCED_ORGASM(ARG) && !FLAG:70
+	CALL COLORMESSAGE(@"＜Simultaneous Climax＞（Favorability+ SOURCE+）",C_YELLOW)
+
+;●---射精の表記---●
+SETCOLOR C_CREAM
+IF NOWEX:ARG:射精
+	PRINTFORM 【%NOWEX:ARG:射精 > 2?"Very "#""%%NOWEX:ARG:射精 > 1?"Large "#""%%TALENT:ARG:濃厚精液?"Thick "#""%
+	;（1=膣内 2=アナル 3=手淫 4=口淫 5=パイズリ 6=素股 7=足コキ 8=体表 9=アナル奉仕 10=道具 11=触手）
+	SELECTCASE TCVAR:ARG:12
+		CASE 1
+			PRINT Vaginal 
+		CASE 2
+			PRINT Anal 
+		CASE 4
+			PRINT Oral 
+		CASE 5
+			PRINT Breast 
+		CASE 6
+			PRINT Thigh 
+		CASE 7
+			PRINT Feet 
+		CASE 8
+			PRINT Body 
+		CASE 9
+			PRINT Prostate 
+		CASE 10
+			PRINT Onahole 
+		CASE 12
+			PRINT Anal Teasing 
+		CASE 13
+			PRINT Vaginal Teasing 
+	ENDSELECT
+	SIF NOWEX:ARG:射精 > 2
+		PRINT 
+	SIF NOWEX:ARG:射精 > 1
+		PRINT 
+	SIF TALENT:ARG:濃厚精液
+		PRINT 
+	PRINT Ejaculation
+	;custom code
+	SIF TCVAR:ARG:コンドーム
+		PRINT (Condom)
+	PRINT 】
+	改行判定 = 1
+ENDIF
+
+RESETCOLOR
+
+SIF 改行判定
+	PRINTFORML %名前表記%
+
+IF ARG == MASTER
+	FOR LOCAL,1,CHARANUM
+		CALL ADDICTION_SHOW(LOCAL, "膣内射精補正", "膣射中毒")
+		CALL ADDICTION_SHOW(LOCAL, "肛内射精補正", "肛射中毒")
+		CALL ADDICTION_SHOW(LOCAL, "口内射精補正", "精液中毒")
+	NEXT
+ENDIF
+

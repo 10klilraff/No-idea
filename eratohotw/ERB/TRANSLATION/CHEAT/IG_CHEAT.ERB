@@ -1,0 +1,192 @@
+;FLAG:CHEATMENU = 1
+@IG_CHEAT_MENU
+#DIM CREDRAW
+#DIM FIRST_LINE
+#DIMS STAT_NAME,20 = "STA","ENE","Errection","VIG","TSP","Mood","Reason","Drunkenness","Sexual Frustration","Favourability","Reliability"
+;0 = BASE, 1 = CFLAG
+#DIM STAT_TYPE,20 = 0,0,0,0,0,0,0,0,1,1,1
+#DIM STAT_NO,20 = 0,1,5,6,8,10,11,15,340,2,4
+;0 = None, 1 = Player Only, 2 = Target Only, 3 = Male/Futa
+#DIM STAT_RESTRICTION,20 = 0,0,3,3,1,2,2,2,2,2,2
+#DIM IDENTIFIER, 40, 2
+#DIM LOOP_COUNT = 11
+FIRST_LINE = LINECOUNT
+$REPRINT
+CLEARLINE LINECOUNT - FIRST_LINE
+CREDRAW = CURRENTREDRAW()
+REDRAW 0
+DRAWLINE
+SETCOLOR C_RED
+PRINTL In Game Cheat Menu
+RESETCOLOR
+PRINTL
+
+IF !FLAG:CHEATMENUCONFIRM
+    FLAG:CHEATMENUCONFIRM = !FLAG:CHEATMENUCONFIRM
+    CLEARLINE 5
+    RETURN
+ENDIF
+
+PRINTFORM %"", 25, LEFT%%"Player", 15, LEFT%
+PRINTFORML %@"Target: %CALLNAME:TARGET%", 15, LEFT%
+FOR LOCAL, 0, LOOP_COUNT
+    PRINTFORM %STAT_NAME:LOCAL, 25, LEFT%
+    IF STAT_RESTRICTION:LOCAL != 2 && !(TALENT:0:2 == 1 && STAT_RESTRICTION:LOCAL == 3)
+        IDENTIFIER:(LOCAL*2):0 = LOCAL
+        IDENTIFIER:(LOCAL*2):1 = 1
+        IF STAT_TYPE:LOCAL == 0
+            PRINTBUTTON @"%@"{BASE:0:(STAT_NO:LOCAL)}/{MAXBASE:0:(STAT_NO:LOCAL)}", 15, LEFT%", (LOCAL * 2)
+        ELSEIF STAT_TYPE:LOCAL == 1
+            PRINTBUTTON @"%@"{CFLAG:0:(STAT_NO:LOCAL)}", 15, LEFT%", (LOCAL * 2)
+        ENDIF
+    ELSE
+        IDENTIFIER:(LOCAL*2):0 = -1
+        PRINTFORM %"", 15, LEFT%
+    ENDIF
+    IF (STAT_RESTRICTION:LOCAL != 1 && !(TALENT:TARGET:2 == 1 && STAT_RESTRICTION:LOCAL == 3)) && TARGET !=0
+        IF STAT_TYPE:LOCAL == 0
+            PRINTBUTTON @"%@"{BASE:TARGET:(STAT_NO:LOCAL)}/{MAXBASE:TARGET:(STAT_NO:LOCAL)}", 10, LEFT%", ((LOCAL * 2) + 1)
+        ELSEIF STAT_TYPE:LOCAL == 1
+            IF STAT_NO:LOCAL == 340
+                LOCAL:2 = 10
+            ELSE
+                LOCAL:2 = 1
+            ENDIF
+            PRINTBUTTON @"%@"{(CFLAG:TARGET:(STAT_NO:LOCAL)) / LOCAL:2}", 10, LEFT%", ((LOCAL * 2) + 1)
+        ENDIF
+        IDENTIFIER:((LOCAL*2) + 1):0 = LOCAL
+        IDENTIFIER:((LOCAL*2) + 1):1 = 2
+    ELSE
+        IDENTIFIER:((LOCAL*2) + 1):0 = -1
+    ENDIF
+    PRINTL
+NEXT
+PRINTL
+PRINTL [998] Change Weather
+PRINTL [999] Load
+PRINTL [1000] Exit
+
+INPUT
+SELECTCASE RESULT
+    CASE -1
+        GOTO REPRINT
+    CASE 0 TO 97
+        LOCAL = RESULT
+        IF IDENTIFIER:(LOCAL):0 != -1
+            IF IDENTIFIER:(LOCAL):1 == 1
+                LOCAL:1 = MASTER
+            ELSEIF IDENTIFIER:(LOCAL):1 == 2
+                LOCAL:1 = TARGET
+            ENDIF
+            IF STAT_TYPE:(IDENTIFIER:(LOCAL):0) == 0
+                CALL CHANGE_BASE_STAT(LOCAL:1, STAT_NO:(IDENTIFIER:LOCAL:0))
+            ENDIF
+            IF STAT_TYPE:(IDENTIFIER:(LOCAL):0) == 1
+                CALL CHANGE_CFLAG_STAT(LOCAL:1, STAT_NO:(IDENTIFIER:LOCAL:0))
+            ENDIF
+        ENDIF
+        GOTO REPRINT
+    CASE 998
+        CALL ADJUST_WEATHER
+    CASE 999
+        TRYCALL LOAD_SAVE(0)
+    CASE 1000
+        FLAG:CHEATMENUCONFIRM = !FLAG:CHEATMENUCONFIRM
+        RETURN
+ENDSELECT
+GOTO REPRINT
+
+@CHANGE_BASE_STAT(CHARA_ID, STAT)
+#DIM CHARA_ID
+#DIM STAT
+SELECTCASE STAT
+    CASE 0 TO 10
+        BASE:CHARA_ID:STAT = MAXBASE:CHARA_ID:STAT
+        PRINTW Maxed
+    CASE 11
+        BASE:CHARA_ID:STAT = 0
+        PRINTW Reduced to 0
+    CASE 15
+        BASE:CHARA_ID:STAT = MAXBASE:CHARA_ID:STAT - 50
+        PRINTW Made drunk
+ENDSELECT
+RETURN
+
+@CHANGE_CFLAG_STAT(CHARA_ID, STAT)
+#DIM CHARA_ID
+#DIM STAT
+
+PRINTFORML Input value to set
+PRINTFORMDL [-1] Return
+INPUT
+IF RESULT > 0
+    SELECTCASE STAT
+        CASE -1
+            RETURN
+        CASE 340
+            CFLAG:CHARA_ID:STAT = RESULT * 10
+        CASEELSE
+            CFLAG:CHARA_ID:STAT = RESULT
+    ENDSELECT
+ENDIF
+RETURN
+
+@ADJUST_WEATHER
+PRINTL What do you want the weather to be? 
+PRINTL [1] Sunny
+PRINTL [2] Cloudy
+PRINTL [3] Rain
+PRINTL [4] Snow
+PRINTL [5] Typhoon
+PRINTL [6] Panties
+PRINTL [7] Skirts
+PRINTL [8] CSense
+PRINTL [9] VSense
+PRINTL [10] ASense
+PRINTL [11] BSense
+PRINTL [12] MSense
+
+INPUT
+SELECTCASE RESULT
+    CASE 1
+        FLAG:89 = 0
+        TIME:5 = 0
+        PRINTW It's now sunny
+    CASE 2
+        FLAG:89 = 0
+        TIME:5 = 3
+        PRINTW It's now cloudy
+    CASE 3
+        FLAG:89 = 0
+        TIME:5 = 4
+        PRINTW It's now raining
+    CASE 4
+        FLAG:89 = 0
+        TIME:5 = 8
+        PRINTW It's now snowing
+    CASE 5
+        FLAG:89 = 9
+        PRINTW A typhoon has started
+    CASE 6
+        FLAG:89 = 7
+        PRINTW It's now raining panties
+    CASE 7
+        FLAG:89 = 6
+        PRINTW It's windy enough to blow up skirts
+    CASE 8
+        FLAG:89 = 1
+        PRINTW CSense is being affected
+    CASE 9
+        FLAG:89 = 2
+        PRINTW VSense is being affected
+    CASE 10
+        FLAG:89 = 3
+        PRINTW ASense is being affected
+    CASE 11
+        FLAG:89 = 4
+        PRINTW BSense is being affected
+    CASE 12
+        FLAG:89 = 5
+        PRINTW MSense is being affected
+ENDSELECT
+RETURN

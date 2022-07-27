@@ -1,0 +1,335 @@
+﻿@SOURCE_ABLUP(ARG)
+IF ABL:ARG:戦闘能力 < 6
+	IF EXP:ARG:戦闘経験 > EXPLV:(ABL:ARG:戦闘能力 + 3) || (EXP:ARG:戦闘経験 > 5 && ABL:ARG:戦闘能力 == 0)
+		;CALL ChangeABL(ARG, "戦闘能力", 1)
+		ABL:ARG:戦闘能力 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% Combat Ability has increased to LV{ABL:ARG:戦闘能力}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Combat Ability has increased to LV{ABL:ARG:戦闘能力}.
+		ENDIF
+		;技能レベルアップ口上,1,戦闘能力
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 1)
+	ENDIF
+ENDIF
+IF ABL:ARG:話術技能 < 6
+	IF EXP:ARG:会話経験 > EXPLV:(ABL:ARG:話術技能 + 3)
+		ABL:ARG:話術技能 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% Speech Skill has increased to LV{ABL:ARG:話術技能}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Speech Skill has increased to LV{ABL:ARG:話術技能}.
+		ENDIF
+		;技能レベルアップ口上,2,話術技能
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 2)
+	ENDIF
+ENDIF
+
+IF ABL:ARG:清掃技能 < 6
+	IF EXP:ARG:清掃経験 > EXPLV:(ABL:ARG:清掃技能 + 3)
+		ABL:ARG:清掃技能 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% Cleaning Skill has increased to LV{ABL:ARG:清掃技能}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Cleaning Skill has increased to LV{ABL:ARG:清掃技能}.
+		ENDIF
+		;技能レベルアップ口上,3,清掃技能
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 3)
+	ENDIF
+ENDIF
+IF ABL:ARG:教養 < 6
+	IF EXP:ARG:学習経験 > EXPLV:(ABL:ARG:教養 + 3) || (EXP:ARG:学習経験 > 5 && ABL:ARG:教養 == 0)
+		ABL:ARG:教養 ++
+		IF ARG == 0
+			PRINTFORMW Your Knowledge has increased to LV{ABL:ARG:教養}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Knowledge has increased to LV{ABL:ARG:教養}.
+		ENDIF
+		IF ABL:ARG:教養 == 1 && !ARG
+			IF ARG == 0
+				PRINTFORMW %PARSE("You are",1)% now able to use aphrodisiacs!
+			ELSE
+				PRINTFORMW %HE_SHE(ARG,1)% is now able to use aphrodisiacs!
+			ENDIF
+		ENDIF
+		;技能レベルアップ口上,4,教養
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 4)
+	ENDIF
+ENDIF
+IF ABL:ARG:料理技能 < 6
+	IF EXP:ARG:料理経験 > EXPLV:(ABL:ARG:料理技能 + 3) || (EXP:ARG:料理経験 > 5 && ABL:ARG:料理技能 == 0)
+		ABL:ARG:料理技能 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% Cooking Skill has increased to LV{ABL:ARG:料理技能}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Cooking Skill has increased to LV{ABL:ARG:料理技能}.
+		ENDIF
+		;技能レベルアップ口上,5,料理技能
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 5)
+		IF ARG == MASTER && ABL:ARG:料理技能 >= 3 && !TALENT:MASTER:健啖
+			PRINTFORMW %PARSE("You are",1)% now【Insatiable】!
+			TALENT:MASTER:健啖 = 1
+		ENDIF
+	ENDIF
+ENDIF
+IF TALENT:ARG:採集Lv < 6
+	IF EXP:ARG:採集経験 > EXPLV:(TALENT:ARG:採集Lv + 3) || (EXP:ARG:採集経験 > 5 && TALENT:ARG:採集Lv == 0)
+		TALENT:ARG:採集Lv ++
+		IF ARG == 0
+			PRINTFORMW Your Foraging Skill has increased to LV{TALENT:ARG:採集Lv}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Foraging Skill has increased to LV{TALENT:ARG:採集Lv}.
+		ENDIF
+	ENDIF
+ENDIF
+IF ABL:ARG:音楽技能 < 6
+	IF (MAX(EXP:ARG:演奏経験, EXP:ARG:歌唱経験, EXP:ARG:舞踏経験) > EXPLV:(ABL:ARG:音楽技能 + 3) * 2) || (MAX(EXP:ARG:演奏経験, EXP:ARG:歌唱経験, EXP:ARG:舞踏経験) > 20 && ABL:ARG:音楽技能 == 0)
+		ABL:ARG:音楽技能 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% Music Skill has increased to LV{ABL:ARG:音楽技能}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Music Skill has increased to LV{ABL:ARG:音楽技能}.
+		ENDIF
+		IF ARG == MASTER && ABL:ARG:音楽技能 == 2
+			PRINTFORMW %PARSE("You",1)% can now play the violin!
+		ENDIF
+		;技能レベルアップ口上,7-0,音楽技能（7-1～はEVENTTURNENDで）
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 7, 0)
+		[SKIPSTART]
+		IF ABL:ARG:音楽技能 != 2
+		ELSEIF ARG == MASTER
+			PRINTW ヴァイオリンを使えるようになりました
+		ELSEIF TALENT:ARG:音楽知識
+		ELSE
+			;おそらく、現状で経験を積む手段がない
+			SELECTCASE MAX(EXP:ARG:演奏経験, EXP:ARG:歌唱経験, EXP:ARG:舞踏経験)
+			CASE EXP:ARG:演奏経験
+				PRINTFORMW 経験を積んだ%CALLNAME:ARG%は人前で楽器の演奏ができるようになりました
+				TALENT:ARG:音楽知識 = 1
+			CASE EXP:ARG:歌唱経験
+				PRINTFORMW 経験を積んだ%CALLNAME:ARG%は人前で歌を披露することができるようになりました
+				TALENT:ARG:音楽知識 = 2
+			CASE EXP:ARG:舞踏経験
+				PRINTFORMW 経験を積んだ%CALLNAME:ARG%は人前で踊りを披露することができるようになりました
+				TALENT:ARG:音楽知識 = 3
+			CASEELSE
+		ENDIF
+		[SKIPEND]
+	ENDIF
+ENDIF
+IF ARG == MASTER && EXP:ARG:演奏経験 >= 1000 && ABL:ARG:技巧 >= 3 && !TALENT:ARG:音楽知識 == 1
+	PRINTFORMW %PARSE("You have")% gained extensive knowledge of musical instruments.
+	PRINTFORMW %PARSE("You")% now %PARSE("have")% [Musical Knowledge].
+	TALENT:ARG:音楽知識 = 1
+	CALL QoL_Info_Write(ARG, Qol_Dates_Musicality) ;qol custom code
+ENDIF
+IF ARG == MASTER && EXP:ARG:演奏経験 >= 5000 && !TALENT:ARG:音感 == 1
+	PRINTFORMW %PARSE("Your")% voice has been tempered to perfection.
+	PRINTFORMW %PARSE("You")% now %PARSE("have")% [Perfect Pitch].
+	TALENT:ARG:音感 = 1
+	CALL QoL_Info_Write(ARG, Qol_Dates_Sound) ;qol custom code
+ENDIF
+
+IF TALENT:ARG:釣りLv < 6
+	IF EXP:ARG:釣り経験 > EXPLV:(TALENT:ARG:釣りLv + 3) || (EXP:ARG:釣り経験 > 5 && TALENT:ARG:釣りLv == 0)
+		TALENT:ARG:釣りLv ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% Fishing Skill has increased to LV{TALENT:ARG:釣りLv}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Fishing Skill has increased to LV{TALENT:ARG:釣りLv}.
+		ENDIF
+	ENDIF
+ENDIF
+
+IF TALENT:ARG:調合Lv < 6
+	IF EXP:ARG:調合経験 > EXPLV:(TALENT:ARG:調合Lv + 3) || (EXP:ARG:調合経験 > 5 && TALENT:ARG:調合Lv == 0)
+		TALENT:ARG:調合Lv ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% Mixing Skill has increased to LV{TALENT:ARG:調合Lv}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Mixing Skill has increased to LV{TALENT:ARG:調合Lv}.
+		ENDIF
+		;技能レベルアップ口上,8,釣りLv
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 8)
+	ENDIF
+ENDIF
+
+IF TALENT:ARG:伐採Lv < 6
+	IF EXP:ARG:伐採経験 > EXPLV:(TALENT:ARG:伐採Lv + 3) || (EXP:ARG:伐採経験 > 5 && TALENT:ARG:伐採Lv == 0)
+		TALENT:ARG:伐採Lv ++
+		IF ARG == 0
+			PRINTFORMW Your Logging skill has increased to LV{TALENT:ARG:伐採Lv}.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s Logging skill has increased to LV{TALENT:ARG:伐採Lv}.
+		ENDIF
+		;技能レベルアップ口上,9-0,調合Lv
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 9, 0)
+	ENDIF
+ENDIF
+
+IF ABL:ARG:指 < 6
+	LOCAL = EXP:ARG:手淫経験
+	LOCAL:1 = 10 + ABL:ARG:技巧 / 2 + TALENT:ARG:器用な指 * 2 + TALENT:ARG:習得速度
+	IF LOCAL * LOCAL:1 / 10 > EXPLV:(ABL:ARG:指 + 3) / 2; && EXP_UP(24,ARG)
+		ABL:ARG:指 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% fingers have become more dexterous.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s fingers have become more dexterous.
+		ENDIF
+		;技能レベルアップ口上,11-0,指
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 11, 0)
+		IF ABL:ARG:指 >= 5 && !TALENT:ARG:器用な指
+			IF ARG == 0
+				PRINTFORMW %PARSE("You have")% become【Nimble-fingered】!
+			ELSE
+				PRINTFORMW %CALLNAME:ARG% has become【Nimble-fingered】!
+			ENDIF
+			TALENT:ARG:器用な指 = 1
+			;技能レベルアップ口上,11-1,器用な指
+			CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 11, 1)
+			CALL QoL_Info_Write(ARG, Qol_Dates_Finger) ;qol custom code
+		ENDIF
+	ENDIF
+ENDIF
+IF ABL:ARG:舌 < 6
+	LOCAL = EXP:ARG:口淫経験
+	LOCAL:1 = 10 + ABL:ARG:技巧 / 2 + TALENT:ARG:舌使い * 2 + TALENT:ARG:習得速度
+	IF  LOCAL * LOCAL:1 / 10 > EXPLV:(ABL:ARG:舌 + 3); && EXP_UP(25,ARG)
+		ABL:ARG:舌 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("You have")% gotten better at using %PARSE("your",1)% tongue.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG% has gotten better at using %HIS_HER(ARG)% tongue.
+		ENDIF
+		;技能レベルアップ口上,12-0,舌
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 12, 0)
+		IF ABL:ARG:舌 >= 5 && !TALENT:ARG:舌使い
+			IF ARG == 0
+				PRINTFORMW %PARSE("You")% now %PARSE("have")% a【Skilled Tongue】!
+			ELSE
+				PRINTFORMW %CALLNAME:ARG% now has a【Skilled Tongue】!
+			ENDIF
+			TALENT:ARG:舌使い = 1
+			;技能レベルアップ口上,12-1,舌使い
+			CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 12, 1)
+			CALL QoL_Info_Write(ARG, Qol_Dates_Tongue) ;qol custom code
+		ENDIF
+	ENDIF
+ENDIF
+IF ABL:ARG:胸 < 6
+	LOCAL = EXP:ARG:パイズリ経験 * 2 +  EXP:ARG:Ｂ経験 / 5 + EXP:ARG:噴乳経験  / 4
+	LOCAL:1 = 10 + ABL:ARG:技巧 / 2 + TALENT:ARG:バストサイズ + TALENT:ARG:習得速度
+	SIF FLAG:抱負 == 5
+		LOCAL:1 ++
+	SIF GETBIT (CFLAG:ARG:引き継ぎ, 5)
+		LOCAL:1 *= 4
+	IF LOCAL * LOCAL:1 / 10 > EXPLV:(ABL:ARG:胸 + 3) && EXP:ARG:パイズリ経験 + EXP:ARG:噴乳経験  / 5 > EXPLV:(ABL:ARG:胸 + 1); && EXP_UP(26,ARG)
+		ABL:ARG:胸 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("You have")% gotten better at servicing with %PARSE("your",1)% breasts.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG% has gotten better at servicing with %HIS_HER(ARG)% breasts.
+		ENDIF
+		;技能レベルアップ口上,13-0,胸
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 13, 0)
+		IF ABL:ARG:胸 >= 5 && TALENT:ARG:2 != 2 && !TALENT:ARG:淫乳
+			IF ARG == 0
+				PRINTFORMW %PARSE("You")% now %PARSE("have")%【Lewd Breasts】!
+			ELSE
+				PRINTFORMW %CALLNAME:ARG% now has【Lewd Breasts】!
+			ENDIF
+			TALENT:ARG:淫乳 = 1
+			;技能レベルアップ口上,13-1,淫乳
+			CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 13, 1)
+			CALL QoL_Info_Write(ARG, Qol_Dates_LewdChest) ;qol custom code
+		ENDIF
+	ENDIF
+ENDIF
+IF ABL:ARG:腰 < 6
+	LOCAL = EXP:ARG:Ｖ性交経験 + EXP:ARG:Ａ性交経験 + EXP:ARG:挿入経験
+	LOCAL:1 = 10 + ABL:ARG:技巧 / 2 + TALENT:ARG:習得速度
+	SIF GETBIT (CFLAG:ARG:引き継ぎ, 3) || GETBIT (CFLAG:ARG:引き継ぎ, 4)
+		LOCAL:1 *= 4
+	IF LOCAL * LOCAL:1 / 10 > EXPLV:(ABL:ARG:腰 + 3)
+		ABL:ARG:腰 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("You have")% gotten better at moving %PARSE("your",1)% waist.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG% has gotten better at moving %HIS_HER(ARG)% waist.
+		ENDIF
+		;技能レベルアップ口上,14,腰
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 14)
+	ENDIF
+ENDIF
+IF ABL:ARG:膣 < 6
+	;広げすぎるとガバガバになっちゃいますよ
+	LOCAL = EXP:ARG:Ｖ性交経験  * 2 +  EXP:ARG:Ｖ経験 / 5 + (EXP:ARG:Ｖ拡張経験 <= 10 ? EXP:ARG:Ｖ拡張経験 * 5 # 100 - EXP:ARG:Ｖ拡張経験 * 5)
+	LOCAL:1 = 10 + ABL:ARG:技巧 / 2 + TALENT:ARG:習得速度
+	SIF FLAG:抱負 == 3
+		LOCAL:1 ++
+	SIF GETBIT (CFLAG:ARG:引き継ぎ, 3)
+		LOCAL:1 *= 4
+	IF LOCAL * LOCAL:1 / 10 > EXPLV:(ABL:ARG:膣 + 3) && EXP:ARG:Ｖ性交経験 >  EXPLV:(ABL:ARG:膣 + 1); && EXP_UP(20,ARG)
+		ABL:ARG:膣 ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% vagina is now more accustomed to sex.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s vagina is now more accustomed to sex.
+		ENDIF
+		;技能レベルアップ口上,15-0,膣
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 15, 0)
+		IF ABL:ARG:膣 >= 5 && TALENT:ARG:2 != 2 && !TALENT:ARG:淫壺
+			IF ARG == 0
+				PRINTFORMW %PARSE("You")% now %PARSE("have")% a【Lewd Vagina】!
+			ELSE
+				PRINTFORMW %CALLNAME:ARG% now has a【Lewd Vagina】!
+			ENDIF
+			TALENT:ARG:淫壺 = 1
+			;技能レベルアップ口上,15-1,淫壺
+			CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 15, 1)
+			CALL QoL_Info_Write(ARG, Qol_Dates_LewdVagina) ;qol custom code
+		ENDIF
+	ENDIF
+ENDIF
+IF ABL:ARG:アナル < 6
+	LOCAL = EXP:ARG:Ａ性交経験  * 2 +  EXP:ARG:Ａ経験 / 5 + (EXP:ARG:Ａ拡張経験 <= 25 ? EXP:ARG:Ａ拡張経験 * 2 # 100 - 2 * EXP:ARG:Ａ拡張経験)
+	LOCAL:1 = 10 + ABL:ARG:技巧 / 2 + TALENT:ARG:習得速度
+	SIF FLAG:抱負 == 4
+		LOCAL:1 ++
+	SIF GETBIT (CFLAG:ARG:引き継ぎ, 4)
+		LOCAL:1 *= 4
+	IF LOCAL * LOCAL:1 / 10 > EXPLV:(ABL:ARG:アナル + 3) && EXP:ARG:Ａ性交経験 > EXPLV:(ABL:ARG:アナル + 1); && EXP_UP(21,ARG)
+		ABL:ARG:アナル ++
+		IF ARG == 0
+			PRINTFORMW %PARSE("Your")% anus is now more accustomed to sex.
+		ELSE
+			PRINTFORMW %CALLNAME:ARG%'s anus is now more accustomed to sex.
+		ENDIF
+		;技能レベルアップ口上,16,アナル
+		CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 16, 0)
+		IF ABL:ARG:アナル >= 5 && !TALENT:ARG:尻穴狂い
+			IF ARG == 0
+				PRINTFORMW %PARSE("You")% now %PARSE("have")% a【Lewd Anus】!
+			ELSE
+				PRINTFORMW %CALLNAME:ARG% now has a【Lewd Anus】!
+			ENDIF
+			TALENT:ARG:尻穴狂い = 1
+			;技能レベルアップ口上,16,尻穴狂い
+			CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 16, 1)
+			CALL QoL_Info_Write(ARG, Qol_Dates_LewdAnus) ;qol custom code
+		ENDIF
+	ENDIF
+ENDIF
+
+IF !TALENT:ARG:調合知識 && TALENT:ARG:調合Lv >= 3 && ABL:ARG:教養 >= 3
+	IF ARG == 0
+		PRINTFORML %PARSE("You have")% acquired【Mixing Knowledge】!
+	ELSE
+		PRINTFORML %CALLNAME:ARG% has acquired【Mixing Knowledge】!
+	ENDIF
+	TALENT:ARG:調合知識 = 1
+	;技能レベルアップ口上,9-1,調合知識
+	CALL KOJO_MESSAGE_SEND("EVENT", 34, ARG, 9, 1)
+	CALL QoL_Info_Write(ARG, Qol_Dates_Mixing) ;qol custom code
+ENDIF

@@ -1,0 +1,236 @@
+﻿;-----------------------------------------------------------
+;陥落キャラの素質変更
+;-----------------------------------------------------------
+@周回特典
+PRINTL
+PRINTL
+PRINTL ＊Inheritance of Will Bonus＊
+PRINTL Previous lovers can be modified.
+PRINTL Yearning and Lust gives some limited changing capabilities.
+PRINTL
+PRINTL
+CALL 周回特典_キャラ選択
+SELECTCASE RESULT
+	CASE 999
+		RETURN
+	;CASE 997
+	;	CALL SaveTalentSet
+	CASE 998
+		CALL LoadTalentSet
+	CASEELSE
+		IF GETBIT(CFLAG:RESULT:引き継ぎ, 1)
+			CALL CUSTOM_TERMINAL(RESULT, 1)
+		ELSEIF GETBIT(CFLAG:RESULT:引き継ぎ, 0)
+			CALL LIMITED_CUSTOM(RESULT)
+		ENDIF
+ENDSELECT
+RESTART
+
+;-----------------------------------------------------------
+;-----------------------------------------------------------
+@周回特典_キャラ選択
+;生成
+LOCAL:1 = 0
+FOR LOCAL, 0, CHARANUM
+	IF !IS_NAMED(LOCAL)
+		CONTINUE
+	ENDIF
+	SIF SuccSetting:LOCAL
+		FONTBOLD
+	IF GETBIT(CFLAG:LOCAL:引き継ぎ, 1)
+		SETCOLOR C_PINK
+		PRINTFORMLC [{LOCAL, 3}] %CALLNAME:LOCAL%
+		LOCAL:1 ++
+	ELSEIF GETBIT(CFLAG:LOCAL:引き継ぎ, 0)
+		SETCOLOR C_YELLOW
+		PRINTFORMLC [{LOCAL, 3}] %CALLNAME:LOCAL%
+		LOCAL:1 ++
+	ENDIF
+NEXT
+RESETCOLOR
+FONTREGULAR
+;その他の選択肢
+PRINTL
+DRAWLINE
+;PRINTL [997] Save Inheritance of Will settings
+PRINTL [998] Load Inheritance of Will settings
+DRAWLINE
+PRINTL [999] Finished
+PRINTL
+;入力受付
+DO
+	INPUT
+	SELECTCASE RESULT
+	;CASE 997
+	;	RETURN RESULT
+	CASE 998
+		RETURN RESULT
+	CASE 999
+		RETURN RESULT
+	CASEELSE
+		SIF IS_NAMED(RESULT) && (GETBIT(CFLAG:RESULT:引き継ぎ, 1) || GETBIT(CFLAG:RESULT:引き継ぎ, 0))
+			RETURN RESULT
+	ENDSELECT
+	CLEARLINE 1
+LOOP 1
+
+;-----------------------------------------------------------
+;-----------------------------------------------------------
+@周回特典_適用
+FOR LOCAL,1,CHARANUM
+	SIF TCVAR:LOCAL:感度上昇部位
+		TALENT:LOCAL:(TCVAR:LOCAL:感度上昇部位) ++
+NEXT
+
+;-----------------------------------------------------------
+;表示名
+;-----------------------------------------------------------
+@周回特典_表示
+#FUNCTIONS
+FOR LOCAL, 1, CHARANUM
+	IF IS_NAMED(LOCAL) && (GETBIT(CFLAG:LOCAL:引き継ぎ, 1) || GETBIT(CFLAG:LOCAL:引き継ぎ, 0))
+		RETURNF "<font color='#FFCCFF'>" + "Inheritance of Will Bonus: Change character specifics" + "</font>"
+	ENDIF
+NEXT
+RETURNF ""
+
+;-----------------------------------------------------------
+;保存
+;-----------------------------------------------------------
+;@SaveTalentSet
+;#DIM C_ID
+;FOR C_ID,1,CHARANUM
+;	FOR LOCAL, 0, 160
+;		TalentSet:C_ID:LOCAL = TALENT:C_ID:LOCAL
+;	NEXT
+;NEXT
+;FLAG:引継ぎ設定保存済み = CHARANUM - 1
+;PRINTFORMW 引継ぎ設定をセーブしました
+;-----------------------------------------------------------
+@SAVE_CUSTOM_TALENT(C_ID, ARGS)
+#DIM C_ID
+LOCALS = 現在の設定を保存
+CALL ASK_M(@"Save current settings",1, "Reset saved settings", SuccSetting:C_ID ,"Cancel",1)
+SELECTCASE RESULT
+	CASE 0
+		FOR LOCAL, 0, 160
+			TalentSet:C_ID:LOCAL = TALENT:C_ID:LOCAL
+		NEXT
+		SuccSetting:C_ID = 1
+		IF ARGS == "恋人"
+			SuccBASE:C_ID:0 = MAXBASE:C_ID:0
+			SuccBASE:C_ID:1 = MAXBASE:C_ID:1
+			SuccSetting:C_ID = 2
+			FOR LOCAL,0,100
+				SuccABL:C_ID:LOCAL = ABL:C_ID:LOCAL
+				SuccEXP:C_ID:LOCAL = EXP:C_ID:LOCAL
+			NEXT
+		ENDIF
+		PRINTFORMW Saved settings for %CALLNAME:C_ID%.
+	CASE 1
+		VARSET TalentSet:C_ID:0, 0
+		SuccSetting:C_ID = 0
+		PRINTFORMW Reset settings for %CALLNAME:C_ID%.
+	CASE 2
+ENDSELECT
+;-----------------------------------------------------------
+@LoadTalentSet
+#DIM C_ID
+;IF !FLAG:引継ぎ設定保存済み
+;	THROW 引き継ぎ設定がありません。
+;ENDIF
+FOR C_ID, 1, CHARANUM
+	SIF !SuccSetting:C_ID
+		CONTINUE
+	FOR LOCAL,0,160
+		TALENT:C_ID:LOCAL = TalentSet:C_ID:LOCAL
+	NEXT
+	IF SuccSetting:C_ID == 2
+		MAXBASE:C_ID:0 = SuccBASE:C_ID:0
+		MAXBASE:C_ID:1 = SuccBASE:C_ID:1
+		FOR LOCAL,0,100
+			ABL:C_ID:LOCAL = SuccABL:C_ID:LOCAL
+			EXP:C_ID:LOCAL = SuccEXP:C_ID:LOCAL
+		NEXT
+	ENDIF
+	PRINTFORML Inheritance of Will settings loaded for %CALLNAME:C_ID%.
+NEXT
+
+;-----------------------------------------------------------
+;周回時恋慕特典によるカスタマイズ用
+;-----------------------------------------------------------
+@LIMITED_CUSTOM(ARG)
+#DIMS choices, 10
+#DIM part
+;表示
+PRINTL
+PRINTL
+PRINTFORML %NAME:ARG%
+PRINTFORML Current body: %GET_TALENTNAME(100,TALENT:ARG:100)%\@ TALENT:ARG:100 == 0? Normal# \@
+PRINTFORML Current bust size: %GET_TALENTNAME(105,TALENT:ARG:105)%\@ TALENT:ARG:105 == 0? Normal# \@
+FOR LOCAL, 101, 107
+	IF LOCAL == 105
+		CONTINUE
+	ENDIF
+	PRINTFORM %TALENT_TR(LOCAL)%：
+	SELECTCASE TALENT:ARG:LOCAL
+		CASE -1
+			PRINTFORM Insensitive　
+		CASE 0
+			PRINTFORM Average　
+		CASE 1
+			PRINTFORM Sensitive　
+	ENDSELECT
+NEXT
+PRINTFORML 
+DRAWLINE
+;選択肢
+VARSET choices
+choices:0 '= "Change body", "Change Bust Size", "Change Sensitivity", "Set All Sensitive" ;custom code, make the hidden option visible
+CALL ASK_CHOICES(choices, 100, "Finished")
+SELECTCASE RESULT
+	CASE 100
+		RETURN
+	CASE 0
+		VARSET choices
+		choices:0 '= "Inchling", "", "", "Fairy", "Loli", "Normal", "Tall", "Giant"
+		CALL ASK_CHOICES(choices, 100, "Return")
+		SELECTCASE RESULT
+			CASE 0, 3 TO 7
+				TALENT:ARG:体型 = RESULT - 5
+		ENDSELECT
+	CASE 1
+		VARSET choices
+		choices:0 '= "Flat", "Small", "Normal", "Big", "Huge"
+		CALL ASK_CHOICES(choices, 100, "Return")
+		SELECTCASE RESULT
+			CASE 0 TO 4
+				TALENT:ARG:バストサイズ = RESULT - 2
+		ENDSELECT
+	CASE 2
+		VARSET choices
+		FOR LOCAL, 1, 7
+			IF LOCAL == 5
+				CONTINUE
+			ENDIF
+			choices:LOCAL '= TALENT_TR(LOCAL + 100)
+		NEXT
+		CALL ASK_CHOICES(choices, 100, "Return")
+		part = RESULT + 100
+		;custom code
+		SELECTCASE RESULT
+			CASE 1 TO 4, 6
+				CALL ASK_M("Insensitive",1,"Average",1,"Sensitive",1)
+				TALENT:ARG:part = RESULT - 1
+		ENDSELECT
+	CASE 3
+		FOR LOCAL, 101, 107
+			IF LOCAL == 105
+				CONTINUE
+			ENDIF
+			TALENT:ARG:LOCAL = 1
+		NEXT
+	CASE 4
+		CALL SAVE_CUSTOM_TALENT(ARG, "恋慕")
+ENDSELECT
+RESTART

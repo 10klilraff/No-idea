@@ -1,0 +1,37 @@
+﻿;FileName_SHOP_CUSTOM.ERB -------------------------- Rev1.00
+;名前の設定
+;CALL		USER
+;ARG		MASTERキャラNO
+;RETURN		VOID
+;COMMENT	
+;-----------------------------------------------------------
+@NAME_CUSTOM(ARG)
+PRINTFORML Please enter \@THIRD_PERSON?the character's#your\@ name.
+IF STRLENS(NAME:ARG)
+	PRINTFORM %@"Current Name: %NAME:ARG%", 40, LEFT%
+	PRINTBUTTON "[Don't Change]",""
+	PRINTL
+ENDIF
+INPUTS
+IF RESULTS == ""
+	NAME:ARG = %NAME:ARG%
+ELSE
+	NAME:ARG = %RESULTS%
+ENDIF
+
+PRINTFORML Please enter \@THIRD_PERSON?the character's nickname.#your nickname - what people should call you.\@
+IF STRLENS(CALLNAME:ARG)
+	PRINTFORM %@"Current Nickname: %CALLNAME:ARG%", 40, LEFT%
+	PRINTBUTTON "[Don't Change]",""
+	PRINTL
+ENDIF
+INPUTS
+IF RESULTS == ""
+	CALLNAME:ARG = %CALLNAME:ARG%
+ELSE
+	CALLNAME:ARG = %RESULTS%
+ENDIF
+IF TALENT:ARG:行きずり ;cheat custom code to support random characters
+	SPLIT CSTR:ARG:モブ子プロフィール１, ":", LOCALS
+	CSTR:ARG:モブ子プロフィール１ = %CALLNAME:ARG%:%LOCALS:1%
+ENDIF

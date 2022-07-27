@@ -1,0 +1,224 @@
+﻿@EXIST_FreeAct15
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+;オブジェクト本体
+@FreeAct15(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+#DIM 経過時間
+経過時間 = Activity_Duration:TARGET
+SELECTCASE O_DATA
+;自由行動に付き合うコマンドの名称
+CASE "名称"
+	CALLF MAKE_STR(V_NAME, "様子をうかがう")
+CASE "CHAIN"
+;他キャラに連鎖しない場合コメントアウトすること
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "経過時間"
+;自由行動に付き合うコマンドでの経過時間
+;0だと30分か残り時間すべての小さい方
+	CALLF MAKE_INT(V_NAME, 0)
+ENDSELECT
+
+@自由行動内容_15(CHARA, ARGS, 時間係数, CHAIN)
+#DIM CHARA
+#DIM CHAIN
+#DIM 現在地
+#DIM メッセージ表示
+#DIM 時間係数
+#DIM 経過時間
+現在地 = CFLAG:CHARA:現在位置
+メッセージ表示 = 現在地 == CFLAG:MASTER:現在位置 ? 1 # 0
+SELECTCASE ARGS
+	CASE "発生"
+		;屋外で発生
+		SIF INROOM(現在地)
+			RETURN 0
+		;仕事予定の邪魔をしない
+		SIF !CHARA_HOLIDAY(CHARA)
+			RETURN 0
+		;映姫様は常に起点
+		SIF CHARA == 30
+			GOTO START
+		;小町/久侘歌以外の神霊と蓬莱人は対象外
+		SIF CHECK_CHARA(CHARA, "蓬莱人") || (TALENT:CHARA:神霊 && !GROUPMATCH(CHARA, 76, 129))
+			RETURN 0
+		;映姫様がすでに説教中なら発生
+		SIF Activity_Type:30 != 15 || 現在地 != CFLAG:30:現在位置 || !Activity_Duration:30
+			RETURN 0
+		$START
+		IF メッセージ表示
+			PRINTFORM %CALLNAME:CHARA% 
+			IF CHARA == 30 
+				PRINTFORMW begins lecturing %FA15_TARGET(0)%.
+			ELSE
+				PRINTFORMW \@ CHAIN ? joins in on %CALLNAME:CHAIN%'s lecture # gets %SPLIT_G("roped into:caught up in")% Eiki's lecturing \@...
+			ENDIF
+		ELSEIF CHARA == 30
+			CALLF FA15_TARGET(0)
+		ENDIF
+		;自由行動にかける時間をRETURNする。小町のみ最低保障2時間
+		IF CHARA == 30
+			RETURN 60 + RAND:30
+		ELSE
+			LOCAL = 30 + RAND:60 + ((CHARA == 76) * 90)
+			Activity_Duration:30 = MAX(Activity_Duration:30, LOCAL)
+			RETURN LOCAL
+		ENDIF
+	CASE "行動中"
+		;行動中の処理、地の文もここで。
+		IF メッセージ表示
+			IF CHARA == 30
+				PRINTFORMW %CALLNAME:CHARA% lectures %FA15_TARGET(1)% %TEXTR("ad nauseam/endlessly/at length/incessantly/")%...
+			ELSEIF 現在地 != CFLAG:30:現在位置 || Activity_Type:30 != 15
+				CALL FA15_RESET(CHARA)
+			ELSE
+				PRINTFORM %CALLNAME:CHARA% is 
+				SELECTCASE CFLAG:CHARA:性格傾向
+					;気弱系
+					CASE 1
+						PRINTFORM %TEXTR(@"being reduced to tears by/hanging %HIS_HER(CHARA)% head in %SPLIT_G("sadness:regret:shame")% while listening to/whimpering and sobbing from")%
+					;強気系
+					CASE 2
+						PRINTFORM %TEXTR(@"%SPLIT_G("mischievously:slyly")% sticking out %HIS_HER(CHARA)% tongue at/pretending to listen to/mostly ignoring/barely paying any attention to")%
+					;素直系
+					CASE 3
+						PRINTFORM %TEXTR(@"feeling %SPLIT_G("like a wreck:crestfallen:defeated:sullen")%/nodding to every word%SPLIT_G(" eagerly: obediently: attentively:")%")% as %HE_SHE(CHARA)% listens to
+					;真面目系
+					CASE 4
+						PRINTFORM %TEXTR(@"feeling %SPLIT_G("remorseful:sorry")%/repenting/reflecting on it/showing remorse/giving serious thought to it/taking it very seriously")% after hearing
+					;その他
+					CASEELSE
+						PRINTFORM %TEXTR(@"%SPLIT_G("obediently:quietly:patiently")% %SPLIT_G("enduring:listening to:undergoing:taking")%")%
+				ENDSELECT
+				PRINTFORMW  Eiki's lecture...
+			ENDIF
+		ELSEIF CHARA != 30 && 現在地 != CFLAG:30:現在位置
+			CALL FA15_RESET(CHARA)
+		ENDIF
+	CASE "完了"
+		;行動時間を使い切ったときの処理、地の文もここで
+		IF メッセージ表示
+			IF CHARA == 30
+				PRINTFORMW At long last, %CALLNAME:CHARA% seems to have finished %HIS_HER(CHARA)% lecture.
+			ELSE
+				PRINTDATAW
+					DATAFORM As the lecture comes to an end, %CALLNAME:CHARA% \@ CFLAG:CHARA:性格傾向 == 2 ? seems %SPLIT_G("bummed out by:fed up with:weary from")% it # %SPLIT_G("looks relieved:lets out a sigh of relief")% \@.
+					DATAFORM %CALLNAME:CHARA% \@ CFLAG:CHARA:性格傾向 == 1 ? is still in tears even after # lets out a small sigh when \@ the lecture is over.
+					DATAFORM After the lecture is over, %CALLNAME:CHARA% \@ CFLAG:CHARA:性格傾向 == 4 ? offers %HIS_HER(CHARA)% sincere gratitude # appears %SPLIT_G("utterly ashamed:very embarrassed:much bothered by it:shaken up")% \@.
+				ENDDATA
+			ENDIF
+		ENDIF
+	CASE "中断"
+		;中断メッセージはうふふ突入時等でも表示されてしまうので表示しない
+		;説教する側がいなくなった場合の処理
+		IF CHARA == 30
+			FOR COUNT, 1, CHARANUM
+				SIF Activity_Type:COUNT != 15
+					CONTINUE
+				CALL FA15_RESET(COUNT)
+			NEXT
+		ENDIF
+	CASE "付き合う"
+		;自由行動に付き合ったとき用メッセージ
+		PRINTFORML %PARSE("You lend your")% ear for a bit and listen to the lecture casually.
+		IF TFLAG:193
+			PRINTFORML Eiki catches sight of that and starts lecturing %PARSE("you")% %SPLIT_G("thoroughly:in full force:diligently")%!
+		ELSE
+			LOCALS = %\@ CHARA == 30 ? %FA15_TARGET(1)% # %CALLNAME:CHARA% \@%
+			PRINTDATAL
+				DATAFORM ... %PARSE("You have")% not the slightest idea when will it ever end.
+				DATAFORM ... %PARSE("You're")% really glad %PARSE("you",1)% %PARSE("weren't")% on the receiving end.
+				DATAFORM ... %PARSE("You")% feel a little sorry for poor %LOCALS%.
+			ENDDATA
+		ENDIF
+	CASE "ソース"
+		;付き合うコマンド選択時の入手ソース、時間係数は付き合った時間の1/10
+		;ソースの基準よくわかんないので適当
+		DOWNBASE:MASTER:気力 += 20 * 時間係数
+		;15%でいっしょに説教されて入手ソース増/MASTER消費気力激増
+		IF !RAND:6
+			TFLAG:193 = 1
+			SOURCE:30:歓楽 = (100 + ((ABL:30:親密 + 好感度係数(TARGET)) * 40)) * 時間係数
+			SOURCE:30:征服 = (60 + (ABL:30:サドっ気 * 60)) * 時間係数
+			IF TARGET != 30
+				SOURCE:TARGET:受動 = (30 + ((ABL:従順 + 好感度係数(TARGET)) * 50)) * 時間係数
+				SOURCE:TARGET:屈従 = (30 + ((ABL:従順 + 好感度係数(TARGET)) * 50)) * 時間係数
+				DOWNBASE:TARGET:気力 += 10 * 時間係数
+			ENDIF
+			DOWNBASE:MASTER:気力 += 150 * 時間係数
+		ELSE
+			SOURCE:歓楽 = (50 + ((ABL:親密 + 好感度係数(TARGET)) * 30)) * 時間係数
+			SOURCE:征服 = (20 + (ABL:サドっ気 * 50)) * 時間係数
+			IF TARGET != 30
+				SOURCE:TARGET:受動 = (20 + ((ABL:従順 + 好感度係数(TARGET)) * 20)) * 時間係数
+				SOURCE:TARGET:屈従 = (20 + ((ABL:従順 + 好感度係数(TARGET)) * 20)) * 時間係数
+				DOWNBASE:TARGET:気力 += 10 * 時間係数
+			ENDIF
+		ENDIF
+ENDSELECT
+;説教相手を表示する式中関数
+@FA15_TARGET(ARG)
+#FUNCTIONS
+#DIM 累計
+#DIMS モブ
+#DIMS ネームド
+;説教開始は仕様上常にモブキャラ
+IF !ARG
+	SELECTCASE GET_MAPID(CFLAG:30:現在位置)
+		CASE 0
+			モブ = youkai
+		CASE 1
+			モブ = shrine visitor
+		CASE 2
+			モブ = %TEXTR("village girl/villager/")%
+		CASE 3
+			モブ = %TEXTR("fairy maid/hobgoblin/")%
+		CASE 4
+			モブ = inaba
+		CASE 5
+			モブ = bake%TEXTR("neko/danuki/gitsune/")%
+		CASE 6
+			モブ = %TEXTR("zombie fairy/shinigami/")%
+		CASE 7
+			モブ = kappa
+		CASE 8
+			モブ = %TEXTR("worshipper/tengu/yamawaro/")%
+			SIF INRANGE(CFLAG:30:現在位置, 830, 850)
+				モブ = celestial
+		CASE 9
+			モブ = oni
+		CASE 10
+			モブ = %TEXTR("moon rabbit/lunarian/")%
+	ENDSELECT
+	LOCALS = %TEXTR("passerby/encountered/nearby/local/bystander/random/onlooker")% %モブ%
+	SIF !RAND:4 ;custom code, moved down here
+		LOCALS += " who wasn't lucky enough to get away in time"
+	RETURNF LOCALS
+;映姫様と同じ場所にいて自由行動=15且つ行動時間中のキャラが説教され中
+ELSE
+	ネームド =
+	累計 = 0
+	FOR COUNT, 1, CHARANUM
+		SIF COUNT == 30
+			CONTINUE
+		SIF CFLAG:30:現在位置 != CFLAG:COUNT:現在位置
+			CONTINUE
+		SIF Activity_Type:COUNT != 15 || !Activity_Duration:COUNT
+			CONTINUE
+		ネームド += @"%\@ 累計 ? %" and "% # \@%%CALLNAME:COUNT%"
+		累計 ++
+	NEXT
+	SIF 累計
+		RETURNF ネームド
+	RETURNF モブ
+ENDIF
+;集合等での強制中断処理
+@FA15_RESET(ARG)
+Activity_Type:ARG = 0
+Activity_Duration:ARG = 0
+RETURN

@@ -1,0 +1,121 @@
+﻿@デート終了タイムアップ処理
+VARSET LOCAL
+;気力ゼロ,衰弱時デート中断
+FOR LOCAL,0,CHARANUM
+	SIF CHK_DATENOW(CFLAG:LOCAL:デート中) && (CFLAG:LOCAL:衰弱 || (BASE:LOCAL:気力 == 0 && CFLAG:LOCAL:現在位置 != 連れ込み宿 && CFLAG:LOCAL:現在位置 != ラブホ && CFLAG:LOCAL:現在位置 != OMANEKIBEYA()))
+		LOCAL:1 ++
+	;bug fix, separate master
+	IF LOCAL:1 && LOCAL == MASTER
+		LOCAL:1 --
+		LOCAL:3 ++
+	ENDIF
+	SIF CHK_DATENOW(CFLAG:LOCAL:デート中) && CFLAG:LOCAL:衰弱
+		CALL ENDUFUFU(LOCAL)
+NEXT
+SIF NEMUKE() >= 720 || BASE:MASTER:酒気 >= MAXBASE:MASTER:酒気
+	LOCAL:2 ++
+;お招きしていて連泊でなければ泊めて貰える
+IF CFLAG:MASTER:お招き && (LOCAL:3 || LOCAL:2) && !FLAG:70 ;bug fix, replace local:1 with local:3
+	IF !TALENT:TARGET:恋慕
+		PRINTFORML %CALLNAME:(CFLAG:MASTER:お招き)% slowly comes to %HIS_HER(CFLAG:MASTER:お招き)% senses as well, it's time to call it for now...
+		IF CFLAG:TARGET:うふふ
+			PRINTFORMW %TNAME(CFLAG:MASTER:お招き),1% clings to you, but eventually you leave for %GET_MAPNAME(MAIN_MAP)%...
+		ELSE
+			PRINTFORMW Seeking to escape %TNAME(CFLAG:MASTER:お招き)%'s feverish gaze, you leave for %GET_MAPNAME(MAIN_MAP)%...
+		ENDIF
+		GOTO ESCAPE
+	ELSEIF TFLAG:泡風呂
+		CALL 泡風呂終了判定("あなた限界")
+		GOTO ESCAPE
+	ENDIF
+	;bug fix
+	IF LOCAL:3
+		PRINTFORML %PARSE("You run")% out of energy.
+	ELSEIF LOCAL:2
+		PRINTL It's time to go home.
+	ENDIF
+	SIF !TCVAR:(CFLAG:MASTER:お招き):連泊禁止
+		PRINTFORMW It seems like it's possible to stay over at %CALLNAME:(CFLAG:MASTER:お招き)% today.
+	SIF TCVAR:(CFLAG:MASTER:お招き):連泊禁止
+		PRINTFORMW Ask %CALLNAME:(CFLAG:MASTER:お招き)% if it's possible to stay over?
+	PRINTL [0] Ask [1] Go Home
+	WHILE 1
+	INPUT
+	SIF RESULT == 0 || RESULT == 1
+		BREAK
+	WEND
+	IF !RESULT && !TCVAR:(CFLAG:MASTER:お招き):連泊禁止
+		PRINTFORMW  %CALLNAME:(CFLAG:MASTER:お招き)% allows %PARSE("you")% to stay over.
+		;デートは終了
+		CFLAG:MASTER:デート中 = MAIN_MAP
+		CFLAG:TARGET:デート中 = MAIN_MAP
+		FLAG:デート相手 = 0
+		TFLAG:デート前好感度 = 0
+		TFLAG:デート道中 = 0
+		CALL 守矢くじデート相手のリセット()
+		;以後の処理をカット
+		GOTO OTOMARI
+	ELSEIF !RESULT && TCVAR:(CFLAG:MASTER:お招き):連泊禁止
+		PRINTFORMW %CALLNAME:(CFLAG:MASTER:お招き)% doesn't let %PARSE("you")% stay for two days in a row...
+	ENDIF
+ENDIF
+$ESCAPE
+;bug fix
+IF LOCAL:3 && CFLAG:MASTER:現在位置
+	PRINTL 
+	PRINTFORMW ★★★ %PARSE("You run")% out of energy, so %PARSE("you have",1)% to return home ★★★
+	CALL 帰宅の時間経過
+	FLAG:時間停止 = 0
+	RESETBGCOLOR
+ELSEIF LOCAL:2
+	PRINTL
+	IF BASE:MASTER:酒気 >= MAXBASE:MASTER:酒気
+		PRINTFORMW ★★★ %PARSE("You get")% too drunk, and %PARSE("stagger")% home ★★★
+		PRINTFORMW As soon as %PARSE("you return",1)% to %GET_MAPNAME(MAIN_MAP)% %PARSE("you fall",1)% asleep.
+	ELSE
+		PRINTFORMW ★★★ %PARSE("You are")% succumbing to drowsiness, so %PARSE("you return",1)% home ★★★
+	ENDIF
+	CALL 帰宅の時間経過
+ENDIF
+IF LOCAL:1 || LOCAL:2
+	FOR LOCAL, 0, CHARANUM
+		IF LOCAL && CFLAG:LOCAL:衰弱
+			IF !CFLAG:LOCAL:神社在住
+				CFLAG:LOCAL:初期位置 = SUKIMA()
+				CFLAG:LOCAL:現在位置 = SUKIMA()
+				CFLAG:LOCAL:拠点来訪 = 0
+				CALL KOJO_MESSAGE_SEND("EVENT",20,LOCAL,2,0)
+				PRINTFORMW The exhausted %CALLNAME:LOCAL% returns home.
+			ELSE
+				PRINTFORMW %CALLNAME:LOCAL% returns from %NAME_FROM_PLACE(CFLAG:LOCAL:初期位置)%.
+				SIF CFLAG:MASTER:初期位置 != CFLAG:LOCAL:初期位置
+					LOCK:(CFLAG:LOCAL:初期位置) = 1
+				CFLAG:LOCAL:現在位置 = CFLAG:LOCAL:初期位置
+				CALL KOJO_MESSAGE_SEND("EVENT",3,1,LOCAL,0)
+			ENDIF
+		ENDIF
+		CALL SET_DATE(99, LOCAL)
+		IF CFLAG:LOCAL:お招き
+			CFLAG:LOCAL:お招き = 0
+			IF LOCAL == 0
+			ELSEIF CFLAG:LOCAL:神社在住
+				CFLAG:LOCAL:初期位置 = CFLAG:LOCAL:神社在住
+			ELSE
+				CFLAG:LOCAL:初期位置 = SUKIMA()
+			ENDIF
+		ENDIF
+		SIF CFLAG:LOCAL:添い寝中 > 0
+			CFLAG:LOCAL:添い寝中 = 0
+		SIF CFLAG:LOCAL:うふふ
+			CALL ENDUFUFU(LOCAL)
+		;イタズラOFF 
+		CALL SET_PRANK(0,LOCAL,1) 
+	NEXT
+	CALL 守矢くじデート相手のリセット()
+ENDIF
+IF TFLAG:デート道中 && !FLAG:デート相手
+	TIME += TFLAG:デート道中
+	TFLAG:デート道中 = 0
+	CFLAG:MASTER:現在位置 = GET_ENTRANCE(CFLAG:MASTER:デート中)
+ENDIF
+$OTOMARI

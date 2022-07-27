@@ -1,0 +1,2159 @@
+﻿@SHOW_CHARA_LIST_TR(LIST_TYPE = "存在するキャラリスト", DISP_TYPE_STR = "体力気力", OP)
+#DIMS LIST_TYPE                     ;リストの種別
+#DIMS LIST_TYPE_TR                  ;リストの種別
+#DIMS DISP_TYPE_STR                 ;Ensures it can still be called like normal
+#DIM  DISP_TYPE                      ;Handle the type as int, rather than string
+#DIMS OP                            ;機能オプション
+#DIM  GET_LIST = 1                  ;リスト更新フラグ
+#DIM  L_ID                          ;リスト上の番号（ループカウンタ）、登録番号にあらず
+#DIM  L_CLASS_ID                    ;リストのクラス内ID
+#DIM  CHARA_LIST , キャラクタ数上限 ;リスト本体、登録番号にて記録
+#DIM  CHARA_CNT                     ;リストに該当したキャラの数
+#DIMS INPUT_STR                     ;入力内容の一時保持
+#DIM  INPUT_INT                     ;入力内容をINT化したモノ
+#DIM  NOW_GROUP = 1                 ;表示中のキャラグループ
+#DIM  LAST_GROUP                    ;キャラグループ総数
+#DIM  SORT_TYPE                     ;キャラリストのソートタイプ
+;表示タイプの名称
+{
+#DIMS CONST DISP_NAME , 5 = 
+	"STA and ENE", "Sense", "Techniques", "Marks", "Favorability"
+}
+
+;表示項目の名称
+{
+#DIMS CONST DISP_MEMO , 26 = 
+	"STR", "ENE", 
+	"CSens", "VSens", "ASens", "BSens", "MSens", 
+	"Intimacy", "Obedience", "Lust", "Technique", 
+	"Hand", "Tongue", "Chest", "Waist", "Vagina", "Anus", 
+	"PAIN", "PLSR", "LEWD", "HATE", "RAPE", 
+	"Favor", "Reliance", "S. Frustration", "Dialog％"
+}
+#DIM CREDRAW
+#DIM FIRST_LINE
+
+;情報表示用
+SELECTCASE DISP_TYPE_STR
+	CASE "体力気力"
+		DISP_TYPE = 0
+	CASE "感度など"
+		DISP_TYPE = 1
+	CASE "性技"
+		DISP_TYPE = 2
+	CASE "刻印"
+		DISP_TYPE = 3
+	CASE "好感度"
+		DISP_TYPE = 4
+ENDSELECT
+
+FIRST_LINE = LINECOUNT
+$REPRINT
+CLEARLINE LINECOUNT - FIRST_LINE
+CREDRAW = CURRENTREDRAW()
+REDRAW 0
+
+SELECTCASE LIST_TYPE
+	CASE "存在するキャラリスト"
+		LIST_TYPE_TR = List all characters
+	CASE "主人公以外のキャラリスト"
+		LIST_TYPE_TR = List everyone but %PARSE("you")%
+	CASE "陥落ずみキャラリスト"
+		LIST_TYPE_TR = List fallen characters
+	CASE "清い交際取得キャラリスト"
+		LIST_TYPE_TR = List lust-less lovers
+	CASE "主人公の弱みを握るキャラリスト"
+		LIST_TYPE_TR = Characters that know %PARSE("your")% weakness
+	CASE "主人公に弱みがあるキャラリスト"
+		LIST_TYPE_TR = Characters whose weakness %PARSE("you know")%
+	CASE "HateMarkもちキャラリスト"
+		LIST_TYPE_TR = Characters with HateMark
+	CASE "RapeMarkもちキャラリスト"
+		LIST_TYPE_TR = Characters with RapeMark
+	CASE "着せ替え可能キャラリスト"
+		LIST_TYPE_TR = Dressable characters
+	CASE "普段着模倣可能キャラリスト"
+		LIST_TYPE_TR = Characters whose clothes can be imitated
+	CASE "口上もちキャラリスト"
+		LIST_TYPE_TR = Characters with dialog
+	CASE "妊娠中キャラリスト"
+		LIST_TYPE_TR = Pregnant characters
+	CASE "育児中キャラリスト"
+		LIST_TYPE_TR = Characters caring for children
+	CASE "子持ちキャラリスト"
+	CASE "メイドキャラリスト"
+		LIST_TYPE_TR = Characters that are maids
+	CASE "人形キャラリスト"
+		LIST_TYPE_TR = Characters that are dolls
+	CASE "幽霊キャラリスト"
+		LIST_TYPE_TR = Characters that are ghosts
+	CASE "人間キャラリスト"
+		LIST_TYPE_TR = Characters that are human
+		LIST_TYPE_TR = Characters that have children
+	CASE "巫女キャラリスト"
+		LIST_TYPE_TR = Characters that are Miko
+	CASE "妖精キャラリスト"
+		LIST_TYPE_TR = Characters that are fairies
+	CASE "神霊キャラリスト"
+		LIST_TYPE_TR = Characters that are divine spirits
+	CASE "付喪神キャラリスト"
+		LIST_TYPE_TR = Characters that are Tsukumogami
+	CASE "鬼キャラリスト"
+		LIST_TYPE_TR = Characters that are Oni
+	CASE "天狗キャラリスト"
+		LIST_TYPE_TR = Characters that are Tengu
+	CASE "蓬莱人キャラリスト"
+		LIST_TYPE_TR = Characters that are Hourai
+	CASE "妖怪キャラリスト"
+		LIST_TYPE_TR = Characters that are Youkai
+	CASE "魔法使いキャラリスト"
+		LIST_TYPE_TR = Characters that are Magicians
+ENDSELECT
+
+
+
+IF GET_LIST
+	CALLF MAKE_CHARA_LIST_TR(LIST_TYPE, L_CLASS_ID, CHARA_LIST, CHARA_CNT)
+	GET_LIST = 0
+	SORT_TYPE = -1
+ENDIF
+DRAWLINE
+
+;項目なし
+IF CHARA_CNT <= 0
+	PRINTFORML ＜N/A＞　%LIST_TYPE_TR%
+	PRINTFORML 
+	DRAWLINE
+	FOR LOCAL, 0, 20
+		PRINTL
+	NEXT
+;項目あり
+ELSE
+	;現在のタイプの総グループ数を更新
+	LAST_GROUP = 1 + (CHARA_CNT - 1) / 20
+	PRINTFORML (Applicable for {CHARA_CNT} people {NOW_GROUP}/{LAST_GROUP}) %LIST_TYPE_TR%    Colored characters have dialog
+	PRINTFORM 
+	CALL CHARA_BUTTON_TR(-1, , DISP_TYPE, SORT_TYPE)
+	DRAWLINE
+	FOR L_ID, (NOW_GROUP - 1) * 20, NOW_GROUP * 20
+		IF INRANGE(L_ID, 0, CHARA_CNT - 1)
+			CALL CHARA_BUTTON_TR(L_ID, CHARA_LIST:L_ID, DISP_TYPE, SORT_TYPE)
+		ELSE
+			PRINTL
+		ENDIF
+	NEXT
+ENDIF
+DRAWLINE
+
+
+IF STRCOUNT(OP, "「情報固定」")
+	PRINTFORM %" "*20%
+ELSE
+	PRINTBUTTON @"<- %DISP_NAME:((DISP_TYPE - 1 + 5) % 5), 20, LEFT%", 444
+ENDIF
+
+;modded to have infinite scroll
+IF LAST_GROUP == 1
+	SETCOLOR 0x606060
+	PRINTFORM %"Prev page",15,LEFT%
+	RESETCOLOR 
+ELSE
+	PRINTBUTTON @"%"Prev page",15,LEFT%", 888
+ENDIF
+PRINTFORM 
+IF LAST_GROUP == 1
+	SETCOLOR 0x606060
+	PRINTFORM %"Next page",15,LEFT%
+	RESETCOLOR 
+ELSE
+	PRINTBUTTON @"%"Next page",15,LEFT%", 222
+ENDIF
+IF STRCOUNT(OP, "「情報固定」")
+	PRINTFORM 　　　　　　　　　　　
+ELSE
+	PRINTBUTTON @"%DISP_NAME:((DISP_TYPE + 1 + 5) % 5), 20, LEFT% ->", 666
+ENDIF
+PRINTFORML 
+
+PRINTFORML 
+PRINTBUTTON "[999] Return　", 999
+PRINTFORM                
+SIF STRCOUNT(OP, "「条件変更」")
+	PRINTBUTTON "[500] Change listing", 555
+IF FLAG:画像表示
+	PRINTFORM %" "*15%
+	PRINTBUTTON "[777] View roster", 777
+ENDIF
+PRINTFORML 
+
+
+INPUT
+SELECTCASE RESULT
+	;先にシステム系を処理、222なら余裕あるっしょ（Kでは使えんわな）
+	;modded to have infinite scroll + tweaked goto's to prevent crashing when entering incorrect values
+	CASE 222, 888
+		SIF LAST_GROUP == 1
+			GOTO REPRINT
+		NOW_GROUP = PAGE_HANDLE(RESULT, 888, NOW_GROUP, 1, LAST_GROUP)
+		GOTO REPRINT
+	CASE 444
+		SIF STRCOUNT(OP, "「情報固定」")
+			GOTO RETRY
+		DISP_TYPE = (DISP_TYPE - 1 + 5) % 5
+		GOTO REPRINT
+	CASE 555
+		SIF !STRCOUNT(OP, "「条件変更」")
+			GOTO RETRY
+		CALL CHANGE_LIST_TR(LIST_TYPE, OP)
+		GET_LIST = 1
+		NOW_GROUP = 1
+		GOTO REPRINT
+	CASE 666
+		SIF STRCOUNT(OP, "「情報固定」")
+			GOTO RETRY
+		DISP_TYPE = (DISP_TYPE + 1 + 5) % 5
+		GOTO REPRINT
+	CASE 999
+		;REFで配列作れば多キャラ選択も行けそう
+		;受け渡しはともかくとして表示まわりがめんどいか
+		GET_LIST = 1
+		NOW_GROUP = 1
+		RETURN 999
+	CASE 1014 TO 1065
+		SORT_TYPE = RESULT
+		CALL SORT_LIST_TR(RESULT, CHARA_LIST, CHARA_CNT)
+		GOTO REPRINT
+	CASE 777
+		SIF !FLAG:画像表示
+			GOTO REPRINT
+		CALL QOL_FULL_ROSTER
+		GOTO REPRINT
+	CASEELSE
+	;キャラが選択された時
+		IF !INRANGE(RESULT, MAX(0, (NOW_GROUP - 1) * 20), MIN(CHARA_CNT - 1, NOW_GROUP * 20))
+			PRINTFORMW {RESULT} is outside range!
+			GOTO REPRINT
+		ELSEIF L_CLASS_ID == -1 && !CHECK_CHARA(CHARA_LIST:RESULT, LIST_TYPE)
+			PRINTFORMW {RESULT} is not a list!
+			GOTO REPRINT
+		ELSEIF L_CLASS_ID > 0 && !GET_INT(CHARA_LIST:RESULT, "キャラリスト", L_CLASS_ID, "判定")
+			PRINTFORMW {RESULT} is not in the list!
+			GOTO REPRINT
+		ENDIF
+		;ここだけDO-LOOPぬけます
+ENDSELECT
+$RETRY
+
+IF STRCOUNT(OP, "「情報表示」")
+	CALL LIST_CHARA_STATE_TR(CHARA_LIST, RESULT, CHARA_CNT, OP)
+	SIF !RESULT
+		GOTO REPRINT
+	NOW_GROUP = 1
+	GET_LIST = 1
+	;一応RESULTが正になるのは「最終確認」のみだが念のために判定
+	SIF STRCOUNT(OP, "「最終確認」")
+		RETURN RESULT
+ELSE
+	NOW_GROUP = 1
+	GET_LIST = 1
+	RETURN CHARA_LIST:RESULT
+ENDIF
+
+;##################################################
+
+@MAKE_CHARA_LIST_TR(LIST_TYPE, L_ID, CHARA_LIST, CHARA_CNT)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS LIST_TYPE
+#DIM C_ID
+#DIM REF L_ID       ;リストのクラスID
+#DIM REF CHARA_LIST ;キャラ一覧
+#DIM REF CHARA_CNT  ;キャラカウンタ
+VARSET CHARA_LIST
+VARSET CHARA_CNT
+L_ID = OBJNAME_TO_ID(0, "GET", "キャラリスト", LIST_TYPE)
+SIF FLAG:並び替え
+	CALLF CHARASORT_EX_TR
+IF L_ID == -1
+	FOR LOCAL, 0, EX_CHARANUM
+		IF FLAG:並び替え
+			C_ID = RESULT:LOCAL
+			SIF C_ID == -1 ;replace check for 0 to include player character in the list
+				CONTINUE
+		ELSE
+			C_ID = LOCAL
+			SIF C_ID >= CHARANUM
+				BREAK
+		ENDIF
+		SIF !CHECK_CHARA(C_ID, LIST_TYPE)
+			CONTINUE
+		CHARA_LIST:CHARA_CNT = C_ID
+		CHARA_CNT ++
+	NEXT
+ELSE
+	FOR LOCAL, 0, EX_CHARANUM
+		IF FLAG:並び替え
+			C_ID = RESULT:LOCAL
+			SIF C_ID == -1
+				CONTINUE
+		ELSE
+			C_ID = LOCAL
+			SIF C_ID >= CHARANUM
+				BREAK
+		ENDIF
+		SIF !GET_INT(C_ID, "キャラリスト", L_ID, "判定")
+			CONTINUE
+		CHARA_LIST:CHARA_CNT = C_ID
+		CHARA_CNT ++
+	NEXT
+ENDIF
+
+;###############################################
+
+@SIMPLE_CHARA_LIST_TR(CHARA_LIST, CHARA_CNT, OP)
+#DIM  REF CHARA_LIST ;リスト本体、登録番号にて記録
+#DIM  REF CHARA_CNT  ;リストに該当したキャラの数
+#DIMS OP
+FOR LOCAL, 0, CHARA_CNT
+	PRINTFORML [{LOCAL, 3}] - %CALLNAME:(CHARA_LIST:LOCAL)%
+NEXT
+PRINTFORML 
+PRINTFORML [999] - もどる
+DO
+	INPUT
+	SELECTCASE RESULT
+	CASE 999
+		RETURN 999
+	CASEELSE
+		SIF INRANGE(RESULT, 0, CHARA_CNT - 1)
+			RETURN RESULT
+		REUSELASTLINE Invalid Input
+		CONTINUE
+	ENDSELECT
+LOOP 1
+
+;###############################################
+;SORT_TYPE, <26 descending, >26 ascending
+;BUTTON, which button it is, corresponds with DISP_MEMO
+@MAKE_SORT_BUTTON_TR(SORT_TYPE, BUTTON)
+#DIM SORT_TYPE ;現在のソートタイプ
+#DIM BUTTON    ;基本のボタン名
+{
+#DIMS CONST DISP_MEMO , 26 = 
+	"STR", "ENE", 
+	"CSens", "VSens", "ASens", "BSens", "MSens", 
+	"Intimacy", "Obedience", "Lust", "Technique", 
+	"Hand", "Tongue", "Chest", "Waist", "Vagina", "Anus", 
+	"PAIN", "PLSR", "LEWD", "HATE", "RAPE", 
+	"Favor", "Reliance", "S. Frustration", "Dialog％"
+}
+IF SORT_TYPE%26!= BUTTON
+	PRINTBUTTON @"　%DISP_MEMO:BUTTON%", 1014+BUTTON
+ELSEIF SORT_TYPE < 1040
+	PRINTBUTTON @"▼%DISP_MEMO:BUTTON%", 1014+BUTTON+26
+ELSEIF SORT_TYPE >= 1040
+	PRINTBUTTON @"▲%DISP_MEMO:BUTTON%", 1014+BUTTON
+ENDIF
+
+;#####################################################
+
+@CHARA_BUTTON_TR(LABEL, C_ID, DISP_TYPE = 0, SORT_TYPE)
+#DIM  LABEL
+#DIM  C_ID
+#DIM DISP_TYPE
+#DIM SORT_TYPE
+#DIMS 表示文
+#DIM  表示ステータス番号
+#DIM  CONST バー長さ = 10
+;LABELが負数はありえないので表示内容のアナウンスに流用してます
+{
+#DIMS CONST DISP_NAME , 6 = 
+	"STA and ENE", "Sense", "Techniques", "Marks", "Favorability", "Requests"
+}
+{
+#DIMS CONST DISP_MEMO , 26 = 
+	"STR", "ENE", 
+	"CSens", "VSens", "ASens", "BSens", "MSens", 
+	"Intimacy", "Obedience", "Lust", "Technique", 
+	"Hand", "Tongue", "Chest", "Waist", "Vagina", "Anus", 
+	"PAIN", "PLSR", "LEWD", "HATE", "RAPE", 
+	"Favor", "Reliance", "Desire", "Dialog"
+}
+IF LABEL >= 0
+	;Temporary code, stopgap since the original flag used isn't set correctly
+	TRYCALLFORM M_KOJO_K{NO:C_ID}
+	SIF RESULT
+		SETCOLOR 103,228,126
+	PRINTFORM [{LABEL, 3}] %CALLNAME:C_ID, 14, LEFT%
+	RESETCOLOR
+ENDIF
+
+SELECTCASE DISP_TYPE
+CASE 0 ;STA and ENE
+	IF LABEL < 0
+		PRINTFORM %"　" * 9%
+		CALL MAKE_SORT_BUTTON_TR(SORT_TYPE, 0)
+		PRINTFORM %"　" * 10%
+		CALL MAKE_SORT_BUTTON_TR(SORT_TYPE, 1)
+	ELSE
+		CALL BASE_BAR(C_ID, "体力", 10, "緑", "「種類表記無し」")
+		CALL BASE_BAR(C_ID, "気力", 10, "青", "「種類表記無し」")
+	ENDIF
+	PRINTFORML 
+CASE 1 ;Sense
+	IF LABEL < 0
+		PRINTFORM %" " * 8%Sense%" "*5% 
+		FOR LOCAL, 2, 11
+		CALL MAKE_SORT_BUTTON_TR(SORT_TYPE, LOCAL)
+		PRINT |
+		NEXT
+	ELSE
+		FOR LOCAL, 0, 13
+			SIF ABLNAME:LOCAL == ""
+				CONTINUE
+			CALL PRINT_RANK(ABL:C_ID:LOCAL, "MAX_99")
+			PRINTFORM {ABL:C_ID:LOCAL, 4}|
+			SIF LOCAL != 10
+				PRINTFORM  
+			SIF LOCAL == 4
+				PRINTFORM    
+			SIF LOCAL == 9
+				PRINTFORM     
+			SIF LOCAL == 10
+				PRINTFORM 
+			SIF LOCAL == 11
+				PRINTFORM     
+		NEXT
+	ENDIF
+	PRINTFORML 
+
+CASE 2 ;Technique
+	IF LABEL < 0
+		PRINTFORM %"　" * 3%Technique%"　" * 2% 
+		FOR LOCAL, 11, 17
+			CALL MAKE_SORT_BUTTON_TR(SORT_TYPE, LOCAL)
+			PRINT |
+		NEXT
+	ELSE
+		;超適当につき修正の余地あり
+		FOR LOCAL, 50, 56
+			SIF ABLNAME:LOCAL == ""
+				CONTINUE
+			CALL PRINT_RANK(ABL:C_ID:LOCAL, "MAX_6")
+			PRINTFORM {ABL:C_ID:LOCAL, 4}|
+			SIF LOCAL != 54
+				PRINTFORM  
+			SIF LOCAL == 50
+				PRINTFORM  
+			SIF LOCAL == 53
+				PRINTFORM  
+		NEXT
+	ENDIF
+	PRINTFORML 
+
+
+CASE 3 ;Marks
+	IF LABEL < 0
+		PRINTFORM %" " * 8%Marks%" " * 7%
+		FOR LOCAL, 17, 22
+			CALL MAKE_SORT_BUTTON_TR(SORT_TYPE, LOCAL)
+			PRINT |
+		NEXT
+	ELSE
+		;超適当につき修正の余地あり
+		FOR 表示ステータス番号, 0, 6
+			IF MARKNAME:表示ステータス番号 == ""
+				CONTINUE
+			ENDIF
+			;反発刻印履歴は表示しないように
+			SIF 表示ステータス番号 == 4
+				CONTINUE
+			IF 表示ステータス番号 == 3
+				CALL COLOR_STAMP(MARK:C_ID:表示ステータス番号, 3, "×", C_RED)
+			ELSE
+				CALL COLOR_STAMP(MARK:C_ID:表示ステータス番号, 3, "★", 0xFFFF00)
+			ENDIF
+			PRINTFORM |
+		NEXT
+	ENDIF
+	PRINTFORML 
+
+
+CASE 4 ;Favorability
+	IF LABEL < 0
+		PRINTFORM %"　" * 10% 
+		FOR LOCAL, 22, 24
+			CALL MAKE_SORT_BUTTON_TR(SORT_TYPE, LOCAL)
+			PRINT |
+		NEXT
+		IF TALENT:MASTER:劣情察知
+			CALL MAKE_SORT_BUTTON_TR(SORT_TYPE, 24)
+			PRINT |
+		ENDIF
+		CALL MAKE_SORT_BUTTON_TR(SORT_TYPE, 25)
+		PRINT |
+		PRINTFORML
+	ELSE
+		;好感度
+		CALL PRINT_RANK(CFLAG:C_ID:好感度, "MAX_50000")
+		PRINTFORM {CFLAG:C_ID:好感度, 6}|  
+		
+		;信頼度
+		CALL PRINT_RANK(CFLAG:C_ID:信頼度, "MAX_20000")
+		PRINTFORM {CFLAG:C_ID:信頼度, 6}|
+		
+		;欲求
+		IF TALENT:MASTER:劣情察知
+			SELECTCASE CFLAG:C_ID:溜まってる度
+			CASE IS >= 665
+				SETCOLOR C_RED
+			CASE IS >= 332
+				SETCOLOR C_YELLOW
+			ENDSELECT
+			PRINTFORM {CFLAG:C_ID:溜まってる度 / 10, 14}
+			RESETCOLOR
+			PRINT ％|
+		ENDIF
+		IF DIALOGSTATUS:C_ID:0 == -1 || C_ID == MASTER
+			PRINTFORM %" ",10%|
+		ELSE
+			PRINTFORM {DIALOGSTATUS:C_ID:0, 8}％|
+		ENDIF
+
+		;恋慕
+		IF TALENT:C_ID:恋人
+			SETCOLOR C_RED
+			表示文 = Lover
+		ELSEIF TALENT:C_ID:恋慕 == 1
+			SETCOLOR 0xEE60EE
+			表示文 = Love
+		ELSEIF TALENT:C_ID:愛欲 == 1 
+			SETCOLOR 0x2E8B57 
+			表示文 = Lust
+		ELSEIF TALENT:C_ID:セフレ == 2 
+			SETCOLOR 0xFF6347 
+			表示文 '= @"\@TALENT:C_ID:2 == 2?Paramour#Mistress\@"
+		ELSEIF TALENT:C_ID:思慕 == 1
+			表示文 = Yearning
+		ELSE
+			表示文 = 
+		ENDIF
+		PRINTFORM %表示文, 9, LEFT%
+		RESETCOLOR
+		PRINT |
+		
+		;既成事実
+		SELECTCASE CFLAG:(C_ID):生解禁
+			CASE 2
+				表示文 = Always Raw
+			CASE 1
+				表示文 = Allows Raw
+			CASE 0
+				IF GETBIT(CFLAG:(C_ID):既成事実,1)
+					表示文 = Consent
+				ELSE
+					表示文 = 
+				ENDIF
+		ENDSELECT
+		PRINTFORM %表示文, 11, LEFT%|
+		
+		;生理周期可視化
+		SIF FLAG:1007
+			CALL PRINT_CYCLE_翌日(C_ID)
+		SIF CFLAG:(C_ID):出産経過日 > 0
+			PRINTFORM Childcare 
+		
+		RESETCOLOR
+		SIF GETBIT(CFLAG:(C_ID):既成事実,2)
+			;Custom code, makes it seem they have a lover other than you, Lover status is printed earlier anyway
+			;PRINTFORM Has Lover 
+			PRINTFORM 
+		;弱み
+		IF CFLAG:(C_ID):弱み握り && CFLAG:(C_ID):弱み握られ
+			PRINTFORM \@THIRD_PERSON?You can#Can\@ both blackmail each other
+		ELSEIF CFLAG:(C_ID):弱み握り
+			PRINTFORM Can blackmail %PARSE("you")%
+		;SIF GETBIT(CFLAG:(C_ID):弱み,0)
+		;	PRINTFORM ぱんつを没収された 
+		;SIF GETBIT(CFLAG:(C_ID):弱み,1)
+		;	PRINTFORM 情事を見られた 
+		ELSEIF CFLAG:(C_ID):弱み握られ
+			PRINTFORM Caught masturbating
+		ENDIF
+		;show translation note, do a little hacking
+		IF CHARANUM < 142 ;failsafe, the function below ree's, so ignore if exception
+			PRINTFORML
+		ELSE
+			;consult the list again just to be safe
+			RESULTS =
+			CALL CHARACTER_DIALOG_STATUS(C_ID)
+			IF STRLENS(RESULTS) ;activate if only there's a note
+				LOCALS '= HTML_POPPRINTINGSTR()
+				;insert tooltip into button
+				LOCALS '= replace(locals, "button value", @"button title= '%HTML_ESCAPE("Translated By " + RESULTS)%' value")
+				HTML_PRINT LOCALS
+			ELSE ;default line break
+				PRINTFORML
+			ENDIF
+		ENDIF
+	ENDIF
+CASEELSE
+	THROW 異常なDISP_TYPE　{DISP_TYPE}
+ENDSELECT
+
+@SORT_LIST_TR(SORT_TYPE, CHARA_LIST, CHARA_CNT)
+#DIM      SORT_TYPE  ;ソート内容の指示
+#DIM      MEMO_TYPE  ;今回のソート項目、CSVでの要素数
+#DIMS     CHECK_VAR  ;チェック対象となる変数名
+#DIMS     CHECK_TYPE ;比較演算子の種類
+#DIM      NUM_LOOP   ;ループ回数
+#DIM  REF CHARA_LIST ;キャラリストの内容配列
+#DIM      CHARA_CNT  ;リストに含まれるキャラ数
+;ソート項目の種別
+{
+#DIMS CONST DISP_MEMO , 26 = 
+	"体力", "気力", 
+	"Ｃ感", "Ｖ感", "Ａ感", "Ｂ感", "Ｍ感", 
+	"親密", "従順", "欲望", "技巧", 
+	"指技", "舌技", "胸技", "腰技", "膣技", "Ａ技", 
+	"苦痛", "快楽", "不埒", "反発", "時姦", 
+	"好感", "信頼", "欲求", "DialogStatus"
+}
+;ソート項目の各キャラ変数における位置
+{
+#DIM CONST MEMO_ID , 26 = 
+	 0,  1, 
+	 0,  1,  2,  3,  4, 
+	 9, 10, 11, 12, 
+	50, 51, 52, 53, 54, 55, 
+	 0,  1,  2,  3,  5, 
+	 2,  4,340,997
+}
+;ソート項目の検索
+MEMO_TYPE = 0
+NUM_LOOP = VARSIZE("DISP_MEMO")
+MEMO_TYPE = SORT_TYPE%26
+
+SELECTCASE DISP_MEMO:MEMO_TYPE
+CASE "体力", "気力"
+	CHECK_VAR '= "BASE"
+CASE "Ｃ感", "Ｖ感", "Ａ感", "Ｂ感", "Ｍ感", "親密", "従順", "欲望", "技巧"
+	CHECK_VAR '= "ABL"
+CASE "指技", "舌技", "胸技", "腰技", "膣技", "Ａ技", 
+	CHECK_VAR '= "ABL"
+CASE "苦痛", "快楽", "不埒", "反発", "時姦", 
+	CHECK_VAR '= "MARK"
+CASE "好感", "信頼", "欲求"
+	CHECK_VAR '= "CFLAG"
+CASE "DialogStatus"
+	CHECK_VAR '= "DIALOG"
+CASEELSE
+	THROW 不正なDISP_MEMO:MEMO_TYPE %DISP_MEMO:MEMO_TYPE%、MEMO_TYPE {MEMO_TYPE}
+ENDSELECT
+
+IF SORT_TYPE < 1040
+	CHECK_TYPE '= ">="
+ELSEIF SORT_TYPE >= 1040
+	CHECK_TYPE '= "<="
+ENDIF
+
+;ソート実処理
+LOCAL:0 = 1
+WHILE LOCAL:0 < CHARA_CNT
+	SIF !(LOCAL:0)
+		LOCAL:0 ++
+	;PRINTW Okay, wait, so, what?
+	IF CHARA_COMPARE(CHECK_VAR, MEMO_ID:MEMO_TYPE, CHARA_LIST:(LOCAL:0 - 1), CHECK_TYPE, CHARA_LIST:(LOCAL:0))
+		LOCAL:0 ++
+	ELSE
+		SWAP CHARA_LIST:(LOCAL:0 - 1), CHARA_LIST:(LOCAL:0)
+		LOCAL:0 --
+	ENDIF
+WEND
+
+@CHANGE_LIST_TR(LIST_TYPE, OP)
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS REF LIST_TYPE;現在使用中の表示内容
+#DIMS OP           ;実行オプション
+PRINTFORML Change display setting (Currently: %LISTING_TR(LIST_TYPE)%)
+PRINTFORML 
+CALL CLASS_LIST_TR("キャラリスト", "SHOP表示")
+PRINTFORML 
+PRINTFORML [999] - Return
+DO
+	INPUT
+	SELECTCASE RESULT
+	CASE 999
+		RETURN
+	CASEELSE
+		IF !STRLENS(GET_STR(0, "キャラリスト", RESULT, "名前")) 
+		ELSEIF GET_INT(0, "キャラリスト", RESULT, "SHOP表示")
+			LIST_TYPE '= GET_STR(0, "キャラリスト", RESULT, "名前")
+			RETURN
+		ENDIF
+		REUSELASTLINE Invalid Input
+		CONTINUE
+	ENDSELECT
+LOOP 1
+
+@CLASS_LIST_TR(CLASS_NAME, CHECK_NAME)
+#DIMS CLASS_NAME  ;表示対象となるクラスの名称
+#DIMS CHECK_NAME  ;判定対象項目（INT限定）、未設定なら存在するものをすべて表示
+LOCAL = 0
+IF STRLENS(CHECK_NAME)
+	FOR LOCAL, OBJ_ID_FIRST, OBJ_ID_LAST + 1
+		SIF !GET_INT(0, CLASS_NAME, LOCAL, CHECK_NAME)
+			CONTINUE
+		PRINTFORML [{LOCAL, 3}] - %LISTING_TR(GET_STR(0, CLASS_NAME, LOCAL, "名前"))%
+
+	NEXT
+ELSE
+	FOR LOCAL, OBJ_ID_FIRST, OBJ_ID_LAST + 1
+		SIF !STRLENS(GET_STR(0, CLASS_NAME, LOCAL, "名前"))
+			CONTINUE
+		PRINTFORML [{LOCAL, 3}] - %LISTING_TR(GET_STR(0, CLASS_NAME, LOCAL, "名前"))%
+	NEXT
+ENDIF
+
+
+@LISTING_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "存在するキャラリスト"
+		LOCALS = List all characters
+	CASE "主人公以外のキャラリスト"
+		LOCALS = List everyone but %PARSE("you")%
+	CASE "陥落ずみキャラリスト"
+		LOCALS = List fallen characters
+	CASE "清い交際取得キャラリスト"
+		LOCALS = List lust-less lovers
+	CASE "主人公の弱みを握るキャラリスト"
+		LOCALS = Characters that know %PARSE("your")% weakness
+	CASE "主人公に弱みがあるキャラリスト"
+		LOCALS = Characters whose weakness %PARSE("you know")%
+	CASE "反発刻印もちキャラリスト"
+		LOCALS = Characters with HateMark
+	CASE "時姦刻印もちキャラリスト"
+		LOCALS = Characters with RapeMark
+	CASE "口上もちキャラリスト"
+		LOCALS = Characters with dialog
+	CASE "妊娠中キャラリスト"
+		LOCALS = Pregnant characters
+	CASE "育児中キャラリスト"
+		LOCALS = Characters caring for children
+	CASE "子持ちキャラリスト"
+		LOCALS = Characters that have children
+	CASE "メイドキャラリスト"
+		LOCALS = Characters that are maids
+	CASE "人形キャラリスト"
+		LOCALS = Characters that are dolls
+	CASE "幽霊キャラリスト"
+		LOCALS = Characters that are ghosts
+	CASE "人間キャラリスト"
+		LOCALS = Characters that are human
+	CASE "巫女キャラリスト"
+		LOCALS = Characters that are Miko
+	CASE "妖精キャラリスト"
+		LOCALS = Characters that are fairies
+	CASE "神霊キャラリスト"
+		LOCALS = Characters that are divine spirits
+	CASE "付喪神キャラリスト"
+		LOCALS = Characters that are Tsukumogami
+	CASE "鬼キャラリスト"
+		LOCALS = Characters that are Oni
+	CASE "天狗キャラリスト"
+		LOCALS = Characters that are Tengu
+	CASE "蓬莱人キャラリスト"
+		LOCALS = Characters that are Hourai
+	CASE "妖怪キャラリスト"
+		LOCALS = Characters that are Youkai
+	CASE "魔法使いキャラリスト"
+		LOCALS = Characters that are Magicians
+	CASE "着せ替え可能キャラリスト"
+		LOCALS = Dressable characters
+	CASE "普段着模倣可能キャラリスト"
+		LOCALS = Characters whose everyday wear one can copy
+	CASE "男装セット"
+		LOCALS = Men's clothing
+	CASE "女装セット"
+		LOCALS = Women's clothing
+	CASE "執事セット"
+		LOCALS = Butler's clothing
+	CASE "女中セット"
+		LOCALS = Maid's clothing
+	CASE "神官セット"
+		LOCALS = Priest's clothing
+	CASE "作務衣セット"
+		LOCALS = Monk's clothing
+	CASE "着流しセット"
+		LOCALS = Casual kimono
+	CASE "道着セット"
+		LOCALS = Keikogi
+	CASE "書生セット"
+		LOCALS = Graduating male student's clothing
+	CASE "女学生セット"
+		LOCALS = Graduating female student's clothing
+	CASE "パジャマ（襦袢）セット"
+		LOCALS = Juban set
+	CASE "パジャマ（ネグリジェ）セット"
+		LOCALS = Nightgown set
+	CASE "パジャマ（ベビードール）セット"
+		LOCALS = Baby doll set
+	CASE "パジャマ（ズボン）セット"
+		LOCALS = Pajama pants set
+	CASE "パジャマ（バスタオル）セット"
+		LOCALS = Pajama bath robe set
+	CASE "パジャマ（スカート）セット"
+		LOCALS = Pajama skirt set
+	CASE "パジャマ（ズボン＋フード）セット"
+		LOCALS = Pajama pants and hoodie set
+	CASE "パジャマ（スカート＋フード）セット"
+		LOCALS = Pajama skirt and hoodie set
+	CASE "パジャマ（ズボン＋キャップ）セット"
+		LOCALS = Pajama pants and hairbun cover set
+	CASE "パジャマ（スカート＋キャップ）セット"
+		LOCALS = Pajama skrit and hairbun cover set
+	CASE "パジャマ（ネグリジェ＋キャップ）セット"
+		LOCALS = Nightgown and hair bun cover set
+	CASE "パジャマ（ベビードール＋キャップ）セット"
+		LOCALS = Baby doll and hairbun cover set
+	CASE "パジャマ（ワンピース）セット"
+		LOCALS = Dress
+	CASE "パジャマ（バスタオル）セット"
+		LOCALS = Towel
+	CASE "保健室の女教師セット"
+		LOCALS = School nurse's clothing
+	CASE "メイドさんセット"
+		LOCALS = Maid's clothing
+	CASE "ビキニセット"
+		LOCALS = Bikini set
+	CASE "マイクロビキニセット"
+		LOCALS = Micro bikini set
+	CASE "褌漢女セット"
+		LOCALS = Fundoshi (female)
+	CASE "バニーガールセット"
+		LOCALS = Bunny girl costume
+	CASE "白衣の天使セット"
+		LOCALS = Nurse set
+	CASE "サンタ服セット"
+		LOCALS = Santa suit
+	CASE "テニスウェアセット"
+		LOCALS = Tennis wear
+	CASE "ニンジャセット"
+		LOCALS = Ninja set
+	CASE "はだかワイシャツセット"
+		LOCALS = Naked shirt
+	CASE "キャスケット文セット"
+		LOCALS = Newsboy's clothes
+	CASE "うどん薬売りセット"
+		LOCALS = Udonge's medicine seller set
+	CASE "マミゾウ和装セット"
+		LOCALS = Mamizou's kimono set
+	CASE "生足美鈴セット"
+		LOCALS = Bare-legged Meiling set
+	CASE "セーラー早苗セット"
+		LOCALS = Sailor Sanae set
+	CASE "着物セット"
+		LOCALS = Kimono set
+	CASE "河童セット"
+		LOCALS = Kappa set
+	CASE "妖精セット"
+		LOCALS = Fairy set
+	CASE "ウェディングセット"
+		LOCALS = Weeding Dress set
+	CASE "素敵なＴシャツセット"
+		LOCALS = Cool T-shirt set
+	CASE "ゴスロリセット"
+		LOCALS = Gothic Lolita set
+	CASE "ライダーセット"
+		LOCALS = Rider set
+	CASE "白狼天狗セット"
+		LOCALS = White Wolf Tengu set
+	CASE "鴉天狗セット"
+		LOCALS = Crow Tengu set
+	CASE "イナバセット"
+		LOCALS = Inaba set
+	CASE "玉兎セット"
+		LOCALS = Moon Rabbit set
+	CASE "鬼セット"
+		LOCALS = Oni set
+	CASE "私服Aセット"
+		LOCALS = plain clothes A set
+	CASE "私服Bセット"
+		LOCALS = plain clothes B set
+	CASE "私服CAセット"
+		LOCALS = plain clothes CA set
+	CASE "私服CBセット"
+		LOCALS = plain clothes CB set
+	CASE "私服Dセット"
+		LOCALS = plain clothes D set
+	CASEELSE
+		LOCALS = %ARGS%
+ENDSELECT
+RETURNF LOCALS
+
+
+;#####################################
+@SINGLE_CHARA_STATE_TR(C_ID,OP)
+#DIMS    OP         ;実行オプション
+#DIM     C_ID       ;登録番号
+#DIM     PAGE       ;表示中のページ
+#DIMS CONST DISP_NAME = "Clothes and ability", "Exp and Gems", "Personal Information", "Preferences", "Body Information", "Falling Conditions"
+#DIM CREDRAW
+#DIM FIRST_LINE
+FIRST_LINE = LINECOUNT
+$REPRINT
+CLEARLINE LINECOUNT - FIRST_LINE
+CREDRAW = CURRENTREDRAW()
+REDRAW 0
+CALL CHARA_STATE_TR(C_ID, PAGE, OP)
+DRAWLINE
+FOR LOCAL, 0, VARSIZE("DISP_NAME")
+	SIF PAGE == LOCAL
+		SETCOLOR 0x00FFFF
+	;exception for player character
+	PRINTBUTTON C_ID == MASTER && LOCAL == 5 ? "Item List" # DISP_NAME:LOCAL, LOCAL + 2
+	RESETCOLOR
+	PRINTFORM 　　
+NEXT
+PRINTFORML 
+IF STRCOUNT(OP, "「最終確認」")
+	PRINTBUTTON "[1] Choose this character", 1
+	PRINTFORM 　　　　　　　　　
+	PRINTBUTTON "[0] Return", 0
+	PRINTFORML 
+ELSE
+	PRINTBUTTON "[0] Return", 0
+ENDIF
+DO
+	INPUT
+	SELECTCASE RESULT
+	CASE 0
+		RETURN 0
+	CASE 1
+		SIF STRCOUNT(OP, "「最終確認」")
+			RETURN C_ID
+		GOTO RETRY
+	CASE 2 TO 7
+		PAGE = RESULT-2
+	CASE 98
+		SIF CFLAG:C_ID:別顔有 || CFLAG:C_ID:別立ち有
+			CFLAG:C_ID:差し替え適用 += 1
+		SIF CFLAG:C_ID:差し替え適用 > CFLAG:C_ID:別顔有 && CFLAG:C_ID:差し替え適用 > CFLAG:C_ID:別立ち有
+			CFLAG:C_ID:差し替え適用 = 0
+	;表示・非表示の切替
+	CASE 160 TO 169, 900, 904 ;custom code
+		TFLAG:RESULT = !TFLAG:RESULT
+	CASE 画像切り替え
+		IF !FLAG:画像表示
+			FLAG:画像表示 = !FLAG:画像表示
+			FLAG:立ち絵種類 = 0
+		ELSEIF !FLAG:立ち絵種類
+			FLAG:立ち絵種類 = !FLAG:立ち絵種類
+		ELSEIF FLAG:立ち絵種類
+			FLAG:画像表示 = !FLAG:画像表示
+		ENDIF
+	CASE 9997 ;custom code
+		CALL Qol_Info_ChildList(C_ID)
+		WAIT
+	CASE 9998 ;custom code
+		CALL Qol_MC_CHILD_LIST
+		;switch to a mother's page when clicked
+		IF INRANGE(RESULT, 10000, 11000)
+			RESULT -= 10000
+			IF EXISTCSV(RESULT)
+				PAGE = 0
+				C_ID = RESULT
+			ENDIF
+		ENDIF
+		BREAK
+	CASE 9999 ;custom code
+		qol_Relation_AscendingOrder = !qol_Relation_AscendingOrder
+	CASEELSE
+		$RETRY
+		REUSELASTLINE Invalid Input
+		CONTINUE
+	ENDSELECT
+	BREAK
+LOOP 1
+GOTO REPRINT
+
+
+@LIST_CHARA_STATE_TR(CHARA_LIST, C_VIEW, CHARA_CNT, OP)
+#DIM REF CHARA_LIST ;リスト本体、登録番号にて記録
+#DIM     C_VIEW     ;表示中キャラのリスト上の位置
+#DIM     CHARA_CNT  ;リストに該当したキャラの数
+#DIMS    OP         ;実行オプション
+#DIM     C_ID       ;登録番号
+#DIM     PAGE       ;表示中のページ
+#DIMS CONST DISP_NAME = "Clothes and ability", "Exp and Gems", "Personal Information", "Preferences", "Body Information", "Falling Conditions"
+#DIM CREDRAW
+#DIM FIRST_LINE
+FIRST_LINE = LINECOUNT
+$REPRINT
+CLEARLINE LINECOUNT - FIRST_LINE
+CREDRAW = CURRENTREDRAW()
+REDRAW 0
+CALL CHARA_STATE_TR(CHARA_LIST:C_VIEW, PAGE, OP)
+DRAWLINE
+FOR LOCAL, 0, VARSIZE("DISP_NAME")
+	SIF PAGE == LOCAL
+		SETCOLOR 0x00FFFF
+	PRINTBUTTON DISP_NAME:LOCAL, LOCAL + 2
+	RESETCOLOR
+	PRINTFORM 　　
+NEXT
+PRINTFORML 
+PRINTBUTTON "[8] Prev Chara", 8
+PRINTFORM   
+PRINTBUTTON "[9] Next Chara", 9
+PRINTFORML 
+
+IF STRCOUNT(OP, "「最終確認」")
+	PRINTBUTTON "[1] Choose this character", 1
+	PRINTFORM 　　　　　　　　　
+	PRINTBUTTON "[0] Return", 0
+	PRINTFORML 
+ELSE
+	PRINTBUTTON "[0] Return", 0
+ENDIF
+DO
+	INPUT
+	SELECTCASE RESULT
+	CASE 0
+		RETURN 0
+	CASE 1
+		SIF STRCOUNT(OP, "「最終確認」")
+			RETURN CHARA_LIST:C_VIEW
+		GOTO RETRY
+	CASE 2 TO 7
+		PAGE = RESULT-2
+	CASE 8
+		C_VIEW = (C_VIEW - 1 + CHARA_CNT) % CHARA_CNT
+	CASE 9
+		C_VIEW = (C_VIEW + 1 + CHARA_CNT) % CHARA_CNT
+	CASE 98
+		SIF CFLAG:(CHARA_LIST:C_VIEW):別顔有 || CFLAG:(CHARA_LIST:C_VIEW):別立ち有
+			CFLAG:(CHARA_LIST:C_VIEW):差し替え適用 += 1
+		SIF CFLAG:(CHARA_LIST:C_VIEW):差し替え適用 > CFLAG:(CHARA_LIST:C_VIEW):別顔有 && CFLAG:(CHARA_LIST:C_VIEW):差し替え適用 > CFLAG:(CHARA_LIST:C_VIEW):別立ち有
+			CFLAG:(CHARA_LIST:C_VIEW):差し替え適用 = 0
+	;表示・非表示の切替
+	CASE 160 TO 169, 900, 904 ;custom code
+		TFLAG:RESULT = !TFLAG:RESULT
+	CASE 画像切り替え
+		IF !FLAG:画像表示
+			FLAG:画像表示 = !FLAG:画像表示
+			FLAG:立ち絵種類 = 0
+		ELSEIF !FLAG:立ち絵種類
+			FLAG:立ち絵種類 = !FLAG:立ち絵種類
+		ELSEIF FLAG:立ち絵種類
+			FLAG:画像表示 = !FLAG:画像表示
+		ENDIF
+	CASE 9997 ;custom code
+		CALL Qol_Info_ChildList(C_ID)
+		WAIT
+	CASE 9998 ;custom code
+		CALL Qol_MC_CHILD_LIST
+		;switch to a mother's page when clicked
+		IF INRANGE(RESULT, 10000, 11000)
+			RESULT -= 10000
+			IF EXISTCSV(RESULT)
+				PAGE = 0
+				C_VIEW = RESULT
+			ENDIF
+		ENDIF
+		BREAK
+	CASE 9999 ;custom code
+		qol_Relation_AscendingOrder = !qol_Relation_AscendingOrder
+	CASEELSE
+		$RETRY
+		REUSELASTLINE Invalid Input
+		CONTINUE
+	ENDSELECT
+	BREAK
+LOOP 1
+GOTO REPRINT
+
+;################################################################
+
+@CHARA_STATE_TR(C_ID, PAGE, OP)
+#DIM  C_ID
+#DIM  PAGE
+#DIMS OP
+CALL BASIC_STATE(C_ID, OP)
+SELECTCASE PAGE
+CASE 0
+	CALL SHOW_SIZE(C_ID)
+	CALL PRINT_STATE_IMAGE(C_ID)
+	IF FLAG:画像表示
+		;the 65, 75, 149 and 75 are based on the normal 50, 60, 120, and 60 presumably being related to screen width
+		IF FLAG:立ち絵種類
+			IF キャラ画像表示サイズ比 <= 65
+				PRINTL 
+				PRINTL 
+			ELSEIF キャラ画像表示サイズ比 <= 75
+				PRINTL 
+			ELSEIF キャラ画像表示サイズ比 >= 149
+				CLEARLINE 1
+			ENDIF
+			SIF TALENT:C_ID:行きずり
+				PRINTL 
+		ELSE
+			SIF キャラ画像表示サイズ比 <= 75
+				PRINTL 
+		ENDIF
+	ENDIF
+	CALL PRINT_STATE_CLOTH(C_ID)
+	
+	CALL PRINT_STATE_TALENT(C_ID)
+	PRINTL
+	;CALL PRINT_ABL_TR(C_ID)
+	CALL PRINT_ABL_MOD(C_ID)
+CASE 1
+	PRINTL
+	CALL PRINT_STATE_EXP(C_ID)
+	PRINTL
+	;現状マスターは妊娠しないはずだが将来の機能拡張を考えるとこれでいいのか？
+	SIF !(C_ID == MASTER) && (TALENT:C_ID:妊娠 || CFLAG:C_ID:子供人数 > 0)
+		CALL 妊娠関連(C_ID)
+	SIF (C_ID == MASTER) && (CFLAG:MASTER:子供人数 > 0)	;custom code
+		CALL Qol_MC_CHILD
+	IF STRCOUNT(OP, "「調教中」")
+		CALL PRINT_STATE_EX(C_ID)
+	ELSEIF !(C_ID == MASTER)
+		CALL PRINT_STATE_JUEL_TR(C_ID)
+	ENDIF
+	PRINTL
+	IF C_ID == MASTER
+		CALL 予定
+	ELSE
+		CALL パンツ収集状況(C_ID)
+	ENDIF
+CASE 2
+	CALL PRINT_STATE_PERSONAL(C_ID)
+	;CALL 肉体情報(C_ID)
+	CALL SHOW_RELATION(C_ID)
+CASE 3
+	CALL PRINT_STATE_PREFERENCE(C_ID)
+	CALL PRINT_STATE_GIFTDATA(C_ID, 15)
+CASE 4
+	CALL 肉体情報(C_ID)
+CASE 5
+	IF C_ID == MASTER
+		CALL SHOW_ALLITEM_INFO
+	ELSE
+		CALL 陥落条件表示(C_ID)
+		CALL 浮気把握状況(C_ID)
+	ENDIF
+CASEELSE
+	THROW 異常なPAGE {PAGE}
+ENDSELECT
+
+;HTML-printing instead so you can get progress and such
+@PRINT_ABL_MOD(C_ID)
+#DIM C_ID
+#DIMS OUTPUT
+OUTPUT = 
+CALL PRINTBUTTON_EX("Abilities", 162, TFLAG:162, , , 1)
+SIF TFLAG:能力表示
+	RETURN
+PRINTL     Marks            H Abilities       Non-H Abilities       Sensitivity          Technique      Disposition            Addiction
+FOR LOCAL, 0, 70
+	OUTPUT += PRINT_SPECIFIC_HTML(C_ID, LOCAL)
+	SIF LOCAL % 7 == 6
+		OUTPUT += "\n"
+NEXT
+HTML_PRINT OUTPUT
+
+@PRINT_SPECIFIC_HTML(C_ID, ARG)
+#FUNCTIONS
+#DIMS OUTPUT
+{
+#DIM CONST DISP_ID = 
+	0,  9, 43, 0, 50, 15, 31,
+	1, 10, 41, 1, 54, 16, 32,
+	2, 11, 42, 2, 55, 17, 33,
+	3, 12, 40, 3, 52, 18, 34,
+	4, 13, 44, 4, 51,  0, 35,
+	5, 14, 45, 0, 53,  0, 30,
+	0,  0, 46, 0,  0,  0,  0,
+	0,  0, 47, 0,  0,  0,  0,
+	0,  0, 48, 0,  0,  0,  0,
+	0,  0, 49, 0,  0,  0,  0,
+}
+#DIM C_ID
+{
+#DIMS CONST DISP_NAME = 
+	"    PAIN",     " Intimacy", "Knowledge", "CSens", "  Hand", "  Maso",   "       Semen",
+	"    PLSR",     "Obedience", "   Speech", "VSens", "Vagina", "  Sado",   "      Homo♀",
+	"    LEWD",     "   Desire", "   Combat", "ASens", "  Anus", "Homo♀",    "      Homo♂",
+	"    HATE",     "Technique", " Cleaning", "BSens", " Chest", "Homo♂",    "    Creampie",
+	"Old HATE",     "Servitude", "  Cooking", "MSens", "Tongue",         "", "  A Creampie",
+	"    RAPE",     " Exposure", "    Music",      "", " Waist",         "", "Masturbation",
+	        "",              "", "  Logging",      "",       "",         "",             "",
+	        "",              "", "  Fishing",      "",       "",         "",             "",
+			"",              "", " Foraging",      "",       "",         "",             "",
+			"",              "", "   Mixing",      "",       "",         "",             "",
+}
+IF !STRLENS(DISP_NAME:ARG) ;skip empties
+	SIF GROUPMATCH(ARG, 42, 49, 56, 63)
+		RETURNF "                "
+	RETURNF "                  "
+ELSEIF ARG%7==0 ;Marks
+		IF C_ID == MASTER
+			OUTPUT '= @"%" " * 16%"
+		ELSEIF RESULT == 4 || RESULT == 5
+			OUTPUT '= @"<nonbutton title='%ABILITY_DESCRIPTION_HTML(C_ID,ARG)%'>"
+			OUTPUT += @"%DISP_NAME:ARG, 4%："
+			OUTPUT += COLOR_STAMP_HTML(MARK:C_ID:(DISP_ID:ARG), 3, "×", "0xFF0000")
+			OUTPUT += @"</nonbutton>"
+		ELSE
+			OUTPUT '= @"<nonbutton title='%ABILITY_DESCRIPTION_HTML(C_ID,ARG)%'>"
+			OUTPUT += @"%DISP_NAME:ARG, 4%："
+			OUTPUT += COLOR_STAMP_HTML(MARK:C_ID:(DISP_ID:ARG), 3, "★", "0xFFFF00")
+			OUTPUT += @"</nonbutton>"
+		ENDIF
+ELSEIF ARG%7==4 || (GROUPMATCH(ARG, 22) && C_ID == MASTER) ;Technique
+		OUTPUT '= @"<nonbutton title='%ABILITY_DESCRIPTION_HTML(C_ID,ARG)%'>"
+		OUTPUT += @"%DISP_NAME:ARG, 12 - 2*(ARG==22)%："
+		OUTPUT += PRINT_RANK_HTML(ABL:C_ID:(DISP_ID:ARG), "MAX_6")
+		OUTPUT += @" {ABL:C_ID:(DISP_ID:ARG), 3}"
+		OUTPUT += @"</nonbutton>"
+ELSEIF GROUPMATCH(ARG, 44, 51, 58, 65) ;Logging, Fishing, Foraging and mixing
+	OUTPUT '= @"<nonbutton title='%ABILITY_DESCRIPTION_HTML(C_ID,ARG)%'>"
+	OUTPUT += @"%DISP_NAME:ARG, 13%："
+	OUTPUT +=  PRINT_RANK_HTML(TALENT:C_ID:(DISP_ID:ARG), "MAX_6")
+	OUTPUT += @" {TALENT:C_ID:(DISP_ID:ARG), 3}"
+	OUTPUT += @"</nonbutton>"
+ELSEIF ARG%7==2 ;Non-H
+	OUTPUT '= @"<nonbutton title='%ABILITY_DESCRIPTION_HTML(C_ID,ARG)%'>"
+	OUTPUT += @"%DISP_NAME:ARG, 13%："
+	OUTPUT +=  PRINT_RANK_HTML(ABL:C_ID:(DISP_ID:ARG), "MAX_6")
+	OUTPUT += @" {ABL:C_ID:(DISP_ID:ARG), 3}"
+	OUTPUT += @"</nonbutton>"
+ELSEIF ARG%7==5 ;Disposition
+	OUTPUT '= @"<nonbutton title='%ABILITY_DESCRIPTION_HTML(C_ID,ARG)%'>"
+	OUTPUT += @"%DISP_NAME:ARG, 8%："
+	OUTPUT +=  PRINT_RANK_HTML(ABL:C_ID:(DISP_ID:ARG), "MAX_99")
+	OUTPUT += @" {ABL:C_ID:(DISP_ID:ARG), 3}  "
+	OUTPUT += @"</nonbutton>"
+ELSE ;H abilities, sensitivity, and addiction
+	OUTPUT '= @"<nonbutton title='%ABILITY_DESCRIPTION_HTML(C_ID,ARG)%'>"
+	OUTPUT += @"%DISP_NAME:ARG, 10%："
+	OUTPUT +=  PRINT_RANK_HTML(ABL:C_ID:(DISP_ID:ARG), "MAX_99")
+	OUTPUT += @" {ABL:C_ID:(DISP_ID:ARG), 3}"
+	OUTPUT += @"</nonbutton>"
+ENDIF
+RETURNF OUTPUT
+
+@COLOR_STAMP_HTML(STAMP_NUM, MAX_NUM, STAMP_STR, STAMP_COLOR)
+#FUNCTIONS
+#DIM  STAMP_NUM   ;並べるスタンプの数
+#DIM  MAX_NUM     ;スタンプの最大数
+#DIMS STAMP_STR   ;スタンプに使用する文字列
+#DIMS  STAMP_COLOR ;スタンプの色
+#DIM  STAMP_LENGTH;スタンプ文字列の長さ
+STAMP_LENGTH = STRLENS(STAMP_STR)
+;custom, failsafe
+STAMP_NUM = LIMIT(STAMP_NUM, 0, 3)
+RETURNF @"<font color='#%STAMP_COLOR%'>%" " * (MAX_NUM - STAMP_NUM) * STAMP_LENGTH%%STAMP_STR * STAMP_NUM%</font>"
+
+@PRINT_RANK_HTML(VAR_VALUE, RANK_SCALE)
+#FUNCTIONS
+#DIM  VAR_VALUE  ;評価対象数値
+#DIMS RANK_SCALE ;評価に使用する尺度の種類
+#DIM  RANK       ;評価ランク、数が小さいほど優秀
+#DIM  RANK_NUM   ;評価尺度に含まれる評価の種数
+RANK = CALC_RANK_FUNCTION(VAR_VALUE, RANK_SCALE)
+RANK_NUM = CALC_RANK_NUM_FUNCTION(VAR_VALUE, RANK_SCALE)
+RETURNF PRINT_ALPHABET_HTML(RANK, RANK_NUM)
+
+@PRINT_ALPHABET_HTML(RANK, RANK_NUM)
+#FUNCTIONS
+#DIM RANK
+#DIM RANK_NUM
+#DIMS CONST STR_RANK10, 10 = "Ex", "SS", " S", " A", " B", " C", " D", " E", " F", " G"
+#DIMS CONST STR_RANK7,   7 = "Ex", " S", " A", " B", " C", " D", " E"
+{
+#DIMS  CONST C_RANK10, 10 = 
+	"C_P_PURPLE", "C_WHITE", "C_WHITE", "C_PINK", "C_RED", 
+	"C_ORANGE", "C_YELLOW", "C_GREEN", "C_AQUA", "C_GRAY"
+}
+#DIMS  CONST C_RANK7,   7 = "C_P_PURPLE", "C_WHITE", "C_PINK", "C_RED", "C_ORANGE", "C_YELLOW", "C_GRAY"
+SELECTCASE RANK_NUM
+CASE 10
+	RETURNF COLOR_PRINT_HTML(STR_RANK10:RANK, C_RANK10:RANK, 2)
+CASE  7
+	RETURNF COLOR_PRINT_HTML(STR_RANK7:RANK, C_RANK7:RANK, 2)
+CASEELSE
+	THROW 不正なRANK_NUM {RANK_NUM}
+ENDSELECT
+RESETCOLOR
+
+@COLOR_PRINT_HTML(ARGS, C_NAME, STR_NUM = 2)
+#FUNCTIONS
+#DIMS C_NAME
+#DIM  STR_NUM
+SIF !STRLENS(ARGS)
+	RETURNF ""
+LOCALS '= "0xFFFFFF"
+SELECTCASE C_NAME
+CASE "C_P_PURPLE"
+	LOCALS '= "0xC070C0"
+CASE "C_WHITE"
+	LOCALS '= "0xC0C0C0"
+CASE "C_PINK"
+	LOCALS '= "0xFFCCFF"
+CASE "C_RED"
+	LOCALS '= "0xFF0000"
+CASE "C_ORANGE"
+	LOCALS '= "0xFFA500"
+CASE "C_YELLOW"
+	LOCALS '= "0xFFFF00"
+CASE "C_GREEN"
+	LOCALS '= "0x00FF00"
+CASE "C_AQUA"
+	LOCALS '= "0x66FFFF"
+CASE "C_GRAY"
+	LOCALS '= "0x404040"
+CASEELSE
+	THROW 不正なC_NAME %C_NAME%
+ENDSELECT
+RETURNF @"<font color='#%LOCALS%'>%ARGS, STR_NUM%</font>"
+
+@ABILITY_DESCRIPTION_HTML(C_ID, ARG)
+#FUNCTIONS
+#DIM C_ID
+VARSET LOCALS
+SELECTCASE ARG
+	CASE 0 ;PAIN
+		LOCALS '= "Increases with pain, not implemented that much."
+	CASE 1 ;Intimacy
+		LOCALS '= "Required for yearning and love. Good to have overall.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    Favor: %ABILITY_FORMAT_HTML(JUEL:C_ID:20, JUEL_DEMAND_9(0,20,C_ID))%"
+	CASE 2 ;Knowledge
+		LOCALS '= "Helps with requests like \"teach me\" and access to certain zones.\n"
+		LOCALS += "Reveals detailed information about Fishing and Hunting, and unlocks special drugs at the shop.\n"
+		LOCALS += "Helps with Mixing, Hunting, haggling and quiz game at the casino.\n"
+		LOCALS += "Your character must be smarter than the owner's diary to decipher it.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:教養 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Experience:\n"
+			IF ABL:C_ID:教養 == 0
+				LOCALS += @"    Education: %ABILITY_FORMAT_HTML(EXP:C_ID:学習経験, 6)%"
+			ELSE
+				LOCALS += @"    Education: %ABILITY_FORMAT_HTML(EXP:C_ID:学習経験, EXPLV:(ABL:C_ID:教養 + 3))%"
+			ENDIF
+		ENDIF
+	CASE 3 ;CSens
+		LOCALS '= "Penis and clitoris sensitivity.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    C Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:0, JUEL_DEMAND_0(0,0,C_ID))%"
+	CASE 4 ;Hand
+		LOCALS '= "Increases caress and such.\n"
+		LOCALS += "Increased with Handjob Exp * (10 + Technique/2 + Dextrous Fingers*2 + Fast Learner) /10.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:指 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCAL = EXP:C_ID:手淫経験 * (10 + ABL:C_ID:技巧 / 2 + TALENT:C_ID:器用な指 * 2 + TALENT:C_ID:習得速度) / 10
+			LOCALS += "Special:\n"
+			LOCALS += @"    Handjob etc: %ABILITY_FORMAT_HTML(LOCAL, EXPLV:(ABL:C_ID:指 + 3) / 2)%"
+		ENDIF
+	CASE 5 ;Maso
+		LOCALS '= "Makes pain fun.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:欲望 < ABL:C_ID:マゾっ気 + 1
+			LOCALS += "Special:\n"
+			LOCALS += @"    Desire too low: {ABL:C_ID:欲望}/{ABL:C_ID:マゾっ気 + 1}\n"
+		ELSE
+			LOCALS += "Gems:\n"
+			LOCALS += @"    Pain: %ABILITY_FORMAT_HTML(JUEL:C_ID:15, JUEL_DEMAND_15(0,15,C_ID))%\n"
+			LOCALS += @"    Desire: %ABILITY_FORMAT_HTML(JUEL:C_ID:11, JUEL_DEMAND_15(0,11,C_ID))%\n"
+		ENDIF
+		LOCALS += "Experience:\n"
+		IF ABL:C_ID:マゾっ気 < 3
+			LOCALS += @"    Masochist: N/A\n"
+		ELSE
+			LOCALS += @"    Masochist: %ABILITY_FORMAT_HTML(EXP:C_ID:42, EXP_DEMAND_15(0,42,C_ID))%\n"
+		ENDIF
+	CASE 6 ;Semen
+		LOCALS '= "Extra protein.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:奉仕精神 < ABL:C_ID:精液中毒 + 1
+			LOCALS += "Special:\n"
+			LOCALS += @"    Servitude too low: {ABL:C_ID:奉仕精神}/{ABL:C_ID:精液中毒 + 1}\n"
+		ELSE
+			LOCALS += "Gems:\n"
+			LOCALS += @"    Submission: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_31(0,12,C_ID))%\n"
+			LOCALS += @"    Desire: %ABILITY_FORMAT_HTML(JUEL:C_ID:11, JUEL_DEMAND_31(0,11,C_ID))%\n"
+		ENDIF
+		LOCALS += "Experience:\n"
+		LOCALS += @"    Semen: %ABILITY_FORMAT_HTML(EXP:C_ID:14, EXP_DEMAND_31(0,14,C_ID))%\n"
+	CASE 7 ;PLSR
+		LOCALS '= "Increases with multiple simultaneous and devastating climaxes while conscious."
+	CASE 8 ;Obedience
+		LOCALS '= "Helps getting more favorable responses from interactions.\n"
+		LOCALS += "Needs when you want to urge girls do things you want from them.\n"
+		LOCALS += "Reduces bad param gain in general. Contributes to Favorability gain.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"        Fear: %ABILITY_FORMAT_HTML(JUEL:C_ID:16, JUEL_DEMAND_10(0,16,C_ID))%\n"
+		LOCALS += "    Or\n"
+		LOCALS += @"        Loyalty Gems: %ABILITY_FORMAT_HTML(JUEL:C_ID:10, JUEL_DEMAND_10(1,10,C_ID))%\n"
+		IF ABL:C_ID:従順 < 3
+			LOCALS += "    Or\n"
+			LOCALS += @"        Submission Gems: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_10(3,12,C_ID))%"
+		ENDIF
+	CASE 9 ;Speech
+		LOCALS '= "Useful in all manners of social interactions, and checked for persuasion attempts.\n"
+		LOCALS += "Raises the upper limit of discussion topics, preventing awkward moods when talking too much.\n"
+		LOCALS += "Improves haggling skills when opening a street stall.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:話術技能 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Experience:\n"
+			LOCALS += @"    Speech: %ABILITY_FORMAT_HTML(EXP:C_ID:会話経験, EXPLV:(ABL:C_ID:話術技能 + 3))%"
+		ENDIF
+	CASE 10 ;Vsens
+		LOCALS '= "Vaginal sensitivity.\n"
+		LOCALS += "Progress towards next stage: \n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    V Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:1, JUEL_DEMAND_1(0,1,C_ID))%\n"
+		IF ABL:C_ID:Ｖ感覚 > 2
+			LOCALS += "Experience:\n"
+			LOCALS += @"    V: %ABILITY_FORMAT_HTML(EXP:C_ID:1, EXP_DEMAND_1(0,1,C_ID))%\n"
+		ENDIF
+	CASE 11 ;Vagina
+		LOCALS '= "Hole quality.\n"
+		LOCALS += "Increased with V Sex Exp, V Exp, and V Stretch Exp, Technique and Fast learner.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:膣 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCAL = EXP:C_ID:Ｖ性交経験 * 2 + EXP:C_ID:Ｖ経験 / 5 + (EXP:C_ID:Ｖ拡張経験 <= 10 ? EXP:C_ID:Ｖ拡張経験 * 5 # 100 - EXP:C_ID:Ｖ拡張経験 * 5)
+			LOCAL:1 = 10 + ABL:C_ID:技巧 / 2 + TALENT:C_ID:習得速度
+			LOCAL = LOCAL * LOCAL:1 / 10
+			LOCALS += "Special:\n"
+			LOCALS += @"    V Exp, V Stretch Exp, Technique etc: %ABILITY_FORMAT_HTML(LOCAL, EXPLV:(ABL:C_ID:膣 + 3))%\n"
+			LOCALS += "Experience:\n"
+			LOCALS += @"    V: %ABILITY_FORMAT_HTML(EXP:C_ID:Ｖ性交経験, EXPLV:(ABL:C_ID:膣 + 1))%"
+		ENDIF
+	CASE 12 ;Sado
+		LOCALS '= "Makes inflicting pain fun.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:欲望 < ABL:C_ID:サドっ気 + 1
+			LOCALS += "Special:\n"
+			LOCALS += @"    Desire too low: {ABL:C_ID:欲望}/{ABL:C_ID:サドっ気 + 1}\n"
+		ELSE
+			LOCALS += "Gems:\n"
+			LOCALS += @"    Superiority: %ABILITY_FORMAT_HTML(JUEL:C_ID:21, JUEL_DEMAND_16(1,21,C_ID))%\n"
+		ENDIF
+		LOCALS += "Experience:\n"
+		LOCALS += @"    Sadist: %ABILITY_FORMAT_HTML(EXP:C_ID:43, EXP_DEMAND_16(0,43,C_ID))%\n"
+	CASE 13 ;Homo♀
+		LOCALS '= "This is not even protein.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Experience:\n"
+		LOCALS += @"    Lesbian: %ABILITY_FORMAT_HTML(EXP:C_ID:51, EXP_DEMAND_32(0,51,C_ID))%\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    Submission: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_32(0,12,C_ID))%\n"
+		LOCALS += @"    Desire: %ABILITY_FORMAT_HTML(JUEL:C_ID:11, JUEL_DEMAND_32(0,11,C_ID))%\n"
+		LOCALS += @"    C Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:0, JUEL_DEMAND_32(0,0,C_ID))%"
+	CASE 14 ;LEWD
+		LOCALS '= "Increases with high Submission and Loyalty."
+	CASE 15 ;Desire
+		LOCALS '= "Sexual attraction.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    Desire: %ABILITY_FORMAT_HTML(JUEL:C_ID:11, JUEL_DEMAND_11(0,11,C_ID))%"
+	CASE 16 ;Combat
+		LOCALS '= "Helps with beating people up and hunting.\n"
+		LOCALS += "Indicates general power level and can prevent push down attempts from other characters.\n"
+		LOCALS += "Checked for intimidation attempts.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:戦闘能力 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Experience:\n"
+			IF ABL:C_ID:戦闘能力 == 0
+				LOCALS += @"    Combat: %ABILITY_FORMAT_HTML(EXP:C_ID:戦闘経験, 6)%"
+			ELSE
+				LOCALS += @"    Combat: %ABILITY_FORMAT_HTML(EXP:C_ID:戦闘経験, EXPLV:(ABL:C_ID:戦闘能力 + 3))%"
+			ENDIF
+		ENDIF
+	CASE 17 ;ASens
+		LOCALS '= "Anal sensitivity.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    A Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:2, JUEL_DEMAND_2(0,2,C_ID))%\n"
+		IF ABL:C_ID:Ａ感覚 > 2
+			LOCALS += "Experience:\n"
+			LOCALS += @"    A: %ABILITY_FORMAT_HTML(EXP:C_ID:2, EXP_DEMAND_2(0,2,C_ID))%\n"
+		ENDIF
+	CASE 18 ;Anus
+		LOCALS '= "Anal hole quality.\n"
+		LOCALS += "Increased with A Sex Exp, A Exp, and A Stretch Exp, Technique and Fast learner.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:アナル >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCAL = EXP:C_ID:Ａ性交経験  * 2 +  EXP:C_ID:Ａ経験 / 5 + (EXP:C_ID:Ａ拡張経験 <= 25 ? EXP:C_ID:Ａ拡張経験 * 2 # 100 - 2 * EXP:C_ID:Ａ拡張経験)
+			LOCAL:1 = 10 + ABL:C_ID:技巧 / 2 + TALENT:C_ID:習得速度
+			LOCAL = LOCAL * LOCAL:1 / 10
+			LOCALS += "Special:\n"
+			LOCALS += @"    A Sex, A, A Stretch etc: %ABILITY_FORMAT_HTML(LOCAL, EXPLV:(ABL:C_ID:アナル + 3))%\n"
+			LOCALS += "Experience:\n"
+			LOCALS += @"    A Sex: %ABILITY_FORMAT_HTML(EXP:C_ID:Ａ性交経験, EXPLV:(ABL:C_ID:アナル + 1))%"
+		ENDIF
+	CASE 19 ;Homo♀
+		LOCALS '= "Really gay.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    Desire: %ABILITY_FORMAT_HTML(JUEL:C_ID:11, JUEL_DEMAND_17(0,11,C_ID))%\n"
+		LOCALS += @"    Submission: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_17(0,12,C_ID))%\n"
+		IF ABL:C_ID:レズっ気 < 3
+			LOCALS += @"    C Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:0, JUEL_DEMAND_17(1,0,C_ID))%\n"
+		ENDIF
+		LOCALS += "Experience:\n"
+		LOCALS += @"    Lesbian: %ABILITY_FORMAT_HTML(EXP:C_ID:51, EXP_DEMAND_17(0,51,C_ID))%\n"
+	CASE 20 ;Homo♂
+		LOCALS '= "Extra protein.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:ホモっ気 < ABL:C_ID:ゲイ中毒 + 1
+			LOCALS += "Special:\n"
+			LOCALS += @"    Homo♂ disposition too low: {ABL:C_ID:ホモっ気}/{ABL:C_ID:ゲイ中毒 + 1}\n"
+		ELSE
+			LOCALS += "Gems:\n"
+			LOCALS += @"    Submission: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_33(0,12,C_ID))%\n"
+			LOCALS += @"    Desire: %ABILITY_FORMAT_HTML(JUEL:C_ID:11, JUEL_DEMAND_33(0,11,C_ID))%\n"
+			LOCALS += @"    C Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:0, JUEL_DEMAND_33(0,0,C_ID))%\n"
+		ENDIF
+		LOCALS += "Experience:\n"
+		LOCALS += @"    BoyLove: %ABILITY_FORMAT_HTML(EXP:C_ID:52, EXP_DEMAND_33(0,52,C_ID))%\n"
+	CASE 21 ;HATE
+		LOCALS '= "Decrease with good dates, sacrificing 10 panties, giving box of cakes (only if at 1)."
+	CASE 22 ;Technique
+		LOCALS '= "Overall technique.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:技巧 >= 5 && C_ID == MASTER
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Gems:\n"
+			LOCALS += @"    Learning: %ABILITY_FORMAT_HTML(JUEL:C_ID:13, JUEL_DEMAND_12(0,13,C_ID))%"
+		ENDIF
+	CASE 23 ;Cleaning
+		LOCALS '= "Clean faster, better.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:清掃技能 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Experience:\n"
+			LOCALS += @"    Cleaning: %ABILITY_FORMAT_HTML(EXP:C_ID:清掃経験, EXPLV:(ABL:C_ID:清掃技能 + 3))%"
+		ENDIF
+	CASE 24 ;BSens
+		LOCALS '= "Breast sensitivity.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    B Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:3, JUEL_DEMAND_3(0,3,C_ID))%\n"
+	CASE 25 ;Chest
+		LOCALS '= "Better Paizuri and such.\n"
+		LOCALS += "Increased with Paizuri Exp, B Exp, Lactation Exp, Technique, Breast Size, and Fast learner.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:胸 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCAL = EXP:C_ID:パイズリ経験 * 2 +  EXP:C_ID:Ｂ経験 / 5 + EXP:C_ID:噴乳経験  / 4
+			LOCAL:1 = 10 + ABL:C_ID:技巧 / 2 + TALENT:C_ID:バストサイズ + TALENT:C_ID:習得速度
+			LOCAL = LOCAL * LOCAL:1 / 10
+			LOCALS += "Special:\n"
+			LOCALS += @"    Paizuri, B, Lactation, Breast Size etc: %ABILITY_FORMAT_HTML(LOCAL, EXPLV:(ABL:C_ID:胸 + 3))%\n"
+			LOCALS += "Experience:\n"
+			LOCALS += @"    Paizuri + Lactation/5: %ABILITY_FORMAT_HTML(EXP:C_ID:パイズリ経験 + EXP:C_ID:噴乳経験  / 5, EXPLV:(ABL:C_ID:胸 + 1))%"
+		ENDIF
+	CASE 26 ;Homo♂
+		LOCALS '= "Gay.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    Desire: %ABILITY_FORMAT_HTML(JUEL:C_ID:11, JUEL_DEMAND_18(0,11,C_ID))%\n"
+		LOCALS += @"    Submission: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_18(0,12,C_ID))%\n"
+		IF ABL:C_ID:ホモっ気 < 3
+			LOCALS += @"    C Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:0, JUEL_DEMAND_18(0,0,C_ID))%\n"
+		ENDIF
+		LOCALS += "Experience:\n"
+		LOCALS += @"    BoyLove: %ABILITY_FORMAT_HTML(EXP:C_ID:52, EXP_DEMAND_18(0,52,C_ID))%\n"
+	CASE 27 ;Creampie
+		LOCALS '= "Makes it easier to negotiate for raw on dangerous days,\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:精液中毒 < ABL:C_ID:膣射中毒 + 1
+			LOCALS += "Special:\n"
+			LOCALS += @"    Semen Addiction too low: {ABL:C_ID:精液中毒}/{ABL:C_ID:膣射中毒 + 1}\n"
+		ELSE
+			LOCALS += "Gems:\n"
+			LOCALS += @"    Submission: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_34(0,12,C_ID))%\n"
+			LOCALS += @"    Desire: %ABILITY_FORMAT_HTML(JUEL:C_ID:11, JUEL_DEMAND_34(0,11,C_ID))%\n"
+		ENDIF
+		LOCALS += "Experience:\n"
+		LOCALS += @"    Creampie: %ABILITY_FORMAT_HTML(EXP:C_ID:16, EXP_DEMAND_34(0,16,C_ID))%\n"
+	CASE 28 ;Old HATE
+		LOCALS '= "A reminder of what has been done. Makes it harder for new Hate Marks to accumulate."
+	CASE 29 ;Servitude
+		LOCALS '= "Servicing of all sorts. General desire to, and pleasure derived from pleasing someone, mostly sexually.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:従順 < ABL:C_ID:奉仕精神 + 1
+			LOCALS += "Special:\n"
+			LOCALS += @"    Obedience too low: {ABL:C_ID:従順}/{ABL:C_ID:奉仕精神 + 1}\n"
+		ELSE
+			LOCALS += "Gems:\n"
+			LOCALS += @"        Submission: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_13(0,12,C_ID))%\n"
+			LOCALS += "    Or\n"
+			LOCALS += @"        Loyalty:  %ABILITY_FORMAT_HTML(JUEL:C_ID:10, JUEL_DEMAND_13(1,10,C_ID))%\n"
+			IF ABL:C_ID:奉仕精神 == 0
+				LOCALS += "    Or\n"
+				LOCALS += @"        Learning:  %ABILITY_FORMAT_HTML(JUEL:C_ID:10, JUEL_DEMAND_13(2,10,C_ID))%\n"
+			ENDIF
+		ENDIF
+		LOCALS += "Experience:\n"
+		LOCALS += @"        Orgasm: %ABILITY_FORMAT_HTML(EXP:C_ID:10, EXP_DEMAND_13(0,10,C_ID))%\n"
+		LOCALS += @"        Semen: %ABILITY_FORMAT_HTML(EXP:C_ID:14, EXP_DEMAND_13(0,14,C_ID))%\n"
+		LOCALS += "    Or\n"
+		LOCALS += @"        Service: %ABILITY_FORMAT_HTML(EXP:C_ID:40, EXP_DEMAND_13(0,40,C_ID))%\n"
+	CASE 30 ;Cooking
+		LOCALS '= "Cook better food.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:料理技能 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Experience:\n"
+			IF ABL:C_ID:料理技能 == 0
+				LOCALS += @"    Cooking: %ABILITY_FORMAT_HTML(EXP:C_ID:料理経験, 6)%"
+			ELSE
+				LOCALS += @"    Cooking: %ABILITY_FORMAT_HTML(EXP:C_ID:料理経験, EXPLV:(ABL:C_ID:料理技能 + 3))%"
+			ENDIF
+		ENDIF
+	CASE 31 ;MSens
+		LOCALS '= "Mouth sensitivity.\n"
+		LOCALS += "Progress towards next stage: \n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    M Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:4, JUEL_DEMAND_4(0,4,C_ID))%\n"
+	CASE 32 ;Tongue
+		LOCALS '= "Better Fellatio and such.\n"
+		LOCALS += "Increased with Oral Sex Exp, Technique, Skilled Tongue, Fast learner.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:舌 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCAL = EXP:C_ID:口淫経験
+			LOCAL:1 = 10 + ABL:C_ID:技巧 / 2 + TALENT:C_ID:舌使い * 2 + TALENT:C_ID:習得速度
+			LOCAL = LOCAL * LOCAL:1 / 10
+			LOCALS += "Special:\n"
+			LOCALS += @"    Oral Sex, Technique etc: %ABILITY_FORMAT_HTML(LOCAL, EXPLV:(ABL:C_ID:舌 + 3))%\n"
+		ENDIF
+	CASE 34 ;A Creampie
+		LOCALS '= "Alternative source of protein.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:肛射中毒 > ABL:C_ID:精液中毒 + 1
+			LOCALS += "Special:\n"
+			LOCALS += @"    Semen Addiction too low: {ABL:C_ID:精液中毒}/{ABL:C_ID:肛射中毒 + 1}\n"
+		ELSE
+			LOCALS += "Gems:\n"
+			LOCALS += @"    Submission: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_35(0,12,C_ID))%\n"
+			LOCALS += @"    Desire: %ABILITY_FORMAT_HTML(JUEL:C_ID:11, JUEL_DEMAND_35(0,11,C_ID))%\n"
+		ENDIF
+		LOCALS += "Experience:\n"
+		LOCALS += @"    A Creampie: %ABILITY_FORMAT_HTML(EXP:C_ID:17, EXP_DEMAND_35(0,17,C_ID))%\n"
+	CASE 35 ;RAPE
+		LOCALS '= "Increases with multiple simultaneous and devastating climaxes while time is stopped."
+	CASE 36 ;Exposure
+		LOCALS '= "Exposure, shameplay stuff, exhibitionism.\n"
+		LOCALS += "Progress towards next stage:\n"
+		LOCALS += "Gems:\n"
+		LOCALS += @"    Exposure: %ABILITY_FORMAT_HTML(JUEL:C_ID:14, JUEL_DEMAND_14(0,14,C_ID))%\n"
+		LOCALS += "Experience:\n"
+		LOCALS += @"    Orgasm: %ABILITY_FORMAT_HTML(EXP:C_ID:10, EXP_DEMAND_14(0,10,C_ID))%\n"
+		LOCALS += @"    Training Masturbation: %ABILITY_FORMAT_HTML(EXP:C_ID:23, EXP_DEMAND_14(0,23,C_ID))%\n"
+	CASE 37 ;Music
+		LOCALS '= "Play better music.\n"
+		LOCALS += "Increased with Musical Performance, Singing, or Dancing, whichever is the highest.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:音楽技能 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCAL = MAX(EXP:C_ID:演奏経験, EXP:C_ID:歌唱経験, EXP:C_ID:舞踏経験)
+			LOCALS += "Special:\n"
+			IF ABL:C_ID:音楽技能 == 0
+				LOCALS += @"    Musical Perform/Singing/Dancing: %ABILITY_FORMAT_HTML(LOCAL, 20)%"
+			ELSE
+				LOCALS += @"    Musical Perform/Singing/Dancing: %ABILITY_FORMAT_HTML(LOCAL, EXPLV:(ABL:C_ID:音楽技能 + 3)*2)%"
+			ENDIF
+		ENDIF
+	CASE 39 ;Waist
+		LOCALS '= "Increases Thrusting and such.\n"
+		LOCALS += "Increased with V Sex Exp, A Sex Exp, Insertion Exp, Technique, Fast learner.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:腰 >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCAL = EXP:C_ID:Ｖ性交経験 + EXP:C_ID:Ａ性交経験 + EXP:C_ID:挿入経験
+			LOCAL:1 = 10 + ABL:C_ID:技巧 / 2 + TALENT:C_ID:習得速度
+			LOCAL = LOCAL * LOCAL:1 / 10
+			LOCALS += "Special:\n"
+			LOCALS += @"    V Sex + A Sex + Insertion: %ABILITY_FORMAT_HTML(LOCAL, EXPLV:(ABL:C_ID:腰 + 3))%\n"
+		ENDIF
+		
+	CASE 41 ;Masturbation
+		LOCALS '= "Makes it easier to get them to masturbate.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF ABL:C_ID:Ｃ感覚 <= ABL:C_ID:自慰中毒 + 1
+			LOCALS += "Special:\n"
+			LOCALS += @"    C Sensitivity too low: {ABL:C_ID:Ｃ感覚}/{ABL:C_ID:自慰中毒 + 2}\n"
+		ELSEIF ABL:C_ID:露出癖 <= ABL:C_ID:自慰中毒 + 1
+			LOCALS += "Special:\n"
+			LOCALS += @"    Exposure too low: {ABL:C_ID:露出癖}/{ABL:C_ID:自慰中毒 + 2}\n"
+		ELSE
+			LOCALS += "Gems:\n"
+			LOCALS += @"    Submission: %ABILITY_FORMAT_HTML(JUEL:C_ID:12, JUEL_DEMAND_30(0,12,C_ID))%\n"
+			LOCALS += @"    Exposure: %ABILITY_FORMAT_HTML(JUEL:C_ID:14, JUEL_DEMAND_30(0,14,C_ID))%\n"
+			LOCALS += @"    C Pleasure: %ABILITY_FORMAT_HTML(JUEL:C_ID:0, JUEL_DEMAND_30(0,0,C_ID))%\n"
+		ENDIF
+		LOCALS += "Experience:\n"
+		LOCALS += @"    Masturbation: %ABILITY_FORMAT_HTML(EXP:C_ID:22, EXP_DEMAND_30(0,22,C_ID))%\n"
+	CASE 44 ;Logging
+		LOCALS '= "Fell trees better or something.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF TALENT:C_ID:伐採Lv >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Experience:\n"
+			IF TALENT:C_ID:伐採Lv == 0
+				LOCALS += @"    Logging: %ABILITY_FORMAT_HTML(EXP:C_ID:伐採経験, 6)%"
+			ELSE
+				LOCALS += @"    Logging: %ABILITY_FORMAT_HTML(EXP:C_ID:伐採経験, EXPLV:(TALENT:C_ID:伐採Lv + 3))%"
+			ENDIF
+		ENDIF
+	CASE 51 ;Fishing
+		LOCALS '= "Fish better or something.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF TALENT:C_ID:釣りLv >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Experience:\n"
+			IF TALENT:C_ID:釣りLv == 0
+				LOCALS += @"    Fishing: %ABILITY_FORMAT_HTML(EXP:C_ID:釣り経験, 6)%"
+			ELSE
+				LOCALS += @"    Fishing: %ABILITY_FORMAT_HTML(EXP:C_ID:釣り経験, EXPLV:(TALENT:C_ID:釣りLv + 3))%"
+			ENDIF
+		ENDIF
+	CASE 58 ;Foraging
+		LOCALS '= "Find better things when foraging or something.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF TALENT:C_ID:採集Lv >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Experience:\n"
+			IF TALENT:C_ID:採集Lv == 0
+				LOCALS += @"    Foraging: %ABILITY_FORMAT_HTML(EXP:C_ID:84, 5)%\n"
+			ELSE
+				LOCALS += @"    Foraging: %ABILITY_FORMAT_HTML(EXP:C_ID:84, EXPLV:(TALENT:C_ID:採集Lv + 3))%\n"
+			ENDIF
+		ENDIF
+	CASE 65 ;Mixing
+		LOCALS '= "Mix better things or something.\n"
+		LOCALS += "Progress towards next stage:\n"
+		IF TALENT:C_ID:調合Lv >= 6
+			LOCALS += @"    MAXED!"
+		ELSE
+			LOCALS += "Experience:\n"
+			IF TALENT:C_ID:調合Lv == 0
+				LOCALS += @"    Mixing: %ABILITY_FORMAT_HTML(EXP:C_ID:85, 5)%\n"
+			ELSE
+				LOCALS += @"    Mixing: %ABILITY_FORMAT_HTML(EXP:C_ID:85, EXPLV:(TALENT:C_ID:調合Lv + 3))%\n"
+			ENDIF
+		ENDIF
+	CASEELSE
+		LOCALS '= @"{ARG} Undefined"
+ENDSELECT
+RETURNF HTML_ESCAPE(LOCALS)
+
+@ABILITY_FORMAT_HTML(ARG, ARG:1)
+#FUNCTIONS
+IF GETPERCENT(ARG, ARG:1) > 100
+	RETURNF @"{ARG}/{ARG:1} - 100\%"
+ELSEIF ARG:1 < 1
+	RETURNF @"N/A"
+ELSE
+	RETURNF @"{ARG}/{ARG:1} - {GETPERCENT(ARG, ARG:1)}\%"
+ENDIF
+
+@CALC_RANK_FUNCTION(VAR_VALUE, RANK_SCALE)
+#FUNCTION
+#DIM      VAR_VALUE  ;評価対象数値
+#DIMS     RANK_SCALE ;評価に使用する尺度の種類
+#DIM RANK       ;評価ランク、数が小さいほど優秀
+SELECTCASE RANK_SCALE
+CASE "MAX_50000"
+;好感度用
+	SELECTCASE VAR_VALUE
+	CASE IS >= 50000
+		RANK = 0
+	CASE IS >= 30000
+		RANK = 1
+	CASE IS >= 10000
+		RANK = 2
+	CASE IS >=  5000
+		RANK = 3
+	CASE IS >=  3000
+		RANK = 4
+	CASE IS >=  1500
+		RANK = 5
+	CASE IS >=  1000
+		RANK = 6
+	CASE IS >=   500
+		RANK = 7
+	CASE IS >=   100
+		RANK = 8
+	CASEELSE
+		RANK = 9
+	ENDSELECT
+CASE "MAX_20000"
+;信頼度用
+	SELECTCASE VAR_VALUE
+	CASE IS >= 20000
+		RANK = 0
+	CASE IS >= 10000
+		RANK = 1
+	CASE IS >=  3000
+		RANK = 2
+	CASE IS >=  1000
+		RANK = 3
+	CASE IS >=   500
+		RANK = 4
+	CASE IS >=   150
+		RANK = 5
+	CASE IS >=   100
+		RANK = 6
+	CASE IS >=    50
+		RANK = 7
+	CASE IS >=    10
+		RANK = 8
+	CASEELSE
+		RANK = 9
+	ENDSELECT
+CASE "MAX_99"
+;技術系以外のABL
+	;数字が縦に並ぶと非常に見にくかったんで意図的にインデントずらしてます
+	SELECTCASE VAR_VALUE
+	CASE IS >= 99
+			RANK = 0
+	CASE IS >= 75
+			RANK = 1
+	CASE IS >= 50
+			RANK = 2
+	CASE IS >= 20
+			RANK = 3
+	CASE IS >= 10
+			RANK = 4
+	CASE IS >=  5
+			RANK = 5
+	CASE IS >=  3
+			RANK = 6
+	CASE IS >=  2
+			RANK = 7
+	CASE IS >=  1
+			RANK = 8
+	CASEELSE
+			RANK = 9
+	ENDSELECT
+CASE "MAX_6"
+;技能系ABL
+	SELECTCASE VAR_VALUE
+	CASE IS >= 6
+			RANK = 0
+	CASE IS >= 5
+			RANK = 1
+	CASE IS >= 4
+			RANK = 2
+	CASE IS >= 3
+			RANK = 3
+	CASE IS >= 2
+			RANK = 4
+	CASE IS >= 1
+			RANK = 5
+	CASEELSE
+			RANK = 6
+	ENDSELECT
+CASEELSE
+	THROW 不明なRANK_SCALE %RANK_SCALE%
+ENDSELECT
+RETURNF RANK
+
+@CALC_RANK_NUM_FUNCTION(VAR_VALUE, RANK_SCALE)
+#FUNCTION
+#DIM      VAR_VALUE  ;評価対象数値
+#DIMS     RANK_SCALE ;評価に使用する尺度の種類
+#DIM RANK_NUM
+SELECTCASE RANK_SCALE
+CASE "MAX_50000"
+;好感度用
+	RANK_NUM = 10
+CASE "MAX_20000"
+;信頼度用
+	RANK_NUM = 10
+CASE "MAX_99"
+;技術系以外のABL
+	;数字が縦に並ぶと非常に見にくかったんで意図的にインデントずらしてます
+	RANK_NUM = 10
+CASE "MAX_6"
+;技能系ABL
+	RANK_NUM = 7
+CASEELSE
+	THROW 不明なRANK_SCALE %RANK_SCALE%
+ENDSELECT
+RETURNF RANK_NUM
+
+@PRINT_ABL_TR(C_ID)
+#DIM C_ID
+CALL PRINTBUTTON_EX("Abilities", 162, TFLAG:162, , , 1)
+SIF TFLAG:能力表示
+	RETURN
+PRINTL     Marks            H Abilities     Non-H Abilities      Sensitivity          Technique      Disposition            Addiction
+FOR LOCAL, 0, 56
+	CALL PRINT_SPECIFIC(C_ID, LOCAL)
+	SIF LOCAL % 7 == 6
+		PRINTFORML 
+NEXT
+
+@PRINT_SPECIFIC(C_ID, ARG)
+{
+#DIM CONST DISP_ID , 56 = 
+	0,  9, 43, 0, 50, 15, 31,
+	1, 10, 41, 1, 54, 16, 32,
+	2, 11, 42, 2, 55, 17, 33,
+	3, 12, 40, 3, 52, 18, 34,
+	4, 13, 44, 4, 51,  0, 35,
+	5, 14, 45, 0, 53,  0, 30,
+	0,  0, 47, 0,  0,  0,  0,
+	0,  0, 83, 0,  0,  0,  0,
+}
+#DIM C_ID
+{
+#DIMS CONST DISP_NAME , 56 = 
+	"    PAIN",     " Intimacy", "Learning", "CSens", "  Hand", "  Maso",   "       Semen",
+	"    PLSR",     "Obedience", "  Speech", "VSens", "Vagina", "  Sado",   "      Homo♀",
+	"    LEWD",     "   Desire", "  Combat", "ASens", "  Anus", "Homo♀",    "      Homo♂",
+	"    HATE",     "Technique", "Cleaning", "BSens", " Chest", "Homo♂",    "    Creampie",
+	"Old HATE",     "Servitude", " Cooking", "MSens", "Tongue",         "", "  A Creampie",
+	"    RAPE",     " Exposure", "   Music",      "", " Waist",         "", "Masturbation",
+	        "",              "", " Fishing",      "",       "",         "",             "",
+			"",              "", " Dancing",      "",       "",         "",             "",
+}
+IF ARG == 33 || ARG == 38 || ARG == 40 || ARG == 43 || INRANGE(ARG, 45, 48) || ARG == 50 || INRANGE(ARG, 52, 55)
+	PRINTFORM                   
+	RETURN
+ELSEIF ARG == 42 || ARG == 49
+	PRINTFORM                 
+	RETURN
+ELSEIF ARG%7==0
+		IF C_ID == MASTER
+			PRINTFORM %" " * 16%
+		ELSEIF RESULT == 4 || RESULT == 5
+			PRINTFORM %DISP_NAME:ARG, 4%：
+			CALL COLOR_STAMP(MARK:C_ID:(DISP_ID:ARG), 3, "×", C_RED)
+		ELSE
+			PRINTFORM %DISP_NAME:ARG, 4%：
+			CALL COLOR_STAMP(MARK:C_ID:(DISP_ID:ARG), 3, "★", 0xFFFF00)
+		ENDIF
+ELSEIF ARG%7==4
+		PRINTFORM %DISP_NAME:ARG, 12%：
+		CALL PRINT_RANK(ABL:C_ID:(DISP_ID:ARG), "MAX_6")
+		PRINTFORM  {ABL:C_ID:(DISP_ID:ARG), 3}
+ELSEIF ARG%7==5
+	PRINTFORM %DISP_NAME:ARG, 8%：
+	CALL PRINT_RANK(ABL:C_ID:(DISP_ID:ARG), "MAX_6")
+	PRINTFORM  {ABL:C_ID:(DISP_ID:ARG), 3}  
+ELSE
+	PRINTFORM %DISP_NAME:ARG, 10%：
+	CALL PRINT_RANK(ABL:C_ID:(DISP_ID:ARG), "MAX_99")
+	PRINTFORM  {ABL:C_ID:(DISP_ID:ARG), 3}
+ENDIF
+
+
+@PRINT_STATE_JUEL_TR(選択中キャラID)
+#DIM 選択中キャラID
+#DIM 表示項目数
+PRINTL
+CALL PRINTLINE, "Gems"
+表示項目数 = 0
+FOR LOCAL, 0, 23
+	;go to denial gems at the end
+	SIF LOCAL == 22
+		LOCAL = 100
+	;PALAM.CSVに名称が登録されていないとCONTINUE
+	SIF !STRLENS(PALAMNAME:LOCAL)
+		CONTINUE
+	
+	LOCALS '= PALAM_NUM(JUEL:選択中キャラID:LOCAL, 1)
+	PRINTFORM 　%PALAM_TR(PALAMNAME:LOCAL)%
+
+	LOCAL:1 = 29 - STRLENS(PALAM_TR(PALAMNAME:LOCAL)) - STRLENS(LOCALS)
+	IF LOCAL:1 > 0
+		SETCOLOR 0x606060
+		PRINTFORM %"." * LOCAL:1%
+		RESETCOLOR
+	ENDIF
+	PRINTFORM %LOCALS% 
+	RESETCOLOR
+	
+	;改行or表示位置あけ
+	SIF (++表示項目数) % 4 == 0 
+		PRINTL 
+NEXT
+
+@PALAM_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "快Ｃ"
+		LOCALS '="C Pleasure"
+	CASE "快Ｖ"
+		LOCALS '="V Pleasure"
+	CASE "快Ａ"
+		LOCALS '="A Pleasure"
+	CASE "快Ｂ"
+		LOCALS '="B Pleasure"
+	CASE "快Ｍ"
+		LOCALS '="M Pleasure"
+	CASE "潤滑"
+		LOCALS '="Lubrication"
+	CASE "恭順"
+		LOCALS '="Loyalty"
+	CASE "欲情"
+		LOCALS '="Desire"
+	CASE "屈服"
+		LOCALS '="Submission"
+	CASE "習得"
+		LOCALS '="Learning"
+	CASE "恥情"
+		LOCALS '="Exposure"
+	CASE "苦痛"
+		LOCALS '="Pain"
+	CASE "恐怖"
+		LOCALS '="Fear"
+	CASE "好意"
+		LOCALS '="Favor"
+	CASE "優越"
+		LOCALS '="Superiority"
+	CASE "反感"
+		LOCALS '="Hostility"
+	CASE "不快"
+		LOCALS '="Discomfort"
+	CASE "抑鬱"
+		LOCALS '="Depression"
+	CASE "否定"
+		LOCALS '="Denial"
+	CASEELSE
+		LOCALS '= ARGS
+ENDSELECT
+RETURNF LOCALS
+
+
+;added, show characters that are:
+
+;maid
+@EXIST_キャラリスト18
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラリスト18(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "名前"
+	CALLF MAKE_STR(V_NAME, "メイドキャラリスト")
+CASE "SHOP表示"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "判定"
+	IF !CHECK_CHARA(ARG, "存在")
+	ELSEIF CHECK_CHARA(ARG, "メイド")
+		CALLF MAKE_INT(V_NAME, 1)
+	ENDIF
+ENDSELECT
+
+;doll
+@EXIST_キャラリスト19
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラリスト19(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "名前"
+	CALLF MAKE_STR(V_NAME, "人形キャラリスト")
+CASE "SHOP表示"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "判定"
+	IF !CHECK_CHARA(ARG, "存在")
+	ELSEIF CHECK_CHARA(ARG, "人形")
+		CALLF MAKE_INT(V_NAME, 1)
+	ENDIF
+ENDSELECT
+
+;ghost
+@EXIST_キャラリスト20
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラリスト20(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "名前"
+	CALLF MAKE_STR(V_NAME, "幽霊キャラリスト")
+CASE "SHOP表示"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "判定"
+	IF !CHECK_CHARA(ARG, "存在")
+	ELSEIF CHECK_CHARA(ARG, "幽霊")
+		CALLF MAKE_INT(V_NAME, 1)
+	ENDIF
+ENDSELECT
+
+;human
+@EXIST_キャラリスト21
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラリスト21(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "名前"
+	CALLF MAKE_STR(V_NAME, "人間キャラリスト")
+CASE "SHOP表示"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "判定"
+	IF !CHECK_CHARA(ARG, "存在")
+	ELSEIF CHECK_CHARA(ARG, "人間")
+		CALLF MAKE_INT(V_NAME, 1)
+	ENDIF
+ENDSELECT

@@ -1,0 +1,95 @@
+﻿@CHARAMOVE_DATA_89(ARG, ARG:2)
+LOCAL = 89
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;命蓮寺メンバーの私室は入らない
+			CASE P113ナズーリン私室, P114ムラサ私室, P115星私室, P116一輪私室, P117ぬえ私室, P118白蓮私室, P109女苑私室, P136響子私室
+				RETURN -100
+			;神霊廟メンバーの私室は入らない
+			CASE P125屠自古私室, P127布都私室, P128神子私室
+				RETURN -100
+			;墓地によく居る
+			CASE P121墓地
+				RETURN 5
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE お地蔵通り, 枝垂れ柳の下, 墓地, 神霊廟広場
+				RETURN 1
+			CASE 再思の道, 無縁塚
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+		;よく墓地に行く
+		SIF CFLAG:LOCAL:今日の運勢 % 4 == 0 && INRANGE(TIME, 0, 360)
+			TCVAR:LOCAL:引力点 = P121墓地
+ENDSELECT
+
+@EXIST_キャラデータ89
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ89(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "芳香")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（ズボン）セット")
+
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "帽子"))
+CASE "普段着：アクセサリ"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("アクセサリ", "御札"))
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "靴"))
+CASE "普段着：スカート"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("スカート", "スカート"))
+CASE "普段着：上半身上着１"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("上半身上着１", "上着"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "青娥が着せたと思しき")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "三段フリルショーツ")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "フリルブラ")
+CASE "固有下着着用条件"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 2)
+
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "肉料理/中華/揚げ物/ジャンキー/濃厚/冷たい/質素/野趣/とろとろ/妖力/霊障/甘い/甘い/すっぱい/すっぱい/ガッツリ/ガッツリ/" + "グロテスク/" * 3)
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "温かい/神力/" + "しょっぱい/あっさり/淡白/" * 2 + "ヘルシー/" * 3)
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "未知の味/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "黒/混沌/怖い/奇妙/" + "死生/妖術/生体品/" * 3 + "死霊の/不滅の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "秩序/知的/" + "光/神霊/書物/護符/機械/" * 3)
+ENDSELECT
+

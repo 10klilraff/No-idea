@@ -1,0 +1,36 @@
+﻿;-------------------------------------------------
+;避妊薬
+;道具使用コマンド、レベル2
+;-------------------------------------------------
+@COM51
+;着脱の処理
+IF TCVAR:ピル
+	PRINTL Already taken.
+	RETURN -1
+ENDIF
+ITEM:ピル -= 1
+TCVAR:ピル = 1
+PRINTFORML \@ SHIRAHU(TARGET) ? %PARSE("You give")% %CALLNAME:TARGET% a pill# %CALLNAME:TARGET% takes a pill\@.
+PRINTFORMW {ITEM:ピル} remaining.
+
+;-------------------------------------------------
+;COM別FLAGの設定
+;-------------------------------------------------
+;行為者
+TCVAR:116 = PLAYER
+
+RETURN 0
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE51
+SIF !TFLAG:100
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(51)
+	RETURN RESULT
+;Custom code - tweaked so that debug flag would affect this properly
+SIF !ITEM:ピル && NOITEM == 0
+	RETURN 0
+RETURN 1

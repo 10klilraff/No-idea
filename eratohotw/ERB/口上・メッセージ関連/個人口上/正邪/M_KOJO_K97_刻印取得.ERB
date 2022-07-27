@@ -1,0 +1,93 @@
+﻿;-------------------------------------------
+;刻印取得
+;-------------------------------------------
+@M_KOJO_MESSAGE_MARKCNG_K97
+;このままだと地の文が表示されません
+;地の文を表示したい方は、下記のコメントアウトを削除して下さい
+CALL MARK_MESSAGE
+SIF FLAG:時間停止
+	RETURN 0
+;苦痛刻印
+IF TFLAG:苦痛刻印取得 == 1
+	PRINTFORMW 「Ghaaah... Hngh... Stop itt--...!」
+ELSEIF TFLAG:苦痛刻印取得 == 2
+	PRINTFORMW 「Aagh...! What do you think you're doing, you little...!」
+ELSEIF TFLAG:苦痛刻印取得 == 3
+	PRINTFORMW 「Hghiii...?! Aack, ghaaah...!」
+ENDIF
+IF TFLAG:苦痛刻印取得 ;added
+	;with all the talk about "be gentle" etc, I think she'd get very pissed if you seriously hurt her to get a mark, tbh
+	PRINTFORMW 「Oww... What the hell... I thought you said you wouldn't hurt me!」
+	PRINTFORMW 「Oh, fuck you then... You %PRINT_MALE("dickhead:cunt", MASTER)%!」
+	PRINTFORMDW Seija becomes utterly unresponsive, refusing to continue...
+	CFLAG:ブチギレ = 1
+	TFLAG:押し倒せない ++
+ENDIF
+
+;時姦刻印
+IF TFLAG:時姦刻印取得 == 1
+	PRINTFORMW 
+ELSEIF TFLAG:時姦刻印取得 == 2
+	PRINTFORMW 
+ELSEIF TFLAG:時姦刻印取得 == 3
+	PRINTFORMW 
+ENDIF
+
+;快楽刻印
+IF TFLAG:23 == 1
+	PRINTFORMW 「Hnnghh... Phew...」
+ELSEIF TFLAG:23 == 2
+	PRINTFORMW 「Aaaahhh! Nhaaah...」
+ELSEIF TFLAG:23 == 3
+	PRINTFORMW 「Hnnnnghh!!! Kuhh...」
+ENDIF
+
+;不埒刻印
+;快楽による刻印
+;LV1
+IF TFLAG:24 == 11
+	PRINTFORMW 「Mmm... More, keep it up...」
+;LV2
+ELSEIF TFLAG:24 == 12
+	PRINTFORMW 「Ulp... I don't get... what's about it with this stuff.」
+;LV3
+ELSEIF TFLAG:24 == 13
+	PRINTFORMW 「Aahh...! Oh dear, not like... this... Hnn...!」
+;屈服、恭順による刻印
+;LV1
+ELSEIF TFLAG:24 == 31
+	PRINTFORMW 「...」
+;LV2
+ELSEIF TFLAG:24 == 32
+	PRINTFORMW 「...Look, %CALLNAME:MASTER%-- Nah, actually, never mind.」
+;LV3
+ELSEIF TFLAG:24 == 33
+	PRINTFORMW 「%CALLNAME:MASTER%, what do you really want from me?」
+ENDIF
+;added
+IF TFLAG:24 == 13 || TFLAG:24 == 33
+	PRINTFORML
+	PRINTFORMW 「Well, that does it. I'm not easily impressed, and yet... you've impressed me.」
+	PRINTFORMW 「Don't get full of yourself though. Day's not over yet, y'know?」
+	PRINTFORMW 「You still have a chance to piss me off.」
+	PRINTFORMDW Seija says with a smirk as you continue making out.
+ENDIF
+
+;反発刻印
+IF TFLAG:反発刻印取得 ;added
+	PRINTFORMDW Seija's grin drops. She frowns, and takes a step back.
+	CALL M_KOJO_DIARYSETTING_K97(11)
+ENDIF
+IF TFLAG:反発刻印取得 == 1
+	PRINTFORMW 「%SPLIT_G("Sheesh:Bah:Geh:Tch:Pfft")%...」
+ELSEIF TFLAG:反発刻印取得 == 2
+	PRINTFORMW 「%SPLIT_G("Are you trying to start a fight:You wanna go, huh")%?」
+ELSEIF TFLAG:反発刻印取得 == 3
+	IF TALENT:恋慕 ;added
+		PRINTFORMW 「...Okay, listen %CALLNAME:MASTER%.」
+		PRINTFORMW 「Just because we're so close doesn't mean you can just disrespect me like that...」
+		PRINTFORMW 「You pissed me off now, no sex for you.」
+	ELSE
+		PRINTFORMW 「Huuuh?! Cut the shit already, will ya asshole?!」
+	ENDIF
+ENDIF

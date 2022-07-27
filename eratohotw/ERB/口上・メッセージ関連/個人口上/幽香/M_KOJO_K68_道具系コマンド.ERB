@@ -1,0 +1,538 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;道具系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;40,ローター
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_40
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_40_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_40_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		RETURN 1
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		RETURN 1
+	ELSEIF TCVAR:68:泥酔 == 1
+		RETURN 1
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORM 「Nhh... Fuaa
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW  It might be feeling way better for me than you... Maybe.」
+			CASEELSE
+				PRINTFORM 「Uuh... Fuuh, mnnnfff
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW  Haah, I can't keep my voice down after all...」
+		ENDSELECT
+	;それ以外
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「Uhh... Hnn! Ahh, doing it with this puny toy...」
+			CASEELSE
+				PRINTFORMW 「Kuh... Ummmnnn! Haven't you had enough...? How much are you going to... Nhaa!」
+		ENDSELECT
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;41,Ｅマッサージャ
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_41
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_41_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_41_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		RETURN 1
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		RETURN 1
+	ELSEIF TCVAR:68:泥酔 == 1
+		RETURN 1
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORM 「Ahh... Kuh, Hiyaaa
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM  This is... Too good... Haaa
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW !」
+			CASEELSE
+				PRINTFORM 「Nhoo... Please, Haaah
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM ! H-Hey, let me go! If you keep going, I'll... Aaahhh
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW !」
+		ENDSELECT
+	;それ以外
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「Hiii! T-This much is... Haah, N-Nothing, I'm telling youu!」
+			CASEELSE
+				PRINTFORMW 「Nhooo, stop, time out! Hold on, the vibration of this thing is way to stro--... Nnghhh!」
+		ENDSELECT
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;42,クリキャップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_42
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_42_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_42_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		RETURN 1
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		RETURN 1
+	ELSEIF TCVAR:68:泥酔 == 1
+		RETURN 1
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		;解除時
+		IF !TEQUIP:クリキャップ
+			PRINTFORMW 「Haa, Haa, Fuah...」
+		ELSE
+			PRINTFORMW 「... I hoped you would touch me directly...」
+		ENDIF
+	;それ以外
+	ELSE
+		;解除時
+		IF !TEQUIP:クリキャップ
+			PRINTFORMW 「Haa, Haaa, Fuah... D- Didn't even feel a thing, really...」
+		ELSE
+			PRINTFORMW 「Uwahh... You've got a really villainous look in your eyes...」
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;43,オナホール
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_43
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_43_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_43_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+;実装されてない、多分
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:オナホール
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			RETURN 1
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW 
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;44,バイブ
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_44
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_44_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_44_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		IF TEQUIP:バイブ
+			PRINTL 
+			PRINTFORMDL Aligning the vibrator with Yuuka's %SLIT(TARGET)%, you insert it all the way in.
+			PRINTFORMDW %HIS_HER(TARGET, 1)% sensitive vagina accepts it easily, making it quite fun just to watch.
+		ENDIF
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		RETURN 1
+	ELSEIF TCVAR:68:泥酔 == 1
+		RETURN 1
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		;解除時
+		IF !TEQUIP:バイブ
+			PRINTFORM 「Uuuh... Haa
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW  You're going to do me next yourself, won't you now...?」
+		ELSE
+			PRINTFORM 「Fufu... Are you fine with me cheating on you with this thing...? Hehe
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML 」
+			PRINTFORM 「Ahhh... Here it comes, so good... Fuaahh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+		ENDIF
+	;それ以外
+	ELSE
+		;解除時
+		IF !TEQUIP:バイブ
+			PRINTFORM 「...Hnn, Nhoo! ...Haah, haah, haah... Uh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+		ELSE
+			PRINTFORM 「Nnhh, Aaah... Uuhh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW ! Aahh, this is, amashing...!」
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;45,アナルバイブ
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_45
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_45_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_45_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		IF TEQUIP:アナルバイブ
+			PRINTL 
+			PRINTFORMDL Aligning the vibrator with Yuuka's anus, you \@ EXP:68:Ａ経験 > 20 ? insert it all the way # force it \@ in and hold it there.
+			PRINTFORMDW \@ EXP:68:Ａ経験 > 20 ? Being well developed it accepts it inside like it's natural, making Yuuka feel pleasure from %HIS_HER(TARGET)% forbidden hole # Yuuka stands completely still with a firm look on %HIS_HER(TARGET)% face, not realizing %HIS_HER(TARGET)% anus is being trained \@.
+		ENDIF
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		RETURN 1
+	ELSEIF TCVAR:68:泥酔 == 1
+		RETURN 1
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		;解除時
+		IF !TEQUIP:アナルバイブ
+			IF EXP:68:Ａ経験 > 20
+				PRINTFORM 「Aaahh...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW  This is so embarrassing, but, it feels so good...」
+			ELSE
+				PRINTFORMW 「Uuuh... Kkhu, And you're sure I'm going to get used to this...?」
+			ENDIF
+		ELSE
+			IF EXP:68:Ａ経験 > 20
+				PRINTFORM 「Ah! N-Not my ass... Ahh, Aaahhh
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW 「A-Are you going to stick this in my...ass...? I- I hope it'll go well... Uh, Kkhu...!」
+			ENDIF
+		ENDIF
+	;それ以外
+	ELSE
+		;解除時
+		IF !TEQUIP:アナルバイブ
+			IF EXP:68:Ａ経験 > 20
+				PRINTFORM 「...Aahhh! No, No more, Shtooop...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORML 「...Uh, Haa...! This stupid...!」
+				PRINTFORMDW Seemingly not enjoying it, the annoyed Yuuka throws away the anal vibrator.
+			ENDIF
+		ELSE
+			IF EXP:68:Ａ経験 > 20
+				PRINTFORML 「Hiii?! I-Is that thing going to go in my ass...? Uh, ahhhhh....!」
+				PRINTFORMDW Yuuka blushes profusely from the embarrassment as you ravage %HIS_HER(TARGET)% anus with the toy.
+			ELSE
+				PRINTFORML 「O-Obviously I would never feel good if this thing gets in my ass! H-Hey, are you listen---...?!」
+				PRINTFORMDW Ignoring Yuuka's complaints, you slowly push the vibrator deep inside %HIS_HER(TARGET)% anus.
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;46,アナルビーズ
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_46
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_46_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_46_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+;実装されてない、多分
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:アナルビーズ
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			RETURN 1
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW 
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;47,ニプルキャップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_47
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_47_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_47_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		RETURN 1
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		RETURN 1
+	ELSEIF TCVAR:68:泥酔 == 1
+		RETURN 1
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		;解除時
+		IF !TEQUIP:ニプルキャップ
+			PRINTFORM 「Haa, Haaa...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW  Just doing it with the toys is clearly not enough after all...」
+		ELSE
+			PRINTFORMW 「Nhhh... I want you to touch me directly too...」
+		ENDIF
+	;それ以外
+	ELSE
+		;解除時
+		IF !TEQUIP:ニプルキャップ
+			PRINTFORM 「Haa, Haaaa...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW  Kuh, this really is one obscene toy...」
+		ELSE
+			PRINTFORMW 「What's wrong with your head... Using such, Ahh, Toys on people...!」
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;48,搾乳機
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_48
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_48_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_48_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:搾乳機
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			RETURN 1
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW 
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;49,乳首ローター
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_49
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_49_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_49_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	CALL M_KOJO_MESSAGE_COM_K68_40_1
+	;時姦中
+	IF FLAG:70
+		RETURN 1
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		RETURN 1
+	ELSEIF TCVAR:68:泥酔 == 1
+		RETURN 1
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		
+	;それ以外
+	ELSE
+		
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;50,ゴム装着
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_50
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_50_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_50_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

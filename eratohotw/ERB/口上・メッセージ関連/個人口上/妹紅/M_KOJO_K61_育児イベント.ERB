@@ -1,0 +1,718 @@
+﻿
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;置き換えではありません。必要な場合は上下のSKIPSTART~SKIPENDを外してください。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_回復
+#DIMS 子名
+子名 = %CHILDNAME:61:(TALENT:61:育児中)%
+;-------------------------------------------------
+SIF FLAG:口上色
+	CALLFORM M_KOJO_COLOR_K61
+PRINTFORMDL Despite being seemingly haggard and emaciated, Mokou quickly regains her previous fleshiness and healthy look.
+PRINTFORMDL A somewhat happy smile spreads on her face.
+IF EXP:出産経験 == 1
+	IF 陥落状態() >= 4
+		PRINTFORML 「Fufu, I haven't been able to imagine that this would come true, ever since my body ended up like this.」
+		PRINTFORML 「That's so delightful, I'm so so happy...」
+		PRINTFORML 「%子名%, are you happy too? You know, your mother is over the moon with joy right now.」
+	ELSEIF 陥落状態() == 3
+		PRINTFORML 「Phew, ever since I became a Hourai person I've never had to be in such a grueling state for that long, so I'm emotionally drained right now.」
+		PRINTFORML 「But I did it all for %子名%'s sake, so I couldn't be more happy.」
+	ELSEIF 陥落状態() == 2
+		PRINTFORML 「Yeah, I'm feeling mostly alright now. Fufu, %子名%. Don't worry, your mother is going to hang in there, okay?」
+	ELSEIF 陥落状態() == 1
+		PRINTFORML 「Fuhh, hmm? Fufu, looks like I'm getting a little better.」
+	ELSE
+		PRINTFORML 「Yeah... I'm feeling better now.」
+	ENDIF
+ELSE
+	IF 陥落状態() >= 4
+		PRINTFORML 「I just can't get used to it in the end...」
+		PRINTFORML 「But it's all right now that %子名% is finally with us.」
+		PRINTFORML 「I couldn't be happier, really.」
+	ELSEIF 陥落状態() == 3
+		PRINTFORML 「Haah, phew... At last, it's all settled down.」
+		PRINTFORML 「From now on, I'll have to give my best for %子名%'s sake too.」
+	ELSEIF 陥落状態() == 2
+		PRINTFORML 「Phew, %子名%, your mother's going to try her best, so please grow up big too.」
+	ELSEIF 陥落状態() == 1
+		PRINTFORML 「Yeah, I'm pretty much recovered now, I think. I'll have to get better for %子名%'s sake if anything.」
+	ELSE
+		PRINTFORML 「Phew... I love you so much, %子名%.」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_離乳
+#DIMS 子名
+子名 = %CHILDNAME:61:(TALENT:61:育児中)%
+;-------------------------------------------------
+SIF FLAG:口上色
+	CALLFORM M_KOJO_COLOR_K61
+IF EXP:出産経験 == 1
+	PRINTFORMDL Mokou watches closely at her smiling baby %PRINT_MALE("boy", (TALENT:61:育児中))% holding %HIS_HER((TALENT:61:育児中))% first ever baby snack in %HIS_HER((TALENT:61:育児中))% mouth.
+	PRINTFORMDL Not letting you say or touch anything, only then did Mokou smile when %子名% had finished eating.
+	PRINTFORMDL At the same time, tears started to escape from the corners of her eyes.
+	PRINTL 
+	IF 陥落状態() >= 4
+		PRINTFORML 「Look, %MASTERNAME:61%... I'm actually raising a baby, a lively and healthy baby.」
+		PRINTFORML 「My... My own baby %PRINT_MALE("boy", (TALENT:61:育児中))%... I wonder if it's okay... For me to have such... such happiness?」
+		PRINTFORML 「For I am sinful, unforgivable and unforgiven...」
+		PRINTFORML 「......Yeah, you're right. I mustn't bear such thoughts, for the sake of this baby, too.」
+		PRINTFORML 「Thank you so much for fathering this child, %MASTERNAME:61%.」
+		PRINTFORML 「And thank you for making me a mother.」
+		PRINTFORML 「...Though it's your fault for turning me into such a crybaby.」
+		PRINTFORML 「Right, %子名%?」
+	ELSEIF 陥落状態() == 3
+		PRINTFORML 「...Thank you so much for being born and being alive, %子名%.」
+		PRINTFORML 「Thank you so much too %CALLNAME:MASTER%, for granting me this child.」
+		PRINTFORML 「I'm sure this baby %PRINT_MALE("boy", (TALENT:61:育児中))% will be alright now, with how eagerly %HE_SHE((TALENT:61:育児中))% eats and all.」
+		PRINTFORML 「So that's that, everything will be fine... Yet for some reason... my tears just won't stop. I wonder why...」
+	ELSEIF 陥落状態() == 2
+		PRINTFORML 「Fufu, thank you for eating, %子名%.」
+		PRINTFORML 「And thank you too, %CALLNAME:MASTER%.」
+		PRINTFORML 「For giving me such a lively, hungry, fine child.」
+	ELSEIF 陥落状態() == 1
+		PRINTFORML 「%子名%, my little %子名%.」
+		PRINTFORML 「Thank you so much for blessing me with a child, %CALLNAME:MASTER%.」
+	ELSE
+		PRINTFORML 「%子名%, my only %子名%, thank you so much for being born, thank you, thank you...」
+		PRINTFORML 「......What?」
+	ENDIF
+ELSE
+	PRINTFORMDL Smiling delightfully, Mokou gives %子名% %HIS_HER((TALENT:61:育児中))% very first taste of food.
+	PRINTFORMDL Giving you a glance, Mokou shows an even bigger smile, as you're unable to do anything but simply watch.
+	PRINTFORMDL But suddenly, tears start sliding off her cheeks one by one and dropping down.
+	PRINTL 
+	IF 陥落状態() >= 4
+		PRINTFORML 「I become so happy I'm always on the verge of crying no matter how many times I go through this. It's so strange, isn't it.」
+		PRINTFORML 「But I'm a crybaby anyways. It's fine. Still, I'm going to give my best to raise this baby %PRINT_MALE("boy", (TALENT:61:育児中))%.」
+		PRINTFORML 「People who like having sex more than watching their child grow up like %MASTERNAME:61% probably won't understand.」
+		PRINTFORML 「......Sorry, I said a little too much.」
+	ELSEIF 陥落状態() == 3
+		PRINTFORML 「...Well, looks like you can cry even when you're happy. Strange how people work, huh.」
+		PRINTFORML 「Fufu, but I can't help but feel delighted seeing how %子名% eats %HIS_HER((TALENT:61:育児中))% first meal.」
+		PRINTFORML 「Hey %子名%. Look, your daddy is watching you having your first meal too. Even though normally %HE_SHE(MASTER)% pretends to be indifferent.」
+	ELSEIF 陥落状態() == 2
+		PRINTFORML 「%子名%, my precious %子名%, please grow up healthy and sound.」
+		PRINTFORML 「C'mon %CALLNAME:MASTER%, say something good to %子名% too.」
+	ELSEIF 陥落状態() == 1
+		PRINTFORML 「%子名%, you were able to eat everything properly... Such a good %PRINT_MALE("boy", (TALENT:61:育児中))%, aren't you? Fufu.」
+	ELSE
+		PRINTFORML 「%子名%, my little %子名%, you've done well...」
+		PRINTFORML 「...Are you having fun staring?」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_玩具
+#DIMS 子名
+子名 = CHILDNAME:61:(TALENT:61:育児中)
+;-------------------------------------------------
+
+
+
+IF EXP:出産経験 == 1
+	IF 陥落状態() >= 4
+	ELSEIF 陥落状態() == 3
+	ELSEIF 陥落状態() == 2
+	ELSEIF 陥落状態() == 1
+	ELSE
+	ENDIF
+ELSE
+	IF 陥落状態() >= 4
+	ELSEIF 陥落状態() == 3
+	ELSEIF 陥落状態() == 2
+	ELSEIF 陥落状態() == 1
+	ELSE
+	ENDIF
+ENDIF
+[SKIPEND]
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_つかまり立ち
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_よちよち
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。これは複数回発生します。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_会話寸前
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_喋る
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_語彙
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_しつけ
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_就学
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_自立前
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+[SKIPSTART]
+;-------------------------------------------------
+;育児イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_自立
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+
+;-------------------------------------------------
+;育児イベント登下校時の地の文。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_登下校(ARGS,ARG,ARG:1)
+IF !ARG
+	;登校時
+	PRINTFORML 
+ELSE
+	;下校時
+	PRINTFORML 
+ENDIF
+
+;-------------------------------------------------
+;育児イベント食事時。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_食事(ARGS,ARG,ARG:1)
+IF ARGS == "授乳"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSEIF ARGS == "離乳食" && CFLAG:出産経過日 > CHILD_離乳
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSEIF ARGS == "幼少期"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;育児イベント入浴
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_BATH(ARGS,ARG,ARG:1)
+IF ARGS == "幼児期"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSEIF ARGS == "幼少期"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;育児イベント就寝
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_SLEEPING(ARGS,ARG,ARG:1)
+IF ARGS == "幼児期"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSEIF ARGS == "幼少期"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;育児イベント川の字でおやすみ
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_OYASUMI(ARGS,ARG,ARG:1)
+PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+
+;-------------------------------------------------
+;育児イベント玩具
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_TOY(ARGS,ARG,ARG:1)
+IF ARGS == "幼児期" && CFLAG:ARG:出産経過日 >= CHILD_玩具
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSEIF ARGS == "幼少期"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;育児イベントその他。一番よく表示される。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_RAISING_OTHER(ARGS,ARG,ARG:1)
+IF ARGS == "幼児期"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSEIF ARGS == "幼少期"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ENDIF
+
+[SKIPSTART]
+;-------------------------------------------------
+;口上専用手紙イベント。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;専用イベントを作りたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;手紙イベント時に1/2の確率でこちらが発生します。
+;ARG 子供の番号（例：子供の名前は『%CHILDNAME:X:ARG%』）
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_DAILY_口上手紙(ARG)
+;-------------------------------------------------
+
+;-------------------------------------------------
+[SKIPEND]
+
+[SKIPSTART]
+;-------------------------------------------------
+;手紙イベントの地の文。口上色はここで付けてください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART~SKIPENDを外してください。
+;置き換える気がないならスルー。
+;ARG	子供の番号（例：子供の名前は『%CHILDNAME:X:ARG%』）
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_DAILY_共通手紙(ARG, ARGS)
+;-------------------------------------------------
+IF ARGS == "すけこまし"
+	
+ELSEIF ARGS == "金の無心"
+	
+ELSEIF ARGS == "仕送り"
+	
+ENDIF
+
+;-------------------------------------------------
+[SKIPEND]
+
+;-------------------------------------------------
+;デイリーイベント：子供が寺子屋で
+;ARG	子供の番号（例：子供の名前は『%CHILDNAME:X:ARG%』）
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_CHILD_DAILY_寺子屋(ARGS,ARG,ARG:1)
+#DIMS 子名
+子名 = %CHILDNAME:61:ARG%
+SIF FLAG:口上色
+	CALLFORM M_KOJO_COLOR_K61
+;正直、怪我させるデイリーの発生は一回だけに限定できないかなぁと思ったり
+;まあ、デイリー自体がそんなに発生するものではない上に更に発生しにくい筈だけど
+IF ARGS == "怪我させた"
+	PRINTFORML 
+	IF !GETBIT(CFLAG:1613,ARG)
+		PRINTFORML 「%子名%, take a seat right over there.」
+		PRINTFORML 「You made a promise when I taught you this technique, remember? That you won't use it against other human beings.」
+		PRINTFORML 「And yet, what made you do such a thing?」
+		PRINTFORMW 「...Why won't you say something? Do you think you did nothing wrong?」
+		PRINTFORML 「Have it your way then. \@ 陥落状態() >= 4 ? %MASTERNAME:61% # %CALLNAME:MASTER% \@, can you please call Keine?」
+		PRINTFORML 「I'm going to have her eat the history of me teaching this child the technique.」
+		PRINTFORML 「Oh, now you're sorry? But there's no point in apologizing to me.」
+		PRINTFORMW 「Why would you ever do such a thing to other people?」
+		PRINTFORML 「...I thought, we had an agreement. That you would, never... sniff... use my technique to put people into harm's way.」
+		PRINTFORML 「You wanted power... to protect... others... That's what you told me, didn't you %子名%?」
+		PRINTFORML 「So why, sob, why did you do this...?」
+		PRINTFORMDW ...
+		PRINTFORML 「...If that's all there's to it, then why, why would you do this... just for my sake...」
+		PRINTFORML 「They're free to think... whatever they want of me. But now, now it's going to affect you too, %子名%...」
+		PRINTFORML 「You're going to be seen just the same way... That's obviously not going to end up well...」
+		PRINTFORMW 「%子名%, you're my... soooob... my treasure after all...」
+		PRINTFORML 「But if such a technique was to hurt someone... what do you think would happen...?」
+		PRINTFORML 「You'll get labeled as a monster, %子名%, even you...」
+		PRINTFORML 「You were supposed to be my treasure, so why... sniff, sob, uuuhhh... how could this happen, how...」
+		PRINTFORMDW ...
+		PRINTFORMDL ...
+		PRINTFORMDL ...
+		PRINTFORMDL ...
+		PRINTFORMDW ...
+		PRINTFORML 「......Really, you're not going to do this ever again? That's a promise, okay? A very, very serious promise with your mother, okay?」
+		PRINTFORMW 「...I will forgive you just this once. It's fine now, \@ 陥落状態() >= 4 ? %MASTERNAME:61% # %CALLNAME:MASTER% \@, you don't have to call Keine anymore.」
+		SETBIT CFLAG:1613,ARG
+	;これで行けるか自信ない
+	;てか二回も同じ事する子供がいるとかあんまり書きたくない
+	ELSEIF GETBIT(CFLAG:1613,ARG) && FIRSTTIME(@"怪我デイリー{ARG}")
+		PRINTFORML 「That's it. I don't want to hear any of your excuses. \@ 陥落状態() >= 4 ? %MASTERNAME:61% # %CALLNAME:MASTER% \@, call Keine please.」
+		PRINTFORML 「%子名%, you must know this, your mother loves you very much.」
+		PRINTFORML 「But that's why this is for your own good. I don't wish you to upset the balance with the excessive power any longer.」
+		PRINTFORMW 「Give it up.」
+		PRINTFORMDL ...
+		PRINTFORMDL ...
+		PRINTFORMDL ...
+		PRINTFORML 「...I wonder, how did it all come to this?」
+		PRINTFORML 「I must've been a huge bother to Keine, too.」
+		PRINTFORML 「Sorry, \@ 陥落状態() >= 4 ? %MASTERNAME:61% # %CALLNAME:MASTER% \@.」
+		PRINTFORML 「Can you please lend me your chest for a moment?」
+		PRINTFORML 「...Sob, sniff, uwaaa... Uh...」
+		PRINTFORMDL ...
+	;仏の顔も三度、なんか書いてる側が痛くなってきた
+	ELSE
+		PRINTFORML 「Oh, does it hurt? Even a simple slap to the cheek?」
+		PRINTFORML 「But %子名%, the child who got hurt by you felt even worse, you know?」
+		PRINTFORML 「......Haah.」
+		PRINTFORML 「I wonder... where did it all go wrong...」
+		PRINTFORML 「Where...」
+	ENDIF
+ELSEIF ARGS == "褒められた"
+	PRINTFORML 
+	IF EXP:出産経験 == 1
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ELSE
+		IF 陥落状態() >= 4
+		ELSEIF 陥落状態() == 3
+		ELSEIF 陥落状態() == 2
+		ELSEIF 陥落状態() == 1
+		ELSE
+		ENDIF
+	ENDIF
+ENDIF

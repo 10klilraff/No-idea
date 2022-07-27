@@ -1,0 +1,144 @@
+﻿;added, original content
+
+;==================================================
+;依頼口上・各依頼で共通の口上
+;==================================================
+@M_KOJO_IRAI_K41(ROLE, SCENE, IRAI_ID)
+#DIMS ROLE     ;キャラの立場、依頼者かそうでないか
+#DIMS SCENE    ;セリフの表示されるタイミング
+#DIM  IRAI_ID  ;依頼自体のID
+#DIM  CLIENT_ID;依頼者IDだけ抜き出したもの
+#DIM  CHK_ID   ;依頼IDだけ抜き出したもの
+#DIMS IRAI_NAME;依頼名
+CHK_ID    = IRAI_ID % 1000
+CLIENT_ID = IRAI_ID_TO_CLIENT(IRAI_ID)
+IRAI_NAME '= STR_DATA_IRAI(IRAI_ID, "依頼名", CLIENT_ID)
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K41
+RESULT = 0
+IF CHK_ID > 100
+	TRYCALLFORM M_KOJO_IRAI_%IRAI_NAME%_K41(ROLE, SCENE, CLIENT_ID)
+ELSE
+	TRYCALLFORM M_KOJO_IRAI_{CHK_ID}_K41(ROLE, SCENE, CLIENT_ID)
+ENDIF
+RESETCOLOR
+SIF RESULT
+	RETURN 1
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K41
+SELECTCASE ROLE
+CASE "CLIENT"
+	;一般依頼
+	IF IS_COMMON_IRAI(IRAI_ID)
+		;SELECTCASE STR_DATA_IRAI(IRAI_ID, "依頼名", CLIENT_ID)
+		;CASE "一般依頼名"
+			SELECTCASE SCENE
+			CASE "依頼提示時"
+			;依頼を持ちかけられる時	
+				IF TALENT:恋人
+					PRINTFORML 「You're no stranger to running chores, right %MASTERNAME:41%?」
+					PRINTFORML 「Yeah, well, I kinda want you to help me out a little here...」
+					PRINTFORML 「But hey, I'll reward you in a proper, romantic way... if you know what I mean♪」
+				ELSEIF TALENT:恋慕
+					PRINTFORML 「Umm, %MASTERNAME:41%... Sorry to bother you, but there's one thing I'd like your help with...」
+					PRINTFORML 「Can you do this for me, um, p... please?」
+				ELSE
+					PRINTFORML 「What's up, %MASTERNAME:41%? You busy? No?」
+					PRINTFORML 「Say, would you like to do a little favor for me? I'll reward you well, kuku!」
+				ENDIF
+			CASE "依頼非受託時"
+			;内容だけ見て受託しなかった時
+				IF TALENT:恋人
+					PRINTFORML 「Aww, shucks... Really, %MASTERNAME:41%?」
+					PRINTFORML 「I thought lovers supposed to help each other, sob-sob...」
+					PRINTFORML 「Naaah, I'm just playing. If you don't want to, that's fine! I still love ya!」
+				ELSEIF TALENT:恋慕
+					PRINTFORML 「Oh, I see... Well, maybe next time, I guess?」
+				ELSE
+					PRINTFORML 「Tsk, darn.」
+					PRINTFORML 「You're no Kyouko, alright. Who knew you could actually say no?」
+				ENDIF
+			CASE "依頼受託時"
+			;依頼を受託した時
+				IF TALENT:恋人
+					PRINTFORML 「Nice one, %MASTERNAME:41%!」
+					PRINTFORML 「Better get started on it right away though! Holler me if you still have any questions about it.」
+				ELSEIF TALENT:恋慕
+					PRINTFORML 「Thank you so much! I, um... I'll be looking forward to the results.」
+				ELSE
+					PRINTFORML 「Great, I knew I could rely on you.」
+					PRINTFORML 「Watch out for that time limit though, and hey? Good luck, ku-ku-ku...」
+				ENDIF
+			CASE "依頼確認時"
+			;[366]で依頼内容を依頼人に確認した時
+				PRINTFORML 「Okay, here's what you'll need to do...」
+			CASE "依頼破棄時"
+			;受託した依頼を破棄する時
+				IF TALENT:恋人
+					PRINTFORML 「No dice, eh?」
+					PRINTFORML 「It's still disappointing, but hey, at least you didn't fail it.」
+				ELSEIF TALENT:恋慕
+					PRINTFORML 「O-Oh... It's no big deal, thanks for telling me. I'll think of something else, it's fine.」
+				ELSE
+					PRINTFORML 「W-Whaaat?!」
+					PRINTFORML 「I was already expecting you to be on it, darn!」
+					PRINTFORML 「I'm gonna have to make you compensate me for it one day...」
+				ENDIF
+			CASE "依頼実行直前"
+			;[367]で依頼を実行する時、実行処理の前に呼び出される
+				PRINTFORML 「Alright, let's see what we can do here...」
+			CASE "依頼実行直後"
+			;[367]で依頼を実行する時、実行処理の後に呼び出される
+				PRINTFORML 「...Hmm, lemme see...」
+			CASE "成功報告時"
+				;報告時（成功）
+				IF TALENT:恋人
+					PRINTFORMDL A moment later, Nue welcomes you with a satisfied grin on her face. She's obviously happy to see you.
+					PRINTFORML 「That's my %MASTERNAME:41%... C'mere.」
+					PRINTFORMD You obediently come forward as Nue 
+					IF RAND:2 && !(TALENT:キス未経験 + TALENT:MASTER:キス未経験)
+						PRINTFORMDW gives you a very passionate kiss that lasted for some time, nearly taking your breath away.
+						PRINTFORML 「Fufu... Come back for more, okay?」
+						CALL MUTUAL_KISS
+					ELSE
+						PRINTFORMDW hugs you tight and caresses you while whispering sweet nothings in your ear.
+						PRINTFORMDL You press your face into her cleavage, feeling at peace as she pats you on the head...
+						PRINTFORML 「Theeere, there... Good %PRINT_MALE("boy")%, good %PRINT_MALE("boy")%...♪」
+						PRINTFORMW 「You're blushing there a bit, ehehe～」
+					ENDIF
+					BASE:ムード = 1000 ;mood up
+					BASE:理性 = 0 ;reason down
+					CFLAG:ディレイ = 30 ;set delay so you don't get pushed down immediately
+					PALAM:好意 += 3000
+				ELSEIF TALENT:恋慕
+					PRINTFORML 「Awesome! You never disappoint, %MASTERNAME:41%!」
+					PRINTFORML 「Err, I probably shouldn't be this excited about it though...」
+				ELSE
+					PRINTFORML 「Well, I'll give credit where it's due.」
+					PRINTFORML 「Great job all around, %MASTERNAME:41%. Think I'm gonna start relying on you more in the future, kuku...」
+				ENDIF
+			CASE "失敗報告時"
+			;報告時（失敗）
+			;この他、報告忘れや期限切れで失敗扱いになり後日依頼人に遭遇した際にも表示
+				IF TALENT:恋人
+					PRINTFORML 「Aww, that's too bad. You'll get it next time %MASTERNAME:41%, don't worry.」
+					PRINTFORML 「Here's a little something to cheer you up...」
+					PRINTFORMDW Nue leans in and kisses you on the cheek, before wrapping her hands around your neck and looking you in the eyes.
+					PRINTFORML 「Ehehe～ Fight on, my love. Never despair, alright? There's always a next time.」
+					PRINTFORMDW Despite your failure, you feel invigorated, nodding to her words and swearing to do better next time around.
+				ELSEIF TALENT:恋慕
+					PRINTFORML 「Wait, you don't need to apologize... It's fine, %MASTERNAME:41%...」
+					PRINTFORML 「I shouldn't have bothered you with this in the first place. I mean, you're already busy and all...」
+					PRINTFORML 「Yeah, just forget it ever happened...」
+				ELSE
+					PRINTFORML 「Oh man, what a mess.」
+					PRINTFORML 「I should've just done it myself at this point, honestly!」
+					PRINTFORML 「I was a fool to entrust it to you, %MASTERNAME:41%...」
+					PRINTFORMDW Nue seems upset, getting sulkier and sulkier the more she keeps on ranting...
+				ENDIF
+			ENDSELECT
+		;ENDSELECT
+		RETURN 1
+	ENDIF
+ENDSELECT
+RESETCOLOR

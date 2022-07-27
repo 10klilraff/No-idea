@@ -1,0 +1,217 @@
+﻿;てゐ口上を参考に作った口上のないキャラでウフフ中呼び出す自動喘ぎ関数
+;口上持ちでも任意で台詞に挟めるようにARGS次第でカッコ省略できるようにしてみた
+;を、丸々流用してちょっとお淑やか方面で輝夜用に調整。
+
+@K62_AUTO_AEGI(ARGS,ARG)
+#DIM 喘ぎ強度
+#DIM 喘ぎ回数
+
+
+; 第二引数(ARG)未指定で呼び出した場合、輝夜として扱う
+SIF !ARG
+	ARG = [[輝夜]]
+
+;シラフじゃないと駄目
+SIF !SHIRAHU(ARG)
+	RETURN 0
+SIF !CFLAG:ARG:うふふ
+	RETURN 0
+SIF GROUPMATCH(SELECTCOM, 19, 20, 81, 88, 89)
+	RETURN 0
+
+喘ぎ強度 = K62_AEGI_LEVEL(ARG)
+
+SIF !喘ぎ強度
+	RETURN 0
+
+SIF ARGS != "前カッコ省略" && ARGS != "カッコ省略"
+	PRINT 「
+
+SELECTCASE 喘ぎ強度
+	CASE 1
+		喘ぎ回数 = 2 + RAND:2
+	CASE 2
+		喘ぎ回数 = 3 + RAND:3 + RAND:3
+	CASE 3
+		喘ぎ回数 = 3 + RAND:3 + RAND:3
+	CASEELSE
+		喘ぎ回数 = 3 + RAND:喘ぎ強度 + RAND:喘ぎ強度
+ENDSELECT
+
+FOR LOCAL,0,喘ぎ回数
+	LOCALS:LOCAL = %K62_AEGI_PATTERN(喘ぎ強度, ARG)%
+	;前のと一緒だったら一度だけ再抽選
+	SIF LOCAL > 0 && LOCALS:LOCAL == LOCALS:(LOCAL - 1)
+		LOCALS:LOCAL = %K62_AEGI_PATTERN(喘ぎ強度, ARG)%
+	PRINTFORM %LOCALS:LOCAL%
+	SIF !RAND:2 && 喘ぎ強度 <= 3
+		PRINT ...
+	SIF 喘ぎ強度 >= 4 || (喘ぎ強度 == 3 && !RAND:4)
+		PRINT ♥
+	SIF LOCAL != 喘ぎ回数 - 1
+		PRINTPLAIN  
+NEXT
+
+SIF ARGS != "後カッコ省略" && ARGS != "カッコ省略"
+	PRINTL 」
+
+
+@K62_AEGI_LEVEL(ARG)
+#FUNCTION
+LOCAL = CUP:ARG:快Ｃ + CUP:ARG:快Ｖ + CUP:ARG:快Ａ + CUP:ARG:快Ｂ + CUP:ARG:快Ｍ
+
+SELECTCASE LOCAL
+	CASE 0
+		RETURNF 0
+	CASE IS < 2500
+		RETURNF 1
+	CASE IS < 5000
+		RETURNF 2
+	CASE IS < 10000
+		RETURNF 3
+	CASE IS < 30000
+		RETURNF 4
+	CASE IS < 50000
+		RETURNF 5
+	CASEELSE
+		RETURNF 6
+ENDSELECT
+
+
+;バリエーションおよび喘ぎ強度と台詞の対応状況は改善の余地があるだろう
+;
+;>まずはいやらしくいじられてる場所をつぶやくようにしよう
+;>対象のCUPを見るために引数を拡張
+@K62_AEGI_PATTERN(喘ぎ強度, ARG)
+#FUNCTIONS
+#DIM 喘ぎ強度
+
+;部位つぶやき、とりあえず20%で（部位そのものをつぶやくとは言っていない）
+;部位ごとのCUPを合計して乱数をとり、Ｃから順に乱数が合計値以内かで部位を判定、ヒットすればその部位をつぶやく（喘ぎ強度と陥落系素質と部位感度を合わせて計算していいんだけど、それは先の話）
+;部位陥落は感度5が条件なのを考えるともう少し分けつつ「感覚*30(最大180)+1d100」の結果で分岐させることでバリエーションが出るといいなぁ
+IF TCVAR:ARG:無理矢理 && 喘ぎ強度 < 3
+
+ELSEIF RAND:100 < 20 && (CUP:ARG:快Ｃ + CUP:ARG:快Ｖ + CUP:ARG:快Ａ + CUP:ARG:快Ｂ + CUP:ARG:快Ｍ) 
+	SELECTCASE RAND:(CUP:ARG:快Ｃ + CUP:ARG:快Ｖ + CUP:ARG:快Ａ + CUP:ARG:快Ｂ + CUP:ARG:快Ｍ)
+	;CUPを合計して乱数を取る。これでCUPの値に応じて拾う確率に差が生まれる
+	CASE IS < CUP:ARG:快Ｃ
+		;クリ、肉棒どうしよう…（このあとに性別判定入れれば分岐は可能ではある）
+		LOCAL = MIN(ABL:ARG:Ｃ感覚 * 20, 180) + RAND:100
+		SIF CFLAG:ARG:オート喘ぎ != 2
+			LOCAL = MIN(LOCAL, 150)
+		SELECTCASE LOCAL
+		;感覚＋乱数による分岐、下に行くほどアレです
+		CASE 0 TO 80
+			LOCALS = %TEXTR("Aah/Yah/Hyahn/Nnah/")%
+		CASE 81 TO 150
+			LOCALS = %TEXTR("Nnh/Fuah/Fuaah/Yah/Mmnah/")%
+		CASE 151 TO 200
+			LOCALS = %TEXTR("Hiuh?!/Yahn/Ohh/Aah/No/Nnnhgh/")%
+		CASEELSE
+			LOCALS = %TEXTR("Hiah/Hiih/Wait/Yaah/Nnm/Mmnnh/")%
+		ENDSELECT
+
+	CASE IS < CUP:ARG:快Ｃ + CUP:ARG:快Ｖ
+		LOCAL = MIN(ABL:ARG:Ｖ感覚 * 20, 180) + RAND:100
+		SIF CFLAG:ARG:オート喘ぎ != 2
+			LOCAL = MIN(LOCAL, 150)
+		;膣、肉オナホまで言わせるのはちょっと違うと思ったので控えました
+		SELECTCASE LOCAL
+		;感覚＋乱数による分岐、下に行くほどアレです
+		CASE 0 TO 80
+			LOCALS = %TEXTR("Khuh/Nnh.../Yaah/Yaah.../There/")%
+		CASE 81 TO 150
+			LOCALS = %TEXTR("Inside/It's grinding—/It's poking—/Aah/There/So deep/My belly is/")%
+		CASE 151 TO 200
+				LOCALS = %TEXTR("Breaking/Hiyuh/My womb/Inside/So deep/Too much")%
+		CASEELSE
+				LOCALS = %TEXTR("Going to break/Hiihn――/So rough/Too rough/My womb is/My insides/I'm going crazy/Aaah/")%
+		ENDSELECT
+
+	CASE IS < CUP:ARG:快Ｃ + CUP:ARG:快Ｖ + CUP:ARG:快Ａ
+		;あなぅ、多分一番はっちゃけられる場所だと思う（のであとは任せた）
+		LOCAL = MIN(ABL:ARG:Ａ感覚 * 20, 180) + RAND:100
+		SIF CFLAG:ARG:オート喘ぎ != 2
+			LOCAL = MIN(LOCAL, 150)
+		SELECTCASE LOCAL
+		;感覚＋乱数による分岐、下に行くほどアレです
+		CASE 0 TO 80
+			LOCALS = %TEXTR("Nnkhu.../Aagh.../Iyah/Hiyauh/Hehn/Theere/")%
+		CASE 81 TO 150
+			LOCALS = %TEXTR("My butt/Khhn/Theere/Aah/")%
+		CASE 151 TO 200
+			LOCALS = %TEXTR("I'm breaking/My butt/It's throbbing/Nngh/Yah, aah—/")%
+		CASEELSE
+			LOCALS = %TEXTR("My but—/Grinding/Gouging/Aah/I'm breakin—/Nnhya/")%
+		ENDSELECT
+
+	CASE IS < CUP:ARG:快Ｃ + CUP:ARG:快Ｖ + CUP:ARG:快Ａ + CUP:ARG:快Ｂ
+		;胸、いろいろかけると思ったらない人のことを忘れてた(ﾋﾟﾁｭｰﾝ)
+		LOCAL = MIN(ABL:ARG:Ｂ感覚 * 20, 180) + RAND:100
+		SIF CFLAG:ARG:オート喘ぎ != 2
+			LOCAL = MIN(LOCAL, 150)
+		SELECTCASE LOCAL
+		;感覚＋乱数による分岐、下に行くほどアレです
+		CASE 0 TO 80
+			LOCALS = %TEXTR("Hahh.../Iih.../Iyah/Hyahn/Nhyu/")%
+		CASE 81 TO 150
+			LOCALS = %TEXTR("My chest/My nipples/Rubbing/")%
+		CASE 151 TO 200
+			LOCALS = %TEXTR("My breasts/My chest/The tip/Pinching/")%
+		CASEELSE
+			LOCALS = %TEXTR("My cheest/My breaast/The tip/It's pinching/Squeezing/")%
+		ENDSELECT
+
+	CASEELSE
+		LOCAL = MIN(ABL:ARG:Ｍ感覚 * 20, 180) + RAND:100
+		SIF CFLAG:ARG:オート喘ぎ != 2
+			LOCAL = MIN(LOCAL, 150)
+		;おくち、実は死に分岐の可能性が高いという。コマンドにゆびちゅぱください
+		SELECTCASE LOCAL
+		;感覚＋乱数による分岐、下に行くほどアレです
+		CASE 0 TO 80
+			LOCALS = %TEXTR("Nnh/Nnmmh.../Nnmp/Hyah/Nnh.../")%
+		CASE 81 TO 150
+			LOCALS = %TEXTR("My mouth/My lips/My tongue/Jhmmp/Bhhm/Chyhm/")%
+		CASE 151 TO 200
+			LOCALS = %TEXTR("Nmh/My tongue/More/Inside/Kchm/Nnchm/")%
+		CASEELSE
+			LOCALS = %TEXTR("My mouth/More/Bero/Juru/Jubu/")%
+		ENDSELECT
+
+	ENDSELECT
+	RETURNF LOCALS
+ENDIF
+IF TCVAR:ARG:無理矢理 && (喘ぎ強度 < 3 || (喘ぎ強度 == 3 && RAND:4))
+	IF TALENT:ARG:度胸 > 0 || TALENT:ARG:応答 > 0 || TALENT:ARG:プライド > 0
+		LOCALS = %TEXTR("Stop right no—/Unskilled!/Let me go!/Don't touch me!/Get away/Die!/You...!/...")%
+		SIF !RAND:10 && !TALENT:ARG:人間
+			LOCALS = 人間なんかにっ
+	ELSE
+		LOCALS = %TEXTR("Uuu.../Sniff.../Stop...…/Stop iit.../Noo.../Forgive me.../Hhngh")%
+	ENDIF
+ELSE
+;通常喘ぎ
+SELECTCASE 喘ぎ強度
+	CASE 1
+		LOCALS = %TEXTR("Aah/Nnh/Nn.../Fu, uh/Haah.../")%
+	CASE 2
+		LOCALS = %TEXTR("Yaah/Hah/Fuaah/Fuah/Fuuh/Mnnh/Fuuh—/Aah/Aahー/Aaah/Aahn/Haah/Hah—/Hiah/Hihn/Hyah/Nnnh/Hauuh/Nnhah/Nngh")%
+	CASEELSE
+		IF RAND:喘ぎ強度 >= 3
+			LOCALS = %TEXTR("Uaah/Aah/Hngh/Hnih/Hih/Amash—/Ughoh/Nnh——/Raah/～～/Hhiyaahn/Nnnhh/Aah――/")%
+		ELSEIF !RAND:3
+			LOCALS = %TEXTR("Haugh/Haauh/Khn/Aaah/Hyaahn/Haah/Aah/")%
+		ELSEIF !RAND:2
+			LOCALS = %TEXTR("Aah/Moore/Hyiihn/Hih—/Nnhaah/Aahn/So roug—/So good")%
+		ELSE
+			LOCALS = %TEXTR("Yaah/Fuaah/Fuah/Fuuh—/Aah/Aahー/Aaaah/Aahn/Haah/Haahー/Hyihn/Hyah/Nnnh/Hauuh/Nngh")%
+		ENDIF
+ENDSELECT
+ENDIF
+;ランダムで「っ」をカタカナにすることでバリエーションが増えたように錯覚させる姑息な処理
+IF !RAND:4 && 喘ぎ強度 >= 3
+	LOCALS = %REPLACE(@"%LOCALS%","ぁ","ァ")%
+	LOCALS = %REPLACE(@"%LOCALS%","っ","ッ")%
+ENDIF
+RETURNF LOCALS

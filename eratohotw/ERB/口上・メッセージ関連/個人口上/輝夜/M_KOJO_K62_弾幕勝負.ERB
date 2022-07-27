@@ -1,0 +1,547 @@
+﻿;==================================================
+;弾幕勝負
+;==================================================
+;
+@M_KOJO_MESSAGE_COM_K62_DANMAKU(ARGS, 相手残機)
+#DIM 相手残機
+;全体の流れ
+;①【戦闘前】→②ダイスロールとプレイヤー選択肢、ハンデをつけた場合は【ハンデ口上】→③対応スキルが発動した場合【スキル口上】→④被弾判定、キャラが被弾したなら【被弾口上】→
+;どちらかの残機が0になっていなければ②に戻る→⑤【戦闘後口上】
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;戦闘前。ブチギレだったり、不機嫌＋あなた戦闘４以上でルナティック。不機嫌もしくは戦闘能力４以上でハード。
+	;custom code, make it a bit more impactful
+	LOCAL = RAND(30, 61)
+	IF CFLAG:318 == 1
+		HANDICAP_FIXED = LOCAL
+		HANDICAP_RAND = LOCAL * ABL:戦闘能力
+	ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+		HANDICAP_FIXED = LOCAL
+		HANDICAP_RAND = LOCAL * ABL:戦闘能力
+	ELSEIF ABL:MASTER:戦闘能力 >= 4 || TALENT:機嫌 < 0
+		HANDICAP_FIXED = LOCAL
+		HANDICAP_RAND = 0
+	ELSE
+		HANDICAP_FIXED = 0
+		HANDICAP_RAND = 0
+	ENDIF
+	;ハンデをつけることができ、数値が大きいほどあなたが不利になる　数値が負ならあなたが有利に
+	;キャラの能力に関わらずクッソ強くしたり弱くしたりできる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘前"
+		IF CFLAG:318 == 1
+			IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「...Understood, so it's a challenge, then?」
+					CASE 1
+						PRINTFORMW 「Kaguya will show you her serious side.」
+					CASE 2
+						PRINTFORMW 「...Kaguya also wanted to get some exercise in.」
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「I'm not going to take any chances today.」
+					CASE 1
+						PRINTFORMW 「My five requests... Will you be able to tackle them?」
+					CASE 2
+						PRINTFORMW 「...Very well, let us participate in a『Danmaku』match.」
+				ENDSELECT
+			ENDIF
+			PRINTFORMDL 
+			PRINTFORMW 「――Divine Treasure "Brilliant Dragon Bullet"!」
+		ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+			IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「...It'd be rude of me to hold back, my dear husband.」
+					CASE 1
+						PRINTFORMW 「I will show you the true extent of my Danmaku, my dear husband.」
+					CASE 2
+						PRINTFORMW 「...Kaguya also wanted to get some exercise in. I will bring my full power.」
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「My five requests that have defeated countless people in the past...」
+						PRINTFORMW 「If you think you can fulfill them, then by all means make an attempt.」
+					CASE 1
+						PRINTFORMW 「My five requests, if you think you can fulfill them, then by all means make an attempt.」
+					CASE 2
+						PRINTFORMW 「Unfortunately for you, I'm in a bad mood today. I won't be holding back.」
+				ENDSELECT
+			ENDIF
+			PRINTFORMDL 
+			PRINTFORMW 「――Divine Treasure "Brilliant Dragon Bullet"!」
+		ELSEIF ABL:MASTER:戦闘能力 >= 4 || TALENT:機嫌 < 0
+			IF TALENT:機嫌 < 0
+				IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMW 「...I guess I don't need to hold back today.」
+						CASE 1
+							PRINTFORMW 「I will show you the true extent of my Danmaku, my dear husband.」
+						CASE 2
+							PRINTFORMW 「...It'd be rude of me to hold back. I will use my full strength.」
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORML 「My five requests that have defeated countless people in the past...」
+							PRINTFORMW 「If you think you can fulfill them, then by all means make an attempt.」
+						CASE 1
+							PRINTFORMW 「My five requests, if you think you can fulfill them, then by all means make an attempt.」
+						CASE 2
+							PRINTFORMW 「Unfortunately for you, I'm in a bad mood today. I won't be holding back.」
+					ENDSELECT
+				ENDIF
+			ELSE
+				IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMW 「...I see that I don't need to worry about holding back against you, my dear husband.」
+						CASE 1
+							PRINTFORMW 「I will show you the true extent of my Danmaku, my dear husband.」
+						CASE 2
+							PRINTFORMW 「It'd be rude of me to hold back, my dear husband. I will show you my true strength.」
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORML 「My five requests that have defeated countless people in the past...」
+							PRINTFORMW 「Just how many will you be able to fulfill?」
+						CASE 1
+							PRINTFORMW 「Fufu, how many of my five divine treasures will you be able to overcome?」
+						CASE 2
+							PRINTFORMW 「I see that I don't have to hold back. Then, let us commence the Danmaku match.」
+					ENDSELECT
+				ENDIF
+			ENDIF
+			PRINTFORMDL 
+			PRINTFORMW 「――Divine Treasure "Brilliant Dragon Bullet"!」
+		ELSE
+			IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「...Very well, my husband. Let us have a match.」
+					CASE 1
+						PRINTFORMW 「Kaguya shall show you her Danmaku, my dear husband.」
+					CASE 2
+						PRINTFORMW 「Then, let's have some fun in moderation.」
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW 「My five requests that have defeated countless people in the past...」
+						PRINTFORMW 「Just how many will you be able to fulfill?」
+					CASE 1
+						PRINTFORMW 「Fufu, how many of my five requests will you be able to fulfill?」
+					CASE 2
+						PRINTFORMW 「How many of them will you see, I wonder.」
+				ENDSELECT
+			ENDIF
+			PRINTFORMDL 
+			PRINTFORMW 「――Impossible Request "Jewel from the Dragon's Neck"!」
+		ENDIF
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;ハンデ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "ハンデ"
+		;ハンデつけなかったら表示されないので無記入でよい
+		IF CFLAG:318 == 1
+			PRINTFORMDL You seem to have really made Kaguya angry.
+			PRINTFORMDL 
+			PRINTFORMDW ――Difficulty Level: Lunatic
+		ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+			PRINTFORMDL Kaguya seems to be in a bad mood, and looks like she'll be getting serious.
+			PRINTFORMDL 
+			PRINTFORMDW ――Difficulty Level: Lunatic
+		ELSEIF ABL:MASTER:戦闘能力 >= 4
+			PRINTFORMDL Kaguya doesn't look like she'll be holding back.
+			PRINTFORMDL 
+			PRINTFORMDW ――Difficulty Level: Hard
+		ELSEIF TALENT:機嫌 < 0
+			PRINTFORMDL Kaguya looks annoyed.
+			PRINTFORMDL 
+			PRINTFORMDW ――Difficulty Level: Hard
+		ENDIF
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中TARGET被弾時口上
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" 
+		;別に一律で「やられたー」だけでもいいよ
+		SELECTCASE 相手残機
+			;残り残機3が表示されるのは【洽覧深識】持ちのみ
+			CASE 3
+				IF CFLAG:318 == 1
+					PRINTFORML 「...Nh!!」
+					PRINTFORMDL The enraged Kaguya is hit with a shot, and she glares at you with an incredibly frustrated look.
+					PRINTFORMW 「――Divine Treasure "Buddhist Diamond"!」
+				ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「Kh... as expected of Kaguya's husband.」
+					ELSE
+						PRINTFORML 「Kh... Nice hit.」
+					ENDIF
+					PRINTFORMDL Kaguya is hit with a shot, and she glares at you with an incredibly frustrated look.
+					PRINTFORMW 「――Divine Treasure "Buddhist Diamond"!」
+				ELSEIF ABL:MASTER:戦闘能力 >= 4
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「...Fufu, as expected of Kaguya's husband.」
+					ELSE
+						PRINTFORML 「Hmm, well done.」
+					ENDIF
+					PRINTFORMDL Kaguya looks at you cheerfully, even after she's been hit with a shot.
+					PRINTFORMW 「Next is――Divine Treasure "Buddhist Diamond"!」
+				ELSEIF TALENT:機嫌 < 0
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「... as expected of Kaguya's husband.」
+					ELSE
+						PRINTFORML 「... Nice hit.」
+					ENDIF
+					PRINTFORMDL Kaguya is hit with a shot, and she glares at you with an incredibly frustrated look.
+					PRINTFORMW 「――Divine Treasure "Buddhist Diamond"!」
+				ELSE
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「Fufu, as expected of my dear husband.」
+					ELSE
+						PRINTFORML 「That was well done.」
+					ENDIF
+					PRINTFORMDL Kaguya looks at you cheerfully, even after she's been hit with a shot.
+					PRINTFORMW 「Up next is――Impossible Request "Buddha's Stone Bowl"!」
+				ENDIF
+			CASE 2
+				IF CFLAG:318 == 1
+					PRINTFORML 「～!!」
+					PRINTFORMDL The enraged Kaguya glares at you with an incredibly frustrated look after being hit for the second time.
+					IF RAND:2 == 0
+						PRINTFORMW 「――Divine Treasure "Salamander Shield"!」
+					ELSE
+						PRINTFORMW 「――Divine Treasure "Life Spring Infinity"!」
+					ENDIF
+				ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+					PRINTFORML 「Uuh...!」
+					PRINTFORMDL Kaguya is taken by surprise after getting hit, scowling at you.
+					IF RAND:2 == 0
+						PRINTFORMW 「――Divine Treasure "Salamander Shield"!」
+					ELSE
+						PRINTFORMW 「――Divine Treasure "Life Spring Infinity"!」
+					ENDIF
+				ELSEIF ABL:MASTER:戦闘能力 >= 4
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「This is far from over.」
+					ELSE
+						PRINTFORML 「Nh, nice shot...!」
+					ENDIF
+					PRINTFORMDL Kaguya looks pretty happy, despite getting hit.
+					IF RAND:2 == 0
+						PRINTFORMW 「――Divine Treasure "Salamander Shield"!」
+					ELSE
+						PRINTFORMW 「――Divine Treasure "Life Spring Infinity"!」
+					ENDIF
+				ELSEIF TALENT:機嫌 < 0
+					PRINTFORML 「Nh...?!」
+					PRINTFORMDL Kaguya looks shocked to have taken another hit despite not holding back.
+					IF RAND:2 == 0
+						PRINTFORMW 「――Divine Treasure "Salamander Shield"!」
+					ELSE
+						PRINTFORMW 「――Divine Treasure "Life Spring Infinity"!」
+					ENDIF
+				ELSE
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「Fufu, then next is――」
+					ELSE
+						PRINTFORML 「Nicely done. Next is――」
+					ENDIF
+					PRINTFORMDL Kaguya looks at you cheerfully, having taken more hits than she had initially expected.
+					IF RAND:2 == 0
+						PRINTFORMW 「――Impossible Request "Robe of Fire Rat"!」
+					ELSE
+						PRINTFORMW 「――Impossible Request "Swallow's Cowrie Shell"!」
+					ENDIF
+				ENDIF
+			CASE 1
+				IF CFLAG:318 == 1
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「I won't hold back any longer!!」
+					ELSE
+						PRINTFORML 「This is the extent of my leniency...!!」
+					ENDIF
+					PRINTFORMDL The enraged Kaguya is backed into a corner, her face red with indignation.
+					PRINTFORMW 「――Divine Treasure "Jeweled Branch of Hourai"!」
+				ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+					PRINTFORML 「The next hit won't be...!」
+					PRINTFORMDL The full-strength Kaguya is backed into a corner, looking at you with bewilderment.
+					PRINTFORMW 「――Divine Treasure "Jeweled Branch of Hourai"!」
+				ELSEIF ABL:MASTER:戦闘能力 >= 4
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「Nh, the next will be the last.」
+					ELSE
+						PRINTFORML 「Nh, the next will be the last.」
+					ENDIF
+					PRINTFORMDL Kaguya is amazed that she's been driven into the corner despite not holding back.
+					PRINTFORMW 「――Divine Treasure "Jeweled Branch of Hourai"!」
+				ELSEIF TALENT:機嫌 < 0
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「Nh, my husband...!」
+					ELSE
+						PRINTFORML 「Nh, how are you so...?!」
+					ENDIF
+					PRINTFORMDL Kaguya is astonished that she's been driven into the corner despite not holding back.
+					PRINTFORMW 「――Divine Treasure "Jeweled Branch of Hourai"!」
+				ELSE
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「Well done, the next will be the last.」
+					ELSE
+						PRINTFORML 「Well done. Prepare yourself.」
+					ENDIF
+					PRINTFORMDL Kaguya looks at you amusedly, having taken more hits than she had initially expected.
+					PRINTFORMW 「――Impossible Request "Bullet Branch of Hourai"!」
+				ENDIF
+			CASE 0
+				IF CFLAG:318 == 1
+					PRINTFORMW 「Uuh...!」
+				ELSE
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「Haah... Fufu, that was fun.」
+					ELSE
+						PRINTFORML 「Haah... Well, that was pretty fun.」
+					ENDIF
+				ENDIF
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【残忍酷薄】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "残忍酷薄"
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【乾坤一擲】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "乾坤一擲"
+
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【怪力乱神】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "怪力乱神"
+		IF CFLAG:318 == 1
+			IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+				PRINTFORML 「Nnh, that kind of Danmaku won't work!」
+			ELSE
+				PRINTFORML 「Nh, that kind of Danmaku is useless against me!」
+			ENDIF
+		ELSE
+			IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+				PRINTFORML 「Fufu, how naive.」
+			ELSE
+				PRINTFORML 「Fufu, so naive.」
+			ENDIF
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;戦闘後
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" 
+		PRINTFORMDL 
+		;残り残機4が表示されうるのは【洽覧深識】持ちのみ
+		;残機が1以上ならあなたの負け、0の場合はあなたの勝利
+		SELECTCASE 相手残機
+			CASE 4
+				IF CFLAG:318 == 1
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「It's absurd to try and defeat me when I'm at my peak, my dear husband.」
+					ELSE
+						PRINTFORML 「It's absurd to try and defeat me when I'm at my peak.」
+					ENDIF
+				ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「...I-I'm sorry, I got carried away...」
+					ELSE
+						PRINTFORML 「...I'm sorry, that was a little childish of me.」
+					ENDIF
+				ELSE
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「It's okay. If there's anyone that can grow stronger, it's you, my dear husband.」
+					ELSE
+						PRINTFORML 「It's my win. But, I know you can grow stronger.」
+					ENDIF
+				ENDIF
+				IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+					SIF (CFLAG:62:既成事実 & 合意_うふふ)  && TALENT:処女 == 0 && TALENT:MASTER:性別 == 2
+						CALL HIMESAMA_OTANOSHIMI_DANMAKU
+				ENDIF
+			CASE 3
+				IF CFLAG:318 == 1
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「It's absurd to try and defeat me when I'm at my peak, my dear husband.」
+					ELSE
+						PRINTFORML 「It's absurd to try and defeat me when I'm at my peak.」
+					ENDIF
+				ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「...I-I'm sorry, I got a little carried away...」
+					ELSE
+						PRINTFORML 「...I apologize. I overdid it.」
+					ENDIF
+				ELSE
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「It's impressive to even land a blow on me. I know you can grow stronger, my dear husband.」
+					ELSE
+						PRINTFORML 「It's my win, but I think you have the talent to grow stronger.」
+					ENDIF
+				ENDIF
+				IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+					SIF (CFLAG:62:既成事実 & 合意_うふふ) && TALENT:処女 == 0 && TALENT:MASTER:性別 == 2
+						CALL HIMESAMA_OTANOSHIMI_DANMAKU
+				ENDIF
+			CASE 2
+				IF CFLAG:318 == 1
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「I-It's because Kaguya was upset, my husband.」
+					ELSE
+						PRINTFORML 「I-I'll give you credit for challenging me while I was upset.」
+					ENDIF
+				ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「...That was amazing. Kaguya was being quite serious, but you still managed to hit me twice...」
+					ELSE
+						PRINTFORML 「...That was amazing. I was being pretty serious, and you still managed to hit me twice.」
+					ENDIF
+				ELSE
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「Very well done. I'm surprised you managed to hit me twice.」
+					ELSE
+						PRINTFORML 「Good job. I'm surprised you got two hits on me.」
+					ENDIF
+				ENDIF
+				IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+					SIF (CFLAG:62:既成事実 & 合意_うふふ) && TALENT:処女 == 0 && TALENT:MASTER:性別 == 2
+						CALL HIMESAMA_OTANOSHIMI_DANMAKU
+				ENDIF
+			CASE 1
+				IF CFLAG:318 == 1
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「I-I said it's my win, my husband.」
+					ELSE
+						PRINTFORML 「I-It doesn't matter how close the match was, it's still my win.」
+					ENDIF
+				ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「...Victory depends on the turn of fortune, it seems. The next time we have a match, Kaguya might lose.」
+					ELSE
+						PRINTFORML 「...Victory depends on the turn of fortune, it seems. The next time we have a match, I might even lose.」
+					ENDIF
+				ELSE
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「That was a good, close match. Fufu, let's do this again sometime, my husband.」
+					ELSE
+						PRINTFORML 「That was a good match. It was quite thrilling to the end.」
+					ENDIF
+				ENDIF
+				IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+					SIF (CFLAG:62:既成事実 & 合意_うふふ) && TALENT:処女 == 0 && TALENT:MASTER:性別 == 2
+						CALL HIMESAMA_OTANOSHIMI_DANMAKU
+				ENDIF
+			CASE 0
+				IF CFLAG:318 == 1
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「Uuu... haah... Kaguya lost...」
+					ELSE
+						PRINTFORML 「Uu...!! I-I lost...」
+					ENDIF
+				ELSEIF ABL:MASTER:戦闘能力 >= 4 && TALENT:機嫌 < 0
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「I was actually using my full power... As expected of my dear husband.」
+					ELSE
+						PRINTFORML 「I was actually using my full power... Very well done.」
+					ENDIF
+				ELSE
+					IF TALENT:恋人 || (TALENT:妄信 && TALENT:MASTER:追加種族 == 4)
+						PRINTFORML 「As expected of my dear husband. It's Kaguya's complete loss.」
+					ELSE
+						PRINTFORML 「Very well done. It's my loss.」
+					ENDIF
+				ENDIF
+		ENDSELECT
+	ENDIF
+RESETCOLOR
+ENDIF
+RETURN 1
+
+;==================================================
+;輝夜のお楽しみタイム。
+;==================================================
+@HIMESAMA_OTANOSHIMI_DANMAKU
+;ほとんど既存地文を流用。
+CALL M_KOJO_COLOR_K62
+PRINTFORMDL 
+IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+	PRINTFORML 「Well, even so... No matter the circumstances, it's still your loss, my husband.」
+ELSE
+	PRINTFORML 「Well, even so... No matter the circumstances, it's still your loss, %CALLNAME:MASTER%.」
+ENDIF
+PRINTFORMDW There should be a reward for the winner.
+PRINTFORMDL After those words were said, the surrounding environment began to slowly lose its vividness.
+PRINTFORMDW No, rather, it was more like your body entered some sort of strange space.
+PRINTFORMDW A gap in the stream of time where a solitary moment stretches onto eternity.
+PRINTFORMDL 
+IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+	PRINTFORML 「...Kaguya's body has been aching so much.」
+ELSE
+	PRINTFORML 「...I am aching so... Do you get my meaning?」
+ENDIF
+SIF CFLAG:62:318 == 1
+	PRINTFORMDW Kaguya stares intently at you, her expression conveying that she won't accept any refusals.
+PRINTFORMDW Her eyes are giving off a strange vibe.
+IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+	PRINTFORML 「...This is fine, isn't it? My dear husband...♥」
+ELSE
+	PRINTFORML 「This is fine, isn't it? You surely knew what you were getting into when you challenged me...♥」
+ENDIF
+PRINTFORMDL 
+PRINTFORMDL 
+PRINTFORMDL 
+PRINTFORMW 「%MOAN()%♥ %MOAN()%♥ It feels, good...♥」
+PRINTFORMDW In this eternal space, a naked Kaguya straddles you.
+PRINTFORMDL Her countless folds wrap around you, coating you in her liquids as your %TINKO(PLAYER)% churns her insides.
+PRINTFORMDW Kaguya's womb clings to your glans everytime you slam against it, almost as if it were begging for your cum.
+PRINTFORMDW The lunarian princess' %FSYN("vagina")% is naturally of the highest quality——it naturally knows how to bring the greatest of pleasure to men.
+PRINTFORMDL 
+CALL HIMESAMA_OTANOSHIMI_HANYOU(1) ;custom code, added arg
+RESETCOLOR

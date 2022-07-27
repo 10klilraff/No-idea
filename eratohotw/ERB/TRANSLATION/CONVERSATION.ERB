@@ -1,0 +1,270 @@
+﻿;what's done - a pleasant conversation, an awkward discussion etc.
+@CONV_WHAT(ARGS)
+#FUNCTIONS
+#DIMS PARTS
+#DIMS OUTPUT
+SELECTCASE ARGS
+	CASE "engage"
+		IF TFLAG:193 == 1
+			PARTS = a pleasant:
+			PARTS = %PARTS%a nice:
+			PARTS = %PARTS%an exciting:
+			PARTS = %PARTS%an interesting
+			PARTS = %SPLIT_G(PARTS)%
+			OUTPUT = %PARTS%
+			PARTS = conversation:
+			PARTS = %PARTS%discussion
+			PARTS = %SPLIT_G(PARTS)%
+			OUTPUT = %OUTPUT% %PARTS%
+		ELSEIF TFLAG:193 == -1
+			PARTS = a somewhat awkward:
+			PARTS = %PARTS%a somewhat forced
+			PARTS = %SPLIT_G(PARTS)%
+			OUTPUT = %PARTS%
+			PARTS = conversation:
+			PARTS = %PARTS%discussion
+			PARTS = %SPLIT_G(PARTS)%
+			OUTPUT = %OUTPUT% %PARTS%
+		ELSE
+			PARTS = some idle chatter:
+			PARTS = %PARTS%some small talk
+			PARTS = %SPLIT_G(PARTS)%
+			OUTPUT = %PARTS%
+		ENDIF
+	CASE "has"
+		IF TFLAG:193 == 1
+			PARTS = a pleasant:
+			PARTS = %PARTS%a nice:
+			PARTS = %PARTS%an exciting:
+			PARTS = %PARTS%an interesting
+		ELSEIF TFLAG:193 == -1
+			PARTS = a somewhat awkward:
+			PARTS = %PARTS%a somewhat forced
+		ELSEIF TFLAG:193 == 0
+			PARTS = a normal:
+			PARTS = %PARTS%an ordinary:
+			PARTS = %PARTS%a relaxed
+		ELSE
+			PARTS = a
+		ENDIF
+		PARTS = %SPLIT_G(PARTS)%
+		OUTPUT = %PARTS%
+		PARTS = conversation:
+		PARTS = %PARTS%discussion
+		PARTS = %SPLIT_G(PARTS)%
+		OUTPUT = %OUTPUT% %PARTS%
+ENDSELECT
+RETURNF OUTPUT
+
+;partner-name, uses favorability
+;returns title, name, or "his/her lover"/"player's lover"
+;ARG the character in question
+;ARG:1 makes the title-names begin with "The" instead of "the"
+;ARG:2 makes it "PLAYER's lover" instead of "your lover" - kept for compatibility with third person branch
+;ARG:3 removes the "the"
+;ARG:4 removes the "lover"-part entirely
+@PNAME(ARG,ARG:1 = 0, ARG:2 = 0, ARG:3 = 0, ARG:4 = 0)
+#FUNCTIONS
+#DIM DYNAMIC LOVER
+#DIM DYNAMIC TITLE
+#DIM DYNAMIC ANAME
+TITLE = 1000
+SIF TALENT:ARG:恋慕
+	LOVER += 300
+SIF CFLAG:ARG:好感度 > 50
+	ANAME += 500
+SIF CFLAG:ARG:好感度 > 200
+	ANAME += 100
+SIF CFLAG:ARG:好感度 > 500
+	ANAME += 100
+TITLE -= ANAME
+LOCAL = RAND:(LOVER+ANAME+TITLE)
+IF LOCAL < LOVER && !ARG:4
+	IF ARG:2 == 1
+	;Repeated code for compatibility
+		SIF ARG:1
+			RETURNF @"%PARSE("Your")% lover"
+		RETURNF @"%PARSE("your")% lover"
+	ELSE
+		SIF ARG:1
+			RETURNF @"%HIS_HER(MASTER,1)% lover"
+		RETURNF @"%PARSE("your",1)% lover"
+	ENDIF
+ELSEIF LOCAL < LOVER+ANAME
+	RETURNF CALLNAME:ARG
+ELSE 
+	RETURNF TNAME(ARG,ARG:1,ARG:3)
+ENDIF
+
+
+@CONVERSATION()
+#DIMS PARTS
+#DIMS OUTPUT
+VARSET PARTS
+VARSET OUTPUT
+IF CFLAG:ブチギレ > 0
+	IF TFLAG:193 == -2
+		OUTPUT = %PARSE("You try")% to calm down %PNAME(TARGET)%
+		PARTS = , but it comes out a bit forced:
+		PARTS = %PARTS% but only barely %PARSE("manage")% to form words
+		OUTPUT = %OUTPUT%%SPLIT_G(PARTS)%
+	ELSEIF TALENT:恋人
+		OUTPUT = %PARSE("You try")% talking with %PNAME(TARGET)%
+		PARTS = , but it's clear neither one of %PARSE("you",4)% is honest about %PARSE("your",2)% feelings:
+		PARTS = %PARTS%, but %PARSE("you",2)%'re too stubborn to listen to each other: 
+		PARTS = %PARTS%, and decide to put off the apology for later:
+		PARTS = %PARTS%, asking how %HE_SHE(TARGET)%'s feeling:
+		PARTS = %PARTS%, apologizing from the bottom of %PARSE("your",1)% heart
+		OUTPUT = %OUTPUT%%SPLIT_G(PARTS)%
+	ELSE
+		PARTS = %PARSE("You diffuse")% the situation by talking with %PNAME(TARGET)% about the weather:
+		PARTS = %PARTS%%PARSE("You apologize")% to %PNAME(TARGET)%:
+		PARTS = %PARTS%%PARSE("You ask")% %PNAME(TARGET)% for forgiveness:
+		PARTS = %PARTS%%PARSE("You ask")% %PNAME(TARGET)% how %HE_SHE(TARGET)%'s feeling:
+		PARTS = %PARTS%%PARSE("You have")% a one-sided conversation with %PNAME(TARGET)%
+		PARTS = %SPLIT_G(PARTS)%
+		OUTPUT = %PARTS%...
+	ENDIF
+ELSEIF CFLAG:TARGET:20 > 0 && CFLAG:TARGET:350 == 49
+	IF TFLAG:193 == -2
+		OUTPUT = %PARSE("You try")% to talk with %PNAME(TARGET)% during the party
+		PARTS = , but it comes out a bit forced:
+		PARTS = %PARTS% but only barely %PARSE("manage")% to form words
+	ELSEIF TALENT:恋慕
+		OUTPUT = %PARSE("You")% and %PNAME(TARGET)% pour drinks for each other as %PARSE("you",2)% talk:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% smile as %PARSE("you",2)% talk:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% laugh as %PARSE("you",2)% talk:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% enjoy the relaxed atmosphere as %PARSE("you",2)% talk:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% talk about pretty audacious topics
+		OUTPUT = %SPLIT_G(OUTPUT)%
+	ELSEIF ABL:親密 >= 5
+		OUTPUT = %PARSE("You")% and %PNAME(TARGET)% pour drinks for each other as %PARSE("you",2)% talk:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% enjoy %PARSE("yourselves")% as %PARSE("you",2)% talk:
+		OUTPUT = %OUTPUT%%PNAME(TARGET,1)% cracks a smile as %PARSE("you tell")% a joke:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% enjoy the relaxed atmosphere as %PARSE("you",2)% talk:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% stand a little too close as %PARSE("you",2)% talk
+		OUTPUT = %SPLIT_G(OUTPUT)%
+	ELSE
+		OUTPUT = %PARSE("You have")% %CONV_WHAT("has")% with %PNAME(TARGET)%:
+		OUTPUT = %OUTPUT%%PARSE("You engage")% %PNAME(TARGET)% in %CONV_WHAT("engage")%:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% have %CONV_WHAT("has")%
+		OUTPUT = %SPLIT_G(OUTPUT)%
+		PARTS '= " during the banquet:"
+		PARTS = %PARTS% while enjoying some drinks
+	ENDIF
+	PARTS = %SPLIT_G(PARTS)%
+	OUTPUT = %OUTPUT%%PARTS%...
+ELSEIF CFLAG:TARGET:添い寝中
+	IF TFLAG:193 == -2
+		OUTPUT = %PARSE("You try")% to make some bed talk with %PNAME(TARGET)%
+		PARTS = , but it comes out a bit forced:
+		PARTS = %PARTS% but only barely %PARSE("manage")% to form words
+		PARTS = %SPLIT_G(PARTS)%
+		OUTPUT = %OUTPUT%%PARTS%.
+	ELSE
+		OUTPUT = %PARSE("You have")% %CONV_WHAT("has")% with %PNAME(TARGET)% while lying in bed:
+		OUTPUT = %OUTPUT%%PARSE("You engage")% %PNAME(TARGET)% in %CONV_WHAT("engage")% while lying in bed:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% have %CONV_WHAT("has")% while lying in bed
+		PARTS '= " hugging each other:"
+		PARTS = %PARTS%, %PARSE("your",2)% fingers entangled:
+		PARTS = %PARTS%, snuggled up against each other
+		OUTPUT = %SPLIT_G(OUTPUT)%%SPLIT_G(PARTS)%...
+	ENDIF
+ELSEIF CHK_DATENOW(CFLAG:TARGET:デート中) && CFLAG:TARGET:同行 && CFLAG:TARGET:現在位置 != OMANEKIBEYA()
+	IF TFLAG:193 == -2
+		OUTPUT = %PARSE("You try")% to have %CONV_WHAT("has")% with %PNAME(TARGET)% during the date:
+		OUTPUT = %OUTPUT%%PARSE("You try")% to engage %PNAME(TARGET)% in %CONV_WHAT("engage")% during the date
+	ELSE
+		OUTPUT = %PARSE("You have")% %CONV_WHAT("has")% with %PNAME(TARGET)% during the date:
+		OUTPUT = %OUTPUT%%PARSE("You engage")% %PNAME(TARGET)% in %CONV_WHAT("engage")% during the date:
+		OUTPUT = %OUTPUT%%PARSE("You")% and %PNAME(TARGET)% have %CONV_WHAT("has")% during the date
+	ENDIF
+	IF TFLAG:193 != -2
+		IF TALENT:恋慕
+			PARTS = , flirting once in a while:
+			PARTS = %PARTS% while holding hands:
+			PARTS = %PARTS% while walking next to each other:
+			PARTS = %PARTS% as %PARSE("you",2)% both smile:
+		ENDIF
+	ENDIF
+	OUTPUT = %SPLIT_G(OUTPUT)%%SPLIT_G(PARTS)%...
+ELSEIF TALENT:恋慕
+	IF TFLAG:193 == -2
+		OUTPUT = %PARSE("You try")% to have %CONV_WHAT("has")% with %PNAME(TARGET)%:
+		OUTPUT = %OUTPUT%%PARSE("You try")% to engage %PNAME(TARGET)% in %CONV_WHAT("engage")%
+		OUTPUT = %SPLIT_G(OUTPUT)%...
+	ELSE
+		OUTPUT = %OUTPUT%%PARSE("You have")% %CONV_WHAT("has")% with %PNAME(TARGET)%:
+		OUTPUT = %OUTPUT%%PARSE("You engage")% %PNAME(TARGET)% in %CONV_WHAT("engage")%:
+		OUTPUT = %PARSE("You")% and %PNAME(TARGET)% have %CONV_WHAT("has")%
+		PARTS = , your fingertips entangled:
+		PARTS = %PARTS% \@ TIME >= 360 && TIME <= 1080 ? in the light of day # in the dead of night \@:
+		PARTS = %PARTS%, while smiling at each other
+		OUTPUT = %SPLIT_G(OUTPUT)%%SPLIT_G(PARTS)%...
+	ENDIF
+ELSE
+	IF TFLAG:193 == -2
+		OUTPUT = %PARSE("You try")% to have %CONV_WHAT("has")% with %PNAME(TARGET)%:
+		OUTPUT = %OUTPUT%%PARSE("You try")% to engage %PNAME(TARGET)% in %CONV_WHAT("engage")%
+		OUTPUT = %SPLIT_G(OUTPUT)%...
+	ELSE
+		OUTPUT = %OUTPUT%%PARSE("You have")% %CONV_WHAT("has")% with %PNAME(TARGET)%:
+		OUTPUT = %OUTPUT%%PARSE("You engage")% %PNAME(TARGET)% in %CONV_WHAT("engage")%:
+		OUTPUT = %PARSE("You")% and %PNAME(TARGET)% have %CONV_WHAT("has")%
+		OUTPUT = %SPLIT_G(OUTPUT)%...
+	ENDIF
+ENDIF
+
+
+PRINTFORML %OUTPUT%
+
+;%CALLNAME:PLAYER% has a pleasant conversation with %CALLNAME:TARGET% while lying in bed.
+
+;situation x mood what y
+;while lying in bed, %CALLNAME:PLAYER% has a pleasant conversation with %CALLNAME:TARGET%
+
+;x and y spend some time talking about various things
+
+
+IF TCVAR:泥酔
+	PARTS = %PARSE("You try")% talking with %TNAME(TARGET)%, but %PARSE("are")% too drunk to form words.
+	PARTS = %PARTS%:%PARSE("You try")% to start a conversation with %TNAME(TARGET)%, but %HE_SHE(TARGET)% can't understand what %PARSE("you are")% saying.
+	PRINTFORMW %SPLIT_G(PARTS)%
+	RETURN 1
+ENDIF
+
+IF CFLAG:ブチギレ > 0 ;if she's pissed
+	IF TALENT:恋慕
+	ELSE
+	ENDIF
+ELSEIF CFLAG:TARGET:20 > 0 && CFLAG:TARGET:350 == 49 ;at party with target
+	IF TALENT:恋慕
+	ELSEIF ABL:親密 >= 5
+	ELSE
+	ENDIF
+ELSEIF CFLAG:TARGET:添い寝中 ;lying in bed
+ELSEIF CHK_DATENOW(CFLAG:TARGET:デート中) && CFLAG:TARGET:同行 && CFLAG:TARGET:現在位置 != OMANEKIBEYA() ;on date
+	IF TALENT:恋慕
+	ELSE
+	ENDIF
+ELSEIF TALENT:恋慕 ;lover
+ELSE ;normal
+ENDIF
+PRINTFORML
+IF TFLAG:193 == 1;good outcome
+ELSEIF TFLAG:193 == 2;exceptional outcome
+	PRINTFORM %PARSE("You have")% a 
+	PRINTDATA
+	;		DATAFORM 新たな異変の
+		DATAFORM exaggeratedly
+		DATAFORM valuable and
+		DATAFORM unexpectedly
+		DATAFORM interesting and
+	ENDDATA
+	PRINTFORML  exciting conversation with %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ?%" "%and the others # \@...
+ELSEIF TFLAG:193 == -1
+	PRINTFORML Overall it was quite an awkward conversation...
+ELSEIF TFLAG:193 == -2
+	PRINTFORML %PARSE("You end")% up not saying much...
+ENDIF
+PRINTFORMW 

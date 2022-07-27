@@ -1,0 +1,1223 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;愛撫系コマンド (note: most lines are duplicated elsewhere, so make sure to replace them all when editing)
+;there's another place where same phrases are used (in ;360,身を任せる), but I think variation is good
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;0,愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_0
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_0_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_0_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入中
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	;V挿入
+	IF LOCAL:1 && TEQUIP:50 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	;A挿入
+	ELSEIF LOCAL:1 && TEQUIP:51 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;ふたなり
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && (TALENT:2 & 3) == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕ほか
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ｃ絶頂 || NOWEX:TARGET:Ｂ絶頂
+			PRINTDATAW
+				DATAFORM 「%SPLIT_G("Oh no:Dear me")%... Yer merely %FSYN("rub:ing")% me, and even then, still... It's so unfaiiiirrr!%UNICODE(0x2764)%」
+				DATAFORM 「Fuaah... I wonder... if it's because of you... that I feel it so sharply... Hey, you can tell it, right?」
+				DATAFORM 「Yer touch feels soo good, I'm gonna... Please, whatever you do, %SPLIT_G("don't stop:keep movin'")% that hand, I beg you...!」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Fufu... Ya really do %SPLIT_G("take good care of:cherish:treasure")% me, I can feel it in yer touch... That makes me so happy!」
+				DATAFORM 「%SPLIT_G("Ya sure are:Yer so")% gentle... You can %SPLIT_G("go hard on me:put some strength into it:be fierce about it")% though, 'kay? It's fine, I can %SPLIT_G("handle:take")% it.」
+				DATAFORM 「%K33_MOAN()%... More... %SPLIT_G("Ya can keep touchin' me some more:Keep touchin' me:Just keep at it")% some more, 'kay...?」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ｃ絶頂 || NOWEX:TARGET:Ｂ絶頂
+			PRINTFORMW 「Yer touch feels soo good, I'm gonna... Please, whatever you do, %SPLIT_G("don't stop:keep movin'")% that hand, I beg you...!」
+		ELSE
+			PRINTFORMW 「%K33_MOAN()%... More... %SPLIT_G("Ya can keep touchin' me some more:Keep touchin' me:Just keep at it")% some more, 'kay...?」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;1,クンニ
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_1
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_1_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_1_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;膣内射精直後
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		IF TCVAR:102
+			PRINTDATAW
+				DATAFORM 「...Oh, yer gonna clean me up? %SPLIT_G(@"That makes me glad～:How... considerate of you, hehe%UNICODE(0x2764)%")%」
+				DATAFORM 「Fufu... So this is the kind of stuff yer into, huuuh... %K33_MOAN(,,2)%...!%UNICODE(0x2764)%」
+				;added
+				DATAFORM 「C'mon, you don't have to go that far. It's gross, right? But... I appreciate it%UNICODE(0x2764)%」
+				DATAFORM 「That's... Well, if you really want to taste yerself, then be my guest, I guess%UNICODE(0x2764)%」
+			ENDDATA
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;絶頂した
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && NOWEX:Ｃ絶頂
+		IF FLAG:70
+			CALL K33_TATARI_COUNTER(2)
+			RETURN 1
+		ELSE
+			PRINTDATAW
+				DATAFORM 「%SPLIT_G(@"%K33_MOAN()%:Oh yesss")%!%UNICODE(0x2764)% %SPLIT_G("Don't stop:Keep at it:Do it, lick meee")%, moooore, hardeeeer!!!」
+				DATAFORM 「%K33_MOAN()%, that's it, I'm gonna, cuuummm--... Mmnnnnnghhh!!!%UNICODE(0x2764)%」
+				DATAFORM 「%SPLIT_G("Sooo good:Theeere it is")%, right there! Keep lickin' that spot...!%UNICODE(0x2764)%」
+			ENDDATA
+			IF NOWEX:Ｃ絶頂 > 1 ;added
+				 PRINTFORMDW The suction of your lips tugging on Suwako's outer lips and massaging her inner ones drives the poor girl into an orgasmic frenzy.
+				 PRINTFORMDW Her walls clench reflexively upon you, releasing a flood of creamy juice down your throat as she moans in ecstasy.
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	ELSEIF SELECTCOM == PREVCOM ;added, continuous
+		PRINTDATAW
+			DATAFORM 「Geez, yer really into it, aren'tcha%UNICODE(0x2764)%」
+			DATAFORM 「%K33_MOAN()%! Be gentle, it's not goin' anywhere%UNICODE(0x2764)%」
+			DATAFORM 「So you were starin' holes in here earlier for this reason, eh?%UNICODE(0x2764)%」
+			DATAFORM 「C'mon, put your back into it... Have a really good taste of my cunny!%UNICODE(0x2764)%」
+			DATAFORM 「Hehe, that's it, very good... %K33_MOAN()%! Keep lappin' up my divine juices%UNICODE(0x2764)%」
+			DATAFORM 「Yer been waitin' for this for so long, I see%UNICODE(0x2764)%」
+		ENDDATA
+
+		PRINTDATADW
+			DATALIST
+				DATAFORM You moan as your tongue darts in and out of Suwako, licking eagerly at her dripping folds,
+				DATAFORM darting into her immature slit with quick twirls of your tongue.
+			ENDLIST
+			DATAFORM Suwako gifts you a charming smile like a goddess she is, pleased with your service as you zealously lick her most sacred place.
+			DATALIST
+				DATAFORM Your tongue glides along the smooth, hairless labia, and your lips suckle on the erect bud.
+				DATAFORM Your face is aligned with the pearly gates of heaven, the tiny slit designed to engulf a manhood.
+				DATAFORM Slicked and wet, it caresses your tongue as your tip flicks and prods at the delicate hole,
+				DATAFORM the pressure increasing as your lips gobble up the pale pink flesh.
+			ENDLIST
+			DATALIST
+				DATAFORM The pungent odor of Suwako's vaginal secretions fill your nostrils as you lap them sloppily with your tongue;
+				DATAFORM Her hot, wet, tight folds swallowing your tongue's every thrust as her legs wrap around your head and hold you in place;
+				DATAFORM Her knees dig into your scalp as she holds your head tight against her crotch.
+			ENDLIST
+			DATALIST
+				DATAFORM Suwako's entrance squeezes and clenches around you as you enter, her folds tickle your tongue as you tease her back.
+				DATAFORM Her juices taste almost sweet, making your taste buds tingle and urging you to lick her even more,
+				DATAFORM as if trying to quench your thirst you never knew you had.
+			ENDLIST
+		ENDDATA
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		PRINTDATAW
+			DATAFORM 「Yer tongue is %SPLIT_G("crawling:swirling:twirling:roaming")% all over the place so %SPLIT_G("wildly:naughtily:lewdly:desperately")%...%UNICODE(0x2764)%」
+			DATAFORM 「Fufu... If yer gonna %SPLIT_G("stimulate:tease:play with:work on")% me so thoroughly, it might just affect me for real%UNICODE(0x2764)%」
+			DATAFORM 「Dunno how to phrase it, but... This feeling of bein' loved I guess? It feels... incredibly good!%UNICODE(0x2764)%」
+		ENDDATA
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 「Yer tongue is %SPLIT_G("crawling:swirling:twirling:roaming")% all over the place so %SPLIT_G("wildly:naughtily:lewdly:desperately")%...%UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;あとは適当な分岐を追加してください
+;==================================================
+;2,フェラする
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_2
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_2_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_2_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕ほか
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:射精
+			PRINTDATAW
+				DATAFORM 「I'm gonna... %FSYN("shoot")% out my %SPLIT_G("stuff:load")% all over yer pretty mouth!%UNICODE(0x2764)%」
+				DATAFORM 「Yer such a tease, I'm about to cum already--...!!!♪」
+				DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)%!」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「The sight of you lickin' me like this... Is totally %FSYN("cute")%, y'know...%UNICODE(0x2764)%」
+				DATAFORM 「Good, thaaat's the spirit... Do it more carefully, make sure to get every nook and corner... %K33_MOAN()%!%UNICODE(0x2764)%」
+				DATAFORM 「Seein' you kneel before me and do stuff like this... Fufu... %SPLIT_G("Can't say I'm not excited:It excites me so:Makes me so thrilled")%!」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:射精
+			PRINTFORMW 「I'm gonna... %FSYN("shoot")% out my %SPLIT_G("stuff:load")% all over yer pretty mouth!%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「Seein' you kneel before me and do stuff like this... Fufu... %SPLIT_G("Can't say I'm not excited:It excites me so:Makes me so thrilled")%!」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;3,指挿入れ
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_3
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_3_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_3_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ｖ絶頂
+			PRINTDATAW
+				DATAFORM 「%K33_MOAN()%!%UNICODE(0x2764)% I'm gonna cum soon, so... %SPLIT_G("Keep it goin':Don't stooop:Finish iiittt")%...!!!%UNICODE(0x2764)%」
+				DATAFORM 「Fuaah... I wonder... if it's because of you... that I feel it so sharply... Hey, you can tell it, right?」
+				DATAFORM 「%K33_MOAN("m")%!%UNICODE(0x2764)% Yer makin' me cuuuuum, I can't stop...!♪」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「%K33_MOAN()%... Ya know all of my weak spots at this point, so... Just go ahead, do as you like%UNICODE(0x2764)%」
+				DATAFORM 「C'moon, quit makin' all those %FSYN("lewd")% %TOLOWER(CONJUGATOR(SQUELCH() + ":ing", 1))% noises... I bet yer doin' it on purpose, %FSYN("geez")%!%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%...! Oh nghooo... It's gettin' all sloppy and messy...!%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ｖ絶頂
+			PRINTFORMW 「%K33_MOAN()%!%UNICODE(0x2764)% I'm gonna cum soon, so... %SPLIT_G("Keep it goin':Don't stooop:Finish iiittt")%...!!!%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「C'moon, quit makin' all those %FSYN("lewd")% %TOLOWER(CONJUGATOR(SQUELCH() + ":ing", 1))% noises... I bet yer doin' it on purpose, %FSYN("geez")%!%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;4,アナル舐め
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_4
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_4_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_4_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕など
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ａ絶頂
+			PRINTDATAW
+				DATAFORM 「It's fine, so please, don't ever stoooop!%UNICODE(0x2764)% I want you to keep lickin' at my butt and make me cuuuuummm!!!%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%... No way... My %FSYN("anus")% can actually... make me feel like this...%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN("m")%!%UNICODE(0x2764)% My %FSYN("ass")% is gonna make me... cuuuuummm...!♪」
+			ENDDATA
+		ELSEIF ABL:TARGET:Ａ感覚 >= 4
+			PRINTDATAW
+				DATAFORM 「%K33_MOAN()%... Ya know all of my weak spots at this point, so... Just go ahead, do as you like%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%... %SPLIT_G("You know full well that my:Don't you know that my")% %FSYN("ass")% is too %SPLIT_G("sensitive:weak")% for this...!%UNICODE(0x2764)%」
+				DATAFORM 「Havin' you cleanse my %FSYN("anus")% like this... Fufu, %SPLIT_G("that's the stuff:this is just the best:dream comes true")%%UNICODE(0x2764)%」
+				;added
+				DATAFORM 「...It doesn't stink, does it? I mean, I'm a God, so... Auuu, this is still sooo awkward...%UNICODE(0x2764)%」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「%SPLIT_G("I-In here:T-This hole")%? Well, I mean, %SPLIT_G("it's not exactly dirty since I'm a God:gods don't poop")%, but... Don't just start fingerin' my butthole cuz yer so darn curious!%UNICODE(0x2764)%」
+				DATAFORM 「Yer the only one... whom I'd allow to %SPLIT_G("do somethin' like this to me:touch me here")%%UNICODE(0x2764)%」
+				DATAFORM 「Havin' you cleanse my %FSYN("anus")%... is kinda making me %SPLIT_G("so excited:thrilled")%...%UNICODE(0x2764)%」
+				;added
+				DATAFORM 「...Do you really have to kiss my %FSYN("ass")% so feverishly? I mean, I might just end up misunderstanding your intentions here...%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ａ絶頂
+			PRINTFORMW 「%K33_MOAN()%... No way... My %FSYN("anus")% can actually... make me feel like this...%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「%SPLIT_G("I-In here:T-This hole")%? Well, I mean, %SPLIT_G("it's not exactly dirty since I'm a God:gods don't poop")%, but... Don't just start fingerin' my butthole cuz yer so darn curious!%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;5,アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_5
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_5_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_5_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕など
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ａ絶頂
+			PRINTDATAW
+				DATAFORM 「It's fine, so please, don't ever stoooop!%UNICODE(0x2764)% I want you to keep fingerin' my butt and make me cuuuuummm!!!%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%... No way... My %FSYN("anus")% can actually... make me feel like this...%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN("m")%!%UNICODE(0x2764)% Havin' yer fingers in my %FSYN("ass")% is gonna make me... cuuuuummm...!♪」
+			ENDDATA
+		ELSEIF ABL:TARGET:Ａ感覚 >= 4
+			PRINTDATAW
+				DATAFORM 「%K33_MOAN("m")%! So it's true that you can get used to pretty much anything, huh... %K33_MOAN()%, quit makin' those weird sounds, c'mooon!%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%... %SPLIT_G("You know full well that my:Don't you know that my")% %FSYN("ass")% is too %SPLIT_G("sensitive:weak")% for this...!%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN("m")%... Those kinks of yers seem to go far and beyond, eh... What about me? C'mooon, don't make me say it!%UNICODE(0x2764)%」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「%SPLIT_G("I-In here:T-This hole")%? Well, I mean, %SPLIT_G("it's not exactly dirty since I'm a God:gods don't poop")%, but... Don't just start fingerin' my butthole cuz yer so darn curious!%UNICODE(0x2764)%」
+				DATAFORM 「Yer the only one... whom I'd allow to %SPLIT_G("do somethin' like this to me:touch me here")%%UNICODE(0x2764)%」
+				DATAFORM 「Auuhhh, ease a up a little, lemme get used to it first...%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ａ絶頂
+			PRINTFORMW 「%K33_MOAN()%... No way... My %FSYN("anus")% can actually... make me feel like this...%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「%SPLIT_G("I-In here:T-This hole")%? Well, I mean, %SPLIT_G("it's not exactly dirty since I'm a God:gods don't poop")%, but... Don't just start fingerin' my butthole cuz yer so darn curious!%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;6,胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_6
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_6_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_6_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕など
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ｂ絶頂
+			PRINTDATAW
+				DATAFORM 「%K33_MOAN()%... I'm gonna cum... from my %SLUR(FSYN("chest"), -3)%!%UNICODE(0x2764)%」
+				DATAFORM 「The way you %SPLIT_G("touch:handle")% my %FSYN("chest")% is just so... %FSYN("lewd")%...!%UNICODE(0x2764)%」
+				DATAFORM 「My nipples, they're tinglin' like crazyyy!%UNICODE(0x2764)% I think I'm gonna %SLUR("cum", -3)%...!♪」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Ya really like them \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? smaller like mine # %FSYN("chest:non")%\@, don'tcha?%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN("m")%... Yer hands are so big, \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? it's enough to wrap 'em up completely! It # it just \@ feels very gentle indeed%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%...%UNICODE(0x2764)% Can you %SPLIT_G("tell... how excited I am?:feel it? My heart goin' crazy right now...")%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ｂ絶頂
+			PRINTFORMW 「%K33_MOAN()%... I'm gonna cum... from my %SLUR(FSYN("chest"), -3)%!%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「Ya really like them \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? smaller like mine # %FSYN("chest:non")%\@, don'tcha?%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;7,乳首責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_7
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_7_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_7_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕など
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ｂ絶頂
+			PRINTDATAW
+				DATAFORM 「%K33_MOAN("m")%... I'm %SLUR("cummin'", -2)%...! From havin' my %FSYN("chest")% \@ TEQUIP:乳首吸い ? sucked and licked # fondled and toyed with \@...!%UNICODE(0x2764)%」
+				DATAFORM 「\@ TEQUIP:乳首吸い ? Keep lickin' meee # Do it harder, don't stooop \@...! Oh yesss, just like that! More, keep goiiiing!%UNICODE(0x2764)%」
+				DATAFORM 「My nipples, they're tinglin' like crazyyy!%UNICODE(0x2764)% I think I'm gonna %SLUR("cum", -3)%...!♪」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Ya really like them \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? smaller like mine # %FSYN("chest:non")%\@, don'tcha?%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%, I get why yer so obsessed with it, but geez...!%UNICODE(0x2764)%」
+				DATAFORM 「Theeere, go on and \@ TEQUIP:乳首吸い ? lick 'em # play with em \@ some mooore!%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ｂ絶頂
+			PRINTFORMW 「%K33_MOAN("m")%... I'm %SLUR("cummin'", -2)%...! From havin' my %FSYN("chest")% \@ TEQUIP:乳首吸い ? sucked and licked # fondled and toyed with \@...!%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「Ya really like them \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? smaller like mine # %FSYN("chest:non")%\@, don'tcha?%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;
+;==================================================
+;8,秘貝開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_8
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_8_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_8_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;added this whole section, comment out (or copy after in sections) if there's an edit
+	;it's weird that this action was empty despite being enabled, derp?
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕
+	;恋慕など
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ｃ絶頂
+			PRINTDATAW
+				DATAFORM 「...Whoa, it's hard to believe it, but... Just gettin' stared at affects me so much it turns out%UNICODE(0x2764)%」
+				DATAFORM 「W-Wait, stoooop, don't make me spread it even more... Not noooowwww...!%UNICODE(0x2764)%」
+			ENDDATA
+		ELSEIF ABL:TARGET:Ｖ感覚 >= 4
+			PRINTDATAW
+				DATAFORM 「If it twitches... then it's prolly 'cause of you%UNICODE(0x2764)%」
+				DATAFORM 「Auhh... Ya big meanie... You know full well I can't keep myself from gettin' wet when you stare so intently...%UNICODE(0x2764)%」
+				DATAFORM 「Well...? Are you proud of the work of art that is my cunny? Ya did some serious development on it after all%UNICODE(0x2764)%」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Ahh... this is kinda... well, it's awkward actually...%UNICODE(0x2764)%」
+				DATAFORM 「Yup, there it is, a young girl's vagina in the flesh... Burn it aaaall into your memory if ya will%UNICODE(0x2764)%」
+				DATAFORM 「Are you done starin' yet? No way you of all people can be satisfied with just that... Right?%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ｃ絶頂
+			PRINTFORMW 「...Whoa, it's hard to believe it, but... Just gettin' stared at affects me so much it turns out%UNICODE(0x2764)%」
+		ELSE
+			PRINTDATAW
+				DATAFORM 「...Is it so fun starin' at my insides?」
+				DATAFORM 「Well? Did you sate yer curiosity yet?」
+				DATAFORM 「Yer like a doctor... Checking every nook and corner! Well, it's healthy, isn't it?」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;9,自慰
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_9
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_9_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_9_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;恋慕など
+	IF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ｃ絶頂 || NOWEX:TARGET:Ｂ絶頂 || NOWEX:TARGET:Ｖ絶頂 || NOWEX:TARGET:Ａ絶頂
+			PRINTDATAW
+				DATAFORM 「%K33_MOAN()%...! I'm gonna cuuuum while you stare at meeee!!!%UNICODE(0x2764)%」
+				DATAFORM 「It feels great, but...%UNICODE(0x2764)% Yer sooo awful, %K33_BOY()%...%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%!%UNICODE(0x2764)% Oh noo, I can't stop%UNICODE(0x2764)% It's comin', I'm gonna cuuuum...!♪」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Makin' a God %SPLIT_G("do something like this:debase herself like this")%... Seriously, I ought to %SPLIT_G("smack some respect into:pass judgement on:punish")% yer knavish ass... %K33_MOAN()%!%UNICODE(0x2764)%」
+				DATAFORM 「Okaaay... Keep lookin', don't avert yer gaze... %K33_MOAN()%!%UNICODE(0x2764)%」
+				DATAFORM 「Heeere, see...? It got all %FSYN("wet")% like this...%UNICODE(0x2764)% You want me to keep goin', don'tcha? Fufu...%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ｃ絶頂 || NOWEX:TARGET:Ｂ絶頂 || NOWEX:TARGET:Ｖ絶頂 || NOWEX:TARGET:Ａ絶頂
+			PRINTFORMW 「%K33_MOAN("m")%... I'm %SLUR("cummin'", -2)%...! From havin' my %FSYN("chest")% \@ TEQUIP:乳首吸い ? sucked and licked # fondled and toyed with \@...!%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「Makin' a God %SPLIT_G("do something like this:debase herself like this")%... Seriously, I ought to %SPLIT_G("smack some respect into:pass judgement on:punish")% yer knavish ass... %K33_MOAN()%!%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+[SKIPSTART]
+;別コマンド化
+;==================================================
+;10,乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_10
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_10_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_10_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;11,乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_11
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_11_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_11_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ｂ絶頂
+			PRINTDATAW
+				DATAFORM 「%K33_MOAN("m")%... I'm %SLUR("cummin'", -2)%, from havin' my %FSYN("chest")% sucked and licked!!!%UNICODE(0x2764)%」
+				DATAFORM 「Keep lickin' meee...! Oh yesss, just like that! More, keep goiiiing!%UNICODE(0x2764)%」
+				DATAFORM 「My nipples, they're tinglin' like crazyyy!%UNICODE(0x2764)% I think I'm gonna %SLUR("cum", -3)%...!♪」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Ya really like them \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? smaller like mine # %FSYN("chest:non")%\@, don'tcha?%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%, I get why yer so obsessed with it, but geez...!%UNICODE(0x2764)%」
+				DATAFORM 「Fufu... Seein' you bein' so eager about it kinda looks... adorable to me. %K33_MOAN()%!%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ｂ絶頂
+			PRINTFORMW 「%K33_MOAN("m")%... I'm %SLUR("cummin'", -2)%, from havin' my %FSYN("chest")% sucked and licked!!!%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「Ya really like them \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? smaller like mine # %FSYN("chest:non")%\@, don'tcha?%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;12,胸もみ
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_12
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_12_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_12_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕など
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ｂ絶頂
+			PRINTDATAW
+				DATAFORM 「%K33_MOAN()%... I'm gonna cum... from my %SLUR(FSYN("chest"), -3)%!%UNICODE(0x2764)%」
+				DATAFORM 「The way you %SPLIT_G("touch:handle")% my %FSYN("chest")% is just so... %FSYN("lewd")%...!%UNICODE(0x2764)%」
+				DATAFORM 「My nipples, they're tinglin' like crazyyy!%UNICODE(0x2764)% I think I'm gonna %SLUR("cum", -3)%...!♪」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Ya really like them \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? smaller like mine # %FSYN("chest:non")%\@, don'tcha?%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN("m")%... Yer hands are so big, \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? it's enough to wrap 'em up completely! It # it just \@ feels very gentle indeed%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%...%UNICODE(0x2764)% Can you %SPLIT_G("tell... how excited I am?:feel it? My heart goin' crazy right now...")%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ｂ絶頂
+			PRINTFORMW 「%K33_MOAN()%... I'm gonna cum... from my %SLUR(FSYN("chest"), -3)%!%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「Ya really like them \@ TALENT:[[諏訪子]]:バストサイズ < 0 ? smaller like mine # %FSYN("chest:non")%\@, don'tcha?%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;13,アナル開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_13
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_13_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_13_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	;恋慕
+	;恋慕など
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:TARGET:Ａ絶頂
+			PRINTDATAW
+				DATAFORM 「...Yer simply starin' there, but... It just feels so goooood!!!%UNICODE(0x2764)%」
+				DATAFORM 「Nooo, stooop! Don't make me spread it out so much, not nooow!%UNICODE(0x2764)%」
+			ENDDATA
+		ELSEIF ABL:TARGET:Ａ感覚 >= 4
+			PRINTDATAW
+				DATAFORM 「Can you see it...? It's all %FSYN("wet")% and squelchy now, expectin' something%UNICODE(0x2764)%」
+				DATAFORM 「Fufu... Heavens me, I hope yer gonna take the responsibility of turnin' even this hole into a fine mess, 'kay?%UNICODE(0x2764)%」
+				DATAFORM 「You do nothin' but simply stare deeply at it, but... I can't help but feel thrilled%UNICODE(0x2764)%」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Auu... I'd like to refrain from spreadin' this hole too much, actually...」
+				DATAFORM 「Wha-- Are you into this kind of thing too?! %CAPITALIZE(FSYN("geez"))%... Yer just irredeemable%UNICODE(0x2764)%」
+				DATAFORM 「Uuuhhh... Don't just stare so hard at it, c'mooon!」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:TARGET:Ａ絶頂
+			PRINTFORMW 「...Yer simply starin' there, but... It just feels so goooood!!!%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「Uuuhhh... Don't just stare so hard at it, c'mooon!」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;ソフト系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;19,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_19
+CALL TRAIN_MESSAGE
+;redirect to "kiss" from sex
+CALL M_KOJO_MESSAGE_COM_K33_20_1
+RETURN RESULT
+
+;==================================================
+;20,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_20
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("take")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_20_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_20_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(2)
+		RETURN 1
+	ELSEIF SELECTCOM != 20 && ONCE("SuwakoDeepKiss") ;when you continue kissing
+		PRINTFORMDW Suwako drools and slurps as she fills your entire mouth with her long, slippery tongue.
+		PRINTFORMW 「%RANDLIPS(,"kiss:heart:name")%...!%UNICODE(0x2764)%」
+		PRINTFORMDW You already feel like blanking out as your head steadily grows numb.
+		PRINTFORMW 「Hehe, ish thath alhight? I'll kheep ohn ghoin' then～」
+		PRINTFORMDW ...Please keep going even if I start choking.
+	;恋慕ほか
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		;挿入中
+		IF TEQUIP:Ｖセックス == PLAYER || TEQUIP:Ａセックス == PLAYER
+			IF NOWEX:TARGET:Ｖ絶頂 || NOWEX:TARGET:Ａ絶頂
+				PRINTDATAL
+					DATAFORM 「%FSYN("lips_muffle")%!%UNICODE(0x2764)% %RANDLIPS(,"kiss")%!」
+					DATAFORM 「%RANDLIPS(,"kiss")%...!%UNICODE(0x2764)%」
+				ENDDATA
+				IF NOWEX:PLAYER:射精
+					IF !RAND:3
+						PRINTFORMDW With one last push, Suwako %FSYN("clamp:s")% down on your %TINKO(MASTER)% and moves her tongue even more intensely...
+					ELSE
+						PRINTDATAW
+							DATAFORM 「%K33_MOAN()%... What, yer cummin'? 'Kay, let's just do it... Together! %FSYN("lips_muffle")%%UNICODE(0x2764)%」
+							DATAFORM 「%KISS("kiss")%... %FSYN("lips_over")%...! %K33_MOAN()%, that's it, I'm gonna cummm...! %FSYN("lips_muffle")%... %KISS("kiss")%%UNICODE(0x2764)%」
+						ENDDATA
+					ENDIF
+				ELSE
+					IF !RAND:3
+						PRINTFORMDW Suwako convulses uncontrollably while drooling a little bit from the corner of her mouth...
+					ELSE
+						PRINTDATAW
+							DATAFORM 「%K33_MOAN()%...! Oh no, I think... I'm about to cuu--... %FSYN("lips_muffle")%!%UNICODE(0x2764)%」
+							DATAFORM 「%KISS("kiss")%... %FSYN("lips_over")%...! %K33_MOAN()%, that's it, I'm gonna cummm...! %FSYN("lips_muffle")%... %KISS("kiss")%%UNICODE(0x2764)%」
+						ENDDATA
+					ENDIF
+				ENDIF
+				RETURN 1
+			ELSEIF NOWEX:PLAYER:射精
+				PRINTFORML 「%RANDLIPS(, "kiss" + (TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ ? ":heart" # "") + (TALENT:恋慕 || TALENT:愛欲 ? ":name" # "") )%%SPLIT_G(@"...%SPLIT_G(@"～:!:%UNICODE(0x2764)%:")%:～:!:%UNICODE(0x2764)%")%」
+				PRINTDATAW
+					DATAFORM 「Yer kinda all fidgety there... Yer about to cross that finish line, eh? Fufu! ...%RANDKISS("kiss")%～%UNICODE(0x2764)%」
+					DATAFORM 「Feels good, eh? Ehehe, go ahead and just cum then～!%UNICODE(0x2764)%」
+					DATAFORM 「Aahh～... I can feel you... gettin' bigger inside%UNICODE(0x2764)% Mfufu～! %KISS("kiss")%...%UNICODE(0x2764)%」
+				ENDDATA
+				RETURN 1
+			ELSE
+				PRINTFORML 「%RANDLIPS(, "kiss" + (TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ ? ":heart" # "") + (TALENT:恋慕 || TALENT:愛欲 ? ":name" # "") )%%SPLIT_G(@"...%SPLIT_G(@"～:!:%UNICODE(0x2764)%:")%:～:!:%UNICODE(0x2764)%")%」
+				PRINTDATAW
+					DATAFORM 「%K33_MOAN()%... Geez, both just feel... out of this world!%UNICODE(0x2764)%」
+					DATAFORM 「Hey, c'mon now! Don't forget movin' that tongue, will ya? %KISS()%... %KISS()%...!♪」
+					DATAFORM 「Aahh～... I can feel you... gettin' bigger inside%UNICODE(0x2764)% Mfufu～! %KISS("kiss")%...%UNICODE(0x2764)%」
+				ENDDATA
+				RETURN 1
+			ENDIF
+		ELSE
+			PRINTFORML 「%RANDLIPS(, "kiss" + (TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ ? ":heart" # "") + (TALENT:恋慕 || TALENT:愛欲 ? ":name" # "") )%%SPLIT_G(@"...%SPLIT_G(@"～:!:%UNICODE(0x2764)%:")%:～:!:%UNICODE(0x2764)%")%」
+			RETURN 1
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 「%RANDLIPS(, "kiss")%%SPLIT_G(@"...%SPLIT_G(@"～:::")%:～")%」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;21,何もしない
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_21
+;CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K33_21_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_21_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;22,誘い受ける
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_22
+;CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K33_22_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_22_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;23,ピロートーク
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_23
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K33_23_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_23_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;失敗
+	IF TFLAG:193
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;思慕
+	ELSEIF TALENT:思慕
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

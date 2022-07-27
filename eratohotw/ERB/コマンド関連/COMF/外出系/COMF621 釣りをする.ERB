@@ -1,0 +1,873 @@
+﻿;釣りをする
+@COM621
+#DIM 釣れたもの
+#DIM 釣りパワー
+#DIM 釣りパワーM
+#DIM 釣りパワーT
+#DIM 釣れない補正
+#DIM 釣り運
+#DIM CHARA
+#DIM 相方が釣った
+#DIM 活性
+#DIM FISHED, 2
+
+相方が釣った = 0
+;参加者判定
+IF FLAG:デート相手
+	CHARA = FLAG:デート相手
+ELSEIF TARGET && ABL:TARGET:親密 >= 5 - TALENT:TARGET:釣りLv && SHIRAHU(TARGET) && CFLAG:TARGET:行動 != 5
+	CHARA = TARGET
+ELSE
+	CHARA = 0
+ENDIF
+;かわいそう；；
+IF CHARA == [[わかさぎ姫]] || TARGET == [[わかさぎ姫]]
+	PRINTFORMW It would be way too cruel to be fishing in front of %HIM_HER(93)%.
+	RETURN -1
+ENDIF
+
+;季節ごとの活性
+SELECTCASE DAY:2
+	CASE 1  ;春
+		活性 = 10
+	CASE 2  ;夏
+		活性 = 7
+	CASE 3  ;秋
+		活性 = 10
+	CASE 4  ;冬
+		活性 = 3
+ENDSELECT
+;時刻ごとの活性補正
+SELECTCASE TIME:2
+	CASE 1, 4  ;早朝と昼下がり
+		活性 += 10
+	CASE 5, 6  ;夕と夜
+		活性 += 5
+ENDSELECT
+;天気による活性
+SELECTCASE TIME:5
+	CASE 3, 6 ;曇、霧雨
+		活性 += 5
+	CASE 4, 5 ;雨
+		活性 += 7
+	CASE 8 TO 13 ;雪系統はマイナス
+		活性 -= 3
+ENDSELECT
+;虹が出てるときは、雨の後で水が濁っているだろう
+SELECTCASE TIME:7
+	CASE 1
+		活性 += 7
+ENDSELECT
+
+;日替わりで-50～+50,アイテムやお祈り等で補正をかけることも可
+釣り運 = CFLAG:MASTER:今日の運勢 / 10 - 50
+
+;釣りLvで活性を察知
+IF TALENT:MASTER:釣りLv >= 3
+	SETCOLOR C_L_GRAY
+	SELECTCASE (活性 + 釣り運)
+		CASE IS <= 10
+			PRINTFORML （There is hardly any sign of fish here...）
+		CASE 11 TO 30
+			PRINTFORML （Fish is rather sparse here...）
+		CASE 31 TO 50
+			PRINTFORML （There is a good amount of fish here...）
+		CASE 51 TO 65
+			PRINTFORML （This spot seems abundant with fish...）
+		CASEELSE
+			PRINTFORML （The surface of the water is churning with fish here...）
+	ENDSELECT
+	RESETCOLOR
+ENDIF
+
+NOSKIP ;addition custom code
+;釣りの醍醐味は待ち時間だと聞いた
+FOR LOCAL, 0, 5
+	REUSELASTLINE  Fishing\@ CHARA ? %" "%with %CALLNAME:CHARA% #  \@.%"." * LOCAL%
+	TWAIT 150, 1
+NEXT
+;釣りパワー設定
+釣りパワーM = MIN(活性 + TALENT:MASTER:釣りLv * 15 + 釣り運 + 釣れない補正, 100)
+SIF CHARA
+	釣りパワーT = MIN(活性 + TALENT:CHARA:釣りLv * 15 + 釣れない補正, 100)
+
+;（釣りパワー）％で釣れる
+FISHED:0 = RAND:100
+IF FISHED < 釣りパワーM
+	釣りパワー = 釣りパワーM
+	$FISH
+	;釣れたら補正リセット
+	釣れない補正 = 0
+	;釣りパワーで釣れるものが変わる
+	SELECTCASE RAND:釣りパワー
+	CASE IS < 5
+		;木材
+		釣れたもの = 610
+	CASE IS < 10
+		;守矢の守札
+		釣れたもの = 131
+	CASE IS < 30 ;addition custom code, hina doll, genbu ravine common, otherwise 1/10; easier to catch when you're unlucky and don't have any dolls
+		IF (FISHING_SPOT(CFLAG:MASTER:現在位置) == 3 || !RAND:10) || (ITEM:497 == 0 && TFLAG:幸運補正 < 0 && RAND:10)
+			釣れたもの = 497
+		ELSE
+			GOTO FISH
+		ENDIF
+	CASE 51 TO 60
+		;カエル
+		釣れたもの = 706
+	CASE 10 TO 50, 61 TO 89
+		FISHED:1 = (FISHED:0 + 10) / 10 * 10
+		釣れたもの = FISHING_CATCH(FISHED:1)
+	CASE IS < 95
+		釣れたもの = FISHING_CATCH(95)
+	CASEELSE
+		釣れたもの = FISHING_CATCH(100)
+		;ボーナス
+		IF 相方が釣った
+			EXP:CHARA:釣り経験 ++
+		ELSE
+			EXP:MASTER:釣り経験 ++
+		ENDIF
+	ENDSELECT
+	;アイテムに追加
+	SELECTCASE 釣れたもの
+		CASE 1 TO 10, 22 TO 23
+			CALL GET_ITEM("魚", 1, 1)
+		CASE 11 TO 20, 24 TO 60
+			CALL GET_ITEM("うまい魚", 1, 1)
+		CASE 21
+			CALL GET_ITEM("ローター", 1, 1)
+		CASEELSE
+			SIF ITEM:釣れたもの < 99
+				ITEM:釣れたもの ++
+	ENDSELECT
+;CHARAが釣った場合
+ELSEIF CHARA && RAND:100 < 釣りパワーT
+	釣りパワー = 釣りパワーT
+	相方が釣った = 1
+	GOTO FISH
+;釣れなかったら補正加算,釣れるまで蓄積していく
+ELSE
+	釣れない補正 += 10
+	釣れたもの = 0
+ENDIF
+ENDNOSKIP ;addition custom code
+
+;基本の経験
+EXP:MASTER:釣り経験 ++
+
+SIF ITEM:107 && !RAND:2
+	EXP:MASTER:釣り経験 ++
+
+SIF CHARA
+	EXP:CHARA:釣り経験 ++
+;釣った人の追加経験
+IF 釣れたもの
+	IF 相方が釣った
+		EXP:CHARA:釣り経験 ++
+	ELSE
+		EXP:MASTER:釣り経験 ++
+	ENDIF
+ENDIF
+;デート経験
+IF CHK_DATENOW(CFLAG:CHARA:デート中) && CHARA > 0
+	EXP:MASTER:デート経験 ++
+	EXP:CHARA:デート経験 ++
+ENDIF
+
+;あなたが釣ったら体力減少
+SIF 釣れたもの && !相方が釣った
+	DOWNBASE:MASTER:体力 = 50
+DOWNBASE:MASTER:気力 = 100
+
+;参加者のソース,適当に設定してます,同一コマンド制限を受けないので控えめに,ただし釣れないと毎回半減
+IF CHARA > 0
+	;固定で獲得するソース
+	SOURCE:CHARA:歓楽 = 400
+	SOURCE:CHARA:情愛 = 50
+	
+	;ABL:従順をみる
+	IF ABL:従順 <= 1
+		SOURCE:CHARA:歓楽 += (ABL:従順 * 40)
+		SOURCE:CHARA:情愛 += (ABL:親密 * 20)
+	ELSEIF ABL:従順 <= 3
+		SOURCE:CHARA:歓楽 += 200 + (ABL:従順 * 40)
+		SOURCE:CHARA:情愛 += 50 + (ABL:親密 * 30)
+	ELSEIF ABL:従順 <= 5
+		SOURCE:CHARA:歓楽 += 500 + (ABL:従順 * 40)
+		SOURCE:CHARA:情愛 += 200 + (ABL:親密 * 30)
+	ELSEIF ABL:従順 <= 8
+		SOURCE:CHARA:歓楽 += 750 + (ABL:従順 * 60)
+		SOURCE:CHARA:情愛 += 300 + (ABL:親密 * 40)
+	ELSEIF ABL:従順 <= 11
+		SOURCE:CHARA:歓楽 += 1000 + (ABL:従順 * 60)
+		SOURCE:CHARA:情愛 += 600 + (ABL:親密 * 40)
+	ELSE
+		SOURCE:CHARA:歓楽 += 1600 + (ABL:従順 * 30)
+		SOURCE:CHARA:情愛 += 1000 + (ABL:親密 * 20)
+	ENDIF
+	SIF CHARA != FLAG:デート相手 
+		SOURCE:CHARA:情愛 = 0
+	
+	;好感度はみない
+	
+	
+	SOURCE:CHARA:受動 = 200 + 100 * ABL:従順
+	SOURCE:CHARA:征服 = 200 + 100 * ABL:サドっ気
+	
+	;釣果をみる
+	SELECTCASE 釣れたもの
+	;釣れない
+	CASE 0
+		TIMES SOURCE:CHARA:歓楽 , 0.50
+		TIMES SOURCE:CHARA:受動 , 0.50
+		TIMES SOURCE:CHARA:征服 , 0.50
+	;木材, 守矢の守札
+	CASE 610, 131
+		TIMES SOURCE:CHARA:歓楽 , 0.10
+		TIMES SOURCE:CHARA:受動 , 0.50
+		TIMES SOURCE:CHARA:征服 , 0.50
+		SOURCE:CHARA:達成 = 20
+	;ウグイ, アマゴ, ヤマメちゃん, イワナ, コイなど
+	CASE 1 TO 10, 22
+		TIMES SOURCE:CHARA:歓楽 , 1.00
+		TIMES SOURCE:CHARA:受動 , 1.00
+		TIMES SOURCE:CHARA:征服 , 1.00
+		SOURCE:CHARA:達成 = 100
+	CASE 497 ;addition custom code, hina doll
+		IF CHARA == [[雛]]
+			TIMES SOURCE:CHARA:歓楽 , 2.00
+			TIMES SOURCE:CHARA:受動 , 2.00
+			TIMES SOURCE:CHARA:征服 , 2.00
+		ELSE
+			TIMES SOURCE:CHARA:歓楽 , 0.50
+			TIMES SOURCE:CHARA:受動 , 0.50
+			TIMES SOURCE:CHARA:征服 , 0.50
+		ENDIF
+	;カエル
+	CASE 706
+		IF CHARA == [[チルノ]]
+			TIMES SOURCE:CHARA:歓楽 , 2.00
+			TIMES SOURCE:CHARA:受動 , 2.00
+			TIMES SOURCE:CHARA:征服 , 2.00
+		ELSEIF CHARA == [[諏訪子]]
+			TIMES SOURCE:CHARA:歓楽 , 0.50
+			TIMES SOURCE:CHARA:受動 , 0.50
+			TIMES SOURCE:CHARA:征服 , 0.50
+		ELSE
+			TIMES SOURCE:CHARA:歓楽 , 1.25
+			TIMES SOURCE:CHARA:受動 , 1.00
+			TIMES SOURCE:CHARA:征服 , 1.00
+		ENDIF
+		SOURCE:CHARA:達成 = 150
+	;サケ, ワカサギ, ニジマス, カムルチーなど
+	CASE 11 TO 13, 15 TO 20, 24 TO 30, 32
+		TIMES SOURCE:CHARA:歓楽 , 1.50
+		TIMES SOURCE:CHARA:受動 , 1.50
+		TIMES SOURCE:CHARA:征服 , 1.50
+		SOURCE:CHARA:達成 = 200
+	;ヤツメウナギ
+	CASE 14
+		;みすちー
+		IF CHARA == 28
+			TIMES SOURCE:CHARA:歓楽 , 2.00
+			TIMES SOURCE:CHARA:受動 , 2.00
+			TIMES SOURCE:CHARA:征服 , 2.00
+		ELSE
+			TIMES SOURCE:CHARA:歓楽 , 1.50
+			TIMES SOURCE:CHARA:受動 , 1.50
+			TIMES SOURCE:CHARA:征服 , 1.50
+		ENDIF
+		SOURCE:CHARA:達成 = 250
+	;ローター
+	CASE 21
+		SOURCE:CHARA:欲情 = 200
+	;シーラカンス，タキタロウ，氷の鱗, 龍の爪，龍涎香
+	CASE 23, 31, 609, 606, 643
+		TIMES SOURCE:CHARA:歓楽 , 2.00
+		TIMES SOURCE:CHARA:受動 , 2.00
+		TIMES SOURCE:CHARA:征服 , 2.00
+		SOURCE:CHARA:達成 = 300
+	ENDSELECT
+ENDIF
+
+;時間経過
+TIME += 20
+
+;フラグ引き渡し
+TFLAG:SELECTCOMの分岐 = 釣れたもの
+TFLAG:SOURCEなどに影響しないSELECTCOMの分岐 = CHARA + (相方が釣った * 1000)
+
+RETURN 1
+
+;-------------------------------------------------
+;実行可能判定
+;-------------------------------------------------
+;釣りをする
+@COM_ABLE621
+;一括管理
+SIF GLOBAL_COMABLE(621)
+	RETURN RESULT
+;釣り竿がない
+SIF !ITEM:釣り竿
+	RETURN 0
+;釣り場でない（拠点でも可に）
+SIF !FISHING_SPOT(CFLAG:MASTER:現在位置)
+	RETURN 0
+;デート中はデート相手とだけ
+SIF FLAG:デート相手 && TARGET != FLAG:デート相手
+	RETURN 0
+;添い寝中
+SIF CFLAG:MASTER:添い寝中
+	RETURN 0
+;うふふ中
+SIF CFLAG:MASTER:うふふ
+	RETURN 0
+;睡眠中
+SIF CFLAG:MASTER:睡眠
+	RETURN 0
+;時間停止中
+SIF FLAG:70
+	RETURN 0
+;bug fix, disallow during sex which happened according to the report (how the f)
+SIF CFLAG:うふふ
+	RETURN 0
+RETURN 1
+
+;FileName_DATE_CMN.ERB ------------------------------- Rev1.00
+;釣りができる場所
+;CALL		USER
+;ARG		現在位置
+;RETURN		釣れる場所の指定
+;COMMENT	場所を追加した場合、CASEを変更の事
+;-----------------------------------------------------------
+@FISHING_SPOT(ARG)
+#FUNCTION
+IF !IN_HOME(ARG)
+	SELECTCASE ARG
+		CASE 霧の湖
+			RETURNF 1
+		CASE 三途の川
+			RETURNF 2
+		CASE 玄武の沢
+			RETURNF 3
+		CASE 大蝦蟇の池
+			RETURNF 4
+		CASE 九天の滝
+			RETURNF 5
+		CASE 山の湖
+			RETURNF 6
+		CASE 地獄の深道
+			RETURNF 7
+	ENDSELECT
+ELSE
+	SELECTCASE ARG
+		CASE 347;霧の湖
+			RETURNF 1
+		CASE 602;賽の河原
+			RETURNF 2
+		CASE 703;玄武の沢
+			RETURNF 3
+		CASE 708;大蝦蟇の池
+			RETURNF 4
+		CASE 806;滝の裏
+			RETURNF 5
+		CASE 814;湖畔（山の湖）
+			RETURNF 6
+		CASE 945;川岸
+			RETURNF 7
+		CASE 1068;純狐邸中庭
+			RETURNF 8
+	ENDSELECT
+ENDIF
+RETURNF 0
+
+;-------------------------------------------------
+;釣れたもの判定の拡張　場所、季節、時刻に応じて可変
+;ARG　…ランクに対応
+;-------------------------------------------------
+@FISHING_CATCH(ARG)
+#FUNCTION
+
+SELECTCASE ARG
+	CASE 20
+		SELECTCASE FISHING_SPOT(CFLAG:MASTER:現在位置)
+			CASE 1, 4 ;アブラハヤ
+				RETURNF 5
+			CASE 2, 7, 8 ;オイカワ
+				RETURNF 6
+			CASE 3, 5, 6 ;ウグイ
+				RETURNF 1
+		ENDSELECT
+	CASE 30
+		SELECTCASE FISHING_SPOT(CFLAG:MASTER:現在位置)
+			CASE 1, 2, 6 ;フナ
+				RETURNF 7
+			CASE 3, 5 ;アマゴ
+				RETURNF 2
+			CASE 4 ;カエル
+				RETURNF 706
+			CASE 7, 8 ;ピラニア
+				RETURNF 8
+		ENDSELECT
+	CASE 40
+		SELECTCASE FISHING_SPOT(CFLAG:MASTER:現在位置)
+			CASE 1, 2, 6 ;カジカ
+				RETURNF 16
+			CASE 3, 5 ;ヤマメちゃん
+				RETURNF 3
+			CASE 4, 8 ;カエル
+				RETURNF 706
+			CASE 7 ;ガーパイク
+				RETURNF 9
+		ENDSELECT
+	CASE 50
+		SELECTCASE FISHING_SPOT(CFLAG:MASTER:現在位置)
+			CASE 1, 6 ;ブルーギル
+				RETURNF 10
+			CASE 2, 7, 8 ;アユ（春夏）orオイカワ（秋冬）
+				IF DAY:2 < 3
+					RETURNF 17
+				ELSE
+					RETURNF 6
+				ENDIF
+			CASE 3, 5 ;イワナ
+				RETURNF 4
+			CASE 4 ;カエル
+				RETURNF 706
+		ENDSELECT
+	CASE 70
+		SELECTCASE FISHING_SPOT(CFLAG:MASTER:現在位置)
+			CASE 1, 4, 6 ;ナマズorワカサギ（冬）
+				IF DAY:2 == 4
+					RETURNF 12
+				ELSE
+					RETURNF 18
+				ENDIF
+			CASE 2, 7, 8 ;ウナギ
+				RETURNF 19
+			CASE 3, 5 ;ニジマスorサケ（秋）orワカサギ（冬）
+				IF DAY:2 == 3
+					RETURNF 11
+				ELSEIF DAY:2 == 4
+					RETURNF 12
+				ELSE
+					RETURNF 13
+				ENDIF
+		ENDSELECT
+	CASE 80
+		SELECTCASE FISHING_SPOT(CFLAG:MASTER:現在位置)
+			CASE 1;ヒメマス
+				RETURNF 20
+			CASE 2, 4, 6, 8 ;コイ
+				RETURNF 22
+			CASE 3, 5 ;ヤツメウナギ
+				RETURNF 14
+			CASE 7 ;チョウザメ
+				RETURNF 24
+		ENDSELECT
+	CASE 90
+		SELECTCASE FISHING_SPOT(CFLAG:MASTER:現在位置)
+			CASE 1;クニマス
+				RETURNF 25
+			CASE 2 ;ソウギョ
+				RETURNF 26
+			CASE 3 ;カムルチー
+				RETURNF 15
+			CASE 4 ;ヘラブナ
+				RETURNF 27
+			CASE 5 ;イトウ
+				RETURNF 28
+			CASE 6 ;オオクチバス
+				RETURNF 29
+			CASE 7 ;ピラルクー
+				RETURNF 30
+			CASE 8 ;アオウオ
+				RETURNF 32
+		ENDSELECT
+	CASE 95
+		SELECTCASE  FISHING_SPOT(CFLAG:MASTER:現在位置)
+			CASE 1 ;タキタロウ（新月の日）orローター
+				IF MOON_WATCH(DAY:3) == 1
+					RETURNF 31
+				ELSE
+					RETURNF 21
+				ENDIF
+			CASE 2 ;シーラカンス
+				RETURNF 23
+			CASEELSE
+				;ローター
+				RETURNF 21
+		ENDSELECT
+	CASE 100
+		SELECTCASE FISHING_SPOT(CFLAG:MASTER:現在位置)
+			CASE 1, 6, 8 ;龍涎香or氷の鱗（冬）
+				IF DAY:2 == 4
+					RETURNF 609
+				ELSE
+					RETURNF 643
+				ENDIF
+			CASE 2, 3, 5, 7 ;龍の爪or氷の鱗（冬）
+				IF DAY:2 == 4
+					RETURNF 609
+				ELSE
+					RETURNF 606
+				ENDIF
+			CASE 4 ;カエル
+				RETURNF 706
+		ENDSELECT
+ENDSELECT
+RETURNF 0
+
+;-----------------------------------------------------------
+;釣った魚のナンバーを名称に変換
+;コレクションリストにも利用するため、ローターは除外しておく
+;ARG　…釣れたものナンバーに対応
+;-----------------------------------------------------------
+@FISH_NAME(ARG)
+#FUNCTIONS
+
+SELECTCASE ARG
+	CASE 1
+		RETURNF "ウグイ"
+	CASE 2
+		RETURNF "アマゴ"
+	CASE 3
+		RETURNF "ヤマメ"
+	CASE 4
+		RETURNF "イワナ"
+	CASE 5
+		RETURNF "アブラハヤ"
+	CASE 6
+		RETURNF "オイカワ"
+	CASE 7
+		RETURNF "フナ"
+	CASE 8
+		RETURNF "ピラニア"
+	CASE 9
+		RETURNF "ガーパイク"
+	CASE 10
+		RETURNF "ブルーギル"
+	CASE 11
+		RETURNF "サケ"
+	CASE 12
+		RETURNF "ワカサギ"
+	CASE 13
+		RETURNF "ニジマス"
+	CASE 14
+		RETURNF "ヤツメウナギ"
+	CASE 15
+		RETURNF "カムルチー"
+	CASE 16
+		RETURNF "カジカ"
+	CASE 17
+		RETURNF "アユ"
+	CASE 18
+		RETURNF "ナマズ"
+	CASE 19
+		RETURNF "ウナギ"
+	CASE 20
+		RETURNF "ヒメマス"
+	CASE 22
+		RETURNF "コイ"
+	CASE 23
+		RETURNF "シーラカンス"
+	CASE 24
+		RETURNF "チョウザメ"
+	CASE 25
+		RETURNF "クニマス"
+	CASE 26
+		RETURNF "ソウギョ"
+	CASE 27
+		RETURNF "ヘラブナ"
+	CASE 28
+		RETURNF "イトウ"
+	CASE 29
+		RETURNF "オオクチバス"
+	CASE 30
+		RETURNF "ピラルクー"
+	CASE 31
+		RETURNF "タキタロウ"
+	CASE 32
+		RETURNF "アオウオ"
+	CASEELSE
+		RETURNF ""
+ENDSELECT
+
+;-------------------------------------------------
+;釣れた魚のサイズを一般的サイズ内でランダムに出力する変数
+;ARG　…釣れたものナンバーに対応
+;-------------------------------------------------
+@FISHING_SIZE(ARG)
+#FUNCTION
+
+LOCAL = 0
+SELECTCASE ARG
+	CASE 1 ;ウグイ
+		LOCAL = MAX(RAND:(56), 25)
+	CASE 2 ;アマゴ
+		LOCAL = MAX(RAND:(40), 18)
+	CASE 3 ;ヤマメちゃん
+		LOCAL = MAX(RAND:(50), 25)
+	CASE 4 ;イワナ
+		LOCAL = MAX(RAND:(70), 20)
+	CASE 5 ;アブラハヤ
+		LOCAL = MAX(RAND:(18), 10)
+	CASE 6 ;オイカワ
+		LOCAL = MAX(RAND:(18), 10)
+	CASE 7 ;フナ
+		LOCAL = MAX(RAND:(36), 15)
+	CASE 8 ;ピラニア
+		LOCAL = MAX(RAND:(61), 15)
+	CASE 9 ;ガーパイク
+		LOCAL = MAX(RAND:(300), 120)
+	CASE 10 ;ブルーギル
+		LOCAL = MAX(RAND:(28), 12)
+	CASE 11 ;サケ
+		LOCAL = MAX(RAND:(100), 65)
+	CASE 12 ;ワカサギ
+		LOCAL = MAX(RAND:(18), 8)
+	CASE 13 ;ニジマス
+		LOCAL = MAX(RAND:(105), 35)
+	CASE 14 ;ヤツメウナギ
+		LOCAL = MAX(RAND:(65), 45)
+	CASE 15 ;カムルチー
+		LOCAL = MAX(RAND:(115), 80)
+	CASE 16 ;カジカ
+		LOCAL = MAX(RAND:(18), 10)
+	CASE 17 ;アユ
+		LOCAL = MAX(RAND:(35), 25)
+	CASE 18 ;ナマズ
+		LOCAL = MAX(RAND:(80), 50)
+	CASE 19 ;ウナギ
+		LOCAL = MAX(RAND:(120), 85)
+	CASE 20 ;ヒメマス
+		LOCAL = MAX(RAND:(55), 20)
+	CASE 21 ;ローター
+		LOCAL = 5
+	CASE 22 ;コイ
+		LOCAL = MAX(RAND:(115), 55)
+	CASE 23 ;シーラカンス
+		LOCAL = MAX(RAND:(200), 100)
+	CASE 24 ;チョウザメ
+		LOCAL = MAX(RAND:(301), 100)
+	CASE 25 ;クニマス
+		LOCAL = MAX(RAND:(45), 30)
+	CASE 26 ;ソウギョ
+		LOCAL = MAX(RAND:(140), 70)
+	CASE 27 ;ヘラブナ
+		LOCAL = MAX(RAND:(62), 25)
+	CASE 28 ;イトウ
+		LOCAL = MAX(RAND:(220), 90)
+	CASE 29 ;オオクチバス
+		LOCAL = MAX(RAND:(55), 25)
+	CASE 30 ;ピラルクー
+		LOCAL = MAX(RAND:(400), 250)
+	CASE 31; タキタロウ
+		LOCAL = MAX(RAND:(550), 300)
+	CASE 32; アオウオ
+		LOCAL =  MAX(RAND:(220), 120)
+ENDSELECT
+RETURNF LOCAL
+
+;-------------------------------------------------
+;釣果の説明、消去行数の関係で５行に統一
+;ARG　…釣れたものナンバーに対応
+;-------------------------------------------------
+@FISHING_EXPLANATION(ARG)
+IF INRANGE(ARG, 11, 20) || INRANGE(ARG, 24, 60)
+	CALL COLOR_PRINT("　　☆Finest Fish☆", "C_YELLOW")
+ELSE
+	PRINTFORM 　　◇Ordinary Fish◇
+ENDIF
+PRINTL 
+SELECTCASE ARG
+	CASE 1 ;ウグイ
+		PRINTFORML 　　30cm～50cm long. Omnivorous. Dark brown, but turns the traditional marriage colors of black and red in spring.
+		PRINTFORML 　　Matures in 2～4 years, and lives in groups. This fish has many small bones, and a noticeable fishy smell.
+		PRINTFORML 　　Lives in rivers, upstream and downstream, and mountain lakes. Resistant to water pollution and acidity.
+		PRINTFORML 
+		PRINTFORML 
+	CASE 2 ;アマゴ
+		PRINTFORML 　　20cm～30cm long. Feeds on small fish and insects. Similar in appearance to the masu salmon, but can be distinguished by its red spots.
+		PRINTFORML 　　A landlocked variety of the red-spotted masu trout, it lives and dies in the river. It prefers cold waters and can be found year-round.
+		PRINTFORML 　　As it can be easily fished during the rainy season up to early summer, its name is sometimes written with the kanji for "rain".
+		PRINTFORML 　　The name can also be written with the kanji for "sweet", and it is indeed quite delicious.
+		PRINTFORML 
+	CASE 3 ;ヤマメちゃん
+		PRINTFORML 　　Roughly 40cm long. Feeds on worms and insects. Yellow-brown tinged with green, and young specimens are speckled with oval patterns.
+		PRINTFORML 　　A landlocked variety, it spends its whole life in the river, preferring cold upstream waters.
+		PRINTFORML 　　Lifespan of 3～4 years. Similar in lifestyle to the whitespotted char, but tends to isolate from them further downstream.
+		PRINTFORML 　　It is notoriously difficult to fish due to its cautious nature, and is thus sometimes dubbed the "Queen of the Mountain Stream".
+		PRINTFORML 
+	CASE 4 ;イワナ
+		PRINTFORML 　　20～60cm long. Prefers a carnivorous diet, but sometimes feeds on insects. Depending on the region, it can range from dark green to gray.
+		PRINTFORML 　　Similar in lifestyle to the masu salmon, but tends to isolate from them, living in far upstream river waters.
+		PRINTFORML 　　It appears to have once lived in the sea alongside other varieties of salmon, but became a landlocked variety after the Ice Age
+		PRINTFORML 　　due to the main species' preference for colder waters. As it separated into various regional rivers, subspecies began to emerge.
+		PRINTFORML 
+	CASE 5 ;アブラハヤ
+		PRINTFORML 　　Roughly 15cm long. Omnivorous. Golden colored with small scales. Its name contains the kanji for「oil」due to its thick slime.
+		PRINTFORML 　　Lives in rivers, midstream to upstream, and inland mountainous lakes. Prefers cold waters. Reproduces in groups.
+		PRINTFORML 　　Fairly bitter, but can be eaten marinated or in tempura.
+		PRINTFORML 
+		PRINTFORML 
+	CASE 6 ;オイカワ
+		PRINTFORML 　　Roughly 15cm in length. Gray in color, but during the mating season, the male becomes a vivid bluish-green and pink.
+		PRINTFORML 　　Lives in rivers, downstream to midstream, as well as inland lakes. Resistant to water pollution and environmental changes.
+		PRINTFORML 　　Omnivorous with a preference for plants. Eaten in tempura, or boiled and then simmered in a sweet sauce (kanroni).
+		PRINTFORML 
+		PRINTFORML 
+	CASE 7 ;フナ
+		PRINTFORML 　　The golden variety is roughly 15cm long, whereas the silver variety is roughly 30 cm long.
+		PRINTFORML 　　Omnivorous, it lives in downstream rivers and inland lakes, and is a relative of the common carp.
+		PRINTFORML 　　Sometimes called "mabuna" to distinguish from other varieties such as the white "herabuna".
+		PRINTFORML 　　Due to difficulty in categorizing varieties, there is still no established theory for classification.
+		PRINTFORML 
+	CASE 8 ;ピラニア
+		PRINTFORML 　　Can grow anywhere between 15cm～60cm long, and lives in tropical regions such as the Amazon rainforest.
+		PRINTFORML 　　Literally meaning "fish with teeth", the piranha is a carnivorous fish possessing razor-sharp teeth.
+		PRINTFORML 　　Despite an exaggerated reputation as a "man-eating fish", it is timid. It lives in swarms, which become aggressive as a whole when agitated.
+		PRINTFORML 　　The meat is delicious and protein-rich. Might it have adapted to warm rivers heated by geothermal energy?
+		PRINTFORML 
+	CASE 9 ;ガーパイク
+		PRINTFORML 　　A large fish that can grow up to 3m in length, possessing a long, skinny body and jaw.
+		PRINTFORML 　　With hard ganoid scales, the garpike has a primitive lifestyle even among fish. Originates in North America.
+		PRINTFORML 　　It is said to have recently taken root in Japan due to warm drainage into a certain river.
+		PRINTFORML 　　It appears to have adapted to river waters heated by geothermal energy... but who exactly brought it here?
+		PRINTFORML 
+	CASE 10 ;ブルーギル
+		PRINTFORML 　　Roughly 25cm long. Originates in North America. Lives in inland lakes and slow-flowing rivers.
+		PRINTFORML 　　A member of the so-called "pan-fish" which are easy to fry in a pan, it is round and flat.
+		PRINTFORML 　　Notorious for eating anything it finds, it can negatively impact native aquatic life when introduced, so it is a target for extermination.
+		PRINTFORML 　　Gensokyo's ecology would likely suffer if it were allowed to spread.
+		PRINTFORML 
+	CASE 11 ;サケ
+		PRINTFORML 　　Grows up to 70cm long. Spawning in rivers and moving to the ocean after 3～4 months, it has an extraordinarily long-distance migration.
+		PRINTFORML 　　After spending 4～6 years in the ocean, it returns upstream in the fall to its birthplace, reproduces in the riverbed, and dies.
+		PRINTFORML 　　Specimens which have developed roe and are moving upstream are notably less fatty than specimens caught at sea.
+		PRINTFORML 　　No one knows where specimens reach maturity in Gensokyo, which has no oceans.
+		PRINTFORML 
+	CASE 12 ;ワカサギ
+		PRINTFORML 　　Roughly 15cm long. Lives in inland lakes or rivers that drain into them. Some can end up in the ocean.
+		PRINTFORML 　　Though it is considered a winter fish since it reproduces in winter, it can actually be fished year-round.
+		PRINTFORML 　　It prefers cold waters, but is surprisingly resistant to heat and water pollution. It has high fertility and lays many eggs.
+		PRINTFORML 　　As an edible fish, it was first relocated to Lake Suwa, and then to other lakes since.
+		PRINTFORML 
+	CASE 13 ;ニジマス
+		PRINTFORML 　　Usually about 40cm long, but specimens living in lakes can grow from 80cm to almost 1m in length.
+		PRINTFORML 　　It can survive for multiple reproductive cycles over several years. The male becomes rainbow-colored during the mating season.
+		PRINTFORML 　　Said to contain no parasites, it is a rare freshwater fish that can be served as sashimi.
+		PRINTFORML 　　It was introduced to Japan during the Meiji era. Given this was after the Great Barrier isolated Gensokyo, no one knows how it came here.
+		PRINTFORML 
+	CASE 14 ;ヤツメウナギ
+		PRINTFORML 　　50cm～60cm long. An extremely primitive jawless fish, it is a real "living fossil".
+		PRINTFORML 　　It has 7 visible eye-like holes for gills on the side of its body, so its name is written with the kanji for "eight-eyes".
+		PRINTFORML 　　It prefers pure, cold waters, and comes in both sea and landlocked varieties. Furthermore, it is a completely different species from eels.
+		PRINTFORML 　　It has a hard texture, but is very rich in nutrients, especially Vitamin A1. Therefore, it is highly effective against night blindness.
+		PRINTFORML 
+	CASE 15 ;カムルチー
+		PRINTFORML 　　Also called the "lightning fish", it grows up to 1m in length. It prefers slow-moving river habitats rich in aquatic plant life.
+		PRINTFORML 　　Though it primarily feeds on other fish, it is known to eat turtles and baby birds as well. It hides on the riverbed and ambushes its prey.
+		PRINTFORML 　　Having a light flavor, it is eaten in fried foods and stews. Sometimes called the "Taiwan loach", it is a Eurasian invasive species.
+		PRINTFORML 　　No one knows who brought this species here from "the other side".
+		PRINTFORML 
+	CASE 16 ;カジカ
+		PRINTFORML 　　Growing up to 15cm long, it is a freshwater fish, and a relative to the scorpionfish. It can be dark to light brown.
+		PRINTFORML 　　It often lives in the shallows or rocky bottoms of clear rivers, and preys on aquatic insects or small fish.
+		PRINTFORML 　　Despite its unpleasant appearance, it is delicious and can form excellent soup stock. It can be eaten fried, stewed, and in kanroni.
+		PRINTFORML 
+		PRINTFORML 
+	CASE 17 ;アユ
+		PRINTFORML 　　Roughly 30cm long. Adult sweetfish feed on algae stuck to rocks. Its lifespan is just one year.
+		PRINTFORML 　　Adults are territorial and will chase off other sweetfish. Because of this, it can be fished with sweetfish bait in "decoy fishing".
+		PRINTFORML 　　Though it normally migrates between the river and ocean, it can also perform this cycle entirely within the Lake Biwa region.
+		PRINTFORML 　　As Gensokyo has no oceans, it may perform a similar migration in lakes here.
+		PRINTFORML 
+	CASE 18 ;ナマズ
+		PRINTFORML 　　Roughly 60cm long. Lives in rivers, mid to downstream, lakes, and man-made canals. Nocturnal and carnivorous, it navigates with its whiskers.
+		PRINTFORML 　　An ancient catfish fishing technique known as "pokan fishing" involves tapping the water surface with a frog.
+		PRINTFORML 　　Though legends say agitated catfish are an omen for earthquakes, there is no scientific evidence for this.
+		PRINTFORML 　　There is a famous legend that a huge underground catfish can cause earthquakes when agitated...hmm? You saw it in a dream?
+		PRINTFORML 
+	CASE 19 ;ウナギ
+		PRINTFORML 　　Grows up to 1m long. Lives in rivers, mid to downstream, and inland lakes. It is covered in a slippery slime.
+		PRINTFORML 　　It is a nocturnal, carnivorous freshwater fish. However, it migrates downstream to the ocean to breed.
+		PRINTFORML 　　It hatches in the deep ocean, moving to the coast and then upstream to rivers once it matures. It has a lifespan of 5～10 years.
+		PRINTFORML 　　Could the sudden decrease in population in the outside world be related to its introduction to Gensokyo?
+		PRINTFORML 　　
+	CASE 20 ;ヒメマス
+		PRINTFORML 　　20cm～50cm long. Living in North America, it is a landlocked variety of the sockeye salmon. It spends its whole life in the river.
+		PRINTFORML 　　Though it prefers cold waters, it can live in warmer climates around cold deepwater springs, so it has been relocated to various lakes.
+		PRINTFORML 　　Gray in color, it feeds on shellfish and plankton, and competes with wakasagi for food.
+		PRINTFORML 　　Though it is extremely delicious even among salmon varieties, it is very quick to lose its flavor.
+		PRINTFORML 
+	;CASE 21 ;ローター
+
+	CASE 22 ;コイ
+		PRINTFORML 　　60cm～1m long. Lives in a wide variety of habitats such as large rivers, down to midstream, inland lakes, and man-made canals.
+		PRINTFORML 　　Resistant to cold water temperatures and water pollution, it has a long lifespan, with some recorded up to 70～80 years.
+		PRINTFORML 　　The carp is omnivorous and will eat just about anything it finds on the river bottom.
+		PRINTFORML 　　The common vertically tall variety is said to have been brought over from China in ancient times.
+		PRINTFORML 　　The slimmer variety found in lakes like Lake Biwa, commonly referred to as the wild carp, is believed to be native to Japan.
+	CASE 23 ;シーラカンス
+		PRINTFORML 　　Grows over 1m in length. An ancient fish once found all over the world, the coelacanth has multiple fleshy fins.
+		PRINTFORML 　　It is said that all present land-based vertebrates evolved from the coelacanth. Found in deep waters, this fish is truly a living fossil.
+		PRINTFORML 　　Sadly, this fish is not very palatable. With a bland crab-like flavor, some liken it to the taste of a used toothbrush.
+		PRINTFORML 　　This particular freshwater specimen is believed to be extinct in the outside world. Is it some kind of ghost...?
+		PRINTFORML 
+	CASE 24 ;チョウザメ
+		PRINTFORML 　　1m～4m in length. Similar in appearance to sharks, but it is a separate, ancient species.
+		PRINTFORML 　　As caviar is made by pickling its eggs in salt, the sturgeon suffers globally from excessive overfishing.
+		PRINTFORML 　　Though it once lived in Japan, it went extinct at the turn of the 20th century.
+		PRINTFORML 　　Today, it is sometimes imported to Japan and farmed in captivity, using heat from hot springs.
+		PRINTFORML 
+	CASE 25 ;クニマス
+		PRINTFORML 　　30cm～40cm long. The color ranges from gray to black. Some say it is a subspecies of the himemasu, but it may be a separate variety entirely.
+		PRINTFORML 　　Lives in deep lakes, and comes up to a depth of 30～40m to lay eggs.
+		PRINTFORML 　　Though it was once native to Lake Tazawa in the Akita Prefecture, it has since gone extinct due to acidic river drainage.
+		PRINTFORML 　　However, eggs were introduced to Saiko Lake at the start of the Showa era, and after 70 years, have returned from the brink of extinction.
+		PRINTFORML 　　Said to be delicious prepared in any way, it was once served as a local delicacy.
+	CASE 26 ;ソウギョ
+		PRINTFORML 　　Roughtly 1.2m long. Resistant to heat and oxygen deficiency. Feeds on aquatic and coastal plants, and is a relative of the common carp.
+		PRINTFORML 　　Originating in large rivers in China, it is notable for laying eggs upstream which hatch while drifting along the river.
+		PRINTFORML 　　As the eggs will die if they reach the ocean, they must be laid in large, slow-flowing rivers to have a chance at survival.
+		PRINTFORML 　　One of the four primary domesticated fish species in China, this popular fish can be served in a wide variety of dishes.
+		PRINTFORML 
+	CASE 27 ;ヘラブナ
+		PRINTFORML 　　30cm～60cm long, and is said to live up to several decades.
+		PRINTFORML 　　Bred as a variety of the Japanese crucian carp found in Lake Biwa, it has a diamond shape when viewed from the side.
+		PRINTFORML 　　There is a saying that "fishing begins and ends with the crucian carp". This difficult-to-fish variety is said to be the "end".
+		PRINTFORML 　　In addition to changing its behavior and swimming depth based on the season, water temperature, and weather,
+		PRINTFORML 　　it feeds and bites dissolving bits of bait with just light sucking, so fishing one requires highly sensitive equipment.
+	CASE 28 ;イトウ
+		PRINTFORML 　　Japan's largest freshwater fish, it usually grows 1m～1.5m long, and occasionally over 2m. Lives in cold, slow-flowing rivers, mid to downstream.
+		PRINTFORML 　　Dark brown with blue tinges on its back. Though it could once be found in the northern Honshuu region, today it is exclusive to Hokkaido.
+		PRINTFORML 　　Though the Japanese variety migrates to the sea like salmon, Gensokyo's variety is landlocked like foreign varieties.
+		PRINTFORML 　　Its white flesh is fatty and delicious, but it takes a long time to reach maturity.
+		PRINTFORML 
+	CASE 29 ;オオクチバス
+		PRINTFORML 　　30cm～50cm long. A carnivorous fish native to North America, it lives in inland lakes and rivers, mid to downstream.
+		PRINTFORML 　　It has a diverse diet, including fish up to half its size, small birds, frogs, and even rats.
+		PRINTFORML 　　Though prized as a sports fishing trophy, it can have a significantly negative impact to the native ecology when imported.
+		PRINTFORML 　　It has a light, mild flavor, and is delicious when fried or prepared meunière.
+		PRINTFORML 
+	CASE 30 ;ピラルクー
+		PRINTFORML 　　Grows over 3m in length. A carnivorous fish native to South America, having a log-like body and flat head and tail.
+		PRINTFORML 　　It is one of the largest freshwater fishes, and like the garpike, have changed very little since ancient times.
+		PRINTFORML 　　Though it ranges from black to gold, its name literally translates to "red fish", as its rear section turns red in adulthood.
+		PRINTFORML 　　The fish has many applications, from its edible meat, to its bony tongue used as a grater, to its scales used as files or shoehorns.
+		PRINTFORML 
+	CASE 31; タキタロウ
+		PRINTFORML 　　Grows over 3m in length. Has a body like a large trout, a cleft lip like a rabbit, and a lower jaw that juts out.
+		PRINTFORML 　　Though it is believed to live in cold, deep lakes, in reality its nature and behavior are not well understood.
+		PRINTFORML 　　Its fatty red flesh is difficult to cook but is extremely delicious.
+		PRINTFORML 　　It may be a large variety of salmon, sakhalin taimen, whitespotted char, or a completely different species altogether.
+		PRINTFORML 　　Its true nature is still hiding somewhere in the deep, cold waters.
+	CASE 32;アオウオ
+		PRINTFORML 　　Grows up to 2m long. One of the four primary domesticated fish in China, and a relative of the common carp, but slimmer and without whiskers.
+		PRINTFORML 　　Though it has the kanji for "blue" in its name, it is very dark blue in color, almost black, hence the name "black carp".
+		PRINTFORML 　　It is an omnivorous fish that feeds on the river bottom, but prefers shellfish.
+		PRINTFORML 　　It is the largest and rarest of the four primary Chinese fish. It can be eaten steamed, boiled, fried, and more.
+		PRINTFORML 　　Its flesh is rich in flavor, but its small bones can make it difficult to eat.
+ENDSELECT

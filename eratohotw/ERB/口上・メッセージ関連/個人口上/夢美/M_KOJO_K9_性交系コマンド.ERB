@@ -1,0 +1,1607 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;性交系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;60,正常位
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_60
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_60_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_60_1
+
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_K9
+			RETURN 1
+		ELSE
+			IF TALENT:3
+				PRINTFORML 「Doing it while standing like this... I think it's our first time.」
+				PRINTFORML 「I'll probably cling to you a lot while we're connected... I hope that's okay \/\/\/」
+			ELSEIF TALENT:8
+				PRINTFORML 「W-We're going to do it...standing, like this?」
+				PRINTFORML 「C-Can't we do this on the bed――Nn!?\/\/\/」
+			ELSEIF TALENT:愛欲 || TALENT:セフレ
+				PRINTFORML 「Nfu, wanting to do it while standing... Just couldn't wait to get on the bed, huh?」
+				PRINTFORML 「Sure, this seems to be interesting, too %UNICODE(0x2764)%」
+				PRINTFORMDW Yumemi laughs playfully and guides your %FSYN("penis")% into her %FSYN("vagina")%.
+				PRINTFORML 「Let's have some fun %UNICODE(0x2764)%」
+			ELSE
+				PRINTFORML 「W-We're doing it while standing?」
+				PRINTFORML 「I-I'm all for new experiences but that seems a little――Nnah!? %UNICODE(0x2764)%」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;不埒を外して思慕/愛欲セフレ/無印分岐を入れる
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	;ELSEIF MARK:不埒刻印 == 3
+	ELSEIF TALENT:愛欲 || TALENT:セフレ
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;正常位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_K9
+			RETURN 1
+		ELSE
+			;やっぱりベッド/布団の上で、が正常位の王道ぐらいには思ってるんじゃないですかね
+			IF TALENT:3
+				PRINTFORML 「This isn't our first time, but I guess I prefer doing it properly like this...」
+				PRINTFORMDW Yumemi gives you a heartfelt smile and invites you closer.
+				PRINTFORML 「Make sure you give me lots of love %UNICODE(0x2764)%」
+			ELSEIF TALENT:8
+				PRINTFORML 「D-Doing it in this posture is definitely best, yeah!」
+				PRINTFORML 「Even though it's not our first time, doesn't this feel more proper?」
+				PRINTFORML 「So I guess I like doing it the standard way like this...\/\/\/」
+				PRINTFORMDW Yumemi keeps mumbling to herself for a while, but eventually calms down and gives you a slightly uneasy smile.
+				PRINTFORML 「Ok, I'm ready, come closer %CALLNAME:MASTER%.」
+			ELSEIF TALENT:愛欲 || TALENT:セフレ
+				PRINTFORML 「Fufufu, doing it standing is fine and all, but sex on the bed is best, after all.」
+				PRINTFORML 「Let's have a wonderful time together, okay? %UNICODE(0x2764)%」
+				PRINTFORMDW Yumemi makes an obscene smile and spreads her %FSYN("vagina")% open.
+			ELSE
+				PRINTFORML 「I didn't expect to be sleeping with you, but...」
+				PRINTFORML 「Well, while we're at it, let's make each other feel good.」
+				PRINTFORML 「Depending on how it goes, maybe I'll want to do it again in the future.」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;61,後背位
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_61
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_61_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_61_1
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_K9
+			RETURN 1
+		ELSE
+			IF TALENT:3
+				PRINTFORML 「Doing it from behind while standing... How indecent...」
+				PRINTFORML 「You're such a pervert...\/\/\/」
+				PRINTFORMDW With an embarrassed laugh, Yumemi sticks out her ass towards you and looks at you.
+				PRINTFORML 「Here %CALLNAME:MASTER%, enjoy me to your heart's content...\/\/\/」
+			ELSEIF TALENT:8
+				PRINTFORML 「Y-You're kidding, doing it from behind while standing!?」
+				PRINTFORML 「I-It's like we're just a-animals...\/\/\/」
+				PRINTFORML （Why am I getting so excited about this?! \/\/\/）
+				PRINTFORMDW Yumemi frets to herself for a while, but eventually turns to you and gives you a slightly uneasy smile.
+				PRINTFORML 「I guess it's fine... Let's do it.」
+			ELSEIF TALENT:愛欲 || TALENT:セフレ
+				PRINTFORML 「Ara, you want to do it from behind like this? Fufufu, you're quite the pervert...」
+				PRINTFORMDW Yumemi smiles obscenely at you over her shoulder while spreading open her %FSYN("vagina")%.
+				PRINTFORML 「Not that I don't like this position...%UNICODE(0x2764)%」
+				PRINTFORML 「Make my pussy feel amazing, okay? %UNICODE(0x2764)%」
+			ELSE
+				PRINTFORML 「Doing it from behind... Just because it's not our first time...」
+				PRINTFORML 「Asking for this kind of position even though we're just acquaintances...\/\/\/」
+				PRINTFORMDW Yumemi blushes slightly and mumbles something, but reluctantly points her ass towards you.
+				PRINTFORML 「Haa... Fine, here. Just make sure you make feel good, okay?」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;後背位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_K9
+			RETURN 1
+		ELSE
+			IF TALENT:3
+				PRINTFORML 「You want to do it from behind...?」
+				PRINTFORML 「We'd be mating like dogs... You're such a pervert...\/\/\/」
+				PRINTFORMDW With an embarrassed laugh, Yumemi sticks out her ass towards you and looks at you.
+				PRINTFORML 「Here %CALLNAME:MASTER%, enjoy me to your heart's content...\/\/\/」
+			ELSEIF TALENT:8
+				PRINTFORML 「Y-You want to do it from behind?」
+				PRINTFORML 「I-It's like we're just a-animals...\/\/\/」
+				PRINTFORML （Is %HE_SHE(MASTER)% going to inseminate me like that...? \/\/\/）
+				PRINTFORMDW Yumemi blushes furiously and timidly looks over her shoulder at you.
+				PRINTFORML 「D-Don't be too rough, okay?」
+			ELSEIF TALENT:愛欲 || TALENT:セフレ
+				PRINTFORML 「Ara, you want to do it from behind? Fufufu, are you planning on teasing my ass?」
+				PRINTFORMDW Yumemi smiles obscenely at you over her shoulder while spreading open her %FSYN("vagina")%.
+				PRINTFORML 「Fufufu, not that you can't do as you please with my pussy and ass...%UNICODE(0x2764)%」
+				PRINTFORML 「Make me feel good, okay? %UNICODE(0x2764)%」
+			ELSE
+				PRINTFORML 「Doing it from behind... Just because it's not our first time...」
+				PRINTFORML 「Asking for this kind of position even though we're just acquaintances...\/\/\/」
+				PRINTFORMDW Yumemi blushes slightly and mumbles something, but reluctantly points her ass towards you.
+				PRINTFORML 「Haa... Fine, here. Just make sure you make feel good, okay?」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;62,正常位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_62
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_62_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_62_1
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_A_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_A_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_A_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;正常位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_A_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_A_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_A_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;63,後背位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_63
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_63_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_63_1
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_A_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_A_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_A_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;後背位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_A_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_A_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_A_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;====================================================================
+;64,逆レイプする
+;紛らわしいが女あなたが上に乗るのであり、あなたが襲われるわけではない
+;====================================================================
+@M_KOJO_MESSAGE_COM_K9_64
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_64_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_64_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;調教者が処女
+		IF TCVAR:PLAYER:破瓜 == 1
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:PLAYER:100 == TARGET
+		;前回射精した
+		IF TCVAR:PLAYER:102
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;65,騎乗位
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_65
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_65_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_65_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;66,騎乗位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_66
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_66_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_66_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_A_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_A_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_A_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;67,対面座位
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_67
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_67_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_67_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;68,背面座位
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_68
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_68_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_68_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;69,対面座位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_69
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_69_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_69_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_A_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_A_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_A_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;70,背面座位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_70
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_70_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_70_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			CALL M_KOJO_MESSAGE_LOSTVIRGIN_A_K9
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_A_K9
+			RETURN 1
+		ELSE
+			;PRINTFORMW 
+			CALL M_KOJO_MESSAGE_KEEPINSERT_A_K9
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;71,二穴挿し
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_71
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_71_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_71_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;考えうる分岐が多すぎるので地の文の大まかな分岐だけ
+	;連続
+	IF PREVCOM == SELECTCOM
+		PRINTFORMW 
+		RETURN 1
+	;主人V挿入→助手A挿入
+	ELSEIF TCVAR:100 == MASTER
+		PRINTFORMW 
+		RETURN 1
+	;主人A挿入→助手V挿入
+	ELSEIF TCVAR:101 == MASTER
+		PRINTFORMW 
+		RETURN 1
+	;助手V挿入→主人A挿入
+	ELSEIF TCVAR:100 == ASSI
+		PRINTFORMW 
+		RETURN 1
+	;助手A挿入→主人V挿入
+	ELSEIF TCVAR:101 == ASSI
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;72,挿入Ｇスポット責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_72
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_72_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_72_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORML 「... What's wrong? Are we...stopping?」
+		PRINTFORMDW Yumemi questions you as you stop moving.
+		PRINTFORMDW Of course you're not done. You adjust the angle of your hips a little.
+		PRINTFORMDW You then begin thrusting again, this time aiming for her G-spot.
+		PRINTFORML 「Nnn～～～%UNICODE(0x2764)%!? Ah, no, so amazing %UNICODE(0x2764)%!?」
+		PRINTFORMDW Yumemi shudders violently from the unfamiliar pleasure.
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			;恋慕
+			IF TALENT:恋慕
+				PRINTFORML 「Ah, yes, more, fill me %UNICODE(0x2764)%」
+				PRINTFORML 「Make me, your woman, etch it, into my body %UNICODE(0x2764)%」
+				RETURN 1
+			;愛欲Orセフレ
+			ELSEIF TALENT:愛欲 || TALENT:セフレ
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Ahaa %UNICODE(0x2764)% Yes, there, more, fill me %UNICODE(0x2764)%」
+						PRINTFORML 「As if, this is your, exclusive fuckhole %UNICODE(0x2764)%」
+					CASE 1
+						PRINTFORML 「No %UNICODE(0x2764)% You don't have to, mark my pussy, like that...%UNICODE(0x2764)%」
+						PRINTFORML 「My pussy, Haa, isn't g-going anywhere %UNICODE(0x2764)%」
+				ENDSELECT
+				RETURN 1
+			;それ以外
+			ELSE
+				PRINTFORML 「Nnn, even though, Ahii, you just, came %UNICODE(0x2764)%」
+				PRINTFORMDW You thrust your hips as if wanting to permanently mark Yumemi's vaginal walls with your semen.
+				PRINTFORML 「Nnah, wait, Ah, where do you think, you're cumming, Ah...%UNICODE(0x2764)%」
+				RETURN 1
+			ENDIF
+		ELSE
+			IF TALENT:3
+				PRINTFORML 「Nhii, love, I love it %UNICODE(0x2764)% I love it, there %UNICODE(0x2764)%」
+				PRINTFORML 「More, %CALLNAME:MASTER%, do me more %UNICODE(0x2764)%」
+				RETURN 1
+			ELSEIF TALENT:184 || TALENT:185
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Ahaa %UNICODE(0x2764)% Yes, there, rub it more %UNICODE(0x2764)%」
+						PRINTFORML 「It's too good, there %UNICODE(0x2764)% I'm gonna, get addicted %UNICODE(0x2764)%」
+					CASE 1
+						PRINTFORML 「No %UNICODE(0x2764)% Not there %UNICODE(0x2764)% I'll cum, right away %UNICODE(0x2764)%」
+						PRINTFORMDW "Oh, I see". You stop for a moment, and Yumemi's true feelings quickly spill out.
+						PRINTFORML 「No %UNICODE(0x2764)% I lied %UNICODE(0x2764)% Don't stop, let me cum %UNICODE(0x2764)%」
+				ENDSELECT
+				RETURN 1
+			ELSE
+				PRINTFORML 「Ahaah! No, it's too, sensitive there! \/\/\/」
+				PRINTFORML 「Only, doing it there, I'll cum, too shoon, Ah %UNICODE(0x2764)%」
+				RETURN 1
+			ENDIF
+		ENDIF
+	ENDIF
+
+	;子宮口同様に他コマンドからの挿入継続で発生する為一旦コメント
+	;基本セット
+	;恋慕
+	;IF TALENT:恋慕
+	;	PRINTFORMW 
+	;	RETURN 1
+	;屈服3
+	;ELSEIF MARK:不埒刻印 == 3
+	;	PRINTFORMW 
+	;	RETURN 1
+	;それ以外
+	;ELSE
+	;	PRINTFORMW 
+	;	RETURN 1
+	;ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;73,挿入子宮口責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_73
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_73_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_73_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORML 「... What's wrong? Stopping like tha...aaaaaa %UNICODE(0x2764)%」
+		PRINTFORML 「Uwah, it's hitting...even deeper!?」
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;あまりにもピュアに恋慕付けるとちょっと展開が変かも。ちゃんと適度に【are】して進展シような！
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			;子作りOKしているか(CFLAG:14==2),危険日以外OKか(CFLAG:14==1),ピル服用済か(TCVAR:109),それ以外
+			IF CFLAG:14 == 2
+				PRINTFORML 「Cum inside %UNICODE(0x2764)% Paint me deeper inside, churn me up %UNICODE(0x2764)%」
+				CALL M_KOJO_MESSAGE_SIKYUKO_K9
+				IF CFLAG:900 == 7 && CFLAG:902 == 0
+					PRINTFORML 「Impregnate me～, with your cum～%UNICODE(0x2764)%」
+				ENDIF
+			ELSEIF CFLAG:14 == 1
+				PRINTFORML 「Ahaa %UNICODE(0x2764)% Fill me with your hot seed, deeper inside～%UNICODE(0x2764)%」
+				CALL M_KOJO_MESSAGE_SIKYUKO_K9
+			ELSEIF TCVAR:109
+				PRINTFORML 「Ahh, Nnn, it's all the way inside... it's filling me up inside...\/\/\/」
+				CALL M_KOJO_MESSAGE_SIKYUKO_K9
+			ELSE
+				PRINTFORML 「Kuu... Cumming inside all of a sudden, you cheeky...!? %UNICODE(0x2764)%」
+				CALL M_KOJO_MESSAGE_SIKYUKO_K9
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			;子作りOKしているか(CFLAG:14==2),危険日以外OKか(CFLAG:14==1),ピル服用済か(TCVAR:109),それ以外
+			IF CFLAG:14 == 2
+				PRINTFORML 「Fuaa %UNICODE(0x2764)% It's filling me up %UNICODE(0x2764)% All the way to my womb %UNICODE(0x2764)%」
+				CALL M_KOJO_MESSAGE_SIKYUKO_K9
+			ELSEIF CFLAG:14 == 1
+				PRINTFORML 「Aah, it's ok %UNICODE(0x2764)% Today is, safe...so %UNICODE(0x2764)%」
+				CALL M_KOJO_MESSAGE_SIKYUKO_K9
+			ELSEIF TCVAR:109
+				PRINTFORML 「Nnah, even though, I took, a pill, Ah?! %UNICODE(0x2764)%」
+				CALL M_KOJO_MESSAGE_SIKYUKO_K9
+			ELSE
+				PRINTFORML 「Uwaa, wait, where are you, cumming %UNICODE(0x2764)%」
+				CALL M_KOJO_MESSAGE_SIKYUKO_K9
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;開幕から選べる(入れっぱなしじゃないと実行できない)コマンドではないので不要？
+	;基本セット
+	;恋慕
+	;IF TALENT:恋慕
+	;	PRINTFORMW 
+	;	RETURN 1
+	;屈服3
+	;ELSEIF MARK:不埒刻印 == 3
+	;	PRINTFORMW 
+	;	RETURN 1
+	;それ以外
+	;ELSE
+	;	PRINTFORMW 
+	;	RETURN 1
+	;ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;74,Ｓ状結腸責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_74
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_74_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_74_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;75,膣裏責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_75
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_75_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_75_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+; 子宮口関数
+;==================================================
+@M_KOJO_MESSAGE_SIKYUKO_K9()
+;ポルチオ性感持ち(EXP:57 > 50)か,綻び状態(EXP:57 > 25)か、それ以外か
+IF TALENT:78 == 1
+	SELECTCASE RAND:4
+		CASE 0
+			PRINTFORML 「Ahh there, there %UNICODE(0x2764)% I love it there %UNICODE(0x2764)%」
+		CASE 1
+			PRINTFORML 「Hammer, my womb, more, harder %UNICODE(0x2764)%」
+		CASE 2
+			PRINTFORML 「Ahh %UNICODE(0x2764)% There, my womb, is so happy %UNICODE(0x2764)%」
+		CASE 3
+			PRINTFORML 「Ahii %UNICODE(0x2764)% I'm losing my mind %UNICODE(0x2764)% Hitting, my womb %UNICODE(0x2764)%」
+	ENDSELECT
+ELSEIF EXP:57 < 50 && EXP:57 > 25
+	PRINTFORML 「Ahaa, Aah!? No way, it's, feeling good %UNICODE(0x2764)%」
+	PRINTFORML 「No, stop, any more...and I'll, lose my mind %UNICODE(0x2764)%」
+ELSE
+	PRINTFORML 「%GROAN()%... Ah... Th-that place... Ah... It hurts...」
+ENDIF
+
+;==================================================
+; 処女喪失関数(V)
+;==================================================
+@M_KOJO_MESSAGE_LOSTVIRGIN_K9()
+
+IF TALENT:恋慕
+	PRINTFORMDW Yumemi smiles warmly at you.
+	PRINTFORML 「I'm so happy... We finally became one...\/\/\/」
+	PRINTFORML 「But, it's my first time, so...please be gentle, ok?」
+ELSEIF TALENT:思慕
+	PRINTFORML 「I-I can't believe we're doing this together...\/\/\/」
+	PRINTFORML 「I-It's not like I don't want to... I'm just, a little scared...」
+	PRINTFORML 「So, please be gentle, ok?」
+ELSEIF TALENT:愛欲 || TALENT:セフレ
+	PRINTFORML 「I guess we're finally doing this, after all this time...」
+	PRINTFORML 「Just thinking of all the pleasure we'll have now...%UNICODE(0x2764)%」
+	PRINTFORML 「... Come closer %UNICODE(0x2764)%」
+ELSE
+	PRINTFORML （Giving my virginity up so easily, I must have gone crazy...）
+	PRINTFORML 「Oh well... Ah, it's my first time, so be gentle, ok?」
+ENDIF
+
+;-------------------------------------------------
+; 初回INSERT関数(非処女)
+;-------------------------------------------------
+@M_KOJO_MESSAGE_INSERT_FIRST_K9()
+IF ABL:1 > 5
+	PRINTFORMDW Yumemi's well-developed vagina welcomes your penis without any resistance, and clings to it as if trying to milk it of semen.
+ELSEIF ABL:1 > 1 && ABL:1 < 6
+	PRINTFORMDW Though not perfect, Yumemi's developed vagina soon brings pleasure to your penis.
+ELSE
+	PRINTFORMDW Not having been used very much, Yumemi's tight vagina squeezes down painfully on your penis.
+ENDIF
+
+;==================================================
+; 処女喪失関数(A)
+;==================================================
+@M_KOJO_MESSAGE_LOSTVIRGIN_A_K9()
+
+IF TALENT:恋慕
+	IF ABL:2 > 2 && EXP:62 == 0
+		PRINTFORML 「M-My butt...? \/\/\/ I-I'm not necessarily against it... B-But I need to mentally prepare...」
+		PRINTFORML 「I-I mean, I've felt good from my butt before, but putting it in...%UNICODE(0x2764)%」
+		PRINTFORML （B-But if it's %CALLNAME:MASTER%, I'm sure it will feel good, right...?）
+		PRINTFORML 「Uu～～～... Please do it gently...\/\/\/」
+	ELSE
+		PRINTFORML 「Eh... You want to put it in my b-butt...?! N-N-N-N-No way! No matter how much you want to!」
+		PRINTFORML 「Wh-What if it doesn't go back to normal after putting it in... And what'll I do if it actually feels good...mumble mumble...」
+		PRINTFORML 「... And anyway, that's not what that hole is for, right? Right? Let's rethink this, ok?」
+		PRINTFORMDW Though Yumemi pleads with you, she eventually caves in to your request.
+		PRINTFORML 「I guess there's no stopping you... Idiot. You'd better be gentle, ok?」
+	ENDIF
+ELSEIF TALENT:思慕
+	IF ABL:2 > 2 && EXP:62 == 0
+		PRINTFORML 「Hii...!? Y-You're going to put it in there...!?」
+		PRINTFORML 「W-Wait, I know I've started feeling good from there, but...I'm a little scared...\/\/\/」
+		PRINTFORML 「... It'll be ok, right? Even if something happens to my butt, you'll take responsibility, right...?」
+	ELSE
+		PRINTFORML 「W-Wait a second! Wanting to do it there, isn't that weird!?」
+		PRINTFORML 「No way no way no way! It's not even meant to go in there!」
+		PRINTFORML 「Let's rethink this! Ok? I beg you!」
+		PRINTFORML 「... You want to do it there, no matter what? ... Haa, fine, just be careful, ok?」
+	ENDIF
+ELSEIF TALENT:愛欲 || TALENT:セフレ
+	IF ABL:2 > 2  && EXP:62 == 0
+		PRINTFORML 「Ara...? You want to put it in my ass? You're such a pervert...%UNICODE(0x2764)%」
+		PRINTFORML 「Nfufu... It's a little scary, but... I can't get pregnant from there, so it might actually be safer \/\/\/」
+		PRINTFORML 「Fufu, I'm fine with doing it there...%UNICODE(0x2764)%」
+		PRINTFORML 「Just make sure you make me feel great, ok?」
+	ELSE
+		PRINTFORML 「What, you want to do it in my ass...?」
+		PRINTFORML 「I know that's a thing, but for me that's a little...\/\/\/」
+		PRINTFORML 「Well, it's fine as long as it feels good, but if something happens, you'll take responsibility, right?」
+		PRINTFORML 「Be gentle, ok?」
+	ENDIF
+ELSE
+	;ケツに関してはここあるのかなあ……あるかもなあ……いやないか。たぶん。でも一応……
+	IF ABL:2 > 2 && EXP:62 == 0
+		PRINTFORML 「Eh, W-Wait just a moment! Where do you think you're putting it!? \/\/\/」
+		PRINTFORML 「E-Even though you've been putting your finger in it lately... That's, uh, well...\/\/\/」
+		PRINTFORML （I wonder if it'll feel good... It's not like I'm not interested, but...%UNICODE(0x2764)%）
+		PRINTFORMDW Even as she pretends to refuse, she begins sliding her own finger around her anus while glancing at your %FSYN("penis")%.
+		PRINTFORML 「D-Do it gently, ok? It's my first time there, so make sure you're reeeally gentle, ok??」
+	ELSE
+		PRINTFORML 「Ehh... I can't believe someone would just suddenly say they want to do it there...」
+		PRINTFORML 「Haa... Why am I sleeping with such a person... I must've gone crazy.」
+		PRINTFORML 「Fine, fine, you want to do it there, right... This is obviously my first time there, so be gentle.」
+	ENDIF
+ENDIF
+
+;===========================================================
+; V挿入継続関数(射精後)
+;===========================================================
+@M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_K9()
+IF TALENT:恋慕
+	PRINTFORMDW Yumemi looks happily at you.
+	PRINTFORML 「I'm so happy... Even though you just came... We're going to keep going...\/\/\/」
+	PRINTFORML 「Fufufu... Give me lots of your love, ok?」
+ELSEIF TALENT:思慕
+	PRINTFORML 「W-Wait, didn't you just cum...\/\/\/」
+	PRINTFORML 「Ah wait! So suddenly!?\/\/\/」
+	PRINTFORML 「Ah, wait, stop %UNICODE(0x2764)%!?」
+ELSEIF TALENT:愛欲 || TALENT:セフレ
+	PRINTFORML 「Even though you just came, you want to keep going...?」
+	PRINTFORML 「Fufu, of course...%UNICODE(0x2764)%」
+	PRINTFORML 「... Let's enjoy ourselves even more %UNICODE(0x2764)%」
+ELSE
+	PRINTFORML 「Eh, wait, you're still going...? \/\/\/」
+	PRINTFORML 「I mean, it's ok, with me――eee!? %UNICODE(0x2764)%」
+ENDIF
+
+;===========================================================
+; V挿入継続関数(単なる継続)
+;===========================================================
+@M_KOJO_MESSAGE_KEEPINSERT_K9()
+IF TALENT:恋慕
+	PRINTFORML 「Nn... Do you, want to do it more..? \/\/\/」
+	PRINTFORML 「Fufu, looks like you're still hard...?」
+	PRINTFORML 「Ok... Make me feel really good, ok...? %UNICODE(0x2764)%」
+ELSEIF TALENT:思慕
+	PRINTFORML 「Eh, you want to keep going? \/\/\/」
+	PRINTFORMDW Ignoring Yumemi's hesitation, you begin thrusting your hips again.
+	PRINTFORML 「Ah, no %UNICODE(0x2764)% Waait～%UNICODE(0x2764)%」
+ELSEIF TALENT:愛欲 || TALENT:セフレ
+	PRINTFORML 「Ara, you want to keep going? Because you haven't cum yet?」
+	PRINTFORML 「Ufufu... I guess satisfying our bodies to the fullest is the whole point of our relationship...%UNICODE(0x2764)%」
+	PRINTFORML 「... Let's keep going %UNICODE(0x2764)%」
+ELSE
+	PRINTFORML 「Nn... You want to keep going?」
+	PRINTFORML 「Mmm, ok... You can keep going... Nn %UNICODE(0x2764)%」
+ENDIF
+
+;===========================================================
+; 尻挿入継続関数(射精後)
+;===========================================================
+@M_KOJO_MESSAGE_KEEPINSERT_AFTERSHOT_A_K9()
+IF TALENT:恋慕
+	PRINTFORML 「Even though you just came in my ass, you still want to cum more? \/\/\/」
+	PRINTFORML 「Well, that's fine... Just don't break my ass, ok?」
+ELSEIF TALENT:思慕
+	PRINTFORML 「What, even though you just came in my butt...\/\/\/」
+	PRINTFORML 「Ah wait! So suddenly!?\/\/\/」
+	PRINTFORML 「Ah, wait, stooop～ %UNICODE(0x2764)%!?」
+ELSEIF TALENT:愛欲 || TALENT:セフレ
+	PRINTFORML 「Even though you just came in my ass, you still want to keep going...?」
+	PRINTFORML 「Fufu, you're such a pervert...%UNICODE(0x2764)%」
+	PRINTFORML 「Go ahead... Make my ass feel even better, ok? %UNICODE(0x2764)%」
+ELSE
+	PRINTFORML 「Eh, wait, even though you just came, you're still...? \/\/\/」
+	PRINTFORML 「I mean, that's my bu――Aguu %UNICODE(0x2764)%」
+ENDIF
+
+;===========================================================
+; 尻挿入継続関数(単なる継続)
+;===========================================================
+@M_KOJO_MESSAGE_KEEPINSERT_A_K9()
+IF TALENT:恋慕
+	PRINTFORML 「Nn... What, you want to do my ass even more...? \/\/\/」
+	PRINTFORML 「I guess you're still hard... Although getting so excited about doing it in my ass, is a little...」
+	PRINTFORML 「Just make sure you make my ass feel good too, ok? %UNICODE(0x2764)%」
+ELSEIF TALENT:思慕
+	PRINTFORML 「Eh, you're going to keep doing it there...? \/\/\/」
+	PRINTFORMDW Ignoring Yumemi's hesitation, you begin thrusting into her anus again.
+	PRINTFORML 「Ah, Guh %UNICODE(0x2764)% Waait～%UNICODE(0x2764)%」
+ELSEIF TALENT:愛欲 || TALENT:セフレ
+	PRINTFORML 「Hmm? You still want to keep digging out my ass...?」
+	PRINTFORML 「Ara ara, how naughty you are...%UNICODE(0x2764)%」
+	PRINTFORML 「... Go ahead and keep going %UNICODE(0x2764)%」
+ELSE
+	PRINTFORML 「Nn... You still want to do it? In my butt...?」
+	PRINTFORML 「Mmm... Well, ok, you can keep moving... Nn %UNICODE(0x2764)%」
+ENDIF
+

@@ -1,0 +1,886 @@
+﻿
+;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;TCVAR:350　挨拶判定
+;TCVAR:351　季節・天候話判定
+;TCVAR:352　デート会話判定
+;TCVAR:360　その日の祟りカウンター回数
+;TCVAR:361　その日の祟りカウンターによる疑念判定（１回）
+
+;CFLAG:1001　パンツ盗られた回数
+;CFALG:1002　邪神（？）崇拝バレ
+;CFLAG:1003　日中祟りカウンター30回（会話では20回）超えによる疑念回数
+;CFALG:1004　時姦バレ
+;CFLAG:1005　三粒の天滴を授けた
+
+;CFLAG:1301　時姦祟りカウンターを喰らわせた総回数
+;CFLAG:1302　睡姦祟りカウンターを喰らわせた総回数
+;CFLAG:1303　それ以外の祟りカウンターを(略
+;******************************************************************************
+
+;-----------------------------------------------------------
+;祟りカウンターの制御用関数（諏訪子専用）
+;ARG:0 ループ回数（接触が濃厚なほど回数を増す）
+;-----------------------------------------------------------
+@K33_TATARI_COUNTER(ARG:0)
+#DIM 減少値
+;added, do not punish the player if you're willingly sharing the bed while she's asleep
+IF CFLAG:[[諏訪子]]:添い寝中
+	RETURN 0
+ENDIF
+
+IF TALENT:[[諏訪子]]:恋慕 || TALENT:[[諏訪子]]:愛欲
+	減少値 = -35
+ELSEIF MARK:不埒刻印 == 3 || TALENT:セフレ
+	減少値 = -50
+ELSEIF TALENT:思慕
+	減少値 = -60
+ELSE
+	減少値 = -100
+ENDIF
+
+SELECTCASE MARK:[[諏訪子]]:快楽刻印
+	CASE 1
+		減少値 += 10
+	CASE 2
+		減少値 += 15
+	CASE 3
+		減少値 += 20
+ENDSELECT
+
+SELECTCASE MARK:[[諏訪子]]:時姦刻印
+	CASE 1
+		減少値 += 0
+	CASE 2
+		減少値 += 5
+	CASE 3
+		減少値 += 10
+ENDSELECT
+
+SELECTCASE MARK:[[諏訪子]]:反発刻印
+	CASE 1
+		減少値 -= 20
+	CASE 2
+		減少値 -= 40
+	CASE 3
+		減少値 -= 60
+ENDSELECT
+
+SIF TALENT:[[諏訪子]]:機嫌 == -1
+	減少値 -= 50
+SIF CFLAG:[[諏訪子]]:ブチギレ
+	減少値 -= 50
+;√累計回数の補正
+SIF CFLAG:[[諏訪子]]:1301 || CFLAG:[[諏訪子]]:1302 || CFLAG:[[諏訪子]]:1303
+	減少値 -= SQRT(CFLAG:[[諏訪子]]:1301 + CFLAG:[[諏訪子]]:1302 + CFLAG:[[諏訪子]]:1303)
+
+;恋人の場合は、一律ゼロに補正／プラス値のときも補正
+SIF TALENT:[[諏訪子]]:恋人
+	減少値 = 0
+SIF 減少値 > 0
+	減少値 = 0
+
+IF 減少値 < 0
+	;non sleeping/no ts, added
+	CALL K33_CURSE
+	
+	SELECTCASE TCVAR:[[諏訪子]]:360
+		CASE 0
+			;最初回の説明用テキスト（総祟りカウンターがゼロの時）
+			IF !CFLAG:[[諏訪子]]:1301 && !CFLAG:[[諏訪子]]:1302
+				LOCAL = 0 ;non sleeping/no ts check, added
+				IF FLAG:70
+					PRINTFORMDW Suwako can't even budge before your ability.
+					PRINTFORMDW As long as you have the time stopping powers, everything will go your way...
+					LOCAL = 1
+				ELSEIF CFLAG:[[諏訪子]]:睡眠
+					PRINTFORMDW Suwako seems to be totally asleep, completely defenseless...
+					LOCAL = 1		
+				ENDIF
+				SIF LOCAL
+					PRINTFORMDW You chuckle to yourself as you reach for Suwako, aiming to do the same thing you did with other girls, as suddenly――
+				SETCOLOR 0x705B67
+				PRINTL 
+				PRINTFORML ――Ｓ Ｈ Ｕ Ｄ Ｄ Ｅ Ｒ
+				PRINTW 
+				SETCOLOR 0xC0A2C7
+				IF !LOCAL
+					PRINTFORML You find yourself trembling uncontrollably as you pull away at once from her.
+				ELSE
+					PRINTFORML You felt like your hair stood on end all over your body, as you reflexively - and vigorously - withdrew your hand.
+				ENDIF
+				PRINTFORMW You gulp down without thinking, not from excitement however... But perhaps to moisten your bone-dry throat.
+				IF !LOCAL
+					PRINTFORMW Her stare alone makes you want to disappear at once, as you feel your head going numb.
+				ELSE
+					PRINTFORMW After just touching Suwako ever so slightly, your fingertips go numb and start tingling, sending faint waves of pain.
+				ENDIF
+				PRINTFORMW %BREAKENG(@"You shiver. Not from the trivial pain of static electricity on your fingertips, but from the more instinctive \"dread\" or \"awe\" that resonates from the core of your being.")%
+				PRINTFORML It's as if something just slipped inside of you...
+				PRINTFORMW With such an indescribable feeling, you realize that your powers have been slightly weakened.
+				PRINTFORMW ...Things have come to a point where you were reminded of what her true nature was, like a rough slap to the face.
+				PRINTFORMW %BREAKENG(@"Yaoyorozu no Kami, one of the Myriad Gods of Shinto religion - she used to be a leader of the curse gods who ruled the kingdoms of old. It appears that a sliver of her former power has just been shown to you.")%
+				PRINTFORMW Trying to hang in there and not to get overawed, you look again at the girl-shaped being in front of you.
+				PRINTFORMW "This is going to be hella tough"... You think, as you clutch your sweaty hand.
+			ELSE
+				SETCOLOR 0x705B67
+				PRINTFORML You felt a chill as if something was invading your body...
+			ENDIF
+		CASE 1 TO 10
+			SETCOLOR 0x70224E
+			PRINTFORML You felt an uncomfortable sensation as if something is writhing inside your body...
+		CASE 11 TO 30
+			SETCOLOR 0xCC3D8E
+			PRINTFORML You felt horrible chills, like needles being shot into every pore in your body...
+			減少値 -= SQRT(TCVAR:[[諏訪子]]:360)
+		CASEELSE
+			SETCOLOR 0xCC0074
+			IF INROOM(CFLAG:MASTER:現在位置)
+				;lovecraft reference btw, decided to include more detail
+				PRINTFORML ...There's a noise at the door, as of some immense slippery body lumbering against it.
+				PRINTFORML God, that hand! The window! The window!
+			ELSE
+				PRINTFORML A white snakelike thing with the texture of ice-cold stone entangles you, as the intense pain similar to having your limbs ripped off torments your body...
+			ENDIF
+			減少値 -= 2 * SQRT(TCVAR:[[諏訪子]]:360)
+	ENDSELECT
+	RESETCOLOR
+	CALL K33_TATARI_MAIN(ARG:0, 減少値)
+ENDIF
+
+;-----------------------------------------------------------
+;祟りカウンターシステムの減算実行関数（諏訪子専用）
+;ARG:0 ループ回数（接触が濃厚なほど回数を増す、コマンド毎に指定）
+;ARG:1 減少値、負の値を入れる
+;-----------------------------------------------------------
+@K33_TATARI_MAIN(ARG:0, ARG:1)
+#DIM DYNAMIC ループ回数
+
+DO
+	;TSPを必ず削る
+	CALL BUFF_BASE(MASTER, BASE_TSP, ARG:1, 0)
+
+	SELECTCASE RAND:3
+		CASE 0
+			CALL BUFF_BASE(MASTER, BASE_体力, ARG:1, 0)
+		CASE 1
+			CALL BUFF_BASE(MASTER, BASE_気力, ARG:1, 0)
+		CASEELSE
+			IF GETBIT(TALENT:MASTER:性別, 1)
+				CALL BUFF_BASE(MASTER, BASE_精力, (ARG:1 / 2) , 0)
+			ELSE
+				CALL BUFF_BASE(MASTER, BASE_TSP, ARG:1, 0)
+			ENDIF
+	ENDSELECT
+
+	;周回数が指定された回数以下ならループ
+LOOP ループ回数++ < ARG:0
+
+;本日の祟り回数に加算（ループ回数に関わらず１回のカウント）
+TCVAR:[[諏訪子]]:360 ++
+;時姦、睡姦それぞれの祟り総カウントに加算
+IF FLAG:70
+	CFLAG:[[諏訪子]]:1301 ++
+ELSEIF CFLAG:睡眠
+	CFLAG:[[諏訪子]]:1302 ++
+ELSE
+	CFLAG:[[諏訪子]]:1303 ++
+ENDIF
+
+;-----------------------------------------------------------
+;祟りカウンターによる時姦バレ判定関数（諏訪子専用）
+;調整のためにまとめておく
+;-----------------------------------------------------------
+@K33_TATARI_BARE(ARG = 33)
+#FUNCTION
+;時姦祟りカウンター回数が一定数を超える
+SIF CFLAG:ARG:1301 >= 500
+	RETURNF 1
+;祟りカウンターによる疑念回数が一定数を超える
+SIF CFLAG:ARG:1003 >= 15
+	RETURNF 1
+
+RETURNF 0
+
+;-----------------------------------------------------------------------------------------------
+;@CHARA_INFO_KOJO_K33()
+;個人情報の「キャラ紹介」の文章を書き換える
+;これがあれば「CSTR」の20番以降(20～39)に文字列を書き込むだけで書き換わるはず
+;早苗口上より引用、改変
+;-----------------------------------------------------------------------------------------------
+@CHARA_INFO_KOJO_K33()
+;===============================================================================================
+;記述例
+;このコメントアウトを外すと「CSTR」の20番以降に文字列を書き込むだけで書き換わるようになる
+;FOR LOCAL,20,40
+;	SIF CSTR:31:(LOCAL) != ""
+;		PRINTFORML %CSTR:31:(LOCAL)%
+;NEXT
+;RETURN 1
+;…とまあ、こんな感じでCSTR20番以降を使えばいいはず
+;===============================================================================================
+;本口上は、書き換わる文章が多いのでCSTRへの保存をせずに直接書き込む
+;現時点で下の2行が書き込まれている
+;PRINTL □ キャラ紹介 □---------------------------------------------------------------------
+;PRINTL 
+
+;##################################################################################
+;①「～土着神の頂点～　●種族：八百万の神　●能力：坤を創造する程度の能力」をプリント
+;##################################################################################
+CALL M_KOJO_COLOR_K33
+PRINTFORML %CSVCSTR(33, 10)%
+RESETCOLOR
+PRINTL 
+
+;##################################################################################
+;②キャラ紹介文を書き込み
+;##################################################################################
+;共通部
+PRINTFORM One of the main deities of the Moriya Shrine, situated atop the Youkai Mountain.<br>
+PRINTFORM She is the de facto god who gathers faith, providing power to the surface-level god Kanako Yasaka, who acts as an official enshrined deity.<br>
+IF TALENT:[[諏訪子]]:思慕 || TALENT:[[諏訪子]]:セフレ || TALENT:[[諏訪子]]:恋慕 || TALENT:[[諏訪子]]:愛欲
+	PRINTFORM She is the Highest of Native Gods who ruled the ancient kingdoms with awe and divine punishment, and the one who united the curse gods who have been revered since ancient times.<br>
+	PRINTFORM Being a Yaoyorozu no Kami - one of the Myriad Gods - she sustains her existence through the power of faith.<br>
+	PRINTFORM Because it has become difficult to acquire faith in the Outside World, the entire shrine has been brought over to Gensokyo.
+ENDIF
+
+;時姦バレしている
+IF CFLAG:[[諏訪子]]:1004
+	PRINT <br> <br>
+	PRINTFORM Using her powers as a curse god Suwako managed to entrap you, a person who has the ability to stop time, thus gaining control over you as her "partner in crime"...
+ELSEIF CFLAG:[[諏訪子]]:1003 >= 14 || K33_TATARI_BARE()
+	PRINT <br> <br> 
+	PRINTFORM Suwako's suspicions have turned to near-certainty as countless invisible curse marks have been etched into you...
+ELSEIF CFLAG:[[諏訪子]]:1003 >= 10
+	PRINT <br> <br> 
+	PRINTFORM The invisible curse marks carved into you are deepening Suwako's suspicions only further...
+ELSEIF CFLAG:[[諏訪子]]:1003 >= 5
+	PRINT <br> <br> 
+	PRINTFORM Suwako is starting to get suspicious of you, sensing traces of curses she can't remember placing...
+ENDIF
+
+SELECTCASE (CFLAG:[[諏訪子]]:1301 + CFLAG:[[諏訪子]]:1302 + CFLAG:[[諏訪子]]:1303)
+	CASE IS >= 500
+		PRINT <br> <br> 
+		PRINTFORM You are being thoroughly cursed, being the prime target as someone worthy of punishment.
+	CASE IS >= 250
+		PRINT <br> <br> 
+		PRINTFORM She passes down curses upon your blasphemous self.
+	CASE IS >= 100
+		PRINT <br> <br> 
+		PRINTFORM She unconsciously passes down curses upon you.
+ENDSELECT
+
+;邪神崇拝バレしている
+IF CFLAG:[[諏訪子]]:1002
+	PRINT <br> <br> 
+	PRINTFORM She's been trying to convert you and turn you away from the deplorable god you're worshiping with all sorts of appeals for divine virtue and blessings, but it doesn't seem to be going well...
+ENDIF
+CALL PRINT_BREAK
+
+;三粒の天滴を授けている
+IF CFLAG:[[諏訪子]]:1005
+	PRINTL 
+	PRINTFORML %BREAKENG(@"She seems to have taken a liking to your pious devotion for one reason or another, and has gone so far as to lend you a fragment of her power.")%
+	CALL M_KOJO_COLOR_K33
+	PRINTFORML 　[Three Heavenly Drops] - is the blessing that constantly moisturizes the soil and promises a rich harvest.
+	PRINTFORML 　Power of the Frog God: Frog Sign [Wily Toad] - the deed of divine reincarnation that causes frogs to burst into more frogs.
+	RESETCOLOR
+	PRINTFORML "Even a curse god may show you virtue should you deify it", as the saying goes...
+ENDIF
+PRINTL 
+RETURN 1
+
+;-----------------------------------------------------------
+;挿入時口上出力用関数（諏訪子専用）
+;絶頂、射精、経験、体位などのシチュエーションで自動的に出力
+;ARG:0…0 膣	1 アナル
+;ARG:1…0 基本	1 挿入継続
+;ARG:2…0 基本	1 騎乗	2 後背
+;Ａ挿入同時クリ攻めとか未対応
+;-----------------------------------------------------------
+@INSERT_KOJO_K33(ARG:0, ARG:1, ARG:2)
+SIF TCVAR:抱き寄せ初回 == 10
+	RETURN 0
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+IF CFLAG:睡眠
+	PRINTFORMW 「%MOAN(,,4)%...」
+	PRINTFORMDW Suwako moans and gasps in her sleep as you thrust away in and out...
+	CALL K33_TATARI_COUNTER(4)
+	RETURN 1
+ENDIF
+;added, part of cherry pop section
+IF TCVAR:MASTER:筆下ろし && CFLAG:うふふ != 2 && FIRSTTIME("SuwakoCherryPop2")
+	;during sex action, first time
+	PRINTFORMW 「Well then, why don't you go ahead and try? It's not gonna start 'till I know yer willin'%UNICODE(0x2764)%」
+	IF ARG:2 == 1 ;cowgirl
+		PRINTFORMW 「Oho? You want me to do it for ya then? Geez, %K33_BOY()%, yer acting so spoiled for yer age, honestly～ Well, not that I mind...」
+		PRINTFORMW 「It's the duty of older generation to teach young'uns the important skills, such as pleasing a woman%UNICODE(0x2764)%」
+		PRINTFORMW 「Sure, I'll oblige... It's been a while though, so it might as well be a first for me, hehe.」
+		LOCALS = grins as she climbs on top of you and%" "%
+	ELSE
+		PRINTFORMW 「Normally I'd take the lead, but... I'm guessin' you'll want to take me yerself since it's yer all-important first time～」
+		SIF ARG:2 != 2 ;not doggy
+			LOCALS = grins, spreading her legs wide and then%" "%
+		PRINTFORMDW Suwako %LOCALS%parts her \@ ARG:0 == 0 ? pussy lips # anal entrance \@ with a squelch for you to see.
+	ENDIF
+	IF ARG:0 == 0 ;cunny
+		PRINTFORMW 「Your generation calls it a "pussy", right? Or even "cunny", in my case... What a dirty, dirty word%UNICODE(0x2764)%」
+	ELSE
+		PRINTFORMW 「I'm surprised you want to do anal for yer first, but if that's yer wish... I'm here to grant 'em after all%UNICODE(0x2764)%」
+		IF !CFLAG:アナル処女喪失記念日 ;anal virgin
+			PRINTFORMW 「Frankly, I'm rather inexperienced in the way of anal sex myself, so it'll be a learnin' experience for us both%UNICODE(0x2764)%」
+			PRINTFORMW 「Auu, how times change... It'd be unthinkable to ever stick it into this impure hole back in my day, but here we are...」
+			PRINTFORMW 「O-Oh, I don't mean that it's dirty or anything! Havin' a divine body, it's as immaculate as it gets, trust me～」
+			PRINTFORML
+		ENDIF
+	ENDIF
+	PRINTFORMW 「Undeveloped it may be in this form, but it's in the same place and works as you'd expect%UNICODE(0x2764)%」
+	PRINTFORMW 「All you gotta do is to thrust your cock into this sweet alluring hole riiiight here♪」
+	PRINTFORMDW %BREAKENG(@"Suwako says as she slides her finger into her tiny hole on the bottom. You mentally note to yourself that this is where you should stick it in.")%
+	PRINTFORMDW But... it's so small though? Is this right?
+	PRINTFORMW 「Haha! No need to worry, %K33_BOY()%! The tightness only makes it better... Besides, I'm a God, remember? 'Tis but a park walk for me!」
+	PRINTFORML
+	IF ARG:2 == 1 ;cowgirl, suwako initiated basically
+		PRINTFORMDW Suwako licks her lips and begins to lower her hips, and your dick disappears inch by inch into the tight hole.
+		PRINTFORMDW You can feel it squeezing you, rubbing you in all the right places. It's so wet and slippery that you can't even feel any friction.
+		PRINTFORMDW %BREAKENG(@"You blush heavily as you feel yourself sliding all the way into her. Before you know it, Suwako already swallowed most of your length inside, about to bottom out.")%
+	ELSEIF ARG:0 == 0 ;vag
+		PRINTFORMDW You move back into position and rub the head of your dick against her lips. They feel very soft and slick, tempting you to go inside.
+		PRINTFORMDW You push harder and feel the lips part before the tip of your dick. Moving further in, it swallows the whole head of your dick in a single gulp.
+		PRINTFORMDW %BREAKENG(@"You push in a little further, and feel the tight orifice squeeze your dick as it enters. It's so tight that you feel you might pop right then and there.")%
+		PRINTFORMDW %BREAKENG(@"You hold still for a moment to catch your breath, before gently sliding it in further. You can feel every single wrinkle inside the passage as your dick slowly moves forward.")%
+		PRINTFORMDW %BREAKENG(@"Suwako looks at you smugly, as if saying that you're almost there, ushering you to continue and seal the deal by bottoming out inside her.")%
+	ELSEIF ARG:0 == 1 ;anus
+		PRINTFORMDW You trace Suwako's pink ring around her anus with your tip before you start probing it little by little, trying to persuade it to let you in.
+		PRINTFORMDW To your surprise, it enters rather easily, and you feel a pleasurable sensation all over your dick.
+		PRINTFORMDW You let out a sharp breath as you feel it squeeze around you, almost sucking onto you with its walls. It feels so good, almost unreal.
+		PRINTFORMDW The tightness of her ring around your shaft squeezes you with incredible force, while her soft flesh lining her innards caress your tip.
+	ENDIF
+	PRINTFORML
+	PRINTFORMDW %BREAKENG(@"Finally losing your cool, you grab her hips and slam yourself in, clearing the remaining distance in one push. Suwako lets out a loud moan, as the look in her eyes shows surprise.")%
+	PRINTFORMDW But you don't care. All you can do now is savor the sensation and try to endure it, even if a little bit.
+	CALL PRINT_DIALOGUE, @"%K33_MOAN("m")%...!!! Auuh, that was a bit uncalled for, %K33_BOY()%... But I get it, you've been waitin' for so long... I forgive you～%UNICODE(0x2764)%", "w"
+	PRINTFORMW 「...Weeell then, with this, you're a real man now, %CALLNAME:MASTER%! My heartfelt congratulations to you... Ehehe%UNICODE(0x2764)%」
+	RETURN 
+ENDIF
+
+;Ｖ
+IF ARG:0 == 0
+	IF ARG:1 == 0
+		$INSERT_V
+		IF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+			IF NOWEX:TARGET:Ｖ絶頂 && NOWEX:MASTER:射精
+				SIF ARG:2 == 1 && !RAND:2
+					GOTO V_OFFENCE
+				PRINTDATAW
+					DATAFORM 「%K33_MOAN()%!%UNICODE(0x2764)% %SPLIT_G("You:It")% got bigger again%UNICODE(0x2764)% C'mon, %SLUR(SPLIT_G("shoot it out:let it loose")), -3%%UNICODE(0x2764)%」
+					DATAFORM 「Wanna cum? It's fine, I'm almost there too... Let's do it together, 'kay?%UNICODE(0x2764)%」
+					DATAFORM 「～～～!!!%UNICODE(0x2764)%%UNICODE(0x2764)% Oh nooo, not like thiiissss! At this rate I'm gonna... %K33_MOAN("h")%!%UNICODE(0x2764)%」
+					DATAFORM 「%K33_MOAN()%!%UNICODE(0x2764)% Theeere ya go～ It's okay, I'm gonna make ya feel like yer in heaven... So don't hold back and gimme as much as you can!%UNICODE(0x2764)%」
+				ENDDATA
+			ELSEIF NOWEX:TARGET:Ｖ絶頂
+				PRINTDATAW 
+					DATAFORM 「Keep it comin', don't %SLUR("stop", -3)%! %K33_MOAN()%, %SLUR("more", -3)%, %SLUR("harder", -3)%!%UNICODE(0x2764)%」
+					DATAFORM 「Wowee, yer sooo awesome, %CALLNAME:MASTER%...%UNICODE(0x2764)% I think... I'm gonna cum nowww!!!%UNICODE(0x2764)%」
+					DATAFORM 「%K33_MOAN()%... %K33_MOAN("m")%!%UNICODE(0x2764)% Nooo, not like thissss! I'm gonna go nuts, it's gonna make me crazyyyyy!!!%UNICODE(0x2764)%」
+					DATAFORM 「That's iiitt, yer doin' it! Mooore, harder, deeper!%UNICODE(0x2764)% %SPLIT_G("I want you to try and break me:Keep at it till I break")%!%UNICODE(0x2764)%」
+					DATAFORM 「Auuu... \@ ARG:2 == 1 ? Oh noo, all this thrustin' and humpin' from below is gonna make me lose first # It feels so good havin' my cunny rubbed and massaged like this \@!!!%UNICODE(0x2764)%」
+					;added
+					DATAFORM 「It's gettin' so sensitive, again... Soon, I won't be able to stop myself%UNICODE(0x2764)%」
+					DATAFORM 「Oh yeah, that's the spirit... Ya know how to please a woman right%UNICODE(0x2764)%」
+				ENDDATA
+			ELSEIF NOWEX:MASTER:射精
+				$V_OFFENCE
+				SELECTCASE IFRAND("0", ARG:2 == 1, "1", 1)
+					CASE 0
+						PRINTDATAW
+							DATAFORM 「Fufu, yer hips have stopped and only yer peeny is %FSYN("throb:ing")% down there, I wonder why? Here, lemme try movin' juuust a little%UNICODE(0x2764)%」
+							DATAFORM 「Yer gettin' close? It's alright, go on and %SPLIT_G("lose yerself in my pussy:admit yer defeat inside of me")% all you want!%UNICODE(0x2764)%」
+						ENDDATA
+					CASE 1
+						PRINTDATAW
+							DATAFORM 「You cummin'? Fufu, go ahead... Let it aaaaall out!%UNICODE(0x2764)%」
+							DATAFORM 「Yer gettin' close? %K33_MOAN()%, %SPLIT_G("you don't have to try so hard, y'know:yer goin' at it waaay too hard than needed, really")%%UNICODE(0x2764)%」
+							DATAFORM 「Yer makin' such a cute face right now, y'know? Fufu, my pussy's gonna give ya a good squeeeeze～, alright♪」
+							DATAFORM 「Yer gettin' harder inside, y'know? %SPLIT_G(@"%PRINT_MALE("Boy", MASTER)%s tryin' their best are just sooo cute:I have a soft spot for %PRINT_MALE("boy", MASTER)%s who try their best like this")%, %K33_MOAN(, 1)%!%UNICODE(0x2764)%」
+						ENDDATA
+				ENDSELECT
+			;通常Ｖ
+			ELSE
+				PRINTDATAW 
+					DATAFORM 「%K33_MOAN()%!%UNICODE(0x2764)% %SPLIT_G("How's that:Well:Whaddya think")%? %SPLIT_G("You enjoy bein' inside of me:How's my pussy treatin' you so far:What's yer impressions about bein' inside of me")%? Fufu～%UNICODE(0x2764)%」
+					DATAFORM 「%K33_MOAN()%... Yer thing's just keeps pokin' me and forcin' its way inside... Ehehe～」
+					DATAFORM 「%K33_MOAN(,,2)%... %K33_MOAN()%!%UNICODE(0x2764)% \@ ARG:2 == 2 ? This pose makes it feel like... we're animals or somethin'...! # The way you move your hips... is just sooooo %FSYN("lewd")% \@%UNICODE(0x2764)%」
+					DATAFORM 「%K33_MOAN()%...! See that? The spot where it keeps moving to and fro... %K33_MOAN()%! %CAPITALIZE(FSYN("geez"))%, look at you gettin' so excited...%UNICODE(0x2764)%」
+					DATAFORM 「\@ ARG:2 == 1 ? %K33_MOAN()%, it just keeps slammin' at me from below... %CAPITALIZE(FSYN("geez"))%, yer just doin' it on purpose so I'd moan more # %K33_MOAN(,,2)%, this is soooo gooood!!! \@%UNICODE(0x2764)%」
+					;added
+					DATALIST
+						DATAFORM 「My puffy lips are just adorable, eh? It looks like I'm really chokin' your thing down there%UNICODE(0x2764)%」
+						DATAFORM 「C'mon, don't lose to me, keep it comin'～!%UNICODE(0x2764)%」
+					ENDLIST
+					DATAFORM 「Ooohhh yes, yer doin' great! Mess my %FSYN("vagina",,TARGET)% up some moreee...!%UNICODE(0x2764)%」
+				ENDDATA
+			ENDIF
+		;陥落なし
+		ELSE
+			IF NOWEX:TARGET:Ｖ絶頂 && NOWEX:MASTER:射精
+				PRINTFORMW 「%K33_MOAN()%!%UNICODE(0x2764)% %SPLIT_G("You:It")% got bigger again%UNICODE(0x2764)% C'mon, %SLUR(SPLIT_G("shoot it out:let it loose")), -3%%UNICODE(0x2764)%」
+			ELSEIF NOWEX:TARGET:Ｖ絶頂 ;added
+				PRINTDATAW
+					DATAFORM 「It's gettin' so sensitive, again... Soon, I won't be able to stop myself%UNICODE(0x2764)%」
+					DATAFORM 「Oh yeah, that's the spirit... Ya know how to please a woman right%UNICODE(0x2764)%」
+				ENDDATA
+			ELSEIF NOWEX:MASTER:射精
+				PRINTFORMW 「Yer gettin' harder inside, y'know? %SPLIT_G(@"%PRINT_MALE("Boy", MASTER)%s tryin' their best are just sooo cute:I have a soft spot for %PRINT_MALE("boy", MASTER)%s who try their best like this")%, %K33_MOAN(, 1)%!%UNICODE(0x2764)%」
+			ELSE
+				PRINTFORMW 「%K33_MOAN(,,2)%... %K33_MOAN()%!%UNICODE(0x2764)% The way you move your hips... is just sooooo %FSYN("lewd")%%UNICODE(0x2764)%」
+			ENDIF
+		ENDIF
+	;中出し後
+	ELSE
+		IF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+			IF TCVAR:Vに中出しされたフラグ && RAND:3 == 0
+				PRINTDATAW
+					DATAFORM 「Ahaaa, %SPLIT_G("awesoooome:amaziiiing")%...! %SPLIT_G("Ya still got ways to go:You can still keep goin'")%～!%UNICODE(0x2764)%」
+					DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% You just came, yet %SPLIT_G("there's no stoppin' to it:yer so unstoppable:it just keeps cummin'")%...! Fufu～ Looks like someone got really motivated here%UNICODE(0x2764)%」
+					DATAFORM 「That's my %CALLNAME:MASTER%... Yer a master when it comes to makin' a girl squeal♪ %K33_MOAN()%!%UNICODE(0x2764)%」
+					;added
+					DATAFORM 「Goin' for a second round without resting, splendid...!%UNICODE(0x2764)%」
+					DATAFORM 「%K33_MOAN()%, good job! Yer workin' so hard for me, that's so very manly of you%UNICODE(0x2764)%」
+				ENDDATA
+			ELSE
+				GOTO INSERT_V
+			ENDIF
+		ELSE
+			IF TCVAR:Vに中出しされたフラグ && RAND:3 == 0
+				PRINTFORMW 「Ahaaa, %SPLIT_G("awesoooome:amaziiiing")%...! %SPLIT_G("Ya still got ways to go:You can still keep goin'")%～!%UNICODE(0x2764)%」
+			ELSE
+				GOTO INSERT_V
+			ENDIF
+		ENDIF
+	ENDIF
+ELSE
+;Ａ
+	IF ARG:1 == 0
+		$INSERT_A
+		IF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+			IF NOWEX:TARGET:Ａ絶頂 && NOWEX:MASTER:射精
+				SIF ARG:2 == 1 && !RAND:2
+					GOTO A_OFFENCE
+				IF ABL:TARGET:アナル >= 2
+					PRINTDATAW
+						DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% My %FSYN("ass")% feels %SPLIT_G("awesome:incredible:great:sooo good")%! Keep it comin', moooore, harder...!%UNICODE(0x2764)%」
+						DATAFORM 「Wanna cum? 'Kaaay, let it aaallll out till my bum is packed full!%UNICODE(0x2764)%」
+						DATAFORM 「Mooore, deeper, till ya hit the back!!!%UNICODE(0x2764)% %K33_MOAN()%! %K33_MOAN("m")%!!!%UNICODE(0x2764)%」
+						DATAFORM 「I can feel ya gettin' harder in my %FSYN("ass")% of all things... %CAPITALIZE(FSYN("geez"))%, how perverted can you get!%UNICODE(0x2764)% ...%K33_MOAN("m")%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					ENDDATA
+				ELSE
+					PRINTDATAW
+						DATAFORM 「Uuah...%UNICODE(0x2764)% I can't believe my ass%SPLIT_G(" would make me feel:' bein' treated")% this way... %K33_MOAN("m")%!%UNICODE(0x2764)%」
+						DATAFORM 「Nooo, this is baaad, I can't allow somethin' like this make me cuuu--... AAAAaaaaAAaahhh!!!%UNICODE(0x2764)%」
+						DATAFORM 「I can feel ya gettin' harder in my %FSYN("ass")% of all things... %CAPITALIZE(FSYN("geez"))%, how perverted can you get!%UNICODE(0x2764)% ...%K33_MOAN("m")%%UNICODE(0x2764)%」
+					ENDDATA
+				ENDIF
+			ELSEIF NOWEX:TARGET:Ａ絶頂
+				IF ABL:TARGET:アナル >= 2
+					;バイブ装備中Ａ挿入時・・・両穴攻めですな
+					IF TEQUIP:TARGET:13
+						PRINTDATAW 
+							DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% Both my %FSYN("ass")% and cunny feel sooo %SPLIT_G("awesome:incredible:great:good")%! Keep it comin', moooore, harder...!%UNICODE(0x2764)%」
+							DATAFORM 「%K33_MOAN()%... Gettin' rammed from both sides is makin' me cuuuummm!!!%UNICODE(0x2764)%」
+							DATAFORM 「%K33_MOAN(,,2,"heart")%...! %SPLIT_G("I'm amazed how good... this actually feels:This is just... too darn good")%! %K33_MOAN("m")%!%UNICODE(0x2764)%」
+							DATAFORM 「Auuuu%UNICODE(0x2764)% It's way too good... %SPLIT_G("I can't think straight anymore:I'm blacking out:It feels like my consciousness is drifting away")%...!%UNICODE(0x2764)%」
+						ENDDATA
+					ELSE
+						PRINTDATAW 
+							DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% My %FSYN("ass")% feels %SPLIT_G("awesome:incredible:great:sooo good")%! Keep it comin', moooore, harder...!%UNICODE(0x2764)%」
+							DATAFORM 「%K33_MOAN()%... Thrustin' and slammin' into my %FSYN("anus")% so much... I'm gonna cuuuummmm!!!%UNICODE(0x2764)%」
+							DATAFORM 「%K33_MOAN(,,2)%!%UNICODE(0x2764)% I think I'm startin'... to like it this way better...!%UNICODE(0x2764)%」
+							DATAFORM 「Auu%UNICODE(0x2764)% My %FSYN("ass")% feels way too good... I can't... take it... anymoreeee...!%UNICODE(0x2764)%」
+						ENDDATA
+					ENDIF
+				ELSE
+					IF TEQUIP:TARGET:13
+						PRINTDATAW 
+							DATAFORM 「Auu... With my cunny coupled together... It's startin' to feel soooo good...!%UNICODE(0x2764)%」
+							DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% %CAPITALIZE(FSYN("geez"))%... Look at you doin' whatever you %SPLIT_G("please:feel like")%... %K33_MOAN("m")%!」
+							DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% Noooo, make it stoooop, I won't be able... to come back from this! %K33_MOAN()%!%UNICODE(0x2764)%」
+						ENDDATA
+					ELSE
+						PRINTDATAW 
+							DATAFORM 「No way... This is actually... makin' my %FSYN("anus")% %FSYN("twitch")% like this... Ah, aahhhn...!%UNICODE(0x2764)%」
+							DATAFORM 「Quit makin' all these shlurpin' sounds, come ooonnn... %K33_MOAN()%, aahhh...!%UNICODE(0x2764)%」
+							DATAFORM 「%K33_MOAN()%... Nhooo... My %FSYN("anus")% feels sooo hooooottt...!%UNICODE(0x2764)%」
+						ENDDATA
+					ENDIF
+				ENDIF
+			ELSEIF NOWEX:MASTER:射精
+				$A_OFFENCE
+				SELECTCASE IFRAND("0", ARG:2 == 1, "1", 1)
+					CASE 0
+						PRINTDATAW
+							DATAFORM 「Fufu, yer hips have stopped and only yer peeny is %FSYN("throb:ing")% down there, I wonder why? Here, lemme try movin' juuust a little%UNICODE(0x2764)%」
+							DATAFORM 「Yer gettin' close? It's alright, go on and %SPLIT_G("lose yerself in:admit yer defeat inside of")% my %FSYN("ass")% all you want!%UNICODE(0x2764)%」
+						ENDDATA
+					CASE 1
+						IF ABL:TARGET:アナル >= 2
+							PRINTDATAW
+								DATAFORM 「Yer about to finish, huh? Fufu～%UNICODE(0x2764)% %SPLIT_G("I'm gonna squeeze it aaaallll out:I'm gonna milk ya dry")% with my %SPLIT_G(@"bumhole:%FSYN("anus")%")%～%UNICODE(0x2764)%」
+								DATAFORM 「The look on yer face is startin' to look pretty pitiful there... Hehe, I'm gonna make ya feel even better with my %FSYN("anus")%, just you wait%UNICODE(0x2764)%」
+								DATAFORM 「Ahaaa... This is all because of you, y'know? Who do you think kept developin' this hole into something so sublime%UNICODE(0x2764)%」
+								DATAFORM 「C'mooon, keep %FSYN("stir:ing")% my %FSYN("ass")% some more%UNICODE(0x2764)% There-theeeere!%UNICODE(0x2764)%」
+							ENDDATA
+						ELSE
+							PRINTDATAW
+								DATAFORM 「Uuoohh... I can feel ya %FSYN("throb:ing")% in my bum...!%UNICODE(0x2764)%」
+								DATAFORM 「%K33_MOAN("m")%!%UNICODE(0x2764)% %SPLIT_G("You:It")%... got bigger again... Hehe%UNICODE(0x2764)%」
+								DATAFORM 「It's okay%UNICODE(0x2764)% Go on and let it all out... Down my %FSYN("anus")%%UNICODE(0x2764)%」
+							ENDDATA
+						ENDIF
+				ENDSELECT
+			;通常Ａ
+			ELSE
+				IF ABL:TARGET:アナル >= 2
+					;バイブ装備中Ａ挿入時
+					IF TEQUIP:TARGET:13
+						PRINTDATAW 
+							DATAFORM 「Both my %FSYN("ass")% and cunny... Keep 'em %FSYN("twitch:ing")%...! Ah, ahhhhh...!%UNICODE(0x2764)%」
+							DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% %CAPITALIZE(FSYN("geez"))%... Look at you doin' whatever you %SPLIT_G("please:feel like")%... %K33_MOAN("m")%!」
+							DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% Noooo, make it stoooop, I won't be able... to come back from this! %K33_MOAN()%!%UNICODE(0x2764)%」
+							DATAFORM 「Ohh, this is really baaaad... When I'm gettin' gouged out in both of my holes at the same time, it's makin' me feel ecstatiiiiicccc...%UNICODE(0x2764)%」
+							DATAFORM 「Both of 'em are gettin' messed up so muuuch%UNICODE(0x2764)% %K33_MOAN()%, nooo, not theeere, don't rub iiitttt!%UNICODE(0x2764)%」
+						ENDDATA
+					ELSE
+						PRINTDATAW 
+							DATAFORM 「How does anal sex feel so far? Good? Fufu... Yeah, same here%UNICODE(0x2764)%」
+							DATAFORM 「It was really... so easy to get used to in the end, huh%UNICODE(0x2764)% Auu... %K33_MOAN()%!%UNICODE(0x2764)%」
+							DATAFORM 「You've done well turnin' it into such %ARTICLE(FSYN("lewd"))% hole, ya rascal... %K33_MOAN("m")%!!!%UNICODE(0x2764)%」
+							DATAFORM 「My %FSYN("ass")% feels soooo hooottt, it's burnin'!!!%UNICODE(0x2764)% I'm shakin' all overrrr...!%UNICODE(0x2764)%」
+							DATAFORM 「The way it forces its way in, scrapin' and gougin' my walls... I could really get hooked on thaaat!%UNICODE(0x2764)%」
+							;added
+							DATAFORM 「Ooohhh yes, yer doin' great! Mess my %FSYN("ass")% up some moreee...!%UNICODE(0x2764)%」
+						ENDDATA
+					ENDIF
+				ELSE
+					IF TEQUIP:TARGET:13
+						PRINTDATAW 
+							DATAFORM 「Auh... This prolly feels... even better than my cunny!%UNICODE(0x2764)%」
+							DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% H-Hey--, this is too intense...!!!%UNICODE(0x2764)%」
+							DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% Just... choose one, c'mooon!%UNICODE(0x2764)%」
+							DATAFORM 「Heeeey! ...%SPLIT_G("This is overkill, don'tcha think:Aren't you overdoing it:Getting cocky, are ya")%? ...AAAaaAAaaAAahhhhh!!!%UNICODE(0x2764)%」
+						ENDDATA
+					ELSE
+						PRINTDATAW 
+							DATAFORM 「Uuh... This kinda feels, y'know... Umm, exhilarating...!%UNICODE(0x2764)%」
+							DATAFORM 「It's so big... It might be a bit too tight... I think%UNICODE(0x2764)%」
+							DATAFORM 「Uyaahh... Wow, it's sorta... sending shivers down my spine...%UNICODE(0x2764)%」
+							DATAFORM 「The way it forces its way in, scrapin' and gougin' my walls... I could really get hooked on thaaat!%UNICODE(0x2764)%」
+						ENDDATA
+					ENDIF
+				ENDIF
+			ENDIF
+		;陥落なし
+		ELSE
+			IF NOWEX:TARGET:Ａ絶頂 && NOWEX:MASTER:射精
+				IF ABL:TARGET:アナル >= 2
+					PRINTFORMW 「%K33_MOAN()%%UNICODE(0x2764)% My %FSYN("ass")% feels %SPLIT_G("awesome:incredible:great:sooo good")%! Keep it comin', moooore, harder...!%UNICODE(0x2764)%」
+				ELSE
+					PRINTFORMW 「Uuah...%UNICODE(0x2764)% I can't believe my ass%SPLIT_G(" would make me feel:' bein' treated")% this way... %K33_MOAN("m")%!%UNICODE(0x2764)%」
+				ENDIF
+			ELSEIF NOWEX:TARGET:Ａ絶頂
+				IF ABL:TARGET:アナル >= 2
+					PRINTFORMW 「%K33_MOAN(,,2)%!%UNICODE(0x2764)% I think I'm startin'... to like it this way better...!%UNICODE(0x2764)%」
+				ELSE
+					PRINTFORMW 「Quit makin' all these shlurpin' sounds, come ooonnn... %K33_MOAN()%, aahhh...!%UNICODE(0x2764)%」
+				ENDIF
+			ELSEIF NOWEX:MASTER:射精
+				IF ABL:TARGET:アナル >= 2
+					PRINTFORMW 「Yer about to finish, huh? Fufu～%UNICODE(0x2764)% %SPLIT_G("I'm gonna squeeze it aaaallll out:I'm gonna milk ya dry")% with my %SPLIT_G(@"bumhole:%FSYN("anus")%")%～%UNICODE(0x2764)%」
+				ELSE
+					PRINTFORMW 「Uuoohh... I can feel ya %FSYN("throb:ing")% in my bum...!%UNICODE(0x2764)%」
+				ENDIF
+			ELSE
+				IF ABL:TARGET:アナル >= 2
+					PRINTFORMW 「My %FSYN("ass")% feels soooo hooottt, it's burnin'!!!%UNICODE(0x2764)% I'm shakin' all overrrr...!%UNICODE(0x2764)%」
+				ELSE
+					PRINTFORMW 「It's so big... It might be a bit too tight... I think%UNICODE(0x2764)%」
+				ENDIF
+			ENDIF
+		ENDIF
+	;中出し後
+	ELSE
+		IF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+			IF TCVAR:Aに中出しされたフラグ && RAND:3 == 0
+				PRINTDATAW
+					DATAFORM 「Fufu～ Looks like yer thing wants to get %FSYN("milk:ed")% bone dry by my %FSYN("anus")% again～%UNICODE(0x2764)%」
+					DATAFORM 「You sure this is the %SPLIT_G("way you wanna go:right hole")%, hmm～?%UNICODE(0x2764)% Eh? You actually like it better? Sheesh, twist my arm why don'tcha～%UNICODE(0x2764)%」
+					DATAFORM 「Au... %CAPITALIZE(FSYN("geez"))%, yer gonna stretch it out and make it all sloshy!%UNICODE(0x2764)%」
+					;added
+					DATAFORM 「Goin' for a second round without resting, splendid...!%UNICODE(0x2764)%」
+					DATAFORM 「%K33_MOAN()%, good job! Yer workin' so hard for me, that's so very manly of you%UNICODE(0x2764)%」
+				ENDDATA
+			ELSE
+				GOTO INSERT_A
+			ENDIF
+		ELSE
+			IF TCVAR:Aに中出しされたフラグ && RAND:3 == 0
+				PRINTFORMW 「Au... %CAPITALIZE(FSYN("geez"))%, yer gonna stretch it out and make it all sloshy!%UNICODE(0x2764)%」
+			ELSE
+				GOTO INSERT_A
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;-----------------------------------------------------------
+;added, custom
+;-----------------------------------------------------------
+;call you a boy or by name depending on your relationship stage
+;added some customization
+@K33_BOY(ARG)
+#FUNCTIONS
+IF STRLENS(MASTERNAME:33)
+	LOCALS '= MASTERNAME:33
+ELSEIF CFLAG:1902 == 1
+	LOCALS '= PRINT_MALE("boy", MASTER)
+ELSE
+	LOCALS '= TALENT:[[諏訪子]]:恋慕 || TALENT:[[諏訪子]]:愛欲 || TALENT:[[諏訪子]]:思慕 ? CALLNAME:MASTER # PRINT_MALE("boy", MASTER)
+ENDIF
+SIF ARG
+	RETURNF CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+;replace some suwako's moans at random
+@K33_MOAN(ARGS, ARG = 3, ARG:1 = 0, ARGS:1 = "", ARGS:2)
+#FUNCTIONS
+#DIMS strTemp
+SIF ARGS == ""
+	ARGS = l
+
+ARGS:0 '= SPLIT_G(ARGS:0)
+
+IF ARG:1
+	RETURNF MOAN(ARGS, ARG, ARG:1, ARGS:1 + ":name:charname_Ribbit_Kero_Croak" + ARGS:2)
+ELSEIF PERCENT(30)
+	strTemp '= SPLIT_G(@"Ribbit:Kero:Croak")
+	SIF !RAND:1000
+		strTemp = Mlem
+	SELECTCASE TOLOWER(ARGS)
+		CASE "l"
+			LOCALS '= strTemp
+		CASE "m"
+			LOCALS '= SPLIT_G(@"%strTemp%-%strTemp%:%SLUR(strTemp, RAND:2 ? -2 # 0)%")
+	CASEELSE
+		GOTO END
+	ENDSELECT
+	
+	RETURNF CAP_PROCESS(LOCALS, ARG)
+ENDIF
+
+$END
+RETURNF MOAN(ARGS, ARG, ARG:1, ARGS:1)
+
+;repeated curse lines
+@K33_CURSE()
+SIF FLAG:70 || CFLAG:[[諏訪子]]:睡眠
+	RETURN 0
+;this is all og
+PRINTFORMDW Suwako stares at you incredibly sternly, her hollow gaze piercing through your soul.
+PRINTFORMDW You feel your entire body seize up as something cold grips your very being, freezing you...
+PRINTDATAL
+	DATAFORM 「I hope yer ready for what's comin'...」
+	DATAFORM 「Prepare yerself!」
+	DATAFORM 「I'll make it quick, don'tcha worry...」
+	DATAFORM 「Sigh... Here we go again I guess.」
+	DATAFORM 「It's that time again, isn't it?」
+	DATAFORM 「Frolick about and discover what for!」
+	DATAFORM 「I ain't a curse god for nothin', lemme show ya...」
+	DATAFORM 「Yer reckless behavior has its consequences...」
+	DATAFORM 「It's not okay to blaspheme a God, %K33_BOY()%... Let me demonstrate what happens when you do.」
+	DATAFORM 「Do I even have to tell you what'll happen next? Hehehe...」
+ENDDATA
+
+;during player's cherry pop
+@K33_TRAIN_MESSAGE_SEX
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX( !(TCVAR:PLAYER:コンドーム || TCVAR:TARGET:ピル) && FIRSTTIME("SuwakoRawHateSex") ? "sexnocondom" # "take")
+	RETURN 0
+ENDIF
+
+IF !(FLAG:70 || CFLAG:[[諏訪子]]:睡眠) && TCVAR:MASTER:筆下ろし && CFLAG:[[諏訪子]]:うふふ != 2 && FIRSTTIME("SuwakoCherryPop",,[[諏訪子]])
+	SIF FLAG:口上色
+		TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	PRINTFORML 「Huuh, so you want me to pop yer cherry then? You sure? Reaaally? Auuu...」
+	PRINTFORMDW %BREAKENG(@"Suwako seemed a little speechless for a split second, but then her expression immediately changed into something dirty, hungry, covetous...")%
+	PRINTFORML 「Mfufu...」
+	PRINTFORML 「D'you prefer yer girls *lookin'* younger, or are ya just so madly in love with me?」
+	PRINTFORMW 「Fufu, I won't judge though. Oh, and don't try to deny it.」
+	PRINTFORML 「'Cause I can tell... this pungent smell... It's a smell of a spoiled boy cock that hasn't been violated by a woman yet...」
+	PRINTFORML 「Quite the rare dish here, in Gensokyo%UNICODE(0x2764)% But make no mistake...」
+	PRINTFORMW 「I'll make a splendid adult out of ya, don't you worry%UNICODE(0x2764)%」
+	PRINTFORMDW Suwako giggles cheerfully and points at herself with her thumb as if telling you to leave it to her.
+	PRINTFORMDW You clearly note that Suwako is acting quite differently as if you just had flipped her switch.
+	PRINTFORMDW You hope that you won't end up turning into a dried squid after she's done with you...
+	PRINTFORML
+	PRINTFORML
+ELSE
+	CALL TRAIN_MESSAGE
+ENDIF
+
+@K33_CHERRYPOPCONCLUSION(ARG)
+SIF CFLAG:1900 != 1
+	RETURN 0
+CFLAG:1900 = 2
+
+SIF FLAG:70 || CFLAG:MASTER:イタズラ == 2 ;ignore when sleep-rape/time-rape
+	RETURN 0
+SIF TCVAR:抱き寄せ初回 == 10
+	RETURN 0
+	
+SELECTCASE ARG
+	CASE 0 ;from normal
+		PRINTFORMDW %BREAKENG(@"You both lay there for a moment before she gets off of you.\@ !FIRSTTIME("SuwakoFirstEjac", 1) ? %" "%You stare at her tiny orifice and can still see your cum leaking out of her. #\@")%
+		PRINTFORMW 「Aahh, that was great. I'm sort of glad you didn't really know what you were doing, it made it more innocent and made me feel young again～」
+		SIF FIRSTTIME("SuwakoFirstEjac", 1)
+			PRINTFORMW 「Though I'm kinda bummed out that ya didn't cum inside... But whatevs, we can always fix it later%UNICODE(0x2764)%」
+		PRINTFORMDW Suwako reaches out to you and gently strokes your cheek with a pleasant smile.
+		PRINTFORMW 「Heh, thanks for choosing me as your first, %K33_BOY()%. I hope you got exactly what you wanted outta this.」
+		PRINTFORMDW Oh no, I'm the one who should be honored to be graced by this divine gift...
+		PRINTFORMW 「Aww you rascal, flatterin' me so～ I mean, if yer okay with this granny then more power to ya♪ And, um, well...」
+		PRINTFORMW 「It makes me very happy too that I'm still wanted... Yeah, I still got this, hehe%UNICODE(0x2764)%」
+		PRINTFORMDW Suwako giggles and takes your hand, pulling you towards her.
+		PRINTFORMW 「Sooo... Wanna go for one more? Cuz I sure am rarin' to do more right now%UNICODE(0x2764)%」
+		IF TALENT:恋慕 || TALENT:愛欲
+			PRINTFORMDW （Auuu... How long has it been since anyone was able to love me like this...?）
+			PRINTFORMDW （I'm... so incredibly happy right now%UNICODE(0x2764)%)）
+		ENDIF
+	CASE 1 ;from reverse rape
+		PRINTFORMW 「Well look at you go!」
+		PRINTFORMW 「You did good for your first time having sex, %PRINT_MALE("boy", MASTER)%. I'm proud of ya♪」
+		CALL PRINT_DIALOGUE, @"Fufu, though with this I shouldn't be calling you %PRINT_MALE("boy:like that", MASTER)% anymore, should I? Yer %PRINT_MALE("a real man:experienced and all", MASTER)% now～ Haaah, how quickly you kids grow these days...", "w"
+		PRINTFORMDW Suwako smiles at you warmly as she gently brushes your %TINKO()%.
+		IF CFLAG:[[諏訪子]]:1901 == 4
+			PRINTFORMW 「And, uh, sorry about me tryin' to squeeze every last drop outta ya. I was tryin' to take it easy, but my hips just didn't stop...」
+			PRINTFORMW 「Once my pussy gets some working out, it ain't stoppin' till I'm done mating%UNICODE(0x2764)%」
+			PRINTFORMDW Suwako giggles with a predatory glint in her eye, making you shiver all over...
+		ENDIF
+		PRINTFORMW 「Let's have some more fun next time, 'kay? I'll show you something even more incredible... You know where to find me%UNICODE(0x2764)%」
+		PRINTFORMW 「...Not that I'm lonely or anything. Totally. Yeah.」
+		PRINTFORMDW Feeling sentimental, you pat Suwako gently on the head as she looks at you warmly with a wide grin, like an innocent child would.
+		PRINTFORMDW After being exposed to her dazzling divinity and making an important memory with her, you feel so at peace.
+		PRINTFORMDW It's like your whole life has been leading up to this moment...
+	CASE 2 ;from request/masturbation peeping
+		PRINTFORML 「By the way, sorry it had to be so messy for yer first time...」
+		PRINTFORML 「Y'know, if I knew it'd come to this I'd do it in a more gentle way and all, more romantic or somethin'.」
+		PRINTFORMDW What, you knew?
+		PRINTFORML 「'Course I knew, %K33_BOY()%! Don't you underestimate gods! Haah...」
+		PRINTFORML 「Well, umm... Congrats, I guess♪ You've done real swell, I'm proud of ya%UNICODE(0x2764)%」
+		PRINTFORMDW Suwako smiles compassionately as she gently pats you on the head.
+		PRINTFORML 「And, uhh... Please don't go braggin' that this old Suwako was yer first mistress too much, 'kay? It's just too darn awkward, hehe...～」
+		PRINTFORMDW %BREAKENG(@"Suwako blushes ever so slightly and turns around, quickly standing up. Meanwhile the proof of your connection and ascension to adulthood slowly trickles down her thighs...")%
+		CALL PRINT_DIALOGUE, @"Well, other than that... Your offer is very much appreciated%UNICODE(0x2764)% I'd like to see more of your uncontrolled beast-like side in the future, so I'm lookin' forward to it～", "w"
+ENDSELECT
+
+;this is for case where you force her to have sex with her with moriya dating ticket and she isn't into it
+@K33_TRAIN_HATESEX(ARGS)
+
+CALL TRAIN_MESSAGE
+SIF FLAG:70 || CFLAG:MASTER:イタズラ == 2 ;just in case
+	RETURN 0
+SELECTCASE ARGS
+	CASE "take"
+		PRINTDATAL
+			DATAFORM 「%MOAN(,,3,"dot")%...」
+			DATAFORM 「%GROAN(,,3)%...」
+		ENDDATA
+		IF !RAND:3
+			IF RAND:2
+				PRINTDATAW
+					DATAFORM 「By the way, if ya haven't noticed yet, I'm really not into it...」
+					DATAFORM 「Yer just wasting time tryin' to make me feel good.」
+					DATAFORM 「Just get this over with quickly, %FSYN("geez")%...」
+				ENDDATA
+			ELSE
+				PRINTDATADW
+					DATAFORM Suwako looks away, avoiding your gaze...
+					DATAFORM Suwako is staring at the ceiling, ignoring your presence...
+					DATAFORM For a moment you think you see tears welling in Suwako's eyes... No, she's just glaring at you.
+					DATAFORM At this point you're sure she's just tolerating your existence.
+				ENDDATA
+			ENDIF
+		ENDIF
+	CASE "give"
+		IF !RAND:3
+			PRINTDATAW
+				DATAFORM 「Hurry up and just ejaculate...」
+				DATAFORM 「How long until yer satisfied, hm?」
+				DATAFORM 「I'm not really in the mood, so don't push it...」
+			ENDDATA
+		ELSE
+			PRINTFORML 「.........」
+			PRINTFORMDW Suwako is just silent, simply doing what's ordered...
+		ENDIF
+	CASE "ejac"
+		PRINTDATAW
+			DATAFORM 「There, you came. Can we stop?」
+			DATAFORM 「Looks like yer out. I'll clean up.」
+			DATAFORM 「Is it over yet?」
+		ENDDATA
+	CASE "cum"
+		PRINTDATAW
+			DATAFORM 「%MOAN("m",,3,"dot")%...!」
+			DATAFORM 「No way...」
+			DATAFORM 「Fuhhh... Ghaaa... Aaahhh!」
+		ENDDATA
+		PRINTDATADW
+			DATAFORM Suwako tries her best to muffle her moans, but she can't deny all of her body's sensations...
+			DATAFORM Suwako simply glares at you for making her feel this way...
+			DATAFORM Feeling unwanted pleasure, Suwako bites her lip and looks away, trying to avoid your leer...
+		ENDDATA
+	CASE "sexnocondom"
+		PRINTFORML 「H-Hey, wait a sec! Where's the rubber, you didn't put any! No pills, either...」
+		PRINTFORML 「Huh? I'm a God, it's not like it's gonna make me pregnant? Don't give me this crap, y'hear?!」
+		PRINTFORMW 「I'm not gonna tolerate this! You better put the dang condom on, or I'll get really angry!」
+	CASE "rawejac"
+		IF FIRSTTIME("SuwakoRawEjacHateSex")
+			PRINTFORML 「Gaah... You heathen... Heretic... Demon...」
+			PRINTFORML 「I told you... to wear the rubber... you'll regret this...」
+			PRINTFORMDW You feel the %PRINT_OUTSIDE("room")% rumbling as your blood almost freezes...
+			CALL K33_TATARI_COUNTER(20)
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Without a rubber, again...」
+				DATAFORM 「Heathen...」
+				DATAFORM 「What blasphemy...」
+			ENDDATA
+		ENDIF
+ENDSELECT
+
+@K33_FIRSTCUM(ARGS)
+PRINTFORML 「Ahh, yer gettin' close, aren'tcha? Cum then!♪ Cum inside the real loli body...」
+PRINTFORML 「That you've only been dreaming of all this time%UNICODE(0x2764)%」
+PRINTFORML 「Cum inside me!」
+PRINTFORMDW %BREAKENG(@"Suwako squeals at the top of her lungs, sensing how you tremble inside her as you obey, unleashing all of your pent up desires inside her...")%
+PRINTFORML
+PRINTFORML 「Ahaaa...%UNICODE(0x2764)% Splendid, you sure came a lot%UNICODE(0x2764)%」
+PRINTFORML 「My %ARGS% is the best, ain't it? I'm not going to stop until yer balls are empty%UNICODE(0x2764)%」
+PRINTFORMDW Suwako murmurs, tracing your cheeks with her little hand as she continues bucking her hips.
+PRINTFORML 「Hehe, your face and moaning are so cute%UNICODE(0x2764)%」
+PRINTFORMDW The sensation of her inside caressing and squeezing around you all at once make your mind go blank...
+PRINTFORML 「Heh, was that too much? Alright, this time I'll be more gentle.」
+PRINTFORML 「Fufu, I bet I could make you my slave right now, if I wanted to...%UNICODE(0x2764)%」
+SIF !TALENT:キス未経験 && !TALENT:MASTER:キス未経験
+	PRINTFORMDW Suwako's long tongue invades your mouth, reaching and tasting every corner...
+PRINTFORMDW The look on her face clearly tells you that she can easily do so, and there's nothing you could do to fight against it... You gulp.
+PRINTFORMW 「But worry not... I'll be good now. Let's keep enjoying this, shall we～?」
+
+@EVENTEND
+#LATER
+;clear trailing flags
+SIF CFLAG:[[諏訪子]]:1900 == 1
+	CFLAG:[[諏訪子]]:1900 = 2
+SIF CFLAG:[[諏訪子]]:1901 && CFLAG:[[諏訪子]]:1901 < 4
+	CFLAG:[[諏訪子]]:1901 = 6
+	

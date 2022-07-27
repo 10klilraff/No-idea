@@ -1,0 +1,7629 @@
+﻿;csv-system doesn't let you mess with strings
+;ARG:0 - which string
+;ARG:1 - if the string is a location, should it add "the " before?
+;ARG:2 - when adding "the ", should it be "The "?
+@STR_TR(ARG:0, ARG:1 = 0, ARG:2 = 0)
+#FUNCTIONS
+SELECTCASE ARG:0
+CASE 0
+	SELECTCASE STR:0
+	CASE "移動"
+		LOCALS = Home
+	CASEELSE
+		LOCALS = %STR:0%
+	ENDSELECT
+CASE 1
+	LOCALS = Torii
+CASE 2
+	LOCALS = Shrine Grounds
+CASE 3
+	LOCALS = Offertory Box
+CASE 4
+	LOCALS = Main Shrine
+CASE 5
+	LOCALS = Chozuya
+CASE 6
+	LOCALS = Storeroom
+CASE 7
+	LOCALS = Doma
+CASE 8
+	LOCALS = Kitchen
+CASE 9
+	LOCALS = Living Room
+CASE 10
+	LOCALS = Veranda
+CASE 11
+	LOCALS = Garden
+CASE 12
+	LOCALS = Dressing Room
+CASE 13
+	LOCALS = Bath
+CASE 14
+	LOCALS = Toilet
+CASE 15
+	LOCALS = Reimu's Boudoir
+CASE 16
+	IF FLAG:住み込みキャラ
+		LOCALS = %CALLNAME:(FLAG:住み込みキャラ)%'s Room
+	ELSE
+		LOCALS = Worn-out Hut
+	ENDIF
+CASE 17
+	LOCALS = Small Closet
+CASE 18
+	LOCALS = Closet
+CASE 19
+	LOCALS = Large Closet
+CASE 20
+	LOCALS = Behind the Main Shrine
+CASE 21
+	LOCALS = Moriya Shrine Branch
+CASE 22
+	LOCALS = Approach
+CASE 23
+	LOCALS = Hot Spring・Dressing room
+CASE 24
+	LOCALS = Hot Spring
+CASE 25
+	LOCALS = Shrine Grove
+CASE 26
+	LOCALS = Three Fairies House・Entrance
+CASE 27
+	LOCALS = Three Fairies House・Hall
+CASE 28
+	LOCALS = Three Fairies House・Stairs
+CASE 29
+	LOCALS = Three Fairies House・Kitchen
+CASE 30
+	LOCALS = Three Fairies House・Bath
+CASE 31
+	LOCALS = Three Fairies House・Upstairs hallway
+CASE 32
+	LOCALS = Sunny's Boudoir
+CASE 33
+	LOCALS = Luna's Boudoir
+CASE 34
+	LOCALS = Star's Boudoir
+CASE 35
+	LOCALS = Three Fairies House・Basement
+CASE 36
+	LOCALS = Fantasy Ruins・Approach
+CASE 37
+	LOCALS = Fantasy Ruins・1F passage
+CASE 38
+	LOCALS = Fantasy Ruins・Washroom
+CASE 39
+	LOCALS = Fantasy Ruins・Bathroom
+CASE 40
+	LOCALS = Fantasy Ruins・Toilet
+CASE 41
+	LOCALS = Fantasy Ruins・Dining hall and lounge
+CASE 42
+	LOCALS = Fantasy Ruins・Kitchen
+CASE 43
+	LOCALS = Yumemi's Boudoir
+CASE 44
+	LOCALS = Chiyuri's Boudoir
+CASE 45
+	LOCALS = Fantasy Ruins・Stairs
+CASE 46
+	LOCALS = Fantasy Ruins・2F passage
+CASE 47
+	LOCALS = Fantasy Ruins・Bridge
+CASE 48
+	LOCALS = Fantasy Ruins・First data room
+CASE 49
+	LOCALS = Fantasy Ruins・Lab
+CASE 50
+	LOCALS = Fantasy Ruins・Second data room
+CASE 51
+	LOCALS = Fantasy Ruins・Warehouse
+CASE 52
+	LOCALS = Detached House
+CASE 53
+	;mutable
+	SELECTCASE STR:53
+		CASE "納戸"
+			LOCALS = %CALLNAME:MASTER%'s back room
+		CASEELSE
+			LOCALS = %STR:53%
+	ENDSELECT
+CASE 54
+	LOCALS = Inchling's Insect Cage
+CASE 55
+	LOCALS = Japanese-style Room
+CASE 56
+	LOCALS = On A Way To Shrine Approach
+CASE 98
+	LOCALS = %STR:98%
+CASE 1000
+	LOCALS = 愛撫
+CASE 1001
+	LOCALS = クンニ
+CASE 1002
+	LOCALS = フェラする
+CASE 1003
+	LOCALS = 指挿れ
+CASE 1004
+	LOCALS = アナル舐め
+CASE 1005
+	LOCALS = アナル愛撫
+CASE 1006
+	LOCALS = 胸愛撫
+CASE 1007
+	LOCALS = 乳首責め
+CASE 1008
+	LOCALS = 秘貝開帳
+CASE 1009
+	LOCALS = Masturbation
+CASE 1013
+	LOCALS = アナル開帳
+CASE 1015
+	LOCALS = Clit Caress
+CASE 1020
+	LOCALS = Kiss
+CASE 1021
+	LOCALS = 何もしない
+CASE 1022
+	LOCALS = 誘い受ける
+CASE 1040
+	LOCALS = Rotor
+CASE 1041
+	LOCALS = Ｅマッサージャ
+CASE 1042
+	LOCALS = Clit Cap
+CASE 1043
+	LOCALS = Onahole
+CASE 1044
+	LOCALS = Vibrator
+CASE 1045
+	LOCALS = Anal Vibrator
+CASE 1046
+	LOCALS = アナルビーズ
+CASE 1047
+	LOCALS = Nipple Cap
+CASE 1048
+	LOCALS = 搾乳機
+CASE 1049
+	LOCALS = 乳首ローター
+CASE 1060
+	LOCALS = Missionary
+CASE 1061
+	LOCALS = Doggy Style
+CASE 1062
+	LOCALS = Anal Missionary
+CASE 1063
+	LOCALS = Anal Doggy Style
+CASE 1064
+	LOCALS = Reverse Rape
+CASE 1065
+	LOCALS = Cowgirl
+CASE 1066
+	LOCALS = Anal Cowgirl
+CASE 1067
+	LOCALS = Lotus Position
+CASE 1068
+	LOCALS = Reverse Lotus
+CASE 1069
+	LOCALS = Anal Lotus
+CASE 1070
+	LOCALS = Reverse Anal Lotus
+CASE 1071
+	LOCALS = Double Penetration
+CASE 1080
+	LOCALS = Handjob
+CASE 1081
+	LOCALS = Fellatio
+CASE 1082
+	LOCALS = Paizuri
+CASE 1083
+	LOCALS = Sumata
+CASE 1084
+	LOCALS = 泡踊り
+CASE 1085
+	LOCALS = Footjob
+CASE 1088
+	LOCALS = Vacuum Fellatio
+CASE 1090
+	LOCALS = Get Anal Caress
+CASE 1091
+	LOCALS = Get Analingus
+CASE 1092
+	LOCALS = Catch Anal Missionary
+CASE 1093
+	LOCALS = Catch Anal Doggy
+CASE 1094
+	LOCALS = Catch Anal Cowgirl
+CASE 1100
+	LOCALS = スパンキング
+CASE 1101
+	LOCALS = 鞭
+CASE 1102
+	LOCALS = 蝋燭
+CASE 1103
+	LOCALS = 針
+CASE 1104
+	LOCALS = Blindfold
+CASE 1105
+	LOCALS = Rope
+CASE 1106
+	LOCALS = Ball gag
+CASE 1107
+	LOCALS = 拘束プレイ
+CASE 1120
+	LOCALS = Get Cunnilingus
+CASE 1121
+	LOCALS = Tribadism
+CASE 1122
+	LOCALS = 助手を犯させる
+CASE 1123
+	LOCALS = Give Footjob
+CASE 1124
+	LOCALS = Give Handjob
+CASE 1125
+	LOCALS = Be Caressed
+CASE 1126
+	LOCALS = Breast Press
+CASE 1130
+	LOCALS = Catch Missionary
+CASE 1131
+	LOCALS = Catch Doggy
+CASE 1132
+	LOCALS = Catch Lotus Position
+CASE 1133
+	LOCALS = Catch Reverse Lotus
+CASE 1140
+	LOCALS = Irrumatio
+CASE 1141
+	LOCALS = Fisting
+CASE 1142
+	LOCALS = A Fisting
+CASE 1143
+	LOCALS = 両アナフィスト
+CASE 1144
+	LOCALS = 放尿
+CASE 1145
+	LOCALS = アナル奉仕
+CASE 1146
+	LOCALS = 浣腸
+CASE 1147
+	LOCALS = 拡張バルーン
+CASE 1148
+	LOCALS = アナル電極
+CASE 1149
+	LOCALS = 
+CASE 1150
+	LOCALS = Forced Paizuri
+CASE 1180
+	LOCALS = Lotion
+CASE 1181
+	LOCALS = Aphrodisiac
+CASE 1182
+	LOCALS = Diuretic
+CASE 1183
+	LOCALS = ビデオ撮影
+CASE 1184
+	LOCALS = 野外プレイ
+CASE 1185
+	LOCALS = 助手を犯す
+CASE 1186
+	LOCALS = 羞恥プレイ
+CASE 1187
+	LOCALS = お風呂場プレイ
+CASE 1188
+	LOCALS = シャワー
+CASE 1189
+	LOCALS = 新妻プレイ
+CASE 1190
+	LOCALS = エプロンを着ける
+CASE 1191
+	LOCALS = 睡眠薬
+CASE 1300
+	LOCALS = 会話
+CASE 1301
+	LOCALS = お茶を淹れる
+CASE 1302
+	LOCALS = スキンシップ
+CASE 1303
+	LOCALS = 謝る
+CASE 1304
+	LOCALS = 仕事を手伝う
+CASE 1305
+	LOCALS = 膝枕してもらう
+CASE 1307
+	LOCALS = 頬をつまむ
+CASE 1308
+	LOCALS = 頬をつつく
+CASE 1309
+	LOCALS = 頭を撫でる
+CASE 1310
+	LOCALS = 尻を撫でる
+CASE 1311
+	LOCALS = 抱き付く
+CASE 1312
+	LOCALS = キスする
+CASE 1313
+	LOCALS = 胸愛撫
+CASE 1314
+	LOCALS = アナル愛撫
+CASE 1315
+	LOCALS = クリ愛撫
+CASE 1316
+	LOCALS = 指挿れ
+CASE 1330
+	LOCALS = スカートめくり
+CASE 1350
+	LOCALS = 押し倒す
+CASE 1351
+	LOCALS = 連れ出す
+CASE 1352
+	LOCALS = 告白する
+CASE 1353
+	LOCALS = イタズラする
+CASE 1354
+	LOCALS = 添い寝する
+CASE 1360
+	LOCALS = 身を任せる
+CASE 1361
+	LOCALS = 抵抗する
+CASE 1362
+	LOCALS = 逃げる
+CASE 1400
+	LOCALS = 移動
+CASE 1401
+	LOCALS = コレクション
+CASE 1402
+	LOCALS = 就寝
+CASE 1403
+	LOCALS = 休憩
+CASE 1405
+	LOCALS = 出掛ける
+CASE 1410
+	LOCALS = 掃除
+CASE 1411
+	LOCALS = 戦闘訓練
+CASE 1412
+	LOCALS = 勉強
+CASE 1413
+	LOCALS = 料理
+CASE 1414
+	LOCALS = Have A Meal
+CASE 1415
+	LOCALS = Serve A Meal
+CASE 1416
+	LOCALS = Musical Performance
+CASE 1420
+	LOCALS = Speak With Ruukoto
+CASE 1427
+	LOCALS = Weather Manipulation
+CASE 1428
+	LOCALS = Use Miracle Mallet
+CASE 1460
+	LOCALS = Delusional Masturbation
+CASE 1461
+	LOCALS = Calm down
+CASE 1501
+	LOCALS = Sixty Nine
+CASE 1502
+	LOCALS = Face sitting
+CASE 1503
+	LOCALS = G Spot Stimulation
+CASE 1504
+	LOCALS = Exposed Reverse Lotus
+CASE 1505
+	LOCALS = Handjob & Fellatio
+CASE 1506
+	LOCALS = G Spot Tease
+CASE 1507
+	LOCALS = Cervix Tease
+CASE 1508
+	LOCALS = 69 Paizuri
+CASE 1509
+	LOCALS = Double Fellatio
+CASE 1510
+	LOCALS = Double Sumata
+CASE 1511
+	LOCALS = Double Paizuri
+CASE 1512
+	LOCALS = Paizuri & Fellatio
+CASE 1513
+	LOCALS = Alternate Insertion
+CASE 1514
+	LOCALS = Sigmoid Colon Tease
+CASE 1515
+	LOCALS = Tease Vagina From Behind
+CASE 1517
+	LOCALS = Double Nipple Sucking
+CASE 1560
+	LOCALS = Get Earpicking
+CASE 1561; Changed from Dakimakura since the only time it's displayed is during SCOM
+	LOCALS = Body Pillow
+CASE 1562
+	LOCALS = Forehead Kiss
+CASE 1563
+	LOCALS = Kiss More
+CASE 1580
+	LOCALS = Lead By Hand
+CASE 1603
+	LOCALS = Hold Hands
+CASE 1604
+	LOCALS = 散策する
+CASE 1605
+	LOCALS = 寄り道する
+CASE 1610
+	LOCALS = 食事に誘う（\2000消費）
+CASE 1611
+	LOCALS = 買い物する
+CASE 1612
+	LOCALS = プレゼント
+CASE 1613
+	LOCALS = お金稼ぎする
+CASE 1619
+	LOCALS = 酒屋
+CASE 1700
+	LOCALS = 愛撫(慰)
+CASE 1701
+	LOCALS = クンニ(慰)
+CASE 1702
+	LOCALS = セルフフェラ(慰)
+CASE 1703
+	LOCALS = 指挿れ(慰)
+CASE 1704
+	LOCALS = アナル舐め(慰)
+CASE 1705
+	LOCALS = アナル愛撫(慰)
+CASE 1706
+	LOCALS = 胸愛撫(慰)
+CASE 1707
+	LOCALS = 乳首責め(慰)
+CASE 1708
+	LOCALS = 秘貝開帳(慰)
+CASE 1709
+	LOCALS = 手淫(慰)
+CASE 1712
+	LOCALS = 胸揉み(慰)
+CASE 1713
+	LOCALS = アナル開帳(慰)
+CASE 1740
+	LOCALS = Rotor
+CASE 1741
+	LOCALS = Eマッサージャ
+CASE 1742
+	LOCALS = Clit Cap
+CASE 1743
+	LOCALS = Onahole
+CASE 1744
+	LOCALS = Vibrator
+CASE 1745
+	LOCALS = Anal Vibrator
+CASE 1746
+	LOCALS = アナルビーズ
+CASE 1747
+	LOCALS = Nipple Cap
+CASE 1748
+	LOCALS = 搾乳機
+CASE 2022 ;巻きタオル
+	LOCALS = Towel Roll
+CASE 2298 ;巫女服(赤)
+	LOCALS = Red Miko Uniform
+CASE 2299 ;巫女服(緑)
+	LOCALS = Red Miko Uniform
+CASE 2435; 尼頭巾
+	LOCALS = Habit
+CASE 3001
+	LOCALS = Sandwich
+CASE 3002
+	LOCALS = Onigiri
+CASE 3003
+	LOCALS = Hamburger
+CASE 3004
+	LOCALS = Scone
+CASE 3005
+	LOCALS = Shumai
+CASE 3006
+	LOCALS = Meat bun
+CASE 3007
+	LOCALS = Fish and chips
+CASE 3008
+	LOCALS = Taco
+CASE 3009
+	LOCALS = Takoyaki
+CASE 3010
+	LOCALS = Rice and vegetable porridge
+CASE 3011
+	LOCALS = Egg on rice
+CASE 3012
+	LOCALS = Fried vegetables
+CASE 3013
+	LOCALS = Powder molded sushi
+CASE 3014
+	LOCALS = Grilled fish
+CASE 3015
+	LOCALS = Miso soup
+CASE 3016
+	LOCALS = Boiled greens in soy sauce
+CASE 3017
+	LOCALS = Udon noodles
+CASE 3018
+	LOCALS = Somen noodles
+CASE 3019
+	LOCALS = Buckwheat noodles
+CASE 3020
+	LOCALS = Omelette
+CASE 3021
+	LOCALS = Stew
+CASE 3022
+	LOCALS = Patty
+CASE 3023
+	LOCALS = Gratin
+CASE 3024
+	LOCALS = Curry and rice
+CASE 3025
+	LOCALS = Shabu-Shabu
+CASE 3026
+	LOCALS = Ramen
+CASE 3027
+	LOCALS = Pork fried with ginger
+CASE 3028
+	LOCALS = Steak
+CASE 3029
+	LOCALS = Yurinchi chicken
+CASE 3030
+	LOCALS = Salad with mozzarella cheese and tomato
+CASE 3031
+	LOCALS = Doping consomme soup
+CASE 3032
+	LOCALS = Chinese style ostrich carpaccio
+CASE 3033
+	LOCALS = Organic・tuna・sushi
+CASE 3034
+	LOCALS = Gingy dish
+CASE 3035
+	LOCALS = Tempura
+CASE 3036
+	LOCALS = Plate full of rice
+CASE 3037
+	LOCALS = Large bowl of rice with tsukemono
+CASE 3050
+	LOCALS = Pudding
+CASE 3051
+	LOCALS = Cake
+CASE 3052
+	LOCALS = Jelly
+CASE 3053
+	LOCALS = Tart
+CASE 3054
+	LOCALS = Cookies
+CASE 3055
+	LOCALS = Pie
+CASE 3056
+	LOCALS = Sweet bean jelly
+CASE 3057
+	LOCALS = Daifuku
+CASE 3058
+	LOCALS = Castella sponge cake
+CASE 3059
+	LOCALS = Dango
+CASE 3060
+	LOCALS = Assorted fruits
+CASE 3061
+	LOCALS = Pound cake
+CASE 3075
+	LOCALS = たけのこご飯
+CASE 3076
+	LOCALS = 七草粥
+CASE 3077
+	LOCALS = カキフライ
+CASE 3078
+	LOCALS = うな重
+CASE 3079
+	LOCALS = ビールと枝豆
+CASE 3080
+	LOCALS = 冷やし中華
+CASE 3651
+	LOCALS = Cabbage
+CASE 3652
+	LOCALS = Strawberry
+CASE 3653
+	LOCALS = Turnip
+CASE 3662
+	LOCALS = Cucumber
+CASE 3663
+	LOCALS = Tomato
+CASE 3664
+	LOCALS = Watermelon
+CASE 3675
+	LOCALS = Eggplant
+CASE 3676
+	LOCALS = Sweet Potato
+CASE 3677
+	LOCALS = Grape
+CASE 3687
+	LOCALS = Lily
+CASE 3688
+	LOCALS = Carrot
+CASE 3689
+	LOCALS = Green Onion
+CASE 3690
+	LOCALS = Rotor Seeds
+CASE 5000
+	LOCALS = Hakurei Shrine
+CASE 5001
+	LOCALS = Myouren Temple
+CASE 5002
+	LOCALS = Human Village
+CASE 5003
+	LOCALS = Misty Lake～Scarlet Devil Mansion
+CASE 5004
+	LOCALS = Bamboo Forest of the Lost
+CASE 5005
+	LOCALS = Forest of Magic
+CASE 5006
+	LOCALS = Sanzu River～Netherworld
+CASE 5007
+	LOCALS = Youkai Mountain (Foot)
+CASE 5008
+	LOCALS = Youkai Mountain (Summit)
+CASE 5009
+	LOCALS = Underworld
+CASE 5010
+	LOCALS = Dream World～Moon
+CASE 6001
+	LOCALS = Cherry Blossom Archway
+CASE 6002
+	LOCALS = Shrine Grounds
+CASE 6003
+	LOCALS = Shrine Main Building
+CASE 6004
+	LOCALS = Shrine Veranda
+CASE 6005
+	LOCALS = Fairy Tree
+CASE 6006
+	LOCALS = Fantasy Ruins
+CASE 6011
+	LOCALS = Jizo Street
+CASE 6012
+	LOCALS = Under the Weeping Willow
+CASE 6013
+	LOCALS = Myouren Temple Grounds
+CASE 6014
+	LOCALS = Myouren Main Temple
+CASE 6015
+	LOCALS = Cemetery
+CASE 6016 ;神霊廟広場
+	LOCALS = Shintoku plaza
+CASE 6017 ;神霊廟道場
+	LOCALS = Shintoku Dojo
+CASE 6021
+	LOCALS = Square
+CASE 6022
+	LOCALS = Shopping District
+CASE 6023
+	LOCALS = Liquor Shop Road
+CASE 6024
+	LOCALS = Temple School
+CASE 6025
+	LOCALS = Public Bath
+CASE 6026
+	LOCALS = Love Hotel
+CASE 6027
+	LOCALS = Residential Area
+CASE 6031
+	LOCALS = Misty Lake
+CASE 6032
+	LOCALS = Ice Igloos
+CASE 6033
+	LOCALS = Abandoned Mansion
+CASE 6034
+	LOCALS = Main Gate
+CASE 6035
+	LOCALS = Hall
+CASE 6036
+	LOCALS = Dining Room
+CASE 6037
+	LOCALS = Great Library
+CASE 6038
+	LOCALS = Basement
+CASE 6041
+	LOCALS = Bamboo Forest Entrance
+CASE 6042
+	LOCALS = Path of the Lost
+CASE 6043
+	LOCALS = Bamboo Forest Edge
+CASE 6044
+	LOCALS = Rabbit Cave
+CASE 6045
+	LOCALS = Eientei
+CASE 6046
+	LOCALS = Nameless Hill
+CASE 6047
+	LOCALS = Garden of the Sun
+CASE 6048
+	LOCALS = Eientei Inner Sanctum
+CASE 6049
+	LOCALS = Mugenkan
+CASE 6051
+	LOCALS = Forest Entrance
+CASE 6052
+	LOCALS = Kourindou
+CASE 6053
+	LOCALS = The Big Old Tree
+CASE 6054
+	LOCALS = Kirisame Magic Shop
+CASE 6055
+	LOCALS = Dollhouse
+CASE 6056
+	LOCALS = Road of Reconsideration
+CASE 6057
+	LOCALS = Muenzuka
+CASE 6061
+	LOCALS = Road of Liminality
+CASE 6062
+	LOCALS = Sanzu River
+CASE 6063
+	LOCALS = Mayohiga
+CASE 6064
+	LOCALS = Higan
+CASE 6065
+	LOCALS = Hakugyokurou Garden
+CASE 6066
+	LOCALS = Hakugyokurou
+CASE 6067
+	LOCALS = Hell
+CASE 6068
+	LOCALS = Animal Realm
+CASE 6069
+	LOCALS = Primate Spirit Garden
+CASE 6071
+	LOCALS = Edge of Great Forest
+CASE 6072
+	LOCALS = Genbu Ravine
+CASE 6073
+	LOCALS = Giant Toad's Pond
+CASE 6074
+	LOCALS = Seija's Secret Base
+CASE 6075
+	LOCALS = Hermit's residence
+CASE 6076
+	LOCALS = Underground Geyser Center
+CASE 6077 ;森の深奥
+	LOCALS = Deep Forest
+CASE 6081
+	LOCALS = Waterfall of Nine Heavens
+CASE 6082
+	LOCALS = Hill of Scenery View
+CASE 6083
+	LOCALS = Mountain Lake
+CASE 6084
+	LOCALS = Moriya Shrine Grounds
+CASE 6085
+	LOCALS = Moriya Main Shrine
+CASE 6086 ;虹龍洞
+	LOCALS = Rainbow Dragon Cave
+CASE 6089
+	LOCALS = Heaven
+CASE 6091
+	LOCALS = Fantastic Blowhole
+CASE 6092
+	LOCALS = Deep Road to Hell
+CASE 6093
+	LOCALS = Streets of Former Hell
+CASE 6094
+	LOCALS = Former Hell's Hot Spring
+CASE 6095
+	LOCALS = Love Hotel
+CASE 6096
+	LOCALS = Palace of the Earth Spirits
+CASE 6097
+	LOCALS = Remains of Blazing Hell
+CASE 6101
+	LOCALS = Kaian Passage
+CASE 6105
+	LOCALS = Lunar Capital
+CASE 6106
+	LOCALS = Watatsuki Pavilion
+CASE 6107
+	LOCALS = Moon Rabbit District
+CASE 6108
+	LOCALS = Peach Garden～Sandy Beach
+CASE 6109
+	LOCALS = Sea of Tranquility
+CASE 7001
+	LOCALS = Plain water
+CASE 7002
+	LOCALS = Water from Misty Lake
+CASE 7003
+	LOCALS = Water from Hell's Hot Spring
+CASE 7005
+	LOCALS = Water of Miracles
+CASE 7051
+	LOCALS = Unrefined Sake
+CASE 7052
+	LOCALS = Sake
+CASE 7053
+	LOCALS = Strong Sake
+CASE 7054
+	LOCALS = Wine
+CASE 7055
+	LOCALS = Sacred Sake
+CASE 7056
+	LOCALS = Sweet Sake
+CASE 7057
+	LOCALS = Umeshu
+CASE 8001;鳥居
+	LOCALS = Torii
+CASE 8002;境内
+	LOCALS = Shrine Grounds
+CASE 8003;賽銭箱
+	LOCALS = Offertory Box
+CASE 8004;本堂
+	LOCALS = Main Shrine
+CASE 8005;手水舎
+	LOCALS = Chozuya
+CASE 8006;物置
+	LOCALS = Storeroom
+CASE 8007;土間
+	LOCALS = Doma
+CASE 8008;台所
+	LOCALS = Kitchen
+CASE 8009;居間
+	LOCALS = Living Room
+CASE 8010;縁側
+	LOCALS = Veranda
+CASE 8011;庭
+	LOCALS = Garden
+CASE 8012;脱衣所
+	LOCALS = Dressing Room
+CASE 8013;風呂
+	LOCALS = Bath
+CASE 8014;トイレ
+	LOCALS = Toilet
+CASE 8015;霊夢私室
+	LOCALS = Reimu's Boudoir
+CASE 8016;ボロ小屋
+	LOCALS = Worn-out Hut
+CASE 8017;小さい納戸
+	LOCALS = Small Closet
+CASE 8018;押入れ
+	LOCALS = Closet
+CASE 8019;大きい納戸
+	LOCALS = Large Closet
+CASE 8020;本殿の裏
+	LOCALS = Behind the Main Shrine
+CASE 8021;守矢神社分社
+	LOCALS = Moriya Shrine Branch
+CASE 8022;参道
+	LOCALS = Approach
+CASE 8023;温泉・脱衣所
+	LOCALS = Hot Spring・Dressing room
+CASE 8024;温泉
+	LOCALS = Hot Spring
+CASE 8025;鎮守の森
+	LOCALS = Shrine Grove
+;CASE 8026;三妖精の家・入口
+;	LOCALS = Three Fairies House・Entrance
+CASE 8027;三妖精の家・広間
+	LOCALS = Three Fairies House・Hall
+;CASE 8028;三妖精の家・階段
+;	LOCALS = Three Fairies House・Stairs
+CASE 8029;三妖精の家・台所
+	LOCALS = Three Fairies House・Kitchen
+CASE 8030;三妖精の家・風呂
+	LOCALS = Three Fairies House・Bath
+CASE 8031;三妖精の家・二階廊下
+	LOCALS = Three Fairies House・Upstairs hallway
+CASE 8032;サニー私室
+	LOCALS = Sunny's Boudoir
+CASE 8033;ルナ私室
+	LOCALS = Luna's Boudoir
+CASE 8034;スター私室
+	LOCALS = Star's Boudoir
+CASE 8035;三妖精の家・地下室
+	LOCALS = Three Fairies House・Basement
+CASE 8036;夢幻遺跡前
+	LOCALS = Fantasy Ruins・Approach
+CASE 8037;夢幻遺跡・一階通路
+	LOCALS = Fantasy Ruins・1F passage
+CASE 8038;夢幻遺跡・洗面所
+	LOCALS = Fantasy Ruins・Washroom
+CASE 8039;夢幻遺跡・浴室
+	LOCALS = Fantasy Ruins・Bathroom
+CASE 8040;夢幻遺跡・トイレ
+	LOCALS = Fantasy Ruins・Toilet
+CASE 8041;夢幻遺跡・食堂兼談話室
+	LOCALS = Fantasy Ruins・Dining hall and lounge
+CASE 8042;夢幻遺跡・調理室
+	LOCALS = Fantasy Ruins・Kitchen
+CASE 8043;夢美私室
+	LOCALS = Yumemi's Boudoir
+CASE 8044;ちゆり私室
+	LOCALS = Chiyuri's Boudoir
+;CASE 8045;夢幻遺跡・階段
+;	LOCALS = Fantasy Ruins・Stairs
+CASE 8046;夢幻遺跡・二階通路
+	LOCALS = Fantasy Ruins・2F passage
+CASE 8047;夢幻遺跡・艦橋
+	LOCALS = Fantasy Ruins・Bridge
+CASE 8048;夢幻遺跡・第一資料室
+	LOCALS = Fantasy Ruins・First data room
+CASE 8049;夢幻遺跡・研究室
+	LOCALS = Fantasy Ruins・Lab
+CASE 8050;夢幻遺跡・第二資料室
+	LOCALS = Fantasy Ruins・Second data room
+CASE 8051;夢幻遺跡・倉庫
+	LOCALS = Fantasy Ruins・Warehouse
+CASE 8052;離れ
+	LOCALS = Detached House
+CASE 8053;納戸
+	SELECTCASE STR:53
+		CASE "納戸"
+			LOCALS = %CALLNAME:MASTER%'s Back Room
+		CASEELSE
+			LOCALS = Back Room
+	ENDSELECT
+CASE 8054;小人の虫かご
+	LOCALS = Inchling's Insect Cage
+CASE 8055;和室
+	LOCALS = Japanese-style Room
+CASE 8056 ;あうんの棲家
+	LOCALS = Aunn's Boudoir
+CASE 8101
+	LOCALS = Temple Gate
+CASE 8102
+	LOCALS = Temple Grounds
+CASE 8103
+	LOCALS = Main Temple Building
+CASE 8104
+	LOCALS = Auditorium
+CASE 8105
+	LOCALS = Sutra Library
+CASE 8106
+	LOCALS = Backyard
+CASE 8107
+	LOCALS = Doma
+CASE 8108
+	LOCALS = Living Room
+CASE 8109 ;女苑私室
+	LOCALS = Joon's Boudoir
+CASE 8110
+	LOCALS = Veranda
+CASE 8111
+	LOCALS = Kitchen
+CASE 8112
+	LOCALS = Bath
+CASE 8113
+	LOCALS = Nazrin's Boudoir
+CASE 8114
+	LOCALS = Murasa's Boudoir
+CASE 8115
+	LOCALS = Shou's Boudoir
+CASE 8116
+	LOCALS = Ichirin's Boudoir
+CASE 8117
+	LOCALS = Nue's Boudoir
+CASE 8118
+	LOCALS = Byakuren's Boudoir
+CASE 8119
+	IF CFLAG:MASTER:初期位置 == 119
+		LOCALS = %CALLNAME:MASTER%'s House
+	ELSE
+		LOCALS = Detached House
+	ENDIF
+CASE 8120
+	LOCALS = Storeroom
+CASE 8121
+	LOCALS = Cemetery
+CASE 8122
+	LOCALS = Bonshodo
+CASE 8123
+	LOCALS = Mausoleum Large Gate
+CASE 8124
+	LOCALS = Mausoleum Square
+CASE 8125
+	LOCALS = Tojiko's Chamber
+CASE 8126
+	LOCALS = Dojo
+CASE 8127
+	LOCALS = Futo's Boudoir
+CASE 8128
+	LOCALS = Miko's Boudoir
+CASE 8129
+	LOCALS = Parlour
+CASE 8130
+	LOCALS = Corridor
+CASE 8131
+	LOCALS = Zen Garden
+CASE 8132
+	LOCALS = Drug Storage Room
+CASE 8133
+	LOCALS = Bath
+CASE 8134 ;蔵
+	LOCALS = Warehouse
+CASE 8135 ;廊下
+	LOCALS = Corridor
+CASE 8136 ;響子私室
+	LOCALS = Kyouko's Boudoir
+CASE 8137 ;マミゾウの棲家
+	LOCALS = Mamizou's Abode
+CASE 8138 ;鐘楼
+	LOCALS = Bell Tower
+CASE 8139 ;邪仙楼
+	LOCALS = Wicked Hermit's Rise
+CASE 8140 ;お地蔵通り
+	LOCALS = Jizo Street
+CASE 8201
+	LOCALS = Village Gate
+CASE 8202
+	LOCALS = Central Square
+CASE 8203
+	LOCALS = Southern Street
+CASE 8204
+	LOCALS = Eastern Street
+CASE 8205
+	LOCALS = Northern Street
+CASE 8206
+	LOCALS = Western Street
+CASE 8207
+	LOCALS = Dragon Statue
+CASE 8208 ;雷鼓の部屋
+	LOCALS = Raiko's Boudoir
+CASE 8209 ;八橋の部屋
+	LOCALS = Yatsuhashi's Boudoir
+CASE 8210 ;弁々の部屋
+	LOCALS = Benben's Boudoir
+CASE 8211
+	LOCALS = Liquor Store
+CASE 8212
+	LOCALS = Cafe
+CASE 8213
+	LOCALS = Suzunaan
+CASE 8214
+	LOCALS = Residential Area, Front
+CASE 8215
+	LOCALS = Flower Shop
+CASE 8216
+	LOCALS = Grocery Store
+CASE 8217
+	LOCALS = Candy Store
+CASE 8218
+	LOCALS = Small Restaurant
+CASE 8219
+	LOCALS = Assembly Hall
+CASE 8220
+	LOCALS = Watchtower
+CASE 8221
+	LOCALS = Hieda Residence
+CASE 8222
+	LOCALS = Temple School
+CASE 8223
+	LOCALS = Public Bath
+CASE 8224
+	LOCALS = Keine's House
+CASE 8225
+	LOCALS = Love Hotel
+CASE 8226
+	LOCALS = Kosuzu's Boudoir
+CASE 8227
+	LOCALS = Grocer
+CASE 8228
+	LOCALS = Private Bathhouse
+CASE 8229
+	LOCALS = Akyuu's Boudoir
+CASE 8230
+	IF CFLAG:MASTER:初期位置 == 230
+		LOCALS = %CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Vacant Room
+	ENDIF
+CASE 8231
+	LOCALS = Sekibanki's Room
+CASE 8232
+	LOCALS = Renko's Room
+CASE 8233
+	LOCALS = Maribel's Room
+CASE 8234
+	LOCALS = Yuki's Room
+CASE 8235
+	LOCALS = Mai's Room
+CASE 8236
+	LOCALS = Public Toilet
+CASE 8237
+	LOCALS = Public Well
+CASE 8238
+	LOCALS = Geidontei
+CASE 8239
+	LOCALS = Miyoi's Boudoir
+CASE 8241 ;空き部屋
+	IF FLAG:住み込みキャラ
+		LOCALS = %CALLNAME:(FLAG:住み込みキャラ)%'s Room
+	ELSE
+		LOCALS = Vacant Room
+	ENDIF
+CASE 8301
+	LOCALS = Main Gate
+CASE 8302
+	LOCALS = Garden
+CASE 8303
+	LOCALS = Guard Hut
+CASE 8304
+	IF CFLAG:MASTER:初期位置 == 304
+		LOCALS = %CALLNAME:MASTER%'s Hut
+	ELSE
+		LOCALS = Empty Hut
+	ENDIF
+CASE 8305
+	LOCALS = Barn
+CASE 8306
+	LOCALS = Backyard
+CASE 8307
+	LOCALS = Eastern Terrace
+CASE 8308
+	LOCALS = Western Terrace
+CASE 8309
+	LOCALS = Hall
+CASE 8310
+	LOCALS = Library
+CASE 8311
+	LOCALS = Patchouli's Boudoir
+CASE 8312
+	LOCALS = Koakuma's Boudoir
+CASE 8313
+	LOCALS = Kitchen
+CASE 8314
+	LOCALS = Dining Room
+CASE 8315
+	LOCALS = Parlour
+CASE 8316
+	LOCALS = 1F Toilet
+;CASE 8317
+;	LOCALS = Big Staircase
+;CASE 8318
+;	LOCALS = Basement Stairs
+CASE 8319
+	LOCALS = 2F Hallway
+CASE 8320
+	LOCALS = Sakuya's Boudoir
+CASE 8321
+	IF FLAG:住み込みキャラ
+		LOCALS = %CALLNAME:(FLAG:住み込みキャラ)%'s Room
+	ELSE
+		LOCALS = Vacant Room
+	ENDIF
+CASE 8322
+	LOCALS = 2F Toilet
+CASE 8323
+	LOCALS = Fairy Maid Dormitory
+CASE 8324
+	LOCALS = Large Balcony
+;CASE 8325
+;	LOCALS = 3F Stairs
+CASE 8326
+	LOCALS = Remilia's Boudoir
+CASE 8327
+	LOCALS = Small Balcony
+CASE 8328
+	LOCALS = Underground Corridor
+CASE 8329
+	LOCALS = Warehouse
+CASE 8330
+	LOCALS = Servant Room
+CASE 8331
+	LOCALS = Basement
+CASE 8332
+	LOCALS = Dressing Room
+CASE 8333
+	LOCALS = Public Bath
+CASE 8334
+	LOCALS = Abandoned Mansion・Entrance
+CASE 8335
+	LOCALS = Abandoned Mansion・Hall
+;CASE 8336
+;	LOCALS = Abandoned Mansion・Stairs
+CASE 8337
+	LOCALS = Abandoned Mansion・Kitchen
+CASE 8338
+	LOCALS = Abandoned Mansion・Bath
+CASE 8339
+	LOCALS = Abandoned Mansion・2F Hallway
+CASE 8340
+	LOCALS = Lunasa's Boudoir
+CASE 8341
+	LOCALS = Merlin's Boudoir
+CASE 8342
+	LOCALS = Lyrica's Boudoir
+CASE 8343
+	LOCALS = Lakeside
+CASE 8344
+	LOCALS = Letty's Igloo
+CASE 8345
+	LOCALS = Cirno's Igloo
+CASE 8346
+	LOCALS = Daiyousei's House
+CASE 8347
+	LOCALS = Misty Lake
+CASE 8348
+	LOCALS = Misty Lake・Bottom
+CASE 8401
+	LOCALS = Eientei Entrance
+;CASE 8402
+;	LOCALS = Foyer
+CASE 8403
+	LOCALS = Waiting Room
+CASE 8404
+	LOCALS = Examination Room
+CASE 8405
+	LOCALS = Apothecary
+CASE 8406
+	LOCALS = Toilet For Visitors
+CASE 8407
+	LOCALS = Corridor
+CASE 8408
+	LOCALS = Middle Corridor
+CASE 8409
+	LOCALS = Veranda
+CASE 8410
+	LOCALS = Tewi's Boudoir
+CASE 8411
+	LOCALS = Reisen's Boudoir
+CASE 8412
+	IF CFLAG:MASTER:初期位置 == 412
+		LOCALS = %CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Vacant Room
+	ENDIF
+CASE 8413
+	LOCALS = Eirin's Boudoir
+CASE 8414
+	LOCALS = Kaguya's Boudoir
+CASE 8415
+	LOCALS = Hall
+CASE 8416
+	LOCALS = Living Room
+CASE 8417
+	LOCALS = Kitchen
+CASE 8418
+	LOCALS = Stables
+CASE 8419
+	LOCALS = Dressing Room
+CASE 8420
+	LOCALS = Bath
+CASE 8421
+	LOCALS = Garden
+CASE 8422
+	LOCALS = Backyard
+;CASE 8423
+;	LOCALS = Closet
+CASE 8424
+	LOCALS = Storeroom
+;CASE 8425
+;	LOCALS = 2F stairs
+CASE 8426
+	LOCALS = 2F hallway
+CASE 8427
+	LOCALS = Warehouse
+CASE 8428
+	IF CFLAG:MASTER:初期位置 == 428
+		LOCALS = %CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = 2F Spare Room
+	ENDIF
+;CASE 8429
+;	LOCALS = Basement Stairs
+CASE 8430
+	LOCALS = Basement
+CASE 8431
+	LOCALS = Rabbit Cave
+CASE 8432
+	LOCALS = Kagerou's House
+CASE 8433
+	LOCALS = Bamboo Forest Edge
+CASE 8434
+	LOCALS = Path of the Lost
+CASE 8435
+	LOCALS = Well
+CASE 8436
+	LOCALS = Nameless Hill
+CASE 8437
+	LOCALS = Medicine's House
+CASE 8438
+	LOCALS = Garden of the Sun
+CASE 8439
+	LOCALS = Larva's House
+CASE 8440
+	LOCALS = Run-down Hut
+CASE 8441
+	LOCALS = Hot Spring
+CASE 8442
+	IF CFLAG:MASTER:初期位置 == 442
+		LOCALS = %CALLNAME:MASTER%'s Hut
+	ELSE
+		LOCALS = Vacant Hut
+	ENDIF
+CASE 8443
+	LOCALS = Mystia's House
+CASE 8444
+	LOCALS = Mystia's Stall
+CASE 8445
+	LOCALS = Mokou's House
+CASE 8446
+	LOCALS = Small Shrine
+CASE 8447
+	LOCALS = Bamboo Forest Entrance
+CASE 8450
+	LOCALS = Mugenkan・Entrance
+CASE 8451
+	LOCALS = Kurumi's Boudoir
+CASE 8452
+	LOCALS = Elly's Boudoir
+CASE 8453
+	LOCALS = Dining Room
+CASE 8454
+	LOCALS = Mugenkan・Bath
+CASE 8455
+	LOCALS = Mugenkan・Toilet
+CASE 8456
+	LOCALS = Mugenkan・Warehouse
+CASE 8457
+	LOCALS = Mugetsu's Boudoir
+CASE 8458
+	LOCALS = Mugenkan・Corridor
+CASE 8459
+	LOCALS = Gengetsu's Boudoir
+CASE 8460
+	IF CFLAG:MASTER:初期位置 == 460
+		LOCALS = Mugenkan・%CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Mugenkan・Vacant Room
+	ENDIF
+CASE 8461
+	LOCALS = Mugenkan・Living Room
+CASE 8462
+	LOCALS = Mugenkan・Terrace
+CASE 8463
+	LOCALS = Yuuka's Boudoir
+CASE 8464
+	LOCALS = Mugenkan・Balcony
+CASE 8465
+	LOCALS = Mugenkan・Hall
+CASE 8466
+	LOCALS = Mugenkan・Garden
+;CASE 8467
+;	LOCALS = Outside of Bamboo Forest
+CASE 8501
+	LOCALS = Forest of Magic Entrance
+CASE 8502
+	LOCALS = Kourindou
+CASE 8503
+	LOCALS = Crossroads
+CASE 8506
+	LOCALS = Muenzuka
+CASE 8507
+	LOCALS = Mushroom Colony
+CASE 8508
+	LOCALS = Magical Square
+CASE 8509
+	LOCALS = Road of Reconsideration
+CASE 8510
+	LOCALS = Kirisame Magic Shop
+CASE 8511
+	LOCALS = Marisa's House・Living Room
+CASE 8512
+	LOCALS = Marisa's House・Bedroom
+CASE 8513
+	LOCALS = Marisa's House・Research Room
+CASE 8514
+	LOCALS = Marisa's House・Bath
+CASE 8515
+	LOCALS = Marisa's House・Warehouse
+CASE 8520
+	LOCALS = Dollhouse Entrance
+CASE 8521
+	LOCALS = Dollhouse・Alice's Room
+CASE 8522
+	LOCALS = Dollhouse・Shinki's Room
+CASE 8523
+	LOCALS = Dollhouse・Yumeko's Room
+CASE 8524
+	LOCALS = Dollhouse・Laboratory
+CASE 8525
+	LOCALS = Dollhouse・Living Room
+CASE 8526
+	LOCALS = Dollhouse・Bath
+CASE 8528
+	LOCALS = Dollhouse・Warehouse
+CASE 8529
+	LOCALS = Dollhouse・Balcony
+CASE 8530
+	LOCALS = Dollhouse・Upstairs
+CASE 8531
+	IF CFLAG:MASTER:初期位置 == 531
+		LOCALS = %CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Dollhouse・Vacant Room
+	ENDIF
+CASE 8534
+	LOCALS = Fluffy Ellen's Magic Shop
+CASE 8535
+	LOCALS = Ellen's House・Boudoir
+CASE 8536
+	LOCALS = Ellen's House・Warehouse
+CASE 8537
+	LOCALS = Ellen's House・Bath
+CASE 8540
+	LOCALS = Big Old Tree
+CASE 8541
+	LOCALS = Tokiko's Living Place
+CASE 8542
+	LOCALS = Wriggle's Living Place
+CASE 8543
+	LOCALS = Rumia's Living Place
+CASE 8544
+	LOCALS = Narumi's Hut
+CASE 8601 ;中有の道
+	LOCALS = Road of Liminality
+CASE 8602 ;賽の河原
+	LOCALS = Children's Limbo
+CASE 8603 ;積石塚
+	LOCALS = Stone Mound
+CASE 8604 ;彼岸
+	LOCALS = Nirvana
+CASE 8608 ;潤美の家
+	LOCALS = Urumi's Boudoir
+CASE 8609 ;瓔花の家
+	LOCALS = Eika's Boudoir
+CASE 8610 ;是非曲直庁ホール
+	LOCALS = The Ministry of Right and Wrong・Hall
+CASE 8612 ;法廷
+	LOCALS = Courtroom
+CASE 8613 ;是非曲直庁廊下
+	LOCALS = The Ministry of Right and Wrong・Corridor
+CASE 8614 ;是非曲直庁ラウンジ
+	LOCALS = The Ministry of Right and Wrong・Lounge
+CASE 8615 ;映姫の部屋
+	LOCALS = Shikieiki's Boudoir
+CASE 8616 ;小町の部屋
+	LOCALS = Komachi's Boudoir
+CASE 8617 ;風呂
+	LOCALS = Bath
+CASE 8618 ;空き部屋
+	IF CFLAG:MASTER:初期位置 == 618
+		LOCALS = %CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Vacant Room
+	ENDIF
+CASE 8620 ;冥界の門
+	LOCALS = Gate to the Netherworld
+CASE 8621 ;庭
+	LOCALS = Garden
+CASE 8622 ;廊下
+	LOCALS = Corridor
+CASE 8623 ;幽々子私室
+	LOCALS = Yuyuko's Boudoir
+CASE 8624 ;妖夢私室
+	LOCALS = Youmu's Boudoir
+CASE 8625 ;あなた私室
+	IF CFLAG:MASTER:初期位置 == 625
+		LOCALS = %CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Vacant Room
+	ENDIF
+CASE 8626 ;台所
+	LOCALS = Kitchen
+CASE 8627 ;風呂
+	LOCALS = Bath
+CASE 8628 ;居間
+	LOCALS = Living Room
+CASE 8629 ;西行妖
+	LOCALS = Saigyou Ayakashi
+CASE 8630 ;八雲邸玄関
+	LOCALS = Yakumo Residence・Entrance
+CASE 8631 ;八雲邸廊下
+	LOCALS = Yakumo Residence・Corridor
+CASE 8632 ;八雲邸庭
+	LOCALS = Yakumo Residence・Kitchen Garden
+CASE 8633 ;紫私室
+	LOCALS = Yukari's Boudoir
+CASE 8634 ;空部屋
+	IF CFLAG:MASTER:初期位置 == 634
+		LOCALS = %CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Vacant Room
+	ENDIF
+CASE 8635 ;橙私室
+	LOCALS = Chen's Boudoir
+CASE 8636 ;八雲邸風呂
+	LOCALS = Yakumo Residence・Bath
+CASE 8637 ;八雲邸台所
+	LOCALS = Yakumo Residence・Kitchen
+CASE 8638 ;藍私室
+	LOCALS = Ran's Boudoir
+CASE 8639 ;八雲邸居間
+	LOCALS = Yakumo Residence・Living Room
+CASE 8640 ;異界の関所
+	LOCALS = Border of the Otherworld
+CASE 8641 ;畜生メトロポリス
+	LOCALS = Beast Metropolis
+CASE 8642 ;霊長園
+	LOCALS = Primate Spirit Garden
+CASE 8643 ;霊長園の風呂
+	LOCALS = Primate Spirit Garden Bath
+CASE 8644 ;袿姫の部屋
+	LOCALS = Keiki's Boudoir
+CASE 8645 ;磨弓の部屋
+	LOCALS = Mayumi Boudoir
+CASE 8646 ;八千慧宅の風呂
+	LOCALS = Yachie's Bath
+CASE 8647 ;八千慧宅のリビング
+	LOCALS = Yachie's Living Room
+CASE 8648 ;八千慧宅の寝室
+	LOCALS = Yachie's Boudoir
+CASE 8650 ;早鬼宅のリビング
+	LOCALS = Kurokoma Living Room
+CASE 8651 ;早鬼宅の寝室
+	LOCALS = Kurokoma's Boudoir
+CASE 8652 ;早鬼宅の風呂
+	LOCALS = Kurokoma Bath
+CASE 8653 ;尤魔宅のリビング
+	LOCALS = Yuuma's Living Room
+CASE 8654 ;尤魔宅の寝室
+	LOCALS = Yuuma's Boudoir
+CASE 8655 ;尤魔宅の風呂
+	LOCALS = Yuuma's Bath
+CASE 8701
+	LOCALS = Way to the Great Forest Entrance
+CASE 8702
+	LOCALS = Mountain Trail・Road to the Ravine
+CASE 8703
+	LOCALS = Genbu Ravine
+CASE 8704
+	LOCALS = Kappa's Hideout
+CASE 8705
+	LOCALS = Mountain Trail・Mountain Side
+CASE 8706
+	LOCALS = Misfortune Goddess' House
+CASE 8707
+	LOCALS = Mountain Trail・Crossroads
+CASE 8708
+	LOCALS = Giant Toad's Pond
+CASE 8709
+	LOCALS = House of Lily Sisters
+CASE 8710
+	LOCALS = Village of Cats
+CASE 8711
+	LOCALS = Resting Place
+CASE 8712
+	LOCALS = Underground Geyser Center
+CASE 8715
+	LOCALS = House of Aki Sisters・Field
+CASE 8716
+	LOCALS = House of Aki Sisters・Doma
+CASE 8717
+	LOCALS = House of Aki Sisters・Bedroom
+CASE 8718
+	LOCALS = House of Aki Sisters・Living Room
+CASE 8719
+	IF CFLAG:MASTER:初期位置 == 719
+		LOCALS = House of Aki Sisters・%CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = House of Aki Sisters・Tatami Room
+	ENDIF
+CASE 8720
+	LOCALS = Hermit's Residence・Kitchen
+CASE 8721
+	LOCALS = Hermit's Residence・Bath
+CASE 8722
+	LOCALS = Hermit's Residence・Dojo
+CASE 8723
+	LOCALS = Hermit's Residence・2F Parlour
+CASE 8724
+	LOCALS = Hermit's Residence・Reading Room
+CASE 8725
+	LOCALS = Hermit's Residence・Sea Eagle's Room
+CASE 8726
+	LOCALS = Hermit's Residence・Living Room
+CASE 8727
+	LOCALS = Hermit's Residence・Kasen's Boudoir
+CASE 8728
+	IF CFLAG:MASTER:初期位置 == 728
+		LOCALS = Hermit's Residence・%CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Hermit's Residence・Vacant Room
+	ENDIF
+CASE 8729
+	LOCALS = Hermit's Residence・Entrance
+CASE 8730
+	LOCALS = Hermit's Residence・Garden
+CASE 8731
+	LOCALS = Broom Tree
+CASE 8732
+	LOCALS = Road to the Mountain Summit
+CASE 8733
+	LOCALS = Seija's Hideout
+CASE 8734
+	IF CFLAG:MASTER:初期位置 == 734
+		LOCALS = %CALLNAME:MASTER%'s Shed
+	ELSE
+		LOCALS = Shed
+	ENDIF
+CASE 8735
+	LOCALS = Bathing Place
+CASE 8736
+	LOCALS = Yamanba's House
+CASE 8737 ;招き猫の家
+	LOCALS = Manekineko's House
+CASE 8738 ;森の深奥
+	LOCALS = Deep Forest
+CASE 8739 ;秘天崖
+	LOCALS = Secret Green Cliff
+CASE 8740 ;山童のアジト
+	LOCALS = Yamawaro's Hideout
+CASE 8801
+	LOCALS = Summit entrance
+CASE 8802
+	LOCALS = Bridge
+CASE 8803
+	LOCALS = Cableway station
+CASE 8804
+	LOCALS = Moriya Shrine Torii
+CASE 8805
+	LOCALS = Summit
+CASE 8806
+	LOCALS = Behind the Waterfall
+CASE 8807
+	LOCALS = Momiji Residence
+CASE 8808
+	LOCALS = Aya Residence
+CASE 8809
+	LOCALS = Hatate Residence
+CASE 8810
+	IF CFLAG:MASTER:初期位置 == 810
+		LOCALS = %CALLNAME:MASTER%'s Hut
+	ELSE
+		LOCALS = Mountain Hut
+	ENDIF
+CASE 8811
+	LOCALS = Shrine Grounds
+CASE 8812
+	LOCALS = Main Shrine
+CASE 8813
+	LOCALS = Shrine Office
+CASE 8814
+	LOCALS = Lakeside
+CASE 8815
+	LOCALS = Garden
+CASE 8816
+	LOCALS = Veranda
+CASE 8817
+	LOCALS = Kanako's Boudoir
+CASE 8818
+	LOCALS = Suwako's Boudoir
+CASE 8819
+	LOCALS = Living Room
+CASE 8820
+	LOCALS = Sanae's Boudoir
+CASE 8821
+	LOCALS = Doma
+CASE 8822
+	LOCALS = Kitchen
+CASE 8823
+	IF CFLAG:MASTER:初期位置 == 823
+		LOCALS = %CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Vacant Room
+	ENDIF
+CASE 8824
+	LOCALS = Toilet
+CASE 8825
+	LOCALS = Bath
+CASE 8826
+	LOCALS = Corridor
+CASE 8830
+	LOCALS = Sea of Abstruse Clouds
+CASE 8831
+	LOCALS = Hinanawi Residence・Front
+CASE 8832
+	LOCALS = Bhavaagra Streets
+CASE 8833
+	LOCALS = Orchard
+CASE 8834
+	LOCALS = Hinanawi Residence・Doma
+CASE 8835
+	LOCALS = Hinanawi Residence・Parlour
+CASE 8836
+	LOCALS = Hinanawi Residence・Kitchen
+CASE 8837
+	LOCALS = Hinanawi Residence・Bath
+CASE 8838
+	LOCALS = Hinanawi Residence・Living Room
+CASE 8839
+	LOCALS = Hinanawi Residence・Japanese-style Room
+CASE 8840
+	LOCALS = Tenshi's Boudoir
+CASE 8841
+	LOCALS = Iku's Boudoir
+CASE 8842
+	LOCALS = Hinanawi Residence・Storeroom
+CASE 8851 ;久侘歌の小屋
+	LOCALS = Kutaka's Hut
+CASE 8852 ;駒草の小屋
+	LOCALS = Sannyo's Hut
+CASE 8853 ;魅須丸の小屋
+	LOCALS = Misumaru's Hut
+CASE 8854 ;龍宅
+	LOCALS = Megumu's House
+CASE 8855 ;虹龍洞
+	LOCALS = Rainbow Dragon Cave
+CASE 8856 ;百々世の住処
+	LOCALS = Momoyo's Dwelling
+CASE 8901
+	LOCALS = Palace of the Earth Spirits・Approach
+;CASE 8902
+;	LOCALS = Palace of the Earth Spirits・Entrance
+;CASE 8903
+;	LOCALS = Reception Room
+CASE 8904
+	LOCALS = Banquet Hall
+CASE 8905
+	LOCALS = 1F Hallway
+CASE 8906
+	LOCALS = 1F Toilet
+CASE 8909
+	LOCALS = Kitchen
+CASE 8910
+	LOCALS = Pantry
+CASE 8911
+	LOCALS = Okuu's Boudoir
+CASE 8912
+	LOCALS = Orin's boudoir
+CASE 8913
+	LOCALS = Dining Room
+CASE 8914
+	LOCALS = 2F Hallway
+CASE 8915
+	LOCALS = Balcony
+CASE 8916
+	LOCALS = Storage Room
+CASE 8917
+	LOCALS = 2F Toilet
+CASE 8918
+	LOCALS = Koishi's Boudoir
+CASE 8919
+	LOCALS = Satori's Boudoir
+CASE 8920
+	LOCALS = Study
+CASE 8921
+	LOCALS = Bath
+CASE 8922
+	LOCALS = Dressing Room
+CASE 8923
+	LOCALS = Backyard
+CASE 8925
+	LOCALS = Rose Garden
+CASE 8926
+	LOCALS = Courtyard
+;CASE 8927
+;	LOCALS = Remains of Blazing Hell・Entrance
+CASE 8928
+	LOCALS = Remains of Blazing Hell
+CASE 8929 ;地獄の人工太陽
+	LOCALS = Hell's Artificial Sun
+CASE 8930 ;旧血の池地獄
+	LOCALS = Former Hell of Blood Pools
+CASE 8931
+	LOCALS = Main Street
+CASE 8932
+	LOCALS = Back Alley
+CASE 8933
+	LOCALS = Tavern
+CASE 8934
+	LOCALS = Hot Spring
+CASE 8935
+	LOCALS = Inn
+CASE 8936
+	LOCALS = Yuugi's House
+CASE 8937
+	LOCALS = Vacant House
+CASE 8938
+	LOCALS = Oni Hang-Out
+CASE 8939
+	LOCALS = Off-Street
+CASE 8940
+	LOCALS = Parsee's House
+CASE 8941
+	LOCALS = Yamame's House
+CASE 8942
+	LOCALS = Kisume's House
+CASE 8943
+	IF CFLAG:MASTER:初期位置 == 943
+		LOCALS = %CALLNAME:MASTER%'s House
+	ELSE
+		LOCALS = Hovel
+	ENDIF
+CASE 8944
+	LOCALS = Street
+CASE 8945
+	LOCALS = Riverside
+CASE 8946
+	LOCALS = Bridge
+CASE 8948
+	LOCALS = Blowhole Bottom
+;CASE 8949
+;	LOCALS = Surface
+CASE 9001 ;槐安通路
+	LOCALS = Kaian Passageway
+CASE 9002 ;月の都
+	LOCALS = Lunar Capital
+CASE 9003 ;玉兎街
+	LOCALS = Moon Rabbit Quarter
+CASE 9004 ;広場
+	LOCALS = Plaza
+CASE 9005 ;サグメ宅 居間
+	LOCALS = Sagume's Living Room
+CASE 9006 ;サグメ宅 寝室
+	LOCALS = Sagume's Boudoir
+CASE 9007 ;空き家
+	IF CFLAG:MASTER:初期位置 == 1007
+		LOCALS = %CALLNAME:MASTER%'s House
+	ELSE
+		LOCALS = Vacant House
+	ENDIF
+CASE 9008 ;鈴瑚宅
+	LOCALS = Ringo's Residence
+CASE 9009 ;清蘭宅
+	LOCALS = Seiran's Residence
+CASE 9010 ;食事処
+	LOCALS = Eating Place
+CASE 9011 ;甘味処
+	LOCALS = Japanese Cafe
+CASE 9012 ;酒屋
+	LOCALS = Liquor Store
+CASE 9013 ;八百屋
+	LOCALS = Grocer
+CASE 9014 ;桃林
+	LOCALS = Peach Grove
+CASE 9015 ;砂浜
+	LOCALS = Sandy Beach
+CASE 9016 ;入り江
+	LOCALS = Inlet
+CASE 9020 ;綿月亭 門
+	LOCALS = Watatsuki Pavilion・Gate
+CASE 9021 ;綿月亭 玄関
+	LOCALS = Watatsuki Pavilion・Foyer
+CASE 9022 ;一階回廊
+	LOCALS = First Floor Corridor
+CASE 9023 ;門番詰め所
+	LOCALS = Gatekeeper Station
+CASE 9024 ;玉兎食堂
+	LOCALS = Rabbit Cafeteria
+CASE 9025 ;玉兎詰め所
+	LOCALS = Rabbit Office
+CASE 9026 ;食堂
+	LOCALS = Dining Room
+CASE 9027 ;厨房
+	LOCALS = Kitchen
+CASE 9028 ;食料庫
+	LOCALS = Food Storage
+CASE 9029 ;綿月亭 脱衣所
+	LOCALS = Watatsuki Pavilion・Changing Room
+CASE 9030 ;綿月亭 風呂
+	LOCALS = Watatsuki Pavilion・Bath
+CASE 9031 ;宝物庫
+	LOCALS = Treasure Storage
+CASE 9032 ;レイセン私室
+	LOCALS = Rei'sen's Boudoir
+CASE 9033 ;綿月亭 空き部屋
+	IF CFLAG:MASTER:初期位置 == 1033
+		LOCALS = Watatsuki Pavilion・%CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Watatsuki Pavilion・Vacant Room
+	ENDIF
+CASE 9035 ;中庭
+	LOCALS = Courtyard
+CASE 9036 ;四阿
+	LOCALS = Azumaya
+CASE 9040 ;二階回廊
+	LOCALS = Second Floor Corridor
+CASE 9041 ;豊姫私室
+	LOCALS = Toyohime's Boudoir
+CASE 9042 ;依姫私室
+	LOCALS = Yorihime's Boudoir
+CASE 9043 ;書斎
+	LOCALS = Library
+CASE 9044 ;応接間
+	LOCALS = Parlour
+CASE 9050 ;ドレミー宅 居間
+	LOCALS = Doremy Residence・Living Room
+CASE 9051 ;ドレミー宅 寝室
+	LOCALS = Doremy's Boudoir
+CASE 9052 ;ドレミー宅 倉庫
+	LOCALS = Doremy Residence・Storage
+CASE 9053 ;ドレミー宅 洗面所
+	LOCALS = Doremy Residence・Washroom
+CASE 9054 ;ドレミー宅 風呂
+	LOCALS = Doremy Residence・Bath
+CASE 9055 ;ドレミー宅 トイレ
+	LOCALS = Doremy Residence・Toilet
+CASE 9060 ;純狐邸 玄関
+	LOCALS = Junko Residence・Entrance
+CASE 9061 ;居間
+	LOCALS = Living Room
+CASE 9062 ;台所
+	LOCALS = Kitchen
+CASE 9063 ;純狐邸 空き部屋
+	IF CFLAG:MASTER:初期位置 == 1063
+		LOCALS = Junko Residence・%CALLNAME:MASTER%'s Room
+	ELSE
+		LOCALS = Junko Residence・Vacant Room
+	ENDIF
+CASE 9064 ;クラウンピース私室
+	LOCALS = Clownpiece's Boudoir
+CASE 9065 ;物置
+	LOCALS = Storeroom
+CASE 9066 ;純狐邸 脱衣所
+	LOCALS = Junko Residence・Dressing Room
+CASE 9067 ;純狐邸 風呂
+	LOCALS = Junko Residence・Bath
+CASE 9068 ;純狐邸 中庭
+	LOCALS = Junko Residence・Courtyard
+CASE 9070 ;屋上
+	LOCALS = Rooftop
+CASE 9071 ;純狐私室
+	LOCALS = Junko's Boudoir
+CASE 9072 ;ヘカーティア私室
+	LOCALS = Hecatia's Boudoir
+CASE 9073 ;夢の向こう
+	LOCALS = Other Side of the Dream
+CASE 10000 ;東方靈異伝　～ Highly Responsive to Prayers
+	LOCALS = Touhou Reiiden ～ Highly Responsive to Prayers
+CASE 10001 ;東方封魔録　～ the Story of Eastern Wonderland
+	LOCALS = Touhou Fuumaroku ～ the Story of Eastern Wonderland 
+CASE 10002 ;東方夢時空　～ Phantasmagoria of Dim.Dream
+	LOCALS = Touhou Yumejikuu Space Time Dream ～ the Phantasmagoria of Dim. Dream 
+CASE 10003 ;東方幻想郷　～ Lotus Land Story
+	LOCALS = Touhou Gensoukyou ～ Lotus Land Story
+CASE 10004 ;東方怪綺談　～ Mystic Square
+	LOCALS = Touhou Kaikidan ～ Mystic Square
+CASE 10005 ;東方紅魔郷　～ the Embodiment of Scarlet Devil.
+	LOCALS = Touhou Koumakyou ～ the Embodiment of Scarlet Devil.
+CASE 10006 ;東方妖々夢　～ Perfect Cherry Blossom.
+	LOCALS = Touhou Youyoumu ～ Perfect Cherry Blossom.
+CASE 10007 ;東方萃夢想　～ Immaterial and Missing Power.
+	LOCALS = Touhou Suimusou ～ Immaterial and Missing Power.
+CASE 10008 ;東方永夜抄　～ Imperishable Night.
+	LOCALS = Touhou Eiyashou　～ Imperishable Night.
+CASE 10009 ;東方花映塚　～ Phantasmagoria of Flower View.
+	LOCALS = Touhou Kaeizuka ～ Phantasmagoria of Flower View.
+CASE 10010 ;東方文花帖　～ Shoot the Bullet.
+	LOCALS = Touhou Bunkachou ～ Shoot the Bullet.
+CASE 10011 ;東方風神録　～ Mountain of Faith.
+	LOCALS = Touhou Fuujinroku ～ Mountain of Faith.
+CASE 10012 ;東方緋想天　～ Scarlet Weather Rhapsody.
+	LOCALS = Touhou Hisouten ～ Scarlet Weather Rhapsody.
+CASE 10013 ;東方地霊殿　～ Subterranean Animism.
+	LOCALS = Touhou Chireiden ～ Subterranean Animism.
+CASE 10014 ;東方星蓮船　～ Undefined Fantastic Object.
+	LOCALS = Touhou Seirensen ～ Undefined Fantastic Object.
+CASE 10015 ;東方非想天則　～ 超弩級ギニョルの謎を追え
+	LOCALS = Touhou Hisoutensoku ～ Choudokyuu Ginyoru no Nazo o Oe
+CASE 10016 ;ダブルスポイラー　～ 東方文花帖
+	LOCALS = Double Spoiler ～ Touhou Bunkachou 
+CASE 10017 ;妖精大戦争　～ 東方三月精
+	LOCALS = Yousei Daisensou ～ Touhou Sangetsusei
+CASE 10018 ;東方神霊廟　～ Ten Desires.
+	LOCALS = Touhou Shinreibyou ～ Ten Desires.
+CASE 10019 ;東方心綺楼　～ Hopeless Masquerade.
+	LOCALS = Touhou Shinkirou ～ Hopeless Masquerade.
+CASE 10020 ;東方輝針城　～ Double Dealing Character.
+	LOCALS = Touhou Kishinjou ～ Double Dealing Character.
+CASE 10021 ;弾幕アマノジャク　～ Impossible Spell Card.
+	LOCALS = Danmaku Amanojaku ～ Impossible Spell Card.
+CASE 10022 ;東方深秘録　～ Urban Legend in Limbo.
+	LOCALS = Touhou Shinpiroku ～ Urban Legend in Limbo.
+CASE 10023 ;東方紺珠伝　～ Legacy of Lunatic Kingdom.
+	LOCALS = Touhou Kanjuden ～ Legacy of Lunatic Kingdom.
+CASE 10024 ;東方天空璋　～ Hidden Star in Four Seasons.
+	LOCALS = Touhou Tenkuushou ～ Legacy of Lunatic Kingdom.
+CASE 10025 ;東方憑依華　～ Antinomy of Common Flowers.
+	LOCALS = Touhou Hyouibana ～ Antinomy of Common Flowers
+CASE 10026 ;秘封ナイトメアダイアリー　～ Violet Detector.
+	LOCALS = Hifuu Nightmare Diary ～ Violet Detector
+CASE 10027 ;東方鬼形獣　～ Wily Beast and Weakest Creature.
+	LOCALS = Touhou Kikeijuu ～ Wily Beast and Weakest Creature
+CASE 10028 ;東方虹龍洞　～ Unconnected Marketeers.
+	LOCALS = Touhou Kouryuudou ～ Unconnected Marketeers
+CASE 10100 ;A Sacred Lot
+	LOCALS = A Sacred Lot
+CASE 10101 ;風の神社
+	LOCALS = Shrine of the Wind
+CASE 10102 ;永遠の巫女
+	LOCALS = Eternal Shrine Maiden
+CASE 10103 ;Highly Responsive to Prayers
+	LOCALS = Highly Responsive to Prayers
+CASE 10104 ;東方怪奇談
+	LOCALS = Eastern Strange Discourse
+CASE 10105 ;Oriental Magician
+	LOCALS = Oriental Magician
+CASE 10106 ;破邪の小太刀
+	LOCALS = Blade of Banishment
+CASE 10107 ;The Legend of KAGE
+	LOCALS = The Legend of KAGE
+CASE 10108 ;The Positive and Negative
+	LOCALS = The Positive and Negative
+CASE 10109 ;天使伝説
+	LOCALS = Angel's Legend
+CASE 10110 ;魔鏡
+	LOCALS = Magic Mirror
+CASE 10111 ;いざ、倒れ逝くその時まで
+	LOCALS = Now, Until the Moment You Die
+CASE 10112 ;死なばもろとも
+	LOCALS = We Shall Die Together
+CASE 10113 ;星幽剣士
+	LOCALS = Swordsman of a Distant Star
+CASE 10114 ;アイリス
+	LOCALS = Iris
+CASE 10150 ;東方封魔録　～浄土曼荼羅
+	LOCALS = Record of the Sealing of an Oriental Demon ～ Pure Land Mandala
+CASE 10151 ;博麗　～Eastern Wind
+	LOCALS = Hakurei ～ Eastern Wind
+CASE 10152 ;She's in a temper!!
+	LOCALS = She's in a temper!!
+CASE 10153 ;End of Daylight
+	LOCALS = End of Daylight
+CASE 10154 ;やみのちから
+	LOCALS = Power of Darkness
+CASE 10155 ;幻夢界
+	LOCALS = World of Empty Dreams
+CASE 10156 ;死を賭して
+	LOCALS = Bet on Death
+CASE 10157 ;ひもろぎ、むらさきにもえ
+	LOCALS = Himorogi, Burn in Violet
+CASE 10158 ;恋色マジック
+	LOCALS = Love-coloured Magic
+CASE 10159 ;東方封魔録　～幽幻乱舞
+	LOCALS = Record of the Sealing of an Oriental Demon ～ A Phantom's Boisterous Dance
+CASE 10160 ;Complete Darkness
+	LOCALS = Complete Darkness
+CASE 10161 ;エキストララブ
+	LOCALS = Extra Love
+CASE 10162 ;戦車むすめのみるゆめ
+	LOCALS = The Tank Girl's Dream
+CASE 10163 ;遠野の森
+	LOCALS = Forest of Tohno
+CASE 10164 ;昔話わんだーらんど
+	LOCALS = Legendary Wonderland
+CASE 10200 ;夢は時空を越えて
+	LOCALS = A Dream Transcending Space-time
+CASE 10201 ;Selection
+	LOCALS = Selection
+CASE 10202 ;東方妖恋談
+	LOCALS = Mystic Oriental Love Consultation
+CASE 10203 ;Reincarnation
+	LOCALS = Reincarnation
+CASE 10204 ;Dim. Dream
+	LOCALS = Dim. Dream
+CASE 10205 ;Tabula rasa　～ 空白少女
+	LOCALS = Tabula rasa ～ The Empty Girl
+CASE 10206 ;Maniacal Princess
+	LOCALS = Maniacal Princess
+CASE 10207 ;夢消失　～ Lost Dream
+	LOCALS = Vanishing Dream ～ Lost Dream
+CASE 10208 ;夢幻遊戯　～ Dream War
+	LOCALS = Visionary Game ～ Dream War
+CASE 10209 ;魔法決戦！　～ Fight it out!
+	LOCALS = Decisive Magic Battle! ～ Fight it out!
+CASE 10210 ;Sailor of Time
+	LOCALS = Sailor of Time
+CASE 10211 ;Strawberry Crisis!!
+	LOCALS = Strawberry Crisis!!
+CASE 10212 ;非統一魔法世界論
+	LOCALS = Disunified Field Theory of Magic
+CASE 10213 ;魔法鐘愛
+	LOCALS = Love of Magical Chimes
+CASE 10214 ;久遠の夢
+	LOCALS = Dream of Eternity
+CASE 10215 ;東方の青い空
+	LOCALS = Eastern Blue Sky
+CASE 10216 ;永遠の満月
+	LOCALS = Eternal Full Moon
+CASE 10217 ;Maple Dream...
+	LOCALS = Maple Dream...
+CASE 10218 ;霊人の休日
+	LOCALS = Ghostly Person's Holiday
+CASE 10219 ;東方夢時空 勝利デモ
+	LOCALS = Touhou Dim. Dream Victory Demo
+CASE 10220 ;東方夢時空 ゲームオーバー
+	LOCALS = Touhou Dim. Dream Game Over
+CASE 10250 ;幻想郷　～ Lotus Land Story
+	LOCALS = Gensokyo ～ Lotus Land Story
+CASE 10251 ;Witching Dream
+	LOCALS = Witching Dream
+CASE 10252 ;Selene's light
+	LOCALS = Selene's light
+CASE 10253 ;装飾戦　～ Decoration Battle
+	LOCALS = Soushoku Ikusa ～ Decoration Battle
+CASE 10254 ;Break the Sabbath
+	LOCALS = Break the Sabbath
+CASE 10255 ;紅響曲　～ Scarlet Phoneme
+	LOCALS = Scarlet Symphony ～ Scarlet Phoneme
+CASE 10256 ;Bad Apple!!
+	LOCALS = Bad Apple!!
+CASE 10257 ;霊戦　～ Perdition crisis
+	LOCALS = Spirit Battle ～ Perdition crisis
+CASE 10258 ;アリスマエステラ
+	LOCALS = Alice Maestra
+CASE 10259 ;少女綺想曲　～ Capriccio
+	LOCALS = Maiden's Capriccio ～ Capriccio
+CASE 10260 ;星の器　～ Casket of Star
+	LOCALS = Vessel of Stars ～ Casket of Star
+CASE 10261 ;Lotus Love
+	LOCALS = Lotus Love
+CASE 10262 ;眠れる恐怖　～ Sleeping Terror
+	LOCALS = Nemureru Kyoufu ～ Sleeping Terror
+CASE 10263 ;Dream Land
+	LOCALS = Dream Land
+CASE 10264 ;幽夢　～ Inanimate Dream
+	LOCALS = Faint Dream ～ Inanimate Dream
+CASE 10265 ;禁じざるをえない遊戯
+	LOCALS = The Inevitably Forbidden Game
+CASE 10266 ;メイド幻想　～ Icemilk Magic
+	LOCALS = Illusion of a Maid ～ Icemilk Magic
+CASE 10267 ;かわいい悪魔　～ Innocence
+	LOCALS = Cute Devil ～ Innocence
+CASE 10268 ;Days
+	LOCALS = Days
+CASE 10269 ;Peaceful
+	LOCALS = Peaceful
+CASE 10270 ;Arcadian Dream
+	LOCALS = Arcadian Dream
+CASE 10271 ;幻想の住人
+	LOCALS = Those Who Live in Illusions
+CASE 10300 ;怪綺談　～ Mystic Square
+	LOCALS = Wondrous Romantic Tale ～ Mystic Square
+CASE 10301 ;Dream Express
+	LOCALS = Dream Express
+CASE 10302 ;魔法陣　～ Magic Square
+	LOCALS = Magic Formation ～ Magic Square
+CASE 10303 ;夢想時空
+	LOCALS = Dimension of Reverie
+CASE 10304 ;霊天　～ Spiritual Heaven
+	LOCALS = Reiten ～ Spiritual Heaven
+CASE 10305 ;Romantic Children
+	LOCALS = Romantic Children
+CASE 10306 ;プラスチックマインド
+	LOCALS = Plastic Mind
+CASE 10307 ;メイプルワイズ
+	LOCALS = Maple Wise
+CASE 10308 ;禁断の魔法　～ Forbidden Magic
+	LOCALS = Kindan no Mahou ～ Forbidden Magic
+CASE 10309 ;真紅の少女　～ Crimson Dead!!
+	LOCALS = Crimson Maiden ～ Crimson Dead!!
+CASE 10310 ;裏切りの少女　～ Judas Kiss
+	LOCALS = Treacherous Maiden ～ Judas Kiss
+CASE 10311 ;the Last Judgement
+	LOCALS = the Last Judgement
+CASE 10312 ;悲しき人形　～ Doll of Misery
+	LOCALS = Kanashiki Ningyou ～ Doll of Misery
+CASE 10313 ;世界の果て　～ World's End
+	LOCALS = Sekai no Hate ～ World's End
+CASE 10314 ;神話幻想　～ Infinite Being
+	LOCALS = Legendary Illusion ～ Infinite Being
+CASE 10315 ;不思議の国のアリス
+	LOCALS = Alice in Wonderland
+CASE 10316 ;the Grimoire of Alice
+	LOCALS = the Grimoire of Alice
+CASE 10317 ;神社
+	LOCALS = Shinto Shrine
+CASE 10318 ;Endless
+	LOCALS = Endless
+CASE 10319 ;久遠の楽園
+	LOCALS = Eternal Paradise
+CASE 10320 ;Mystic Dream
+	LOCALS = Mystic Dream
+CASE 10321 ;Peaceful Romancer
+	LOCALS = Peaceful Romancer
+CASE 10322 ;魂の休らむ所
+	LOCALS = Soul's Resting Place
+CASE 10350 ;赤より紅い夢
+	LOCALS = A Dream that is more Scarlet than Red
+CASE 10351 ;ほおずきみたいに紅い魂
+	LOCALS = A Soul as Red as a Ground Cherry
+CASE 10352 ;妖魔夜行
+	LOCALS = Apparitions Stalk the Night
+CASE 10353 ;ルーネイトエルフ
+	LOCALS = Lunate Elf
+CASE 10354 ;おてんば恋娘
+	LOCALS = Tomboyish Girl in Love
+CASE 10355 ;上海紅茶館　～ Chinese Tea
+	LOCALS = Shanghai Teahouse ～ Chinese Tea
+CASE 10356 ;明治十七年の上海アリス
+	LOCALS = Shanghai Alice of Meiji 17
+CASE 10357 ;ヴワル魔法図書館
+	LOCALS = Voile, the Magic Library
+CASE 10358 ;ラクトガール　～ 少女密室
+	LOCALS = Locked Girl ～ The Girl's Secret Room
+CASE 10359 ;メイドと血の懐中時計
+	LOCALS = The Maid and the Pocket Watch of Blood
+CASE 10360 ;月時計　～ ルナ・ダイアル
+	LOCALS = Lunar Clock ～ Luna Dial
+CASE 10361 ;ツェペシュの幼き末裔
+	LOCALS = The Young Descendant of Tepes
+CASE 10362 ;亡き王女の為のセプテット
+	LOCALS = Septette for the Dead Princess
+CASE 10363 ;魔法少女達の百年祭
+	LOCALS = The Centennial Festival for Magical Girls
+CASE 10364 ;U.N.オーエンは彼女なのか？
+	LOCALS = U.N. Owen was Her?
+CASE 10365 ;紅より儚い永遠
+	LOCALS = An Eternity that is more Transient than Scarlet
+CASE 10366 ;紅楼　～ Eastern Dream...
+	LOCALS = Crimson Tower ～ Eastern Dream...
+CASE 10400 ;妖々夢　～ Snow or Cherry Petal
+	LOCALS = Mystic Dream ～ Snow or Cherry Petal
+CASE 10401 ;無何有の郷　～ Deep Mountain
+	LOCALS = Paradise ～ Deep Mountain
+CASE 10402 ;クリスタライズシルバー
+	LOCALS = Crystallized Silver
+CASE 10403 ;遠野幻想物語
+	LOCALS = The Fantastic Legend of Tohno
+CASE 10404 ;ティアオイエツォン(withered leaf)
+	LOCALS = Diao ye zong (Withered Leaf)
+CASE 10405 ;ブクレシュティの人形師
+	LOCALS = The Doll Maker of Bucuresti
+CASE 10406 ;人形裁判　～ 人の形弄びし少女
+	LOCALS = Doll Judgment ～ The girl who played with people's shapes
+CASE 10407 ;天空の花の都
+	LOCALS = The capital city of flowers in the sky
+CASE 10408 ;幽霊楽団　～ Phantom Ensemble
+	LOCALS = Yuurei Gakudan ～ Phantom Ensemble
+CASE 10409 ;東方妖々夢　～ Ancient Temple
+	LOCALS = Mystic Oriental Dream ～ Ancient Temple
+CASE 10410 ;広有射怪鳥事　～ Till When?
+	LOCALS = Hiroari Shoots a Strange Bird ～ Till When?
+CASE 10411 ;アルティメットトゥルース
+	LOCALS = Ultimate Truth
+CASE 10412 ;幽雅に咲かせ、墨染の桜　～ Border of Life
+	LOCALS = Bloom Nobly, Cherry Blossoms of Sumizome ～ Border of Life
+CASE 10413 ;ボーダーオブライフ
+	LOCALS = Border of Life
+CASE 10414 ;妖々跋扈
+	LOCALS = Charming Domination
+CASE 10415 ;少女幻葬　～ Necro-Fantasy
+	LOCALS = A Maiden's Illusionary Funeral ～ Necro-Fantasy
+CASE 10416 ;妖々跋扈　～ Who done it!
+	LOCALS = Charming Domination ～ Who done it!
+CASE 10417 ;ネクロファンタジア
+	LOCALS = Necrofantasia
+CASE 10418 ;春風の夢
+	LOCALS = Dream of a Spring Breeze
+CASE 10419 ;さくらさくら　～ Japanize Dream...
+	LOCALS = Sakura, Sakura ～ Japanize Dream...
+CASE 10450 ;Demystify Feast
+	LOCALS = Demystify Feast
+CASE 10451 ;夜が降りてくる　～ Evening Star
+	LOCALS = Night Comes and Falls ～ Evening Star
+CASE 10452 ;御伽の国の鬼が島　～ Missing Power
+	LOCALS = Onigashima in the Fairyland ～ Missing Power
+CASE 10500 ;永夜抄　～ Eastern Night.
+	LOCALS = Imperishable Night ～ Eastern Night
+CASE 10501 ;幻視の夜　～ Ghostly Eyes
+	LOCALS = Illusionary Night ～ Ghostly Eyes
+CASE 10502 ;蠢々秋月　～ Mooned Insect
+	LOCALS = Stirring an Autumn Moon ～ Mooned Insect
+CASE 10503 ;夜雀の歌声　～ Night Bird
+	LOCALS = Song of the Night Sparrow ～ Night Bird
+CASE 10504 ;もう歌しか聞こえない
+	LOCALS = Deaf to all but the Song
+CASE 10505 ;懐かしき東方の血　～ Old World
+	LOCALS = Nostalgic Blood of the East ～ Old World
+CASE 10506 ;プレインエイジア
+	LOCALS = Plain Asia
+CASE 10507 ;永夜の報い　～ Imperishable Night.
+	LOCALS = Retribution for the Eternal Night ～ Imperishable Night
+CASE 10508 ;少女綺想曲　～ Dream Battle
+	LOCALS = Maiden's Capriccio ～ Dream Battle
+CASE 10509 ;恋色マスタースパーク
+	LOCALS = Love-colored Master Spark
+CASE 10510 ;シンデレラケージ　～ Kagome-Kagome
+	LOCALS = Cinderella Cage ～ Kagome-Kagome
+CASE 10511 ;狂気の瞳　～ Invisible Full Moon
+	LOCALS = Lunatic Eyes ～ Invisible Full Moon
+CASE 10512 ;ヴォヤージュ1969
+	LOCALS = Voyage 1969
+CASE 10513 ;千年幻想郷　～ History of the Moon
+	LOCALS = Gensokyo Millennium ～ History of the Moon
+CASE 10514 ;竹取飛翔　～ Lunatic Princess
+	LOCALS = Flight of the Bamboo Cutter ～ Lunatic Princess
+CASE 10515 ;ヴォヤージュ1970
+	LOCALS = Voyage 1970
+CASE 10516 ;エクステンドアッシュ　～ 蓬莱人
+	LOCALS = Extend Ash ～ Hourai Victim
+CASE 10517 ;月まで届け、不死の煙
+	LOCALS = Reach for the Moon, Immortal Smoke
+CASE 10518 ;月見草
+	LOCALS = Evening Primrose
+CASE 10519 ;Eternal Dream　～ 幽玄の槭樹
+	LOCALS = Eternal Dream ～ Mystic Maple
+CASE 10520 ;東方妖怪小町
+	LOCALS = Eastern Youkai Beauty
+CASE 10550 ;花映塚　～ Higan Retour
+	LOCALS = Flower Viewing Mound ～ Higan Retour
+CASE 10551 ;春色小径　～ Colorful Path
+	LOCALS = Spring Lane ～ Colorful Path
+CASE 10552 ;オリエンタルダークフライト
+	LOCALS = Oriental Dark Flight
+CASE 10553 ;フラワリングナイト
+	LOCALS = Flowering Night
+CASE 10554 ;東方妖々夢　～ Ancient Temple
+	LOCALS = Mystic Oriental Dream ～ Ancient Temple
+CASE 10555 ;狂気の瞳　～ Invisible Full Moon
+	LOCALS = Lunatic Eyes ～ Invisible Full Moon
+CASE 10556 ;おてんば恋娘の冒険
+	LOCALS = Adventure of the Lovestruck Tomboy
+CASE 10557 ;幽霊楽団　～ Phantom Ensemble
+	LOCALS = Yuurei Gakudan ～ Phantom Ensemble
+CASE 10558 ;もう歌しか聞こえない　～ Flower Mix
+	LOCALS = Deaf to all but the Song ～ Flower Mix
+CASE 10559 ;お宇佐さまの素い幡
+	LOCALS = White Flag of Usa Shrine
+CASE 10560 ;風神少女　 (Short Version)
+	LOCALS = Wind God Girl (Short Version)
+CASE 10561 ;ポイズンボディ　～ Forsaken Doll
+	LOCALS = Poison Body ～ Forsaken Doll
+CASE 10562 ;今昔幻想郷　～ Flower Land
+	LOCALS = Gensokyo, Past and Present ～ Flower Land
+CASE 10563 ;彼岸帰航　～ Riverside View
+	LOCALS = Higan Retour ～ Riverside View
+CASE 10564 ;六十年目の東方裁判　～ Fate of Sixty Years
+	LOCALS = Touhou Judgement in the Sixtieth Year ～ Fate of Sixty Years
+CASE 10565 ;花の映る塚
+	LOCALS = The Mound Where the Flowers Reflect
+CASE 10566 ;此岸の塚
+	LOCALS = Mound of Shigan
+CASE 10567 ;花は幻想のままに
+	LOCALS = The Flowers Remain in Fantasy
+CASE 10568 ;魂の花　～ Another Dream...
+	LOCALS = Flower of Soul ～ Another Dream...
+CASE 10600 ;天狗の手帖　～ Mysterious Note
+	LOCALS = Tengu's Notebook ～ Mysterious Note
+CASE 10601 ;風の循環　～ Wind Tour
+	LOCALS = Wind Circulation ～ Wind Tour
+CASE 10602 ;天狗が見ている　～ Black Eyes
+	LOCALS = Tengu is Watching ～ Black Eyes
+CASE 10603 ;東の国の眠らない夜
+	LOCALS = Sleepless Night of the Eastern Country
+CASE 10604 ;レトロスペクティブ京都
+	LOCALS = Retrospective Kyoto
+CASE 10605 ;風神少女
+	LOCALS = Wind God Girl
+CASE 10650 ;封印されし神々
+	LOCALS = Sealed Gods
+CASE 10651 ;人恋し神様　～ Romantic Fall
+	LOCALS = A God That Misses People ～ Romantic Fall
+CASE 10652 ;稲田姫様に叱られるから
+	LOCALS = Because Princess Inada Is Scolding Me
+CASE 10653 ;厄神様の通り道　～ Dark Road
+	LOCALS = The Road of the Apotropaic God ～ Dark Road
+CASE 10654 ;運命のダークサイド
+	LOCALS = Dark Side of Fate
+CASE 10655 ;神々が恋した幻想郷
+	LOCALS = The Gensokyo The Gods Loved
+CASE 10656 ;芥川龍之介の河童　～ Candid Friend
+	LOCALS = Akutagawa Ryuunosuke's "Kappa" ～ Candid Friend
+CASE 10657 ;フォールオブフォール　～ 秋めく滝
+	LOCALS = Fall of Fall ～ Autumnal Waterfall
+CASE 10658 ;妖怪の山　～ Mysterious Mountain
+	LOCALS = The Youkai Mountain ～ Mysterious Mountain
+CASE 10659 ;少女が見た日本の原風景
+	LOCALS = The Primal Scene of Japan the Girl Saw
+CASE 10660 ;信仰は儚き人間の為に
+	LOCALS = Faith is for the Transient People
+CASE 10661 ;御柱の墓場　～ Grave of Being
+	LOCALS = Cemetery of Onbashira ～ Grave of Being
+CASE 10662 ;神さびた古戦場　～ Suwa Foughten Field
+	LOCALS = The Venerable Ancient Battlefield ～ Suwa Foughten Field
+CASE 10663 ;明日ハレの日、ケの昨日
+	LOCALS = Tomorrow Will Be Special - Yesterday Was Not
+CASE 10664 ;ネイティブフェイス
+	LOCALS = Native Faith
+CASE 10665 ;麓の神社
+	LOCALS = Shrine at the Foot of the Mountain
+CASE 10666 ;神は恵みの雨を降らす　～ Sylphid Dream
+	LOCALS = The Gods Give Us Blessed Rain ～ Sylphid Dream
+CASE 10667 ;プレイヤーズスコア(東方風神録)
+	LOCALS = Player Score (Mountain of Faith)
+CASE 10700 ;黒い海に紅く　～ Legendary Fish
+	LOCALS = Crimson in the Black Sea ～ Legendary Fish
+CASE 10701 ;有頂天変　～ Wonderful Heaven
+	LOCALS = Catastrophe in Bhava-agra ～ Wonderful Heaven
+CASE 10702 ;幼心地の有頂天
+	LOCALS = Bhava-agra As Seen Through a Child's Mind
+CASE 10750 ;地霊達の起床
+	LOCALS = Awakening of the Earth Spirits
+CASE 10751 ;暗闇の風穴
+	LOCALS = The Dark Blowhole
+CASE 10752 ;封じられた妖怪　～ Lost Place
+	LOCALS = The Sealed-Away Youkai ～ Lost Place
+CASE 10753 ;渡る者の途絶えた橋
+	LOCALS = The Bridge People No Longer Cross
+CASE 10754 ;緑眼のジェラシー
+	LOCALS = Green-Eyed Jealousy
+CASE 10755 ;旧地獄街道を行く
+	LOCALS = Walking the Streets of a Former Hell
+CASE 10756 ;華のさかづき大江山
+	LOCALS = A Flower-Studded Sake Dish on Mt. Ooe
+CASE 10757 ;ハートフェルトファンシー
+	LOCALS = Heartfelt Fancy
+CASE 10758 ;少女さとり　～ 3rd eye
+	LOCALS = Satori Maiden ～ 3rd Eye
+CASE 10759 ;廃獄ララバイ
+	LOCALS = Lullaby of Deserted Hell
+CASE 10760 ;死体旅行　～ Be of good cheer!
+	LOCALS = Corpse Voyage ～ Be Of Good Cheer!
+CASE 10761 ;業火マントル
+	LOCALS = Hellfire Mantle
+CASE 10762 ;霊知の太陽信仰　～ Nuclear Fusion
+	LOCALS = Sun Worship of Gnosis ～ Nuclear Fusion
+CASE 10763 ;ラストリモート
+	LOCALS = Last Remote
+CASE 10764 ;ハルトマンの妖怪少女
+	LOCALS = Hartmann's Youkai Girl
+CASE 10765 ;地霊達の帰宅
+	LOCALS = The Earth Spirits' Homecoming
+CASE 10766 ;エネルギー黎明 ～ Future Dream...
+	LOCALS = Energy Daybreak ～ Future Dream...
+CASE 10767 ;プレイヤーズスコア(東方地霊殿)
+	LOCALS = Player Score (Subterranean Animism)
+CASE 10800 ;青空の影
+	LOCALS = A Shadow In The Blue Sky
+CASE 10801 ;春の湊に
+	LOCALS = At the End of Spring
+CASE 10802 ;小さな小さな賢将
+	LOCALS = A Tiny, Tiny, Clever Commander
+CASE 10803 ;閉ざせし雲の通い路
+	LOCALS = The Sealed Cloud Route
+CASE 10804 ;万年置き傘にご注意を
+	LOCALS = Beware the Umbrella Left There Forever
+CASE 10805 ;スカイルーイン
+	LOCALS = Sky Ruin
+CASE 10806 ;時代親父とハイカラ少女
+	LOCALS = The Traditional Old Man and the Stylish Girl
+CASE 10807 ;幽霊客船の時空を越えた旅
+	LOCALS = Interdimensional Voyage of a Ghostly Passenger Ship
+CASE 10808 ;キャプテン・ムラサ
+	LOCALS = Captain Murasa
+CASE 10809 ;魔界地方都市エソテリア
+	LOCALS = Rural Makai City Esoteria
+CASE 10810 ;虎柄の毘沙門天
+	LOCALS = The Tiger-Patterned Bishamonten
+CASE 10811 ;法界の火
+	LOCALS = Fires of Houkai
+CASE 10812 ;感情の摩天楼　～ Cosmic Mind
+	LOCALS = Emotional Skyscraper ～ Cosmic Mind
+CASE 10813 ;夜空のユーフォーロマンス
+	LOCALS = UFO Romance in the Night Sky
+CASE 10814 ;平安のエイリアン
+	LOCALS = Heian Alien
+CASE 10815 ;妖怪寺
+	LOCALS = Youkai Temple
+CASE 10816 ;空の帰り道　～ Sky Dream
+	LOCALS = Returning Home from the Sky ～ Sky Dream
+CASE 10817 ;プレイヤーズスコア(東方星蓮船)
+	LOCALS = Player Score (Undefined Fantastic Object)
+CASE 10850 ;アンノウンX　～ Unfound Adventure
+	LOCALS = Unknown X ～ Unfound Adventure
+CASE 10851 ;空に浮かぶ物体X
+	LOCALS = X, the Floating Objects in the Sky
+CASE 10900 ;ニュースハウンド
+	LOCALS = Newshound
+CASE 10901 ;あなたの町の怪事件
+	LOCALS = The Mystery in Your Town
+CASE 10902 ;妖怪モダンコロニー
+	LOCALS = Youkai Modern Colony
+CASE 10903 ;ネメシスの要塞
+	LOCALS = Nemesis's Stronghold
+CASE 10904 ;無間の鐘　～ Infinite Nightmare
+	LOCALS = Bell of Avici ～ Infinite Nightmare
+CASE 10905 ;妖怪の山　～ Mysterious Mountain
+	LOCALS = The Youkai Mountain ～ Mysterious Mountain
+CASE 10950 ;春の氷精
+	LOCALS = An Ice Fairy in Spring
+CASE 10951 ;可愛い大戦争のリフレーン
+	LOCALS = The Refrain of the Lovely Great War
+CASE 10952 ;いたずらに命をかけて
+	LOCALS = Staking Your Life on a Prank
+CASE 10953 ;年中夢中の好奇心
+	LOCALS = Year-Round Absorbed Curiosity
+CASE 10954 ;真夜中のフェアリーダンス
+	LOCALS = A Midnight Fairy Dance
+CASE 10955 ;妖精大戦争　～ Fairy Wars
+	LOCALS = Great Fairy Wars ～ Fairy Wars
+CASE 10956 ;ルーズレイン
+	LOCALS = Lose Rain
+CASE 10957 ;メイガスナイト
+	LOCALS = Magus Night
+CASE 10958 ;春の氷精　- 静 -
+	LOCALS = An Ice Fairy in Spring - still -
+CASE 10959 ;プレイヤーズスコア(妖精大戦争)
+	LOCALS = Player Score (Fairy Wars)
+CASE 11000 ;欲深き霊魂
+	LOCALS = Spirit of Avarice
+CASE 11001 ;死霊の夜桜
+	LOCALS = Night Sakura of Dead Spirits
+CASE 11002 ;ゴーストリード
+	LOCALS = Ghost Lead
+CASE 11003 ;妖怪寺へようこそ
+	LOCALS = Welcome to the Youkai Temple
+CASE 11004 ;門前の妖怪小娘
+	LOCALS = The Youkai Girl at the Gate
+CASE 11005 ;素敵な墓場で暮しましょ
+	LOCALS = Let's Live in a Nice Cemetery
+CASE 11006 ;リジッドパラダイス
+	LOCALS = Rigid Paradise
+CASE 11007 ;デザイアドライブ
+	LOCALS = Desire Drive
+CASE 11008 ;古きユアンシェン
+	LOCALS = Old Distant Hermit (Gu Yuan Xian)
+CASE 11009 ;夢殿大祀廟
+	LOCALS = Dream Palace Great Mausoleum
+CASE 11010 ;大神神話伝
+	LOCALS = The Legend of the Great Gods
+CASE 11011 ;小さな欲望の星空
+	LOCALS = A Starry Sky of Small Desires
+CASE 11012 ;聖徳伝説　～ True Administrator
+	LOCALS = Shoutoku Legend ～ True Administrator
+CASE 11013 ;妖怪裏参道
+	LOCALS = Youkai Back Shrine Road
+CASE 11014 ;佐渡の二ッ岩
+	LOCALS = Futatsuiwa from Sado
+CASE 11015 ;神社の新しい風
+	LOCALS = A New Wind at the Shrine
+CASE 11016 ;デザイアドリーム
+	LOCALS = Desire Dream
+CASE 11017 ;プレイヤーズスコア(東方神霊廟)
+	LOCALS = Player Score (Ten Desires)
+CASE 11050 ;幻想郷の二ッ岩
+	LOCALS = Futatsuiwa from Gensokyo
+CASE 11051 ;亡失のエモーション
+	LOCALS = The Lost Emotion
+CASE 11100 ;不思議なお祓い棒
+	LOCALS = Mysterious Purification Rod
+CASE 11101 ;ミストレイク
+	LOCALS = Mist Lake
+CASE 11102 ;秘境のマーメイド
+	LOCALS = Mermaid from the Uncharted Land 
+CASE 11103 ;運河を行き交う人妖
+	LOCALS = Humans and Youkai Traversing the Canal 
+CASE 11104 ;柳の下のデュラハン
+	LOCALS = Dullahan Under the Willows 
+CASE 11105 ;満月の竹林
+	LOCALS = Bamboo Forest of the Full Moon 
+CASE 11106 ;孤独なウェアウルフ
+	LOCALS = Lonesome Werewolf 
+CASE 11107 ;マジカルストーム
+	LOCALS = Magical Storm 
+CASE 11108 ;幻想浄瑠璃
+	LOCALS = Illusionary Joururi 
+CASE 11109 ;空中に沈む輝針城
+	LOCALS = The Shining Needle Castle Sinking in the Air 
+CASE 11110 ;リバースイデオロギー
+	LOCALS = Reverse Ideology 
+CASE 11111 ;針小棒大の天守閣
+	LOCALS = The Exaggerated Castle Keep 
+CASE 11112 ;輝く針の小人族　～ Little Princess
+	LOCALS = Inchlings of the Shining Needle ～ Little Princess 
+CASE 11113 ;魔力の雷雲
+	LOCALS = Thunderclouds of Magical Power 
+CASE 11114 ;始原のビート　～ Pristine Beat
+	LOCALS = Primordial Beat ～ Pristine Beat 
+CASE 11115 ;小槌の魔力
+	LOCALS = Magical Power of the Mallet 
+CASE 11116 ;不思議な不思議な道具達
+	LOCALS = Mysterious, Mysterious Tools 
+CASE 11117 ;プレイヤーズスコア(東方輝針城)
+	LOCALS = Player Score (Double Dealing Character)
+CASE 11150 ;反則の狼煙を上げろ
+	LOCALS = Raise the Signal Fire of Cheating 
+CASE 11151 ;不可能弾幕には反則を
+	LOCALS = Cheat Against the Impossible Danmaku 
+CASE 11152 ;ミッドナイトスペルカード
+	LOCALS = Midnight Spell Card 
+CASE 11153 ;ロマンチック逃飛行
+	LOCALS = Romantic Escape Flight 
+CASE 11154 ;永遠の三日天下
+	LOCALS = Eternal Transient Reign 
+CASE 11155 ;秘境のマーメイド(弾幕アマノジャク)
+	LOCALS = Mermaid from the Uncharted Land (Impossible Spell Card)
+CASE 11156 ;リバースイデオロギー(弾幕アマノジャク)
+	LOCALS = Reverse Ideology (Impossible Spell Card)
+CASE 11157 ;幻想浄瑠璃(弾幕アマノジャク)
+	LOCALS = Illusionary Joururi (Impossible Spell Card)
+CASE 11158 ;妖怪の山　～ Mysterious Mountain(弾幕アマノジャク)
+	LOCALS = Youkai Mountain ～ Mysterious Mountain (Impossible Spell Card)
+CASE 11200 ;華狭間のバトルフィールド
+	LOCALS = Battlefield of the Flower Threshold 
+CASE 11201 ;ラストオカルティズム　～ 現し世の秘術師
+	LOCALS = Last Occultism ～ Esotericist of the Present World 
+CASE 11202 ;アンノウンX　～ Occultly Madness
+	LOCALS = Unknown X ～ Occultly Madness
+CASE 11250 ;宇宙巫女現る
+	LOCALS = The Space Shrine Maiden Appears 
+CASE 11251 ;忘れがたき、よすがの緑
+	LOCALS = Unforgettable, the Nostalgic Greenery 
+CASE 11252 ;兎は舞い降りた
+	LOCALS = The Rabbit Has Landed
+CASE 11253 ;湖は浄めの月光を映して
+	LOCALS = The Lake Reflects the Cleansed Moonlight 
+CASE 11254 ;九月のパンプキン
+	LOCALS = September Pumpkin 
+CASE 11255 ;宇宙を飛ぶ不思議な巫女
+	LOCALS = The Mysterious Shrine Maiden Flying Through Space 
+CASE 11256 ;永遠の春夢
+	LOCALS = Eternal Spring Dream 
+CASE 11257 ;凍り付いた永遠の都
+	LOCALS = The Frozen Eternal Capital 
+CASE 11258 ;逆転するホイールオブフォーチュン
+	LOCALS = Reversed Wheel of Fortune 
+CASE 11259 ;遥か３８万キロのボヤージュ
+	LOCALS = Faraway Voyage of 380000 Kilometers 
+CASE 11260 ;星条旗のピエロ
+	LOCALS = Pierrot of the Star-Spangled Banner 
+CASE 11261 ;故郷の星が映る海
+	LOCALS = The Sea that Reflects One's Home Planet
+CASE 11262 ;ピュアヒューリーズ　～ 心の在処
+	LOCALS = Pure Furies ～ Whereabouts of the Heart 
+CASE 11263 ;見た事も無い悪夢の世界
+	LOCALS = A World of Nightmares Never Seen Before 
+CASE 11264 ;パンデモニックプラネット
+	LOCALS = Pandemonic Planet 
+CASE 11265 ;神社から見える月
+	LOCALS = The Moon as Seen from the Shrine 
+CASE 11266 ;宇宙巫女帰還する
+	LOCALS = The Space Shrine Maiden Returns Home 
+CASE 11267 ;プレイヤーズスコア(東方紺珠伝)
+	LOCALS = Player Score (Legacy of Lunatic Kingdom)
+CASE 11300 ;桜舞い散る天空
+	LOCALS = The Sky Where Cherry Blossoms Flutter Down 
+CASE 11301 ;希望の星は青霄に昇る
+	LOCALS = A Star of Hope Rises in the Blue Sky 
+CASE 11302 ;真夏の妖精の夢
+	LOCALS = A Midsummer Fairy's Dream 
+CASE 11303 ;色無き風は妖怪の山に
+	LOCALS = The Colorless Wind on Youkai Mountain 
+CASE 11304 ;山奥のエンカウンター
+	LOCALS = Deep-Mountain Encounter 
+CASE 11305 ;桜色の海を泳いで
+	LOCALS = Swim in a Cherry Blossom-Colored Sea 
+CASE 11306 ;一対の神獣
+	LOCALS = A Pair of Divine Beasts 
+CASE 11307 ;幻想のホワイトトラベラー
+	LOCALS = Illusionary White Traveler 
+CASE 11308 ;魔法の笠地蔵
+	LOCALS = The Magic Straw-Hat Jizo 
+CASE 11309 ;禁断の扉の向こうは、この世かあの世か
+	LOCALS = Does the Forbidden Door Lead to This World, or the World Beyond?
+CASE 11310 ;クレイジーバックダンサーズ
+	LOCALS = Crazy Backup Dancers 
+CASE 11311 ;イントゥ・バックドア
+	LOCALS = Into Backdoor 
+CASE 11312 ;秘匿されたフォーシーズンズ
+	LOCALS = The Concealed Four Seasons 
+CASE 11313 ;もうドアには入れない
+	LOCALS = No More Going Through Doors 
+CASE 11314 ;秘神マターラ　～ Hidden Star in All Seasons
+	LOCALS = Secret God Matara ～ Hidden Star in All Seasons
+CASE 11315 ;不自然な自然
+	LOCALS = Unnatural Nature 
+CASE 11316 ;白い旅人
+	LOCALS = White Traveler 
+CASE 11317 ;プレイヤーズスコア(東方天空璋)
+	LOCALS = Player Score (Hidden Star in Four Seasons)
+CASE 11350 ;今宵は飄逸なエゴイスト　～ Egoistic Flowers
+	LOCALS = Tonight Stars an Easygoing Egoist ～ Egoistic Flowers
+CASE 11351 ;憑坐は夢と現の間に　～ Necro-Fantasia
+	LOCALS = The Yorimashi Sits Between Dream and Reality ～ Necro-Fantasia
+CASE 11400 ;悪夢日記
+	LOCALS = Nightmare Journal
+CASE 11401 ;ルーシッドドリーマー
+	LOCALS = Lucid Dreamer
+CASE 11402 ;ルナティックドリーマー
+	LOCALS = Lunatic Dreamer
+CASE 11403 ;ナイトメアダイアリー
+	LOCALS = Nightmare Diary
+CASE 11404 ;バー・オールドアダム
+	LOCALS = "Old Adam" Bar
+CASE 11405 ;燕石博物誌が連れてきた闇
+	LOCALS = The Darkness Brought In by Swallowstone Naturalis Historia
+CASE 11450 ;物言わぬ獣の霊
+	LOCALS = Silent Beast Spirits
+CASE 11451 ;地蔵だけが知る哀嘆
+	LOCALS = The Lamentations Known Only by Jizo
+CASE 11452 ;ジェリーストーン
+	LOCALS = Jelly Stone
+CASE 11453 ;ロストリバー
+	LOCALS = Lost River
+CASE 11454 ;石の赤子と水中の牛
+	LOCALS = The Stone Baby and the Submerged Bovine
+CASE 11455 ;不朽の曼珠沙華
+	LOCALS = Everlasting Red Spider Lily
+CASE 11456 ;セラフィックチキン
+	LOCALS = Seraphic Chicken
+CASE 11457 ;アンロケイテッドヘル
+	LOCALS = Unlocated Hell 
+CASE 11458 ;トータスドラゴン　～ 幸運と不運
+	LOCALS = Tortoise Dragon ～ Fortune and Misfortune
+CASE 11459 ;ビーストメトロポリス
+	LOCALS = Beast Metropolis
+CASE 11460 ;セラミックスの杖刀人
+	LOCALS = Joutoujin of Ceramics
+CASE 11461 ;エレクトリックヘリテージ
+	LOCALS = Electric Heritage
+CASE 11462 ;偶像に世界を委ねて　～ Idoratrize World
+	LOCALS = Entrust this World to Idols ～ Idolatrize World
+CASE 11463 ;輝かしき弱肉強食の掟
+	LOCALS = The Shining Law of the Strong Eating the Weak
+CASE 11464 ;聖徳太子のペガサス　～ Dark Pegasus
+	LOCALS = Prince Shoutoku's Pegasus ～ Dark Pegasus
+CASE 11465 ;畜生達の休息
+	LOCALS = The Animals' Rest
+CASE 11466 ;地下からの帰還
+	LOCALS = Returning Home from the Underground
+CASE 11467 ;プレイヤーズスコア(東方鬼形獣)
+	LOCALS = Player Score (Wily Beast and Weakest Creature)
+CASE 11500 ;虹の架かる幻想郷
+	LOCALS = A Rainbow Spanning Gensokyo
+CASE 11501 ;妖異達の通り雨
+	LOCALS = A Shower of Strange Occurrences
+CASE 11502 ;大吉キトゥン
+	LOCALS = Kitten of Great Fortune
+CASE 11503 ;深緑に隠された断崖
+	LOCALS = The Cliff Hidden in Deep Green
+CASE 11504 ;バンデットリィテクノロジー
+	LOCALS = Banditry Technology
+CASE 11505 ;駒草咲くパーペチュアルスノー
+	LOCALS = The Perpetual Snow of Komakusa Blossoms
+CASE 11506 ;スモーキングドラゴン
+	LOCALS = Smoking Dragon
+CASE 11507 ;廃れゆく産業遺構
+	LOCALS = The Obsolescent Industrial Remains
+CASE 11508 ;神代鉱石
+	LOCALS = Ore from the Age of the Gods
+CASE 11509 ;待ちわびた逢魔が時
+	LOCALS = The Long-Awaited Oumagatoki
+CASE 11510 ;星降る天魔の山
+	LOCALS = Starry Mountain of Tenma
+CASE 11511 ;ルナレインボー
+	LOCALS = Lunar Rainbow
+CASE 11512 ;あの賑やかな市場は今どこに　～ Immemorial Marketeers
+	LOCALS = Where Is That Bustling Marketplace Now ～ Immemorial Marketeers
+CASE 11513 ;幻想の地下大線路網
+	LOCALS = The Great Fantastic Underground Railway Network
+CASE 11514 ;龍王殺しのプリンセス
+	LOCALS = The Princess Who Slays Dragon Kings
+CASE 11515 ;嵐の後の日曜日
+	LOCALS = The Sunday After the Storm
+CASE 11516 ;虹色の世界
+	LOCALS = A Rainbow-Colored World
+CASE 11517 ;プレイヤーズスコア(東方虹龍洞)
+	LOCALS = Player Score (Unconnected Marketeers)
+CASEELSE
+	RETURNF STR:ARG
+ENDSELECT
+SIF ARG:1
+	LOCALS = %LOC_THE(ARG:0,ARG:2)%%LOCALS%
+RETURNF LOCALS
+
+@TASTE_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "葉物"
+		LOCALS = leafy
+	CASE "あっさり"
+		LOCALS = light
+	CASE "淡白"
+		LOCALS = plain
+	CASE "ふわふわ"
+		LOCALS = fluffy
+	CASE "春物"
+		LOCALS = spring
+	CASE "すっぱい"
+		LOCALS = sour
+	CASE "煎餅"
+		LOCALS = pancake
+	CASE "妖力"
+		LOCALS = Youkai
+	CASE "血の魔力"
+		LOCALS = blood magic
+	CASE "辛い"
+		LOCALS = spicy
+	CASE "グロテスク"
+		LOCALS = grotesque
+	CASE "謎料理"
+		LOCALS = questionable
+	CASE "薄味"
+		LOCALS = insipid
+	CASE "得意料理＊和食＊"
+		LOCALS = 
+	CASE "ミルク"
+		LOCALS = milk
+	CASE "和食"
+		LOCALS = japanese-style
+	CASE "煮物"
+		LOCALS = boiled
+	CASE "パイ"
+		LOCALS = pie
+	CASE "ヘルシー"
+		LOCALS = healthy
+	CASE "機能的"
+		LOCALS = efficient
+	CASE "サクサク"
+		LOCALS = crunchy
+	CASE "科学的"
+		LOCALS = scientific
+	CASE "揚げ物"
+		LOCALS = deep-fried
+	CASE "しょっぱい"
+		LOCALS = salty
+	CASE "霊障"
+		LOCALS = anti-spirit
+	CASE "化学的"
+		LOCALS = chemical
+	CASE "得意料理＊家庭的＊"
+		LOCALS = 
+	CASE "パン"
+		LOCALS = bread
+	CASE "汁物"
+		LOCALS = soup
+	CASE "鮮やか"
+		LOCALS = vivid
+	CASE "外界風"
+		LOCALS = Real world style
+	CASE "ガッツリ"
+		LOCALS = firm
+	CASE "虫肉"
+		LOCALS = insect meat
+	CASE "キノコ"
+		LOCALS = mushroom
+	CASE "豪華"
+		LOCALS = deluxe
+	CASE "豪快"
+		LOCALS = hearty
+	CASE "中華"
+		LOCALS = chinese
+	CASE "濃厚"
+		LOCALS = nutritious
+	CASE "魔界風"
+		LOCALS = Makai-style
+	CASE "魔力"
+		LOCALS = charming
+	CASE "ジャンキー"
+		LOCALS = junk-food
+	CASE "温かい"
+		LOCALS = warm
+	CASE "トロトロ", "とろとろ"
+		LOCALS = sticky
+	CASE "濃い味"
+		LOCALS = colorful
+	CASE "果物"
+		LOCALS = fruity
+	CASE "冷たい"
+		LOCALS = cold
+	CASE "もちもち"
+		LOCALS = springy
+	CASE "鍋物"
+		LOCALS = stewed
+	CASE "芸術的"
+		LOCALS = artsy
+	CASE "ぷるぷる"
+		LOCALS = jiggly
+	CASE "隠し味"
+		LOCALS = subtle
+	CASE "カレー"
+		LOCALS = curry
+	CASE "カエル"
+		LOCALS = frog
+	CASE "ドリンク"
+		LOCALS = drink
+	CASE "イチゴ"
+		LOCALS = strawberry
+	CASE "おつまみ"
+		LOCALS = snack
+	CASE "刺激的"
+		LOCALS = stimulating
+	CASE "冬物"
+		LOCALS = winter
+	CASE "エンチャント"
+		LOCALS = enchanted
+	CASE "アイス"
+		LOCALS = icy
+	CASE "夏物"
+		LOCALS = summer
+	CASE "辛い辛い"
+		LOCALS = super spicy
+	CASE "氷結"
+		LOCALS = freezing
+	CASE "得意料理＊夏物＊"
+		LOCALS = 
+	CASE "絢爛"
+		LOCALS = gorgeous
+	CASE "秘術"
+		LOCALS = secret
+	CASE "高級食材"
+		LOCALS = high class
+	CASE "ケーキ"
+		LOCALS = cake
+	CASE "安物食材"
+		LOCALS = low class
+	CASE "得意料理＊洋食＊"
+		LOCALS = 
+	CASE "彩り"
+		LOCALS = coloring
+	CASE "天界風"
+		LOCALS = Heavenly
+	CASE "得意料理＊春物＊"
+		LOCALS = 
+	CASE "チーズ"
+		LOCALS = cheese
+	CASE "未知の味"
+		LOCALS = unknown flavor
+	CASE "卵"
+		LOCALS = egg
+	CASE "切れ味"
+		LOCALS = sharp
+	CASE "得意料理＊野趣＊"
+		LOCALS = 
+	CASE "鳥肉"
+		LOCALS = chicken
+	CASE "得意料理＊魚料理＊"
+		LOCALS = 
+	CASE "獣肉"
+		LOCALS = animal
+	CASE "秋物"
+		LOCALS = autumn
+	CASE "得意料理＊秋物＊"
+		LOCALS = 
+	CASE "加護"
+		LOCALS = divine protection
+	CASE "おいしい水"
+		LOCALS = sweet water
+	CASE "神力"
+		LOCALS = divine
+	CASE "ゆでたまご"
+		LOCALS = boiled egg
+	CASE "大火力"
+		LOCALS = super heated
+	CASE "ドッキリ味"
+		LOCALS = surprise
+	CASE "道具の共鳴"
+		LOCALS = tool-resonant
+	CASE "得意料理＊チーズ＊"
+		LOCALS = 
+	CASE "ナス"
+		LOCALS = eggplant
+	CASE "仙術"
+		LOCALS = hermit
+	CASE "得意料理＊中華＊"
+		LOCALS = 
+	CASE "得意料理＊ふわふわ＊"
+		LOCALS = 
+	CASE "キュウリ"
+		LOCALS = cucumber
+	CASE "玉兎流"
+		LOCALS = moon rabbit style
+	CASE "ニンジン"
+		LOCALS = carrot
+	CASE "得意料理＊ヘルシー＊"
+		LOCALS = 
+	CASE "得意料理＊質素＊"
+		LOCALS = 
+	CASE "得意料理＊鳥肉＊"
+		LOCALS = 
+	CASE "得意料理＊肉料理＊"
+		LOCALS = 
+	CASE "得意料理＊豪快＊"
+		LOCALS = 
+	CASE "夢幻風"
+		LOCALS = Mugenkan style
+	CASE "鬼の魔力"
+		LOCALS = oni magic
+	CASE "得意料理＊上品＊"
+		LOCALS = 
+	CASE "薬効"
+		LOCALS = medical efficacy
+	CASE "得意料理＊冬物＊"
+		LOCALS = 
+	CASE "イモ"
+		LOCALS = potato
+	CASE "稗田家秘伝の味"
+		LOCALS = Hieda secret recipe
+	CASE "得意料理＊ジャンキー＊"
+		LOCALS = 
+	CASE "得意料理＊虫肉＊"
+		LOCALS = 
+	CASE "家庭的サクサク"
+		LOCALS = family meal
+	CASE "得意料理＊淡白＊"
+		LOCALS = 
+	CASE "逆転"
+		LOCALS = reversed
+	CASE "生命力"
+		LOCALS = revitalizing
+	CASE "おふくろの味"
+		LOCALS = mom's cooking
+	CASE "ハンバーガー"
+		LOCALS = hamburger
+	CASE "純化した味"
+		LOCALS = purified
+	CASE "貧乏飯"
+		LOCALS = poverty
+	CASE "得意料理＊魚＊"
+		LOCALS = 
+	CASE "畜生流"
+		LOCALS = beast style
+	CASE "プロの味"
+		LOCALS = professional
+	CASE "できたて"
+		LOCALS = fresh-made
+	CASE "タマネギ"
+		LOCALS = onion
+	CASE "山菜"
+		LOCALS = wild herbs
+	CASE "カブ"
+		LOCALS = turnip
+	CASE "ギンギー"
+		LOCALS = gingy
+	CASE "カボチャ"
+		LOCALS = pumpkin
+	CASE "ハクサイ"
+		LOCALS = cabbage
+	CASE "はちみつ"
+		LOCALS = honey
+	CASE "雪だるまの"
+		LOCALS = Snowman's
+	CASE "甘味材"
+		LOCALS = Sweetening material
+	CASE "仙桃"
+		LOCALS = Hermit peach
+
+
+	CASE "生地"
+		LOCALS = Texture
+	CASE "質素"
+		LOCALS = Modest
+	CASE "禁断"
+		LOCALS = Forbidden
+	CASE "鶏肉"
+		LOCALS = Chicken
+	CASE "油"
+		LOCALS = Oily
+	CASE "雑穀"
+		LOCALS = Cereal
+	CASE "壮大"
+		LOCALS = Grand
+	CASE "肉料理"
+		LOCALS = Meat dish
+	CASE "洋食"
+		LOCALS = Western
+	CASE "野趣"
+		LOCALS = Rural
+	CASE "麺類"
+		LOCALS = Noodles
+	CASE "シンプル"
+		LOCALS = Simple
+	CASE "鶏卵"
+		LOCALS = Egg
+	CASE "米", "お米"
+		LOCALS = Rice
+	CASE "白米"
+		LOCALS = White rice
+	CASE "スパイス"
+		LOCALS = Spiced
+	CASE "上品"
+		LOCALS = Premium
+	CASE "ボリューム感"
+		LOCALS = Filling
+	CASE "甘い"
+		LOCALS = Sweet
+	CASE "野菜"
+		LOCALS = Vegetables
+	CASE "野菜抜き"
+		LOCALS = No veggies
+	CASE "さっぱり"
+		LOCALS = Refreshing
+	CASE "かわいい"
+		LOCALS = Cute
+	CASE "紅い"
+		LOCALS = Scarlet
+	CASE "なめらか"
+		LOCALS = Smooth
+	CASE "水気"
+		LOCALS = Moist
+	CASE "トマト"
+		LOCALS = Tomato
+	CASE "あんこ"
+		LOCALS = Anko
+	CASE "魚料理"
+		LOCALS = Fish dish
+	CASE "軽食"
+		LOCALS = Snack
+	CASE "主食"
+		LOCALS = Staple
+	CASE "デザート"
+		LOCALS = Dessert
+	CASE "カエル料理"
+		LOCALS = Frog
+	CASE "ごちそう"
+		LOCALS = Feast
+	CASE "わんぱく"
+		LOCALS = Childish
+	CASE "魔法"
+		LOCALS = Magical
+	CASE "自然"
+		LOCALS = Natural
+	CASE "霊験"
+		LOCALS = Miraculous
+	CASE "精妙"
+		LOCALS = Exquisite
+	CASE "月都風"
+		LOCALS = Lunar
+	CASE "貧相"
+		LOCALS = Thin
+	CASE "怪しい"
+		LOCALS = Suspicious
+	CASE "上質"
+		LOCALS = Fine quality
+	CASE "キイチゴ"
+		LOCALS = Raspberry
+	CASE "安物食材"
+		LOCALS = Cheap ingredients
+	CASE "上質食材"
+		LOCALS = Fine ingredients
+	CASE "高級食材"
+		LOCALS = Great ingredients
+	CASE "キャベツ"
+		LOCALS = Cabbage
+	CASE "強精"
+		LOCALS = Performance-enhancing
+	CASE "龍の爪"
+		LOCALS = Dragon's claw
+	CASE "竜骨"
+		LOCALS = Ryuukotu
+	CASE "チョコレート"
+		LOCALS = Chocolate
+	CASE "高級チョコ"
+		LOCALS = Fine chocolate
+	CASE "不穏"
+		LOCALS = Disturbing
+	CASE "気配り"
+		LOCALS = Attentive
+	CASE "メイド流"
+		LOCALS = Maid-style
+	CASE "家庭的"
+		LOCALS = Homemade
+	CASE "幸運"
+		LOCALS = Lucky
+	CASE "精密"
+		LOCALS = Meticulous
+	CASE "パワフル"
+		LOCALS = Powerful
+	CASE "不思議"
+		LOCALS = Mysterious
+	CASE "けなげ"
+		LOCALS = Lovable
+	CASE "慈悲"
+		LOCALS = Merciful
+	CASE "きらめき"
+		LOCALS = Glimmering
+	CASE "予想外"
+		LOCALS = Unreal
+	CASE "妖精風"
+		LOCALS = Fairy-style
+	CASE "実験的"
+		LOCALS = Experimental
+	CASE "水兵風"
+		LOCALS = Sailor-style
+	CASE "ハーブ"
+		LOCALS = Herbs
+	CASE "へべれけ"
+		;Comes from "Hebe's cupbearer", but, ehh
+		LOCALS = Bacchian
+	CASE "鬼の隠し味"
+		LOCALS = Oni flavored
+	CASE "小人族秘伝の味"
+		LOCALS = Inchling style
+	CASE "天狗流"
+		LOCALS = Tengu-style
+	CASE "華人小娘"
+		LOCALS = Chinese Girl
+	CASE "瀟洒"
+		LOCALS = Elegant
+	CASE "カリスマ"
+		LOCALS = Charisma
+	CASE "華やか"
+		LOCALS = Flashy
+	CASE "春風"
+		LOCALS = Spring breeze
+	CASE "風流"
+		LOCALS = Refined
+	CASE "名刀"
+		;Nightmare, used to describe like, swords by famous sword-smiths
+		LOCALS = Master-crafted
+	CASE "ネギ"
+		LOCALS = Welch onion
+	CASE "冥界風"
+		LOCALS = Netherworldly
+	CASE "地獄風"
+		LOCALS = Hellish
+	CASE "地底風"
+		LOCALS = Underworldly
+	CASE "愛情"
+		LOCALS = Love
+	CASE "嫉妬"
+		LOCALS = Jealousy
+	CASE "反逆"
+		LOCALS = Rebellious
+	CASE "秋風"
+		LOCALS = Autumn breeze
+	CASE "繊細"
+		LOCALS = Delicate
+	CASE "奇跡"
+		LOCALS = Marvelous
+	CASE "豊穣"
+		LOCALS = Abundance
+	CASE "サツマイモ"
+		LOCALS = Sweet potato
+	CASE "肉"
+		LOCALS = Meat
+	CASE "あたたかい"
+		LOCALS = Warm
+	CASE "琉球風"
+		LOCALS = Ryukyu style
+	CASE "ブドウ"
+		LOCALS = Grape
+	CASE "レタス"
+		LOCALS = Lettuce
+	CASE "栗"
+		LOCALS = Chestnut
+	CASE "オクラ"
+		LOCALS = Okra
+	CASE "スイカ"
+		LOCALS = Watermelon
+	CASE "テンサイ"
+		LOCALS = Sugar beet
+	CASE "小麦"
+		LOCALS = Wheat
+	CASE "大豆"
+		LOCALS = Soy
+	CASE "ゴマ"
+		LOCALS = Sesame
+	CASE "メロン"
+		LOCALS = Melon
+	CASE "ヒシ"
+		LOCALS = Water caltrop
+	CASE "桃"
+		LOCALS = Peach
+	CASE "キウイ"
+		LOCALS = Kiwi
+	CASE "白ウド"
+		LOCALS = White ginseng
+	CASE "バラの花"
+		LOCALS = Rose
+	CASE "モヤシ"
+		LOCALS = Bean sprouts
+	CASE "サンショウ"
+		LOCALS = Pepper
+	CASE "ソバ"
+		LOCALS = Buckwheat
+	CASE "ザクロ"
+		LOCALS = Pomegranate
+	CASE "花の苗"
+		LOCALS = Flower seedling
+	CASE "フキ"
+		LOCALS = Butterbur
+	CASE "薬草"
+		LOCALS = Medicinal plants
+	CASE "椿油"
+		LOCALS = Camellia oil
+	CASE "お芋"
+		LOCALS = Potato
+	CASE "ゼンマイ"
+		LOCALS = Royal fern
+	CASE "大根"
+		LOCALS = Daikon
+	CASE "月見"
+		LOCALS = Evening
+	CASE "ローヤルゼリー"
+		LOCALS = Royal jelly
+	CASE "マイルド"
+		LOCALS = Mild
+	CASE "魚"
+		LOCALS = Fish
+	CASE "うまい魚"
+		LOCALS = Finest Fish
+	CASE "豆"
+		LOCALS = Beans
+	CASE "わさび"
+		LOCALS = Wasabi
+	CASE "精力"
+		LOCALS = Vigor
+	CASE "★旬", "旬"
+		LOCALS = In Season
+	CASE "季節外れ"
+		LOCALS = Out of Season
+	CASE "祝福"
+		LOCALS = Blessing
+	CASE "饅頭"
+		LOCALS = Manjuu
+	CASE "たけのこ"
+		LOCALS = Bamboo shoots
+	CASE "薬膳"
+		LOCALS = Medicinal cooking
+	CASE "ダークマター"
+		LOCALS = Dark matter
+	CASE "彷徨う魂"
+		LOCALS = Wandering soul
+	CASE "氷の鱗"
+		LOCALS = Ice scale
+	CASE "★縁起物", "縁起物"
+		LOCALS = Auspicious
+	CASE "練習"
+		LOCALS = Practice
+	CASE "ローター"
+		LOCALS = Rotor
+	CASEELSE
+		;check if ARGS is a dishname
+		LOCALS = %DISHNAME_TR(ARGS)%
+		;if LOCALS is ARGS, try a cropname instead
+		SIF LOCALS == ARGS
+			LOCALS = %CROP_NAME_TR(ARGS)%
+		;if cropname fails too, locals will be args, so below is not needed
+		;LOCALS = %ARGS%
+		;with the present preferences, clothing attributes and others are possible for taste as well
+		SIF LOCALS == ARGS
+			LOCALS = %TASTE_TR2(ARGS)%
+		SIF LOCALS == ARGS
+			LOCALS = %GIFT_ADJECTIVE_TR(ARGS)%
+		SIF LOCALS == ARGS
+			LOCALS = %GIFT_NOUN_TR(ARGS)%
+ENDSELECT
+;;since some of the stuff we might return here is lowercased
+RETURNF CAPITALIZE(LOCALS)
+;---------------------------------------------------
+; @TASTE_TR2(ARGS)
+; Translates the many words used during MAKE_STR calls in キャラデータ.ERB
+; Is WIP, since working through them all there would take a long time and there are many duplicates
+; So new stuff is added as encountered
+;---------------------------------------------------
+@TASTE_TR2(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "黒"
+		LOCALS = black
+	CASE "ポップ"
+		LOCALS = pop
+	CASE "闇"
+		LOCALS = darkness
+	CASE "音楽"
+		LOCALS = music
+	CASE "食器"
+		LOCALS = tableware
+	CASE "光"
+		LOCALS = light
+	CASE "秩序"
+		LOCALS = order
+	CASE "奇妙"
+		LOCALS = strange
+	CASE "星"
+		LOCALS = star
+	CASE "書物"
+		LOCALS = book
+	CASE "妖怪"
+		LOCALS = apparition
+	CASE "怖い"
+		LOCALS = scary
+	CASE "ロリータ"
+		LOCALS = lolita
+	CASE "生体品" ;biological products (went with below since rumia likes it)
+		LOCALS = living food
+	CASE "知的"
+		LOCALS = intellectual
+	CASE "白"
+		LOCALS = white
+	CASE "日"
+		LOCALS = sun
+	CASE "照明"
+		LOCALS = illumination
+	CASE "緑"
+		LOCALS = green
+	CASE "植物"
+		LOCALS = plants
+	CASE "風"
+		LOCALS = breeze
+	CASE "派手"
+		LOCALS = flashy
+	CASE "威厳"
+		LOCALS = dignified
+	CASE "刃物"
+		LOCALS = cutlery 
+	CASE "氷"
+		LOCALS = ice 
+	CASE "赤"
+		LOCALS = red 
+	CASE "幽霊"
+		LOCALS = ghost 
+	CASE "楽器"
+		LOCALS = music instrument 
+	CASE "月"
+		LOCALS = moon
+	CASE "シック"
+		LOCALS = chic
+	CASE "宝石"
+		LOCALS = jewelry
+	CASE "レトロ"
+		LOCALS = retro
+	CASE "混沌"
+		LOCALS = chaos
+	CASE "文具"
+		LOCALS = stationery
+	CASE "マニアック"
+		LOCALS = maniac
+	CASE "神霊"
+		LOCALS = divine spirit
+	CASE "オシャレ"
+		LOCALS = stylish
+	CASE "土"
+		LOCALS = soil
+	CASE "雷"
+		LOCALS = thunder
+	CASE "火"
+		LOCALS = fire
+	CASE "ピンク"
+		LOCALS = pink
+	CASE "鳥"
+		LOCALS = bird
+	CASE "果実"
+		LOCALS = fruit
+	CASE "未来"
+		LOCALS = future
+	CASE "巫術"
+		LOCALS = divination
+	CASE "青"
+		LOCALS = blue
+	CASE "水"
+		LOCALS = water
+	CASE "妖術"
+		LOCALS = sorcery
+	CASE "虹"
+		LOCALS = rainbow
+	CASE "死生" ;death and life (tenshi dislikes it?)
+		LOCALS = death and rebirth
+	CASE "酒"
+		LOCALS = sake
+	CASE "紫"
+		LOCALS = purple
+	CASE "かっこいい"
+		LOCALS = cool
+	CASE "光学技術の"
+		LOCALS = optical tech
+	CASE "和風"
+		LOCALS = japanese style
+	CASE "骨"
+		LOCALS = bone
+	CASE "金属"
+		LOCALS = metal
+	CASE "付喪神"
+		LOCALS = tsukumogami
+	CASE "洋風"
+		LOCALS = western style
+	CASE "黄"
+		LOCALS = yellow
+	CASE "技術"
+		LOCALS = technology
+	CASE "道具"
+		LOCALS = tool
+	CASE "高級"
+		LOCALS = luxury
+	CASE "金"
+		LOCALS = gold
+	CASE "灰"
+		LOCALS = gray
+	CASE "虫"
+		LOCALS = insect
+	CASE "レアな虫"
+		LOCALS = rare insect
+	CASE "ヤマドリ"
+		LOCALS = mountain bird
+	CASE "得体の知れない肉"
+		LOCALS = suspicious meat
+	CASE "茶"
+		LOCALS = tea
+	CASE "毒"
+		LOCALS = poison
+	CASE "動物"
+		LOCALS = animal
+	CASE "朱"
+		LOCALS = vermilion
+	CASE "美術品"
+		LOCALS = fine art
+	CASE "装飾"
+		LOCALS = decoration
+	CASE "銀"
+		LOCALS = silver
+	CASE "安物"
+		LOCALS = cheap
+	CASE "法具" ;Legal equipment, ritual implements
+		LOCALS = ritual
+	CASE "血"
+		LOCALS = blood
+	CASE "身につける"
+		LOCALS = wearable
+	CASE "抱く"
+		LOCALS = huggable
+	CASE "握る"
+		LOCALS = holdable
+	CASE "眺める"
+		LOCALS = lookable
+	CASE "布製"
+		LOCALS = cloth
+	CASE "鉱製"
+		LOCALS = ore
+	CASE "肖像"
+		LOCALS = portrait
+	CASE "キャラクター"
+		LOCALS = characteristic
+	CASE "繊維"
+		LOCALS = textile
+	CASE "粗悪"
+		LOCALS = inferior
+	CASE "型"
+		LOCALS = shaped
+	
+	CASEELSE
+		LOCALS = %ARGS%
+ENDSELECT
+RETURNF LOCALS
+
+@BAIT_TR(ARGS, ARG)
+#FUNCTIONS
+#DIMS DYNAMIC strTaste
+VARSET LOCALS
+SPLIT ARGS, "/", LOCALS
+IF RESULT > 1
+	FOR LOCAL, 0, RESULT-2 ;remove two splits which contain empty split + scuffed untranslated bait name
+		SELECTCASE LOCALS:LOCAL
+			CASE "光物"
+				strTaste += "Shiny"
+			CASE "蜜"
+				strTaste += "Nectar"
+			CASE "植物"
+				strTaste += "Plant"
+			CASE "肉"
+				strTaste += "Meat"
+			CASE "毒"
+				strTaste += "Poison"
+			CASE "魔力"
+				strTaste += "Magic"
+			CASE "汚物"
+				strTaste += "Manure"
+		CASEELSE
+			strTaste += LOCALS:LOCAL
+		ENDSELECT
+		SIF STRLENS(LOCALS:LOCAL)
+			strTaste += "/"
+	NEXT
+ENDIF
+;itemname is added at the very end, so we append it here
+strTaste += ITEMNAME_TR(ARG) + "/"
+RETURNF strTaste
+
+@TALENT_TR(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 0
+		LOCALS = Virgin
+	CASE 1
+		LOCALS = Male Virgin
+	CASE 2
+		LOCALS = Gender
+	CASE 3
+		LOCALS = Love
+	CASE 4
+		LOCALS = Lewd
+	CASE 5
+		LOCALS = Submission
+	CASE 6
+		LOCALS = Kissing Inexperience
+	CASE 7
+		LOCALS = Lover
+	CASE 8
+		LOCALS = Yearning
+	CASE 9
+		LOCALS = Desires Pregnancy
+	CASE 10
+		LOCALS = Courage
+	CASE 11
+		LOCALS = Attitude
+	CASE 12
+		LOCALS = Response
+	CASE 13
+		LOCALS = Pride
+	CASE 14
+		LOCALS = Tsundere
+	CASE 15
+		LOCALS = Mood
+	CASE 16
+		LOCALS = Appearance
+	CASE 17
+		LOCALS = Age
+	CASE 18
+		LOCALS = Sleazy
+	CASE 19
+		LOCALS = Moody
+	CASE 20
+		LOCALS = Self Control
+	CASE 21
+		LOCALS = Apathetic
+	CASE 22
+		LOCALS = Emotionless
+	CASE 23
+		LOCALS = Sexual Interest
+	CASE 24
+		LOCALS = Cheerful/Gloomy
+	CASE 25
+		LOCALS = Reserved
+	CASE 26
+		LOCALS = Show-off
+	CASE 27
+		LOCALS = Ignorant
+	CASE 30
+		LOCALS = Virtue
+	CASE 31
+		LOCALS = Openness
+	CASE 32
+		LOCALS = Reluctant
+	CASE 33
+		LOCALS = Shyness
+	CASE 34
+		LOCALS = Weakness
+	CASE 40
+		LOCALS = Sense of Pain
+	CASE 41
+		LOCALS = Wet Ease
+	CASE 46
+		LOCALS = Logging Lv
+	CASE 47
+		LOCALS = Fishing Lv
+	CASE 48
+		LOCALS = Foraging Lv
+	CASE 49
+		LOCALS = Mixing Lv
+	CASE 50
+		LOCALS = Learning Speed
+	CASE 51
+		LOCALS = Nimble-Fingered
+	CASE 52
+		LOCALS = Skilled Tongue
+	CASE 53
+		LOCALS = Needle Skill
+	CASE 54
+		LOCALS = Cat Tongue
+	CASE 55
+		LOCALS = Mixing Knowledge
+	CASE 56
+		LOCALS = Drug Resistant
+	CASE 57
+		LOCALS = Peeing Habit
+	CASE 60
+		LOCALS = Masturbator
+	CASE 61
+		LOCALS = Smell Resistance
+	CASE 62
+		LOCALS = Devoted
+	CASE 70
+		LOCALS = Response To Pleasure
+	CASE 71
+		LOCALS = Easily Addicted
+	CASE 72
+		LOCALS = Submits Easily
+	CASE 73
+		LOCALS = Loves To Masturbate
+	CASE 74
+		LOCALS = Lewd Vagina
+	CASE 75
+		LOCALS = Lewd Anus
+	CASE 76
+		LOCALS = Lewd Breasts
+	CASE 77
+		LOCALS = Lewd Lips
+	CASE 78
+		LOCALS = Lewd Cervix
+	CASE 80
+		LOCALS = Perverted
+	CASE 81
+		LOCALS = Gender Preference
+	CASE 82
+		LOCALS = Sadist
+	CASE 83
+		LOCALS = Masochist
+	CASE 84
+		LOCALS = Jealous
+	CASE 85
+		LOCALS = Gullible
+	CASE 86
+		LOCALS = Little Devil
+	CASE 90
+		LOCALS = Kitsune
+	CASE 91
+		LOCALS = Youko
+	CASE 92
+		LOCALS = Charming
+	CASE 93
+		LOCALS = Captivating
+	CASE 94
+		LOCALS = Mysterious Charm
+	CASE 100
+		LOCALS = Figure 
+	CASE 101
+		LOCALS = C Sensitivity
+	CASE 102
+		LOCALS = V Sensitivity
+	CASE 103
+		LOCALS = A Sensitivity
+	CASE 104
+		LOCALS = B Sensitivity
+	CASE 105
+		LOCALS = Breast Size
+	CASE 106
+		LOCALS = M Sensitivity
+	CASE 120
+		LOCALS = Thick Semen
+	CASE 121
+		LOCALS = Alcohol Tolerance
+	CASE 122
+		LOCALS = Loves Taste of Semen
+	CASE 130
+		LOCALS = Recovery Speed
+	CASE 132
+		LOCALS = Vampire
+	CASE 133
+		LOCALS = Early Bird
+	CASE 134
+		LOCALS = Night Person
+	CASE 135
+		LOCALS = Treatment
+	CASE 136
+		LOCALS = Inspiring
+	CASE 137
+		LOCALS = Insatiable
+	CASE 138
+		LOCALS = Mysterious Origin
+	CASE 141
+		LOCALS = Insane
+	CASE 142
+		LOCALS = Slut
+	CASE 143
+		LOCALS = Animal Ears
+	CASE 144
+		LOCALS = Forbidden Knowledge
+	CASE 145
+		LOCALS = Popular
+	CASE 146
+		LOCALS = Embodiment
+	CASE 149
+		LOCALS = Lactating
+	CASE 150
+		LOCALS = Infant Regression
+	CASE 151
+		LOCALS = Childlike
+	CASE 152
+		LOCALS = Unmatched
+	CASE 153
+		LOCALS = Pregnant
+	CASE 154
+		LOCALS = Childcare
+	CASE 155
+		LOCALS = Maternity
+	CASE 156
+		LOCALS = First Menstruation
+	CASE 157
+		LOCALS = Lust Sense
+	CASE 158
+		LOCALS = Panty Smuggler
+	CASE 159
+		LOCALS = Whereabouts Sense
+	CASE 160
+		LOCALS = Dirtiness Sense
+	CASE 161
+		LOCALS = Musicality
+	CASE 162
+		LOCALS = Sense of Sound
+	CASE 163
+		LOCALS = Aquatic
+	CASE 164
+		LOCALS = Ice Spirit
+	CASE 165
+		LOCALS = Race
+	CASE 166
+		LOCALS = Were-hakutaku
+	CASE 167
+		LOCALS = Gathering
+	CASE 169
+		LOCALS = Ignores M Insensitivity
+	CASE 170
+		LOCALS = Ignores C Insensitivity
+	CASE 171
+		LOCALS = Ignores B Insensitivity
+	CASE 172
+		LOCALS = Ignores V Insensitivity
+	CASE 173
+		LOCALS = Ignores A Insensitivity
+	CASE 174
+		LOCALS = Cleaning Addiction
+	CASE 175
+		LOCALS = Many Visitors
+	CASE 176
+		LOCALS = One In Each Hand
+	CASE 182
+		LOCALS = Cleaner
+	CASE 183
+		LOCALS = Twin Dicks
+	CASE 184
+		LOCALS = Lust
+	CASE 185
+		LOCALS = Sex Friend
+	CASE 189
+		LOCALS = Delusion
+	CASE 190
+		LOCALS = Fairy
+	CASE 191
+		LOCALS = Hourai Person
+	CASE 192
+		LOCALS = Non-living
+	CASE 193
+		LOCALS = Divine Spirit
+	CASE 194
+		LOCALS = Human
+	CASE 195
+		LOCALS = Oni
+	CASE 196
+		LOCALS = Tsukumogami
+	CASE 197
+		LOCALS = Tengu
+	CASE 250
+		LOCALS = Shape
+	CASE 256
+		LOCALS = Tengu Impregnation
+	CASE 257
+		LOCALS = Hourai Impregnation
+	CASE 258
+		LOCALS = Tsukumogami Impregnation
+	CASE 259
+		LOCALS = Oni Impregnation
+	CASE 260
+		LOCALS = Miko Impregnation
+	CASE 261
+		LOCALS = Fairy Impregnation
+	CASE 262
+		LOCALS = Youkai Impregnation
+	CASE 263
+		LOCALS = Divine Spirit Impregnation
+	CASE 264
+		LOCALS = Almighty Impregnation
+	CASE 270 ;グレイズ上手
+		LOCALS = Good Grazing
+	CASE 271 ;エクステンド
+		LOCALS = Extend
+	CASE 272 ;霊力充填
+		LOCALS = Full Spirit Power
+	CASE 273 ;ルナシューター
+		LOCALS = Luna Shooter
+	CASE 300
+		LOCALS = Mob
+	CASEELSE
+		LOCALS = %TALENTNAME:ARG%
+ENDSELECT
+RETURNF LOCALS
+
+@TRAINNAME_TR(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 0 ;愛撫
+		LOCALS = Caress
+	CASE 1 ;クンニ
+		LOCALS = Cunnilingus
+	CASE 2 ;フェラする
+		LOCALS = Give Fellatio
+	CASE 3 ;指挿れ
+		LOCALS = Fingering
+	CASE 4 ;アナル舐め
+		LOCALS = Analingus
+	CASE 5 ;アナル愛撫
+		LOCALS = Anal Caress
+	CASE 6 ;胸愛撫
+		LOCALS = Breast Caress
+	CASE 7 ;乳首責め
+		LOCALS = Nipple Tease
+	CASE 8 ;秘貝開帳
+		LOCALS = Spread Labia
+	CASE 9 ;自慰
+		LOCALS = Masturbation
+	CASE 11 ;乳首吸い
+		LOCALS = Nipple Sucking
+	CASE 12 ;胸揉み
+		LOCALS = Breast Fondling
+	CASE 13 ;アナル開帳
+		LOCALS = Spread Anus
+	CASE 15 ;クリ愛撫
+		LOCALS = Clit Caress
+	CASE 19 ;キス（継続）
+		LOCALS = Continue Kissing
+	CASE 20 ;キスする
+		LOCALS = Kiss
+	CASE 21 ;何もしない
+		LOCALS = Do Nothing
+	CASE 22 ;誘い受ける
+		LOCALS = Be Seduced
+	CASE 23 ;ピロートーク
+		LOCALS = Pillow Talk
+	CASE 24 ;攻守交替
+		LOCALS = Pass Initiative
+	CASE 40 ;ローター
+		LOCALS = Rotor
+	CASE 41 ;Ｅマッサージャ
+		LOCALS = Electric Massager
+	CASE 42 ;クリキャップ
+		LOCALS = Clit Cap
+	CASE 43 ;オナホール
+		LOCALS = Onahole
+	CASE 44 ;バイブ
+		LOCALS = Vibrator
+	CASE 45 ;アナルバイブ
+		LOCALS = Anal Vibrator
+	CASE 46 ;アナルビーズ
+		LOCALS = Anal Beads
+	CASE 47 ;ニプルキャップ
+		LOCALS = Nipple Caps
+	CASE 48 ;搾乳機
+		LOCALS = Milk Machine
+	CASE 49 ;乳首ローター
+		LOCALS = Nipple Rotor
+	CASE 50 ;ゴム装着
+		LOCALS = Use Condom
+	CASE 51 ;避妊薬
+		LOCALS = Use Contraceptive
+	CASE 60 ;正常位
+		LOCALS = Missionary
+	CASE 61 ;後背位
+		LOCALS = Doggy Style
+	CASE 62 ;正常位アナル
+		LOCALS = Anal Missionary
+	CASE 63 ;後背位アナル
+		LOCALS = Anal Doggy Style
+	CASE 64 ;逆レイプする
+		LOCALS = Reverse Rape
+	CASE 65 ;騎乗位
+		LOCALS = Cowgirl
+	CASE 66 ;騎乗位アナル
+		LOCALS = Anal Cowgirl
+	CASE 67 ;対面座位
+		LOCALS = Lotus Position
+	CASE 68 ;背面座位
+		LOCALS = Reverse Lotus
+	CASE 69 ;対面座位アナル
+		LOCALS = Anal Lotus
+	CASE 70 ;背面座位アナル
+		LOCALS = Reverse Anal Lotus
+	CASE 71 ;二穴挿し
+		LOCALS = Double Penetration
+	CASE 72 ;挿入Ｇスポット責め
+		LOCALS = G Spot Tease
+	CASE 73 ;挿入子宮口責め
+		LOCALS = Cervix Tease
+	CASE 74 ;Ｓ状結腸責め
+		LOCALS = Sigmoid Colon Tease
+	CASE 75 ;膣裏責め
+		LOCALS = Tease Vagina From Behind
+	CASE 79 ;小人オナホ
+		LOCALS = Inchling Onahole
+	CASE 80 ;手淫
+		LOCALS = Handjob
+	CASE 81 ;フェラチオ
+		LOCALS = Fellatio
+	CASE 82 ;パイズリ
+		LOCALS = Paizuri
+	CASE 83 ;素股
+		LOCALS = Sumata
+	CASE 84 ;泡踊り
+		LOCALS = Foam Play
+	CASE 85 ;足コキ
+		LOCALS = Footjob
+	CASE 88 ;バキュームフェラ
+		LOCALS = Vacuum Fellatio
+	CASE 89 ;ゴム精飲 com custom code
+		LOCALS = Drink Semen
+	CASE 90 ;アナル愛撫される
+		LOCALS = Get Anal Caress
+	CASE 91 ;アナル舐めされる
+		LOCALS = Get Analingus
+	CASE 92 ;Ａ正常位される
+		LOCALS = Catch Anal Missionary
+	CASE 93 ;Ａ後背位される
+		LOCALS = Catch Anal Doggy
+	CASE 94 ;Ａ騎乗位する
+		LOCALS = Catch Anal Cowgirl
+	CASE 96 ;パイズリする
+		LOCALS = Give Paizuri
+	CASE 99 ;オナホコキ
+		LOCALS = Onaholejob
+	CASE 100 ;スパンキング
+		LOCALS = Spanking
+	CASE 104 ;アイマスク
+		LOCALS = Blindfold
+	CASE 105 ;縄
+		LOCALS = Bondage
+	CASE 107 ;拘束プレイ
+		LOCALS = Restrain Mode
+	CASE 108 ;乳スパンキング
+		LOCALS = Breast Spanking
+	CASE 120 ;クンニ強制
+		LOCALS = Get Cunnilingus
+	CASE 121 ;貝合わせ
+		LOCALS = Tribadism
+	CASE 123 ;足コキする
+		LOCALS = Give Footjob
+	CASE 124 ;手淫する
+		LOCALS = Give Handjob
+	CASE 125 ;愛撫させる
+		LOCALS = Be Caressed
+	CASE 126 ;乳の揉み合い
+		LOCALS = Breast Press
+	CASE 127 ;Ａパールを入れられる
+		LOCALS = Get Insert Anal Beads
+	CASE 130 ;正常位される
+		LOCALS = Catch Missionary
+	CASE 131 ;後背位される
+		LOCALS = Catch Doggy
+	CASE 132 ;対面座位される
+		LOCALS = Catch Lotus Position
+	CASE 133 ;背面座位される
+		LOCALS = Catch Reverse Lotus
+	CASE 140 ;イラマチオ
+		LOCALS = Irrumatio
+	CASE 144 ;放尿
+		LOCALS = Urinate
+	CASE 150 ;胸の谷間を犯す
+		LOCALS = Forced Paizuri
+	CASE 180 ;ローション
+		LOCALS = Lotion
+	CASE 181 ;媚薬
+		LOCALS = Aphrodisiac
+	CASE 182 ;利尿剤
+		LOCALS = Diuretic
+	CASE 183 ;ビデオ撮影
+		LOCALS = Video Recording
+	CASE 184 ;野外プレイ
+		LOCALS = Outdoor Play
+	CASE 186 ;羞恥プレイ
+		LOCALS = Shame Play
+	CASE 188 ;シャワー
+		LOCALS = Shower
+	CASE 189 ;新妻プレイ
+		LOCALS = Apron Play
+	CASE 191 ;睡眠薬
+		LOCALS = Sleeping Pill
+	CASE 192 ;排卵誘発剤
+		LOCALS = Ovulation Drug
+	CASE 300 ;会話
+		LOCALS = Conversation
+	CASE 301 ;お茶を淹れる
+		LOCALS = Serve Tea
+	CASE 302 ;スキンシップ
+		LOCALS = Skinship
+	CASE 303 ;謝る
+		LOCALS = Apologize
+	CASE 304 ;仕事を手伝う
+		LOCALS = Help With Work
+	CASE 305 ;膝枕してもらう
+		LOCALS = Get A Lap Pillow
+	CASE 306 ;お腹を撫でる
+		LOCALS = Belly Caress
+	CASE 307 ;頬をつまむ
+		LOCALS = Pinch Cheek
+	CASE 308 ;頬をつつく
+		LOCALS = Poke Cheek
+	CASE 309 ;頭を撫でる
+		LOCALS = Head Pat
+	CASE 310 ;尻を撫でる
+		LOCALS = Butt Caress
+	CASE 311 ;抱き付く
+		LOCALS = Embrace
+	CASE 312 ;キスする
+		LOCALS = Kiss
+	CASE 313 ;胸愛撫
+		LOCALS = Breast Caress
+	CASE 314 ;アナル愛撫
+		LOCALS = Anal Caress
+	CASE 315 ;クリ愛撫
+		LOCALS = Clit Caress
+	CASE 316 ;指挿れ
+		LOCALS = Fingering
+	CASE 317 ;腰を動かす（Ｖ）
+		LOCALS = Move Hips（Ｖ）
+	CASE 318 ;腰を動かす（Ａ）
+		LOCALS = Move Hips（Ａ）
+	CASE 320 ;相手主導正常位
+		LOCALS = Partner-led Missionary
+	CASE 322 ;相手主導後背位
+		LOCALS = Partner-led Doggy
+	CASE 323 ;相手主導後背位Ａ
+		LOCALS = Partner-led A-Doggy
+	CASE 330 ;スカートをめくる
+		LOCALS = Flip Their Skirt
+	CASE 331 ;お茶を淹れる（薬入り）
+		LOCALS = Serve Tea W/ Medicine
+	CASE 332 ;お酒をふるまう
+		LOCALS = Serve Alcohol
+	CASE 333 ;愚痴を聞く
+		LOCALS = Listen To Complaints
+	CASE 334 ;杯を交わす
+		LOCALS = Share Drink
+	CASE 335 ;介抱する
+		LOCALS = Look After
+	CASE 336 ;膝枕する
+		LOCALS = Give A Lap Pillow
+	CASE 337 ;子供とふれあう
+		LOCALS = Child Interaction
+	CASE 350 ;押し倒す
+		LOCALS = Push Down
+	CASE 351 ;連れ出す
+		LOCALS = Lead Around
+	CASE 352 ;告白する
+		LOCALS = Confess
+	CASE 353 ;イタズラする
+		LOCALS = Molest
+	CASE 354 ;添い寝する
+		LOCALS = Sleep Together
+	CASE 355 ;時間停止
+		LOCALS = Time Stop
+	CASE 356 ;物陰に誘う
+		LOCALS = Take To Secluded Spot
+	CASE 360 ;身を任せる
+		LOCALS = Surrender
+	CASE 361 ;抵抗する
+		LOCALS = Resist
+	CASE 362 ;逃げる
+		LOCALS = Run Away
+	CASE 363 ;読み聞かせ
+		LOCALS = Story-telling
+	CASE 364 ;豆まき
+		LOCALS = Bean-scattering
+	CASE 365 ;素材購入
+		LOCALS = Purchase Materials
+	CASE 366 ;依頼を聞く
+		LOCALS = Listen To Request
+	CASE 367 ;依頼実行
+		LOCALS = Execute The Request
+	CASE 368 ;自由行動に付き合う
+		LOCALS = Join In
+	CASE 400 ;移動
+		LOCALS = Move
+	CASE 401 ;コレクション
+		LOCALS = Collection
+	CASE 402 ;就寝
+		LOCALS = Go To Bed
+	CASE 403 ;休憩
+		LOCALS = Rest
+	CASE 405 ;出掛ける
+		LOCALS = Go Out
+	CASE 406 ;日記帳
+		LOCALS = Diary
+	CASE 410 ;掃除
+		LOCALS = Cleaning
+	CASE 411 ;戦闘訓練
+		LOCALS = Combat Training
+	CASE 412 ;勉強
+		LOCALS = Study
+	CASE 413 ;料理を作る
+		LOCALS = Cooking
+	CASE 414 ;食事を取る
+		LOCALS = Have A Meal
+	CASE 415 ;食事をふるまう
+		LOCALS = Serve A Meal
+	CASE 416 ;演奏する
+		LOCALS = Musical Performance
+	CASE 417 ;昼寝する
+		LOCALS = Take A Nap
+	CASE 418 ;家庭菜園
+		LOCALS = Kitchen Garden
+	CASE 419 ;水汲み
+		LOCALS = Fetch Water
+	CASE 420 ;る～ことと話す
+		LOCALS = Speak With
+	CASE 421 ;願掛け
+		LOCALS = Pray
+	CASE 422 ;天の声を聞く
+		LOCALS = Listen To God
+	CASE 423 ;道具を買う
+		LOCALS = Buy Tools
+	CASE 424 ;薬を買う
+		LOCALS = Buy Medicine
+	CASE 425 ;薬を盛る
+		LOCALS = Spike Drinks/Food
+	CASE 428 ;小槌を使う
+		LOCALS = Use Miracle Mallet
+	CASE 429 ;着せ替え
+		LOCALS = Change Clothes
+	CASE 430 ;着替える
+		LOCALS = Wear Pilfered Panties
+	CASE 431 ;お風呂でくつろぐ
+		LOCALS = Relax In The Bath
+	CASE 432 ;銭湯
+		LOCALS = Visit Public Bath
+	CASE 434 ;おみくじ
+		LOCALS = Omikuji
+	CASE 435 ;守矢くじ
+		LOCALS = Moriya Lottery
+	CASE 436 ;読書
+		LOCALS = Reading
+	CASE 440 ;待つ
+		LOCALS = Wait
+	CASE 441 ;授業を受ける
+		LOCALS = Take A Class
+	CASE 442 ;伐採する
+		LOCALS = Logging
+	CASE 443 ;固有コマンド
+		LOCALS = Character-unique command
+	CASE 444 ;女の子を物色
+		LOCALS = Hunt For Girls
+	CASE 445 ;採集する
+		LOCALS = Forage
+	CASE 446 ;調合する
+		LOCALS = Mixing
+	CASE 447 ;露店を開く
+		LOCALS = Open Street Stall
+	CASE 448 ;罠を仕掛ける
+		LOCALS = Set a Trap
+	CASE 449 ;虫捕り
+		LOCALS = Catch Bugs
+	CASE 450 ;酒虫の様子を見る
+		LOCALS = Make Sake
+	CASE 451 ;オナニー
+		LOCALS = Masturbate
+	CASE 464 ;特殊地域間異動
+		LOCALS = Move To Another Area
+	CASE 470 ;畑仕事をする
+		LOCALS = Work In A Field
+	CASE 480 ;弾幕勝負
+		LOCALS = Danmaku Match
+	CASE 481 ;スカウター
+		LOCALS = Scouter
+	CASE 482 ;追う
+		LOCALS = Follow
+	CASE 483 ;ムシバトル
+		LOCALS = Bug Battle
+	CASE 484 ;スイカ割り
+		LOCALS = Suikawari
+	CASE 490 ;アイテム
+		LOCALS = Items
+	CASE 491 ;ホワイトデー
+		LOCALS = White Day Gift
+	CASE 603 ;手を繋ぐ
+		LOCALS = Hold Hands
+	CASE 604 ;散策する
+		LOCALS = Stroll
+	CASE 605 ;寄り道する
+		LOCALS = Detour
+	CASE 610 ;食事に誘う
+		LOCALS = Eat Together
+	CASE 613 ;お金稼ぎする
+		LOCALS = Part-time Job
+	CASE 614 ;食材の買い出し
+		LOCALS = Buy Food
+	CASE 615 ;お弁当を食べる
+		LOCALS = Eat From Lunchbox
+	CASE 616 ;診察を受ける
+		LOCALS = Medical Examination
+	CASE 617 ;甘味処へ誘う
+		LOCALS = Eat Sweets
+	CASE 618 ;花屋
+		LOCALS = Flower Shop
+	CASE 619 ;酒屋
+		LOCALS = Liquor Store
+	CASE 620 ;鈴奈庵
+		LOCALS = Suzunaan
+	CASE 621 ;釣りをする
+		LOCALS = Go Fishing
+	CASE 622 ;八百屋
+		LOCALS = Grocer
+	CASE 623 ;材木商
+		LOCALS = Lumber Dealer
+	CASE 624 ;山の製材所
+		LOCALS = Mountain Sawmill
+	CASE 625 ;家具屋
+		LOCALS = Furniture Store
+	CASE 626 ;土産屋
+		LOCALS = Souvenir Shop
+	CASE 630 ;ホフゴブリンに依頼
+		LOCALS = Request To Hobgoblins
+	CASE 631 ;紅魔カジノ
+		LOCALS = Scarlet Casino
+	;CASE 632 ;組み手（試作） unused
+	;	LOCALS = Battle System(Prototype)
+	CASE 633 ;積み石コンテスト
+		LOCALS = Stone-stacking Contest
+	CASE 697 ;部屋を訪ねる
+		LOCALS = Visit A Room
+	CASE 698 ;部屋に入る
+		LOCALS = Enter The Room
+	CASE 699 ;外に出る
+		LOCALS = Go Outside
+	CASEELSE
+		RETURNF TRAINNAME:ARG
+ENDSELECT
+RETURNF LOCALS
+
+@ITEMNAME_TR(ARG)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 0
+		LOCALS = Rotor
+	CASE 1
+		LOCALS = Electric Massager
+	CASE 2
+		LOCALS = Clit Cap
+	CASE 3
+		LOCALS = Onahole
+	CASE 4
+		LOCALS = Vibrator
+	CASE 5
+		LOCALS = Anal Vibrator
+	CASE 6
+		LOCALS = Anal Beads
+	CASE 10
+		LOCALS = Nipple Cap
+	CASE 11
+		LOCALS = Milker
+	CASE 12
+		LOCALS = Strapon
+	CASE 15
+		LOCALS = Blindfold
+	CASE 16
+		LOCALS = Rope
+	CASE 19
+		LOCALS = Scouter
+	CASE 20
+		LOCALS = Play Mat
+	CASE 23
+		LOCALS = Apron
+	CASE 25;昆虫採集セット
+		LOCALS = Bug Catching Set
+	CASE 26
+		LOCALS = Chainsaw
+	CASE 27
+		LOCALS = 【Capturing Skill】
+	CASE 28
+		LOCALS = Shooter Cast
+	CASE 29
+		LOCALS = Mixing Supplies
+	CASE 30
+		LOCALS = Keyboard
+	CASE 31
+		LOCALS = Piano
+	CASE 32
+		LOCALS = Guitar
+	CASE 33
+		LOCALS = Trumpet
+	CASE 34
+		LOCALS = Violin
+	CASE 35
+		LOCALS = Thermal Jar
+	CASE 36
+		LOCALS = Folding Umbrella
+	CASE 37
+		LOCALS = Fishing Rod
+	CASE 38
+		LOCALS = Simple Pool
+	CASE 39
+		LOCALS = Mixer
+	CASE 40
+		LOCALS = Lotion
+	CASE 41
+		LOCALS = Aphrodisiac
+	CASE 42
+		LOCALS = Diuretic
+	CASE 45
+		LOCALS = Condom
+	CASE 47
+		LOCALS = White Rice
+	CASE 48
+		LOCALS = Cereals
+	CASE 49
+		LOCALS = Pill
+	CASE 50
+		LOCALS = Old Rice
+	CASE 51
+		LOCALS = Unrefined Sake
+	CASE 52
+		LOCALS = Sake
+	CASE 53
+		LOCALS = Strong Sake
+	CASE 55
+		LOCALS = Sacred Sake
+	CASE 56
+		LOCALS = Sweet Sake
+	CASE 58
+		LOCALS = Distilled Alcohol
+	CASE 59
+		LOCALS = Medical Alcohol
+	CASE 61
+		LOCALS = 【Mixing Knowledge】
+	CASE 62
+		LOCALS = 【Forbidden Knowledge】
+	CASE 63
+		LOCALS = 【Technique UP】
+	CASE 64
+		LOCALS = 【Technique DOWN】
+	CASE 65
+		LOCALS = 【Redemption】
+	CASE 66
+		LOCALS = 【Smell Res UP】
+	CASE 67
+		LOCALS = 【Smell Res DOWN】
+	CASE 68
+		LOCALS = 【Sadism DOWN】
+	CASE 69
+		LOCALS = 【Masochism DOWN】
+	CASE 71
+		LOCALS = Futa Medicine
+	CASE 72
+		LOCALS = Futa Removal Medicine
+	CASE 74
+		LOCALS = Red Candy
+	CASE 77
+		LOCALS = Brown Candy
+	CASE 78
+		LOCALS = Light Blue Candy
+	CASE 81 ;安物食材
+		LOCALS = Cheap Ingredients
+	CASE 82 ;上質食材
+		LOCALS = Fine Ingredients
+	CASE 83 ;高級食材
+		LOCALS = Great Ingredients
+	CASE 84 ;甘味材
+		LOCALS = Sweetening Materials
+	CASE 91
+		LOCALS = Ovulation Drug
+	CASE 94
+		LOCALS = Christmas Gift
+	CASE 95
+		LOCALS = Box of Cakes
+	CASE 101
+		LOCALS = Martial arts guidebook
+	CASE 102
+		LOCALS = Cookbook
+	CASE 103
+		LOCALS = Dictionary
+	CASE 104
+		LOCALS = Short Novel
+	CASE 105
+		LOCALS = Music Instruction Manual
+	CASE 106
+		LOCALS = Picture-Story Show
+	CASE 107
+		LOCALS = Fishing Picture Book
+	CASE 108
+		LOCALS = Foraging Guide
+	CASE 109
+		LOCALS = Pharmacy Textbook
+	CASE 110
+		LOCALS = Lumberjack's Primer
+	CASE 111
+		LOCALS = Demon Book
+	CASE 120
+		LOCALS = Black Thunder
+	CASE 121
+		LOCALS = Chocolate
+	CASE 122
+		LOCALS = Premium Chocolate
+	CASE 123
+		LOCALS = Heart-Shaped Chocolate
+	CASE 124 ;WDチョコレート
+		LOCALS = White Day Chocolate
+	CASE 125 ;WDプディング
+		LOCALS = White Day Custard
+	CASE 126 ;手作りチョコクッキー
+		LOCALS = Homemade Chocolate Cookies
+	CASE 127 ;手作りプディング
+		LOCALS = Handmade Custard
+	CASE 128 ;デコレーションケーキ
+		LOCALS = Decorated Cake
+	CASE 129 ;ローターチョコ
+		LOCALS = Rotor Chocolate
+	CASE 130
+		LOCALS = Rabbit Sign 「Great Fortune Crest」
+	CASE 131
+		LOCALS = Moriya Blank
+	CASE 132 ;罠猟用品【小型】
+		LOCALS = Trap (Small)
+	CASE 133 ;罠猟用品【中型】
+		LOCALS = Trap (Medium)
+	CASE 134 ;罠猟用品【大型】
+		LOCALS = Trap (Large)
+	CASE 140
+		LOCALS = Broken Umbrella
+	CASE 150
+		LOCALS = Gardening Equipment
+	CASE 151
+		LOCALS = Cabbage Seeds
+	CASE 152
+		LOCALS = Strawberry Seeds
+	CASE 153
+		LOCALS = Turnip Seeds
+	CASE 161
+		LOCALS = Cucumber Seeds
+	CASE 162
+		LOCALS = Tomato Seeds
+	CASE 163
+		LOCALS = Onion Seeds
+	CASE 164
+		LOCALS = Watermelon Seeds
+	CASE 171
+		LOCALS = Eggplant Seeds
+	CASE 172
+		LOCALS = Potato Seeds
+	CASE 173
+		LOCALS = Pumpkin Seeds
+	CASE 181
+		LOCALS = Bok Choy Seeds
+	CASE 182
+		LOCALS = Carrot Seeds
+	CASE 183
+		LOCALS = Green Onion Seeds
+	CASE 190
+		LOCALS = Rotor Seeds
+	CASE 191
+		LOCALS = Fertilizer
+	CASE 212
+		LOCALS = Rice Cakes
+	CASE 213
+		LOCALS = Ice Cream
+	CASE 214
+		LOCALS = Homework
+	CASE 215
+		LOCALS = Black Tea
+	CASE 216
+		LOCALS = Candy
+	CASE 250
+		LOCALS = Love Potion
+	CASE 251
+		LOCALS = Sports Drink
+	CASE 252
+		LOCALS = Sleeping Pill
+	CASE 351
+		LOCALS = Cabbage
+	CASE 352
+		LOCALS = Strawberry
+	CASE 353
+		LOCALS = Turnip
+	CASE 361
+		LOCALS = Cucumber
+	CASE 362
+		LOCALS = Tomato
+	CASE 363
+		LOCALS = Onion
+	CASE 364
+		LOCALS = Watermelon
+	CASE 371
+		LOCALS = Eggplant
+	CASE 372
+		LOCALS = Potato
+	CASE 373
+		LOCALS = Pumpkin
+	CASE 381
+		LOCALS = Bok Choy
+	CASE 382
+		LOCALS = Carrot
+	CASE 383
+		LOCALS = Green Onion
+	CASE 399
+		LOCALS = Magic Crystal Pendant
+	CASE 400
+		LOCALS = Collector's Gap
+	CASE 401
+		LOCALS = Instant Barrier
+	CASE 402
+		LOCALS = Three Heavenly Drops
+	CASE 403
+		LOCALS = Lunar Shooter Cast
+	CASE 404
+		LOCALS = Sweet Sleep Pillow
+	CASE 405;月の羽衣
+		LOCALS = Moon Feather
+	CASE 497 ;addition custom code
+		LOCALS = Hina Doll
+	CASE 498 ;addition custom code
+		LOCALS = Seed of Unknown Form
+	CASE 500
+		LOCALS = Green Juice
+	CASE 501
+		LOCALS = Energy Drink
+	CASE 502
+		LOCALS = Vigora
+	CASE 503
+		LOCALS = Gin Gin Ｚ
+	CASE 505
+		LOCALS = Gin Gin Ｘ
+	CASE 506
+		LOCALS = Medical Drug『Tengen Toppa』
+	CASE 507
+		LOCALS = Potion
+	CASE 508
+		LOCALS = Magic Potion
+	CASE 509
+		LOCALS = No-Sleep Potion
+	CASE 510
+		LOCALS = Turmeric Drink
+	CASE 511
+		LOCALS = Elixir
+	CASE 512
+		LOCALS = Elixir of Life
+	CASE 513
+		LOCALS = Overnight Kushinada
+	CASE 514
+		LOCALS = Lunar Incense
+	CASE 515
+		LOCALS = Peerless Patriot's Elixir
+	CASE 516 ;ガシングガーデン
+		LOCALS = Gassing Garden
+	CASE 517 ;ポイズンボディ
+		LOCALS = Poison Body
+	CASE 518 ;栄養強化剤
+		LOCALS = Nutrition Enhancer
+	CASE 520
+		LOCALS = Bandage
+	CASE 521
+		LOCALS = Fortune Letter
+	CASE 530
+		LOCALS = Stone of Mirada
+	CASE 550
+		LOCALS = Lamprey Skewer
+	CASE 600
+		LOCALS = Ordinary Mushroom
+	CASE 601
+		LOCALS = Poisonous Mushroom
+	CASE 602
+		LOCALS = Milky Mushroom
+	CASE 603
+		LOCALS = Caterpillar Fungus
+	CASE 604
+		LOCALS = Risky Mushroom
+	CASE 605
+		LOCALS = Magic Mushroom
+	CASE 606
+		LOCALS = Dragon's Claw
+	CASE 607
+		LOCALS = Medicinal Herb
+	CASE 608
+		LOCALS = High Quality Medicinal Herb
+	CASE 609
+		LOCALS = Ice Scale
+	CASE 610
+		LOCALS = Timber
+	CASE 611 
+		LOCALS = Edible Plants
+	CASE 612 
+		LOCALS = Poison Grass
+	CASE 613 
+		LOCALS = Special Medicinal Herb
+	CASE 614 
+		LOCALS = Red Spider Lily
+	CASE 615 
+		LOCALS = Snow Spirit Grass
+	CASE 616 
+		LOCALS = Yam
+	CASE 617 
+		LOCALS = Turmeric
+	CASE 618 
+		LOCALS = Ginseng
+	CASE 619 
+		LOCALS = Bitter Root
+	CASE 620 
+		LOCALS = Mandragora
+	CASE 621 
+		LOCALS = White Resin
+	CASE 622 
+		LOCALS = Yellow Resin
+	CASE 623 
+		LOCALS = Sweet Resin
+	CASE 624 
+		LOCALS = Evil Flower's Latex
+	CASE 625 
+		LOCALS = Dragon Blood
+	CASE 626 
+		LOCALS = Raspberry
+	CASE 627 
+		LOCALS = Honey
+	CASE 628 
+		LOCALS = Akebia
+	CASE 629 
+		LOCALS = Bamboo Shoots
+	CASE 630 
+		LOCALS = Hermit Peaches
+	CASE 631 
+		LOCALS = Bone Scraps
+	CASE 632 
+		LOCALS = Gypsum
+	CASE 633 
+		LOCALS = Talc
+	CASE 634 
+		LOCALS = Ryuukotu
+	CASE 635 
+		LOCALS = Cinnabar
+	CASE 636 
+		LOCALS = Manure
+	CASE 637 
+		LOCALS = Flowers of Sulphur
+	CASE 638 
+		LOCALS = Wandering Soul
+	CASE 639 
+		LOCALS = Dark Matter
+	CASE 640 
+		LOCALS = Fenghuang Tail
+	CASE 641 
+		LOCALS = Toad's Oil
+	CASE 642
+		LOCALS = Fish Meal
+	CASE 643
+		LOCALS = Ambergris
+	CASE 644 ;丸太
+		LOCALS = Wood Log
+	CASE 645 ;竹材
+		LOCALS = Bamboo
+	CASE 646 ;香木
+		LOCALS = Incense Wood
+	CASE 709;虫
+		LOCALS = Bug
+	CASE 710;レアな虫
+		LOCALS = Rare Bug
+	CASE 701
+		LOCALS = Pheasant
+	CASE 702
+		LOCALS = Red Meat
+	CASE 703
+		LOCALS = Chicken Meat
+	CASE 705
+		LOCALS = Unknown Meat
+	CASE 706
+		LOCALS = Frog
+	CASE 707
+		LOCALS = Fish
+	CASE 708
+		LOCALS = Finest Fish
+	CASE 800
+		LOCALS = Maid Clothes
+	CASE 801
+		LOCALS = Nurse Clothes
+	CASE 802
+		LOCALS = Santa Clothes
+	CASE 850
+		LOCALS = Powerful Drug
+	CASE 851
+		LOCALS = Icicle Bomb
+	CASE 852
+		LOCALS = Taiyi's Live Coals
+	CASE 853
+		LOCALS = Bewitching Bait
+	CASE 854
+		LOCALS = Philosopher's Stone
+	CASE 855
+		LOCALS = Bullet Golem
+	CASE 870 ;エピタフ
+		LOCALS = Epitaph
+	CASE 871 ;キング・クリムゾン
+		LOCALS = King Crimson
+	CASE 900
+		LOCALS = Altar
+	CASE 902 ;ヒノキ風呂, お風呂の回復に補正
+		LOCALS = Cypress Bath
+	CASE 903 ;キリのベッド, 睡眠回復に補正
+		LOCALS = Paulownia Bed
+	CASE 904 ;イチョウのまな板, 料理に補正
+		LOCALS = Ginkgo Cutting Board
+	CASE 905 ;ケヤキの机椅子, 調合・勉強に補正
+		LOCALS = Zelkova Desk Chair
+	CASE 906 ;ナラのソファー, 休憩・回復に補正
+		LOCALS = Oak Sofa
+	CASE 907 ;カスタム竹箒, 掃除力に補正
+		LOCALS = Custom Bamboo Broom
+	CASEELSE
+		RETURNF ITEMNAME:ARG
+ENDSELECT
+RETURNF LOCALS
+
+@ENKAI_TITLE_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "霊夢の気紛れ酒盛り"
+		LOCALS = Reimu's spontaneous drinking party
+	CASE "幻想郷歳忘れ会"
+		LOCALS = Gensokyo's year-end drinking party
+	CASE "月見酒"
+		LOCALS = A moon-viewing party
+	CASE "収穫祭"
+		LOCALS = A harvest festival
+	CASE "夜通し読経ライブ"
+		LOCALS = An all-night sutra chanting performance
+	CASE "レミリアの気紛れなパーティ"
+		LOCALS = Remilia's spontaneous party
+	CASEELSE 
+		RETURNF ARGS
+ENDSELECT
+RETURNF LOCALS
+
+@WoodName_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "スギ"
+		LOCALS = Cedar
+	CASE "ヒノキ"
+		LOCALS = Cypress
+	CASE "マツ"
+		LOCALS = Pine
+	CASE "カシ"
+		LOCALS = Evergreen
+	CASE "ブナ"
+		LOCALS = Beech
+	CASE "イチョウ"
+		LOCALS = Ginkgo
+	CASE "ケヤキ"
+		LOCALS = Zelkova
+	CASE "キリ"
+		LOCALS = Paulownia
+	CASE "ナラ"
+		LOCALS = Oak
+	CASE "カエデ"
+		LOCALS = Maple
+	CASE "ダケカンバ"
+		LOCALS = Betula
+	CASE "竹"
+		LOCALS = Bamboo
+	CASEELSE 
+		RETURNF ARGS
+ENDSELECT
+RETURNF LOCALS
+
+@JOIN_IN_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "なに考えてるの"
+		LOCALS = Join Navelgazing
+	CASE "一緒に遊ぶ"
+		LOCALS = Join Play
+	CASE "一緒に食事する"
+		LOCALS = Join Meal
+	CASE "一緒につまみ食い"
+		LOCALS = Join Snack
+	CASE "掃除を手伝う"
+		LOCALS = Join Cleaning
+	CASE "一緒に運動する"
+		LOCALS = Join Exercising
+	CASE "本の感想を聞く"
+		LOCALS = Join Reading
+	CASE "料理を手伝う"
+		LOCALS = Join Cooking
+	CASE "料理を分けてもらう"
+		LOCALS = Join Eating
+	CASE "セッションする"
+		LOCALS = Join Jamming
+	CASE "伴奏する"
+		LOCALS = Join Accompaniment
+	CASE "採集を手伝う"
+		LOCALS = Join Foraging
+	CASE "一緒に釣りをする"
+		LOCALS = Join Fishing
+	CASE "実験を手伝う"
+		LOCALS = Join Experimenting
+	CASE "一緒にのんびりする"
+		LOCALS = Join Relaxing
+	CASE "晩酌に付き合う"
+		LOCALS = Join Drinking
+	CASE "買い物を手伝う"
+		LOCALS = Join Shopping
+	CASE "自由行動に付き合う"
+		LOCALS = Join Activity
+	CASE "様子をうかがう"
+		LOCALS = See Eiki's Lecture
+	CASE "いたずらに付き合う"
+		LOCALS = Join In A Prank
+	CASE "様子をうかがう2"
+		LOCALS = Check Pitfall
+	CASE "一緒に雪作り"
+		LOCALS = Make Snowman
+	CASEELSE 
+		RETURNF ARGS
+ENDSELECT
+RETURNF LOCALS
+
+;for 子供ふれあい名称
+@CHILD_INTERACT_TR(ARGS)
+#FUNCTIONS
+#DIM CHARA
+#DIM CHILDNUM
+#DIMS strChildName
+;figure out who's the child
+;自立後
+IF TFLAG:描写中の子供 > 1000
+	CHARA = TFLAG:描写中の子供 % 1000
+	CHILDNUM = TFLAG:描写中の子供 / 1000
+;育児中
+ELSE
+	CHARA = TFLAG:描写中の子供
+	CHILDNUM = TALENT:CHARA:育児中
+ENDIF
+
+strChildName = %CHILDNAME:CHARA:CHILDNUM%
+SELECTCASE ARGS
+	CASE "子供とふれあう"
+		LOCALS = Interact With Your Child
+	CASE strChildName + "を撫でる"
+		LOCALS = Pat %strChildName%
+	CASE strChildName + "をあやす"
+		LOCALS = Soothe %strChildName%
+	CASE strChildName + "と会話"
+		LOCALS = Speak With %strChildName%
+	CASE strChildName + "を洗う"
+		LOCALS = Bathe %strChildName%
+	CASE strChildName + "と一緒に食事"
+		LOCALS = Eat With %strChildName%
+	CASE strChildName + "と遊ぶ"
+		LOCALS = Play With %strChildName%
+	CASE strChildName + "を手伝う"
+		LOCALS = Help %strChildName%
+	CASE strChildName + "の伴奏をする"
+		LOCALS = Accompany %strChildName%
+	CASEELSE 
+		RETURNF ARGS
+ENDSELECT
+RETURNF LOCALS
+
+;This function is used for the line "you join the target in activity"
+@JOIN_IN_SINGLE_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "なに考えてるの"
+		LOCALS = navelgazing
+	CASE "一緒に遊ぶ"
+		LOCALS = playing
+	CASE "一緒に食事する"
+		LOCALS = eating
+	CASE "一緒につまみ食い"
+		LOCALS = snacking
+	CASE "掃除を手伝う"
+		LOCALS = cleaning
+	CASE "一緒に運動する"
+		LOCALS = exercising
+	CASE "本の感想を聞く"
+		LOCALS = reading
+	CASE "料理を手伝う"
+		LOCALS = cooking
+	CASE "料理を分けてもらう"
+		LOCALS = eating
+	CASE "セッションする"
+		LOCALS = jamming
+	CASE "伴奏する"
+		LOCALS = accompanying
+	CASE "採集を手伝う"
+		LOCALS = foraging
+	CASE "一緒に釣りをする"
+		LOCALS = fishing
+	CASE "実験を手伝う"
+		LOCALS = experimenting
+	CASE "一緒にのんびりする"
+		LOCALS = relaxing
+	CASE "晩酌に付き合う"
+		LOCALS = drinking
+	CASE "買い物を手伝う"
+		LOCALS = shopping
+	CASE "自由行動に付き合う"
+		LOCALS = their activity
+	CASEELSE 
+		RETURNF ARGS
+ENDSELECT
+RETURNF LOCALS
+
+@GIFT_ADJECTIVE_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "シンプルな"
+		LOCALS = simplistic
+	CASE "キュートな"
+		LOCALS = cute
+	CASE "アンティークな"
+		LOCALS = antique
+	CASE "ゴシックな"
+		LOCALS = gothic
+	CASE "ポップな"
+		LOCALS = pop
+	CASE "モダンな"
+		LOCALS = modern
+	CASE "レトロな"
+		LOCALS = retro-style
+	CASE "ミステリアスな"
+		LOCALS = mysterious
+	CASE "オリエンタルな"
+		LOCALS = oriental
+	CASE "ユニークな"
+		LOCALS = unique
+	CASE "ブランドの"
+		LOCALS = brand
+	CASE "ゴージャスな"
+		LOCALS = gorgeous
+	CASE "ファンシーな"
+		LOCALS = fancy
+	CASE "ホラーな"
+		LOCALS = horrific
+	CASE "中世風の"
+		LOCALS = feudal-era
+	CASE "和風の"
+		LOCALS = japanese-style
+	CASE "南国風の"
+		LOCALS = Nankoku-style
+	CASE "民族風の"
+		LOCALS = ethnic-style
+	CASE "大陸風の"
+		LOCALS = mainland-style
+	CASE "北欧風の"
+		LOCALS = nordic-style
+	CASE "異国風の"
+		LOCALS = foreign-style
+	CASE "美しい"
+		LOCALS = lovely 
+	CASE "大陸風"
+		LOCALS = continental 
+	CASE "美麗な"
+		LOCALS = beautiful
+	CASE "瀟洒な"
+		LOCALS = elegant
+	CASE "幽玄な"
+		LOCALS = subtle and modest
+	CASE "侘寂な"
+		LOCALS = wabisabi
+	CASE "魅惑の"
+		LOCALS = captivating
+	CASE "妖艶な"
+		LOCALS = bewitching
+	CASE "イカす"
+		LOCALS = cool
+	CASE "オシャレな"
+		LOCALS = stylish
+	CASE "ナウい"
+		LOCALS = trendy
+	CASE "神秘的な"
+		LOCALS = esoteric
+	CASE "芸術的な"
+		LOCALS = artistic
+	CASE "絢爛たる"
+		LOCALS = dazzling
+	CASE "奇妙な"
+		LOCALS = bizarre
+	CASE "怪奇な"
+		LOCALS = strange
+	CASE "不気味な"
+		LOCALS = creepy
+	CASE "不思議な"
+		LOCALS = marvelous
+	CASE "ダークな"
+		LOCALS = dark-style
+	CASE "愉快な"
+		LOCALS = funny
+	CASE "前衛的な"
+		LOCALS = avant-garde
+	CASE "パンクな"
+		LOCALS = punk
+	CASE "コズミックな"
+		LOCALS = cosmic
+	CASE "レトロフューチャーな"
+		LOCALS = retro-futuristic
+	CASE "近未来風の"
+		LOCALS = futuristic style
+	CASE "オカルティックな"
+		LOCALS = occult
+	CASE "クレイジーな"
+		LOCALS = crazy
+	CASE "パンデモニックな"
+		LOCALS = pandemonic
+	CASE "エニグマティクな"
+		LOCALS = enigmatic
+	CASE "マニアックな"
+		LOCALS = rabid
+	CASE "モノクロの"
+		LOCALS = black and white
+	CASE "カラフルな"
+		LOCALS = colorful
+	CASE "セピアの"
+		LOCALS = sepia
+	CASE "透明な"
+		LOCALS = transparent
+	CASE "真紅の"
+		LOCALS = crimson
+	CASE "漆黒の"
+		LOCALS = jet-black
+	CASE "純白の"
+		LOCALS = pure white
+	CASE "白銀の"
+		LOCALS = silver-white
+	CASE "暗黒の"
+		LOCALS = darkness
+	CASE "瑠璃色の"
+		LOCALS = lapis lazuli-blue
+	CASE "浅葱色の"
+		LOCALS = pale blue-green
+	CASE "橘色の"
+		LOCALS = tachibana-colored
+	CASE "七色の"
+		LOCALS = rainbow-colored
+	CASE "極彩の"
+		LOCALS = radiant
+	CASE "永遠に紅い"
+		LOCALS = eternally red
+	CASE "ハートの"
+		LOCALS = heart
+	CASE "精神"
+		LOCALS = spirit
+	CASE "音符の"
+		LOCALS = clef
+	CASE "十字型の"
+		LOCALS = cross-shaped
+	CASE "星型の"
+		LOCALS = star-shaped
+	CASE "うずまきの"
+		LOCALS = whirlpool
+	CASE "幾何学模様の"
+		LOCALS = geometrically patterned
+	CASE "水玉の"
+		LOCALS = polka dotted
+	CASE "キャンディの"
+		LOCALS = candy
+	CASE "ドクロの"
+		LOCALS = skull
+	CASE "瞳の"
+		LOCALS = shut-eyed
+	CASE "タマゴの"
+		LOCALS = egg-like
+	CASE "翼の"
+		LOCALS = winged
+	CASE "錨の"
+		LOCALS = anchor
+	CASE "鬼形の"
+		LOCALS = beast-shaped
+	CASE "キャラクターの"
+		LOCALS = namesake
+	CASE "ゆるキャラの"
+		LOCALS = mascot's
+	CASE "怪獣の"
+		LOCALS = kaijuu's
+	CASE "怪物の"
+		LOCALS = monster's
+	CASE "魔法少女の"
+		LOCALS = magical girl's
+	CASE "ヒーローの"
+		LOCALS = hero's
+	CASE "ゆきだるまの"
+		LOCALS = snowman's
+	CASE "はにわの"
+		LOCALS = haniwa's
+	CASE "伝説の"
+		LOCALS = legendary
+	CASE "古の"
+		LOCALS = antiquated
+	CASE "太古の"
+		LOCALS = ancient
+	CASE "始原の"
+		LOCALS = primordial
+	CASE "懐かしき"
+		LOCALS = nostalgic
+	CASE "神さびた"
+		LOCALS = majestic
+	CASE "千年の"
+		LOCALS = millennial
+	CASE "神代の"
+		LOCALS = divine
+	CASE "過去の"
+		LOCALS = reincarnated
+	CASE "木の"
+		LOCALS = wooden
+	CASE "竹の"
+		LOCALS = bamboo
+	CASE "石の"
+		LOCALS = stone
+	CASE "青銅の"
+		LOCALS = bronze
+	CASE "鉄の"
+		LOCALS = iron
+	CASE "銀の"
+		LOCALS = silver
+	CASE "黄金の"
+		LOCALS = golden
+	CASE "翠玉の"
+		LOCALS = emerald
+	CASE "紅玉の"
+		LOCALS = ruby
+	CASE "青玉の"
+		LOCALS = sapphire
+	CASE "金剛石の"
+		LOCALS = diamond
+	CASE "翡翠の"
+		LOCALS = jade
+	CASE "黄玉の"
+		LOCALS = topaz
+	CASE "琥珀の"
+		LOCALS = amber
+	CASE "紺珠の"
+		LOCALS = lunatic
+	CASE "白金の"
+		LOCALS = Kanju
+	CASE "猫目石の"
+		LOCALS = cat's-eye
+	CASE "黒曜石の"
+		LOCALS = obsidian
+	CASE "黒玉の"
+		LOCALS = jet
+	CASE "白亜の"
+		LOCALS = chalk
+	CASE "瑪瑙の"
+		LOCALS = agate
+	CASE "真鍮の"
+		LOCALS = brass
+	CASE "電気石の"
+		LOCALS = tourmaline
+	CASE "柘榴石の"
+		LOCALS = garnet
+	CASE "蛍石の"
+		LOCALS = flourite
+	CASE "月長石の"
+		LOCALS = moonstone
+	CASE "太陽石の"
+		LOCALS = sunstone
+	CASE "宝石の"
+		LOCALS = bejeweled
+	CASE "骨の"
+		LOCALS = bone
+	CASE "鋼鉄の"
+		LOCALS = steel
+	CASE "プラスチックの"
+		LOCALS = plastic
+	CASE "ガラスの"
+		LOCALS = glass
+	CASE "クリスタルの"
+		LOCALS = crystal
+	CASE "オリハルコンの"
+		LOCALS = orichalcum
+	CASE "メテオライトの"
+		LOCALS = meteorite
+	CASE "セラミックの"
+		LOCALS = ceramic
+	CASE "ミスリルの"
+		LOCALS = mithril
+	CASE "精霊銀の"
+		LOCALS = soul-silver
+	CASE "魔石の"
+		LOCALS = magic stone
+	CASE "要石の"
+		LOCALS = keystone
+	CASE "サンゴの"
+		LOCALS = coral
+	CASE "貝殻の"
+		LOCALS = seashell
+	CASE "真珠の"
+		LOCALS = pearl
+	CASE "ふにゃふにゃの"
+		LOCALS = flabby
+	CASE "つるつるの"
+		LOCALS = slippery
+	CASE "木綿の"
+		LOCALS = cotton
+	CASE "絹の"
+		LOCALS = silk
+	CASE "麻の"
+		LOCALS = hemp
+	CASE "蜘蛛糸の"
+		LOCALS = spider silk
+	CASE "注連縄の"
+		LOCALS = shimenawa
+	CASE "フェムトファイバーの"
+		LOCALS = femtofiber
+	CASE "鎖の"
+		LOCALS = chain
+	CASE "茨の"
+		LOCALS = ibaraki
+	CASE "ふかふかの"
+		LOCALS = soft
+	CASE "ふわふわの"
+		LOCALS = fluffy
+	CASE "もこもこの"
+		LOCALS = lumpy
+	CASE "ふさふさの"
+		LOCALS = tufty
+	CASE "もふもふの"
+		LOCALS = fuzzy
+	CASE "にょろにょろの"
+		LOCALS = slick
+	CASE "獣の"
+		LOCALS = beastly
+	CASE "サクラの"
+		LOCALS = cherry blossom
+	CASE "バラの"
+		LOCALS = rose
+	CASE "ヒマワリの"
+		LOCALS = sunflower
+	CASE "スミレの"
+		LOCALS = violet
+	CASE "ユリの"
+		LOCALS = lily
+	CASE "キクの"
+		LOCALS = chrysanthemum
+	CASE "アジサイの"
+		LOCALS = hydrangea
+	CASE "スズランの"
+		LOCALS = lily of the valley
+	CASE "カエデの"
+		LOCALS = maple
+	CASE "キノコの"
+		LOCALS = mushroom
+	CASE "リンゴの"
+		LOCALS = apple
+	CASE "モモの"
+		LOCALS = peach
+	CASE "オレンジの"
+		LOCALS = orange
+	CASE "イチゴの"
+		LOCALS = strawberry
+	CASE "ブドウの"
+		LOCALS = grape
+	CASE "サクランボの"
+		LOCALS = cherry
+	CASE "スイカの"
+		LOCALS = watermelon
+	CASE "キュウリの"
+		LOCALS = cucumber
+	CASE "四葉の"
+		LOCALS = four leaves
+	CASE "紅葉の"
+		LOCALS = autumn leaf
+	CASE "葉っぱの"
+		LOCALS = leaf
+	CASE "妖精の"
+		LOCALS = fairy's
+	CASE "妖怪の"
+		LOCALS = youkai's
+	CASE "妖魔の"
+		LOCALS = youma's
+	CASE "幻獣の"
+		LOCALS = cryptid's
+	CASE "河童の"
+		LOCALS = kappa's
+	CASE "天狗の"
+		LOCALS = tengu's
+	CASE "鬼の"
+		LOCALS = oni's
+	CASE "人魚の"
+		LOCALS = mermaid's
+	CASE "小人の"
+		LOCALS = inchling's
+	CASE "氷精の"
+		LOCALS = ice spirit's
+	CASE "白蛇の"
+		LOCALS = mishaguji's
+	CASE "鳳凰の"
+		LOCALS = chinese phoenix's
+	CASE "天馬の"
+		LOCALS = pegasus'
+	CASE "龍の"
+		LOCALS = Ryuu's
+	CASE "海神の"
+		LOCALS = sea god's
+	CASE "水神の"
+		LOCALS = water god's
+	CASE "龍神の"
+		LOCALS = dragon god's
+	CASE "天使の"
+		LOCALS = angel's
+	CASE "悪魔の"
+		LOCALS = demon's
+	CASE "ドラゴンの"
+		LOCALS = dragon's
+	CASE "亡霊の"
+		LOCALS = ghost's
+	CASE "死霊の"
+		LOCALS = departed soul's
+	CASE "地霊の"
+		LOCALS = chireiden
+	CASE "死神の"
+		LOCALS = shinigami's
+	CASE "魔女の"
+		LOCALS = witch's
+	CASE "紅魔の"
+		LOCALS = scarlet devil's
+	CASE "神霊の"
+		LOCALS = divine spirit's
+	CASE "風神の"
+		LOCALS = wind god's
+	CASE "雷神の"
+		LOCALS = thunder god's
+	CASE "魔神の"
+		LOCALS = devil's
+	CASE "仙人の"
+		LOCALS = hermit's
+	CASE "天人の"
+		LOCALS = celestial's
+	CASE "天女の"
+		LOCALS = nymph's
+	CASE "女神の"
+		LOCALS = goddess'
+	CASE "冥王の"
+		LOCALS = emperor's
+	CASE "メイドの"
+		LOCALS = maid's
+	CASE "騎士の"
+		LOCALS = knight's
+	CASE "王女の"
+		LOCALS = princess'
+	CASE "女王の"
+		LOCALS = queen's
+	CASE "王者の"
+		LOCALS = king's
+	CASE "酔神の"
+		LOCALS = drunken god's
+	CASE "呑んべぇの"
+		LOCALS = drunkard's
+	CASE "酔人の"
+		LOCALS = heavy drinker's
+	CASE "賢者の"
+		LOCALS = sage's
+	CASE "巫女の"
+		LOCALS = miko's
+	CASE "式神の"
+		LOCALS = shikigami's
+	CASE "憑坐の"
+		LOCALS = paper doll's
+	CASE "火の"
+		LOCALS = fire
+	CASE "水の"
+		LOCALS = water
+	CASE "土の"
+		LOCALS = earth
+	CASE "風の"
+		LOCALS = wind
+	CASE "氷の"
+		LOCALS = icy
+	CASE "炎の"
+		LOCALS = flame
+	CASE "大地の"
+		LOCALS = earthly
+	CASE "天空の"
+		LOCALS = heavenly
+	CASE "光の"
+		LOCALS = light
+	CASE "闇の"
+		LOCALS = dark
+	CASE "太陽の"
+		LOCALS = solar
+	CASE "星の"
+		LOCALS = star
+	CASE "月の"
+		LOCALS = moon
+	CASE "雲の"
+		LOCALS = cloud
+	CASE "雨の"
+		LOCALS = rain
+	CASE "霞の"
+		LOCALS = mist
+	CASE "霧の"
+		LOCALS = fog
+	CASE "雪の"
+		LOCALS = snow
+	CASE "雷の"
+		LOCALS = lightning
+	CASE "嵐の"
+		LOCALS = storm
+	CASE "虹の"
+		LOCALS = rainbow
+	CASE "森の"
+		LOCALS = forest
+	CASE "花の"
+		LOCALS = flower
+	CASE "華の"
+		LOCALS = blossoming
+	CASE "海の"
+		LOCALS = sea
+	CASE "山の"
+		LOCALS = mountain
+	CASE "凍った"
+		LOCALS = frozen
+	CASE "燃える"
+		LOCALS = burning
+	CASE "核熱の"
+		LOCALS = nuclear-heated
+	CASE "氷結の"
+		LOCALS = freezing
+	CASE "東方の"
+		LOCALS = eastern
+	CASE "故郷の"
+		LOCALS = native
+	CASE "聖域の"
+		LOCALS = consecrated
+	CASE "世界の"
+		LOCALS = worldly
+	CASE "地上の"
+		LOCALS = groundly
+	CASE "冥界の"
+		LOCALS = netherworldly
+	CASE "霊界の"
+		LOCALS = Reikai's
+	CASE "冥府の"
+		LOCALS = Meifu's
+	CASE "彼岸の"
+		LOCALS = Higan's
+	CASE "幽明の"
+		LOCALS = Yuumei's
+	CASE "非想非非想の"
+		LOCALS = Hisouhihisou's
+	CASE "星界の"
+		LOCALS = starworldly
+	CASE "蓬莱の"
+		LOCALS = Hourai's
+	CASE "地獄の"
+		LOCALS = hellish
+	CASE "廃獄の"
+		LOCALS = Deserted Hell's
+	CASE "地底の"
+		LOCALS = underworldly
+	CASE "深淵の"
+		LOCALS = abyssal
+	CASE "魔界の"
+		LOCALS = Makai's
+	CASE "法界の"
+		LOCALS = Hokkai's
+	CASE "後戸の"
+		LOCALS = Back Door's
+	CASE "異界の"
+		LOCALS = otherworldly
+	CASE "外界の"
+		LOCALS = outerworldly
+	CASE "鏡の国の"
+		LOCALS = mirrorworldly
+	CASE "博霊の"
+		LOCALS = Hakurei's
+	CASE "守矢の"
+		LOCALS = Moriya's
+	CASE "魔法の"
+		LOCALS = witching
+	CASE "魔力の"
+		LOCALS = magic
+	CASE "霊力の"
+		LOCALS = sacred
+	CASE "幽霊の"
+		LOCALS = phantom's
+	CASE "七曜の"
+		LOCALS = luminarian
+	CASE "魔採光の"
+		LOCALS = magically luminous
+	CASE "ルーンの"
+		LOCALS = rune
+	CASE "輝きの"
+		LOCALS = glittering
+	CASE "神秘の"
+		LOCALS = secret
+	CASE "聖なる"
+		LOCALS = holy
+	CASE "祝福された"
+		LOCALS = blessed
+	CASE "豊穣の"
+		LOCALS = fertile
+	CASE "封魔の"
+		LOCALS = demon-sealing
+	CASE "封呪の"
+		LOCALS = curse-sealing
+	CASE "守護の"
+		LOCALS = guardian's
+	CASE "不滅の"
+		LOCALS = immortal's
+	CASE "完全なる"
+		LOCALS = perfect
+	CASE "穢れなき"
+		LOCALS = pristine
+	CASE "純粋な"
+		LOCALS = pure
+	CASE "邪悪な"
+		LOCALS = wicked
+	CASE "不吉な"
+		LOCALS = ominous
+	CASE "厄い"
+		LOCALS = unlucky
+	CASE "危険な"
+		LOCALS = dangerous
+	CASE "血の"
+		LOCALS = blood
+	CASE "毒の"
+		LOCALS = poison
+	CASE "呪われた"
+		LOCALS = cursed
+	CASE "呪詛の"
+		LOCALS = hexed
+	CASE "殺意の"
+		LOCALS = murderous
+	CASE "血に飢えた"
+		LOCALS = bloodthirsty
+	CASE "禁断の"
+		LOCALS = forbidden
+	CASE "禁忌の"
+		LOCALS = taboo
+	CASE "封印されし"
+		LOCALS = sealed
+	CASE "機械仕掛けの"
+		LOCALS = mechanized
+	CASE "最新鋭の"
+		LOCALS = state of the art
+	CASE "からくりの"
+		LOCALS = contrived
+	CASE "伝来の"
+		LOCALS = ancestral
+	CASE "変形型"
+		LOCALS = deformed
+	CASE "光学技術/の"
+		LOCALS = optical
+	CASE "造形術の"
+		LOCALS = modeling
+	CASE "電子工学の"
+		LOCALS = electronic
+	CASE "ナノテクノロジーの"
+		LOCALS = nanotech
+	CASE "ロストテクノロジーの"
+		LOCALS = lost tech
+	CASE "光学技術の"
+		LOCALS = optical tech
+	CASE "量子の"
+		LOCALS = quantum
+	CASE "暗器仕込みの"
+		LOCALS = concealment
+	CASE "スチームパンクの"
+		LOCALS = steampunk
+	CASE "歩く"
+		LOCALS = walking
+	CASE "動く"
+		LOCALS = moving
+	CASE "蠢く"
+		LOCALS = wriggling
+	CASE "歌う"
+		LOCALS = singing
+	CASE "踊る"
+		LOCALS = hopping
+	CASE "奏でる"
+		LOCALS = playing
+	CASE "浮かぶ"
+		LOCALS = floating
+	CASE "幻想の"
+		LOCALS = fantasy
+	CASE "永遠の"
+		LOCALS = eternal
+	CASE "悠久の"
+		LOCALS = perpetual
+	CASE "夢幻の"
+		LOCALS = Mugen's
+	CASE "音の"
+		LOCALS = noisy
+	CASE "旋律の"
+		LOCALS = melodious
+	CASE "舞踊の"
+		LOCALS = dancing
+	CASE "知恵の"
+		LOCALS = wise
+	CASE "知識の"
+		LOCALS = knowledgeable
+	CASE "記憶の"
+		LOCALS = recollecting
+	CASE "謎の"
+		LOCALS = puzzling
+	CASE "未知の"
+		LOCALS = unknown
+	CASE "魅知の"
+		LOCALS = enchanted
+	CASE "霊知の"
+		LOCALS = mystic
+	CASE "平和の"
+		LOCALS = peaceful
+	CASE "刹那の"
+		LOCALS = momentary
+	CASE "須臾の"
+		LOCALS = instantaneous
+	CASE "力の"
+		LOCALS = forceful
+	CASE "肉体の"
+		LOCALS = bodily
+	CASE "心の"
+		LOCALS = mental
+	CASE "精神の"
+		LOCALS = spiritual
+	CASE "魂の"
+		LOCALS = soulful
+	CASE "愛の"
+		LOCALS = loving
+	CASE "涙の"
+		LOCALS = crying
+	CASE "運命の"
+		LOCALS = fateful 
+	CASE "理の"
+		LOCALS = reasoning
+	CASE "夢の"
+		LOCALS = dreamy
+	CASE "眠りの"
+		LOCALS = sleepy
+	CASE "死の"
+		LOCALS = deathly
+	CASE "無の"
+		LOCALS = hollow
+	CASE "虚空の"
+		LOCALS = empty
+	CASE "幻の"
+		LOCALS = phantom
+	CASE "幻影の"
+		LOCALS = illusionary
+	CASE "蜃気楼の"
+		LOCALS = mirage
+	CASE "歓びの"
+		LOCALS = joyous
+	CASE "安らぎの"
+		LOCALS = tranquil
+	CASE "嫉妬の"
+		LOCALS = jealous
+	CASE "慈愛の"
+		LOCALS = affectionate
+	CASE "奇跡の"
+		LOCALS = miraculous
+	CASE "究極の"
+		LOCALS = ultimate
+	CASE "最後の"
+		LOCALS = final
+	CASE "恋色の"
+		LOCALS = Love-colored
+	CASE "小さな小さな"
+		LOCALS = tiny little
+	CASE "厳つがましい"
+		LOCALS = grim
+	CASE "正体不明の"
+		LOCALS = unidentifiable
+	CASE "逆転する"
+		LOCALS = reversing
+	CASE "トリニタリアンな"
+		LOCALS = trinitarian
+	CASE "秘匿された"
+		LOCALS = hiding
+	CASE "ダサい"
+		LOCALS = lame
+	CASE "ボロい"
+		LOCALS = worn-out
+	CASE "古びた"
+		LOCALS = old
+	CASE "粗末な"
+		LOCALS = crude
+	CASE "欠けた"
+		LOCALS = chipped
+	CASE "歪んだ"
+		LOCALS = warped
+	CASE "偽物の"
+		LOCALS = fake
+	CASE "逆さまの"
+		LOCALS = upside down
+	CASE "錆びた"
+		LOCALS = rusted
+	CASE "壊れた"
+		LOCALS = broken
+	CASE "おもちゃの"
+		LOCALS = toy
+	CASE "砂漠の"
+		LOCALS = desert
+	CASE "回る"
+		LOCALS = rotating
+	CASE "山吹の"
+		LOCALS = bright yellow
+	CASE "空色の"
+		LOCALS = azure
+	CASE "マーブルな"
+		LOCALS = marble
+	CASE "やみかわな"
+		LOCALS = sickly cute
+	CASE "ゆめかわな"
+		LOCALS = girly cute
+	CASE "深緑の"
+		LOCALS = dark green
+	CASE "反射の"
+		LOCALS = reflective
+	CASE "ダマスカスの"
+		LOCALS = Damascus
+	CASE "毛皮の"
+		LOCALS = fur
+	CASE "魔彩光の"
+		LOCALS = Magically Luminous
+	CASE "緋緋色金の"
+		;mythical Japanese alloy that is said to glow in a way that resembles flames
+		LOCALS = Hihiirokane
+	CASE "喋る"
+		LOCALS = talking
+	CASE "大樹の"
+		LOCALS = big tree's
+	CASE "ピンクの"
+		LOCALS = pink-colored
+	CASE "星砂の"
+		LOCALS = star sand
+	CASE "消える"
+		LOCALS = fading
+	CASE "白雪の"
+		LOCALS = snow-white
+	CASE "神話の"
+		LOCALS = mythical
+	CASE "高貴な"
+		LOCALS = noble
+	CASE "感情の"
+		LOCALS = emotional
+	CASE "失われた"
+		LOCALS = lost
+	CASE "神々が恋した"
+		LOCALS = divinely favored
+	CASE "灰の"
+		LOCALS = ashen
+	CASE "無間の"
+		LOCALS = dimensionless
+	CASE "強欲な"
+		LOCALS = greedy
+	CASE "剛欲な"
+		LOCALS = avaricious
+	CASE "深紫の"
+		LOCALS = deep purple
+	CASE "痺れる"
+		LOCALS = numbing
+	CASE "千里の"
+		LOCALS = swift traveler's
+	CASE "忘れられた"
+		LOCALS = forgotten
+	CASE "龍珠の" 
+		LOCALS = Dragon Ball's
+	CASE "煙の"
+		LOCALS = smoky
+	CASE "月虹の"
+		LOCALS = moonbow
+	CASE "職人仕立ての"
+		LOCALS = masterwork
+	CASE "世界に一つだけの"
+		LOCALS = one of a kind
+	
+	;special cases where adjective is at the end (tweak at misc.erb for item generation pattern as well)
+	
+	CASE "レアメタルの"
+		;made from rare metals more like
+		LOCALS = of rare metals
+	CASE "夢と現の"
+		LOCALS = of Dreams and Reality
+	CASE "幼心地の"
+		LOCALS = of Child's Mind
+	CASE "妖力の"
+		LOCALS = of spirit power
+	CASE "鬼力の"
+		LOCALS = of demonic power
+	CASE "忘却の"
+		LOCALS = of forgetfulness
+	CASE "憂鬱の"
+		LOCALS = of depression
+	CASE "秩序の"
+		LOCALS = of order
+	CASE "混沌の"
+		LOCALS = of chaos
+	CASE "天輪の"
+		LOCALS = of celestial order
+	CASE "希望の"
+		LOCALS = of hope
+	CASE "勇気の"
+		LOCALS = of courage
+	CASE "幸せの"
+		LOCALS = of happiness
+	CASE "狂気の"
+		LOCALS = of madness
+	CASE "怒りの"
+		LOCALS = of anger
+	CASE "恐怖の"
+		LOCALS = of fear
+	CASE "欲望の"
+		LOCALS = of lust
+	CASE "温もりの"
+		LOCALS = of warmth
+	CASE "悲しみの"
+		LOCALS = of sadness
+	CASE "生と死の"
+		LOCALS = of life and death
+	CASE "生命の"
+		LOCALS = of life
+	CASE "時の"
+		LOCALS = of time
+	CASE "時空の"
+		LOCALS = of space-time
+	CASE "秋風の"
+		LOCALS = of autumn breeze
+	CASE "春風の"
+		LOCALS = of spring breeze
+	CASE "幻葬の" 
+		LOCALS = of Illusionary Funeral
+	CASE "霊天の" 
+		LOCALS = of Spiritual Heaven
+		
+	CASE "鳥の"
+		LOCALS = of the bird
+	CASE "魚の"
+		LOCALS = of the fish
+	CASE "イヌの"
+		LOCALS = of the dog
+	CASE "ネコの"
+		LOCALS = of the cat
+	CASE "トラの"
+		LOCALS = of the tiger
+	CASE "ネズミの"
+		LOCALS = of the rat
+	CASE "ウシの"
+		LOCALS = of the cow
+	CASE "ウサギの"
+		LOCALS = of the rabbit
+	CASE "クマの"
+		LOCALS = of the bear
+	CASE "ヒツジの"
+		LOCALS = of the sheep
+	CASE "キツネの"
+		LOCALS = of the fox
+	CASE "タヌキの"
+		LOCALS = of the raccoon
+	CASE "オオカミの"
+		LOCALS = of the wolf
+	CASE "ウマの"
+		LOCALS = of the horse
+	CASE "バクの"
+		LOCALS = of the baku
+	CASE "カワウソの"
+		LOCALS = of the otter
+	CASE "カエルの"
+		LOCALS = of the frog
+	CASE "ヘビの"
+		LOCALS = of the snake
+	CASE "コウモリの"
+		LOCALS = of the bat
+	CASE "スズメの"
+		LOCALS = of the sparrow
+	CASE "カラスの"
+		LOCALS = of the crow
+	CASE "ワシの"
+		LOCALS = of the eagle
+	CASE "タカの"
+		LOCALS = of the hawk
+	CASE "ニワトリの"
+		LOCALS = of the chicken
+	CASE "ミミズクの"
+		LOCALS = of the horned owl
+	CASE "カメの"
+		LOCALS = of the turtle
+	CASE "クラゲの"
+		LOCALS = of the jellyfish
+	CASE "イルカの"
+		LOCALS = of the dolphin
+	CASE "クジラの"
+		LOCALS = of the whale
+	CASE "揚羽蝶の"
+		LOCALS = of the swallowtail butterfly
+	CASE "蓮花蝶の"
+		LOCALS = of the lotus butterfly
+	CASE "黒死蝶の"
+		LOCALS = of the death omen butterfly
+	CASE "魔界蝶の"
+		LOCALS = of the makai butterfly
+	CASE "蜘蛛の"
+		LOCALS = of the spider
+	CASE "毒蛾の"
+		LOCALS = of the poisonous moth
+	CASE "深海魚の"
+		LOCALS = of the deep-sea fish
+	CASE "古代魚の"
+		LOCALS = of the ancient fish
+	CASE "獅子の"
+		LOCALS = of the lion
+	CASE "麒麟の"
+		LOCALS = of the giraffe
+	CASE "パンダの"
+		LOCALS = of the panda
+	CASE "天界の"
+		LOCALS = of heavens
+	CASE "氷河の"
+		LOCALS = of glacier
+	CASE "稲妻の"
+		LOCALS = of lightning flash
+	CASE "晴天の"
+		LOCALS = of clear sky
+	CASE "暁の"
+		LOCALS = of dawn
+	CASE "日輪の"
+		LOCALS = of sun
+	CASE "幻日の"
+		LOCALS = of sundog
+	CASE "極光の"
+		LOCALS = of northern lights
+	CASE "陽光の"
+		LOCALS = of sunlight
+	CASE "黄昏の"
+		LOCALS = of twilight
+	CASE "宵闇の"
+		LOCALS = of dusk
+	CASE "夜の"
+		LOCALS = of night
+	CASE "夜帳の"
+		LOCALS = of nightfall
+	CASE "永夜の"
+		LOCALS = of eternal night
+	CASE "星空の"
+		LOCALS = of starry sky
+	CASE "星光の"
+		LOCALS = of starlight
+	CASE "真夜中の"
+		LOCALS = of midnight
+	CASE "夜空の"
+		LOCALS = of night sky
+	CASE "月見の"
+		LOCALS = of evening
+	CASE "夕焼けの"
+		LOCALS = of sunset
+	CASE "七星の"
+		LOCALS = of the Big Dipper
+	CASE "彗星の"
+		LOCALS = of comet
+	CASE "星座の"
+		LOCALS = of constellation
+	CASE "星屑の"
+		LOCALS = of stardust
+	CASE "客星の"
+		LOCALS = of guest star
+	CASE "星降る"
+		LOCALS = of starfall
+	CASE "三日月の"
+		LOCALS = of new moon
+	CASE "満月の"
+		LOCALS = of full moon
+	CASE "月輪の"
+		LOCALS = of moon ring
+	CASE "月光の"
+		LOCALS = of moonlight
+	CASE "月影の"
+		LOCALS = of moonshade
+	CASE "四季の"
+		LOCALS = of four seasons
+	CASE "春の"
+		LOCALS = of spring
+	CASE "夏の"
+		LOCALS = of summer
+	CASE "秋の"
+		LOCALS = of autumn
+	CASE "冬の"
+		LOCALS = of winter
+	CASE "業火の"
+		LOCALS = of hellfire
+	CASE "深海の"
+		LOCALS = of deep-sea
+	CASE "疾風の"
+		LOCALS = of gale
+	CASE "神風の"
+		LOCALS = of divine wind
+	CASE "蛍火の"
+		LOCALS = of firefly light
+	CASE "新緑の"
+		LOCALS = of fresh verdure
+	CASE "ヴァカンスの"
+		LOCALS = of vacation
+	CASE "楽園の"
+		LOCALS = of paradise
+	CASE "緋想の"
+		LOCALS = of scarlet weather
+	CASE "陰陽の"
+		LOCALS = of Yin-Yang
+	CASE "霊気の"
+		LOCALS = of aura
+	CASE "風水の"
+		LOCALS = of feng shui
+	CASE "呪術の"
+		LOCALS = of sorcery
+	CASE "幸運の"
+		LOCALS = of good-luck
+	CASE "退魔の"
+		LOCALS = of demon-eradication
+	CASE "喪心の"
+		LOCALS = of stupor
+	CASE "死出の"
+		LOCALS = of untimely death
+	CASE "正義の"
+		LOCALS = of justice
+	CASE "終末の"
+		LOCALS = of doomsday
+	CASE "弾幕の"
+		LOCALS = of Danmaku
+	CASE "救世の"
+		LOCALS = of salvation
+	CASE "悪夢の"
+		LOCALS = of nightmare
+	CASE "絶望の"
+		LOCALS = of despair
+	CASE "裏切りの"
+		LOCALS = of betrayal
+	CASE "孤独の"
+		LOCALS = of isolation
+	CASE "破滅の"
+		LOCALS = of ruin
+	CASE "万物の"
+		LOCALS = of all of creation
+	CASE "真実の"
+		LOCALS = of truth
+	CASE "境界の"
+		LOCALS = of boundary
+	CASE "隙間の"
+		LOCALS = of the Gap
+	CASE "イドの"
+		LOCALS = of id
+	CASE "エゴの"
+		LOCALS = of ego
+	CASE "紫電の"
+		LOCALS = of purple lightning
+	CASE "閃光の"
+		LOCALS = of flash
+	CASE "機力の"
+		LOCALS = of retry
+	CASE "自由の"
+		LOCALS = of freedom
+	CASEELSE 
+		RETURNF ARGS
+ENDSELECT
+RETURNF LOCALS
+
+
+@GIFT_NOUN_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "リボン"
+		LOCALS = ribbon
+	CASE "ヘアゴム"
+		LOCALS = hair band
+	CASE "ヘアピン"
+		LOCALS = hairpin
+	CASE "髪飾り"
+		LOCALS = hair ornament
+	CASE "かんざし"
+		LOCALS = ornate hairpin
+	CASE "羽飾り"
+		LOCALS = decorative feather
+	CASE "花飾り"
+		LOCALS = decorative flower
+	CASE "バレッタ"
+		LOCALS = hair clasp
+	CASE "櫛"
+		LOCALS = comb
+	CASE "耳飾り"
+		LOCALS = ear decoration
+	CASE "イヤリング"
+		LOCALS = earrings
+	CASE "ピアス"
+		LOCALS = piercings
+	CASE "首飾り"
+		LOCALS = neckband
+	CASE "ネックレス"
+		LOCALS = necklace
+	CASE "チョーカー"
+		LOCALS = choker
+	CASE "首輪"
+		LOCALS = collar
+	CASE "数珠"
+		LOCALS = prayer beads
+	CASE "指輪"
+		LOCALS = finger band
+	CASE "リング"
+		LOCALS = ring
+	CASE "腕輪"
+		LOCALS = wristlet
+	CASE "ブレスレット"
+		LOCALS = bracelet
+	CASE "バングル"
+		LOCALS = bangle
+	CASE "シュシュ"
+		LOCALS = scrunchie
+	CASE "ミサンガ"
+		LOCALS = friendship bracelet
+	CASE "アンクレット"
+		LOCALS = anklet
+	CASE "ペンダント"
+		LOCALS = pendant
+	CASE "アミュレット"
+		LOCALS = amulet
+	CASE "スカーフ"
+		LOCALS = scarf
+	CASE "マフラー"
+		LOCALS = muffler
+	CASE "襟巻き"
+		LOCALS = shawl
+	CASE "ストール"
+		LOCALS = stole
+	CASE "ネクタイ"
+		LOCALS = necktie
+	CASE "ケープ"
+		LOCALS = cape
+	CASE "ローブ"
+		LOCALS = robe
+	CASE "羽織"
+		LOCALS = coat
+	CASE "羽衣"
+		LOCALS = emissarial robes
+	CASE "マント"
+		LOCALS = cloak
+	CASE "帯"
+		LOCALS = obi
+	CASE "ベルト"
+		LOCALS = belt
+	CASE "手袋"
+		LOCALS = mitts
+	CASE "小手"
+		LOCALS = armlet
+	CASE "グローブ"
+		LOCALS = gloves
+	CASE "眼鏡"
+		LOCALS = spectacles
+	CASE "メガネ"
+		LOCALS = glasses
+	CASE "サングラス"
+		LOCALS = sunglasses
+	CASE "レンズ"
+		LOCALS = lens
+	CASE "面"
+		LOCALS = half-mask
+	CASE "仮面"
+		LOCALS = faceguard
+	CASE "マスク"
+		LOCALS = mask
+	CASE "靴"
+		LOCALS = shoes
+	CASE "ブーツ"
+		LOCALS = boots
+	CASE "紋章"
+		LOCALS = crest
+	CASE "ブローチ"
+		LOCALS = brooch
+	CASE "ワッペン"
+		LOCALS = emblem
+	CASE "シール"
+		LOCALS = seal
+	CASE "缶バッジ"
+		LOCALS = pin button
+	CASE "ストラップ"
+		LOCALS = strap
+	CASE "キーホルダー"
+		LOCALS = keychain
+	CASE "鈴"
+		LOCALS = bell
+	CASE "根付"
+		LOCALS = netsuke
+	CASE "帯留"
+		LOCALS = obidome
+	CASE "護符"
+		LOCALS = talisman
+	CASE "お守り"
+		LOCALS = omamori
+	CASE "お札"
+		LOCALS = ofuda
+	CASE "チャーム"
+		LOCALS = charm
+	CASE "魔除け"
+		LOCALS = warding necklace
+	CASE "ロザリオ"
+		LOCALS = rosary
+	CASE "ロケット"
+		LOCALS = locket
+	CASE "勾玉"
+		LOCALS = magatama
+	CASE "ハンカチ"
+		LOCALS = handkerchief
+	CASE "タオル"
+		LOCALS = towel
+	CASE "手ぬぐい"
+		LOCALS = washcloth
+	CASE "時計"
+		LOCALS = watch
+	CASE "腕時計"
+		LOCALS = wristwatch
+	CASE "懐中時計"
+		LOCALS = pocket watch
+	CASE "財布"
+		LOCALS = wallet
+	CASE "がま口"
+		LOCALS = coin purse
+	CASE "巾着"
+		LOCALS = purse
+	CASE "印籠"
+		LOCALS = medicine case
+	CASE "ポーチ"
+		LOCALS = pouch
+	CASE "鞄"
+		LOCALS = satchel
+	CASE "バッグ"
+		LOCALS = bag
+	CASE "鏡"
+		LOCALS = mirror
+	CASE "手鏡"
+		LOCALS = hand mirror
+	CASE "香水"
+		LOCALS = perfume
+	CASE "薬瓶"
+		LOCALS = vial
+	CASE "香炉"
+		LOCALS = censer
+	CASE "法輪"
+		LOCALS = buddhist teachings
+	CASE "ペン"
+		LOCALS = pen
+	CASE "筆"
+		LOCALS = brush
+	CASE "万年筆"
+		LOCALS = fountain pen
+	CASE "羽根ペン"
+		LOCALS = feather pen
+	CASE "器"
+		LOCALS = bowl
+	CASE "皿"
+		LOCALS = dish
+	CASE "グラス"
+		LOCALS = cup
+	CASE "マグカップ"
+		LOCALS = mug
+	CASE "酒器"
+		LOCALS = sake cup
+	CASE "茶器"
+		LOCALS = tea cup
+	CASE "茶碗"
+		LOCALS = rice bowl
+	CASE "扇"
+		LOCALS = fan
+	CASE "扇子"
+		LOCALS = folding fan
+	CASE "うちわ"
+		LOCALS = paper fan
+	CASE "提灯"
+		LOCALS = paper lantern
+	CASE "ランプ"
+		LOCALS = lamp
+	CASE "ランタン"
+		LOCALS = lantern
+	CASE "傘"
+		LOCALS = umbrella
+	CASE "キセル"
+		LOCALS = kiseru smoking pipe
+	CASE "鍵"
+		LOCALS = key
+	CASE "かざぐるま"
+		LOCALS = pinwheel
+	CASE "機械"
+		LOCALS = machine
+	CASE "書"
+		LOCALS = writings
+	CASE "本"
+		LOCALS = book
+	CASE "巻物"
+		LOCALS = scroll
+	CASE "グリモワール"
+		LOCALS = grimoire
+	CASE "経典"
+		LOCALS = scriptures
+	CASE "手帳"
+		LOCALS = notebook
+	CASE "記録"
+		LOCALS = document
+	CASE "事典"
+		LOCALS = encyclopedia
+	CASE "妖魔本"
+		;according to official translation
+		LOCALS = demon book
+	CASE "懐剣"
+		LOCALS = dagger
+	CASE "ナイフ"
+		LOCALS = knife
+	CASE "護刀"
+		LOCALS = sword
+	CASE "宝剣"
+		LOCALS = treasure sword
+	CASE "杖"
+		LOCALS = cane
+	CASE "ステッキ"
+		LOCALS = wand
+	CASE "笏"
+		LOCALS = scepter
+	CASE "枝"
+		LOCALS = branch
+	CASE "箒"
+		LOCALS = broom
+	CASE "錫杖"
+		LOCALS = bishop's staff
+	CASE "お祓い棒"
+		LOCALS = purification rod
+	CASE "蓮華蝶の"
+		LOCALS = lotus flower butterfly's
+	CASE "弾"
+		LOCALS = bullet
+	CASE "針"
+		LOCALS = needle
+	CASE "矢"
+		LOCALS = arrow
+	CASE "笛"
+		LOCALS = whistle
+	CASE "オカリナ"
+		LOCALS = ocarina
+	CASE "フルート"
+		LOCALS = flute
+	CASE "ビードロ"
+		LOCALS = stained glass whistle
+	CASE "オルゴール"
+		LOCALS = music box
+	CASE "バチ"
+		LOCALS = drumstick
+	CASE "ピック"
+		LOCALS = pick
+	CASE "スティック"
+		LOCALS = stick
+	CASE "絵画"
+		LOCALS = picture
+	CASE "絵はがき"
+		LOCALS = picture postcard
+	CASE "写真"
+		LOCALS = photo
+	CASE "コイン"
+		LOCALS = coin
+	CASE "カメオ"
+		LOCALS = cameo
+	CASE "カード"
+		LOCALS = card
+	CASE "レアカード"
+		LOCALS = rare card
+	CASE "スペルカード"
+		LOCALS = Spell Card
+	CASE "人形"
+		LOCALS = doll
+	CASE "ぬいぐるみ"
+		LOCALS = plushie
+	CASE "フィギュア"
+		LOCALS = figurine
+	CASE "彫刻"
+		LOCALS = carving
+	CASE "はにわ"
+		LOCALS = haniwa
+	CASE "牙"
+		LOCALS = fang
+	CASE "角"
+		LOCALS = horn
+	CASE "爪"
+		LOCALS = claw
+	CASE "鱗"
+		LOCALS = scale
+	CASE "羽"
+		LOCALS = feather
+	CASE "卵"
+		LOCALS = egg
+	CASE "しっぽ"
+		LOCALS = tail
+	CASE "種"
+		LOCALS = seed
+	CASE "結晶"
+		LOCALS = crystal
+	CASE "宝玉"
+		LOCALS = jewel
+	CASE "宝珠"
+		LOCALS = gem
+	CASE "オーブ"
+		LOCALS = orb
+	CASE "守護石"
+		LOCALS = warding stone
+	CASE "魔法石"
+		LOCALS = magic stone
+	CASE "妖玉"
+		LOCALS = spirit ball
+	CASE "しずく"
+		LOCALS = drop
+	CASE "遺物"
+		LOCALS = relic
+	CASE "秘宝"
+		LOCALS = treasure
+	CASE "かけら"
+		LOCALS = fragment
+	CASE "アーティファクト"
+		LOCALS = artifact
+	CASE "化石"
+		LOCALS = fossil
+	CASE "キャノンボール"
+		LOCALS = cannonball
+	CASE "楽譜"
+		LOCALS = music score
+	CASE "鉱物"
+		LOCALS = mineral
+	CASE "置物"
+		LOCALS = ornament
+	CASE "箸"
+		LOCALS = chopsticks
+	CASE "メダル"
+		LOCALS = medal
+	CASEELSE 
+		RETURNF ARGS
+ENDSELECT
+RETURNF LOCALS
+
+
+@GIFTSHOP_NAME_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "香霖堂"
+		LOCALS = Kourindou
+	CASE "土産屋"
+		LOCALS = Souvenir Shop
+	CASEELSE 
+		RETURNF ARGS
+ENDSELECT
+RETURNF LOCALS
+
+@CREATE_GIFT_NAME_TR(strMain, strAdj)
+#FUNCTIONS
+#DIMS strMain
+#DIMS strAdj
+
+SELECTCASE strAdj
+	CASE "レアメタルの", "夢と現の", "幼心地の", "妖力の", "鬼力の", "忘却の", "憂鬱の", "秩序の", "混沌の", "天輪の", "希望の", "勇気の", "幸せの", "狂気の", "怒りの", "恐怖の", "欲望の", "温もりの", "悲しみの", "生と死の", "生命の", "時の", "時空の", "鳥の", "魚の", "イヌの", "ネコの", "トラの", "ネズミの", "ウシの", "ウサギの", "クマの", "ヒツジの", "キツネの", "タヌキの", "オオカミの", "ウマの", "バクの", "カワウソの", "カエルの", "ヘビの", "コウモリの", "スズメの", "カラスの", "ワシの", "タカの", "ニワトリの", "ミミズクの", "カメの", "クラゲの", "イルカの", "クジラの", "揚羽蝶の", "蓮花蝶の", "黒死蝶の", "魔界蝶の", "蜘蛛の", "毒蛾の", "深海魚の", "古代魚の", "獅子の", "麒麟の", "パンダの", "天界の", "秋風の", "春風の", "氷河の", "稲妻の", "晴天の", "暁の", "日輪の", "幻日の", "極光の", "陽光の", "黄昏の", "宵闇の", "夜の", "夜帳の", "永夜の", "星空の", "星光の", "真夜中の", "夜空の", "月見の", "夕焼けの", "七星の", "彗星の", "星座の", "星屑の", "客星の", "星降る", "三日月の", "満月の", "月輪の", "月光の", "月影の", "四季の", "春の", "夏の", "秋の", "冬の", "業火の", "深海の", "疾風の", "神風の", "蛍火の", "新緑の", "ヴァカンスの", "楽園の", "緋想の", "陰陽の", "霊気の", "風水の", "呪術の", "幸運の", "退魔の", "喪心の", "死出の", "正義の", "終末の", "弾幕の", "救世の", "悪夢の", "絶望の", "裏切りの", "孤独の", "破滅の", "万物の", "真実の", "境界の", "隙間の", "イドの", "エゴの", "幻葬の", "霊天の", "紫電の", "閃光の", "機力の", "自由の"
+		;stuff of ...
+		RETURNF CAPITALIZE(GIFT_NOUN_TR(strMain)) + " " + GIFT_ADJECTIVE_TR(strAdj)
+CASEELSE
+	;normal way
+	RETURNF CAPITALIZE(GIFT_ADJECTIVE_TR(strAdj)) + " " + GIFT_NOUN_TR(strMain)
+ENDSELECT
+
+
+;Lower case, CAPITALIZE when needed
+;ARG - 0 default, return just noun
+;ARG - 1 where to, "into the above the joists" does not work
+@NAME_HIDING_PLACE_TR(ARG)
+#FUNCTIONS
+VARSET LOCALS
+VARSET LOCAL
+SELECTCASE FLAG:潜伏場所
+	CASE 1 ;物陰
+		LOCALS = secluded spot
+	CASE 2 ;草薮
+		LOCALS = bush
+	CASE 3 ;茂み
+		LOCALS = thicket
+	CASE 4 ;木立
+		LOCALS = grove
+	CASE 5 ;樹上
+		LOCAL = 1
+		LOCALS = up a tree
+	CASE 6 ;岩陰
+		LOCAL = 1
+		LOCALS = behind a rock
+	CASE 7 ;稜線
+		LOCALS = ridgeline
+		SIF ARG == 1
+			LOCALS = into the ridgeline
+	CASE 8 ;屋根の上
+		LOCALS = rooftop
+		SIF ARG == 1
+			LOCALS = up on a roof
+	CASE 9 ;路地裏
+		LOCALS = back alley
+	CASE 10 ;梁の上
+		LOCALS = above the joists
+		SIF ARG == 1
+			LOCALS = up above the joists
+	CASE 11 ;柱の陰
+		LOCAL = 1
+		LOCALS = behind a pillar
+	CASE 12 ;塀の陰
+		LOCAL = 1
+		LOCALS = behind a wall
+	CASE 13 ;荷車の陰
+		LOCAL = 1
+		LOCALS = behind a cart
+	CASE 14 ;衝立裏
+		LOCAL = 1
+		LOCALS = behind a partitioning screen
+	CASE 15 ;竹薮
+		LOCALS = bamboo grove
+	CASE 16 ;衣装箪笥
+		LOCALS = wardrobe
+	CASE 17 ;花畑
+		LOCALS = flower garden
+	CASE 18 ;屋台の陰
+		LOCAL = 1
+		LOCALS = behind a cart
+	CASE 19 ;商品棚の陰
+		LOCAL = 1
+		LOCALS = behind a product shelf
+	CASE 20 ;倉庫奥
+		LOCALS = back of a storehouse
+		SIF ARG == 1
+			LOCALS = into the back of a storehouse
+	CASE 21 ;濃霧
+		LOCALS = thick fog
+		SIF ARG == 1
+			LOCALS = into the thick fog
+	CASE 22 ;暗がり
+		LOCALS = darkness
+		SIF ARG == 1
+			LOCALS = into the darkness
+	CASE 23 ;都合の良いスキマ
+		LOCALS = convenient gap
+	CASE 24 ;空き部屋
+		LOCALS = vacant room
+	CASE 25 ;横穴
+		LOCALS = cave
+	CASE 26 ;祠の陰
+		LOCAL = 1
+		LOCALS = behind a Hokora
+	CASE 27 ;テーブルの下
+		LOCAL = 1
+		LOCALS = under a table
+	CASE 28 ;ソファーの陰
+		LOCAL = 1
+		LOCALS = behind a sofa
+	CASE 110 ;桜並木
+		LOCAL = 1
+		LOCALS = behind a cherry tree
+	CASE 111 ;鳥居の上
+		LOCAL = 1
+		LOCALS = above a Torii
+		SIF ARG == 1
+			LOCALS = onto a Torii
+	CASE 120 ;灯篭の陰
+		LOCAL = 1
+		LOCALS = behind a garden lantern
+	CASE 121 ;手水舎裏
+		LOCAL = 1
+		LOCALS = behind the Chozuya
+	CASE 122 ;本堂裏
+		LOCAL = 1
+		LOCALS = behind the Main Temple Building
+	CASE 13 ;賽銭箱の陰
+		LOCAL = 1
+		LOCALS = behind the Offertory Box
+	CASE 131 ;御神体の陰
+		LOCAL = 1
+		LOCALS = behind the Shintai
+	CASE 140 ;縁側の下
+		LOCAL = 1
+		LOCALS = below the veranda
+	CASE 141 ;物置裏
+		LOCALS = back of the storeroom
+		SIF ARG == 1
+			LOCALS = to the back of the storeroom
+	CASE 150 ;うねった根の陰
+		LOCALS = between some roots
+		SIF ARG == 1
+			LOCALS = in between some roots
+	CASE 160 ;謎の装置の陰
+		LOCAL = 1
+		LOCALS = behind the mysterious device
+	CASE 161 ;エアダクトの中
+		LOCALS = in the air duct
+		SIF ARG == 1
+			LOCALS = into the air duct
+	CASE 162 ;研究机の下
+		LOCAL = 1
+		LOCALS = below the research desk
+		SIF ARG == 1
+			LOCALS = benath the research desk
+	CASE 210 ;お地蔵さんの陰
+		LOCAL = 1
+		LOCALS = behind a Jizo statue
+	CASE 220 ;柳の陰
+		LOCAL = 1
+		LOCALS = behind a willow tree
+	CASE 221 ;柳の樹上
+		LOCAL = 1
+		LOCALS = up in a willow tree
+	CASE 230 ;山門の上
+		LOCAL = 1
+		LOCALS = above the Temple Gate
+		SIF ARG == 1
+			LOCALS = up unto the Temple Gate
+	CASE 231 ;祈祷殿
+		LOCALS = the back of the prayer hall
+		SIF ARG == 1
+			LOCALS = into the back of the prayer hall
+	CASE 232 ;鐘楼
+		LOCALS = the bellfry
+		SIF ARG == 1
+			LOCALS = up into the bellfry
+	CASE 240 ;脇間
+		LOCALS = side room
+	CASE 241 ;宮殿裏
+		LOCALS = back of the palace
+		SIF ARG == 1
+			LOCALS = into the back of the palace
+	CASE 250 ;墓の陰
+		LOCAL = 1
+		LOCALS = behind a tombstone
+	CASE 251 ;納骨堂裏
+		LOCAL = 1
+		LOCALS = behind a crypt
+	CASE 260 ;大門の上
+		LOCAL = 1
+		LOCALS = above the large gate
+	CASE 310 ;物見櫓
+		LOCAL = 1
+		LOCALS = the watchtower
+		SIF ARG == 1
+			LOCALS = into the watchtower
+	CASE 311 ;龍神像の陰
+		LOCAL = 1
+		LOCALS = behind the dragon statue
+	CASE 330 ;空樽
+		LOCALS = empty barrel
+	CASE 340 ;保健室
+		LOCALS = school infirmary
+		SIF ARG == 1
+			LOCALS = into the school infirmary
+	CASE 341 ;指導室
+		LOCALS = guidance counselling room
+		SIF ARG == 1
+			LOCALS = into the guidance counselling room
+	CASE 420 ;氷壁裏
+		LOCAL = 1
+		LOCALS = behind an ice wall
+	CASE 421 ;かまくら裏
+		LOCAL = 1
+		LOCALS = behind an igloo
+	CASE 430 ;古びたカーテン
+		LOCAL = 1
+		LOCALS = behind some old curtains
+	CASE 431 ;オルガンの陰
+		LOCAL = 1
+		LOCALS = behind the organ
+	CASE 440 ;守衛小屋裏
+		LOCAL = 1
+		LOCALS = behind the guard hut
+	CASE 441 ;空き小屋裏
+		LOCAL = 1
+		LOCALS = behind the empty shed
+	CASE 450 ;応接間の家具
+		LOCAL = 1
+		LOCALS = among the parlor furniture
+		SIF ARG == 1
+			LOCALS = in between some of the parlor furniture
+	CASE 451 ;トイレの個室
+		LOCALS = toilet stall
+	CASE 452 ;大窓のカーテン
+		LOCAL = 1
+		LOCALS = behind the large window curtains
+	CASE 460 ;ディナーテーブルの下
+		LOCAL = 1
+		LOCALS = under the dinner table
+	CASE 461 ;食器棚の陰
+		LOCAL = 1
+		LOCALS = behind a cupboard
+	CASE 462 ;火の消えた暖炉
+		LOCAL = 1
+		LOCALS = extinguished fireplace
+		SIF ARG == 1
+			LOCALS = into the extinguished fireplace
+	CASE 470 ;本棚の陰
+		LOCAL = 1
+		LOCALS = between some bookshelves
+	CASE 471 ;長机の下
+		LOCAL = 1
+		LOCALS = under a long table
+	CASE 472 ;古書の山
+		LOCAL = 1
+		LOCALS = pile of old books
+		SIF ARG == 1
+			LOCALS = into a pile of old books
+	CASE 480 ;大浴場奥
+		LOCAL = 1
+		LOCALS = in a big open bath
+		SIF ARG == 1
+			LOCALS = into a big open bath
+	CASE 481 ;使用人部屋奥
+		LOCAL = 1
+		LOCALS = inside the servant's room
+	CASE 520 ;廃屋裏
+		LOCAL = 1
+		LOCALS = behind the dilapidated house
+	CASE 550 ;寝台下
+		LOCAL = 1
+		LOCALS = below the couch
+	CASE 551 ;来客用トイレの個室
+		LOCALS = guest toilet stall
+	CASE 560 ;小川
+		LOCAL = 1
+		LOCALS = brook
+		SIF ARG == 1
+			LOCALS = into the brook
+	CASE 561 ;草原
+		LOCAL = 1
+		LOCALS = a meadow
+		SIF ARG == 1
+			LOCALS = into a meadow
+	CASE 570 ;ひまわり畑
+		LOCALS = sunflower field
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the sunflower field
+	CASE 580 ;屏風の陰
+		LOCAL = 1
+		LOCALS = behind a folding screen
+	CASE 581 ;御簾裏
+		LOCAL = 1
+		LOCALS = behind some bamboo blinds
+	CASE 582 ;一枚天井裏
+		LOCAL = 1
+		LOCALS = above the patio
+	CASE 590 ;カーテン
+		LOCAL = 1
+		LOCALS = behind some curtains
+	CASE 620 ;香霖堂裏
+		LOCAL = 1
+		LOCALS = behind Kourindou
+	CASE 630 ;大樹の樹上
+		LOCAL = 1
+		LOCALS = up a big tree
+	CASE 631 ;巨根の狭間
+		LOCALS = between some massive roots
+		SIF ARG == 1
+			LOCAL = 1
+	CASE 632 ;お化けキノコの傘
+		LOCAL = 1
+		LOCALS = under a monster mushroom
+	CASE 640 ;魔法店裏
+		LOCAL = 1
+		LOCALS = behind the Magic Shop
+	CASE 641 ;カウンター下
+		LOCAL = 1
+		LOCALS = under the counter
+	CASE 650 ;ゴリアテ人形のスカートの中
+		LOCAL = 1
+		LOCALS = inside the skirt of the Goliath doll
+	CASE 651 ;階段脇
+		LOCAL = 1
+		LOCALS = under some nearby stairs
+	CASE 660 ;彼岸花畑
+		LOCALS = in the Red Spider Lily field
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the Red Spider Lily field
+	CASE 661 ;彼岸花の群生
+		LOCALS = among some Red Spider Lilies
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into some of the Red Spider Lilies
+	CASE 662 ;彼岸花の絨毯
+		LOCALS = on some Red Spider Lilies
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = onto some Red Spider Lilies
+	CASE 670 ;紫の桜
+		LOCAL = 1
+		LOCALS = under some purple cherries
+	CASE 671 ;無名墓標の陰
+		LOCAL = 1
+		LOCALS = behind an unmarked tombstone
+	CASE 710 ;大看板の陰
+		LOCAL = 1
+		LOCALS = behind a billboard
+	CASE 720 ;渡し舟
+		LOCALS = in a ferryboat
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into a ferryboat
+	CASE 721 ;山水瀬
+		LOCALS = in the shallows of the Sanzu river
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the shallows of the Sanzu river
+	CASE 750 ;西行妖
+		LOCALS = Saigyou Ayakashi
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the shade of Saigyou Ayakashi
+	CASE 751 ;石灯篭の陰
+		LOCAL = 1
+		LOCALS = behind a stone lantern
+	CASE 752 ;生垣
+		LOCALS = hedge
+	CASE 810 ;小屋裏
+		LOCAL = 1
+		LOCALS = behind a shed
+	CASE 820 ;沢の岩陰
+		LOCAL = 1
+		LOCALS = behind a rock in the swamp
+	CASE 850 ;書斎奥
+		LOCALS = back of the study
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the back of the study
+	CASE 851 ;回廊奥
+		LOCAL = 1
+		LOCALS = in the hallway
+		SIF ARG == 1
+			LOCALS = into the hallway
+	CASE 860 ;核融合炉メンテナンス通路
+		LOCALS = the nuclear fusion reactor maintenance passage
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the nuclear fusion reactor maintenance passage
+	CASE 861 ;非常用七千階段
+		LOCALS = The Seven Thousand Steps
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = up The Seven Thousand Steps
+	CASE 862 ;入り組んだパイプ網
+		LOCALS = among the mess of pipes
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the mess of pipes
+	CASE 940 ;ロボット型のアドバルーン
+		LOCALS = giant robot shaped-advertising balloon
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = unto the giant robot-shaped advertising balloon
+	CASE 941 ;御柱
+		LOCAL = 1
+		LOCALS = behind an Onbashira
+	CASE 942 ;大蛇の姿を象った石
+		LOCAL = 1
+		LOCALS = behind a giant snake made of stone
+	CASE 960 ;桃の木
+		LOCAL = 1
+		LOCALS = beneath a peach tree
+	CASE 961 ;要石
+		LOCALS = on a keystone
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = onto a keystone
+	CASE 1020 ;橋台
+		LOCALS = on the bridge abutment
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = onto the bridge abutment
+	CASE 1040 ;湯気
+		LOCALS = steam
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the steam
+	CASE 1060 ;バラ園
+		LOCALS = rose garden
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the rose garden
+	CASE 1061 ;執務机の下
+		LOCAL = 1
+		LOCALS = under the work desk
+	CASE 1070 ;燻りの湖
+		LOCALS = Smouldering Lake
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the Smouldering Lake
+	CASE 1071 ;灰の湖
+		LOCALS = Ashen Lake
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the Ashen Lake
+	CASE 1072 ;最初の火の炉
+		LOCALS = Kiln of the First Flame
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the Kiln of the First Flame
+	CASE 1110 ;パンツの巨像
+		LOCALS = on the Opantsu Colossus
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = onto the Opantsu Colossus
+	CASE 1111 ;掃除道具と茶道具の山
+		LOCALS = mountain of cleaning supplies and tea utensils
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the mountain of cleaning supplies and tea utensils
+	CASE 1112 ;ローター畑
+		LOCALS = rotor field
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the rotor field
+	CASE 1180 ;桃林
+		LOCALS = peach orchard
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the peach orchard
+	CASE 1181 ;砂丘
+		LOCALS = on a sand dune
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = onto a sand dune
+	CASE 1182 ;窪地
+		LOCALS = sandpit
+	CASE 1190 ;結界の狭間
+		LOCALS = threshold of the barrier
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the threshold of the barrier
+	CASE 1191 ;地球の影
+		LOCALS = shadow of Earth
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the shadow of Earth
+	CASE 1192 ;水面の地球
+		LOCALS = reflection of Earth
+		SIF ARG == 1
+			LOCAL = 1
+			LOCALS = into the reflection of Earth
+ENDSELECT
+SIF ARG == 1 && LOCAL != 1
+	LOCALS '= @"into %A_AN(LOCALS)%%LOCALS%"
+RETURNF @"%LOCALS%"
+
+@MUSHI_NAME_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "モンシロチョウ"
+		LOCALS = Small Cabbage White Butterfly
+	CASE "モンキチョウ"
+		LOCALS = Eastern Pale Clouded Yellow
+	CASE "アゲハチョウ"
+		LOCALS = Swallowtail Butterfly
+	CASE "カラスアゲハ"
+		LOCALS = Chinese Peacock
+	CASE "アオスジアゲハ"
+		LOCALS = Chinese Windmill
+	CASE "オオゴマダラ"
+		LOCALS = Tree Nymph Butterfly
+	CASE "オオムラサキ"
+		LOCALS = Giant Purple Butterfly
+	CASE "アオバセセリ"
+		LOCALS = Blue-winged Skipper Butterfly
+	CASE "モルフォチョウ"
+		LOCALS = Morpho Butterfly
+	CASE "ミイロタテハ"
+		LOCALS = Common Cardinal
+	CASE "ウスバシロチョウ"
+		LOCALS = Parnassius Strubbendorfii
+	CASE "アレキサンドラトリバネアゲハ"
+		LOCALS = Alexandra Trivanel Swallowtail
+	CASE "チャドクガ"
+		LOCALS = Tea Tussock Moth
+	CASE "オオミズアオ"
+		LOCALS = Emperor Moth
+	CASE "スズメガ"
+		LOCALS = Hawk Moth
+	CASE "クジャクヤママユ"
+		LOCALS = Sloe Emperor Moth
+	CASE "ヨナグニサン"
+		LOCALS = Atlas Moth
+	CASE "ショウリョウバッタ"
+		LOCALS = Oriental Longheaded Locust
+	CASE "トノサマバッタ"
+		LOCALS = Migratory Locust
+	CASE "オンブバッタ"
+		LOCALS = Smaller Longheaded Locust
+	CASE "イナゴ"
+		LOCALS = Rice Grasshopper
+	CASE "キリギリス"
+		LOCALS = Japanese Katydid
+	CASE "クツワムシ"
+		LOCALS = Mecopoda Nipponensis
+	CASE "エンマコオロギ"
+		LOCALS = Oriental Garden Cricket
+	CASE "スズムシ"
+		LOCALS = Bell Cricket
+	CASE "マツムシ"
+		LOCALS = Pine Cricket
+	CASE "ウマオイ"
+		LOCALS = Hexacentrus Japonicus
+	CASE "リオック"
+		LOCALS = Sia Ferox
+	CASE "コカマキリ"
+		LOCALS = Asian Jumping Mantis
+	CASE "オオカマキリ"
+		LOCALS = Chinese Mantis
+	CASE "ハナカマキリ"
+		LOCALS = Flower Mantis
+	CASE "カレハカマキリ"
+		LOCALS = Stubborn Mantis
+	CASE "ミツバチ"
+		LOCALS = Honeybee
+	CASE "オオマルハナバチ"
+		LOCALS = Buff-tailed Bumblebee
+	CASE "クマンバチ"
+		LOCALS = Carpenter Bee
+	CASE "ジガバチ"
+		LOCALS = Thread-waisted Wasp
+	CASE "アシナガバチ"
+		LOCALS = Red-banded Sand Wasp
+	CASE "ヒメスズメバチ"
+		LOCALS = Black-tailed Hornet
+	CASE "オオスズメバチ"
+		LOCALS = Asian Giant Hornet
+	CASE "アブラゼミ"
+		LOCALS = Large Brown Cicada
+	CASE "ミンミンゼミ"
+		LOCALS = Min-min Cicada
+	CASE "クマゼミ"
+		LOCALS = Cryptotympana Facialis
+	CASE "ツクツクボウシ"
+		LOCALS = Meimuma Opalifera
+	CASE "ヒグラシ"
+		LOCALS = Evening Cicada
+	CASE "ギンヤンマ"
+		LOCALS = Lesser Emperor
+	CASE "ルリボシヤンマ"
+		LOCALS = Common Hawker
+	CASE "シオカラトンボ"
+		LOCALS = Orthetrum Albistylum Speciosum
+	CASE "イトトンボ"
+		LOCALS = Damselfly
+	CASE "ハグロトンボ"
+		LOCALS = Atrocalopteryx Atrata
+	CASE "アキアカネ"
+		LOCALS = Sympetrum Frequens
+	CASE "オニヤンマ"
+		LOCALS = Siebold's Dragonfly
+	CASE "ガガンボ"
+		LOCALS = Crane Fly
+	CASE "ウスバカゲロウ"
+		LOCALS = Antlion
+	CASE "ムカシヤンマ"
+		LOCALS = Tanypteryx Pryeri
+	CASE "アメンボ"
+		LOCALS = Water Strider
+	CASE "ゲンゴロウ"
+		LOCALS = Predaceous Diving Beetles
+	CASE "タガメ"
+		LOCALS = Lethocerus Deyrollei
+	CASE "タイコウチ"
+		LOCALS = Water Scorpion
+	CASE "ミズカマキリ"
+		LOCALS = Narrow-winged Mantis
+	CASE "ナミテントウ"
+		LOCALS = Asian Ladybug
+	CASE "ナナホシテントウ"
+		LOCALS = Seven-spotted Ladybug
+	CASE "ナミハンミョウ"
+		LOCALS = Japanese Tiger Beetle
+	CASE "オオエンマハンミョウ"
+		LOCALS = Manticora Latipennis
+	CASE "ヒラズゲンセイ"
+		LOCALS = Cissites Cephalotes
+	CASE "ゴミムシ"
+		LOCALS = Ground Beetle
+	CASE "マイマイカブリ"
+		LOCALS = Carabus Blaptoides
+	CASE "タマムシ"
+		LOCALS = Jewel Beetle
+	CASE "ゴマダラカミキリ"
+		LOCALS = Anoplophora Malasiaca
+	CASE "シロスジカミキリ"
+		LOCALS = Batocera Lineolata
+	CASE "ルリボシカミキリ"
+		LOCALS = Rosalia Batesi
+	CASE "フンコロガシ"
+		LOCALS = Dung Beetle
+	CASE "コガネムシ"
+		LOCALS = Mimela Splendens
+	CASE "プラチナコガネ"
+		LOCALS = Jewel Scarab
+	CASE "ドウガネブイブイ"
+		LOCALS = Cupreous Chafer
+	CASE "アオカナブン"
+		LOCALS = Rhomborrhina Unicolor
+	CASE "ゴライアスオオツノハナムグリ"
+		LOCALS = Goliath Beetle
+	CASE "コクワガタ"
+		LOCALS = Dorcus Rectus
+	CASE "ノコギリクワガタ"
+		LOCALS = Sawtooth Stag Beetle
+	CASE "ミヤマクワガタ"
+		LOCALS = Miyami Stag Beetle
+	CASE "ヒラタクワガタ"
+		LOCALS = Flat Stag Beetle
+	CASE "アカアシクワガタ"
+		LOCALS = Red-Legged Stag Beetle
+	CASE "オオクワガタ"
+		LOCALS = Giant Stag Beetle
+	CASE "ニジイロクワガタ"
+		LOCALS = White-bellied Stag Beetle
+	CASE "ギラファノコギリクワガタ"
+		LOCALS = Gilafa Sawtooth Stag Beetle
+	CASE "パラワンオオヒラタクワガタ"
+		LOCALS = Parawang Stag Beetle
+	CASE "オウゴンオニクワガタ"
+		LOCALS = Gonista Bicolor
+	CASE "ヤマトカブトムシ"
+		LOCALS = Japanese Horned Beetle
+	CASE "タイワンカブト"
+		LOCALS = Coconut Rhinoceros Beetle
+	CASE "ヒメカブト"
+		LOCALS = Xylotrupes gideon
+	CASE "コーカサスオオカブト"
+		LOCALS = Caucasian Longhorn Beetle
+	CASE "エレファスゾウカブト"
+		LOCALS = Elephant Beetle
+	CASE "ヘラクレスオオカブト"
+		LOCALS = Hercules Beetle
+	CASE "ゲンジボタル"
+		LOCALS = Luciola Cruciata
+	CASE "オケラ"
+		LOCALS = Mole Cricket
+	CASE "カメムシ"
+		LOCALS = Pentatomoidea
+	CASE "ナナフシ"
+		LOCALS = Walking Stick
+	CASE "コノハムシ"
+		LOCALS = Leaf Bug
+	CASE "ハサミムシ"
+		LOCALS = Earwig
+	CASE "ガロアムシ"
+		LOCALS = Ice Crawler
+	CASE "クロオオアリ"
+		LOCALS = Carpenter Ant
+	CASE "ヒアリ"
+		LOCALS = Fire Ant
+	CASE "青虫"
+		LOCALS = Cabbageworm
+	CASE "毛虫"
+		LOCALS = Hairy Caterpillar
+	CASE "ミノムシ"
+		LOCALS = Bagworm
+	CASE "ヤゴ"
+		LOCALS = Dragonfly Naiad
+	CASE "アリジゴク"
+		LOCALS = Ant Lion Larve
+	CASE "ダンゴムシ"
+		LOCALS = Pillbug
+	CASE "ワラジムシ"
+		LOCALS = Wood Louse
+	CASE "ヤスデ"
+		LOCALS = Millipede
+	CASE "ゲジゲジ"
+		LOCALS = House Centipede
+	CASE "イシムカデ"
+		LOCALS = Stone Centipede
+	CASE "オオムカデ"
+		LOCALS = Scolopendra Subspinipes
+	CASE "オオヒメグモ"
+		LOCALS = Common House Spider
+	CASE "ジョロウグモ"
+		LOCALS = Nephila Clavata
+	CASE "ハエトリグモ"
+		LOCALS = Jumping Spider
+	CASE "アシダカグモ"
+		LOCALS = Huntsman Spider
+	CASE "タランチュラ"
+		LOCALS = Tarantula
+	CASE "サソリ"
+		LOCALS = Scorpion
+	CASE "あれ"
+		LOCALS = Cockroach
+	CASE "ハエ"
+		LOCALS = Fly
+	CASE "カ"
+		LOCALS = Mosquito
+	CASE "ノミ"
+		LOCALS = Flea
+	CASE "ミミズ"
+		LOCALS = Earthworm
+	CASE "プラナリア"
+		LOCALS = Flatworm
+	CASE "ヤマビル"
+		LOCALS = Land Leech
+	CASE "ナメクジ"
+		LOCALS = Slug
+	CASE "カタツムリ"
+		LOCALS = Snail
+	CASE "ロイコクロディウム"
+		LOCALS = Leucochloridium
+	CASE "カブトエビ"
+		LOCALS = Horseshoe Shrimp
+	CASE "サワガニ"
+		LOCALS = Freshwater Crab
+	CASE "モクズガニ"
+		LOCALS = Mitten Crab
+	CASE "ヤマトザリガニ"
+		LOCALS = Crayfish
+	CASE "アメリカザリガニ"
+		LOCALS = Red Swamp Crayfish
+	CASE "ダイオウグソクムシ"
+		LOCALS = Giant Isopod
+	CASE "アマガエル"
+		LOCALS = Tree Frog
+	CASE "ガマガエル"
+		LOCALS = Toad
+	CASE "トノサマガエル"
+		LOCALS = Black-spotted Pond Frog
+	CASE "ヤドクガエル"
+		LOCALS = Poison Dart Frog
+	CASE "イモリ"
+		LOCALS = Fire Belly Newt
+	CASE "サンショウウオ"
+		LOCALS = Salamander
+	CASE "ウーパールーパー"
+		LOCALS = Axolotl
+	CASE "ニホントカゲ"
+		LOCALS = Skink
+	CASE "カナヘビ"
+		LOCALS = Grass Lizard
+	CASE "ヤモリ"
+		LOCALS = Gecko
+	CASE "アオダイショウ"
+		LOCALS = Rat Snake
+	CASE "ミドリガメ"
+		LOCALS = Green Turtle
+	CASE "ローター"
+		LOCALS = Rotor
+	CASE "蓮花蝶"
+		LOCALS = Dichromatic Lotus Butterfly
+	CASE "黒死蝶"
+		LOCALS = Black Butterfly of Death
+	CASE "マジカルパピヨン"
+		LOCALS = Magical Butterfly
+	CASE "ダイオウガマ"
+		LOCALS = Giant King Toad
+	CASE "プロトファージ"
+		LOCALS = Protophage
+	CASE "ナノマシン"
+		LOCALS = Nanomachine
+	CASE "ディテクター"
+		LOCALS = Detector
+	CASE "ドローン"
+		LOCALS = Lunar Combat Drone
+	CASE "キュリオシティ"
+		LOCALS = Curiosity
+	CASE "サムライカブト"
+		LOCALS = Samurai Beetle
+	CASE "スカイフィッシュ" ;skyfish is more recognizable than rod tbh
+		LOCALS = Skyfish
+	CASE "モンゴリアンデスワーム"
+		LOCALS = Mongolian Death Worm
+	CASE "ネオヒドラ"
+		LOCALS = neo-HYDRA
+	CASE "アントクイーン"
+		LOCALS = Ant Queen
+	CASE "カンダタグモ"
+		LOCALS = Kandata's Spider
+	CASE "死神カマキリ"
+		LOCALS = Reaper Mantis
+	CASE "三葉虫"
+		LOCALS = Trilobite
+	CASE "アノマロカリス"
+		LOCALS = Anomalocaris
+	CASE "闘蟋"
+		LOCALS = Battle Cricket
+	CASE "ルンバ"
+		LOCALS = Roomba
+	CASEELSE
+		LOCALS = %ARGS%
+ENDSELECT
+RETURNF LOCALS
+
+@MUSHI_SKL_TR(ARGS)
+#FUNCTIONS
+#DIMS DYNAMIC strOut
+;store RESULT
+LOCAL:1 = RESULT
+;clear out leftover tag, split by tags, translate each
+ARGS '= REPLACE(ARGS, "\\[", "")
+SPLIT ARGS, "]", LOCALS
+SIF RESULT <= 1 && STRLENS(ARGS) ;failsafe
+	RETURNF ARGS
+FOR LOCAL, 0, RESULT-1 ;remove split which contain scuffed untranslated names
+	SELECTCASE LOCALS:LOCAL
+		CASE "通常攻撃"
+			strOut += "[Attack]"
+		CASE "バタフライエフェクト"
+			strOut += "[Butterfly Effect]"
+		CASE "陽炎"
+			strOut += "[Haze]"
+		CASE "発光"
+			strOut += "[Luminescence]"
+		CASE "太古の力"
+			strOut += "[Ancient Power]"
+		CASE "水棲特効"
+			strOut += "[Aquatic Slayer]"
+		CASE "呪い攻撃"
+			strOut += "[Curse Strike]"
+		CASE "浄化"
+			strOut += "[Purification]"
+		CASE "大将"
+			strOut += "[Leader]"
+		CASE "眠り粉"
+			strOut += "[Sleeping Powder]"
+		CASE "高速回避"
+			strOut += "[Evasive Maneuvers]"
+		CASE "毒攻撃"
+			strOut += "[Poison Attack]"
+		CASE "マヒ攻撃"
+			strOut += "[Paralysis Attack]"
+		CASE "ドミネイト"
+			strOut += "[Dominate]"
+		CASE "強攻撃"
+			strOut += "[Strong Attack]"
+		CASE "音波攻撃"
+			strOut += "[Sonic Attack]"
+		CASE "秋の虫"
+			strOut += "[Autumn Bug]"
+		CASE "猛攻"
+			strOut += "[Fierce Attack]"
+		CASE "クリティカル攻撃"
+			strOut += "[Critical Strike]"
+		CASE "擬態"
+			strOut += "[Mimic]"
+		CASE "猛毒攻撃"
+			strOut += "[Venom Attack]"
+		CASE "騒音攻撃"
+			strOut += "[Noise Attack]"
+		CASE "夏の虫"
+			strOut += "[Summer Bug]"
+		CASE "先手必勝"
+			strOut += "[Preemptive Move]"
+		CASE "高揚"
+			strOut += "[Uplift]"
+		CASE "陽炎"
+			strOut += "[Haze]"
+		CASE "悪臭攻撃"
+			strOut += "[Stink Attack]"
+		CASE "軟体特効"
+			strOut += "[Soft Slayer]"
+		CASE "光の装甲"
+			strOut += "[Shining Shell]"
+		CASE "ふんばり"
+			strOut += "[Stand Firm]"
+		CASE "逆襲"
+			strOut += "[Counterattack]"
+		CASE "カウンター"
+			strOut += "[Counter]"
+		CASE "発光"
+			strOut += "[Luminescence]"
+		CASE "太古の力"
+			strOut += "[Ancient Power]"
+		CASE "極小"
+			strOut += "[Miniscule]"
+		CASE "ジャストガード"
+			strOut += "[Perfect Guard]"
+		CASE "流砂"
+			strOut += "[Quicksand]"
+		CASE "グロテスク攻撃"
+			strOut += "[Grotesque Strike]"
+		CASE "飛行特効"
+			strOut += "[Flying Slayer]"
+		CASE "駆逐"
+			strOut += "[Extermination]"
+		CASE "吸収攻撃"
+			strOut += "[Absorption Attack]"
+		CASE "粘液攻撃"
+			strOut += "[Mucus Attack]"
+		CASE "再生"
+			strOut += "[Regeneration]"
+		CASE "フェイタル攻撃"
+			strOut += "[Fatal Strike]"
+		CASE "レーザー攻撃"
+			strOut += "[Laser Attack]"
+		CASEELSE
+			strOut += "[%ARGS%]"
+	ENDSELECT
+NEXT
+RESULT = LOCAL:1
+RETURNF strOut 
+
+@MUSHI_TRIBE_TR(ARGS)
+#FUNCTIONS
+#DIMS DYNAMIC strOut
+;store RESULT
+LOCAL:1 = RESULT
+;clear out leftover tag, split by tags, translate each
+ARGS '= REPLACE(ARGS, "\\[", "")
+SPLIT ARGS, "]", LOCALS
+FOR LOCAL, 0, RESULT-1 ;remove split which contain scuffed untranslated names
+	SELECTCASE LOCALS:LOCAL
+		CASE "蝶"
+			strOut += "[Butterfly]"
+		CASE "飛行"
+			strOut += "[Flying]"
+		CASE "バッタ"
+			strOut += "[Grasshopper]"
+		CASE "トンボ"
+			strOut += "[Dragonfly]"
+		CASE "水棲"
+			strOut += "[Aquatic]"
+		CASE "甲虫"
+			strOut += "[Beetle]"
+		CASE "クワガタ"
+			strOut += "[Stag Beetle]"
+		CASE "カブト"
+			strOut += "[Helmet]"
+		CASE "土中"
+			strOut += "[Earthdwelling]"
+		CASE "幼体"
+			strOut += "[Larva]"
+		CASE "多脚"
+			strOut += "[Multiped]"
+		CASE "軟体"
+			strOut += "[Softbodied]"
+		CASE "甲殻類"
+			strOut += "[Crustacean]"
+		CASE "両生類"
+			strOut += "[Amphibian]"
+		CASE "カエル"
+			strOut += "[Frog]"
+		CASE "爬虫類"
+			strOut += "[Reptile]"
+		CASE "機械"
+			strOut += "[Machine]"
+		CASEELSE
+			strOut += @"[%ARGS%]"
+	ENDSELECT
+NEXT
+RESULT = LOCAL:1
+RETURNF strOut 
+
+@MUSHI_STATUS_TR(ARGS)
+#FUNCTIONS
+#DIMS DYNAMIC strOut
+SIF !STRLENS(ARGS)
+	RETURNF ""
+;store RESULT
+LOCAL:1 = RESULT
+;clear out leftover tag, split by tags, translate each
+ARGS '= REPLACE(ARGS, "<", "")
+SPLIT ARGS, ">", LOCALS
+FOR LOCAL, 0, RESULT-1 ;remove split which contain scuffed untranslated names
+	SELECTCASE LOCALS:LOCAL
+		CASE "毒"
+			strOut += "<Poison>"
+		CASE "猛毒"
+			strOut += "<Venom>"
+		CASE "マヒ"
+			strOut += "<Paralysis>"
+		CASE "眠り"
+			strOut += "<Sleep>"
+		CASE "混乱"
+			strOut += "<Confusion>"
+		CASE "スロウ"
+			strOut += "<Slow>"
+		CASE "悪臭"
+			strOut += "<Stink>"
+		CASE "逆襲"
+			strOut += "<Counter+>"
+		CASE "高揚"
+			strOut += "<Uplift>"
+		CASE "得意地形"
+			strOut += "<Terrain+>"
+		CASE "得意季節"
+			strOut += "<Season+>"
+		CASE "大将"
+			strOut += "<Leader>"
+		CASE "陽炎"
+			strOut += "<Haze>"
+		CASE "擬態"
+			strOut += "<Mimic>"
+		CASEELSE
+			strOut += @"<%ARGS%>"
+	ENDSELECT
+NEXT
+RESULT = LOCAL:1
+RETURNF strOut 
+
+@SUIKA_WEAPON_TR(ARGS)
+#FUNCTIONS
+SELECTCASE ARGS
+	CASE "マイほうき"
+		RETURNF "Broom"
+	CASE "お祓い棒"
+		RETURNF "Purification Rod"
+	CASE "木刀" ;not Bokken :C
+		RETURNF "Wooden Sword"
+	CASE "打ち出の小槌"
+		RETURNF "Miracle Mallet"
+	CASE "制御棒"
+		RETURNF "Control Rod"
+ENDSELECT

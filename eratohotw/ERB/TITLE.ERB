@@ -1,0 +1,110 @@
+﻿;revからパクリ
+
+@SYSTEM_TITLE
+
+LOADGLOBAL
+RESULT = GLOBAL
+SAVEGLOBAL
+LOADGLOBAL
+
+
+;Bug-fix resets color to black
+RESETBGCOLOR
+
+REDRAW 0
+IF GAMEBASE_VERSION == 0
+	WINDOW_TITLE = %GAMEBASE_TITLE% %eraTW_Version%
+ELSEIF GAMEBASE_VERSION < 0
+	WINDOW_TITLE = %GAMEBASE_TITLE% 0.00
+ENDIF
+CLEARLINE 1
+RESULT  = 1
+LOCAL:2 = LINECOUNT
+
+DO
+	FOR LOCAL:1, 0, 126
+		CLEARLINE LINECOUNT - LOCAL:2
+		FOR LOCAL:0, 0, 35
+			HTML_PRINT "<p align='center'><img src='TW_title" + TOSTR(LOCAL:0, "000") + "'></p>"
+		NEXT
+		LOCAL = LINECOUNT
+		$START
+		ALIGNMENT CENTER
+		CUSTOMDRAWLINE ━
+		PRINTFORML %GAMEBASE_TITLE%
+		PRINTFORML \@ GAMEBASE_VERSION <= 0 ? %eraTW_Version% # %TOSTR(GAMEBASE_VERSION,"0,.###")% \@
+		PRINTFORML %GAMEBASE_YEAR%
+		PRINTFORML
+		PRINTFORML Lmao rip 8chan build
+;		CALL HTMLPRINTL(@"%HTMLFONT(@"<b>%HTMLSTYLE(@"%GAMEBASE_TITLE%", 2)%</b>", "Courier New", )%")
+;		CALL HTMLPRINTL(@"%HTMLFONT(@"<b>%eraTW_Version%</b>", "Courier New")%")
+;		CALL HTMLPRINTL(@"%HTMLFONT(@"<b>(%GAMEBASE_YEAR%)</b>", "Courier New")%")
+		PRINTL
+		PRINTFORML %GAMEBASE_INFO%
+		PRINTL
+		PRINTL
+		PRINT Random Tip:
+		PRINTDATAL
+			DATAFORM Remember to train your Time Stop abilities, even for trivial things.
+			DATAFORM Helping the girls at their jobs is a good source of income.
+			DATAFORM There is no entirely private place.
+			DATAFORM Remember to always water your crops.
+			DATAFORM Check the calendar to know the girls' work hours and general locations, you can click on their names!
+			DATAFORM A good date can help to remove hate marks.
+			DATAFORM Don't let the girls know you have stolen panties or they will take them back.
+			DATAFORM You need to have an erection to penetrate.
+			DATAFORM Vigor is how much cum and virility you still have.
+			DATAFORM Big is not always better in a little girls' world.
+			DATAFORM Always carry some lotion.
+			DATAFORM Consensual unsafe sex is more difficult than you think.
+			DATAFORM The food you carry can get cold or stolen by the girls.
+			DATAFORM Impregnation is almost a myth unless you empty a gallon of cum into her.
+			DATAFORM Buying things through mail order is expensive. Search proper shops to get a discount.
+			DATAFORM Be careful when time is stopped, a chupacabra can appear and kill you.
+			DATAFORM Remember to draw water before tending your crops as a peasant.
+			DATAFORM There is a little chance that they can learn about your powers if you are not careful.
+			DATAFORM You can live in the same room as your lover after you two go steady (if they have their own house).
+			DATAFORM Sexual activity may cause a child to start menstruating.
+			DATAFORM Orgasm denial may cause your partner to take a more active role.
+			DATAFORM Girls taking the initiative may lead to an endless night of sex with your lifeless body.
+			DATAFORM You can try to slip away if your partner pushes you down.
+			DATAFORM Always use a sleeping pill before a sleep rape.
+			DATAFORM Be careful on a drunk or sleep rape, she may wake up and she will never forget.
+			DATAFORM There is only one garden per home zone, be smart *some may not even have one.
+			DATAFORM Watch out when raping Yuuka!
+			DATAFORM Depending on how frustrated they are, they may be more into rape.
+			DATAFORM Awoo〜Wan Wan〜
+			DATAFORM Punch-free zone.
+			DATAFORM Depending on the traits a girl has, she may be easier to conquer, or more proactive.
+			DATAFORM For the last time, Wriggle is not a boy.
+			DATAFORM Food is a good way to the heart of a girl.
+			DATAFORM Music can be a good hobby to make some friends and to court your lover.
+			DATAFORM Wan mind, Wan world.
+			DATAFORM When submitting a bug, submit the error text. A screenshot of the error is useless.
+			DATAFORM There's your fucking tutorial. Happy?
+		ENDDATA
+		PRINTL 
+		CUSTOMDRAWLINE ━
+		PRINTFORML [0] Start Game
+		PRINTFORML [1] Continue
+		PRINTFORML [2] Pronoun - \@THIRD_PERSON?Third Person#Second Person\@
+		ALIGNMENT LEFT
+		INPUT
+		CUSTOMDRAWLINE ━
+		SELECTCASE RESULT
+			CASE 0
+				RESETDATA
+				ADDCHARA 0
+				BEGIN FIRST
+			CASE 1
+				;Custom code for load-save menu
+				CALL LOAD_SAVE(0,1)
+			CASE 2
+				THIRD_PERSON = !THIRD_PERSON
+				SAVEGLOBAL
+		ENDSELECT
+		CLEARLINE LINECOUNT - LOCAL
+		GOTO START
+	NEXT
+LOOP RESULT
+REDRAW 1

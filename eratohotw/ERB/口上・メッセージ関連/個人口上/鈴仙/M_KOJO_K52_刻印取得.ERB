@@ -1,0 +1,730 @@
+﻿;original code as of now
+;-------------------------------------------
+;調教後のテキスト
+;-------------------------------------------
+@M_KOJO_MESSAGE_PALAMCNG_C_K52
+CALL PALAM_MESSAGE_C
+
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+
+;first kiss section
+;during counter mode (orig)
+IF CFLAG:うふふ == 2 && CFLAG:PLAYER:ファーストキス喪失相手 == TARGET && FIRSTTIME("ReisenFirstKiss")
+	PRINTFORML 「Looks like I just got your first kiss, fufu... Remember it well.」
+	PRINTFORMDW It appears Reisen is getting a bit cocky after taking the initiative.
+	PRINTFORML 「...Ah, sorry... That was probably important to you, I should've asked...」
+	PRINTFORMDW Spoke too soon...
+	IF CSTR:ファーストキス喪失履歴 != "" && !TALENT:キス未経験
+		PRINTFORML
+		PRINTFORMW 「Mmm... After all it was my first kiss too...」
+		PRINTFORMW 「So, how about we practice some more?」
+	ENDIF
+	SIF !(TALENT:恋人 || TALENT:恋慕)
+		PRINTFORMW 「Maybe in the future we'll even get to know each other better...」
+ENDIF
+
+;normal
+IF !TALENT:キス未経験 && CSTR:ファーストキス喪失履歴 != "" && CFLAG:ファーストキス喪失記念日 > 0 && FIRSTTIME("ReisenFirstKiss")
+	;time stop or sleep molestation (orig)
+	IF FLAG:70 || CFLAG:MASTER:イタズラ == 2
+		PRINTFORMDW You enjoy tasting every corner of Reisen's mouth and ingraining the taste into your mind.
+		PRINTFORMDW Eventually, you let go of Reisen, leaving some saliva on %HIS_HER(TARGET)% moist lips.
+		PRINTFORMDW You relish the aftertaste and make a good memory of how much soft and warm it was.
+		PRINTFORMDW But contrary to you, she will remain oblivious that %HIS_HER(TARGET)% first kiss just got stolen like that...
+	;(from J)
+	;first kiss when she's drunk or during sexy time
+	ELSEIF TCVAR:泥酔 == 1 || CFLAG:うふふ
+		IF (TALENT:恋人 || TALENT:恋慕)
+			PRINTFORMW 「Fuh, there goes my first kiiiiss～」
+			PRINTFORMDW %BREAKENG(@"Reisen murmurs as %HE_SHE(TARGET)% \@ CFLAG:うふふ ? holds %HIS_HER(TARGET)% head between %HIS_HER(TARGET)% hands # crouches down on the spot with %HIS_HER(TARGET)% face between %HIS_HER(TARGET)% legs\@ and quickly mumbles something to %HIMSELF_HERSELF(TARGET)%.")%
+			PRINTFORMW 「Oh dear, what do I dooo... My first kiss was just taken away...」
+			PRINTFORMW 「I don't regret it, not at all, but, but... Somehow it makes me feel incredibly uneasy, my chest is beating so hard...」
+			SIF TALENT:処女 == 0 && CSTR:処女喪失履歴 == ""
+				PRINTFORMW 「Even when my virginity was forcibly taken away from me back then, they didn't take my lips...」
+			PRINTFORMW 「Does that mean that this person cares more about what's inside rather than simply my looks?」
+			PRINTFORMW 「It makes me really happy if that's the case, but...」
+			PRINTFORMW 「Yeah, %HIS_HER(MASTER)% mind works in all sorts of mysterious ways and I have no idea what %HE_SHE(MASTER)%'s thinking...」
+			PRINTFORMW 「%HIS_HER(MASTER,1)% brainwaves are always pink and I just can't seem to identify %HIS_HER(MASTER)% true feelings and intentions.」
+			PRINTFORMW 「Aahh, just what am I supposed to do? I wonder what I'm actually thinking of this person...」
+			PRINTFORMW 「There's really no need to contemplate this at all, but then, then...」
+			PRINTFORMW 「I heard that it tastes sweet when you kiss with someone you love, but it wasn't sweet at all.」
+			PRINTFORMW 「But perhaps I'm the one mistaken here... I just can't tell heads or tails of this situation at all.」
+		ELSE
+			PRINTFORMW 「...So this is what kiss feels like, huh. It's tasteless, yet it's raw.」
+			PRINTFORMW 「It's very different from what I've heard indeed. Fufu, but it doesn't mean I hate it.」
+			PRINTFORMDW %BREAKENG(@"\@ CFLAG:うふふ ? Licking %HIS_HER(TARGET)% lips # Taking a step away from you\@, Reisen faces you upfront while blushing embarrassingly before continuing.")%
+			PRINTFORMW 「You have no other choice but to take the responsibility now, got it?」
+			PRINTFORMDW These words, though unintentionally, fill you with so much excitement you actually feel like swooning.
+		ENDIF
+	ELSE
+		;with love
+		IF (TALENT:恋人 || TALENT:恋慕)
+			PRINTFORML 「U-Umm... I actually never kissed before, so...」
+			PRINTFORMDL Hearing hints of uneasiness in %HIS_HER(TARGET)% voice, you fix your gaze on Reisen's glowing red eyes.
+			PRINTFORMW 「If you're going to stare this hard, I might get too excited...」
+			PRINTFORMDL %BREAKENG(@"Reisen's face was so close, you could actually feel %HIS_HER(TARGET)% breath on your skin... %HIS_HER(TARGET,1)% incredibly pleasant smell also wafts over you.")%
+			PRINTFORMDL But perhaps due to this smell, your senses get overloaded as your vision gets wobbly and distorted, and then... There was only darkness.
+			PRINTFORML 「Eh?! Hey! What's going on?! Are you okay?! Are you okay?!」
+			PRINTFORMDW .........
+			PRINTFORMDW ......
+			PRINTFORMDW ...
+			PRINTFORMDL When you come to your senses, you see Reisen, seemingly relieved.
+			PRINTFORML 「I'm so sorry... I got so nervous I lost control over my power...」
+			PRINTFORMDL Crying %HIS_HER(TARGET)% eyes out and bawling like a child, Reisen continues to apologize over and over.
+			PRINTFORMDL Apparently you ended up fainting due to Reisen's ability.
+			PRINTFORMW 「I might've perhaps... Made you go crazy just a little bit...」
+			PRINTFORMDL You raise your hand towards %HIM_HER(TARGET)% as %HE_SHE(TARGET)% doesn't stop crying one bit.
+			PRINTFORMDL Thinking that %HE_SHE(TARGET)% is about to get hit, Reisen's body jerks and twitches.
+			PRINTFORMW 「Fueh...?」
+			PRINTFORMDL However you only gently pat %HIM_HER(TARGET)% on the head.
+			PRINTFORMW 「I-I might've irreversibly damaged your mind, you know?」
+			PRINTFORMDL But even then, you simply continue stroking and patting %HIS_HER(TARGET)% head.
+			PRINTFORML 「You really are... so kind...」
+			PRINTFORMDL Reisen says as %HE_SHE(TARGET)% closes %HIS_HER(TARGET)% eyes and joins your lips in a kiss.
+			PRINTFORMW 「Fufuun... Take this as an apology from me. I totally didn't force myself, y'know?」
+			CALL MUTUAL_KISS
+		ELSE
+			PRINTFORML 「...!」
+			PRINTFORMDL Reisen quickly pulls away and stares at your direction.
+			PRINTFORMW 「Th-That was... my first time...」
+			PRINTFORMDL %HE_SHE(TARGET,1)% mumbles barely audibly as %HE_SHE(TARGET)% presses %HIS_HER(TARGET)% index fingers on %HIS_HER(TARGET)% lips.
+			PRINTFORML 「That was... my first time... and yet... Uuhh, sniff......」
+			PRINTFORMDL Perhaps this was quite shocking to %HIM_HER(TARGET)%.
+			PRINTFORMDL Reisen's voice was on the verge of crying and %HIS_HER(TARGET)% eyes were full of tears ready to burst out.
+			PRINTFORMDW Apparently you ended up doing something pretty terrible...
+		ENDIF
+	ENDIF
+ENDIF
+
+;here we track the fact of the first intercourse between Reisen and Player
+;if EXP_UP(GETNUM("Ｖ性交経験", "EXP"), TARGET)
+
+;original content, first insertion from the player for non-virgin (default) reisen; might be buggy because it's not a flag, repair it in the future when male virginity loss is tracked
+;no anal cherry pop, sorry
+;branch for virgin reisen and virgin player is below
+;not using TEQUIP:Ｖセックス or MASTER_POSE and the like because it resets during ejaculation and the detection is garbage for orifices
+IF CSTR:処女喪失履歴 == "" && TCVAR:破瓜 != 1 && CATCHER_ORIFICE:MASTER:0 == DT_VAGINA && TCVAR:MASTER:筆下ろし && FIRSTTIME("ReisenCherryPop")
+	PRINTFORMDW Reisen's hot entrance welcomes your tip, giving you sweet and soft numbing sensation you've not felt yet.
+	PRINTFORMDW Overtaken by a primal urge to make love with a woman, you thrust forward, enjoying the sensation her renowned vagina provides.
+	PRINTFORMDW %BREAKENG(@"Her insides ripple and pull on your length as you finish bottoming out inside of her, the insane stimulation leaves you with your mouth agape, drooling at the side.")%
+	PRINTFORMDW %BREAKENG(@"The rough and grainy texture of her walls rub against you with every movement, sending sparks through your body ending with an explosion in the back of your head.")%
+	PRINTFORMDW Soon, the desire to unload these feelings is starting to grow in your lower body...
+	PRINTFORMDW Who would've known that this bunny had such thing hidden between her legs this entire time...
+	PRINTFORML
+	IF FLAG:70 || CFLAG:MASTER:イタズラ == 2
+		PRINTFORMDW But while you enjoy the sensation of bonding with a woman, your unwilling partner will probably remain completely unaware of it.
+		;cancel out additional flags
+		CALLF FIRSTTIME("ReisenFirstEjac")
+	ELSEIF TCVAR:泥酔 == 1
+		PRINTFORMDW But while you enjoy the sensation of bonding with a woman, Reisen seems to be too jolly and drunk to react to your graduation.
+		CALLF FIRSTTIME("ReisenFirstEjac")
+	ELSEIF (MARK:反発刻印 || CFLAG:ブチギレ || TFLAG:21)
+		PRINTFORMDW You feel Reisen's red lunatic eyes glare on your skin, almost piercing you through as you continue the deed.
+		PRINTFORMDW She doesn't seem all that amused by you using her body for your needs so selfishly...
+		PRINTFORMW 「You're going to pay for this... One day, I will make sure of that.」
+		CALLF FIRSTTIME("ReisenFirstEjac")
+	ELSE
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMDW In the midst of action you notice Reisen smiling at you somewhat slyly as if she got something to say. What that might be...?
+			PRINTFORMW 「%CALLNAME:MASTER%'s cherry... get!」
+			PRINTFORMDW What, you knew?
+			PRINTFORMW 「Ehehe... Your reactions were just a little too innocent, so I thought you'd get embarrassed if I pointed it out too early...」
+			PRINTFORMW 「Well, how are you liking the taste of this bunny pussy?」
+			PRINTFORML
+			PRINTFORMDW %BREAKENG(@"It goes in surprisingly easy, looks like it's been used well. Still, she expertly tightens and squeezes around, making it mind-numbingly pleasant.")%
+			PRINTFORMW 「I'm glad if it's able to satisfy you...」
+			PRINTFORMDW But you can't shake off the feeling that she might be...
+			PRINTFORMW 「Sorry if that displeases you... I hope you don't regret it.」
+			PRINTFORMW 「As expected, innocence is most preferable, so I'm probably unworthy. Still...」
+			PRINTFORMW 「I... will try to make up for it... Like I said you're still my actual first...」
+			PRINTFORMW 「So please, don't hold back... use me as you see fit.」
+			PRINTFORMW 「Make me yours, %CALLNAME:MASTER%%UNICODE(0x2665)%」
+		ELSE
+			PRINTFORMW 「Ahn, haah...」
+			PRINTFORMDW Reisen moans to the rhythm of your hip movement.
+			PRINTFORMW 「Your dick is so hard, you're just too excited.」
+			PRINTFORMW 「Did you want to have sex with me so bad?」
+			PRINTFORMDW Reisen says somewhat nonchalantly, even condescendingly.
+			PRINTFORMW 「Well, I know well what kind of reaction my body elicits, but I never knew it would go this far...」
+			PRINTFORMW 「I suppose I'll have to go along with your desperate desire to taste a woman for now.」
+			PRINTFORMW 「Here, I'll squeeze it out for you in no time...!」
+			IF NOWEX:MASTER:射精
+				PRINTFORMW 「...Ahn! And there it is... Are you ready for another round, %CALLNAME:MASTER%-san?」
+				CALLF FIRSTTIME("ReisenFirstEjac")
+			ENDIF
+		ENDIF
+
+		IF (TALENT:恋人 || TALENT:恋慕)
+			PRINTFORML
+			IF NOWEX:MASTER:射精
+				PRINTFORMW 「Ufufu, looks like just putting it in made you cum as well... You came so much inside%UNICODE(0x2665)%」
+				IF TCVAR:MASTER:コンドーム + TEQUIP:MASTER:コンドーム
+					PRINTFORMDW As you pull away, Reisen looks at your withered penis wrapped in a filled condom with a wry smile.
+				ELSE
+					PRINTFORMDW Reisen glances at your flaccid penis still connected to her entrance with wet threads, smeared with her juices and your semen.
+				ENDIF
+				PRINTFORMW （But truth is, I came a little from him putting it too... my body is way too happy%UNICODE(0x2665)%）
+				CALLF FIRSTTIME("ReisenFirstEjac")
+			ENDIF
+			PRINTFORMDW Noticing you struggling somewhat with finding a proper pace, Reisen smiles and starts speaking.
+			PRINTFORMW 「I need to wring you of everything you have.」
+			PRINTFORMW 「Fufu, you're shivering all over... Let me teach you the right way to do it.」
+			PRINTFORMDW %BREAKENG(@"Displaying surprising amount of strength, Reisen changes the position into a missionary for a moment with her wrapping her legs around your waist.")%
+			PRINTFORMW 「Now pull your dick as far as you can without letting it come out...」
+			PRINTFORMDW Reisen says, letting you pull away, before...
+			PRINTFORMW 「...and thrust it deep inside again! Repeat it again and again%UNICODE(0x2665)%」
+			PRINTFORMDW ...violently pushing you in!
+			PRINTFORMW 「Yes, like that! Very good... It's pretty tiring, isn't it? But you have to work hard, come on.」
+			PRINTFORMW 「It's so cute seeing how desperately you're trying to pleasure me, following your instincts... Fufu%UNICODE(0x2665)%」
+			PRINTFORMDW ...Breeding with a bunny is going to be lots of fun it seems.
+		ENDIF
+		
+		IF (TALENT:恋人 || TALENT:恋慕) && TALENT:キス未経験
+			PRINTFORML
+			PRINTFORMW 「Ah, and by the way...」
+			PRINTFORMW 「I haven't even kissed before, and yet we're already at this stage...」
+			PRINTFORMW 「Talk about skipping, huh?」
+			PRINTFORMDW Reisen chuckles and licks %HIS_HER(TARGET)% lips.
+			PRINTFORMW 「Let's fix that next, shall we?」
+		ENDIF
+	ENDIF
+ENDIF
+
+;reisen losing mvirginity to player (orig)
+IF TCVAR:筆下ろし && FIRSTTIME("ReisenCherryPopByPlayer")
+	SIF FLAG:70
+		RETURN 0
+		
+	PRINTFORMDW %BREAKENG(@"Seeing Reisen being taken aback by the overwhelming sensation coursing through %HIM_HER(TARGET)% as %HE_SHE(TARGET)% finishes the insertion, you smile, thinking how adorable this is to yourself.")%
+	PRINTFORMW 「Uuuu... I... I never thought it will be like this... I'm sorry, it's just... if I move just a little bit, I'll explode...」
+	PRINTFORMDW %BREAKENG(@"%HE_SHE(TARGET,1)% seems to be on the verge of tears, however you start patting %HIM_HER(TARGET)% on the head, as though commending %HIS_HER(TARGET)% efforts and saying \"good %PRINT_MALE("boy")%, good %PRINT_MALE("boy")%, you've done well\".")%
+	PRINTFORMW 「Ehe, ehehe... Thank you... I'm glad if this is to your liking... No one expects me to do well on my first time, right? But I'll try my best.」
+	PRINTFORMW 「Well then... I think I'm ready. Here I go!」
+	PRINTFORMDW %BREAKENG(@"Reisen begins moving back and forth, slowly at first but then speeding up gradually, slamming %HIS_HER(TARGET)% hips bolder as if getting used to the rhythm and bearing the sensation.")%
+	PRINTFORMDW %HIS_HER(TARGET,1)% motions are still unrefined, but the look of intense focus and desire to please you on %HIS_HER(TARGET)% face melts your heart.
+	
+	;no anal
+	IF NOWEX:射精 && CATCHER_ORIFICE:TARGET:0 == DT_VAGINA
+		PRINTFORML
+		PRINTFORMDW %BREAKENG(@"Ejaculating for the first time inside of a woman, Reisen breathes out and takes a short rest without pulling out, before continuing to thrust again.")%
+		PRINTFORMDW Hey... aren't you supposed to have a refractory period?
+		PRINTFORMW 「Ah, well, you see... We bunnies dedicate ourselves solely to the deed as our instincts guide us...」
+		PRINTFORMW 「And there's no time for idling when it comes to passing down the genes!」
+		SIF TCVAR:コンドーム + TEQUIP:コンドーム
+			PRINTFORMDW Well, it's all fine and dandy... but Reisen is wearing a condom right now.
+	ENDIF
+ENDIF
+IF TCVAR:MASTER:破瓜 && FIRSTTIME("ReisenPlayerFVirginityTaken")
+	SIF FLAG:70
+		RETURN 0
+		
+	PRINTFORML
+	PRINTFORMW 「H-Huh, blood?! A-Are you okay, %CALLNAME:MASTER%\@ !(TALENT:恋人 || TALENT:恋慕) ? -san#\@?!」
+	PRINTFORMDW Noticing that %HE_SHE(TARGET)% took your virginity just now, Reisen expresses %HIS_HER(TARGET)% concern.
+	PRINTFORMW 「Ah, y-you're fine? Thank goodness, I'm glad...」
+	PRINTFORMW 「I never thought you'll be giving me something so precious... I'll try my best to meet your expectations!」
+	PRINTFORMW 「Please leave it to me!」
+	PRINTFORMDW That dedicated look on Reisen's face is priceless.
+ENDIF
+
+;処女喪失
+IF TCVAR:破瓜
+	IF FLAG:70
+		PRINTFORMDW Reisen's virgin blood flows from her orifice, her hymen broken after what you've done to her.
+		PRINTFORMDW Normally this would be very painful, but for now, her expression remains still as ever.
+		PRINTFORMDW Such contrast is staggering, but this is given since she hasn't realized it yet.
+		PRINTFORMDW She will likely never realize that her precious innocence was stolen just like that except for the strange painful sensation.
+		RETURN 0
+	ENDIF
+	
+	;正真正銘処女喪失
+	;during sex
+	;going to check pose array, I think it's more reliable since it's also set for counter actions unlike vsex partner tequip
+	IF TEQUIP:体位
+		;from ym
+		IF TALENT:恋人
+			PRINTFORMW 「Aaaahn... It's finally in... We're finally connected...」
+			PRINTFORMDW Reisen shows a top notch smile as tears wet her cheeks.
+			PRINTFORMDW She might be still recovering from the leftover pain, but the joy of giving her virginity to you was still greater.
+			PRINTFORMW 「It's us together forever now... My dear beloved person...」
+			IF TEQUIP:縄 == 0
+				PRINTFORMD Reisen kisses you over and over 
+			ELSE
+				PRINTFORMD Reisen expresses her yearning in a poetic fashion 
+			ENDIF
+			PRINTFORMDW as you join your bodies together in an intimate union.
+		;lower cases are all original
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「This is amazing... I never thought it'd be like this...!」
+			PRINTFORMW 「I'm so glad... I was able to save it for you...」
+			PRINTFORMW 「I could only imagine that I'd ever bond with someone so well... So I'm happy it was you... So happy...」
+			PRINTFORMW 「Please... make yourself comfortable... Because I will accept... everything...」
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「Aghn, aaaah... I-It's okay, I'm f-fine...」
+			PRINTFORMW 「It doesn't... really... hurt... anymore... So please, keep moving...」
+			PRINTFORMW 「Let's explore each other even more from now on%UNICODE(0x2665)%」
+		ELSEIF !TFLAG:21 ;no love, see if it didn't cause hate mark
+			PRINTFORMW 「I-I hope... this bunny pussy will do you well...」
+			PRINTFORMW 「P-Please enjoy and take your time...」
+			PRINTFORMDW Though with her voice trembling and her body quivering, Reisen's desire to serve was still greater.
+		ENDIF
+	;other cases of defloration
+	ELSE
+		;added, orig, in case lesbians without dicks, then you don't have options
+		IF IS_FEMALE(MASTER) && IS_FEMALE(TARGET)
+			;恋慕
+			IF TALENT:恋人 || TALENT:恋慕
+				PRINTFORMW 「My first... is now yours...」
+				PRINTFORMW 「Aaahh... I guess... that's how it goes... Ehe, hehehe...」
+				PRINTFORMDW Reisen tries to cheer herself up and laughs, but it's obvious that she's disappointed that you couldn't get connected properly.
+			;それ以外
+			ELSE
+				PRINTFORMW 「Aaaahhh, noooo... That was supposed to be my... my precious first time...」
+				PRINTFORMW 「I wanted to save it... save it for someone I truly love... and yet...」
+				PRINTFORMW 「Uuuu... Sniff, uuuu...!」
+			ENDIF
+		;rest from ym
+		;指挿入れで処女喪失（反感がかなり少ない） fingering, though should be very rare as of now since normal fingering doesn't cause deflowering
+		ELSEIF IS_SELECTCOM("指挿れ") || TCVAR:カウンター行動 == 57
+			;恋慕
+			IF TALENT:恋人 || TALENT:恋慕
+				PRINTFORMW 「Uuaah... No way, how could we do it with fingers...」
+				PRINTFORMW 「Why... How did it come to this...?」
+				PRINTFORMW 「I wish you could... put it in earlier... Sniff...」
+			;それ以外
+			ELSE
+				PRINTFORMW （Uuhh, kuh... Compared to actually having sex, this is... Urk!）
+				PRINTFORMDW Reisen clenches her teeth, enduring the unbearable regret.
+			ENDIF
+		;それ以外の時に処女喪失
+		ELSE
+			;恋慕
+			IF TALENT:恋人 || TALENT:恋慕
+				PRINTFORMW 「Aaah, aaah... Nooo... My first time, my precious first time... To think it'd go like this...」
+				PRINTFORMDW After having her virginity robbed in an unromantic way, Reisen's voice gets hoarse as she keeps weeping.
+			;それ以外
+			ELSE
+				PRINTFORMW 「N-No, s-stooo--... Urk, aaaghhh!」
+				PRINTFORMW 「Aaahhh... N-No... No way... This isn't happening, this can't be happening...」
+				PRINTFORMDW Reisen stares at the blood flowing between her legs in pure disbelief.
+				PRINTFORMW 「Nooo...! Noooooooooooooooooo!」
+				PRINTFORMDW The moment she realized her virginity was no more, Reisen lets out a depressing shrilled scream as it echoes around.
+			ENDIF
+		ENDIF
+	ENDIF
+	
+	;Reisen wouldn't comment about your cherry when she gets deflowered herself, but this moment is special for lovers
+	IF TEQUIP:体位 && TCVAR:MASTER:筆下ろし && (TALENT:恋人 || TALENT:恋慕) && FIRSTTIME("ReisenCherryPop") 
+		PRINTFORML
+		PRINTFORMW 「Oh, it was your first time too? I'm glad... So glad...」
+		PRINTFORMW 「We're like real lovers, sharing out precious moments together...」
+		PRINTFORMW 「Mmm, yes... Let's take it easy and enjoy every second of it, shall we?」
+		PRINTFORMDW You take Reisen's hand and gaze at each other's eyes, smiling warmly.
+		PRINTFORMW 「You're not scared that you might go crazy? Well, not so much at this point, right? Fufufu...」
+	ENDIF
+	
+	IF (TALENT:恋人 || TALENT:恋慕) && TALENT:キス未経験
+		PRINTFORML
+		PRINTFORMW 「Ah, and by the way...」
+		PRINTFORMW 「I haven't even kissed before, and yet we're already at this stage...」
+		PRINTFORMW 「Talk about skipping, huh?」
+		PRINTFORMDW Reisen chuckles and licks %HIS_HER(TARGET)% lips.
+		PRINTFORMW 「Let's fix that next, shall we?」
+	ENDIF
+;all original after this
+;再生処女喪失
+ELSEIF TCVAR:破瓜 == 2
+	SIF FLAG:70
+		RETURN 0
+		
+	IF (TALENT:恋人 || TALENT:恋慕)
+		IF CSTR:処女喪失履歴 == "" ;in case this is original non-virgin Reisen
+			IF FIRSTTIME("ReisenRestoredHymen")
+				PRINTFORMW 「Huh, blood? So that's what that prickling feeling was about...」
+				PRINTFORMW 「Eh, you did it? I wonder why though... what purpose could this facsimile of chastity possibly serve?」
+				PRINTFORMW 「Ahh, I get it... making your woman bleed, feeling the pain she gets to feel only once with a partner she loves...」
+				PRINTFORMW 「That's what makes that first bond valuable... and it was taken away from me so long ago...」
+				PRINTFORMW 「Mhm, yes, I will happily oblige. If it's for your sake, I will... dedicate myself again and again, however many times it takes.」
+			ELSE
+				PRINTFORMW 「Well, I said however many times it takes... but I didn't think you'd just go and restore it again!」
+				PRINTFORMW 「Geez... this pain, it's... do you enjoy seeing me in pain? at my weakest? haah... never mind.」
+				PRINTFORMW 「If popping my cherry gets you going, then I suppose... I'll go along with it.」
+			ENDIF
+		ELSE
+			PRINTFORMW 「Ahn, haah... So that's what that sudden tightness was about...」
+			PRINTFORMW 「Geez, %CALLNAME:MASTER%... What do you think you're doing...」
+			PRINTFORMW 「It's so hard to comprehend what you're thinking, but if you wanted to pretend I'm an innocent virgin again... I'll play along...」
+		ENDIF
+	ELSE
+		PRINTFORMW 「Aaahhh, noooo... the blood, the pain... not again...!」
+		PRINTFORMDW Surprised by the unexpected return of what was already taken, Reisen cries out with her eyes open wide.
+		PRINTFORMW 「Uuuhhhhnn, slowly please... Aaaghhhh! Hhhaah, haah...」
+	ENDIF
+;無自覚非処女喪失
+ELSEIF TCVAR:破瓜 == -1
+	SIF FLAG:70
+		RETURN 0
+		
+	PRINTFORMDL At a complete loss, Reisen mumbles on and on.
+	PRINTFORMW 「Wait, this is weird... even though it's supposed to be my first time, somehow...」
+	PRINTFORMW 「These are not just instincts and feelings... My body, it feels like I've done it before... Why, how...」
+	PRINTFORMW 「It didn't just tear without me knowing one day, right?」
+	PRINTFORMDL If you recall it correctly, you had her actual first time a while ago using your ability, but you can't just tell her now, can you?
+	PRINTFORMDW For the time being, you hug her closer and tell her not to worry.
+	IF TALENT:恋人 || TALENT:恋慕
+		PRINTFORMW 「Sorry, I'm sorry... I'm supposed to be giving my first time, and there's no blood at all...」
+		PRINTFORMW 「But why, why are you so calm about it... It just doesn't add up, I don't understand...」
+		PRINTFORMDW %BREAKENG(@"Before she could process what's actually going on, you start slamming your hips back and forth, making her focus on pleasure rather than thinking of something she shouldn't.")%
+	ELSE
+		PRINTFORMW 「Ah? Oh, o-okay... If you say so...」
+		PRINTFORMDW Although %HE_SHE(TARGET)% still looks a little anxious, you pat Reisen on the head and encourage %HIM_HER(TARGET)% to continue.
+	ENDIF
+ENDIF
+
+;Ａ処女喪失 (orig)
+IF TCVAR:Ａ破瓜
+	SIF FLAG:70
+		RETURN 0
+		
+	;正真正銘Ａ処女喪失
+	IF TCVAR:Ａ破瓜 == 1
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMW 「%GROAN()%... Ahiii... Are you sure... t-that wasn't a fluke?」
+			IF IS_MALE(TARGET)
+				PRINTFORMW 「Haaah... You really went ahead and put your thing in a boy's ass...」
+			ELSE
+				PRINTFORMW 「You didn't slip, you didn't stick it in the wrong hole? Haah... You actually wanted to put it in there, huh...」
+			ENDIF
+			PRINTFORMDW Reisen sounds somewhat speechless, but %HIS_HER(TARGET)% expression isn't as disgusted as you'd might believe.
+			PRINTFORMW 「Well... I hope this bunny bum... is going to satisfy your needs... Aahhh!」
+			PRINTFORMW 「W-Why... is it affecting me so much though... Hnnnghh!」
+		ELSE
+			PRINTFORMW 「Aaaaghhh, ah! What are you doing, %CALLNAME:MASTER%-san?! I didn't think you were actually serious!」
+			PRINTFORMW 「Why would you put it in there, it's dirtyyyy... Aaahhh?!」
+			PRINTFORMW 「Nooo, it's tearing me, it's tearing meeeee! Stoooop!」
+		ENDIF
+	;無自覚Ａ処女喪失
+	ELSEIF TCVAR:Ａ破瓜 == -1
+		PRINTFORMW 「Aaah, aaaaaaaah!」
+		PRINTFORMDW Reisen shuts %HIS_HER(TARGET)% eyes and starts squealing almost prematurely, but then suddenly stops.
+		PRINTFORMW 「Eh, huh? It's going in and out... so surprisingly easy?! W-What's going on...」
+		PRINTFORMDW %BREAKENG(@"Bewildered, %HIS_HER(TARGET)% mind was more focused on coming up with an explanation to this than you currently penetrating %HIS_HER(TARGET)% butt.")%
+	ENDIF
+ENDIF
+	
+;フェラで射精後のお掃除
+IF (TCVAR:MASTER:112 == 1 || TCVAR:MASTER:112 == 2) && IS_SELECTCOM("フェラチオ")
+	SIF FLAG:70
+		RETURN 0
+		
+	IF TALENT:恋人 || TALENT:恋慕
+		PRINTFORML
+		PRINTFORMW 「Hehe, to finish off I'll clean it up for youuuu...%UNICODE(0x2665)%」
+		PRINTFORMDW %BREAKENG(@"Sticking out %HIS_HER(TARGET)% tongue, Reisen carefully licks all over your tip and, pulling your foreskin with %HIS_HER(TARGET)% lips, %HE_SHE(TARGET)% welcomes your %FSYN("penis")% into %HIS_HER(TARGET)% mouth and slurps everything off.")%
+		PRINTFORMW 「Puhaaaa! Theeere... All done%UNICODE(0x2665)%」
+		PRINTFORMDW Fuhh... Since when did Reisen become so lewd?
+	ENDIF
+	; IF ABL:LOCAL:精液中毒 < 3
+		
+	; ;Ｖ出し
+	; ELSEIF TCVAR:MASTER:112 == 1
+		
+	; ;after anal
+	; ELSEIF TCVAR:MASTER:112 == 2
+		
+	; ENDIF
+	; PRINTFORMW 
+ ENDIF
+
+;-------------------------------------------
+;刻印取得
+;-------------------------------------------
+@M_KOJO_MESSAGE_MARKCNG_K52
+;このままだと地の文が表示されません
+;地の文を表示したい方は、下記のコメントアウトを削除して下さい
+CALL MARK_MESSAGE
+
+SIF FLAG:70
+	RETURN 0
+	
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+;added, collection of lines from various Reisen dialogues from J/Ym unless otherwise stated
+;-------------------------------------------------
+;苦痛刻印
+;-------------------------------------------------
+;during deflowering (orig)
+IF TFLAG:22 
+	IF (TCVAR:破瓜 || TCVAR:Ａ破瓜)
+		;if hate/anger and no love
+		IF !(TALENT:恋人 || TALENT:恋慕) && (MARK:反発刻印 || CFLAG:ブチギレ || TFLAG:21)
+			PRINTFORMW 「Why, whyyy... why are you making me feel like this...」
+			PRINTFORMW 「Sniff, uuuu... my precious first time... to someone like that... uuu...」
+			PRINTFORMW 「My body and soul... it hurts... everything hurts...」
+		ELSEIF (TALENT:恋人 || TALENT:恋慕) && ABL:マゾっ気 >= 3
+			;with enough masochism + love
+			PRINTFORMW 「It hurts, it huuurts... Hahaha, it huurts, hurts so good... Aaah, haaah...」
+			PRINTFORMDW %BREAKENG(@"Despite crying %HIS_HER(TARGET)% eyes out and genuinely sounding like %HE_SHE(TARGET)%'s in a lot of pain, Reisen somehow continues pursuing the unpleasant feelings.")%
+			PRINTFORMDW It's almost as if %HE_SHE(TARGET)% gets off from that... At what point did it happen? Is %HE_SHE(TARGET)% broken?
+			PRINTFORMW 「Owww... Yes, just like that... Aaahhh, owwww! Hurt me more...!」
+			PRINTFORMW 「No mercy, don't hold back... I can take iiittt...」
+			PRINTFORMW 「This is the only chance I get to savor this kind of pain after alllll%UNICODE(0x2665)%」
+		ELSE
+			PRINTFORMW 「Aargh, haah... Ah, yes, I-I'm all right, please continue...」
+			PRINTFORMW 「I expected it to be painful, but for it to be this much... I think I'm going to remember it forever.」
+		ENDIF
+	ELSE
+		SELECTCASE TFLAG:22
+			CASE 3
+				IF (TALENT:恋人 || TALENT:恋慕) && ABL:マゾっ気 >= 3
+					PRINTFORMW 「Hyaaaauuuuhhh... Ow, it hhhhuuUUUUUUURTTTTTSSSS!」
+					PRINTFORMDW %BREAKENG(@"Despite shrilling at the top of her lungs and writhing in pain like crazy from the stupefying pain, Reisen's eyes were glittering dimly with the pleasure of being hurt.")%
+				;恋慕
+				ELSEIF TALENT:恋人 || TALENT:恋慕
+					PRINTFORMW 「Oooowwwww! W-Why are you so rough with me?!」
+				ELSE
+					PRINTFORMW 「Sniiiff... No, no more... Just stop it, please!」
+					PRINTFORMW 「I... I hate painful stuff!」
+				ENDIF
+			CASE 2
+				;恋慕
+				IF TALENT:恋人 || TALENT:恋慕
+					PRINTFORML 「%GROAN()%...! Uuuu... It hurts...」
+					PRINTFORML 「W-Why would you do such a thing...?!」
+					PRINTFORMDW Reisen shouts in protest while crying.
+				ELSE
+					PRINTFORML 「%GROAN()%! Owww! ...It hurts, it really really huuurts... Sniff... Whyyyy...?」
+					PRINTFORMDW Tears start flowing from Reisen's eyes, quickly turning into bawling.
+				ENDIF
+			CASE 1
+				;恋慕
+				IF TALENT:恋人 || TALENT:恋慕
+					PRINTFORMW 「%GROAN()%! Haah, hhhaa...」
+					PRINTFORMW 「I'll do whatever you want, even if it hurts like this... Everything for your sake...」
+				;それ以外
+				ELSE
+					PRINTFORMW 「%GROAN()%, aahh, eeeek! Aahh, haah... Uuu, uuu...」
+					PRINTFORMDW Reisen starts bawling right in front of you as %HE_SHE(TARGET)% wipes off %HIS_HER(TARGET)% rapidly flowing tears with both hands.
+					PRINTFORMW 「Please, please... No more... I'll do what you want... Just no more pain... Please...」
+					PRINTFORMDW %HE_SHE(TARGET, 1)%'s not really sensitive to pain, but perhaps the fact that %HE_SHE(TARGET)%'s getting hurt by a human is what affecting %HIS_HER(TARGET)% the most.
+				ENDIF
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;快楽刻印
+;-------------------------------------------------
+SELECTCASE TFLAG:23
+	CASE 3
+		;恋慕
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORML 「I-It feels so gooood...! Aah... Aaaauuuhhn! Haaah... Haaauuuu!」
+			PRINTFORML 「If this continues, I'm afraid I'm going to breaaaaa--...!」
+			PRINTFORMDW Reisen seems to be completely absorbed and captivated by the pleasure you're giving %HIM_HER(TARGET)%.
+		ELSE
+			PRINTFORML 「Eeeeehh...?! Just how much p-pleasure is thiiiis?!」
+			PRINTFORMW （Uuu... For some reason I feel like I'm being swept away... Haah...）
+		ENDIF
+	CASE 2
+		;恋慕もしくは恋人
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMW 「Ahiii... This is just way too good... L-Let me take a little break...」
+			PRINTFORMDW Overwhelmed by pleasure and almost fainting from it, Reisen gasps and begs you as %HIS_HER(TARGET)% body keeps twitching all over.
+		ELSE
+			PRINTFORMW 「Hooohhh, hyaaaah, I'm going to lose my mind... Fuwaaaaahhh!」
+			PRINTFORMDW %BREAKENG(@"With %HIS_HER(TARGET)% entire body convulsing in bliss and going slack, Reisen whispers with drool escaping %HIS_HER(TARGET)% mouth as %HE_SHE(TARGET)% stares off into the distance with a blank look in %HIS_HER(TARGET)% eyes.")%
+		ENDIF
+	CASE 1
+		;恋慕
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMW 「Haaaah♪ More, please make me feel good some moooore♪」
+		;それ以外
+		ELSE
+			PRINTFORMW 「No way... It feels sooo good...」
+			PRINTFORMW 「...!」
+			PRINTFORMDW Reisen seemed rather puzzled by %HIS_HER(TARGET)% body being enraptured with pleasure.
+		ENDIF
+ENDSELECT
+
+;-------------------------------------------------
+;不埒刻印
+;-------------------------------------------------
+SELECTCASE TFLAG:24 
+	;快楽による刻印
+	;LV1
+	CASE 11
+		;恋慕もしくは恋人
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMW 「To think we're still only at this stage, we've got quite a loooong way to go...」
+		ELSE
+			PRINTFORMW 「I don't think lunarians would ever forgive me for doing this with earthlings. Well, it doesn't really concern them anymore.」
+		ENDIF
+	;LV2
+	CASE 12
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMW 「Looks like we've become pretty close. I've never gotten along this well with anybody else but you, %CALLNAME:MASTER%.」
+		ELSE
+			PRINTFORML 「I never thought our relationship would turn out like this since we've met.」
+			PRINTFORMDW Looks like Reisen is thinking back at the time of your first encounter.
+		ENDIF
+	;LV3
+	CASE 13
+		;恋慕
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMW 「And at last, we have reached the final destination it seems...」
+			PRINTFORMW 「If you decide to dump me now thinking this is good enough, I'm never going to forgive you, you know?」
+			PRINTFORMW 「I want you to look at me only from now on... %CALLNAME:MASTER%.」
+		ELSE
+			PRINTFORMW 「Ehehe, we went ahead and ended up doing this, huh.」
+			PRINTFORMW 「%PRINT_MALE("If you call yourself a man, you better get ready:I suggest you prepare yourself for what's to come", MASTER)%... Mfufu.」
+		ENDIF
+		
+	;屈服、恭順による刻印
+	;LV1
+	CASE 31
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMW 「Mmm... Well, since we're partners and all, this much is... you know.」
+		ELSE
+			PRINTFORML 「Aha, ahaha...」
+			PRINTFORMDW Reisen averts %HIS_HER(TARGET)% gaze with an embarrassed grin.
+		ENDIF
+	;LV2
+	CASE 32
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMW 「Huuum... I would never think we'd get along like this... Fufufu.」
+		ELSE
+			PRINTFORML 「N-No way... To think it would turn out like this with %CALLNAME:MASTER%-san...」
+			PRINTFORMDW Reisen seems to be quite bewildered as %HE_SHE(TARGET)% stares down, blushing.
+		ENDIF
+	;LV3
+	CASE 33
+		;恋慕
+		IF TALENT:恋人 || TALENT:恋慕
+			PRINTFORMW 「...At this point this body truly belongs to you, %CALLNAME:MASTER%.」
+			PRINTFORMDW Reisen looks mesmerized as %HE_SHE(TARGET)% makes a vow to you.
+		;それ以外
+		ELSE
+			PRINTFORMW 「Master... Princess... I'm sorry, but I'm already...」
+		ENDIF
+ENDSELECT
+
+;-------------------------------------------------
+;反発刻印
+;-------------------------------------------------
+IF TFLAG:21
+	;Hate mark caused during defloration etc
+	IF TCVAR:破瓜 || TCVAR:Ａ破瓜
+		IF CFLAG:2 > 1000 ;from ym, if there's at least some favor
+			PRINTFORMW 「Guhhh, uuuhhh... Ouch...」
+			PRINTFORMW 「Kh... Even though I wanted you to be a little more gentle...」
+			PRINTFORMDW Due to a possible lack of preparation, Reisen seemed like she was in great pain.
+			PRINTFORMDW Despite her desperate attempts to look more composed than she actually is, her tears never stopped.
+		ELSE
+		;just rape
+			PRINTFORMW 「Again... again... a human hurt me... again...」
+			PRINTFORMW 「Uuuu... uuuuuuu...」
+			PRINTFORMDW Reisen starts sobbing uncontrollably, mumbling and bawling.
+			PRINTFORMDW Looks like it's taking quite an emotional toll on %HIM_HER(TARGET)%.
+		ENDIF
+	;anger (orig) ; changed to during sexy time since anger is given
+	ELSEIF CFLAG:うふふ ;CFLAG:ブチギレ
+		PRINTFORMW 「Uuu... uuuuuu... why... why must you bully me so...」
+		PRINTFORMW 「What have I done to deserve this... why is it always me...」
+		PRINTFORMW 「Uuuwaaaaaaahhh!」
+		PRINTFORMDW Reisen runs off, crying.
+		;todo make reisen move a tile?
+	ELSE
+		PRINTFORMDW For a moment you see Reisen becoming very serious, even the mood around %HIM_HER(TARGET)% changes.
+		;these might be a bit too out of character? but then she's pissed off, so w/e
+		SELECTCASE TFLAG:21
+			CASE 3
+				IF TALENT:恋人 || TALENT:恋慕
+					PRINTFORMDW Reisen slaps you on the cheek with all %HIS_HER(TARGET)% might.
+					PRINTFORMW 「Looks like I've overestimated you a bit too much. I didn't think you'd be this kind of person...」
+					CALL COLORMESSAGE("(-300 STA)",C_YELLOW,2,1)
+					BASE:MASTER:体力 -= 300
+				ELSE
+					PRINTFORMDW You receive a good punch from Reisen. Without %HIM_HER(TARGET)% holding back. Right in the face.
+					CALL PRINT_DIALOGUE, @"If I have to go through something like this ever again, no matter how much Master is going to get mad at me, I will simply leave and that's that.", "w"
+					PRINTFORMW 「Yes, you heard me right.」
+					CALL COLORMESSAGE("(-500 STA)",C_YELLOW,2,1)
+					BASE:MASTER:体力 -= 500
+				ENDIF
+			CASE 2
+				IF TALENT:恋人 || TALENT:恋慕
+					PRINTFORMW 「Wait, hey, stop it!」
+					PRINTFORMDW Pushing you away as hard as %HE_SHE(TARGET)% could, Reisen glares back while scowling.
+					PRINTFORMW 「Get a grip, will you?!」
+				ELSE
+					PRINTFORMDW Reisen slaps you.
+					PRINTFORMW 「Please keep your obscene impulses to your brainwaves only.」
+					PRINTFORMW 「What you did now was... quite shocking, to say the least.」
+					CALL COLORMESSAGE("(-100 STA)",C_YELLOW,2,1)
+					BASE:MASTER:体力 -= 100
+				ENDIF
+			CASE 1
+				;恋慕もしくは恋人
+				IF TALENT:恋人 || TALENT:恋慕
+					PRINTFORMW 「Nooo...!」
+					PRINTFORMDW Pushing you away, Reisen stares back, %HIS_HER(TARGET)% eyes glow red menacingly as if threatening you.
+					PRINTFORMW 「...How could you do something like that?!」
+				ELSE
+					PRINTFORMW 「...I can't say I'm in a good mood right now.」
+					PRINTFORMW 「Please restrain yourself from playing around me too much.」
+				ENDIF
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;special event (added orig)
+@EVENTEND
+#LATER
+;don't activate unless TS rape was done with deflowering
+SIF FIRSTTIME("ReisenTSVirginRob", 1, 52)
+	RETURN 0
+;show only once
+SIF !FIRSTTIME("ReisenTSCheckUp", 0, 52)
+	RETURN 0
+RESETCOLOR
+DRAWLINE
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K52
+PRINTFORML
+PRINTFORMDW Later that day at Eientei...
+PRINTFORMDW 『Udonge.』
+PRINTFORMW 「Y-Yes!」
+PRINTFORMDW Doctor Yagokoro was conducting a medical checkup as requested by Reisen.
+PRINTFORMDW Stepping away from Reisen who was strapped to a medical chair with her legs spread, Eirin frowns and breathes a sigh.
+PRINTFORMDW 『I have bad news. You're no virgin, Udonge.』
+PRINTFORMW 「H-Huh...?」
+PRINTFORMDW 『It appears that your hymen was broken, and fairly recently too, likely today.』
+PRINTFORMDW 『And I don't mean it getting torn on its own as a result of physical activity, no, it was most certainly pierced by someone else.』
+PRINTFORMDW 『So that leaves us with the *other* physical activity that may possibly cause this.』
+PRINTFORMDW 『Was that your way of telling me that you have grown up? If so, congratulations.』
+PRINTFORMW 「B-But... H-How...」
+PRINTFORMDW 『Hm? What do you mean?』
+SIF TALENT:52:恋人 || TALENT:52:恋慕
+	PRINTFORMDW 『Wasn't it your %PRINT_MALE("boy", MASTER)%friend you're so fond of?』
+PRINTFORMW 「No, I don't... remember a thing... And I never...」
+PRINTFORMDW 『I thought I told you to stay away from alcohol.』
+PRINTFORMW 「No, Master, I...! I'm serious...」
+PRINTFORMW 「I just... collapsed all of a sudden and next thing I know, my crotch was on fire and there was blood, and...」
+PRINTFORMDW 『Hmm... Well, that does sound strange. You think it's an ability of some sorts?』
+PRINTFORMW 「Huh? No, I... I don't know. Why do you think it's an ability?」
+PRINTFORMDW 『Because no one could possibly sneak past you with their brainwaves screaming that they'd like to desecrate you like that.』
+PRINTFORMW 「D-Desecrate?! Uuuu, Master... That's horrible...」
+PRINTFORMDW Reisen runs up to Eirin and buries her face in her chest, crying.
+PRINTFORMDW Surprised by that for a moment, Eirin smiles warmly and gently pats Reisen on the head.
+PRINTFORMDW 『Oh, I'm sorry Udonge. You had a rough day... Do you want me to restore it?』
+PRINTFORMW 「Restore?! You can do that?! B-But... No, that's... I'll just... pretend it never happened...」
+PRINTFORMW 「After all my mind is still pure...」
+PRINTFORMDW 『You may be right. You had enough of strange things happening today. Well, if you ever feel the need to vent, you can talk to me any time.』
+PRINTFORMW 「Yes! Thank you so much, Master...」
+PRINTFORMDW 『Of course.』
+PRINTFORMDW Gently smooching Reisen on her forehead as they separate, Reisen waves at Eirin and runs off.
+PRINTFORMDW （Haah, Udonge... A sweet child like you never deserved such a thing... I wonder who on earth could do that...）
+PRINTFORMDW （We might be having a new situation on our hands with this... Well, let's just wait and see.）
+DRAWLINE
+RESETCOLOR 

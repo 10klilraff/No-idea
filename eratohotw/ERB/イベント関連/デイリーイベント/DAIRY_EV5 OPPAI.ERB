@@ -1,0 +1,240 @@
+﻿@DAILY_CONDITION_EV5
+
+SIF RAND:(30 - TFLAG:OPPAI * 25) > 0
+	RETURN -1
+
+CALL DAILY_EV5
+RETURN 1
+
+@DAILY_EV5
+#DIM おっぱい神
+		
+;CASE 9は未完成だから
+おっぱい神 = RAND:9
+PRINTFORMW As %PARSE("you're")% about to fall asleep, %PARSE("you hear",1)% a miraculous voice.
+PRINTFORML 
+SETCOLOR C_AQUA
+FONTBOLD
+;微妙に変化させる
+SELECTCASE おっぱい神
+	CASE 0 TO 4
+		PRINTFORMW ...Can you hear me... ...Can you hear me... %CALLNAME:MASTER%... %CALLNAME:MASTER%... 
+		PRINTFORMW ...Now... I speak directly ... to your... heart... Can you hear me......
+	CASE 5,6
+		PRINTFORML ...Can you hear me... ...Can you hear me... %CALLNAME:MASTER%... %CALLNAME:MASTER%...
+		PRINTFORMW ...Now... I speak directly ... to your... heart... Can you hear me...?
+	CASE 7,8
+		PRINTFORML ...Can you hear me......　Can you hear me... %CALLNAME:MASTER%...　%CALLNAME:MASTER%...
+		PRINTFORMW ...Now... I speak directly ... to your... heart... Can you hear me......?
+	CASE 9
+		PRINTFORML ...Can you hear me... ...Can you hear me... %CALLNAME:MASTER%... %CALLNAME:MASTER%...
+		PRINTFORMW ...Now...... I speak directly ... to your... heart... Can you hear me......?
+ENDSELECT
+PRINTFORML 
+PRINTFORMW Big breasts or small breasts, which do you prefer......
+RESETCOLOR
+FONTREGULAR
+;CALL COLORMESSAGE("あなたは大きいおっぱいと小さいおっぱい、どちらが好きですか……","AQUA",1,1)
+
+;qol custom code
+LOCAL = CFLAG:MASTER:累計膣内精液 + CFLAG:MASTER:累計アナル精液 + CFLAG:MASTER:累計精飲
+CALL ASK_M("Big ones",1,"Small ones",1,"Breasts have no rankings",1,@"I like futanari penis\@ LOCAL < 5000 ? %" "%Your body must accept more semen, my child... {LOCAL}/5000 #\@",LOCAL >= 5000)
+
+SELECTCASE おっぱい神
+	CASE 0 TO 4
+		IF RESULT == 3 && !おっぱい神
+			CALL GOD_FUTANARI
+		ELSE
+			SETCOLOR C_AQUA
+			FONTBOLD
+			SIF RESULT == 3
+				PRINTFORMW （Invalid answer）
+			PRINTFORMW Thank you for cooperating on this questionnaire...... Here is a reward......
+			RESETCOLOR
+			FONTREGULAR
+			PRINTFORML Kyabaan!
+			PRINTFORMW \\1000 is transferred to %PARSE("your")% account!
+			MONEY += 1000
+		ENDIF
+	CASE 5,6
+	;巨乳の神
+		SELECTCASE RESULT
+			CASE 0
+				CALL OPPAIANSWER(1,1)
+			CASE 1
+				CALL OPPAIANSWER(1,-1)
+			CASE 2
+				CALL OPPAIANSWER(1,0)
+			CASE 3
+				CALL OPPAIANSWER(1,2)
+		ENDSELECT
+	CASE 7,8
+	;貧乳の神
+		SELECTCASE RESULT
+			CASE 0
+				CALL OPPAIANSWER(-1,-1)
+			CASE 1
+				CALL OPPAIANSWER(-1,1)
+			CASE 2
+				CALL OPPAIANSWER(-1,0)
+			CASE 3
+				CALL OPPAIANSWER(-1,2)
+		ENDSELECT
+	CASE 9
+		SELECTCASE RESULT
+			CASE 0,1
+				CALL OPPAIANSWER(2,-1)
+			CASE 2
+				CALL OPPAIANSWER(2,2)
+		ENDSELECT
+ENDSELECT
+PRINTFORMW 
+
+RETURN 1
+
+@GOD_FUTANARI
+CALL COLORMESSAGE("Hoho～ So you've noticed my true form.",C_D_RED,2,1)
+PRINTFORML 
+PRINTFORMW The voice becomes a bit more powerful than usual...
+CALL COLORMESSAGE("You hold a great love for futanari penis.",C_D_RED,1,1)
+CALL COLORMESSAGE("As reward, I'll grant you one wish.",C_D_RED,1,1)
+$LOOP
+CALL ASK_M("No need",1,"Give someone a penis",1,"Strengthen someone's penis",1,"Taste a futanari penis",1,"Panties please",1)
+SELECTCASE RESULT
+	CASE 0
+		CALL COLORMESSAGE("How boring... I do not understand how you can squander something like this.",C_D_RED,1,1)
+		CALL COLORMESSAGE("Oh well...",C_D_RED,1,1)
+	CASE 1
+		PRINTFORML Who?
+		DRAWLINE
+		FOR LOCAL,0,CHARANUM
+			SIF TALENT:LOCAL:性別 == 1
+				PRINTFORMLC [{LOCAL}] %CALLNAME:LOCAL,15,LEFT%
+		NEXT
+		DRAWLINE
+		PRINTFORML [999] Return
+		INPUT
+		IF INRANGE(RESULT,0,CHARANUM) && TALENT:RESULT:性別 == 1
+			TALENT:RESULT:性別 = 3
+			MAXBASE:RESULT:精力 = 1000
+			CALL COLORMESSAGE("That's easy.",C_D_RED,1,1)
+			PRINTFORMW %CALLNAME:RESULT% is now a futanari.
+		ELSE
+			GOTO LOOP
+		ENDIF
+	CASE 2
+		PRINTFORML Whose?
+		DRAWLINE
+		FOR LOCAL,1,CHARANUM
+			SIF TALENT:LOCAL:性別 == 3 && MAXBASE:LOCAL:精力 < 1500
+				PRINTFORMLC [{LOCAL}] %CALLNAME:LOCAL,15,LEFT%
+		NEXT
+		PRINTL 
+		DRAWLINE
+		PRINTFORML [999] Return
+		INPUT
+		IF INRANGE(RESULT,1,CHARANUM) && TALENT:RESULT:性別 == 3 && MAXBASE:RESULT:精力 < 1500
+			PRINTFORMW %CALLNAME:RESULT%'s max vigor increases.
+			MAXBASE:RESULT:精力 += 100
+			CALL COLORMESSAGE("That's easy.",C_D_RED,1,1)
+		ELSE
+			GOTO LOOP
+		ENDIF
+	CASE 3
+		CALL COLORMESSAGE("Fufu, I will give you a heavenly futanari cock.",C_D_RED,1,1)
+		CALL COLORMESSAGE("Taste it to your heart's content, if you can handle it.",C_D_RED,1,1)
+		PRINTFORML Suddenly %PARSE("you feel")% an enormous mass in %PARSE("your",1)% mouth.
+		PRINTFORML It's hard, but tender, and pliable, it radiates with warmth and fills %PARSE("your",1)% mind with calm.
+		PRINTFORML %PARSE("You're")% overwhelmed for a while before coming to %PARSE("your",1)% senses and serving it with skills beyond human comprehension.
+		PRINTFORML After an eternity of anguish and bliss, the divine phallus finally reaches it peak.
+		PRINTFORML An incredibly rich flavor in impossible amounts pours down %PARSE("your",1)% throat, and %PARSE("you lose",1)% consciousness...
+		CALL BUFF_BASE(MASTER,BASE_気力,2000)
+		CALL BUFF_BASE(MASTER,BASE_体力,2000)
+	CASE 4
+		CALL COLORMESSAGE("I do not have such things.",C_D_RED,2,1)
+		GOTO LOOP
+ENDSELECT
+CALL COLORMESSAGE("Don't forget, I am the embodiment of all futanari cocks.",C_D_RED,1,1)
+PRINTFORML The divine presence leaves...
+
+
+@OPPAIANSWER(ARG,ARG:1)
+IF ARG:1 == -1
+	;CALL COLORMESSAGE("滅びよ悪しき者！！！","RED",1,1)
+	SETCOLOR C_RED
+	FONTBOLD
+	PRINTFORMW Fall you evil one!!!
+	RESETCOLOR
+	FONTREGULAR
+	PRINTFORML Following a terrible blow to the head, %PARSE("you lose")% consciousness...
+	BASE:MASTER:体力 -= 5000
+ELSEIF ARG:1 == 2
+	CALL COLORMESSAGE("Ehh what was that...",C_AQUA,1,1)
+	PRINTFORML The voice falls silent.
+ELSEIF !ARG:1
+		;これが正解の分岐を後で作る
+		;PRINTFORML あなたは心底おっぱいを愛しているのですね……
+		SETCOLOR C_AQUA
+		FONTBOLD
+		PRINTFORMW One lacking belief...
+		RESETCOLOR
+		FONTREGULAR
+			;CALL COLORMESSAGE("哀れなる信念なき者……","AQUA",1,1)
+		PRINTFORML The voice falls silent.
+ELSE
+	SETCOLOR C_AQUA
+	FONTBOLD
+	PRINTFORML As we have not forgotten your wishes, \@ ARG < 0 ? small# big\@ breasts will always be your ally...
+	PRINTFORML You have an unused divine favor for \@ ARG < 0 ? small# big\@ breasts...
+	RESETCOLOR
+	FONTREGULAR
+	CALL ASK_YN("Fondle breasts","Bless a pair of breasts")
+	IF RESULT
+		PRINTFORML Whose?
+		DRAWLINE
+		FOR LOCAL,0,CHARANUM
+			IF ARG > 0
+				SIF TALENT:LOCAL:バストサイズ < 2
+					PRINTFORMLC [{LOCAL}] %CALLNAME:LOCAL%
+			ELSE
+				SIF TALENT:LOCAL:バストサイズ > -2
+					PRINTFORMLC [{LOCAL}] %CALLNAME:LOCAL%
+			ENDIF
+		NEXT
+		PRINTFORML 
+		DRAWLINE
+		PRINTFORML [999] Stop
+		INPUT
+		SELECTCASE RESULT
+			CASE 0 TO CHARANUM
+				SETCOLOR C_AQUA
+				FONTBOLD
+				PRINTFORMW %CALLNAME:RESULT%'s breasts are blessed...
+				RESETCOLOR
+				FONTREGULAR
+				IF ARG > 0
+					TALENT:RESULT:バストサイズ ++
+					PRINTFORMW %CALLNAME:RESULT%'s breasts become bigger!
+				ELSE
+					TALENT:RESULT:バストサイズ --
+					PRINTFORMW %CALLNAME:RESULT%'s breasts shrink!
+				ENDIF
+			CASEELSE
+		ENDSELECT
+	ELSE
+		;揉ませてもらえる分岐は未完成
+		SETCOLOR C_AQUA
+		FONTBOLD
+		PRINTFORML I will let you fondle them once your love for them has grown...
+		IF !TALENT:MASTER:器用な指
+			PRINTFORMW Instead, I will teach you a technique that will let you fondle breasts with greater skill...
+			RESETCOLOR
+			FONTREGULAR
+			PRINTFORMW %PARSE("You have")% become【Nimble-fingered】!
+			TALENT:MASTER:器用な指 = 1
+		ENDIF
+		RESETCOLOR
+		FONTREGULAR
+	ENDIF
+	PRINTFORML Seemingly wrapped in the comfort of breasts, %PARSE("your")% consciousness wanders away as %PARSE("you fall",1)% asleep...
+ENDIF

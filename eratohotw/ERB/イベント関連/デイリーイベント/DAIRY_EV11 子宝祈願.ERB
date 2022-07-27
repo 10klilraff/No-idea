@@ -1,0 +1,14 @@
+﻿@DAILY_CONDITION_EV11
+IF !FLAG:子宝祈願
+	RETURN -1
+ELSEIF RAND:10 > 0
+	RETURN -1
+ELSE
+	CALL DAILY_EV11(FLAG:子宝祈願)
+	RETURN 1
+ENDIF
+
+@DAILY_EV11(ARG)
+PRINTFORMW %PARSE("You pray")% to have children with %CALLNAME:ARG%...
+CFLAG:ARG:子宝補正 ++
+CALL Com_PregPrayer(ARG) ;com custom code

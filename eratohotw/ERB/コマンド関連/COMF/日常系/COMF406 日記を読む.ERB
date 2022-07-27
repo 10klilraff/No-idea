@@ -1,0 +1,253 @@
+﻿;-------------------------------------------------
+;日記を読む
+;日常系コマンド
+;-------------------------------------------------
+@COM406
+#DIM 同棲
+#DIM OWNER
+
+IF TARGET > 0 && CFLAG:TARGET:初期位置 == CFLAG:MASTER:初期位置
+	同棲 = 1
+ELSE
+	同棲 = 0
+ENDIF
+OWNER = COM406_CHECK_OWNER()
+
+LOCAL = 50 + ABL:MASTER:話術技能 * 5 + ABL:TARGET:親密 * 2
+SIF BASE:TARGET:酒気 > MAXBASE:TARGET:酒気 / 2
+	LOCAL -= 15
+
+SELECTCASE TFLAG:192
+	;通常
+	CASE 0
+		SELECTCASE RAND:LOCAL
+			CASE IS < 20
+				TFLAG:193 = 1
+			CASE 20 TO 50
+				TFLAG:193 = 2
+			CASEELSE
+				TFLAG:193 = 3
+		ENDSELECT
+	;強制成功or大成功
+	CASE 1
+		SELECTCASE RAND:LOCAL
+			CASE IS < 50
+				TFLAG:193 = 2
+			CASEELSE
+				TFLAG:193 = 3
+		ENDSELECT
+	;強制失敗
+	CASE -1
+		TFLAG:193 = 1
+	;コマンド終了
+	CASE -2
+		TFLAG:193 = -1
+		RETURN 0
+ENDSELECT
+
+TFLAG:194 = OWNER
+
+IF CFLAG:MASTER:現在位置 == CFLAG:MASTER:初期位置
+	PRINTFORML There \@ 同棲 ?are two diaries# is a diary\@ on the desk.
+	PRINTFORML Choose an action.
+	VARSET LOCALS, "？？？？"
+	IF TARGET > 0
+		LOCALS:0 = Have %CALLNAME:TARGET% read %PARSE("your")% diary
+		LOCALS:1 = Read %CALLNAME:TARGET%'s diary
+	ENDIF
+	{
+	CALL ASK_M("Write",1,"Read",1,@"%LOCALS:0%", TARGET > 0,
+	@"%LOCALS:1%", 同棲 && (!SHIRAHU(TARGET) || TALENT:TARGET:恋慕 ),
+	"Save diary",1, "Load diary",1,
+	"Nothing",1)
+	}
+	SELECTCASE RESULT
+		CASE 0
+			IF STRCOUNT(SAVESTR:1,"//") >= 100
+				PRINTFORML This diary is already full.
+				PRINTFORMW Replace it with another diary.
+			ELSE
+				PRINTFORML Please enter the contents of the diary directly. Write <br> to start a new line.
+				PRINTFORML There is no need to write the date as it is automatically recorded.
+				PRINTL
+				CALL MASTER_DAIRY_INPUT
+				SIF RESULTS != ""
+					CALL MASTER_DIARY_WRITE,RESULTS
+				PRINTL
+			ENDIF
+		CASE 1
+			CALL READ_MASTER_DIARY
+		CASE 2
+			IF ABL:TARGET:親密 >= 5
+				PRINTFORMW %CALLNAME:TARGET% picks up %PARSE("your")% diary...
+				CALL SHARE_MASTER_DIARY
+			ELSE
+				PRINTFORMW %CALLNAME:TARGET% doesn't seem interested...
+			ENDIF
+		CASE 3
+			CALL CHARA_DIARY_COM(TARGET)
+		CASE 4
+			CALL WRITE_MASTER_DAIRY_FILE
+		CASE 5
+			CALL READ_MASTER_DAIRY_FILE
+		CASE 6
+	ENDSELECT
+	GOTO SKIP
+ELSEIF TALENT:OWNER:恋慕 && CFLAG:MASTER:現在位置 != CFLAG:MASTER:初期位置
+	PRINTFORML There is a diary next to the pillow.
+	PRINTFORML %CALLNAME:OWNER% seems willing to share the contents of it.
+	PRINTFORML Choose an action.
+	CALL ASK_YN("Read the diary","Don't read")
+	IF !RESULT
+		CALL CHARA_DIARY_COM(OWNER)
+	ENDIF
+ELSEIF CFLAG:OWNER:現在位置 != CFLAG:MASTER:現在位置 && TARGET && !(FLAG:70 || !SHIRAHU(TARGET))
+	PRINTFORML It seems there's a diary under %CALLNAME:OWNER%'s pillow.
+	PRINTFORML But... %CALLNAME:TARGET% is here...
+	PRINTFORML Take a peek?
+	CALL ASK_YN("Read it together","Don't read it")
+	IF !RESULT && TFLAG:193 > 0
+		CALL CHARA_DIARY_COM(OWNER)
+	ELSE
+		PRINTFORML Decided to give up...
+	ENDIF
+ELSE
+	PRINTFORML There seems to be a diary under the pillow.
+	PRINTFORML Choose an action.
+	CALL ASK_YN("Sneak a peek","Don't read")
+	IF !RESULT
+		CALL CHARA_DIARY_COM(OWNER)
+	ENDIF
+ENDIF
+
+$SKIP
+IF !FLAG:70
+	TIME += 5
+ELSE
+	BASE:MASTER:TSP -= 10
+ENDIF
+
+IF SHIRAHU(TARGET) && TARGET > 0
+	;固定で獲得するソース
+	SOURCE:歓楽 = 200
+
+	;ABL:親密をみる
+	IF ABL:親密 <= 1
+		SOURCE:歓楽 += (ABL:親密 * 30)
+	ELSEIF ABL:親密 <= 3
+		SOURCE:歓楽 += 200 + (ABL:親密 * 30)
+	ELSEIF ABL:親密 <= 5
+		SOURCE:歓楽 += 500 + (ABL:親密 * 30)
+	ELSEIF ABL:親密 <= 8
+		SOURCE:歓楽 += 750 + (ABL:親密 * 50)
+	ELSEIF ABL:親密 <= 10
+		SOURCE:歓楽 += 1000 + (ABL:親密 * 50)
+	ELSE
+		SOURCE:歓楽 += 1600 + (ABL:親密 * 30)
+	ENDIF
+
+
+	SOURCE:歓楽 = LIMIT(SOURCE:歓楽,0,5000)
+
+
+	SOURCE:受動 = 100 + 100 * ABL:従順
+	SOURCE:征服 = 100 + 100 * ABL:サドっ気
+
+	IF TFLAG:193 == -1 || TFLAG:193 == -2
+		TIMES SOURCE:歓楽 , 0.10
+		TIMES SOURCE:征服 , 0.50
+		TIMES SOURCE:受動 , 0.50
+	ELSEIF TFLAG:193 == 0
+		TIMES SOURCE:歓楽 , 1.00
+		TIMES SOURCE:征服 , 1.00
+		TIMES SOURCE:受動 , 1.00
+	ELSE
+		TIMES SOURCE:歓楽 , 2.00
+		TIMES SOURCE:征服 , 2.00
+		TIMES SOURCE:受動 , 2.00
+	ENDIF
+	SELECTCASE ABL:MASTER:話術技能
+		CASE 0
+			TIMES SOURCE:歓楽 , 0.20
+			TIMES SOURCE:征服 , 0.20
+			TIMES SOURCE:受動 , 0.20
+		CASE 1
+			TIMES SOURCE:歓楽 , 0.40
+			TIMES SOURCE:征服 , 0.40
+			TIMES SOURCE:受動 , 0.40
+		CASE 2
+			TIMES SOURCE:歓楽 , 0.70
+			TIMES SOURCE:征服 , 0.70
+			TIMES SOURCE:受動 , 0.70
+		CASE 3
+			TIMES SOURCE:歓楽 , 1.00
+			TIMES SOURCE:征服 , 1.00
+			TIMES SOURCE:受動 , 1.00
+		CASE 4
+			TIMES SOURCE:歓楽 , 1.20
+			TIMES SOURCE:征服 , 1.20
+			TIMES SOURCE:受動 , 1.20
+		CASEELSE
+			TIMES SOURCE:歓楽 , 1.50
+			TIMES SOURCE:征服 , 1.50
+			TIMES SOURCE:受動 , 1.50
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE406
+#DIM OWNER
+OWNER = COM406_CHECK_OWNER()
+
+;移動実行判定
+SIF !TFLAG:100
+	RETURN 0
+	
+;イタズラかウフフ中
+SIF CFLAG:MASTER:イタズラ
+	RETURN 0
+
+SIF CFLAG:MASTER:うふふ
+	RETURN 0
+
+;拠点にいる時かお招き部屋のみ
+SIF !AT_HOME(MASTER) && CFLAG:MASTER:現在位置 != OMANEKIBEYA()
+	RETURN 0
+
+SIF CFLAG:MASTER:現在位置 != CFLAG:MASTER:初期位置 && !OWNER
+	RETURN 0
+
+SIF !TALENT:OWNER:恋慕 && ABL:MASTER:教養 < ABL:OWNER:教養 && OWNER
+	RETURN 0
+
+SIF !TALENT:OWNER:恋慕 && CFLAG:OWNER:現在位置 == CFLAG:OWNER:初期位置 && !(FLAG:70 || !SHIRAHU(OWNER)) && OWNER
+	RETURN 0
+
+SIF !TALENT:TARGET:恋慕 && !(FLAG:70 || !SHIRAHU(TARGET)) && TARGET
+	RETURN 0
+
+RETURN 1
+
+@MESSAGE_COM406
+#DIM OWNER
+OWNER = COM406_CHECK_OWNER()
+
+IF (!TALENT:OWNER:恋慕 && !(FLAG:70 || !SHIRAHU(OWNER))) && !(CFLAG:MASTER:現在位置 == CFLAG:MASTER:初期位置)
+	PRINTFORML After %PARSE("you")% finished reading, %PARSE("you",1)% quietly put the diary back in its place.
+ELSE
+ENDIF
+
+;日記の著者チェッカー
+@COM406_CHECK_OWNER
+#FUNCTION
+
+IF TARGET > 0 && CFLAG:TARGET:初期位置 == CFLAG:MASTER:初期位置 && CFLAG:MASTER:現在位置 == CFLAG:MASTER:初期位置
+	RETURNF TARGET
+ELSEIF TARGET == CFLAG:MASTER:お招き && CFLAG:MASTER:現在位置 == OMANEKIBEYA()
+	RETURNF CFLAG:MASTER:お招き
+ELSE
+	RETURNF PRIVATEROOM:(CFLAG:MASTER:現在位置 % 100)
+ENDIF

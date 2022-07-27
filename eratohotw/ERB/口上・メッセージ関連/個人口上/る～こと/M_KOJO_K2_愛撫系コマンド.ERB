@@ -1,0 +1,1293 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;愛撫系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;0,愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_0
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_0_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_0_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入中
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	;V挿入
+	IF LOCAL:1 && TEQUIP:50 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	;A挿入
+	ELSEIF LOCAL:1 && TEQUIP:51 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;ふたなり
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && (TALENT:2 & 3) == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	$PETTING_LOOP
+	IF K2_BASIC_CONDITION_IN_MATING()
+		IF TALENT:恋慕 || TALENT:愛欲
+			SELECTCASE RAND:5
+			CASE 1
+				IF EXP_UP(27,TARGET)
+					CALL K2_HPH_PRINT,@"「Chuuup... Chu HPH Haa HPH Please kiss me more HPH」","W" 
+				ELSE
+					GOTO PETTING_LOOP
+				ENDIF
+			CASE 2
+				IF ABL:MASTER:指 >= 2 && K2_SEXUAL_FRANKNESS()
+					CALL K2_HPH_PRINT,@"「Ah HPH Nh, Nhaaa HPH Your finger feels so good. HPH」","W" 
+				ELSE
+					GOTO PETTING_LOOP
+				ENDIF
+			CASE 3
+				IF ABL:MASTER:指 >= 3
+					CALL K2_HPH_PRINT,@"「Ah HPH Yaah HPH No good, %CALLNAME:MASTER%-sama's touch is going to break me HPH」","W" 
+				ELSE
+					GOTO PETTING_LOOP
+				ENDIF
+			CASE 4
+				CALL K2_HPH_PRINT,@"「Whenever I'm touched by %CALLNAME:MASTER%-sama I feel so hot HPH」","W" 
+			CASEELSE
+				CALL K2_HPH_PRINT,@"「Ehehe HPH Touch me gently... It makes me feel loved HPH」","W" 
+			ENDSELECT
+		ELSEIF TALENT:ヤリマン
+			SELECTCASE RAND:2
+			CASE 1
+				CALL K2_HPH_PRINT,@"「Nh HPH You're going easy on me HPH But I wouldn't mind if you were rougher HPH」","W"
+			CASEELSE
+				CALL K2_HPH_PRINT,@"「There HPH So good HPH Please touch me more HPH」","W"
+			ENDSELECT
+		ELSE
+			IF EXP_UP(27,TARGET) && RAND:2
+				PRINTFORMW 「Nhh... Chu... Chuup... Ah... Nh」
+			ELSE
+				PRINTFORMW 「Ah... Nh, Nhaa... There...」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;1,クンニ
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_1
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_1_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_1_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;膣内射精直後
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		IF TCVAR:102
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;絶頂した
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && NOWEX:0
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	IF !K2_EXCESSIVE_STATURE_GAP()
+		;真正ヤリマン
+		IF CFLAG:1001
+			;同一対象にクンニを連続実行
+			IF PREVCOM == SELECTCOM && MASTER_POSE(SET_C,SET_M,1) == TARGET
+				PRINTFORMDL As your brain registers the robot's feminine smell, your feel your head go numb as you savor %CALLNAME:TARGET%'s secret place in a trance.
+			ELSE
+				PRINTFORMDL You spread the robot's labia widely with both hands, her pink membranes expand forming a rhomboid shape. 
+				PRINTFORMDL Once exposed out in the open, her vaginal opening twitches, reacting to your tongue as you carefully lick her.
+			ENDIF
+		ELSE
+			SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMDL You erotically run your tongue all over the robot's pubic region.
+			CASEELSE
+				PRINTFORMD You spread her lovely white skin to the sides to let your tongue crawl around her pink insides, 
+				SELECTCASE PALAM:潤滑
+				CASE IS >= PALAMLV:5
+					PRINTFORMDL she exudes a strong feminine scent once she's fully %TEXTR("moist/soaked/wet")%. 
+				CASE IS >= PALAMLV:3
+					PRINTFORMDL she begins to exude a feminine scent as she slowly gets wet. 
+				CASEELSE
+					PRINTFORMDL Shiny love juices ooze out of her as you get her wet with your saliva.
+				ENDSELECT
+			ENDSELECT
+		ENDIF
+		$CUNNILINGUS_LOOP
+		IF K2_BASIC_CONDITION_IN_MATING()
+			IF TALENT:恋慕 || TALENT:愛欲
+				SELECTCASE RAND:7
+				CASE 1
+					IF CFLAG:1001 && ( ABL:露出癖 <= 2 || TALENT:羞恥心 >= 0 || !RAND:4 )
+						CALL K2_HPH_PRINT,@"「My slit, it has become very lovely... It's a bit embarrassing HPH」","L"
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 2
+					IF ABL:MASTER:舌 >= 4 && ABL:Ｃ感覚 >= 5
+						PRINTFORMDL Your tongue touches her \@ TALENT:性別 & 2 ?penis #clitoris \@ whenever you lick her upwards, producing lewd sounds. 
+						PRINTFORMD %CALLNAME:TARGET% 
+						IF BEDROOM() && !TEQUIP:縄 && !TEQUIP:拘束
+							PRINTFORMD grasps the sheets 
+						ELSEIF !TEQUIP:縄 && !TEQUIP:拘束
+							PRINTFORMD grasps you with her hand 
+						ELSE
+							PRINTFORMD while clenching her teeth.
+						ENDIF
+						PRINTFORMDL She lets out a small moan.
+						CALL K2_HPH_PRINT,@"「Nhiih HPH Nh, Uwaah, Nhaah, Hah　Nhoooh HPH」","L"
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 3
+					IF K2_SEXUAL_FRANKNESS()
+						CALL K2_HPH_PRINT,@"「Ah, Haa, Nhaa HPH W-wonderful, Nhaa HPH」","L"
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 4
+					PRINTFORMD You play with her 
+					IF !(TALENT:性別 & 2) && RAND:2
+						IF CFLAG:1001
+							PRINTFORMD %TEXTR("big/fat/engorging")% %TEXTR("clit/clitoris")% using your mouth, and tease it
+						ELSE
+							PRINTFORMD %TEXTR("swollen/hidden/lovely")% %TEXTR("clit/clitoris")% using your mouth and %TEXTR("kiss/smooch/peck")% it 
+						ENDIF
+					ELSE
+						IF CFLAG:1001
+							PRINTFORMD %TEXTR("big/large/lewd/obscene")% %TEXTR("flesh/entrance/labia")% using your mouth, 
+						ELSE
+							PRINTFORMD %TEXTR("stiff/excited/moist")% %TEXTR("labia/flesh")% using your mouth and %TEXTR("kiss/smooch/peck")% it  
+						ENDIF
+					ENDIF
+					PRINTFORMDL with your tongue and lips.
+					CALL K2_HPH_PRINT,@"「Hyaan, that's, Hiiih HPH "
+					SIF NOWEX:Ｃ絶頂
+						PRINTFORM I'm cumming. 
+					CALL K2_HPH_PRINT,@"Nhaah, Nhaaa HPH」","L"
+				CASE 5
+					PRINTFORMD As you spread her entrance
+					IF TALENT:性別 & 2
+						PRINTFORMD her \@ CFLAG:TARGET:勃起度 >= 1000 ?hard # \@ cock becomes fully erect.
+					ELSE
+						PRINTFORMD her \@ PALAM:欲情 >= PALAMLV:4 ?stiff # \@ clit engorges.
+					ENDIF
+					PRINTFORMDL Once you insert your tongue, %CALLNAME:TARGET% raises a loud moan.
+					CALL K2_HPH_PRINT,@"「Yhaaa HPH There HPH」","L"
+				CASE 6
+					PRINTFORMDL %CALLNAME:TARGET% gently places your face between her thighs \@ TEQUIP:アイマスク ?as you enthusiastically service her#, she looks at you with a delightful expression as you service her\@.
+					CALL K2_HPH_PRINT,@"「Ehehe HPH %CALLNAME:MASTER%-samaah HPH Thank you for always loving me HPH」","L"
+				CASEELSE
+					CALL K2_HPH_PRINT,@"「Fufu HPH %CALLNAME:MASTER%-sama is licking my vagina, it's somewhat cute HPH」","L"
+				ENDSELECT
+			ELSEIF TALENT:ヤリマン
+				SELECTCASE RAND:5
+				CASE 1
+					IF ABL:MASTER:舌 >= 3 && CFLAG:1001
+						CALL K2_HPH_PRINT,@"「Aaah HPH So good HPH %CALLNAME:MASTER%-sama, you're so skilled HPH」","L"
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 2
+					IF PALAM:潤滑 >= PALAMLV:4
+						CALL K2_HPH_PRINT,@"「Hey, It's wet enough already HPH Don't just insert your tongue, I also want to feel \@ TALENT:MASTER:性別 & 2 ?your cock #that toy \@ HPH」","L"
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 3
+					IF PALAM:潤滑 < PALAMLV:3
+						CALL K2_HPH_PRINT,@"「Nh HPH Please keep licking me more HPH」","L"
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 4
+					CALL K2_HPH_PRINT,@"「Ahahh HPH Be rougher, do it with all your might HPH」","L"
+				CASEELSE
+					PRINTFORMDL %CALLNAME:TARGET% actively indulges in pleasure as you press your face against her intimate place.
+					CALL K2_HPH_PRINT,@"「More please HPH Keep using your tongue HPH」","L"
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:7
+				CASE 1
+					IF ABL:MASTER:舌 >= 3 && K2_SEXUAL_FRANKNESS()
+						PRINTFORML 「Nhaaa... Hah, Aah... It feels better than using fingers...」
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 2
+					IF ABL:MASTER:舌 >= 4 && K2_SEXUAL_FRANKNESS()
+						PRINTFORML 「So good, your tongue is wonderful.　Ah, Nhhu.」
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 3
+					IF ABL:MASTER:舌 >= 5 && !FIRSTTIME(SELECTCOM,1,2) && !K2_SEXUAL_FRANKNESS()
+						PRINTFORML 「A-are you going to lick me? Somehow, %CALLNAME:MASTER%-sama's tongue... Scares me a little...」
+						PRINTFORMDL %CALLNAME:TARGET% blushes as she recalls your tongue's technique.
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 4
+					IF !K2_SEXUAL_FRANKNESS()
+						PRINTFORML 「... Nh... Ah, don't... That place is...」
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 5
+					IF ABL:MASTER:舌 >= 4
+						PRINTFORMDL The movements of your tongue are so skillful that %CALLNAME:TARGET% is unable to conceal her moans.
+						PRINTFORML 「Khu, Nhaaa, Ah, Haaaanh」
+					ELSE
+						GOTO CUNNILINGUS_LOOP
+					ENDIF
+				CASE 6
+					IF ABL:MASTER:舌 >= 2
+						PRINTFORML 「Err... I'm being licked... If you keep licking me like tha-... Nh, Ah, Fwaaah」
+						PRINTFORMDL %CALLNAME:TARGET% tries to restrain herself and goes silent as you tease her sensitive spots.
+					ELSE
+						PRINTFORML 「Err... But that's a dirty place, so don't overdo it, alright...?」
+					ENDIF
+				CASEELSE
+					PRINTFORML 「Ah, Fwhaa, Fwaa... T-that place...」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		WAIT
+	ENDIF
+ENDIF
+RETURN 1
+;あとは適当な分岐を追加してください
+;==================================================
+;2,フェラする
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_2
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_2_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_2_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;3,指挿入れ
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_3
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_3_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_3_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;4,アナル舐め
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_4
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_4_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_4_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && SHIRAHU(TARGET) && !K2_EXCESSIVE_STATURE_GAP() && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「Y-you can't! That's my-!」
+		PRINTFORMDW Upon noticing your intention, %CALLNAME:TARGET% tries to push your head away, but she's unable to win against your desire.
+		PRINTFORMDW You deliberately lick %CALLNAME:TARGET%'s anus and wriggle your tongue inside her twitching hole. Since she's a robot there aren't any strangle smells.
+		RETURN 1
+	ENDIF
+	
+	IF SHIRAHU(TARGET) && !K2_EXCESSIVE_STATURE_GAP()
+		SELECTCASE RAND:3
+		CASE 1
+			PRINTFORMDL %CALLNAME:TARGET% quivers and takes long breaths as your tongue crawls and traces the entrance of her anus.
+			PRINTFORMW 「...H...a... Fuh, Nh... Aah」
+		CASE 2
+			PRINTFORMDL You carefully lick her \@ CFLAG:1001 ? butthole # nearly pink-colored hole \@, she gradually produces small moans as her sphincter muscles loosen up.
+			PRINTFORMW 「Nkhu... Nh... Nhaa...」
+		CASEELSE
+			PRINTFORMDL You insert your tongue inside her anus, her rectum repeatedly contracts and loosens up as it accepts your tongue little by little.
+			PRINTFORML 「Ah... The insides of my butt... Nnh」
+			PRINTFORMDL After licking her ass for a while you withdraw your tongue, but her anus suddenly sucks your tongue back in, as if preventing you from leaving.
+			IF ABL:Ａ感覚 >= 5 && K2_CONSCIOUS_AND_TOLERANT()
+				PRINTFORMW 「Haa... Haa... Pulling out already?」
+			ELSE
+				PRINTFORMW 「Nkuuh! Khaaa...」
+			ENDIF
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;5,アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_5
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_5_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_5_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;6,胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_6
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_6_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_6_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;7,乳首責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_7
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_7_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_7_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;8,秘貝開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_8
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_8_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_8_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+
+	$V_GAPING_LOOP_1
+	IF K2_CONSCIOUS_AND_TOLERANT() && !TALENT:無知
+		IF TALENT:恋慕 || TALENT:愛欲 || TALENT:ヤリマン
+			IF TALENT:処女 == 1 || TALENT:処女 == -1
+				SIF TALENT:処女 == 1
+					PRINTFORMDL You tremble with expectation, waiting for the robot maid to show you her chaste entrance.
+				CALL K2_HPH_PRINT,@"「H-hey now, don't act so impatiently HPH W-when are you going to take my first time? HPH」","L"
+				SIF TALENT:処女 == -1
+					PRINTFORMDL %CALLNAME:TARGET% waits for you, unaware that she already lost her virginity.
+				WAIT
+			ELSE
+				IF ABL:露出癖 < 2
+					SELECTCASE RAND:2
+					CASE 1
+						IF CFLAG:1001
+							PRINTFORMDL Contrary to what %CALLNAME:TARGET%'s ladylike appearance shows on the outside, her secret lips hint that they've been used quite a bit.
+							CALL K2_HPH_PRINT,@"「My pussy, do you want to see it that much? HPH It's embarrassing since it's not very pretty HPH」","W"
+						ELSE
+							GOTO V_GAPING_LOOP_1
+						ENDIF
+					CASEELSE
+						PRINTFORMDL %CALLNAME:TARGET% bashfully tries to avert you gaze.
+						CALL K2_HPH_PRINT,@"「Nh HPH This is embarrassing to show HPH」","W"
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:6
+					CASE 1
+						IF ABL:膣 >= 3 && PALAM:潤滑 >= PALAMLV:3
+							PRINTFORMDL Her %TEXTR("drenched/slimy/overflowing")% and sticky %K2_EXPRESSION_VARIATION("VULVA")% loosens up, attracting you like an insect to a flower.
+						ELSE
+							GOTO V_GAPING_LOOP_1
+						ENDIF
+					CASE 2
+						IF ABL:膣 >= 5
+							PRINTFORMDL Your training has turned her vagina into a penis-processing hole. It has a %TEXTR("bright/slimy")% luster as it moves vermicularly, asking for your sperm.
+						ELSE
+							GOTO V_GAPING_LOOP_1
+						ENDIF
+					CASE 3
+						IF CFLAG:1001
+							PRINTFORMDL Her indecent honeypot, which has been used by many in the past, greedily \@ PALAM:潤滑 >= PALAMLV:3 ?drips its love juices #opens up \@.
+						ELSE
+							GOTO V_GAPING_LOOP_1
+						ENDIF
+					CASE 4
+						IF CFLAG:1001
+							PRINTFORMDL The strong contrast of colors between her snow-white skin and her sleek pink membrance, which has welcomed so many penises inside, strongly fills you with arousal.
+						ELSE
+							GOTO V_GAPING_LOOP_1
+						ENDIF
+					CASE 5
+						PRINTFORMDL You get a good glance of %CALLNAME:TARGET%'s exposed \@ CFLAG:1001 ?dark and lewd labia #fresh lips \@.
+					CASEELSE
+						SELECTCASE ABL:膣
+						CASE 0
+							PRINTFORMDL %CALLNAME:TARGET% vaginal opening is still narrow, it seems it might need more time and proper training.
+						CASE 1,2
+							PRINTFORMDL %CALLNAME:TARGET%'s %TEXTR("healthy vagina loosens/vagina begins to open")% widely as if waiting for you.
+						CASE IS >= 3
+							PRINTFORMDL Her %TEXTR("hole/entrance")%'s wetness reflects the light, it seems to be feeling pleasure, \@ CFLAG:1001 ?%TEXTR("its lewd color shows its experience/it reflects its lewdness on its enlarged labia")% # thanks to being fully trained by you\@. 
+						ENDSELECT
+					ENDSELECT
+					$V_GAPING_LOOP_2
+					SELECTCASE RAND:7
+					CASE 1
+						IF K2_SEXUAL_FRANKNESS() && ABL:膣 >= 3
+							CALL K2_HPH_PRINT,@"「%CALLNAME:MASTER%-samaah, my vagina HPH "
+							;主人に男性器あり
+							IF TALENT:MASTER:性別 & 2
+								CALL K2_HPH_PRINT,@"It wants your penis HPH」","L"
+								PRINTFORML 「We'll have sex, won't we?」
+								CALL K2_HPH_PRINT,@"「I wish you would insert your cock inside, it would feel so good HPH」","W"
+							;主人に男性器なし
+							ELSE
+								CALL K2_HPH_PRINT,@"It wants something inside HPH」","L"
+								PRINTFORMW 「We'll have sex, won't we?」
+							ENDIF
+						ELSE
+							GOTO V_GAPING_LOOP_2
+						ENDIF
+					CASE 2
+						IF PALAM:潤滑 >= PALAMLV:3
+							CALL K2_HPH_PRINT,@"「Anh, my love juices are dripping out HPH」","W"
+						ELSE
+							GOTO V_GAPING_LOOP_2
+						ENDIF
+					CASE 3
+						IF K2_SEXUAL_FRANKNESS()
+							CALL K2_HPH_PRINT,@"「Are you only going to watch? Play %CALLNAME:TARGET%'s vagina, it's so lonely HPH」","L"
+							PRINTFORMDW The flustered %CALLNAME:TARGET% leans her waist near to you, filling you with temptation.
+						ELSE
+							GOTO V_GAPING_LOOP_2
+						ENDIF
+					CASE 4
+						IF ABL:膣 >= 3
+							CALL K2_HPH_PRINT,@"「How is it? My vagina? HPH It has received plenty of training HPH」","W"
+						ELSE
+							CALL K2_HPH_PRINT,@"「Please, fill my experienced hole HPH」","W"
+						ENDIF
+					CASE 5
+						IF K2_SEXUAL_FRANKNESS()
+							CALL K2_HPH_PRINT,@"「Aaan HPH Just being watched isn't good enough HPH」","W"
+						ELSE
+							CALL K2_HPH_PRINT,@"「Umm... What? Are you only going to watch? HPH」","W"
+						ENDIF
+					CASE 6
+						CALL K2_HPH_PRINT,@"「You really love watching down there HPH But... Nfuh HPH Are we not going to have sex? HPH」","W"
+					CASEELSE
+						CALL K2_HPH_PRINT,@"「My vagina belongs to %CALLNAME:MASTER%-sama HPH Please use it however you like HPH」","W"
+					ENDSELECT
+				ENDIF
+			ENDIF
+		ELSE
+			IF ABL:露出癖 >= 2
+				PRINTFORMD Feeling aroused from being seen, 
+				IF PALAM:潤滑 >= PALAMLV:3 && RAND:2
+					PRINTFORMDL sexual fluids come out from her secret place
+				ELSE
+					PRINTFORMDL %CALLNAME:TARGET% teases her sensitive sports with her finger.
+				ENDIF
+				PRINTFORMW 「Nh... Being seen like this...」
+			ELSE
+				PRINTFORMDL %CALLNAME:TARGET% looks %TEXTR("anxious/uncomfortable")% as you gaze at her.
+				SELECTCASE RAND:2
+				CASE 1
+					PRINTFORMW 「Uuu... W-why do you want to see it?」
+				CASEELSE
+					PRINTFORMW 「Exposing myself like this... Uuu...」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;9,自慰
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_9
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_9_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_9_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+[SKIPSTART]
+;別コマンド化
+;==================================================
+;10,乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_10
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_10_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_10_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;11,乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_11
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_11_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_11_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;12,胸もみ
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_12
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_12_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_12_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	$KNEAD_BREASTS_LOOP_1
+	IF !K2_EXCESSIVE_STATURE_GAP()
+		SELECTCASE RAND:3
+		CASE 1
+			IF !TEQUIP:継続キス && !TEQUIP:乳首吸い && !GROUPMATCH(TEQUIP:体位,1,3,4,6)
+				PRINTFORMDL When you massage %CALLNAME:TARGET%'s tits from behind, she \@ !TALENT:MASTER:サド && ( TALENT:恋慕 || TALENT:愛欲 || CFLAG:1001 ) ?leans back and relaxes #curls herself up and blushes \@.
+			ELSE
+				GOTO KNEAD_BREASTS_LOOP_1
+			ENDIF
+		CASE 2
+			IF !TEQUIP:縄 && !TEQUIP:拘束 && K2_CONSCIOUS_AND_TOLERANT()
+				PRINTFORMDL You place your hands on %CALLNAME:TARGET%'s breasts to fondle them.
+			ELSE
+				GOTO KNEAD_BREASTS_LOOP_1
+			ENDIF
+		CASEELSE
+			PRINTFORMD You grab %CALLNAME:TARGET%'s boobs, and enjoy 
+			IF TALENT:バストサイズ >= ( TALENT:体型 == -2 ?3 #2 )
+				PRINTFORMD feeling %TEXTR("your fingers burying themselves in her skin/their flexibility as you form different shapes with her skin/their weight/their great size/their great softness")%
+			ELSEIF TALENT:バストサイズ == ( TALENT:体型 == -2 ?2 #1 )
+				PRINTFORMD %TEXTR("her jelly-like skin as you shake them/fondling her skin/their elasticity/their soft plumpness")%
+			ELSEIF TALENT:バストサイズ == ( TALENT:体型 == -2 ?1 #0 )
+				PRINTFORMD %TEXTR("their softness/their pleasant squishiness/how soft they are")%
+			ELSEIF TALENT:バストサイズ == ( TALENT:体型 == -2 ?0 #-1 )
+				PRINTFORMD %TEXTR("fondling them while grinning/her tender skin/her thin skin")%
+			ELSEIF TEQUIP:上半身着衣状況 == 0
+				PRINTFORMD %TEXTR("her bashful reaction/their sleekness/her smooth skin")%
+			ELSE
+				PRINTFORMD %TEXTR("her bashful reaction/her blushing expression/the way she squats her shoulders in response")%
+			ENDIF
+				PRINTFORMD .
+		ENDSELECT
+		$KNEAD_BREASTS_LOOP_2
+		IF K2_BASIC_CONDITION_IN_MATING()
+			IF TALENT:恋慕 || TALENT:愛欲
+				SELECTCASE RAND:5
+				CASE 1
+					IF TALENT:母乳体質
+						CALL K2_HPH_PRINT,@"「Yhaa, Ahaa HPH Milk comes out whenever you massage me like that HPH」","L" 
+					ELSE
+						GOTO KNEAD_BREASTS_LOOP_2
+					ENDIF
+				CASE 2
+					IF ABL:Ｂ感覚 >= 3 && K2_SEXUAL_FRANKNESS()
+						CALL K2_HPH_PRINT,@"「Ah HPH Haa HPH Caress my breasts, it feels so good HPH」","L" 
+					ELSE
+						GOTO KNEAD_BREASTS_LOOP_2
+					ENDIF
+				CASE 3
+					IF ABL:MASTER:指 >= 3
+						CALL K2_HPH_PRINT,@"「Ah HPH %CALLNAME:MASTER%-sama you can play with my boobs, Yaa, I canno- HPH」","L" 
+					ELSE
+						GOTO KNEAD_BREASTS_LOOP_2
+					ENDIF
+				CASE 4
+					IF TALENT:バストサイズ >= ( TALENT:体型 == -2 ?1 #0 )
+						CALL K2_HPH_PRINT,@"「Nh... How do you like- HPH My boobs? HPH」","L"
+					ELSE
+						PRINTFORML 「There isn't much %CALLNAME:MASTER%-sama can fondle... I'm sorry...」
+						PRINTFORMDL Ignoring %CALLNAME:TARGET%'s worries about her small breasts, you deliberately massage her lovely chest.
+					ENDIF
+				CASEELSE
+					CALL K2_HPH_PRINT,@"「%CALLNAME:MASTER%-sama's hands, so warm...HPH」","L" 
+				ENDSELECT
+			ELSEIF TALENT:ヤリマン
+				SELECTCASE RAND:2
+				CASE 1
+					IF TALENT:MASTER:性別 == 2
+						CALL K2_HPH_PRINT,@"「You look dazed... HPH It's to be expected, men really love fondling women's tits after all HPH」","L"
+					ELSE
+						CALL K2_HPH_PRINT,@"「Nnh, Haah HPH I would also like to feel %CALLNAME:MASTER%-sama's breasts HPH」","L"
+					ENDIF
+				CASEELSE
+					IF ABL:MASTER:指 >= 3
+						CALL K2_HPH_PRINT,@"「Nfuh HPH %CALLNAME:MASTER%-sama wants to feel them, how lewd. You're wonderful\@ CFLAG:1001 ?ly skilled # \@ at this HPH」","L" 
+					ELSE
+						CALL K2_HPH_PRINT,@"「Yaah, Anhh HPH A girl's chest should be touched more gently HPH」","L"
+					ENDIF
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+				CASE 1
+					PRINTFORML 「Ah... Nh... Nhu... Yhaa... You're fondling them too much.」
+				CASEELSE
+					PRINTFORML 「Ah... Nh... Fwaa... Hah, Nnuuh」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		WAIT
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;13,アナル開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_13
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_13_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_13_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;ソフト系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;19,キス（継続）
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_19
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_19_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_19_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	IF K2_BASIC_CONDITION_IN_MATING()
+		IF TALENT:恋慕 || TALENT:愛欲
+			SELECTCASE RAND:2
+			CASE 1
+				CALL K2_HPH_PRINT,@"「Chuphaah... Chuhmu... Jhuuru... Nhh HPH ...Rero... Nh... Jhupa... Haa HPH」","W"
+			CASEELSE
+				CALL K2_HPH_PRINT,@"「Chuuhru... Jhupuh... Ahh... Nhaah HPH... Ahmuh... Chuphaa... Nnhu HPH」","W"
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW 「Chuphhaa... Chu... Nh... Nhaa...」
+			CASEELSE
+				PRINTFORMW 「Nchu... Chupu... Nh... Peroh...」
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;20,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_20
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_20_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_20_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	IF K2_BASIC_CONDITION_IN_MATING()
+		IF TALENT:恋慕 || TALENT:愛欲
+			IF !RAND:10
+				PRINTFORMDL Besides entwining tongues with %CALLNAME:TARGET%, you also let your lips crawl through her neck and collarbone.
+				CALL K2_HPH_PRINT,@"「Ah HPH If you leave a mark in such a place, everyone will notice it HPH」","W"
+			ELSEIF !RAND:3
+				CALL K2_HPH_PRINT,@"「Haahm... Nh... Chu HPH Nchu... Chuhpu... Nhu... Nhaa HPH」","W"
+			ELSEIF RAND:2
+				CALL K2_HPH_PRINT,@"「Nfu HPH Ahmu... Chuuphu... Nchu... Churu... Nh... Chuphaa HPH」","W"
+			ELSE
+				CALL K2_HPH_PRINT,@"「Chu... Chuuphu... Nhu... Ha HPH Please, do it more HPH Ahm... Chuhpu... Nngh HPH」","W"
+			ENDIF
+		ELSE
+			SELECTCASE RAND:2
+			CASE 1
+				PRINTFORMW 「Nh...Chu...Chhhup...Nh...」
+			CASEELSE
+				PRINTFORMW 「Nh... Haa... Haaah... Nchuu...Chuup...」
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+
+;==================================================
+;21,何もしない
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_21
+;CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_21_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_21_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;22,誘い受ける
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_22
+;CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_22_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_22_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;23,ピロートーク
+;==================================================
+@M_KOJO_MESSAGE_COM_K2_23
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K2_23_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K2_23_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;失敗
+	IF TFLAG:193
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;思慕
+	ELSEIF TALENT:思慕
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

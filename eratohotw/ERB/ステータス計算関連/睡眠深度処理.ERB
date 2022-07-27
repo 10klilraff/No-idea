@@ -1,0 +1,144 @@
+﻿;FileName_SOURCE1.ERB ------------------------------ Rev1.00
+;睡眠深度の減少処理
+;ARG		キャラNO
+;-----------------------------------------------------------
+@睡眠深度減少(ARG)
+SIF CFLAG:MASTER:イタズラ != 2
+	RETURN
+
+LOCAL:1 += CUP:ARG:不快 * 10 + CUP:ARG:苦痛 * 10 + CUP:ARG:恐怖 + CUP:ARG:反感 + CUP:ARG:抑鬱 / 2
+SELECTCASE CUP:ARG:欲情
+	CASE 50 TO 100
+		LOCAL:1 += 50
+	CASE 101 TO 500
+		LOCAL:1 += 250
+	CASE 501 TO 1000
+		LOCAL:1 += 500
+	CASE IS > 1000
+		LOCAL:1 += 1000
+	CASEELSE
+ENDSELECT
+;		PRINTFORM 睡眠深度基礎値{LOCAL:1}
+SELECTCASE EXP:MASTER:睡眠姦経験
+	CASE 100 TO 500
+		LOCAL:1 -= 100
+	CASE 501 TO 1000
+		LOCAL:1 -= 250
+	CASE IS > 1000
+		LOCAL:1 -= 500
+	CASEELSE
+ENDSELECT
+SELECTCASE EXP:TARGET:睡眠姦経験
+	CASE 100 TO 500
+		LOCAL:1 -= 100
+	CASE 501 TO 1000
+		LOCAL:1 -= 250
+	CASE IS > 1000
+		LOCAL:1 -= 500
+	CASEELSE
+ENDSELECT
+LOCAL:1 = MAX(LOCAL:1, 0) 
+SIF TCVAR:TARGET:睡眠薬強度 == 1
+		LOCAL:1 = LOCAL:1 / 2
+SIF TCVAR:TARGET:睡眠薬強度 == 2
+		LOCAL:1 = LOCAL:1 / 4
+SIF TCVAR:TARGET:睡眠薬強度 == 3
+		LOCAL:1 = 0
+;PRINTFORM 睡眠深度が{LOCAL:1}減った
+TCVAR:ARG:睡眠深度 -= LOCAL:1
+
+
+;FileName_TRACHECK.ERB ----------------------------- Rev1.00
+;好感度上昇計算処理
+;CALL		USER
+;ARG		0:キャラNO
+;RETURN		VOID
+;COMMENT	
+;-----------------------------------------------------------
+@睡眠姦発覚(ARG)
+SIF TCVAR:ARG:睡眠薬強度 == 3 && 睡眠時間(ARG) || FLAG:70
+	RETURN
+;昏睡だと起きない
+PRINTFORML %CALLNAME:ARG% wakes up.
+IF !TEQUIP:TARGET:縄
+;縄で縛っていない
+	IF TALENT:ARG:恋慕
+		PRINTFORML %CALLNAME:ARG% stares up at %PARSE("you")% in confusion upon noticing the state of %HIS_HER(TARGET)% clothes.
+		PRINTFORMW %CALLNAME:ARG% scolds %PARSE("you")% lightly as %HE_SHE(TARGET)% begins putting %HIS_HER(TARGET)% clothes into order.
+		CFLAG:ARG:好感度 += ABL:ARG:欲望
+		PRINTFORML Favorability＋{ABL:ARG:欲望}
+		CALL CHARA_AWAKE(ARG,1,1)
+		CALL SET_PRANK(0,ARG,2)
+		CALL ENDUFUFU(ARG)
+	ELSEIF TALENT:TARGET:セフレ || TALENT:TARGET:愛欲
+		PRINTFORML %CALLNAME:ARG% wakes up staring at %PARSE("you")%, %HIS_HER(TARGET)% body hungering for pleasure like a beast.
+		PRINTFORMW %CALLNAME:ARG% takes on an even more obscene pose as %HE_SHE(TARGET)% invites %PARSE("you")% to continue...
+		CFLAG:ARG:好感度 += ABL:ARG:欲望 * 2
+		PRINTFORML Favorability＋{ABL:ARG:欲望 * 2}
+		CALL CHARA_AWAKE(ARG,1,1)
+		CALL SET_PRANK(0,ARG,2)
+		FOR LOCAL, 1, GET_TARGETNUM() + 1
+			CFLAG:(TARGET:LOCAL):うふふ = 1
+		NEXT
+	ELSE
+		PRINTFORML %CALLNAME:ARG% glares at %PARSE("you")% in disbelief as %HE_SHE(TARGET)% notices how disheveled %HIS_HER(TARGET)% clothes are.
+		PRINTFORMW %CALLNAME:ARG% is furious...
+		IF MARK:ARG:反発刻印 <= 2
+			MARK:ARG:反発刻印 = 3
+			PRINTFORML Rage distorts %HIS_HER(TARGET)% face as %HE_SHE(TARGET)% utters a curse...
+			SETCOLOR C_RED
+			PRINTFORMW %CALLNAME:ARG% got Hate Mark Lv3
+			RESETCOLOR
+		ENDIF
+		CALL CHARA_AWAKE(ARG,1,1)
+		CALL SET_PRANK(0,ARG,2)
+		CALL ENDUFUFU(ARG)
+	ENDIF
+ELSE
+;縄でしばってるならそのままヤッちゃう
+	IF TALENT:ARG:恋慕
+		PRINTFORML %CALLNAME:ARG% wakes up and notices %HE_SHE(TARGET)%'s tied up.
+		PRINTFORMW When %HE_SHE(TARGET)% sees %PARSE("you")%, %HE_SHE(TARGET)% rolls her eyes in exasperation and tells %PARSE("you",5)% to hurry up and let %HIM_HER(TARGET)% go...
+		CALL CHARA_AWAKE(ARG,1,1)
+		CALL SET_PRANK(0,ARG,2)
+		FOR LOCAL,1, GET_TARGETNUM() + 1
+			CFLAG:(TARGET:LOCAL):うふふ = 1
+		NEXT
+	ELSEIF TALENT:TARGET:セフレ || TALENT:TARGET:愛欲
+		PRINTFORML %CALLNAME:ARG% wakes up to a pleasant sensation and realizes %PARSE("you've")% tied %HIS_HER(TARGET)% up and violated %HIM_HER(TARGET)%.
+		PRINTFORMW %CALLNAME:ARG% shakes %HIS_HER(TARGET)% hips, asking %PARSE("you")% to violate %HIM_HER(TARGET)% some more...
+		CFLAG:ARG:好感度 += ABL:ARG:欲望 * 3
+		PRINTFORML 好感度＋{ABL:ARG:欲望 * 3}
+		CALL CHARA_AWAKE(ARG,1,1)
+		CALL SET_PRANK(0,ARG,2)
+		FOR LOCAL,1, GET_TARGETNUM() + 1
+			CFLAG:(TARGET:LOCAL):うふふ = 1
+		NEXT
+	ELSE
+		PRINTFORML %CALLNAME:ARG% wakes up to a pleasant sensation and realizes %PARSE("you've")% tied %HIS_HER(TARGET)% up and violated %HIM_HER(TARGET)%.
+		IF TALENT:TARGET:度胸 < 0
+			PRINTFORMW %CALLNAME:ARG% begs %PARSE("you")% to stop while crying...
+		ELSE
+			PRINTFORMW %CALLNAME:ARG% shouts curses at %PARSE("you")% as %HIS_HER(TARGET)% face fills with hatred.
+		ENDIF
+		IF MARK:ARG:反発刻印 <= 2
+			MARK:ARG:反発刻印 = 3
+			IF TALENT:ARG:度胸 < 0
+				PRINTFORM Tears roll down %CALLNAME:ARG%'s cheeks
+			ELSE
+				PRINTFORM %CALLNAME:ARG%'s face is twisted in rage
+			ENDIF
+			PRINTFORML  as %HE_SHE(ARG)% utters a curse...
+			SETCOLOR C_RED
+			PRINTFORMW %CALLNAME:ARG% got Hate Mark Lv3 
+			RESETCOLOR
+		ENDIF
+		CALL CHARA_AWAKE(ARG,1,1)
+		CALL SET_PRANK(0,ARG,2)
+		FOR LOCAL,1, GET_TARGETNUM() + 1
+			CFLAG:(TARGET:LOCAL):うふふ = 1
+		NEXT
+		TCVAR:ARG:無理矢理 = 1
+	ENDIF
+ENDIF
+CFLAG:ARG:眠姦発覚 = 1

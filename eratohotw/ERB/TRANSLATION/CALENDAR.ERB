@@ -1,0 +1,102 @@
+﻿@CALENDAR
+#DIM 予定種別 = 0
+#DIM CREDRAW
+#DIM FIRST_LINE
+FIRST_LINE = LINECOUNT
+$REPRINT
+CLEARLINE LINECOUNT - FIRST_LINE
+CREDRAW = CURRENTREDRAW()
+REDRAW 0
+;[SKIPSTART]
+VARSET LOCAL
+FOR COUNT, 1, 9
+	LOCAL:COUNT = DAY:3 + COUNT - 1
+	LOCAL:(COUNT + 10) = DAY + COUNT - 1
+	IF LOCAL:COUNT > 31
+		LOCAL:COUNT -= 31
+		LOCAL:(COUNT + 100) = 1
+	ENDIF
+NEXT
+PRINTL ┌──┬──────────────────────────────────────
+PRINT │Day │Event／Banquet Information／
+IF 予定種別 == 0
+	SETCOLOR 0 , 255, 0
+	PRINT Work
+	RESETCOLOR
+	IF FLAG:1007
+		PRINT ／
+		PRINTBUTTON "Dangerous day",901
+	ENDIF
+ELSE
+	PRINTBUTTON "Work",900
+	IF FLAG:1007
+		PRINT ／
+		SETCOLOR 0 , 255, 0
+		PRINT Dangerous day
+		RESETCOLOR
+	ENDIF
+ENDIF
+PRINTL 
+PRINTL ├──┼──────────────────────────────────────
+PRINT │
+SETCOLOR 0 , 255, 0
+;{LOCAL:1(～9)}+100の数値がCHARANUM以下だとバグになるので
+;未実装の間はボタン機能自体殺しておく
+;機能実装時に適切な値を設定しなおすこと
+;PRINTBUTTON (LOCAL:1 > 9 ? TOSTR(LOCAL:1) # TOFULL(TOSTR(LOCAL:1))), (LOCAL:1 + 100)
+PRINTFORM %(LOCAL:1 > 99 ? TOSTR(LOCAL:1) # TOFULL(TOSTR(LOCAL:1))), 4%
+RESETCOLOR
+PRINT │
+;予定表内で１行目にイベント・宴会情報、２行目に名前リスト表示
+;曜日も予定表内で表示する
+;予定表を呼ぶと時間が進むので細心の注意を払う
+CALL 予定表(LOCAL:1, LOCAL:11, LOCAL:101, 1, 予定種別)
+PRINTL 
+FOR LOCAL, 2, 8
+	PRINTL ├──┼──────────────────────────────────────
+	PRINTFORM │%(LOCAL:(LOCAL) > 99 ? TOSTR(LOCAL:LOCAL) # TOFULL(TOSTR(LOCAL:LOCAL))),4%│
+	CALL 予定表(LOCAL:LOCAL, LOCAL:(10+LOCAL), LOCAL:(100+LOCAL), LOCAL, 予定種別)
+	PRINTL 
+NEXT
+PRINTL └──┴──────────────────────────────────────
+PRINTL [0] - Return
+
+;時間を戻すためにリセット用の予定表を呼ぶ
+CALL 予定表(LOCAL:8, LOCAL:18, LOCAL:108, 8)
+INPUT
+IF RESULT >= 1 && RESULT <= CHARANUM
+	PRINTFORML %CALLNAME:RESULT%
+	IF CFLAG:RESULT:自宅位置
+		PRINT Home: 
+		IF CFLAG:RESULT:神社在住
+			PRINTFORML %NAME_FROM_PLACE(CFLAG:RESULT:神社在住)%
+		ELSE
+			PRINTFORML %NAME_FROM_PLACE((CFLAG:RESULT:自宅位置) / 10 + 6000)%
+		ENDIF
+	ENDIF
+	PRINT Work information: 
+	;bug fix
+	;SIF CSVCSTR(RESULT, 1,) == ""
+	;	PRINT ？？？
+	PRINTFORML %WORK_INFO(RESULT)%
+	PRINT Workplace: 
+	SIF CSVCSTR(RESULT, 2,) == ""
+		PRINT ？？？
+;	// GET_JOBPLACE("仕事",ARG)で職場の書き換え処理があるので変更
+;	再変更しました,1外出先に対応してない,2職場が複数あるキャラに対応できない,ため
+	PRINTFORML %CSVCSTR(RESULT, 2)%
+;	PRINTFORML %NAME_FROM_PLACE(CFLAG:RESULT:職場)%
+	WAIT
+	GOTO REPRINT
+;機能実装時に条件を設定しなおす
+;ELSEIF RESULT >= 101 && RESULT <= 131
+;	PRINTFORMW {RESULT - 100}日の予定　※未実装
+;	RESTART
+ELSEIF RESULT >= 900 && RESULT <= 901
+;900:お仕事予定(予定=0)
+;901:危険日予定(予定=1)
+	予定種別 = RESULT - 900
+	GOTO REPRINT
+ENDIF
+;[SKIPEND]
+RETURN

@@ -1,0 +1,669 @@
+﻿;**************************************************************
+;キャラ追加のやり方
+
+;①@STONELEVELの相手候補:Xのところに/で区切って名前を追加。
+;	Xは出現レベル。
+;
+;②@StoneMessage_XX(ARGS)を増設。XXは追加するキャラの番号。
+;
+;@StoneMessage_XX(ARGS)
+;IF ARGS == "beginning"
+;	対戦前のメッセージ
+;ELSEIF ARGS == "win"
+;	プレイヤー勝利時
+;ELSEIF ARGS == "lose"
+;	プレイヤー敗北時
+;ENDIF
+;**************************************************************
+
+@STONELEVEL(difficulty)
+#DIM C_ID
+#DIM difficulty
+#DIMS ENEMY
+#DIMS 相手候補, 9
+;Custom code
+#DIMS 相手候補_TR, 9
+
+相手候補:0 = 久侘歌/妖夢/成美
+相手候補:1 = スター/こころ/小町
+相手候補:2 = 霊夢/白蓮/小悪魔
+相手候補:3 = にとり/サニー/こころ
+相手候補:4 = 菫子/妖夢/白蓮
+相手候補:5 = 布都/青娥/神子
+相手候補:6 = エレン/袿姫/隠岐奈/布都/青娥/神子/ヘカーティア
+相手候補:7 = 瓔花
+相手候補:8 = 瓔花
+
+相手候補_TR:0 = Kutaka/Youmu/Narumi
+相手候補_TR:1 = Star/Kokoro/Komachi
+相手候補_TR:2 = Reimu/Byakuren/Koakuma
+相手候補_TR:3 = Nitori/Sunny/Kokoro
+相手候補_TR:4 = Sumireko/Youmu/Byakuren
+相手候補_TR:5 = Futo/Seiga/Miko
+相手候補_TR:6 = Ellen/Keiki/Okina/Futo/Seiga/Miko/Hecatia
+相手候補_TR:7 = Eika
+相手候補_TR:8 = Eika
+
+
+
+LOCALS = %TEXTR(@"%相手候補_TR:difficulty%")%
+C_ID = NameToID(LOCALS)
+IF C_ID == -1
+	;custom code last ditch failsafe
+	LOCALS = %TEXTR(@"%相手候補:difficulty%")%
+	C_ID = NameToID(LOCALS)
+	SIF C_ID == -1
+		THROW %LOCALS% does not exist!
+ENDIF
+CALL PRINT_FACE(C_ID)
+;custom code in case images aren't available
+PRINTFORML %CALLNAME:C_ID%!!!
+IF difficulty == 8
+	;ラスボス特殊分岐
+	TRYCALLFORM StoneMessage_{C_ID}("lastbattle_b")
+ELSE
+	TRYCALLFORM StoneMessage_{C_ID}("beginning")
+ENDIF
+CALL STONEBATTLE(difficulty, C_ID)
+RETURN RESULT
+
+@STONELEVEL_8
+
+CALL STONEBATTLE
+IF RESULT == 0
+	PRINTFORMW YOU WIN!
+	PRINTFORMW Life Prevails!
+	PRINTFORMW
+
+	RETURN 0
+ELSEIF RESULT == 1
+	PRINTFORMW YOU LOSE
+	PRINTFORMW LOSER!
+	PRINTFORMW
+
+	RETURN 1
+ENDIF
+
+@TAGMATCH
+;TBH, I'm not sure how to handle these intro lines in general. The way they're phrased is not really in-character for a lot of the characters here
+;I'm considering removing the quotation marks and changing them from lines spoken by each character to descriptive text voiced by some "offscreen Vince McMahon"
+;For this line in particular, I have no idea how to handle it as a spoken line... maybe it's both speaking simultaneously? How tf should it be colored then...
+PRINTFORMW 「The Unreasonable and Unjust Duo who Control the Dragon Veins! We're Seiga Kaku & Mononobe no Futo!!!!」
+PRINTFORMW
+CALL SET_KOJO_COLOR(90)
+PRINTFORMW 「Futo-sama! This competition looks interesting, too - let's give it a shot!」
+CALL SET_KOJO_COLOR(92)
+PRINTFORMW 「The Crown Prince bade me watch over the Wicked Hermit, but alas... I fear 'tis impossible to reign in such an unfettered bohemian...」
+RESETCOLOR
+CALL STONEBATTLE
+IF RESULT == 0
+	PRINTFORMW YOU WIN!
+	PRINTFORMW Life Prevails!
+	PRINTFORMW
+		CALL SET_KOJO_COLOR(92)
+		PRINTFORMW 「Aaargh...so infuriating...once more, then! Once more into the breach!」
+		CALL SET_KOJO_COLOR(90)
+		PRINTFORMW 「Ehh... But I want to go home soon, Futo-sama... I swear, you can be such a free spirit at times, what a pickle this isー」
+		RESETCOLOR
+	RETURN 0
+ELSEIF RESULT == 1
+	PRINTFORMW YOU LOSE
+	PRINTFORMW LOSER!
+	PRINTFORMW
+		CALL SET_KOJO_COLOR(90)
+		PRINTFORMW 「It sure feels good to win, doesn't it. Now then, I think it's about time I ditch my little tag-along...」
+		CALL SET_KOJO_COLOR(92)
+		PRINTFORMW 「Wait! Seiga-dono, hold thine horses! Canst there be any such amusements over yonder!? Hey!」
+		RESETCOLOR
+	RETURN 1
+ENDIF
+
+@StoneMessage_1(ARGS)
+CALL SET_KOJO_COLOR(1)
+IF ARGS == "beginning"
+	;interestingly, Reimu is the only one who doesn't have an introduction line here
+	IF TALENT:1:恋慕
+		PRINTFORMW 「Oho? So you're in on this too, %CALLNAME:MASTER%? Fufun, You won't get the better of me.」
+		PRINTFORMDW Reimu breaks into a gentle smile when she realizes you're her opponent.
+	ELSE
+		PRINTFORMW 「I thought it might be fun to kill some time here, but this looks boring after all.」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:1:恋慕
+		PRINTFORMW 「Sighー... Now that I've lost, it looks like I'll be in charge of breakfast tomorrow. I'm gonna surprise you, it'll make you go 'Ahh'～」
+	ELSE
+		PRINTFORMW 「Sigh... There goes the prize money.」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:1:恋慕
+		PRINTFORMW 「Let's have a rematch sometime when we're having tea at the shrine, %CALLNAME:MASTER%.」
+	ELSE
+		PRINTFORMW 「The prize money is almost within my grasp!」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_5(ARGS)
+CALL SET_KOJO_COLOR(5)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Glimmering Sunlight! I'm Sunny Milk!」
+	PRINTFORMW
+	IF TALENT:5:恋慕
+		PRINTFORMW 「So you're my opponent, %CALLNAME:MASTER%? If I win, that means I get to play a prank on you!」
+	ELSE
+		PRINTFORMW 「We play at stacking things all the time... There's no way I'll lose!」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:5:恋慕
+		PRINTFORMW 「I lost, but it was funー! %CALLNAME:MASTER%ー, I wanna do it again!」
+	ELSE
+		PRINTFORMW 「I lost, but it was funー!」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:5:恋慕
+		PRINTFORMW 「I won～! What kind of prank should I play on you, I wonderー♪」
+	ELSE
+		PRINTFORMW 「We fairies won't lose, even if the three of us aren't together!」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_7(ARGS)
+CALL SET_KOJO_COLOR(7)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Showering Star Light! I'm Star Sapphire!」
+	PRINTFORMW
+	IF TALENT:7:恋慕
+		PRINTFORMW 「You're my opponent, %CALLNAME:MASTER%? In that case, how about the winner gets to prank the loser?」
+	ELSE
+		PRINTFORMW 「I practiced for this day with Luna and Sunny. I can't be beaten, you know!」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:7:恋慕
+		PRINTFORMW 「It seems I lost～ I wonder what kind of prank you're going to pull on me♪」
+	ELSE
+		PRINTFORMW 「Khh... I'll win for sure next time...!」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:7:恋慕
+		PRINTFORMW 「I won～! I wonder what kind of trick I should play on you♪」
+	ELSE
+		PRINTFORMW 「It doesn't take all three of us to be strong♪」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_23(ARGS)
+CALL SET_KOJO_COLOR(23)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Half-Human Half-Phantom Gardener! I'm Youmu Konpaku!」
+	PRINTFORMW
+	IF TALENT:23:恋慕
+		PRINTFORMW 「――Ack, %CALLNAME:MASTER%-san!?」
+		PRINTFORMW 「Even if it's you, I'll never lose!」
+	ELSE
+		PRINTFORMW 「Last time I was here I shattered a lot of stones, but that doesn't mean I'm not good at piling them up...probably.」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:23:恋慕
+		PRINTFORMW 「Gahh... I couldn't keep up with you at all... I'll do better next time, so please help me practice...」
+	ELSE
+		PRINTFORMW 「Gahh... I couldn't keep up with you at all...」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:23:恋慕
+		PRINTFORMW 「%CALLNAME:MASTER%-san, if you have any distractions holding you back, why don't I lop them off?」
+	ELSE
+		PRINTFORMW 「There aren't many stones that I can't stack!」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_44(ARGS)
+CALL SET_KOJO_COLOR(44)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Hardworking Witch who Dreams of Love! I'm Ellen!」
+	PRINTFORMW
+	IF TALENT:44:恋慕
+		PRINTFORMW 「Ehh!? %CALLNAME:MASTER%!? Alright! You won't beat me!」
+	ELSE
+		PRINTFORMW 「All that sewing and mixing sure made me good with my hands. It won't be easy to beat me!」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:44:恋慕
+		PRINTFORMW 「I lost... You're so strong, %CALLNAME:MASTER%%UNICODE(0x2665)%」
+	ELSE
+		PRINTFORMW 「I lost... You're strong, %CALLNAME:MASTER%!」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:44:恋慕
+		PRINTFORMW 「I beat %CALLNAME:MASTER%%UNICODE(0x2665)%」
+	ELSE
+		;I'm not sure if the Fuwafuwa in Ellen's shop name should be translated or just transliterated. Wiki leaves it as Fuwafuwa
+		PRINTFORMW 「I put in the effort to win, so I might as well take this chance to advertise. Please visit Fuwafuwa Ellen's Magic Shopー!」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_51(ARGS)
+CALL SET_KOJO_COLOR(51)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Handyman of the River! I'm Nitori Kawashiro!」
+	PRINTFORMW
+	IF TALENT:51:恋慕
+		;Apparently plesiosaurs are among the extinct fish in the Sanzu river, mentioned in Urumi's profile
+		PRINTFORMW 「So %CALLNAME:MASTER% is my opponent... Oh yeah, sometime why don't we go look for the Futabasaurus that's rumored to live in the Sanzu River?」
+		PRINTFORMDW Nitori fidgets nervously before your match...
+	ELSE
+		PRINTFORMW 「For kappa, stones on the riverbank are very familiar. I don't think I'll lose, you know.」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:51:恋慕
+		PRINTFORMW 「You got meー. It's a little hard when you're my opponent, you know...」
+	ELSE
+		PRINTFORMW 「You got meー. Even though I had confidence in my technique...」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:51:恋慕
+		PRINTFORMW 「Alright! I won, I won! I wonder what should I build with the prize money I get... %CALLNAME:MASTER%, do you have any suggestions?」
+	ELSE
+		;The Manzairaku is a reference to WaHH ch. 22
+		PRINTFORMW 「Alright! I won, I won! Hmm, I think I'll use the prize money to buy some fish from that Ushi-oni, for the Manzairaku...」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_55(ARGS)
+CALL SET_KOJO_COLOR(55)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Demonic Chief Priest of Youkai Temple! I'm Byakuren Hijiri!」
+	PRINTFORMW
+	IF TALENT:55:恋慕
+		;Byakuren is referring to mizuko kuyo and the superstition that stillborn/miscarried fetuses must endlessly stack stones on the banks of the sanzu river
+		PRINTFORMW 「I'm participating in this contest in the hopes that it will help the stillborn children...」
+		PRINTFORMW 「%CALLNAME:MASTER%, since you're my opponent, you want to have a good match that will save a child's soul, don't you?」
+	ELSE
+		PRINTFORMW 「I'm participating in this contest in the hopes that it will help the stillborn children...」
+		PRINTFORMW 「So if I'm going to do this I need to aim for the top.」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:55:恋慕
+		PRINTFORMW 「I didn't intend to lose so easily, even if it was to you, %CALLNAME:MASTER%...」
+	ELSE
+		PRINTFORMW 「Originally, the salvation of the stillborn children was the responsibility of the Bodhisattva Jizo... Was it too heavy a load me, a mere nun?」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:55:恋慕
+		PRINTFORMW 「It's my victory. I'll ask you to make breakfast tomorrow as part of your training.」
+	ELSE
+		PRINTFORMW 「Stacking stones is essentially a kind of training to realize futility...」
+		PRINTFORMW 「Maybe the stillborn children can find peace now, since they can have fun doing this.」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_56(ARGS)
+CALL SET_KOJO_COLOR(56)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Almighty and Humanitarian Taoist! I'm Toyosatomimi no Miko!」
+	PRINTFORMW
+	IF TALENT:56:恋慕
+		PRINTFORMW 「So it seems you're also participating, %CALLNAME:MASTER%? No matter how much you want it, I won't give up on the championship!」
+	ELSE
+		PRINTFORMW 「None can best me, who has been researching speedy and stable stoneworking. My victory is nothing but assured!」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:56:恋慕
+		PRINTFORMW 「I guess I made a mistake in that last round... I might have gotten a little carried away because you were my opponent.」
+	ELSE
+		PRINTFORMW 「It seems I made a mistake at the very end... I may have been a little, teensy bit overconfident...」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:56:恋慕
+		PRINTFORMW 「The height of this pile of stones is proof enough that I am the Tendou!」
+	ELSE
+		PRINTFORMW 「The height of this pile of stones is proof enough that I am the Tendou!」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_57(ARGS)
+CALL SET_KOJO_COLOR(57)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Expressionless and Emotional Menreiki! I'm Hata no Kokoro!」
+	PRINTFORMW
+	IF TALENT:57:恋慕
+		;kokoro
+		PRINTFORMW 「Ehh!? %CALLNAME:MASTER%!?」
+		PRINTFORMW 「You surprised me so much I put on my mask of surprise by mistake, instead of my mask of love...」
+	ELSE
+		PRINTFORMW 「Battle with me for the title of the strongest.」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:57:恋慕
+		PRINTFORMW 「I regret losing, but I can forgive you because you're someone I love...what a complicated expression.」
+	ELSE
+		PRINTFORMW 「Inconceivable, how could I lose. This is the mask of surprise.」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:57:恋慕
+		PRINTFORMW 「Hey hey, this is the happy but conflicted expression of winning against someone you love.」
+	ELSE
+		PRINTFORMW 「Hooray, I won. This is the expression of joy.」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_59(ARGS)
+CALL SET_KOJO_COLOR(59)
+IF ARGS == "beginning"
+	PRINTFORMW 「The librarian of the Scarlet Devil Mansion Library! I'm Koakuma!」
+	PRINTFORMW
+	IF TALENT:59:恋慕
+		PRINTFORMW 「Eh!? %CALLNAME:MASTER%-san!? I won't be defeated by you!」
+	ELSE
+		PRINTFORMW 「I sometimes help out Patchouli-sama, so I'm plenty skilled at stacking things.」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:59:恋慕
+		PRINTFORMW 「I can't compete with you, %CALLNAME:MASTER%-san...」
+	ELSE
+		PRINTFORMW 「But I'm good at stacking books, though...」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:59:恋慕
+		PRINTFORMW 「%CALLNAME:MASTER%-san. Would you like me to lend you a book on stone stacking sometime?」
+	ELSE
+		PRINTFORMW 「I think you might get better at stone stacking if you read a book on it.」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_76(ARGS)
+CALL SET_KOJO_COLOR(76)
+IF ARGS == "beginning"
+	PRINTFORMW 「Guide of the Sanzu River! I'm Komachi Onozuka!」
+	PRINTFORMW
+	IF TALENT:76:恋慕
+		PRINTFORMW 「Oho, Well I'll be damned, if it isn't %CALLNAME:MASTER%... If I win, I think I'll have you buy me a gift♪」
+	ELSE
+		PRINTFORMW 「Hey, this looks like it might be fun... You wanna let me give it a shot?」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:76:恋慕
+		PRINTFORMW 「You got me. I think I'll hand over one of my favorite things as a reward.」
+	ELSE
+		PRINTFORMW 「I'm not very good at this delicate stuff...」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:76:恋慕
+		PRINTFORMW 「I got you. As for where you'll treat me... I think I'd like to go to a sweets shop. Yep, it's a date!」
+	ELSE
+		PRINTFORMW 「If I keep going like this, I might win... If I can get my mitts on that prize money, maybe I could skip work! Ahh, That'd be the life♪」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_90(ARGS)
+CALL SET_KOJO_COLOR(90)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Unreasonable and Unjust Hermit! I'm Seiga Kaku!」
+	PRINTFORMW
+	IF TALENT:90:恋慕
+		PRINTFORMW 「I know what you're thinking, %CALLNAME:MASTER%-san...」
+		PRINTFORMW 「But I promise you, I'm not here to do anything to the spirits of the unborn children.」
+		PRINTFORMW 「Because... We can pick that argument back up after the match, you know?」
+	ELSE
+		PRINTFORMW 「Fufun, There seems to be quite the selection of opponents～」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:90:恋慕
+		PRINTFORMW 「Well I let you win this time... Because I don't want you to hate me, %CALLNAME:MASTER%-san.」
+	ELSE
+		PRINTFORMW 「Well I lost, so let's just say it was a tactical retreat.」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:90:恋慕
+		PRINTFORMW 「I don't want you to hate me, %CALLNAME:MASTER%-san... But you see, I hate losing, so I'll take the win.」
+	ELSE
+		PRINTFORMW 「WhatーpeーnalーtyーshouldーIーchooseー♪」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_92(ARGS)
+CALL SET_KOJO_COLOR(92)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Feng Shui Master who Controls Dragon Veins! I'm Mononobe no Futo!」
+	PRINTFORMW
+	IF TALENT:92:恋慕
+		PRINTFORMW 「Being that %CALLNAME:MASTER% and the Crown Prince are participating, 'twas a foregone conclusion that I shall also participate!」
+	ELSE
+		PRINTFORMW 「Being that the Crown Prince is participating, 'twas a foregone conclusion that I shall also participate!」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:92:恋慕
+		PRINTFORMW 「Take my ambitions upon ye, and in my stead seize victory～!」
+	ELSE
+		PRINTFORMW 「Nine plates... Forsooth, for lack of enough stones and plates, all is lost...」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:92:恋慕
+		PRINTFORMW 「Fear not! I shall clutch thine ambitions to my breast, and seize the championship in thy stead!」
+	ELSE
+		PRINTFORMW 「Worries did gnaw at me that my Feng Shui mightn't work in The Children's Limbo, but all hath turned out alright!」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_106(ARGS)
+CALL SET_KOJO_COLOR(106)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Mystic and Difficult-to-Handle Schoolgirl! I'm Sumireko Usami!」
+	PRINTFORMW
+	IF TALENT:106:恋慕
+		PRINTFORMW 「No way, it's %CALLNAME:MASTER%! How about the loser buys the winner some juice next time we meet up?」
+	ELSE
+		PRINTFORML 「A stone-stacking contest for the spirits of the stillborn children on the banks of the Sanzu River...」
+		PRINTFORMW 「It sure is amazing that you can experience such mystical things here～」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:106:恋慕
+		PRINTFORMW 「I lost～ Since I'll be buying you a drink next time we're in the outside world, let's have lunch together on the rooftop while we're at it!」
+	ELSE
+		PRINTFORMW 「I'm just a weak JK when I can't use my psychic powers...」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:106:恋慕
+		PRINTFORMW 「Gotcha－ Since you'll be treating me, let's have lunch together behind the school building next time we meet up in the outside world!」
+	ELSE
+		PRINTFORMW 「Aren't high school girls and masonry totally unrelated? Tsk tsk tsk, Just why does rock balancing have to be the fad around here...」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_113(ARGS)
+CALL SET_KOJO_COLOR(113)
+IF ARGS == "beginning"
+	PRINTFORMW 「Goddess of Hell! I'm Hecatia Lapislazuli!」
+	PRINTFORMW
+	IF TALENT:113:恋慕
+		PRINTFORMW 「Ara, %CALLNAME:MASTER% is also taking part in this. I wonder if that'll make me a little bit nervous...」
+	ELSE
+		PRINTFORMW 「Goddess of Hell's Incognito Observation- Go!」
+		PRINTFORMDW There's nothing 'incognito' about this...
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:113:恋慕
+		PRINTFORMW 「Just as expected from my favorite pet human!」
+	ELSE
+		PRINTFORMW 「It looks like this match is my loss. You're not bad at this, apparently.」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:113:恋慕
+		PRINTFORMW 「Ara... Since you were watching me, it seems that I got a little too serious...」
+	ELSE
+		PRINTFORMW 「Hell is my home ground. I won't be defeated so easily!」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_121(ARGS)
+CALL SET_KOJO_COLOR(121)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Magical Jizo who Manifested in the Forest! I'm Narumi Yatadera!」
+	PRINTFORMW
+	IF TALENT:121:恋慕
+		PRINTFORMW 「Eh, %CALLNAME:MASTER%? Y-You won't beat meー!」
+	ELSE
+		PRINTFORMW 「Stones are sometimes piled up as offerings for Jizo - so I know how to stack them!」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:121:恋慕
+		PRINTFORMW 「Arara, I got beaten...」
+		PRINTFORMW 「Well if %CALLNAME:MASTER% is the one who beat me, I guess it's alright.」
+	ELSE
+		PRINTFORMW 「I just realized after I lost and the excitement wore off... But maybe it's not good for a Jizo to do this at the Children's Limbo...」
+		PRINTFORMW 「No wait, maybe it's good because it's helping the stillborn children have fun...?」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:121:恋慕
+		PRINTFORMW 「I still have lots of energy left! %CALLNAME:MASTER%, come hang out with me for a bit after this!」
+	ELSE
+		PRINTFORMW 「Sorry, too bad, try again... It's a little unpleasant to have to tell you that, you know.」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_124(ARGS)
+CALL SET_KOJO_COLOR(124)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Ultimate, Absolute Secret God! I'm Okina Matara!」
+	PRINTFORMW
+	IF TALENT:124:恋慕
+		PRINTFORMW 「Whoa, who do we have here but %CALLNAME:MASTER%... I'll show you my splendid masonry! It'll blow you away!」
+	ELSE
+		PRINTFORMW 「...Let me tell you up front, it's against the rules to stop time.」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:124:恋慕
+		PRINTFORMW 「You got meー! Impressive as usual, %CALLNAME:MASTER%. I can't believe you beat my stoneworking speed.」
+	ELSE
+		PRINTFORMW 「What is this masonry that surpasses the ultimate dark masonry of the Absolute Secret God... It's quite a spectacle, isn't it?」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:124:恋慕
+		PRINTFORML 「To commemorate my victory, Okina's lecture on Noh～!」
+		PRINTFORMW 「The story of Motomezuka in Noh is about a woman who suffers in hell because she was wooed by two men.」
+		PRINTFORMW 「In Buddhism, an indecisive and popular woman is a sin in itself...」
+		PRINTFORMW 「Well, I may be a popular beauty, but... No matter how many people fall in love with me, there is only one person I can fall in love with!」
+	ELSE
+		PRINTFORMW 「To commemorate my victory, Okina's lecture on Noh～! The Sanzu River has a very profound relationship with Noh.」
+		CALL PRINT_DIALOGUE, @"The bridge connecting the backstage with the main stage in Noh plays represents this place, which connects the mortal world to the spirit realm!", "w"
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_127(ARGS)
+CALL SET_KOJO_COLOR(127)
+IF ARGS == "beginning"
+	PRINTFORMW 「Our Stillborn Idol of the Riverbed! I'm Eika Ebisu!!!」
+	PRINTFORMW
+	IF TALENT:127:恋慕
+		PRINTFORMW 「%CALLNAME:MASTER%... I didn't think you would make it this far.」
+		PRINTFORMW 「No matter how much I like you... I won't hold back just because it's you!」
+		PRINTFORMW 「Stone stacking is a sacred, precious thing and it would be disgraceful to do anything less than my best.」
+		PRINTFORMW 「Come on, let's begin! Let's play a match so intense that the demons can't come to send it crashing down!」
+	ELSE
+		PRINTFORMW 「%CALLNAME:MASTER%... I didn't think you would make it this far.」
+		PRINTFORMW 「I won't go easy on anyone. Stone stacking is a sacred, precious thing and it would be disgraceful to do anything less than my best.」
+		PRINTFORMW 「Come on, let's begin! Let's play a match so intense that the demons can't come to send it crashing down!」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:127:恋慕
+		PRINTFORMW 「Grrr... You're so strong! I thought there's no way I could lose! You're the best! %CALLNAME:MASTER%!」
+	ELSE
+		PRINTFORMW 「Grrr... You're so strong! I thought there's no way I could lose!」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:127:恋慕
+		PRINTFORMW 「It was a heated battle... Considering your growth, %CALLNAME:MASTER%, the next match might be dangerous.」
+	ELSE
+		PRINTFORMW 「It was a heated battle... The next match could be dangerous.」
+	ENDIF
+ELSEIF ARGS == "lastbattle_b"
+	PRINTFORMW 「Our Stillborn Idol of the Riverbed! I'm Eika Ebisu!!!」
+	PRINTFORMW
+	IF TALENT:127:恋慕
+		PRINTFORMW 「Coming to this rank means you're looking for a serious fight, right?」
+		PRINTFORMW 「I didn't mean to let my guard down or get sloppy last time, but now we might be able to stack up to the highest ever.」
+		PRINTFORMW 「Come on, let's begin! Here in our kingdom! I have no intention of losing, even to you %CALLNAME:MASTER%!」
+	ELSE
+		PRINTFORMW 「Coming to this rank means you're looking for a serious fight, right?」
+		PRINTFORMW 「I didn't mean to let my guard down or get sloppy last time, but now we might be able to stack up to the highest ever.」
+		PRINTFORMW 「Come on, let's begin! Here in our kingdom of the stillborn children! I have no intention of losing!」
+	ENDIF
+ELSEIF ARGS == "lastbattle_w"
+	IF TALENT:127:恋慕
+		PRINTFORMW 「Congratulations! Just as expected of the one I love! You've already become a master of masonry!」
+	ELSE
+		PRINTFORMW 「Congratulations! It's amazing how far you've come! You've already become a master of masonry!」
+	ENDIF
+ELSEIF ARGS == "lastbattle_l"
+	IF TALENT:127:恋慕
+		PRINTFORMW 「I did itー! I got you, %CALLNAME:MASTER%ー! Revenge achieved!」
+	ELSE
+		PRINTFORMW 「I did itー! Revenge achieved!」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_129(ARGS)
+CALL SET_KOJO_COLOR(129)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Clerical God of Hell's Checkpoint! I'm Kutaka Niwatari!」
+	PRINTFORMW
+	IF TALENT:129:恋慕
+		PRINTFORMW 「Ehh!? %CALLNAME:MASTER%-san!? ...Even if I'm up against you... I w-won't cut corners!!」
+	ELSE
+		PRINTFORMW 「The Yama-sama gave me the job of participating in this tournament...but that doesn't mean I'll cut any corners!」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:129:恋慕
+		PRINTFORMW 「As I thought, I'm no match for you, %CALLNAME:MASTER%-san...」
+	ELSE
+		PRINTFORMW 「You did a fantastic job!」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:129:恋慕
+		PRINTFORMW 「%CALLNAME:MASTER%-san, are you feeling under the weather or something?」
+	ELSE
+		PRINTFORMW 「It's not so simple to pass my test, unfortunately.」
+	ENDIF
+ENDIF
+RESETCOLOR
+
+@StoneMessage_132(ARGS)
+CALL SET_KOJO_COLOR(132)
+IF ARGS == "beginning"
+	PRINTFORMW 「The Sculptor God Crafted by Utter Isolation! I'm Keiki Haniyasushin!」
+	PRINTFORMW
+	IF TALENT:132:恋慕
+		CALL PRINT_DIALOGUE, @"Ara, %CALLNAME:MASTER%... I wasn't enthused because I registered in the speed-stacking contest by mistake, but I'm a bit more motivated now.", "w"
+	ELSE
+		PRINTFORMW 「I mistakenly registered for this speed-stacking contest, but that's OK, I'm still going to win.」
+	ENDIF
+ELSEIF ARGS == "win"
+	IF TALENT:132:恋慕
+		PRINTFORMW 「%CALLNAME:MASTER%'s pile of stones... It could be called modern art, but I might be a little bit biased.」
+	ELSE
+		PRINTFORMW 「I knew I should have registered for the artistic category...」
+	ENDIF
+ELSEIF ARGS == "lose"
+	IF TALENT:132:恋慕
+		PRINTFORMW 「Look, %CALLNAME:MASTER%! This hastily-erected object! Isn't it inspiring?」
+	ELSE
+		PRINTFORMW 「Now that I've won, I think I'll sculpt a stone statue today.」
+	ENDIF
+ENDIF
+RESETCOLOR

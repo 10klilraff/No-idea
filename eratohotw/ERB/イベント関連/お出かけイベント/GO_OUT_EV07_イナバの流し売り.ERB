@@ -1,0 +1,152 @@
+﻿@GO_OUT_CONDITION_EV7
+SIF RAND:10 || FLAG:デート相手
+	RETURN 0
+CALL GO_OUT_EV7
+RETURN 1
+@GO_OUT_EV7
+#DIM 取引
+#DIM 割引
+#DIM 値段
+#DIM 石販売中
+
+石販売中 = (GETBIT(FLAG_DAILY_EV23, 0) && !ITEM:(GETNUM(ITEM, "ミラダの石")))
+割引 = -50
+値段 = ITEMPRICE:(GETNUM(ITEM, "ミラダの石")) / 10
+SETCOLOR 0XFFFFFF
+PRINTFORMDW On the way %PARSE("you're")% suddenly attacked by an Inaba...?!
+PRINTFORML
+PRINTFORML 「Aaaaah!!! Please, I beg you, dear customer!!! Aahhh!!! We can't have you do that!!!」
+PRINTFORMW 「Aahhhhh!!! No more, please, dear customer!!! I'm not here to challenge you to a Danmaku, oh no!!! So please, just give me a moment!!!」
+PRINTFORML 「Aahh!!! Oh dear me!!! You mustn't!!! Please, calm down!!! Just listen to me for a second, please!!! AAAAAAAAAAHHHHHH!!!」
+PRINTFORMDW Inaba, carrying a large luggage, is kicking up a fuss all by herself... 
+CALL PRINT_FACE, 0, "通常", "服", "20"
+PRINTFORML 「Oh, umm, apologies for a rather ugly scene back there...」
+PRINTFORMW 「I may have been a little panicky, so...」
+PRINTFORML 「But then again, we met here for a reason, no doubt about it! It may be even fate!」
+PRINTFORM 「Tell me, dear customer, are you perchance interested in our 
+CALL COLORMESSAGE("wonderful", C_YELLOW, 0, 1)
+PRINTFORMW  products?」
+RESETCOLOR
+CALL ASK_M("Ignore her and move on", 1, "Have a look", 1)
+SETCOLOR 0XFFFFFF
+IF !RESULT
+	PRINTFORMDL We don't want no phony salesmen!
+	PRINTFORML 「Please, don't be like thaaat! At least hear me ouuut!」
+	PRINTFORMDL Ignoring the salesgirl who keeps on bugging %PARSE("you",5)%, %PARSE("you continue")% moving past her back home.
+	PRINTFORMW
+	RESETCOLOR
+	RETURN 1
+ENDIF
+CALL PRINT_FACE, 0, "笑顔", "服", "20"
+PRINTFORMW 「Ah, thank you very much!」
+PRINTFORM 「Then, let's peruse our selection of the most 
+CALL COLORMESSAGE("treasured items", C_AQUA, 0, 1)
+PRINTFORML  you won't find anywhere else!」
+PRINTFORM 「They may be a little 
+CALL COLORMESSAGE("pricey", C_M_GREEN, 0, 1)
+PRINTFORM , but the effects are well 
+CALL COLORMESSAGE("worth it", C_RED, 0, 1)
+PRINTFORMW , I assure you!!!」
+PRINTFORM 「As you can see, it's a variety of 
+CALL COLORMESSAGE("special", C_YELLOW, 0, 1)
+PRINTFORM  products suited for a 
+CALL COLORMESSAGE("special", C_YELLOW, 0, 1)
+PRINTFORML  person like yourself, dear customer!!!」
+PRINTFORMW 「Come take a look around at your leisure!!!」
+RESETCOLOR
+DRAWLINE
+$INPUT_LOOP
+RESETCOLOR
+CALL ITEM_SHOPPING(GETNUM(ITEM, "仙香玉兎"), "", 割引)
+CALL ITEM_SHOPPING(GETNUM(ITEM, "国士無双の薬"), "", 割引)
+CALL ITEM_SHOPPING(GETNUM(ITEM, "ガシングガーデン"), "", 割引)
+CALL ITEM_SHOPPING(GETNUM(ITEM, "ポイズンボディ"), "", 割引)
+IF 石販売中
+	PRINTFORM [{GETNUM(ITEM, "ミラダの石")}] 
+	CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 1, 1)
+	CALL COLORMESSAGE("　　　UNPRECEDENTED SPECIAL OFFER 90% OFF!", C_RED, 0, 1)
+	PRINTFORML %金額表示(値段), 13%
+ENDIF
+DRAWLINE
+SIF 石販売中
+	PRINTL [990] What's this "Stone of Mirada" thingy exactly?
+PRINTFORML [999] Not interested
+PRINTFORML 　　　Funds: %金額表示(MONEY)%
+$INPUT_LOOP2
+INPUT
+取引 = RESULT
+SETCOLOR 0XFFFFFF
+SELECTCASE 取引
+	CASE GETNUM(ITEM, "仙香玉兎") TO GETNUM(ITEM, "ポイズンボディ"), GETNUM(ITEM, "ミラダの石")
+		IF 取引 == GETNUM(ITEM, "ミラダの石") && !石販売中
+			CLEARLINE 1
+			GOTO INPUT_LOOP2
+		ENDIF
+		LOCAL = 取引 == GETNUM(ITEM, "ミラダの石") ? 90 # 割引
+		CALL SHOP_ASK(RESULT, LOCAL)
+		IF RESULT
+			PRINTFORMW 「Weeell, how about some other items perhaps?」
+			CLEARLINE 12 + RESULT + (石販売中 * 3)
+			GOTO INPUT_LOOP
+		ENDIF
+		CALL GET_ITEM(ITEMNAME:取引, 1, 2)
+	;あのセリフたまに聞きたくなるので
+	CASE 990
+		IF !石販売中
+			CLEARLINE 1
+			GOTO INPUT_LOOP2
+		ENDIF
+		PRINTFORMW 「Oh? I assumed you were familiar with it already, dear customer...」
+		PRINTFORML 「But still, it sure brings me back.」
+		PRINTFORML 「When I first started my job, I struggled to remember the description of this particular product myself...」
+		PRINTFORML 「Now then, I shall introduce you to it once again while I do my confirmation!」
+		PRINTFORMW 
+		CALL DAILY_EV23_SALESTALK(1)
+		FONTBOLD
+		PRINTFORMW 「Oh, but you wouldn't believe this!」
+		PRINTFORM 「Just for today, we're pleased to offer it at a discounted price for a paltry sum of 
+		CALL COLORMESSAGE(@"\\{値段}", C_RED, 0, 1)
+		PRINTFORMW !」
+		FONTREGULAR
+		PRINTFORML 「A rare item that you may never come across again!」
+		PRINTFORM 「If you miss your chance to purchase it at this 
+		CALL COLORMESSAGE("special price", C_RED, 0, 1)
+		PRINTFORML  while you still can...」
+		PRINTFORMW 「You may never have another one in your lifetime!」
+		PRINTFORML 「So, dear customer!」
+		PRINTFORM 「
+		CALL COLORMESSAGE("The Millennium Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+		PRINTFORMW  which promises to give you a fulfilling sexlife!!!!!!」
+		PRINTFORML 「You would of course purchase it at once, right?!」
+		FONTREGULAR
+		CALL ASK_M("Deal!!!", MONEY >= 値段, "No thanks", 1)
+		IF !RESULT
+			MONEY -= 値段
+			CALL GET_ITEM("ミラダの石", 1, 2)
+		ELSE
+			取引 = 999
+		ENDIF
+	CASE 999
+	CASEELSE
+		CLEARLINE 1
+		GOTO INPUT_LOOP2
+ENDSELECT
+IF 取引 < 999
+	CALL PRINT_FACE, 0, "笑顔", "服", "20"
+	CALL COLORMESSAGE("「Thank you for your purchase!」", 0XFFFFFF, 2, 1)
+	PRINTFORMW 「My word～ Our dear customer is such an easy mark...」
+	CLEARLINE 1
+	PRINTFORMW 「We'd love to have you back for another order sometime!」
+	PRINTFORML 「Well, that's it for today! Have fun!!!」
+ELSE
+	CALL PRINT_FACE, 0, "怒り", "服", "20"
+	CALL COLORMESSAGE(@"「%SPLIT_G("Bah:Sheesh:Pweh")%, so %SPLIT_G("yer:you're:you're")% just a %SPLIT_G("bum:hobo:pauper")%... %SPLIT_G("How lame:What a bummer:Drat")%!」", 0XFFFFFF, 1, 2)
+	CALL COLORMESSAGE(@"「%SPLIT_G("Darn:Oh dear me:Aw man")%... I've wasted so much time!」", 0XFFFFFF, 1, 2)
+	PRINTFORMDW As soon as she finds out that %PARSE("you")% weren't going to buy anything, the saleswoman's attitude takes a nosedive...
+	CALL COLORMESSAGE(@"「I %SPLIT_G("ain't got enough time:don't have time:can't be bothered")% to deal with people who don't buy anything!」", 0XFFFFFF, 1, 2)
+	CALL COLORMESSAGE(@"「%SPLIT_G("Bye bye now:See ya")%!!!」", 0XFFFFFF, 1, 2)
+ENDIF
+PRINTFORMDW The bunny saleswoman was gone\@ 取引 < 999 ? # , leaving a sharp parting remark \@.
+RESETCOLOR
+PRINTFORML 
+RETURN 1

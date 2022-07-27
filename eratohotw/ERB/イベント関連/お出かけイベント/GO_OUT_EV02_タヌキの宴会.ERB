@@ -1,0 +1,285 @@
+﻿@GO_OUT_CONDITION_EV2
+;デート中は発生しない
+SIF RAND:10 || FLAG:デート相手
+	RETURN 0
+CALL GO_OUT_EV2
+RETURN 1
+@GO_OUT_EV2
+#DIM 結果
+#DIM 色１
+#DIM 色２
+#DIM 色３
+#DIMS 自称
+#DIMS 呼び名
+#DIM nPersonality ;custom 
+結果 = CFLAG:MASTER:今日の運勢 / 100 + TFLAG:幸運補正 + TALENT:MASTER:酒耐性 + RAND:10
+LOCAL:0 = RAND:12
+LOCAL:1 = LOCAL:0 > 10 ? 1 # LOCAL:0 + 2
+LOCAL:2 = LOCAL:1 > 10 ? 1 # LOCAL:1 + 2
+色１ = GET_CN_WORD_COLOR(STR:(LOCAL:0 + 2050))
+色２ = GET_CN_WORD_COLOR(STR:(LOCAL:1 + 2050))
+色３ = GET_CN_WORD_COLOR(STR:(LOCAL:2 + 2050))
+自称 = %TEXTR("あたい/あたし/ボク")%
+呼び名 = %\@ TALENT:MASTER:性別 == 2 ? %TEXTR("mister/niisan/fella")% # %TEXTR("missy/neesan/gal")%\@%
+nPersonality = RAND:3 ;%SPLIT_G("child:girly:tomboy")%
+
+SETCOLOR 色１
+PRINTFORMDW On the way %PARSE("you're")% suddenly attacked by a tanuki...?!
+CALL PRINT_FACE, 0, "通常", "服", "21"
+PRINTFORML 「%SPLIT_SINGLE(@"Wait, wait, %呼び名%! Wait for me, please!:Heeeey, %呼び名%! Please, wait a moment!:Hey %呼び名%, wait up! Don't run!", nPersonality)%」
+PRINTFORML 「%SPLIT_SINGLE(@"I don't wanna fight you, I swear!:I don't mean harm, I promise!:I ain't about to duke it out here with you, honest!", nPersonality)%」
+PRINTFORMDL The bakedanuki donning a haori formal coat calls out to %PARSE("you")% in a fluster... she really doesn't seem to be hostile.
+PRINTFORMW 
+PRINTFORML 「%SPLIT_SINGLE(@"Speaking of which, %呼び名%... Are you free at the moment?:Leaving that aside, %呼び名%... Do you have any free time now?:Anyways, %呼び名%... You free right now?", nPersonality)%」
+PRINTFORML 「%SPLIT_SINGLE(@"Actually, we're fixing to start a party!:We're about to start a banquet around here.:The thing is, we're about to start partying hard right about now, y'see.", nPersonality)%」
+PRINTFORML 「%SPLIT_SINGLE(@"It's soooo boring to see the same people all the time, right～?:Seeing the same old faces all the time is soooo boring, don'tcha think～?:So y'know, I figured a new face would liven it up a little～", nPersonality)%」
+PRINTFORMW  
+PRINTFORML 「%SPLIT_SINGLE(@"So I thought, having a \@ TALENT:MASTER:性別 == 2 ? handsome guy # lovely lady \@ like you would be always welcome!:So why don't you show up there with me? A \@ TALENT:MASTER:性別 == 2 ? handsome guy # lovely lady \@ like you would be a welcome change!:'Specially a \@ TALENT:MASTER:性別 == 2 ? hottie # cutie \@ like you, I'd be glad to see you jump in straight away!", nPersonality)%」
+PRINTFORML 「%SPLIT_SINGLE(@"By all means, feel free to have a drink with us, 'kay?:Please come and have a drink with us, okay?:So what d'you say, %呼び名%? Wanna join us for a drink?", nPersonality)%」
+RESETCOLOR
+CALL ASK_M("Ignore her and move on", 1, "Participate", 1)
+SETCOLOR 色１
+IF !RESULT
+	;化かされ - reads as bakasare as in duped, (un)intentional pun?
+	PRINTFORMDW %PARSE("You don't")% feel like going out of %PARSE("your",1)% way just to get bewitched and/or scammed.
+	PRINTFORML 「%SPLIT_SINGLE(@"Eeehhh～! Come ooon, we'll be nice!:Eeh, what's the problem, why so cold? We don't want any trouble!:Aww, c'mon now, don't tell me you're gettin' spooked all of a sudden?", nPersonality)%」
+	PRINTFORML 「%SPLIT_SINGLE(@"Bweeh, you're sooo boring, %呼び名%～!:Way to ruin the mood, %呼び名%...～:Meh, I didn't peg you for a killjoy, %呼び名%. Guess I was wrong then～?", nPersonality)%」
+	PRINTFORMDL Ignoring the tanuki who keeps on bugging %PARSE("you",5)%, %PARSE("you continue")% moving past her to %PARSE("your",1)% destination.
+	PRINTFORMW
+	RESETCOLOR
+	RETURN 1
+ENDIF
+CALL PRINT_FACE, 0, "笑顔", "服", "21"
+PRINTFORML 「%SPLIT_SINGLE(@"Yaaay～!:Awesome～!:Awright～!", nPersonality)%♪」
+PRINTFORMW 「%SPLIT_SINGLE(@"Okay, come this way, this way! Follow me, %呼び名%!:Very well, in here, let's go here! Please keep up, %呼び名%!:That's the spirit, %呼び名%! A'ight, follow my lead, it's right about here.", nPersonality)%」
+RESETCOLOR
+DRAWLINE
+PRINTFORMW %PARSE("You encounter")% a group of bakedanuki wearing matching haori who were already having a feast at the destination.
+CALL PRINT_FACE, 0, "通常", "服", "22"
+CALL COLORMESSAGE(@"「Oooh! Been a while since we've had a newcomer♪」", 色２, 1, 0)
+CALL COLORMESSAGE(@"「Ahaha! Hey \@ TALENT:MASTER:性別 == 2 ? boyo # lassie \@, where'd ya come from? \@ TALENT:MASTER:性別 == 2 ? Quite the looker we got ourselves 'ere # You sure are a sight for sore eyes, darlin' \@♥」", 色２, 2, 0)
+CALL PRINT_FACE, 0, "笑顔", "服", "23"
+CALL COLORMESSAGE(@"「Go on now, don't be shy～ %SPLIT_G("Here's a drink to seal our acquaintance:Let's have a drink as a token of our friendship:Let's enjoy a drink to commemorate our get together")%, alright \@ TALENT:MASTER:性別 == 2 ? buddy # dear \@～?」", 色３, 1, 0)
+CALL COLORMESSAGE(@"「It's fine, don't hold back～ I want you to go for it, bottoms up～♪」", 色３, 2, 0)
+SELECTCASE 結果
+	;化かされる
+	CASE IS <= 4
+		LOCAL = MAX(ABL:MASTER:戦闘能力 * 10000, 10000)
+		PRINTFORMW %PARSE("You take")% a drink of the sake poured for %PARSE("you",5)%. It's palatable, but quite strong...
+		CALL COLORMESSAGE(@"「Oooohhh～! Nice going, %呼び名%! Down the hatch it goes～♪」", 色１, 1, 0)
+		CALL COLORMESSAGE(@"「Yup yup, %HE_SHE(MASTER)% can hold %HIS_HER(MASTER)% drink a'ight! I'm startin' to feel like we gotta give more to our dear friend 'ere!」", 色２, 2, 0)
+		PRINTFORMW As %PARSE("you drink")% in the company of the bakedanuki fawning over %PARSE("you",5)%, %PARSE("you",1)% soon %PARSE("become")% intoxicated...
+		PRINTW .........
+		PRINTW ......
+		PRINTW ...
+		DRAWLINE
+		PRINTFORML When %PARSE("you wake")% up with a start, %PARSE("you realize",1)% that %PARSE("you've",1)% fallen asleep in a pile of leaves.
+		PRINTFORMW There was no one around, no sign of a feast in the slightest... Even though not much time had passed at all since then, %PARSE("you're",1)% sure.
+		PRINTFORMW %PARSE("You've")% been had! Looks like the tanuki bewitched %PARSE("you",5)% in the end...
+		;addition custom code, tanuki back off when they try to rob you if you're friends with mamizou
+		CALL Add_Tanuki_Ex(1, 色１, 色２, 色３, 呼び名)
+		SIF RESULT
+			RETURN 1
+		;---------------------------------------------------------------------------------------------
+		PRINTFORML 
+		PRINTFORML On top of that, %PARSE("your",1)% wallet is much lighter than before!!!
+		PRINTFORML Looks like they've taken \@ MONEY > LOCAL ? %金額表示(LOCAL)% # all the cash \@ %PARSE("you",1)% had...
+		CALL LOST_MONEY_YEN(LOCAL, 1) ;custom code
+		PRINTFORMW 　Current Money:%金額表示(MONEY)%
+		PRINTFORML 
+		PRINTFORML %PARSE("You get")% up and continue on %PARSE("your",1)% way to %PARSE("your",1)% original destination, feeling like crap...
+		PRINTFORMW 
+	;逆レ。パターン欲しいので加筆大歓迎
+	CASE 5 TO 9
+		PRINTFORML Urged by the company around %PARSE("you",5)%, %PARSE("you start")% drinking, as they offer %PARSE("you",5)% more and more one after another.
+		PRINTFORMW Strangely enough, the drink goes more easily than usual, and %PARSE("you",1)% quickly find %PARSE("yourself",1)% completely wasted...
+		PRINTW .........
+		PRINTW ......
+		PRINTW ...
+		DRAWLINE
+		;IF RAND:2
+			SETCOLOR 色１
+			PRINTFORMDW %PARSE("You seem")% to have fallen asleep before %PARSE("you",1)% %PARSE("know")% it, but for some reason, a pleasant sensation is welling up between %PARSE("your",1)% legs...
+			IF TALENT:MASTER:性別 == 2
+				PRINTFORMDW As %PARSE("you wake")% up, %PARSE("you find",1)% the tanuki %PARSE("you",1)% just met being naked as the day she was born, brazenly gulping down %PARSE("your",1)% %TINKO()% and slurping on it loudly.
+				CALL PRINT_FACE, 0, "笑顔", "裸", "21"
+				PRINTFORMW 「%SPLIT_SINGLE(@"Ahaha, rise and shine %呼び名%～!:You're awake at last, %呼び名%～!:I was startin' to wonder when you're gonna wake up, %呼び名%～!", nPersonality)%」
+				PRINTFORML 「%SPLIT_SINGLE(@"Wonder how it feels to wake up with your dick being all licked?:How does it feel to wake up with your dick in my mouth?:Bet it feels good to wake up with your dick being sucked, doesn't it?", nPersonality)%」
+				PRINTFORML 「%SPLIT_SINGLE(@"No one's ever done anything like this for you before, right?:Have you ever had anything like this before, huh?:That gotta be the first time you've ever had someone do this for ya", nPersonality)%♥」
+				PRINTFORMW 
+				PRINTFORML 「%SPLIT_SINGLE(@"Anyway... this thing is just the right length and shape! It's prolly my favorite!:Still, this dick... it just has the perfect length and shape! I like it so much!:Gotta say though... I love this cock, the length and shape are right on! Just the way I like it!", nPersonality)%」
+				PRINTFORML 「%SPLIT_SINGLE(@"I can't wait to see how much longer you can keep up with me!:I'm really looking forward to seeing how long you'll last!:Now I just have to wait and see how long you'll last!", nPersonality)%」
+			ELSE
+				PALAM:MASTER:潤滑 = MAX(PALAMLV:4, PALAM:MASTER:潤滑)
+				PRINTFORMDW %BREAKENG(@"As %PARSE("you wake")% up, %PARSE("you find",1)% the tanuki %PARSE("you",1)% just met eagerly licking all over %PARSE("your",1)% %SLIT(MASTER,1)%, splashing %PARSE("your",1)% juices everywhere.")%
+				CALL PRINT_FACE, 0, "笑顔", "裸", "21"
+				;feel like this is gonna be the same for every personality
+				PRINTFORMW 「Whoa there %呼び名%, you up? I went ahead and helped myself to it!」
+				PRINTFORML 「Your crotch juice tastes so good, I just can't stop eating you out anymore, I just caaaan't♥」
+				PRINTFORML 「I'm sopping wet already just from gettin' high on your smell♥」
+				PRINTFORMW 
+				IF HAS_PENIS(MASTER)
+					PRINTFORML 「Still, I can't believe someone so prim and pretty as you been hiding something so \@ TALENT:MASTER:形状 < 4 ? funny # nasty \@ dangling between your legs all along～!」
+					PRINTFORMW 「I was totally amazed when I stripped you naked and found that thing in front of my face in all of its glory!」
+					PRINTFORML 「But it makes me happy, 'cause I'll get to have even more fun with it in a moment!」
+				ELSE
+					PRINTFORML 「But you knoooow～... I've only just started!」
+					PRINTFORMW 「It's 'cause you're so slippery and inviting, it's asking me to keep going with how much it twitches!」
+					PRINTFORML 「You're very naughty yourself too, aren'tcha %呼び名%? Your pussy doesn't lie～」
+				ENDIF
+			ENDIF
+			PRINTFORML 「Y'know %呼び名%, I really think I made the right choice asking you out. I've hit the jackpot, no doubt about it!♥」
+			PRINTFORMW 
+			IF HAS_PENIS(MASTER)
+				PRINTFORMDL %PARSE("You look")% around and see that all the tanuki are already stripped naked and gathered around %PARSE("you",5)%.
+				PRINTFORMDL They all stare at %PARSE("you",5)% and %PARSE("your",1)% fiercely erect penis with a preying glint in their eyes...
+			ELSE
+				PRINTFORMDL The next thing %PARSE("you")% knew, all the tanuki around %PARSE("you",5)% were naked, with sweet yuri action blooming everywhere out of control!
+				PRINTFORMDL The small clearing is filled with the incessant sound of moaning and the intoxicating smell of debauchery...
+			ENDIF
+			PRINTFORMW 
+			PRINTFORMDL This situation has left %PARSE("you")% completely incapable of moving %PARSE("your",1)% body!
+			PRINTFORMDL It appears that the alcohol %PARSE("you were")% drinking earlier had been laced with drugs...
+			;addition custom code, tanuki spare you from rape if you're friends with momiji as a male/futa (option)
+			CALL Add_Tanuki_Ex(2, 色１, 色２, 色３, 呼び名)
+			SIF RESULT
+				RETURN 1
+			;---------------------------------------------------------------------------------------------
+			PRINTFORMW 
+			IF HAS_PENIS(MASTER)
+				CALL Add_Tanuki_Ex(3, 色１, 色２, 色３, 呼び名) ;addition custom code, virgin eating
+				CALL PRINT_FACE, 0, "笑顔", "裸", "21"
+				PRINTFORMW 「Well then, since I'm the one who found %HIM_HER(MASTER,,1)%, I should be the first one to get it, right?」
+				CALL HPH_PRINT, @"「No one's objecting? Okaaaay, then it's decided! Thank you for the treaaaaat～ %SLUR(FSYN("lips_gulp"), -2)%!HPH」", "L"
+				PRINTFORMDW %BREAKENG(@"Straddling %PARSE("you")%, bakedanuki lowers her hips and sits down in one fell swoop, taking %PARSE("your",1)% %TINKO()% deep inside her %FSYN("base")% all at once.")%
+				CALL HPH_PRINT, @"「Ahaaaaaa!HPH That's the stuuuff!HPH %CAPITALIZE(呼び名)%, your thing's %FSYN("throb:ing")% sooo hard right nowHPH It's simply the beeeest!HPH」", "L"
+				CALL HPH_PRINT, @"「C'monHPH Be a dear nowHPH Hang in there!HPH Until the moment I cumHPH You're not allowed to cum until then at aaall!HPHHPH」", "W"
+				CALL PRINT_FACE, 0, "笑顔", "裸", "22"
+				CALL COLORMESSAGE(@"「Ooooi \@ TALENT:MASTER:性別 == 2 ? boyo # lassie \@, say, your mouth works just fine, ain't it?」", 色２, 1, 0)
+				CALL COLORMESSAGE(@"「Make sure to keep lickin' my pussy 'till my turn comes, a'ight?♥」", 色２, 2, 0)
+				CALL COLORMESSAGE(@"「What 'bout you, %ランダムキャラ_命名(69)%-chan～? Ya still 'aven't called yer dibs yet～」", 色２, 2, 0)
+				CALL PRINT_FACE, 0, "笑顔", "裸", "23"
+				CALL COLORMESSAGE(@"「Hmmmm～ I guess I'll...～ Enjoy myself takin' care of %HIS_HER(MASTER)% balls for now～」", 色３, 1, 0)
+				CALL COLORMESSAGE(@"「I'm gonna give ya a go～oood rubdown so that we can sque～eeeze out all the juice we need, \@ TALENT:MASTER:性別 == 2 ? buddy # dear \@!♥」", 色３, 2, 0)
+				RESETCOLOR
+				PRINTW .........
+				PRINTW ......
+				PRINTW ...
+				PRINTFORML %PARSE("You get")% toyed with by a bunch of horny bakedanuki who make %PARSE("you",5)% ejaculate over and over again until %PARSE("you get",1)% empty.
+				PRINTFORML They milk %PARSE("you")% for all %PARSE("you're",1)% worth until %PARSE("you are",1)% completely spent, before they all just disappear off to somewhere...
+				;custom code
+				CALL SET_DOUTEILOSS_MASTER(@"lost it after getting dead drunk and bewitched by the tanuki.")
+				PRINTFORMW 
+				;custom code
+				CALL AddEXP("Ｍ経験", MASTER, 15)
+				CALL AddEXP("口淫経験", MASTER, 15)
+				CALL AddEXP("Ｃ経験", MASTER, 45)
+				CALL AddEXP("Ｃ絶頂経験", MASTER, 30)
+				CALL AddEXP("挿入経験", MASTER, 30)
+				CALL AddEXP("射精経験", MASTER, 30)
+				CALL AddEXP("絶頂経験", MASTER, 30)
+				PRINTFORMW 
+				FLAG:気絶中断 = 100 + CFLAG:MASTER:現在位置 / 100
+				CFLAG:MASTER:デート中 = CFLAG:MASTER:現在位置 / 100
+				TARGET = 0
+				CALL LOST_GYAKURE(MASTER)
+			ELSEIF !TALENT:MASTER:処女
+				CALL PRINT_FACE, 0, "笑顔", "裸", "21"
+				PRINTFORML 「C'mon c'mon, %呼び名%! The others are havin' so much fun with each other already! Shall we get started too on that～?♥」 
+				PRINTFORMDW %BREAKENG(@"The bakedanuki takes out a fiendishly shaped double-headed dildo and plunges it into %PARSE("you")% %SLIT(MASTER)% before quickly joining it with hers without hesitation...")%
+				CALL HPH_PRINT, @"「%MOAN("m")%!HPH It's as enormous... as I remember it...!HPH I can feel it... %FSYN("stir:ing")% my insides like crazy!HPH」", "L"
+				CALL HPH_PRINT, @"「But still... it feels... awesomeeee!HPH The fact that we're connected with each other... feels so darn goooood!HPHHPH」", "W"
+				CALL PRINT_FACE, 0, "笑顔", "裸", "22"
+				CALL COLORMESSAGE(@"「Aww dear me, you look like yer in a real pinch now that you've let her force herself on ya, eh lassie～...?」", 色２, 2, 0)
+				CALL COLORMESSAGE(@"「'ere, lemme flick yer bean for ya while we're at it... Ahaha, what a splendid reaction!♥」", 色２, 1, 0)
+				CALL COLORMESSAGE(@"「Lettin' go and losin' yer mind in a cum frenzy... might be just an easy way out for ya now♥ Right, %ランダムキャラ_命名(69)%-chan?」", 色２, 2, 0)
+				CALL PRINT_FACE, 0, "笑顔", "裸", "23"
+				CALL COLORMESSAGE(@"「Mfufu!♥ Such nice boobs you got there, dearie... Even your nipples are all hard and twitchy at this point～」", 色３, 1, 0)
+				CALL COLORMESSAGE(@"「Think I'm gonna lick 'em for you even mooore～ So ya cum a who～ooole lot moreeee for me!～♥」", 色３, 2, 0)
+				PRINTFORMDL %PARSE("You climax")% over and over again as %PARSE("your",1)% body gets teased all over by the bakedanuki all at once!
+				PRINTFORMDW Eventually, %PARSE("you lose")% the energy to even let out a gasp, before %PARSE("you",1)% pass out once again...
+				RESETCOLOR
+				PRINTW .........
+				PRINTW ......
+				PRINTW ...
+				PRINTFORML When %PARSE("you wake")% up with a start, %PARSE("you realize",1)% that %PARSE("you've",1)% fallen asleep in a pile of leaves.
+				PRINTFORMW There was no sign of a feast going on around, not even a hint of someone being there.
+				PRINTFORML %PARSE("Your")% body is still on fire, but %PARSE("you're",1)% not worn out, and all of %PARSE("your",1)% belongings seem to be safe.
+				PRINTFORML Could it be that %PARSE("you",1)% just got bewitched by a group of tanuki, or perhaps...?
+				PRINTFORMW 
+				PRINTFORML In any case, feeling a bit fuzzy, %PARSE("you continue")% on %PARSE("your",1)% way to %PARSE("your",1)% original destination.
+				PRINTFORML +60 Minutes
+				PRINTFORMW 
+				;custom code
+				CALL AddEXP("Ｃ経験", MASTER, 15)
+				CALL AddEXP("Ｖ経験", MASTER, 35)
+				CALL AddEXP("Ｂ経験", MASTER, 15)
+				CALL AddEXP("Ｃ絶頂経験", MASTER, 10)
+				CALL AddEXP("Ｖ絶頂経験", MASTER, 20)
+				CALL AddEXP("Ｂ絶頂経験", MASTER, 10)
+				CALL AddEXP("絶頂経験", MASTER, 40)
+				CALL AddEXP("レズ経験", MASTER, 40)
+				PRINTFORMW 
+				PALAM:MASTER:潤滑 += 10000
+				TIME += 60
+			;不意打ちで履歴汚さないように処女は除外
+			ELSE
+				CALL PRINT_FACE, 0, "通常", "裸", "21"
+				PRINTFORML 「Come now %呼び名%, I think we should get started too right about now～♥」
+				PRINTFORMW 「...Wait, huuuh～?」
+				PRINTFORMDW %BREAKENG(@"As soon as she inserts her finger into %PARSE("your")% %SLIT(MASTER,1)%, the bakedanuki looks very confused and startled before she starts speaking with %PARSE("you",5)% again.")%
+				PRINTFORMW 「...Uuuummm, y'know, just to make sure... Say %呼び名%, could it be... that you're still... a greenhorn?」 
+				CALL PRINT_DIALOGUE, @"Blow me down and stone the crows～...! I feel like this is gonna be a big blunder on my part... if I go any further than this, right?", "w"
+				CALL PRINT_FACE, 0, "通常", "裸", "22"
+				CALL COLORMESSAGE(@"「Well, you might... just have a point there, this ain't a good thing at all...」", 色２, 2, 0)
+				CALL COLORMESSAGE(@"「We sure love teasin' and all in good faith, but...」\n「It's not like we wanna do anythin' irreversible, that's bad news...」", 色２, 2, 0)
+				CALL PRINT_FACE, 0, "通常", "裸", "23"
+				CALL COLORMESSAGE(@"「What do we do now? The drug's about to wear off, so...」", 色３, 1, 0)
+				CALL COLORMESSAGE(@"「Shall we just let this dearie go, or...?」", 色３, 1, 0)
+				PRINTFORMW 
+				PRINTFORMDL The next thing %PARSE("you know")%, the bakedanuki are blanketing %PARSE("you",5)% with fallen leaves and covering %PARSE("your",1)% eyes.
+				PRINTFORMDL As soon as %PARSE("your")% vision returned, there was no one around anymore, only %PARSE("you",5)% lying alone in the clearing...
+				PRINTFORMW 
+				PRINTFORMDL Feeling a bit bewildered by the situation, %PARSE("you continue")% on %PARSE("your",1)% way to %PARSE("your",1)% original destination.
+				PRINTFORMDL +30 Minutes
+				PRINTFORMW 
+				;custom code
+				CALL AddEXP("Ｃ経験", MASTER, 15)
+				CALL AddEXP("レズ経験", MASTER, 15)
+				TIME += 30
+			ENDIF
+		;ELSE
+		;ENDIF
+	;仲良くなる
+	CASE IS >= 10
+		PRINTFORMW The sake that was poured seemed to be very pleasant to the palate, making %PARSE("you")% feel like %PARSE("you",5)% could drink as much as %PARSE("you",1)% wanted.
+		CALL COLORMESSAGE(@"「B-Bwuh?! \@ TALENT:MASTER:性別 == 2 ? Buddy # Dearie \@, ya actually didn't go under after drinkin' this stuff, say whaaaat???」", 色３, 2, 0)
+		CALL COLORMESSAGE(@"「A-HA-HA-HA! Ain't that just great?!」\n「I guess you and us are gonna be drinkin' buddies now♪」", 色２, 2, 0)
+		PRINTFORML For some reason, the bakedanuki were surprised, but they soon regained their composure and started pouring drinks for each other.
+		PRINTFORMW The feast went on and on as %PARSE("you",2)% all enjoyed each other's company...
+		PRINTW .........
+		PRINTW ......
+		PRINTW ...
+		DRAWLINE
+		SETCOLOR 色１
+		CALL PRINT_FACE, 0, "笑顔", "服", "21"
+		PRINTFORML 「%SPLIT_SINGLE(@"Weeeell～ Thank you so much for today, %呼び名%!:That was fantastic～ I really appreciate your company today, %呼び名%!:Gotta say, thanks a lot for hangin' out with us today, %呼び名%!", nPersonality)%」
+		PRINTFORMW 「%SPLIT_SINGLE(@"It's been a long time since I had such a fun party!:This is the most fun I've had at a banquet in a long time!:Been a heck of a long time since I enjoyed a party like this!", nPersonality)%」
+		PRINTFORML 「%SPLIT_SINGLE(@"You're leaving now, right? Don't you want a souvenir or something?:You're about to leave, aren't you? Would you like a souvenir to take home with you?:You leaving already, huh? I thought maybe you'd like some souvenirs and stuff.", nPersonality)%」
+		PRINTFORMW 「%SPLIT_SINGLE(@"Go on, take all the leftover alcohol you can find around here! Just take it, it's fine～!:Just help yourself to all the alcohol that's left around here! We don't mind, you deserve it～!:If you like, take all the alcohol that's left around here! We got more, so don't worry about us～!", nPersonality)%♪」
+		PRINTFORML 
+		PRINTFORMDL The bakedanuki lets %PARSE("you")% have 5 bottles each of Unrefined Sake, Sake, and Strong Sake!
+		PRINTFORMDL %PARSE("You thank")% her and %PARSE("leave")%, continuing on %PARSE("your",1)% way to %PARSE("your",1)% original destination...
+		PRINTFORMDL +60 Minutes
+		PRINTFORMW  
+		TIME += 60
+		BASE:MASTER:酒気 = MAX(MAXBASE:MASTER:酒気 / 3 * 2, BASE:MASTER:酒気)
+		;custom code
+		CALL GET_ITEM("どぶろく", 5, 1)
+		CALL GET_ITEM("清酒", 5, 1)
+		CALL GET_ITEM("鬼殺し", 5, 1)
+		WAIT
+ENDSELECT
+TARGET = 0
+RESETCOLOR
+RETURN 1

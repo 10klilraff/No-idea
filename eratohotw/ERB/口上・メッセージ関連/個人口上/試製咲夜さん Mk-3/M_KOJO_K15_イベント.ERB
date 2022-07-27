@@ -1,0 +1,1585 @@
+﻿;-------------------------------------------------
+; eraTheWorld 4.575用 咲夜口上（キャラクターの名前を入れる、下にコンセプトなど一言あれば入れる）
+;-------------------------------------------------
+;他者による修正、加筆、改変については、同梱のライセンス条項に従ってください。
+
+
+;美鈴口上を参考にさせていただきました。
+;とりあえずある程度出来たので年越しに合わせて。
+
+;******************************************************************************
+
+;### 口上存在判定 ###################################
+@M_KOJO_K15(ARG)
+;別人版を作成する際はこのテンプレではなく別人版用口上テンプレをご利用ください
+
+;口上存在判定です、けしてコメントアウトしないでください
+;他の処理は一切行わないように
+RETURN 1
+
+;### 口上基本フラグ設定 #############################
+@M_KOJO_FLAGSETTING_K15
+;基本フラグ設定はここで行ってください
+;共通の口上フラグは必要な箇所のコメントアウトを外してご利用ください
+;口上専用フラグはご自由に
+;Xにはキャラ番号を入れてください
+
+;眠姦口上有、時間停止口上有、なりきりに1を入れると、それぞれ時間停止時、眠姦時、なりきり時にコマンド口上が読み込まれるように
+;入れないと時間停止時、眠姦時、なりきり時は一切喋りません
+;CFLAG:X:眠姦口上有 = 0
+;CFLAG:X:時間停止口上有 = 0
+;CFLAG:X:なりきり口上有 = 0
+
+;破瓜キャンセル口上有に1を入れると、@M_KOJO_EVENT_KX_LOST_VIRGIN_STOPでキャンセルの成否を操作できます
+;CFLAG:X:破瓜キャンセル口上有 = 0
+
+;口上内抱き寄せ判定_初回と口上内抱き寄せ判定_通常に1を入れると、M_KOJO_EVENT_KX_PERMISSIONで押し倒しの成否を操作できます
+;CFLAG:X:口上内抱き寄せ判定_初回 = 0
+;CFLAG:X:口上内抱き寄せ判定_通常 = 0
+
+;押し倒し禁止に1を入れると、自分から押し倒してこなくなります
+;以下は恋慕かセフレがつくまで押し倒してこなくなる使用例
+;IF !TALENT:X:恋慕 && !TALENT:X:セフレ
+;	CFLAG:X:押し倒し禁止 = 1
+;ELSE
+;	CFLAG:X:押し倒し禁止 = 0
+;ENDIF
+
+;来訪不能に1を入れると、来訪してこなくなります
+;以下は面識があるまで来訪してこなくなる使用例
+;IF !CFLAG:X:面識
+;	CFLAG:X:来訪不能 = 1
+;ELSE
+;	CFLAG:X:来訪不能 = 0
+;ENDIF
+
+;### 口上色判定 ###################################
+@M_KOJO_COLOR_K15
+
+;ここでSETCOLORすることで口上に色を付けられます
+;例：SETCOLOR 0xC07070
+SETCOLOR 0x8b9ddd
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"UPDATE判定"
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;口上独自のUPDATE用
+;独立ファイルに移行
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"ENCOUNTER"系イベント（エクストラ構文）
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_ENCOUNTER_K15
+;初対面、挨拶のタイミング
+;TALENTの変更はここでどうぞ。
+;経験の変更は齟齬が出る場合がありますので、CSVを修正し同梱する事を推奨します
+PRINTL
+PRINTFORMW 「Hello. I am the Head Maid of the Scarlet Devil Mansion, Izayoi Sakuya.」
+PRINTFORMDW Before you even realise, a silver-haired girl is already standing behind you.
+PRINTFORMW 「Pleased to make your acquaintance.」
+;拠点が紅魔館かどうか
+IF MAIN_MAP == 3
+	PRINTFORML 
+	PRINTFORMDL She bows politely with a practiced grace, giving you a good look at her beautiful face.
+	PRINTFORMDL Her appealing appearance fits someone who is tasked with all the household chores in the Scarlet Devil Mansion.
+	PRINTFORMDL Her body, well proportioned and enticing, probably garners a lot of envy.
+	PRINTL 
+	PRINTFORMW 「You are the new butler, right? For now, you will be working under me.」
+	PRINTFORMW 「Your duties will be mainly cooking and cleaning.」
+	PRINTL 
+	PRINTFORMW （There should be no problem since the Mistress appointed this person...）
+	PRINTFORMDL %BREAKENG(@"Since the well-being of the Mansion is almost entirely her responsibility, she takes caution, carefully observing your every action and expression.")%
+	PRINTFORMDL As if satisfied from what she has seen, for now, she meets your gaze and extends her hands for a handshake.
+	PRINTFORMW 「The work may be tiring, but we will be living together from now on. Please take care of me.」
+	PRINTFORMDW You extend your hand in response―――
+	PRINTL 
+	PRINTL
+	PRINTFORML 「Please do beware of your actions around the mistresses. It is a hassle if I have to dispose of the extra trash.」
+	PRINTL
+	PRINTL 
+	PRINTFORMDL Before you realise, Sakuya is already holding a knife in her hands, the edge biting into your neck.
+	PRINTFORMW 「If it were up to me, I would have been perfectly fine managing the Mansion alone...」
+	PRINTFORMW 「However, since this is an direct order from the mistress, I have no choice but to work with you.」
+	PRINTFORMW 「If you misunderstand this as my accepting you and do something out of the line, please understand that I will pass judgement without fail.」
+	PRINTL 
+	PRINTFORMDW A perfect woman to molest with my powers... You chuckle to yourself internally.
+	PRINTFORMDW With your power, no one can stand up against you.
+	PRINTFORMW 「Controlling time is within my powers. Do not think you will get away with any transgressions.」
+	PRINTFORMDW ―――Even if you can control the time, you will eventually fall under my grasp.
+	PRINTFORMDW You think to yourself, not even bothering to conceal a smirk as she turns back into the Mansion.
+ENDIF
+
+PRINTL
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"SP_EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;デート帰りにファーストKISS（合意も付く）
+;==================================================
+@M_KOJO_SPEVENT_K15_1(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+;CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTFORML  
+	PRINTFORMDW The two of you return side by side, matching the pace of each other.
+	PRINTFORMDW Sneaking a sideways glance, Sakuya finds herself transfixed by you.
+	PRINTFORMDW She stops, staring at your gentle expression and breaking into a smile.
+	PRINTFORMDW Just when you are about to ask her if there is something stuck on your face――
+	PRINTFORML 
+	PRINTFORMDW You feel a soft touch and smell her fragrance.
+	PRINTFORMDW When you realise her face is right in front of your eyes,
+	PRINTFORMDW your lips brush against each other.
+	PRINTFORMW 「Nng...」
+	PRINTFORML 
+	PRINTFORMW 「... Thank you very much for today.」
+	PRINTFORMDW %BREAKENG(@"She says as she turns away. You can't help but think how cute she is as she hurries back into the Mansion not realising how flush her face is.")%
+	;キスをキャンセルしたい場合は以下を開放
+	;TCVAR:キスキャンセル = 1
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰りに告白（恋人が付く）
+;==================================================
+@M_KOJO_SPEVENT_K15_2(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+;CALL SPEVENT_MESSAGE_2(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;告白内容
+	;この告白内容表示後に受けるかどうかの選択分が表示されます
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		IF FIRSTTIME("デート告白イベント")
+			PRINTFORML
+			PRINTFORMDW Sakuya walks home next to you, her arms wrapped around your waist.
+			PRINTFORMDW Just as you two are about to reach the Mansion, your eyes meet with Sakuya.
+			PRINTFORMDW An expression you can not quite describe overcomes her - one filled with a hint hesitation and anticipation.
+			PRINTFORMW 「Umm... %CALLNAME:MASTER%, there is something I want to say... No, something I want to tell you.」
+			PRINTFORMDW She says with a seriousness you have never heard before, and stares into your eyes.
+			PRINTFORML 
+			PRINTFORMW 「When I am with %CALLNAME:MASTER%, I feel like I can be myself.」
+			PRINTFORMW 「... Not just a maid serving the Mistress, not just someone that can stop time...」 
+			PRINTFORMW 「But just『Izayoi Sakuya』.」
+			PRINTFORMW 「... That is why, my feelings, I have to convey it to you now...」
+			PRINTFORML
+			PRINTFORMW 「I...」
+			PRINTFORMW 「I love you, %CALLNAME:MASTER%.」
+			PRINTFORMDW She lowers her eyes, hiding a blush, but looks up at you once more.
+			PRINTFORMDW With cheeks painted scarlet from nervousness, she says――
+			PRINTFORMW 「... Will you, go out with me?」
+		ELSE
+			PRINTFORMDL On the way back, Sakuya faintly murmurs,
+			PRINTFORML 「... I had so much fun today.」
+			PRINTFORMDL From her faint whisper, she continues, condensing a million feelings into her words,
+			PRINTFORML 「I feel happy whenever I am with %CALLNAME:MASTER%,」
+			PRINTFORML 「and I think nothing will change how I feel.」
+			PRINTFORMDW She smiles gently, her voice barely a whisper in the wind.
+			PRINTFORML 
+			PRINTFORMW 「... Say, %CALLNAME:MASTER%, will you think about going out with me?」
+			PRINTFORML 
+			PRINTFORMDW Though her words are nonchalant, you can see her eyes are filled with anticipation and unease...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白オッケー（恋人が付く）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		PRINTFORMDW When you reply that you feel the same way, a sheen of moisture wells up in Sakuya's eyes.
+		PRINTFORML 
+		PRINTFORMW 「Really...?」
+		PRINTFORMW 「Are you really okay with me?」
+		PRINTFORML 
+		PRINTFORMDW Her expression falters, as if she can't believe it's real. You nod in response, clearly conveying your conviction.
+		PRINTFORMDW Overcome by emotion, Sakuya leaps into you, embracing you.
+		PRINTFORML 
+		PRINTFORMW 「...」
+		PRINTFORMDW Sakuya buries her face into your chest.
+		PRINTFORMDW You wrap your arms around Sakuya, who can not express her feelings through words alone.
+		PRINTFORMW 「Hehe, %CALLNAME:MASTER%, I love you!」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		PRINTFORMW 「...」
+		PRINTFORMW 「...Umm, That is fine.」
+		PRINTFORMW 「Looks like I was a bit overcome by the moment.」
+		PRINTFORMDW Although she tries to regain her usual composure, you can tell that she is dejected.
+		PRINTFORMW 「I had lots of fun today. Really.」
+		PRINTFORMW 「I would be happy if you would take me out some time again.」
+		PRINTFORMW 「And... um,」
+		PRINTFORMW 「one day, I will definitely make you look my way.」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰り
+;==================================================
+@M_KOJO_SPEVENT_K15_3(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_3(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORML
+		IF TALENT:恋人
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「... I see, so Meiling did something like that... I will punish her when we get back.」
+				PRINTFORMDL You chat about mundane things.
+				PRINTFORML 「Hm? You want to hold hands? Sure.」
+				PRINTFORMDL Just by holding hands and strolling, you feel a wave of contentedness crash over you.
+				PRINTFORML 「Then... Here... How is it?」
+				PRINTFORML 「Right now I feel happy just by having you by my side, %CALLNAME:MASTER%.」
+				PRINTFORML 「What about you, %CALLNAME:MASTER%? Are you really happy by my side?」
+				PRINTFORMDW Of course, you reply. The two of you return home, basking in the closeness of one another.
+			CASE 1
+				PRINTFORML 「Hmmm, What should we do for the next date?」
+				PRINTFORML 「I want to eat that one. You know, the one featured in the Bunbunmaru Newspaper...」
+				PRINTFORMDL The two of you have already started planning for the next date on the way back.
+				PRINTFORML 「Ah, But I also really want to see landscapes with you again, %CALLNAME:MASTER%. Hehe.」
+				PRINTFORMDW The two of you chat, never running out of new topics on the way back.
+			CASEELSE
+				PRINTFORML 「Fufu, Time really flies when I am with you, %CALLNAME:MASTER%.」
+				PRINTFORML 「Even though time goes by really fast when you are having fun,」
+				PRINTFORML 「for『me』, that is not a problem at all, %CALLNAME:MASTER%♪」
+				PRINTFORMDL Sakuya says as she throws her arms around you, making a show of the watch that she holds in her hand.
+				PRINTFORMDL You, knowing that telling her it is hard to walk in her embrace would end it,
+				PRINTFORMDW simply enjoy the warmth of her body as the two of you make your way back.
+			ENDSELECT
+		ELSEIF TALENT:恋慕
+			SELECTCASE RAND:4
+			CASE 0
+				PRINTFORMDL The two of you look back on the date on your way back.
+				PRINTFORML 「I had tons of fun today♪」
+				PRINTFORML 「Oh, yeah, lets go there next time!」
+				PRINTFORML 「I will show you a good place I know. Hehehe.」
+				PRINTFORMDW Enjoying the sensation of her breasts pressing against your arm, the two of you return, laughing and chatting along the way――
+			CASE 1
+				PRINTFORML 「Time flies when you are having fun.」
+				PRINTFORML 「Almost makes me want to stop the time when we go out.」
+				PRINTFORML 「Hehe, That was just a joke. But, thank you for today.」
+				PRINTFORMDW Sakuya thanks you as you arrive home, a hint of loneliness dancing across her face.
+			CASE 2
+				PRINTFORML 「...Oh, It's already this late?」
+				PRINTFORML 「Did you have fun, %CALLNAME:MASTER%?」
+				PRINTFORMDL You nod, soliciting a warm smile from Sakuya.
+				PRINTFORML 「That's good. Then, lets do this again sometime... okay♪?」
+				PRINTFORMDW Imagining the next date, the two of you walk back together...
+			CASEELSE
+				PRINTFORML 「I like the time when we walk back together.」
+				PRINTFORML 「How should I put it? It's almost like an extension of the date...」
+				PRINTFORML 「Makes me feel like: ”Ahh, I just came back from a date”.」
+				PRINTFORMDL A wave of peacefulness and contentedness surfaces on Sakuya's expression as she speaks.
+				PRINTFORMW （I would be happy if %CALLNAME:MASTER% felt the same too...）
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Ara, It's already time to go home...」
+				PRINTFORML 「I had a pretty good time♪　Please take care of me next time as well♪」
+				PRINTFORMDW Sakuya says as she waves goodbye, a smile on her face as she returns home...
+			CASE 1
+				PRINTFORML 「Thank you for inviting me out today.」
+				PRINTFORML 「Why don't you visit the Scarlet Devil Mansion next time. I will make sure you have a great time.」
+				PRINTFORMDW Sounds good, you say, promising you will visit next time.
+			CASEELSE
+				PRINTFORML 「Going outside with someone is pretty refreshing once in a while.」
+				PRINTFORML 「%CALLNAME:MASTER%, thank you for today.」
+				PRINTFORMW 「Goodbye.」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「Let's go back now.」
+				PRINTFORML 「It was a nice change of pace. Please invite me next time when you have the time.」
+				PRINTFORMDW Sakuya bows politely and waves goodbye before returning home.
+			CASEELSE
+				PRINTFORML 「Looks like this is the end of our rendezvous today.」
+				PRINTFORMW 「Please take care on your way back. Goodbye.」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印消去イベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		PRINTFORMW 「...Hmmm.」
+		PRINTFORMW 「I understand. I will let bygones be bygones.」
+		PRINTFORMDW Sakuya shakes her head in acquiescence, relaxing her posture, prompting you to finally sigh in relief.
+		PRINTFORMW 「But there will be no next time, okay?」
+		PRINTFORMDW Though her words are cautionary, there is no hostility in them anymore.
+		
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印2>1レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		PRINTFORMW 「...Haa. I guess you at least are regretting your actions.」
+		PRINTFORMW 「I will forgive you, but only a little.」
+		PRINTFORMDW It seems like Sakuya's mood has improved, if only slightly.
+		PRINTFORMW 「However, if you ever do something like that again... I probably don't need to tell you what will happen.」
+		PRINTFORMW 「I think you understand that you can never escape my powers, yes?」
+		PRINTFORMDW Looks like in order to completely get off her bad side, there is still some work to do...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印3>2レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		PRINTFORMW 「......」
+		PRINTFORMW 「I suppose that you have some intention of apologizing.」
+		PRINTFORMW 「I guess I will give you a chance.」
+		PRINTFORML 
+		PRINTFORMW 「... After all, it is quite troublesome if the amount of flammable trash increases.」
+		PRINTFORMDW For a brief moment, you feel a terrifying intent exuding from Sakuya.
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;部屋で遭遇
+;==================================================
+@M_KOJO_EVENT_K15_1(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && GROUPMATCH(ARG, 1, 6) ;edit
+		IF CFLAG:MASTER:現在位置 == 309
+			IF TALENT:恋慕 || TALENT:恋人
+				SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML 「Ara, Isn't it %CALLNAME:MASTER%?」
+					PRINTFORMDL Sakuya greets you with a smile.
+					PRINTFORML 「...Hehe♪」
+					PRINTFORMW 「Oh, it's nothing, Master♪」
+				CASE 1
+					PRINTFORMDL As you approach, Sakuya greets you with a smile.
+					PRINTFORML 「How are you, %CALLNAME:MASTER%♪」
+					PRINTFORML 「Are you here on an errand, or...」
+					PRINTFORML 「...have you come to meet me?」
+					PRINTFORMDL Her voice as faint as a whisper, Sakuya looks up into your eyes.
+					PRINTFORMW 「It's nothing. I'm just joking. Hehehe.」
+				CASE 2 TO 3
+					PRINTFORML 「Ah, It's you, %CALLNAME:MASTER%.」
+					PRINTFORMDL Sakuya greets you with a warm gaze, almost as if she knew you were coming.
+					PRINTFORMW 「Is there anything I can do for you today?」
+				CASEELSE
+					SELECTCASE TIME
+					;朝８時～夕方５時。実質休日のみ
+					CASE 480 TO 1020
+						PRINTFORMDL Sakuya is smiling as she jokes around with a newly hired Fairy Maid.
+						PRINTFORMDL Looks like the newcomer has taken a liking to her.
+						PRINTFORML 「Hey now, do your work properly. Hehe. Say, %CALLNAME:MASTER%, do you think I will ever...」
+						PRINTFORMW 「Ah, Wait... Hyaan... Where do you think you're touching? Ah! Stop right there!」
+					;それ以外
+					CASEELSE
+						PRINTFORMDL As Sakuya notices you, she waves her hand, beckoning you over.
+						PRINTFORMDL When you come to her, Sakuya leaps into your arms, a pretty shade of pink creeping up her cheeks.
+						PRINTFORMDL Sakuya nuzzles her face against your chest.
+						PRINTFORML 
+						CALL HPH_PRINT(@"「Nng～...HPH Okay, I'm ready to work hard today as well!」", "L") 
+						PRINTFORMDW Seems like she has had her daily dose of “Vitamin %CALLNAME:MASTER%” today.
+					ENDSELECT
+				ENDSELECT
+			ELSEIF TALENT:思慕
+				SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML 「...Ah, %CALLNAME:MASTER%!」
+					PRINTFORMDW Sakuya's face lights up as she sees you.
+				CASE 1
+					PRINTFORML 「......～♪」
+					PRINTFORMDL Sakuya is humming a tune as she cleans, her movements practiced and deliberate.
+					PRINTFORML 「...Huh?! %CALLNAME:MASTER%!? Wh-when did you...?!」
+				CASE 2 TO 3
+					PRINTFORML 「Ahh, I knew it. Hello, %CALLNAME:MASTER%.」
+					PRINTFORML 「I somehow just knew you were coming.」
+					PRINTFORMDW Sakuya seemed rather happy after greeting %CALLNAME:MASTER%.
+				CASEELSE
+					SELECTCASE TIME
+					;朝８時～夕方５時。実質休日のみ
+					CASE 480 TO 1020
+						PRINTFORMDL Sakuya is smiling as she jokes around with a newly hired Fairy Maid.
+						PRINTFORMdL Looks like the newcomer has taken a liking to her.
+						PRINTFORML 「Hey now, do your work properly. Hehe. Say, %CALLNAME:MASTER%, do you think I will ever...」
+						PRINTFORMW 「Ah, Wait... Hyaan... Where do you think you're touching? Ah! Stop right there!」
+					CASEELSE
+						PRINTFORMDL Sakuya is smiling as she jokes around with a newly hired Fairy Maid.
+						PRINTFORMDL Looks like the newcomer has taken a liking to her.
+						PRINTFORML 「Hey now, do your work properly. Hehe. Say, %CALLNAME:MASTER%, do you think I will ever...」
+						PRINTFORMW 「Ah, Wait... Hyaan... Where do you think you're touching? Ah! Stop right there!」
+					ENDSELECT
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「......」
+					PRINTFORMDW Looks like she is cleaning in silence.
+				CASE 1
+					PRINTFORML 「Oh, Good day.」
+					PRINTFORMDL Sakuya curtly greeted you, who greet her back.
+					PRINTFORMDW Her posture is one that lacks any openings.
+				CASEELSE
+					SELECTCASE TIME
+					;朝８時～夕方５時。実質休日のみ
+					CASE 480 TO 1020
+						PRINTFORMDL Sakuya is instructing the new Fairy Maids.
+						PRINTFORMDL Seems like the Fairy Maids want new brooms.
+						PRINTFORMW 「There are a lot of brooms in the casino toilets, you can just pick and take one as you like.」
+					CASEELSE
+						PRINTFORML 「Ara, What are you doing at this time of the day?」
+						PRINTFORMDW Sakuya asks curiously as she greets you.
+					ENDSELECT
+				ENDSELECT
+			ENDIF
+		;広間以外
+		ELSE
+			IF TALENT:恋慕 || TALENT:恋人
+				SELECTCASE RAND:4
+				CASE 0
+					PRINTFORML 「Ara, %CALLNAME:MASTER%. Why don't you have a seat here?」
+					PRINTFORMDL Sakuya, who was relaxing in her seat, says as she notices you, patting the seat next to her and beckoning.
+					PRINTFORML 
+					PRINTFORML 「Come on, come closer. Closer♪」
+					PRINTFORMDW As you sit down next to her, Sakuya moves her body closer to yours, her attitude completely different from when she is at work.
+				CASE 1 TO 2
+					PRINTFORML 「Ah, It's you, %CALLNAME:MASTER%.」
+					PRINTFORMDL Sakuya greets you with a warm gaze, almost as if she knew you were coming.
+					PRINTFORMW 「Is there anything I can do for you today?」
+				CASEELSE
+					PRINTFORML 「Ara, %CALLNAME:MASTER%. Why don't you have a seat here?」
+					PRINTFORMDL Sakuya, who was relaxing in her seat, says as she notices you, patting the seat next to her and beckoning.
+					PRINTFORML 
+					PRINTFORML 「Come on, come closer. Closer♪」
+					PRINTFORMDW As you sit down next to her, Sakuya moves her body closer to yours, her attitude completely different from when she is at work.
+				ENDSELECT
+			ELSEIF TALENT:思慕
+				SELECTCASE RAND:5
+				CASE 0 TO 2
+					PRINTFORML 「Ah, It's you, %CALLNAME:MASTER%.」
+					PRINTFORMDL Sakuya greets you with a warm gaze, almost as if she knew you were coming.
+					PRINTFORMW 「Is there anything I can do for you today?」
+				CASE 3
+					PRINTFORML 「Ara, Isn't this %CALLNAME:MASTER%?」
+					PRINTFORMDL Sakuya smiles faintly as she notices you.
+					PRINTFORMDL You ask her what she is smiling at.
+					PRINTFORML 「Nothing. Nothing in particular really.」
+					PRINTFORMDW Sakuya's smile becomes more radiant as she replies, shaking her head.
+				CASEELSE
+					PRINTFORML 「Hello, %CALLNAME:MASTER%.」
+					PRINTFORMDL You turn towards the source of the voice. Sakuya stands there without your realising.
+					PRINTFORML 「I am on break time right now.」
+					PRINTFORMDW Sakuya seems bored.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「......」
+					PRINTFORMDW Looks like she is cleaning in silence.
+				CASEELSE
+					PRINTFORML 「Oh, Good day.」
+					PRINTFORMDL Sakuya curtly greets you, who greet her back.
+					PRINTFORMDW Her posture is one that lacks any openings.
+				ENDSELECT
+			ENDIF
+			;時姦刻印があるとき時姦刻印/7で
+			IF MARK:時姦刻印 > 0 && RAND:7 < MARK:時姦刻印
+				PRINTFORMDL As you approach her, \@MARK:快楽刻印>0? #due to time stop rape,%" "%\@the memory of intense carnal pleasure carved into Sakuya's body comes to life.
+				PRINTFORMDW It makes her yearn mercilessly for your touch subconsciously.
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		SELECTCASE RAND:3
+		CASE 0
+			IF CFLAG:MASTER:現在位置 == 309 && RAND:3 == 0
+				PRINTFORMDL Sakuya approaches slowly, the silver luminance of the moon covering her like a cape.
+			ELSEIF TALENT:恋慕
+				PRINTFORML 「Ah, %CALLNAME:MASTER%.」
+				PRINTFORMDL Sakuya's expression brightens as she sees you.
+				PRINTFORMDW She smiles, an expression that doesn't fit the work she is doing right now.
+			ELSE
+				PRINTFORML 「Ah, Hello.」
+				PRINTFORMDW Sakuya bows as she looks your way.
+			ENDIF
+		CASE 1
+			PRINTFORML 「Ara, %CALLNAME:MASTER%.」
+			IF CFLAG:MASTER:現在位置 == 309 && RAND:3 == 0
+				PRINTFORML 「Do you have an errand to run here?」
+				PRINTFORMDW Sakuya approaches you calmly.
+			ELSEIF TALENT:恋慕
+				PRINTFORMDW Sakuya approaches happily as she notices you.
+			ELSEIF TALENT:思慕
+				PRINTFORMDW Sakuya approaches with a bright expression as she notices you.
+			ELSE
+				PRINTFORMDW Sakuya says as she approaches.
+			ENDIF
+		CASEELSE
+			PRINTFORML 「Ara, %CALLNAME:MASTER%. Can I help you?」
+			IF TALENT:恋慕
+				PRINTFORMDL She approaches with a slight blush over her cheeks.
+			ELSEIF TALENT:思慕
+				PRINTFORMDW She approaches with a faint smile across her lips.
+			ELSE
+				PRINTFORMDW She says as she approaches.
+			ENDIF
+		ENDSELECT
+
+		;時姦刻印があるとき時姦刻印/7で
+		IF MARK:時姦刻印 > 0 && RAND:7 < MARK:時姦刻印
+			IF MARK:快楽刻印 > 0
+				PRINTFORMDL Just from your presence alone, Sakuya's body, though invisible from her clothes covering, naturally goes into heat.
+				PRINTFORMDW Her developed, sensitive erogenous zones start longing for the pleasures you have given her.
+			ELSE
+				PRINTFORMDL Due to the unresisted time stop rape she endured, Sakuya's blossoming female instincts
+				PRINTFORMDW makes her unconsciously desire you, filling the surrounding with the pleasant aroma of her arousal as she approaches.
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて一緒に入る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF TALENT:恋人
+			IF MARK:快楽刻印 > 0 && RAND:7 < MARK:快楽刻印
+				PRINTFORML 「Excuse me.」
+				PRINTFORMDL Sakuya's eyes meet with yours as she puts her body against you.
+				PRINTFORML 「Haaa～ This feel so good～...」
+				PRINTFORMDL She sighs lazily and places her hand on your thigh under the water.
+				PRINTFORML 「Hm? What's wrong, %CALLNAME:MASTER%?」
+				PRINTFORMDL Smirking, Sakuya starts moving her hands closer and closer to your groin.
+				CALL HPH_PRINT(@"「――― Why don't we do something that feels even better?HPH」", "L")
+				PRINTFORMDL A devilish smile dances across Sakuya's face and a tinge of lust surfaces in her eyes as she presents her body to you...
+			ELSEIF MARK:時姦刻印 > 0 && RAND:7 < MARK:時姦刻印
+				PRINTFORML 「Ara, I see you've already entered the bath.」
+				CALL HPH_PRINT(@"「Wait a moment, I'll just quickly wash... Hnng...HPH」", "L")
+				PRINTFORMDL Sakuya says as she enters the bath and begins washing her body.
+				PRINTFORMDL However, her gaze is already transfixed on your body and her movements seem unnatural.
+				PRINTFORMDL Perhaps the memory of the time stop rape has made her go into heat, for she washed herself with excessive showmanship,
+				PRINTFORMDL purposefully making a show of washing her erogenous zones, her fingers doing a sensual dance across her body.
+				PRINTFORMDL Finishing with a cascade of hot water, she lowers herself into the bathtub as a contented sigh escapes her lips.
+				CALL HPH_PRINT(@"「Nnnhg... Ahhh... I'm ready. HeheHPH」", "L")
+			ELSE
+				PRINTFORML 「Hey, %CALLNAME:MASTER%. Will you make some room for me next to you?」
+				PRINTFORMDL Sakuya enters the bath next to you.
+				PRINTFORML 「Ahh～. This feels so nice, right?」
+				PRINTFORMDL After submerging herself in the water for a while, Sakuya rests her head on your shoulder.
+				PRINTFORML 「It feels this nice because I'm taking the bath with %CALLNAME:MASTER%, maybe♪」
+				PRINTFORMDW Enjoying the feeling of the physical contact, Sakuya whispers as she looks up into your eyes.
+			ENDIF
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「Ara, There's already someone in here?」
+			PRINTFORMDL Blushing slightly, Sakuya approaches you and enters the bath next to you.
+			PRINTFORML 
+			PRINTFORML 「How is it? The temperature of the bath, I mean.」
+			
+			IF MARK:快楽刻印 > 0 && RAND:7 < MARK:快楽刻印
+				PRINTFORMDL Sakuya smirks provocatively as she leans against you.
+				CALL HPH_PRINT(@"「But... Don't you want to do something that feels better than a bath?HPH」", "L")
+				PRINTFORMDL Sakuya purposely squeezes her twin mounds together, a sheet of pink coated over them from the bath.
+				PRINTFORMDW Her nipples stand erect without having been caressed, almost as if they had a mind of their own.
+			ELSEIF MARK:時姦刻印 > 0 && RAND:7 < MARK:時姦刻印
+				PRINTFORML 「... Looking at %CALLNAME:MASTER%'s body, why do I feel...」
+				PRINTFORMDL Sakuya murmurs to herself as her gaze swims around your naked body, stopping excessively on the nether region.
+				CALL HPH_PRINT(@"「I-it's nothing... Humph...HPH」", "L")
+				PRINTFORMDL Sakuya tries to hide her arousal by averting her gaze, but after learning of the pleasure while being time-stopped,
+				PRINTFORMDW she subconsciously rubs her fingers against her entrance.
+			ELSE
+				PRINTFORMDW Watching Sakuya as she stretched her back, you cannot help but be blown away by the beautiful curves of her shoulder and breasts.
+			ENDIF
+			
+		ELSE
+			PRINTFORML 「――Huh, %CALLNAME:MASTER%!?」
+			PRINTFORMDL Sakuya quickly hugs her smooth, unblemished body in a panic, attempting to hide her nakedness as she enters the bath.
+			PRINTFORML 
+			PRINTFORML 「You're already in the bath, I see.」
+			PRINTFORML 「Ummm, If you'll excuse me.」
+			
+			IF MARK:快楽刻印 > 0 && RAND:7 < MARK:快楽刻印
+				PRINTFORMDL Sakuya blushes as she enters the bath.
+				PRINTFORMDL It seems like seeing you naked makes her recall the pleasure of sex with you.
+				PRINTFORMDW As if dizzy from the heat of the bath, she sneaks occasional glances at your groin.
+			ELSEIF MARK:時姦刻印 > 0 && RAND:7 < MARK:時姦刻印
+				PRINTFORMDL Seeing your naked body, Sakuya's body can't help but recall the pleasures it received while being time-stop raped.
+				PRINTFORMDW A stream of moisture trickles down her leg even before entering the bath.
+			ELSE
+				PRINTFORMDL Sakuya enters the bath, keeping a small distance from you.
+				PRINTFORMDW Casting an occasional glance at her figure, you can see the nape of her neck - glistening with droplets of water.
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて出て行った
+	;仲が進んでおらず、既成事実が1未満か、恋慕が付いていない異性の場合に出ていく（他でも共通の風呂条件）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		IF MARK:快楽刻印 > 0 && RAND:7 < MARK:快楽刻印
+			PRINTFORML 「――Ah... Hnng... Ah!」
+			PRINTFORML 「P-Pardon me...」
+			PRINTFORMDL After losing herself in your body, Sakuya finally comes back to her senses.
+			PRINTFORMDW She hurriedly exits the bath, covering her nethers as she hastily retreats.
+		ELSEIF MARK:時姦刻印 > 0 && RAND:7 < MARK:時姦刻印
+			PRINTFORML 「...Ara, You're already in the bath.」
+			PRINTFORML 「...Hnng... Pardon me...」
+			PRINTFORMDL For a split second, Sakuya swallows hard as an unknown shock of pleasure runs across her body.
+			PRINTFORMDW Your eyes follow her as she leaves, and you notice a small trickle of liquid down her thighs even though she hasn't entered the bath...
+		ELSE
+			PRINTFORML 「P-Pardon me.」
+			PRINTFORMDW Sakuya hastily exits the bath in embarrassment.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて追い出された
+	;異性で弱みを握られている（パンツ発見or情事を見られた）場合に発生
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORMW 「――Ara.」
+		PRINTFORML 「Bath time is one of the only times I can relax.」
+		PRINTFORML 「Since I don't think I can relax in the bath with %CALLNAME:MASTER% around, would you please leave?」
+		PRINTFORMDL You find yourself outside the bath just as she finishes her sentence.
+		PRINTFORMDW Seems like she threw you out using her power.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;外出先で遭遇した
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;他キャラとデート中に遭遇した
+	;ARG:1にデート相手
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML 
+ENDIF
+RETURN 1
+
+;==================================================
+;朝起きたとき（おはよう口上）
+;==================================================
+@M_KOJO_EVENT_K15_2(ARG,ARG:1)
+CALL MESSAGE_GOODMONING(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ARG == 1 非同棲かつ相手が先に起きてる
+	;ARG == 2 同棲かつ相手が起きている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1 || LOCAL:1 && ARG == 2
+		;-------------------------------------------------
+		;TARGET私室にMASTERが入っている（恋慕時添い寝中就寝時のみ？
+		;記入チェック（=0, 非表示、1, 表示）
+		;LOCAL:1 = 0
+		;-------------------------------------------------
+		;IF LOCAL:1 && !ARG:1
+		;	RETURN 1
+		;ENDIF
+		;-------------------------------------------------
+		;MASTER私室にTARGETが入ってきてる(恋慕無しでも入ってくる可能性有り
+		;記入チェック（=0, 非表示、1, 表示）
+		;LOCAL:1 = 0
+		;-------------------------------------------------
+		;IF LOCAL:1 && ARG:1 == 1
+		;	RETURN 1
+		;ENDIF
+		
+		;共通。あなたが男かふたなり時、合意ありで奉仕・口淫経験一定以上
+		IF GETBIT(TALENT:MASTER:性別,1) && CFLAG:既成事実 & 合意_うふふ && EXP:奉仕快楽経験 >= 10 && EXP:口淫経験 >= 10
+			SELECTCASE RAND:4
+			CASE 0
+				PRINTFORMDW Still groggy from waking up, you feel a weird but pleasurable sensation coming from your lower body.
+				PRINTFORML 
+				PRINTFORML 「Amph, Nnph, Hnnng, Juru... Oh my, you're finally awake.」
+				PRINTFORMDL Looking down, you see Sakuya between your legs, kissing your penis with fervor.
+				PRINTFORML 「When I was cleaning your room, I happened to see your morning wood. It seemed like it wanted release, so..」
+				PRINTFORML 「By the way, the smell is mindblowingly strong. You should... Rero... Really wash it carefully.」
+				PRINTFORMDL Sakuya wraps her lips and tongue around your member even as she speaks, the slurping noises coming from her lips intensifying by the minute.
+				PRINTFORML 「Fuuu――...haa... It's so hard...! Aumph, Juru... Nhh... Jubu... Mmmmggg!」
+				PRINTFORMDL Finally, you are at your limit, releasing your semen directly into Sakuya's mouth, whose eyes are muddied with a glazed expression.
+				CALL HPH_PRINT(@"「Nnng...HPH Juru, Juzozo～HPH Phew... Haa...HPH」", "L")
+				PRINTFORMDL Sakuya pools the semen she's milked in her mouth, opening wide and showing the white liquid dancing on her tongue.
+				PRINTFORMDL And just like that, she swallows it with an audible gulp...
+				CALL HPH_PRINT(@"「Cough, What a thick load...HPH Thank you for the mealHPH」", "L")
+			CASE 1
+				PRINTFORMDW Waking up to a pleasant feeling, you hear a wet noise coming from your groin.
+				PRINTFORML 
+				PRINTFORML 「Good morning... Haaa, Nchuu, Pero Pero...」
+				CALL HPH_PRINT(@"「? What this is? Morning sexual relief, of course. It's the duty of a maid after allHPH」", "L")
+				PRINTFORMDL Your penis is completely coated with Sakuya's saliva, the length and degree of her blowjob apparent from its condition.
+				PRINTFORML 「Did you wash it properly? The smell was really strong... Chuu.」
+				CALL HPH_PRINT(@"（However, if I were to rate it on the shape, smell, and size, it would get full marksHPH）", "L")
+				CALL HPH_PRINT(@"「Chyuupa... Come on, give me your extra thick morning loadHPH」", "L")
+				PRINTFORMDW With that, she latches her lips on your glans like a vacuum, and a burst of hot liquid rushes into Sakuya's waiting mouth...
+			CASE 2
+				PRINTFORML 「%CALLNAME:MASTER%, wake up.」
+				PRINTFORML 「Do you want to be punished like Meiling?」
+				PRINTFORMDW You fly out of bed without thinking.
+			CASEELSE
+				PRINTFORML 「...Hmmm, It's unexpectedly soft...!?」
+				PRINTFORMDL You wake up to find Sakuya poking you cheeks.
+				PRINTFORMW 「F-Forget what you just saw! Forget it right this moment!! \/\/\/」
+			ENDSELECT
+		ELSEIF CFLAG:好感度 >= 1500 && CFLAG:信頼度 >= 300
+			SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML 「%CALLNAME:MASTER%, it's morning already.」
+				PRINTFORML 「If you don't wake up, you'll end up like Meiling, okay?」
+				PRINTFORMDW You wake up to Sakuya's gentle morning call.
+			CASE 1
+				PRINTFORML 「It's time to wake up, %CALLNAME:MASTER%.」
+				PRINTFORML 「%CALLNAME:MASTER%?」
+				PRINTFORMDL Sakuya calls as she moves her face closer to yours.
+				PRINTFORMDL Having enjoyed her fragrance, you open your eyes and greets her.
+				PRINTFORML 「... If you're awake already then get up quickly!」
+				PRINTFORMDW Sakuya scolds, a pretty blush creeping up her cheeks...
+			CASE 2
+				PRINTFORML 「%CALLNAME:MASTER%, wake up.」
+				PRINTFORML 「Do you want to be punished like Meiling?」
+				PRINTFORMDW You fly out of the bed without thinking.
+			CASEELSE
+				PRINTFORML 「...Hmmm, It's unexpectedly soft...!?」
+				PRINTFORMDL You wake up to find Sakuya poking you cheeks.
+				PRINTFORMW 「F-Forget what you just saw! Forget it right this moment!! \/\/\/」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「It's morning already, %CALLNAME:MASTER%.」
+				PRINTFORMDW You wake up to Sakuya's voice.
+			CASEELSE
+				PRINTFORML 「%CALLNAME:MASTER%, wake up.」
+				PRINTFORML 「You'll be late for work.」
+				PRINTFORMDW You wake up to Sakuya's voice.
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;-------------------------------------------------
+	;同棲かつ相手が寝ている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		;中身の文は美鈴用関数置き場に。共通なのは朝起きた時、夜寝るとき（睡眠中）、仕事中居眠り
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERが起きていて、相手が起きてきた
+	;添い寝時TARGET起床はこちら（TARGET衰弱or添い寝中TARGET睡魔負け後そのままMASTERが起き続けた上で相手が起床した場合限定
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;-------------------------------------------------
+		;非同棲
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;同棲中
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;共通
+		IF TALENT:恋人
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Nnngg, good morning, %CALLNAME:MASTER%.」
+				PRINTFORMDL Sakuya rubs her eyes sleepily as she gets out of bed.
+			CASEELSE
+				PRINTFORML 「Funyaaa... Good mormin'...」
+				PRINTFORMDL Although it seems like she's awake, her slurring indicates that she is still half-frolicking in the dream world.
+				PRINTFORML 「%CALLNAME:MASTER%, wuv you, I wuv you... Nnnmmm....」
+				PRINTFORMDL She purses her lips as if begging for a kiss, but you tell her to go wash her face first.
+				PRINTFORMDL She gets up and leaves for the sink.
+				PRINTFORMDW After a while, a scream of embarrassment reverberates throughout the room...
+			ENDSELECT
+		ELSEIF TALENT:恋慕 || TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Mmmnn... Good morning, %CALLNAME:MASTER%.」
+				PRINTFORML 「... I hope today will be a good day, hehe.」
+				PRINTFORMDW Sakuya looks somewhat happy.
+			CASEELSE
+				PRINTFORML 「Hnngg.. Auuu...」
+				PRINTFORMDL It seems like Sakuya was restless in her sleep, for her blanket is nowhere to be seen, and her clothes hang messily from her body.
+				PRINTFORMDL Just as you devour the eye candy that is her perfectly sized twin mounds that could just barely be seen through her clothes,
+				PRINTFORMDL Sakuya opens her eyes.
+				PRINTFORMW 「Nnng... Ah, Good morning.」
+			ENDSELECT
+		ELSE
+			PRINTFORMW 「... Good morning.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;夜寝るとき（おやすみ口上）
+;==================================================
+@M_KOJO_EVENT_K15_3(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;自室に帰る（定時になって寝る）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:恋人
+			PRINTFORML 「Fuwahh, It's already this late...」
+			PRINTFORMW 「I wish I could stop time to preserve this moment forever.」
+			PRINTFORML 「I am the happiest when I'm with %CALLNAME:MASTER% after all♪」
+			PRINTFORMDL Her gaze softens as you stare into each other's eyes.
+			PRINTFORMW 「Well, good night, %CALLNAME:MASTER%.」
+		ELSEIF TALENT:恋慕 || TALENT:思慕
+			PRINTFORML 「Oh my, it's already this late?」
+			PRINTFORML 「I will have to excuse myself here today.」
+			PRINTFORMDL Sakuya murmurs sleepily, her voice indicating she would like to stay awake longer.
+			PRINTFORMW 「See you tomorrow.」
+		ELSE
+			PRINTFORML 「Well now, it's almost bed time. I will have to excuse myself here.」
+			PRINTFORML 「Please, have a good night, %CALLNAME:MASTER%.」
+			PRINTFORMDW Sakuya leaves without another word...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;眠そうにしている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		SELECTCASE RAND:4
+		CASE 0
+			PRINTFORML 「Nnng... I feel a bit sleepy.」
+			PRINTFORMDW You can see her grogginess as her centre of gravity sways sleepily...
+		CASEELSE
+			PRINTFORML 「Fuwaaa... I'm sleepy.」
+			PRINTFORMDW Sakuya covers her mouth with her hands as she stifles a yawn.
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;睡眠中（起きていないので会話というよりは寝言？）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+	;中身の文は美鈴用関数置き場に。共通なのは朝起きた時、夜寝るとき（睡眠中）、仕事中居眠り
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;イタズラ中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		IF TALENT:恋人 || TALENT:恋慕
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「Nnggg... Ah... Haaa...」
+				CASE 1
+					PRINTFORMW 「Ah... Hyaa...」
+				CASEELSE
+					PRINTFORMW 「Nnngg... I like this... Nnngg... Ah!」
+				ENDSELECT
+		ELSEIF TALENT:思慕
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「...Fuuu...hiii...」
+				CASE 1
+					PRINTFORMW 「Munyaa...? Ah... Nng!」
+				CASEELSE
+					PRINTFORMW 「Nnng.. Ah... Not there...」
+				ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「Munyuuu... Nnng...」
+				CASE 1
+					PRINTFORMW 「...Haaa... Nnng...」
+				CASEELSE
+					PRINTFORMW 「... Nnnmm?... Ah...?」
+				ENDSELECT
+		RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;衰弱中（恋慕付き拠点内キャラがMAIN_MAPで衰弱状態になった場合か、お招き部屋で相手が衰弱した場合に発生
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		IF TALENT:恋人
+			PRINTFORMW 「... Ah... Oh... Nnnngg... Haaa....」
+			PRINTFORMW 「Uuhh... Ah... Ahhnnngg... Eheee...」
+			PRINTFORMDW You bring Sakuya, who is unable to form words beyond random sounds, back to her room.
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「... Nnngg... Ahh... Amazing... Haaa...」
+			PRINTFORMW 「... Haa, haaa... Nnng, ah!」
+			PRINTFORMDW You carry Sakuya, whose entire body is painted with a sheen of scarlet, back to her room.
+		ELSE
+			PRINTFORMW 「... Haa... Haa... I...can't go on... Haa.. Haaa...」
+			PRINTFORMDW After steadying her on her feet, you watch as Sakuya leaves, shakily.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERがダウン（部屋まで運ばれる）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		IF TALENT:恋人
+			PRINTFORML 「%CALLNAME:MASTER%?... %CALLNAME:MASTER%!?」
+			PRINTFORML 「Are you okay, %CALLNAME:MASTER%!? ... Eh? You're just tired, you say?」
+			PRINTFORMDL After calming down and confirming your well-being, Sakuya sighs in relief.
+			PRINTFORML 「My... What am I going to do with you?」
+			PRINTFORML 「Don't make me worry so much, idiot...」
+			PRINTFORMDW Sakuya sighs as she holds you gently, carrying you back to your room.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「A-Are you okay?」
+			PRINTFORML 「You're working too hard... Goodness's sake.」
+			PRINTFORML 「It can't be helped. I'll carry you back to your room, just tell me where it is.」
+			PRINTFORMDW Sakuya sighs as she carries you in her arms back to your room.
+		ELSE
+			PRINTFORML 「... Are you okay?」
+			PRINTFORML 「This... seems like just over-fatigue.」
+			PRINTFORMDL Sakuya supports you with her shoulder nonchalantly.
+			PRINTFORMW 「Even I can't just leave someone lying on the ground after all...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;移動時すれちがい
+;==================================================
+@M_KOJO_EVENT_K15_4(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;立ち止まった
+	;この後遭遇口上に接続
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;軽く会釈して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:恋人
+			PRINTFORML 「%CALLNAME:MASTER%, where are you going?」
+			PRINTFORML 「Will you come with me after your errand is done?」
+			PRINTFORMDL Returning Sakuya's smile, you continue on your way.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「Ara, Isn't it %CALLNAME:MASTER%?」
+			PRINTFORML 「... In a hurry? Have a safe trip.」
+			PRINTFORMDL Sakuya says as she gives you a quick wave and smile.
+		ELSEIF TALENT:思慕
+			PRINTFORML 「...」
+			PRINTFORMDL Sakuya waves her hand as she notices you.
+		ELSE
+			PRINTFORML 「Hello.」
+			PRINTFORMDL Sakuya curtsies politely
+		ENDIF
+		;快楽or時姦刻印がある時
+		IF MARK:快楽刻印 > 0 && RAND:7 < MARK:快楽刻印
+			PRINTFORMDL Although her demeanor seems normal from afar, as you pass her,
+			PRINTFORMDL Sakuya's mind fills with the memory of pleasure carved deep into her being, and her nethers moisten without prompting...
+		ELSEIF MARK:時姦刻印 > 0 && RAND:7 < MARK:時姦刻印
+			PRINTFORMDL However, underneath her clothes, almost as if anticipating some sort of reward, her erogenous zones start thirsting after you.
+			PRINTFORMDL Sakuya's eyes start following you even without her realising...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無視して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;弱みを握った
+;==================================================
+@M_KOJO_EVENT_K15_9(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;同じ場所に居てパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML 「... Please excuse me.」
+		PRINTFORMDL The panties you held in your pockets appears in Sakuya's hands as she finises her sentence.
+		PRINTFORMW 「... Why do you have this?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;遠距離移動中にパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML 「... Hmm? Wait a moment.」
+		PRINTFORMDL Sakuya blocks your path, and starts searching your body.
+		PRINTFORML 「Oh my, this is... Ha...」
+		PRINTFORML 「...」
+		PRINTFORML 「Do you have a moment to『talk』?」
+		PRINTFORMDW Looking at the panties you held in your pockets, a「gentle」smile dances across Sakuya's face.
+		RETURN 1
+	ENDIF
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;押し倒した
+;==================================================
+@M_KOJO_EVENT_K15_10(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;うふふ==2（開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;MASTERを押し倒した（開始時）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			IF TALENT:恋人
+				PRINTFORML 「... I can't wait anymore.」
+				PRINTFORML 「It was %CALLNAME:MASTER% who teased me first... okay?」
+				PRINTFORMDL You, who are pushed down gently in a blink of the eye, stroke Sakuya's hair lovingly.
+				PRINTFORML 「Really, that trait of yours is really unfair... You know that, right?」
+				PRINTFORMDL Sakuya's eyes are foggy with lust, and she doesn't waste a moment peeling off your clothes.
+				PRINTFORML 「I'm sorry, %CALLNAME:MASTER%, but you'll have to bear with me until I'm satisfied.」
+				CALL HPH_PRINT(@"「I'll make sure you won't be able to stand after this... Okay?HPH」", "L")
+			ELSEIF TALENT:恋慕 || TALENT:思慕
+				PRINTFORML 「...Phew, Uhhgg...」
+				PRINTFORML 「Sorry... I can't...」
+				PRINTFORMDL Sakuya pushes you down in the blink of an eye, her eyes hungrily devouring you.
+				PRINTFORMDL Her hot breath dances across your neck, and her slit rubs against your thigh.
+				PRINTFORMW 「It's all your fault, %CALLNAME:MASTER%...」
+			ELSE
+				PRINTFORML 「... I can't take it anymore.」
+				PRINTFORMDL Just as you hear Sakuya's voice, you find yourself constricted by her body.
+				PRINTFORML 「Fufufu, It's your fault, %CALLNAME:MASTER%, for seducing me like this...」
+				PRINTFORMDL Her tongue flicks across her slightly opened lips, and her silver hair wraps around her pale skin.
+				PRINTFORMDW From her expression and words, you understand what is about to happen.
+			ENDIF
+			RETURN 1
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;なだめられた（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		SELECTCASE ARG:1
+			CASE 0
+			;抜け出した
+				IF TALENT:恋人
+					PRINTFORML 「Nnng... Haaa... Haaa... Are you done already?」
+					PRINTFORML 「But I wanted to feel your touch a bit more, %CALLNAME:MASTER%...」
+					PRINTFORMDL Although her pink breasts press against you, you tell her to endure it until next time.
+					PRINTFORML 「... I understand.」
+					PRINTFORMW 「Next time, please make love to me until I lose conscious, okay?」
+				ELSEIF TALENT:恋慕 || TALENT:思慕
+					PRINTFORML 「Ha... Haa... You're already done?」
+					PRINTFORML 「Can't we continue...just a little bit?」
+					PRINTFORMDL Sakuya runs her fingers across your groin, pleadingly.
+					PRINTFORMDL You grip that hand firmly, making Sakuya give up on her advances.
+					PRINTFORMW 「... Next time, let's do it til the end, okay?」
+				ELSE
+					PRINTFORML 「My, you're already finished?」
+					PRINTFORMW 「I can still go on but... I guess it can't be helped.」
+				ENDIF
+				RETURN 1
+			CASE 1
+			;抱き着きモード満足終了
+				IF TALENT:恋慕
+					PRINTFORML 「... Thank you, %CALLNAME:MASTER%.」
+					PRINTFORMDW Sakuya nuzzles her nose against your chest, breathing in your aroma before untangling her body from yours.
+				ELSE
+					PRINTFORML 「... Phew. I feel a lot better after that. Thank you very much.」
+					PRINTFORMW 「Please take care of me next time too, okay %CALLNAME:MASTER%♪?」
+				ENDIF
+				RETURN 1
+			CASE 2
+			;抱き着きモード強制終了。
+			;誰かが入ってきた中断時？っぽいんだけど振り払われた時で書いてる感じの口上も有るしよく分からん
+				IF TALENT:恋慕
+					PRINTFORML 「... Looks like we had an intruder this time.」
+					PRINTFORML 「Next time, let's do it properly, %CALLNAME:MASTER%. Promise?」
+					PRINTFORMDW Sakuya licks her lips exaggeratedly, as if to show you on purpose...
+				ELSE
+					PRINTFORML 「Looks like we have an intruder.」
+					PRINTFORMDW Sakuya leaves as if nothing had happened.
+				ENDIF
+				RETURN 1
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;抜け出す失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		SELECTCASE ARG:1
+			CASE 1
+			;好きにして状態から抜け出せなかった
+				IF TALENT:恋慕
+					CALL HPH_PRINT(@"「My my, you can't escape from meHPH」", "L")
+					CALL HPH_PRINT(@"「Did you forget my powers? NnnggHPH」", "L")
+					PRINTFORMDL Just as you think you got away from Sakuya, you find yourself restrained by Sakuya once more.
+					CALL HPH_PRINT(@"「Come on, try your hardest to escapeHPH」", "L")
+					PRINTFORMDW A devilish smile surfaces on Sakuya's face. Looks like there is no escape from her.
+				ELSE
+					PRINTFORML 「Ara, I won't let you go.」
+					PRINTFORML 「It's %CALLNAME:MASTER%'s fault that I became like this,」
+					PRINTFORML 「so take responsibility, okay?」
+					PRINTFORMDW You are restrained by Sakuya with a challenging smirk. Seems like there is no escape.
+				ENDIF
+				RETURN 1
+			CASE 2
+			;欲求不満が高くて抜け出せなかった
+				IF TALENT:恋慕
+					CALL HPH_PRINT(@"「Haa...HPH Haa...HPH Haaa...HPH...」", "L") 
+					PRINTFORMDL Sakuya uses her powers to restrain you against your will. She has clearly lost her senses.
+					PRINTFORMDL Drool trickles from the corner of her mouth, and love juices flows from her honey pot.
+					PRINTFORMDW You can't escape from her current state - one you never could have imagined from her normal self.
+				ELSE
+					CALL HPH_PRINT(@"「Not yet...HPH I still haven't had enoughHPH」", "L") 
+					CALL HPH_PRINT(@"「Come on, you can『use』me as you like, so please fill me up some more...HPH」", "L") 
+				ENDIF
+				RETURN 1
+		ENDSELECT
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;浴場で遭遇
+;==================================================
+@M_KOJO_EVENT_15_11(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+
+;==================================================
+;お仕事中
+;==================================================
+@M_KOJO_EVENT_K15_13(ARG,ARG:1)
+#DIM 居眠り割合
+;口上主はTARGET
+;ARG:1に残っている仕事量
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;仕事開始（職場へ移動する）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF ABL:欲望 >= 5 && PALAM:欲情 >= PALAMLV:7
+			PRINTFORML 「... Looks like it's time for work.」
+			PRINTFORML 「Now then, if you'll excuse me.」
+			PRINTFORML （... No... I have to endure it... At least until I finish work...）
+			PRINTFORMDW Although she tries to act as if nothing is wrong, Sakuya heads to work even though her face is flushed and her breathing is jagged...
+		ELSE
+			IF TALENT:恋人
+				PRINTFORML 「Oh my, it's already time?」
+				PRINTFORML 「%CALLNAME:MASTER%, I'll go to work for a bit.」
+				PRINTFORML 「See you♪ %CALLNAME:MASTER%♪」
+				PRINTFORMDW With a satisfied nod, Sakuya heads to work with a bright smile.
+			ELSEIF TALENT:恋慕
+				PRINTFORML 「Ah... It's time for work.」
+				PRINTFORML 「Because of that, I'll have to excuse myself here...」
+				PRINTFORMDW Sakuya says as she heads towards work with a slight skip in her step.
+			ELSE
+				PRINTFORML 「Well then, since it's time for work, I will have to excuse myself here...」
+				PRINTFORMDW Sakuya disappears after a polite curtsey...
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;業務中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;絶賛発情中。仕事前にズコバコしたり仕事中に時姦したりしちゃダメだぞ！門番との約束だ！
+		IF ABL:欲望 >= 6 && PALAM:欲情 >= PALAMLV:10
+			SELECTCASE RAND:3
+				CASE 0
+					CALL HPH_PRINT(@"「Ha...HPH Ha...HPH...」", "L")
+					PRINTFORMD Even while at work, Sakuya's body burns with lust
+					IF EXP:Ｖ絶頂経験 >= 300 || FLAG:異常気象 == 2
+						PRINTFORMDL , imagining the sensation of her inner walls being churned up.
+					ELSEIF EXP:Ａ絶頂経験 >= 300 || FLAG:異常気象 == 3
+						PRINTFORMDL , dominated by the desire for her anus to be penetrated deeply.
+					ELSEIF EXP:Ｂ絶頂経験 >= 300 || FLAG:異常気象 == 4
+						PRINTFORMDL , shaking from the pleasure from her nipples, which have become hard just by rubbing against her own clothes.
+					ELSEIF EXP:Ｃ絶頂経験 >= 300 || FLAG:異常気象 == 1
+						PRINTFORMDL , her clitoris engorged from just imagining being abused.
+					ELSEIF EXP:Ｍ絶頂経験 >= 300 || FLAG:異常気象 == 5
+						PRINTFORMDL , longing to have her throat, which was as sensitive as a sex organ, raped.
+					ELSE
+						PRINTDL .
+					ENDIF
+					PRINTFORMDL And she is in no state to focus at all.
+					PRINTFORMDL Although she tries her best to clean, the love juices that flows from her pussy stains the floor.
+					PRINTFORMDW Looks like the work load has just increased...
+				CASE 1
+					CALL HPH_PRINT(@"「...Nnng, Huuu...HPH Huuu...HPH」", "L") 
+					PRINTFORMDL Sakuya is doing something behind the pillar...
+					PRINTFORMDL Seems like she is masturbating with a broom between her legs.
+					CALL HPH_PRINT(@"（Even though I shouldn't be doing something like this...HPH I can't take it anymoreHPH）", "L")
+					PRINTFORMDL She is so engrossed in her actions she didn't even notice you...
+					PRINTFORMDW You decide to leave her be...
+				CASEELSE
+					PRINTFORML 「Ara, There's some mold here...」
+					PRINTFORML 「... Wait? I'm sure cleaned this place already...」
+					PRINTFORML 「Huh, Huhh? Here too, I'm sure I just...?」
+					PRINTFORML 
+					PRINTFORML 「......?!?!」
+					PRINTFORMDW It seems like they were stains from her own love juices.
+			ENDSELECT
+		ELSEIF ABL:欲望 >= 5 && PALAM:欲情 >= PALAMLV:7
+			SELECTCASE RAND:4
+				CASE 0
+					CALL HPH_PRINT(@"「Ha...HPH Ha...HPH...」", "L")
+					PRINTFORMD Even while at work, Sakuya's body burns with lust
+					IF EXP:Ｖ絶頂経験 >= 200 || FLAG:異常気象 == 2
+						PRINTFORMDL , her inner walls recalling the feeling of the meat rod.
+					ELSEIF EXP:Ａ絶頂経験 >= 200 || FLAG:異常気象 == 3
+						PRINTFORMDL , her anus begging to be penetrated.
+					ELSEIF EXP:Ｂ絶頂経験 >= 200 || FLAG:異常気象 == 4
+						PRINTFORMDL , her nipples erect, begging to be fondled.
+					ELSEIF EXP:Ｃ絶頂経験 >= 200 || FLAG:異常気象 == 1
+						PRINTFORMDL , her clitoris engorged from rubbing against her clothes.
+					ELSEIF EXP:Ｍ絶頂経験 >= 200 || FLAG:異常気象 == 5
+						PRINTFORMDL , her lips longing for oral stimulation.
+					ELSE
+					PRINTDL .
+					ENDIF
+					PRINTFORMDL It becomes a hinderance to her cleaning.
+					PRINTFORMW 「Nnng... Uuuu... Endure it... Endure...」
+				CASE 1
+					CALL HPH_PRINT(@"「...Nnng, Huuu... HPH Huuu...HPH」", "L") 
+					PRINTFORMDL Sakuya is doing something behind the pillar...
+					PRINTFORMDL Seems like she is masturbating with a broom between her legs.
+					CALL HPH_PRINT(@"（Even though I shouldn't be doing something like this...HPH I can't take it anymoreHPH）", "L")
+					PRINTFORMDL She is so engrossed in her actions she didn't even notice you...
+					CALL HPH_PRINT(@"「―――HPHHPH... HaaHPH, HaaHPH... Ah!」", "L")
+					PRINTFORMDL Looks like she noticed your staring. Sakuya stares at you, face flushed with arousal and embarrassment. 
+				CASEELSE
+					PRINTFORML 「Ara, There's some mold here...」
+					PRINTFORML 「... Wait? I'm sure cleaned this place already...」
+					PRINTFORML 「Huh, Huhh? Here too, I'm sure I just...?」
+					PRINTFORML 
+					PRINTFORML 「......?!?!」
+					PRINTFORMDW It seems like they were stains from her own love juices.
+			ENDSELECT
+		;ここから通常業務。IFが無駄にデカくなりがち……
+		ELSE
+			IF TALENT:恋慕 || TALENT:恋人
+				SELECTCASE RAND:10
+				CASE 0 to 1
+					PRINTFORML 「Ara, %CALLNAME:MASTER%. Can I help you?」
+					PRINTFORMDL Sakuya smiles as you visit her while she works.
+					PRINTFORMW 「It's fine if you just watch on the side, but don't you distract me while I work, okay?」
+				CASE 2 to 3
+					PRINTFORML 「......」
+					PRINTFORMDW Sakuya works in silence...
+				CASE 4 to 5
+					PRINTFORML 「Ara, Isn't it %CALLNAME:MASTER%?」
+					PRINTFORML 「Just wait a moment while I finish my work, okay...?」
+					PRINTFORMDL Her movements hastens up a little.
+				CASE 6
+					PRINTFORML 「Ah, %CALLNAME:MASTER%. I'm sorry, but can you help check on Meiling?」
+					PRINTFORML 「She falls asleep as soon as I leave... I don't know what to do with her.」
+					PRINTFORMDW Actually you just saw her sleeping, so you are at a loss for words...
+				CASE 7
+					PRINTFORMDW Sakuya focuses on her work silently...
+				CASEELSE
+					PRINTFORML 「～～～♪」
+					PRINTFORMDL Sakuya is humming while she cleans...
+					PRINTFORML 「～～......」
+					PRINTFORMDW Seems like she notices you as she hastily returns to cleaning in silence with a blush...
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			SELECTCASE RAND:10
+				CASE 0 to 1
+					PRINTFORML 「Ara, %CALLNAME:MASTER%-sama. Can I help you?」
+					PRINTFORMDL Sakuya smiles as you visit her while she works.
+					PRINTFORMW 「You're just here to watch me work? I see...」
+				CASE 2 to 3
+					PRINTFORML 「...」
+					PRINTFORMDW Sakuya works in silence...
+				CASE 4 to 5
+					PRINTFORML 「Ara, %CALLNAME:MASTER%-sama.」
+					PRINTFORML 「Please wait a moment while I finish my work.」
+					PRINTFORMDL Her movements hastens up a little.
+				CASE 6
+					PRINTFORML 「Ah, %CALLNAME:MASTER%-sama. I'm sorry, but can you help check on Meiling?」
+					PRINTFORML 「She falls asleep as soon as I leave... I don't know what to do with her.」
+					PRINTFORMDW Actually you just saw her sleeping, so you are at a loss for words...
+				CASE 7
+					PRINTFORMDW Sakuya focuses on her work silently...
+				CASEELSE
+					PRINTFORML 「～～～♪」
+					PRINTFORMDL Sakuya is humming while she cleans...
+					PRINTFORML 「～～...」
+					PRINTFORMDW Seems like she notices you as she hastily returns to cleaning in silence with a blush...
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:5
+				CASE 0 to 1
+					PRINTFORML 「Ara, %CALLNAME:MASTER%-sama. Can I help you?」
+					PRINTFORMDL Sakuya smiles as you visit her while she works.
+					PRINTFORMW 「You're just here to watch me work? I see...」
+				CASE 2 to 3
+					PRINTFORML 「......」
+					PRINTFORMDW Sakuya works in silence...
+				CASEELSE
+			ENDSELECT
+		ENDIF
+	ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+	;-------------------------------------------------
+	;仕事終了
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF ABL:欲望 >= 5 && PALAM:欲情 >= PALAMLV:10
+			CALL HPH_PRINT(@"「Haa～HPH Haa～HPH……」", "L")
+			CALL HPH_PRINT(@"「At this rate...HPH」", "L")
+			PRINTFORMD Unable to control her lust during work, Sakuya stares at you, 
+			IF EXP:Ｖ絶頂経験 >= 200 || FLAG:異常気象 == 2
+				PRINTFORMDL wanting you to make a mess of her inner walls.
+			ELSEIF EXP:Ａ絶頂経験 >= 200 || FLAG:異常気象 == 3
+				PRINTFORMDL wanting you to dominate her anus.
+			ELSEIF EXP:Ｂ絶頂経験 >= 200 || FLAG:異常気象 == 4
+				PRINTFORMDL wanting you to fondle her breasts until they change shape.
+			ELSEIF EXP:Ｃ絶頂経験 >= 200 || FLAG:異常気象 == 1
+				PRINTFORMDL wanting you to play with her clit until it falls off.
+			ELSEIF EXP:Ｍ絶頂経験 >= 200 || FLAG:異常気象 == 5
+				PRINTFORMDL wanting you to rape her mouth with your tongue.
+			ELSE
+				PRINTFORMDL lusting after you.
+			ENDIF
+			PRINTFORMDL She imagines being abused by you.
+			CALL HPH_PRINT(@"「Ahh......HPH」", "L") 
+		
+		ELSEIF ABL:欲望 >= 5 && PALAM:欲情 >= PALAMLV:7
+			PRINTFORML 「Haa～ Haa～」
+			CALL HPH_PRINT(@"「Finally...」", "L") 
+			PRINTFORMD Unable to control her lust during work, Sakuya stares at you, 
+			IF EXP:Ｖ絶頂経験 >= 200 || FLAG:異常気象 == 2
+				PRINTFORMD imagining her inner walls 
+			ELSEIF EXP:Ａ絶頂経験 >= 200 || FLAG:異常気象 == 3
+				PRINTFORMD imagining her anus 
+			ELSEIF EXP:Ｂ絶頂経験 >= 200 || FLAG:異常気象 == 4
+				PRINTFORMD imagining her breasts 
+			ELSEIF EXP:Ｃ絶頂経験 >= 200 || FLAG:異常気象 == 1
+				PRINTFORMD imagining her clit 
+			ELSEIF EXP:Ｍ絶頂経験 >= 200 || FLAG:異常気象 == 5
+				PRINTFORMD imagining her lips 
+			ELSE
+				PRINTFORMD imagining her body 
+			ENDIF
+			PRINTFORMDL being abused by you.
+			PRINTFORMW 「Nnng... I'm almost finished...」
+		ELSE
+			SELECTCASE RAND:1
+				CASEELSE
+					PRINTFORMW 「I am finished.」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	;その他
+	PRINTFORML  
+RETURN 1
+
+

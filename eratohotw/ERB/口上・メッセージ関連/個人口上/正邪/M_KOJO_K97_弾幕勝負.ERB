@@ -1,0 +1,341 @@
+﻿;==================================================
+;弾幕勝負
+;==================================================
+;
+@M_KOJO_MESSAGE_COM_K97_DANMAKU(ARGS, 相手残機)
+#DIM 相手残機
+;全体の流れ
+;①【戦闘前】→②ダイスロールとプレイヤー選択肢、ハンデをつけた場合は【ハンデ口上】→③対応スキルが発動した場合【スキル口上】→④被弾判定、キャラが被弾したなら【被弾口上】→
+;どちらかの残機が0になっていなければ②に戻る→⑤【戦闘後口上】
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ハンデをつけることができ、数値が大きいほどあなたが不利になる　数値が負ならあなたが有利に
+	;キャラの能力に関わらずクッソ強くしたり弱くしたりできる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘前"
+		;戦闘前
+		HANDICAP_FIXED = 0
+		HANDICAP_RAND = 0
+		;added
+		IF CFLAG:弾幕勝負勝利 && ABL:MASTER:戦闘能力 > ABL:戦闘能力 ;if beat and you're stronger
+			IF FIRSTTIME("SeijaAblFlip")
+				PRINTFORMW 「I admit it, you're hella strong...」
+				PRINTFORMW 「Oh man, you just want to humiliate me at this point, don't you?」
+				PRINTFORMW 「How about we even things out a little?」
+				PRINTFORML
+				PRINTFORMW REVERSE SIGN "OVERTURNING ALL UNDER HEAVEN"
+				PRINTFORMDW Seija flips you off as she flips your combat abilities!
+				PRINTFORMDW What deviousness...
+				PRINTFORML
+				PRINTFORMW 「Ahh... much better. I can't believe it actually worked though.」
+				PRINTFORMW 「See, this is the balance I'm talking about.」
+				PRINTFORMW 「...Even so, this power is ridiculous. Just how exactly did you become so strong...?」
+				PRINTFORML
+				PRINTFORMW 「Well then, shall we begin?」
+				BASE:体力 -= 300
+				LOCAL = ABL:戦闘能力
+				LOCAL:1 = ABL:MASTER:戦闘能力
+				ABL:MASTER:戦闘能力 = LOCAL
+				ABL:戦闘能力 = LOCAL:1
+				TCVAR:390 = 1
+			ELSE
+				PRINTFORMW 「Haven't you had enough already?」
+				PRINTFORMW 「Well, I'll let you decide how you wanna go about it.」
+				CALL ASK_YN("Flip mode", "Normal mode")
+				IF RESULT ;normal
+					PRINTFORMW 「Beat me up again, would ya?」
+					PRINTFORMW 「Man, you're cruel...」
+					PRINTFORML
+					GOTO COMBAT
+				ELSE
+					PRINTFORMW 「Oh, so you like the challenge? Fine by me!」
+					PRINTFORMW 「I'll give ya a run for your money, make no mistake about that...」
+					PRINTFORMW 「This is pretty tiresome for me though, so ya better entertain me well!」
+					BASE:体力 -= 300
+					LOCAL = ABL:戦闘能力
+					LOCAL:1 = ABL:MASTER:戦闘能力
+					ABL:MASTER:戦闘能力 = LOCAL
+					ABL:戦闘能力 = LOCAL:1
+					TCVAR:390 = 1
+				ENDIF
+			ENDIF
+		ELSE
+			$COMBAT
+			;怒り
+			IF CFLAG:318 == 1
+				PRINTFORMW 「You're gonna pay for pissin' me off!」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Come then, let's get started! Go easy on me if you will, %K97_DUDE()%!」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Get lost in a world where everything is turning on its head!」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「%SPLIT_G("I'll show you the true meaning of weakness:I'll show you what it's like to be weak")%!」
+			ELSE
+				PRINTFORMW 「%SPLIT_G("Too bad, but this is as far as you go:Sorry not sorry, but this is where it ends for you")%, sucker!」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;ハンデ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "ハンデ"
+		;ハンデつけなかったら表示されないので無記入でよい
+		PRINTFORML 
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中TARGET被弾時口上
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" 
+		;別に一律で「やられたー」だけでもいいよ
+		SELECTCASE 相手残機
+			;残り残機3が表示されるのは【洽覧深識】持ちのみ
+			CASE 3
+				PRINTFORML 
+			CASE 2
+				IF TCVAR:390 ;added, during flip mode
+					PRINTFORMW 「Augh, off to a good start I see!」
+					PRINTFORMW 「A'ight, time to get serious! Time for you to learn how it feels to be harassed by the strong!」
+					HANDICAP_FIXED += 50
+				;怒り
+				ELSEIF CFLAG:318 == 1
+					PRINTFORMW 「Don't you get cocky with me, ya brat!」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「Hoo, not too shabby.」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「Huuh? What's with this half-assed pattern? Are you takin' me lightly?」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Hmph, don't %SPLIT_G("get your hopes up:get your knickers in a twist:be so sure")% just yet!」
+				ELSE
+					PRINTFORMW 「%SPLIT_G("Heh, you ain't that big of a deal:It ain't worth fussing over")%!」
+				ENDIF
+			CASE 1
+				IF TCVAR:390 ;added, during flip mode, last ditch effort
+					PRINTFORMW 「I really don't want to lose again, so...」
+					PRINTFORMW TURNABOUT "REVERSE HIERARCHY"!!!
+					PRINTFORMW 「How about I give you a taste of impossible spell card for once?」
+					PRINTFORMDW Seija exclaims while striking her iconic pose!
+					PRINTFORMW （Man, I wish I still had my cheat items with me though...）
+					LOCAL = RAND(30, 61)
+					HANDICAP_FIXED += LOCAL
+					HANDICAP_RAND += LOCAL * ABL:戦闘能力
+				;怒り
+				ELSEIF CFLAG:318 == 1
+					PRINTFORMW 「Fuck! Shit! Damn it all to hell!」
+				ELSEIF RAND:5 == 0 ;added
+					PRINTFORMW 「Guh, is this how it ends...? No! Not yet!」
+					PRINTFORMW 「I'll give you a taste of this earnest frustration!」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「Hah! So this is what they call a predicament, huh?! Best feeling ever!」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「A cornered amanojaku can be fierce, don't you know! And I'm well used to it by now!」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Hate to break it to you, but I never once had an advantage in a fight! You ain't scarin' me!」
+				ELSE
+					PRINTFORMW 「One life left, the situation is just grrreat... I will turn the tables on ya!」
+				ENDIF
+			CASE 0
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「Oh fuck off, you gotta be kidding me...!」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「...%SPLIT_G("Curses:Son of a bitch:Dammit")%...!」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「...Well, look at ya go. Well done, %K97_DUDE()%.」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「...」
+				ELSE
+					PRINTFORMW 「%SPLIT_G("Nah, don't worry about me:Hey, it's fine")%. %SPLIT_G("Happens all the time:Business as usual for me:Just the same old")%...」
+				ENDIF
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【残忍酷薄】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "残忍酷薄"
+		IF RAND:5 == 0 ;added
+			PRINTFORMW 「You're going down!」
+		ELSEIF RAND:4 == 0
+			PRINTFORMW 「Most cowardly, unjust, unreasonable, and outrageous indeed!」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「Don't you ever let your guard down, strong one!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「You might wanna check and make sure you didn't drop anything there, y'know?」
+		ELSE
+			PRINTFORMW 「Why don't you just keep throwing while you're at it?」
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【乾坤一擲】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "乾坤一擲"
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【怪力乱神】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "怪力乱神"
+		
+	ENDIF
+	
+	;-------------------------------------------------
+	;戦闘後
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" 
+		PRINTFORML 
+		;残り残機4が表示されうるのは【洽覧深識】持ちのみ
+		;残機が1以上ならあなたの負け、0の場合はあなたの勝利
+		SELECTCASE 相手残機
+			CASE 4
+				PRINTFORML 
+			CASE 3
+				IF TCVAR:390
+					PRINTFORMW 「You're such a sorry mess right now. Is this all you can do, really?」
+				;怒り
+				ELSEIF CFLAG:318 == 1
+					PRINTFORMW 「Humph, let this be a lesson for ya. Think twice before you piss me off again.」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「Ha-ha-ha! You can't let *me* beat you! You'll never make it at this rate!」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「Oh, you're not such a big deal in the end, are you? Not what I expected.」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Well, that's a let-down alright.」
+				ELSE
+					PRINTFORMW 「Huh, so I take it you're one of ours?」
+				ENDIF
+			CASE 2
+				IF TCVAR:390
+					PRINTFORMW 「You struggled and fought, but it wasn't enough! How does it feel to be in my shoes, huh?」
+				;怒り
+				ELSEIF CFLAG:318 == 1
+					PRINTFORMW 「Tch... Damn you for giving me a hard time...」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「...A level of strength that's not worth commenting on, I must say.」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「%SPLIT_G("That was surprisingly weak:You were surprisingly weak:Didn't expect you to be so weak")%.」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Wanna side with the weak too?」
+				ELSE
+					PRINTFORMW 「That was... an interesting one, %K97_DUDE()%.」
+				ENDIF
+			CASE 1
+				IF TCVAR:390
+					PRINTFORMW 「Oh yeah, so close! Not good enough though. Do you understand now, why is this so, sooo frustrating?」
+				;怒り
+				ELSEIF CFLAG:318 == 1
+					PRINTFORMW 「Damn... You're even a bigger jerk than I am, aren'tcha...」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「...You actually gave me a hard time there. That's what I'm talking about!」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「Ow-ow-ow... Maaaan, that was sooo dull!」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「That must be the most unfun I've ever had!」
+				ELSE
+					PRINTFORMW 「...You actually do pack a punch when it comes to it, huh.」
+				ENDIF
+			CASE 0
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「Fuck you! I'll never forget this!」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「...Hmph. Well, I can always try again for as long as I can draw breath.」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「Maaan, nicely done! Way to go, %K97_DUDE()%!」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Kuh, crap! Talk about premature... I got too eager too soon for sure.」
+				ELSE
+					PRINTFORMW 「...I'm gonna win this thing one day alright! Remember that, ya mooooron!」
+				ENDIF
+				;added, after first win
+				IF !CFLAG:弾幕勝負勝利
+					PRINTFORML
+					PRINTFORMW 「Ow ow ow, shit... I dun goofed, huh?」
+					PRINTFORMW 「Since when did you become so strong? You're full of mysteries, man...」
+					PRINTFORMW 「And I can't wait to unravel them all!」
+					PRINTFORMW 「I'll be prepared for the next time, mark my words...」
+				ENDIF
+		ENDSELECT
+		
+		;added
+		IF TCVAR:390
+			PRINTFORML
+			LOCAL = ABL:戦闘能力
+			LOCAL:1 = ABL:MASTER:戦闘能力
+			ABL:MASTER:戦闘能力 = LOCAL
+			ABL:戦闘能力 = LOCAL:1
+			TCVAR:390 = 0
+			IF 相手残機 == 0
+				PRINTFORMW 「Gahh, dammit! Even with all that power it was still not enough...」
+				PRINTFORMW 「Good job, I guess... You may call me weak, but I'm resourceful! And I don't know when to give up!」
+				PRINTFORMW 「I'll do my research and I'll beat you next time, you'll see!」
+			ELSE
+				IF CFLAG:弾幕勝負勝利 && FIRSTTIME("SeijaWon")
+					PRINTFORMW 「Aww yiss! I beat you! Serves you right!」
+					PRINTFORMW 「Man, so this is what it takes to beat someone like you, huh.」
+					PRINTFORMW 「Well, at least it's not a complete shutout from my side anymore. For that I'm thankful.」
+					PRINTFORMW 「C'mon, let's go, you'll get over it. Lemme treat you to beer or somethin'.」
+				ELSE
+					IF TALENT:恋慕
+						PRINTFORMW 「Ah, well that's too bad. Not this time it seems.」
+						PRINTFORMW 「You did well though, really. C'mon, let's have a nice meal or a bath or somethin' now.」
+						PRINTFORMW 「We can always rematch later if ya want.」
+					ELSE
+						PRINTFORMW 「Looks like you bit more than you could chew, duuuumbass!」
+						PRINTFORMW 「Here comes the moment when I sneer and gloat at your failure! Kha-ha-ha!」
+						PRINTFORMDW Seija cackles smugly...
+					ENDIF
+				ENDIF
+			ENDIF
+			IF 相手残機 == 0 ;bonus exp for winning during flip mode
+				PRINTFORML
+				LOCAL = LIMIT((HANDICAP_FIXED / 10) * 3, 1, 50)
+				CALL COLORMESSAGE(@"Bonus Combat Exp+{LOCAL}",C_YELLOW,2,1)
+				EXP:MASTER:戦闘経験 += LOCAL
+				PRINTFORMDW Seija, too, seemed to have learned quite a bit.
+				EXP:戦闘経験 += LOCAL*2
+			ENDIF
+			
+			IF FIRSTTIME("SeijaReverseFight")
+				PRINTFORML
+				PRINTFORMW 「Oh, right. I gotta give you your abilities back... Not!」
+				PRINTFORMDW Seija laughs at you like a villain...
+				PRINTFORMDW But then stops.
+				PRINTFORMW 「...Nah, just kiddin'. I can't maintain this for too long, y'know.」
+				PRINTFORMW 「Don't hold a grudge, okay? I'm just messin' around is all.」
+			ENDIF
+		ENDIF
+	ENDIF
+RESETCOLOR
+ENDIF
+RETURN 1
+

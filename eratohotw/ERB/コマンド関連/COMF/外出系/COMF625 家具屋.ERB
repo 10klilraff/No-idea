@@ -1,0 +1,460 @@
+﻿;家具屋
+@COM625
+#DIM 売値
+#DIM ループ数
+#DIM リザルト
+#DIM 資材保管
+#DIM 削除行数
+#DIM MaterialQTY
+#DIMS DiscountedPrice
+
+ループ数 = 0
+
+;開店時間・閉店時間
+IF INRANGE(TIME:0, 480, 1020) == 0
+	PRINTFORMW Outside of business hours.
+	RETURN -1
+ENDIF
+
+;初回イベント
+IF FLAG:最後に家具屋に訪れた日 == 0
+	PRINTL 
+	PRINTFORMW A sign that read "Furniture Store" catches %PARSE("your")% eye, and %PARSE("you decide",1)% to walk through the door.
+	PRINTFORMW But as %PARSE("you",1)% %PARSE("do")%...
+	PRINTFORMW 「...The fuck, who the hell are you? Huuuh?!」
+	PRINTFORMW 「Wuh? Yeah, this is a furniture store, you got that right. What now?」
+	PRINTFORMW 「"Do we have anything for sale"?」
+	PRINTFORMW 「Quit bein' dumb, stupid. It's all custom-made on order, be it a wardrobe or whatever. And right now, I'm outta work.」
+	PRINTFORMW 「...So? The hell you want from me, 'fess up.」
+	PRINTFORMW 「...Huuh? You thought you'd see the real thing before you decided?」
+	PRINTFORMW 「If you just wanna look around without buyin', then get the fuck out...」
+	PRINTFORMW 「That's what I'd like to say, but what the heck. Let's see, where's the ledger from the last job――」
+	PRINTFORMW 　The man presents %PARSE("you")% with a document in which the expenses were written in a surprisingly punctual manner.
+	PRINTFORMW 　...Holy crap, that's expensive alright!
+	PRINTFORMW 「That's 'cause I ain't gonna sell myself short on a masterpiece that's been carefully crafted, y'know.」
+	PRINTFORMW 　%PARSE("You try")% to ask him if there's a way around that...
+	PRINTFORMW 「I thought I'd drain you dry if you just shovel all that money you're sitting on at me, but, well...」
+	PRINTFORMW 「...You've got a point. If you can provide me with the lumber material, I can offer you a discount for it.」
+	PRINTFORMW 　He then proceeds showing %PARSE("you")% the parity of this and that compared to that and this...
+	PRINTFORMW  Well, %PARSE("you")% %PARSE("think")% %PARSE("you'd",1)% rather settle on a parity that %PARSE("you",1)% could manage to pay.
+	PRINTFORMW 「Hmph. Well, place your order whenever you're ready. I'll make sure it's the best of the best!」
+	PRINTL 
+	ループ数 = 1
+ENDIF
+
+;conflicts with my timer
+;SIF FLAG:作成中家具
+;	FLAG:家具作成残り = MAX(FLAG:家具作成残り-((DAY:0 - FLAG:最後に家具屋に訪れた日)*2),0)
+
+$LOOP_SELECT
+
+IF ループ数
+	PRINTL 
+	IF FLAG:家具作成残り
+		PRINTFORMW 「C'mon, step aside, I'm trying to work here!」
+	ELSE
+		PRINTFORMW 「What, you still want somethin'?」
+	ENDIF
+ELSE
+	;平常来店
+	PRINTL 
+	;家具発注中
+	IF FLAG:家具作成残り >= 14
+		PRINTFORMW 「What, you again? Man, you're as hasty as morning diarrhea. I'm still only at a blueprint stage, shoo-shoo.」
+	ELSEIF FLAG:家具作成残り >= 9
+		PRINTFORMW 「What, you again? If it's about your placed order, then it's gonna take a while. Have patience.」
+	ELSEIF FLAG:家具作成残り >= 5
+		PRINTFORMW 「What, you again? Don't you worry, I'm working on the furniture you ordered. Still got ways to go.」
+	ELSEIF FLAG:家具作成残り >= 2
+		PRINTFORMW 「Yup, I'm almost done with the furniture you ordered!」
+	ELSEIF FLAG:作成中家具 && FLAG:家具作成残り == 0
+		;完成日
+		IF nFurnitureStoreComplete == 0 ;changed with this since your first order might be anything else
+			PRINTFORMW 「Yo, it's nice that you showed up.　Huh, say what?」
+			PRINTFORMW 「You saw the completion of the %ITEMNAME_TR(FLAG:作成中家具)% you ordered with your own eyes, so why should you come all the way to the store?」
+			PRINTFORMW 「There's some stuff we gotta take care of, like the signing of a delivery note and so on.」
+			PRINTFORMW 「I'd hate to deal with the aftermath if we don't do it right.」
+			nFurnitureStoreComplete = 1
+		ELSE
+			PRINTFORMW 「Yo, %PRINT_MALE("man_:miss", MASTER)%. Sorry to keep you waiting. Here's what you ordered.」
+		ENDIF
+		IF FLAG:作成中家具 == 907
+			PRINTFORMW 「I gotta say... I'm not exactly a broom expert, so it took me a while.」
+		ELSEIF ITEM:(FLAG:作成中家具) == 2
+			PRINTFORMW 「Maaan... This has to be one of the most satisfying works I've done in a long time. I'm sure you'll be pleased with the results.」
+		ELSEIF ITEM:(FLAG:作成中家具) == 1 
+			PRINTFORMW 「Mm-hmm, I touched up the parts you were concerned about, but... Well, that's about as good as it gets.」
+			PRINTFORMW 「The satisfaction of the creator and the user are two slightly different things, so it takes a true craftsman to balance 'em.」
+		ELSE
+			PRINTFORMW 「Holler me again if there's any furniture you want. Oh, and if you're not happy with your current furniture, lemme know that too.」
+		ENDIF
+		PRINTL 
+		SETCOLOR 0x00FF00
+		PRINTFORM %ITEMNAME_TR(FLAG:作成中家具)% 
+		IF ITEM:(FLAG:作成中家具) == 0
+			PRINTFORMW has been acquired!
+		ELSE
+			PRINTFORMW has been renovated to make it more comfortable to use!
+		ENDIF
+		RESETCOLOR
+		PRINTL 
+		ITEM:(FLAG:作成中家具) ++
+		FLAG:作成中家具 = 0
+	ELSE
+		IF DAY:0 - FLAG:最後に家具屋に訪れた日 > 28
+			PRINTFORMW 「What, you again? Have you finally decided to place an order?」
+		ELSEIF FLAG:最後に家具屋に訪れた日 == DAY:0
+			PRINTFORMW 「What's your deal? I don't have time to be bothered with you...」
+			PRINTFORMW 「...And yeah, I know I'm free right now, fuck off.」
+		ELSE
+			PRINTFORMW 「What, you again? You want some furniture?」
+		ENDIF
+	ENDIF
+ENDIF
+
+ループ数 ++
+FLAG:最後に家具屋に訪れた日 = DAY:0
+
+PRINTFORM 　　Money: \\%TOSTR(MONEY,"#,###")%
+IF FLAG:作成中家具
+	PRINTFORML 　　%ITEMNAME_TR(FLAG:作成中家具)% is under construction　　Estimated delivery: %PRINT_PLUR("day", FLAG:家具作成残り)%.
+ELSE
+	PRINTL 
+ENDIF
+DRAWLINE
+
+CALL ASK_M("Place an order", !FLAG:作成中家具, "About the deal", 1, "Exit shop", 2)
+
+SELECTCASE RESULT
+	;家具を作ってほしい
+	CASE 0
+		PRINTFORMW 「If we're talkin' about the furniture you might be needin'... Let's see, something like this?」
+
+		$INPUT_LOOP01
+		;リストの呼び出し
+		削除行数 = 0
+		FOR LOCAL, 902, 908
+			削除行数 ++
+			IF ITEM:LOCAL == 3
+				PRINTPLAINFORM 　[{LOCAL}]
+				LOCALS = %ITEMNAME_TR(LOCAL)%(Lv{ITEM:LOCAL})
+				PRINTPLAINFORM %LOCALS, 32, LEFT%
+			ELSE
+				PRINTFORM 　
+				PRINTFORM [{LOCAL}]
+				IF ITEM:LOCAL == 0
+					;未所持
+					PRINTFORM %ITEMNAME_TR(LOCAL), 32, LEFT%
+				ELSE
+					;所持
+					LOCALS = %ITEMNAME_TR(LOCAL)%(Lv{ITEM:LOCAL})
+					PRINTFORM %LOCALS, 32, LEFT%
+				ENDIF
+			ENDIF
+			CALL FURNITURE_EXPLANATION(LOCAL)
+		NEXT
+		PRINTFORML 　[999]Cancel
+		削除行数 ++
+		
+		INPUT
+		
+		リザルト = RESULT
+		MaterialQTY = FURNITURE(リザルト, "軽減上限", ITEM:リザルト)
+		SELECTCASE リザルト
+			CASE 902 TO 907
+				;Lv3の時は選択できない
+				IF ITEM:リザルト == 3
+					CLEARLINE 削除行数 + 1
+					GOTO INPUT_LOOP01
+				ENDIF
+
+				;注文家具の請求を作成
+				DRAWLINE
+				PRINTFORML \@ ITEM:リザルト == 0? Ordering # Upgrading\@ %ITEMNAME_TR(リザルト)%
+				;所持製材量での値引きの表記
+				;Lv1→2の時は半額
+				IF ITEM:リザルト == 1
+					PRINTFORM 　%"Cost", 20, LEFT%: \\%TOSTR((ITEMPRICE:リザルト / 2),"#,###")% → 
+				ELSE
+					PRINTFORM 　%"Cost", 20, LEFT%: \\%TOSTR(ITEMPRICE:リザルト,"#,###")%  → 
+				ENDIF
+				DiscountedPrice = %TOSTR(FURNITURE(リザルト, 0, ITEM:リザルト),"#,###")%
+				
+				IF FURNITURE(リザルト, 0, ITEM:リザルト) == FURNITURE(リザルト, "最低額", ITEM:リザルト)
+					SETCOLOR C_RED
+				ELSEIF ITEM:リザルト == 1 && FURNITURE(リザルト, 0, ITEM:リザルト) < ITEMPRICE:リザルト / 2
+					SETCOLOR C_YELLOW
+				ELSEIF FURNITURE(リザルト, 0, ITEM:リザルト) < ITEMPRICE:リザルト
+					SETCOLOR C_YELLOW
+				ENDIF
+				PRINTFORML \\%DiscountedPrice% \@ FURNITURE(リザルト, 0, ITEM:リザルト) == FURNITURE(リザルト, "最低額", ITEM:リザルト)? Lowest Possible! # \@
+				RESETCOLOR
+
+				;価格軽減に必要な資材量と現在所持量の比較
+				PRINTFORM 　Cost Reduction Terms: Supply with {MaterialQTY} %WOOD_NAME(FURNITURE(リザルト, "資材番号"))% Lumber
+				SIF LOG_SALES:FURNITURE(リザルト, "資材番号") >= MaterialQTY
+					SETCOLOR C_RED
+				PRINTFORML （{LOG_SALES:FURNITURE(リザルト, "資材番号")}／{MaterialQTY}）
+				RESETCOLOR
+			CASE 999
+				PRINTL 
+				GOTO LOOP_SELECT
+			CASEELSE
+				CLEARLINE 1
+				GOTO INPUT_LOOP01
+		ENDSELECT
+		PRINTL 
+		IF ITEM:リザルト == 0
+			CALL ASK_M("Make this furniture", MONEY >= FURNITURE(リザルト, 0), "Cancel", 1)
+		ELSE
+			CALL ASK_M("Upgrade this furniture", MONEY >= FURNITURE(リザルト, 0, ITEM:リザルト) && ITEM:リザルト <= 2, "Cancel", 1)
+		ENDIF
+		
+		IF RESULT
+			CLEARLINE 9 + 削除行数
+			GOTO INPUT_LOOP01
+		ELSE
+			;費用の支払い
+			PRINTFORMW 　Money: \\%TOSTR(MONEY,"#,###")% → \\%TOSTR(MONEY - FURNITURE(リザルト, 0, ITEM:リザルト),"#,###")%
+			PRINTFORM 　
+			CALL PAY_MONEY_YEN(FURNITURE(リザルト, 0, ITEM:リザルト))
+
+			;製材等の消費  軽減上限量以上に持っていれば上限量分減らし、上限に達していなければ全部消費
+			;現在の製材の量を退避してから計算
+			資材保管 = LOG_SALES:FURNITURE(リザルト, "資材番号")
+			LOG_SALES:FURNITURE(リザルト, "資材番号") = MAX(0, LOG_SALES:FURNITURE(リザルト, "資材番号") - MaterialQTY)
+			;文章部分
+			PRINTFORMW 　%WOOD_NAME(FURNITURE(リザルト, "資材番号"))% Lumber: {資材保管} → {LOG_SALES:FURNITURE(リザルト, "資材番号")}
+			PRINTL 
+			LOCAL = FURNITURE(リザルト, "期間", ITEM:リザルト)
+			IF ITEM:リザルト
+				PRINTFORMW 「Huh, I see you're not happy with your old furniture. Bring it on then!」
+				PRINTFORMW 「Come back in \@ LOCAL == 1 ? tomorrow # {LOCAL} days\@, I'll surprise you alright!」
+			ELSE
+				PRINTFORMW 「Awright, we have a deal! Expect it delivered \@ LOCAL == 1 ? tomorrow # in {LOCAL} days\@.」
+				PRINTFORMW 「And don't you ever show your face in my store again!」
+			ENDIF
+			FLAG:家具作成残り = LOCAL
+			FLAG:作成中家具 = リザルト
+		ENDIF
+	;取引内容を確認する
+	CASE 1
+		PRINTFORMW 「Haaah?　You want me to go over this again? Sheesh...」
+		PRINTFORMW 「Look, this is a furniture store, so of course we specialize on making furniture.」
+		PRINTFORMW 「If you provide me with the lumber, I'll make it for you at a discount.」
+		PRINTFORMW 「This should be obvious, but it's gonna take some time to make the furniture you've ordered.」
+		PRINTFORMW 「I can't just spawn it out of thin air, duh!」
+		PRINTFORML 「Speaking of which, I always focus on making the furniture I have in queue for that period of time,
+		PRINTFORMW 　so I ain't gonna take any other orders.」
+		PRINTFORMW 「And yeah, if you're not happy with the furniture I made, tell me right away.」
+		PRINTFORMW 「I'll still charge you money, but I'll make it better.」
+		PRINTL 
+	CASE 2
+		PRINTFORMW 「Yeah, right. Hurry and get the fuck outta here.」
+		PRINTL 
+		TIME += ループ数 * 5
+		RETURN -1
+
+ENDSELECT
+GOTO LOOP_SELECT
+
+;-------------------------------------------------
+;実行可能判定
+;-------------------------------------------------
+;家具屋
+@COM_ABLE625
+;一括管理
+SIF GLOBAL_COMABLE(625)
+	RETURN RESULT
+
+IF !AT_HOME(MASTER)
+	SIF CFLAG:MASTER:現在位置 != 長屋街
+		RETURN 0
+ELSE
+	;長屋前
+	SIF CFLAG:MASTER:現在位置 != 214
+		RETURN 0
+ENDIF
+;睡眠中
+SIF CFLAG:MASTER:睡眠 || CFLAG:MASTER:イタズラ || CFLAG:うふふ ;custom code
+	RETURN 0
+;時間停止中
+SIF FLAG:70
+	RETURN 0
+RETURN 1
+
+
+;-------------------------------------------------
+;注文できる家具リストに付随する説明文
+;ARG 家具のアイテム番号
+;-------------------------------------------------
+@FURNITURE_EXPLANATION(ARG)
+
+IF ITEM:ARG
+	PRINTFORM Spot: 
+	SELECTCASE ARG
+		CASE 902
+			LOCALS = %NAME_FROM_PLACE(NEAR_BATH(1))%
+		CASE 904, 907
+			LOCALS = On %CALLNAME:MASTER%
+		CASEELSE
+			LOCALS = %CALLNAME:MASTER%'s Room
+	ENDSELECT
+	PRINTFORMD %LOCALS, 26, LEFT%
+ELSE
+	PRINTFORM %" "*32%
+ENDIF
+
+SIF ITEM:ARG == 0
+	SETCOLOR C_GRAY
+
+SELECTCASE ARG
+	CASE 902
+		PRINTFORM …Increases STA and ENE recovery when bathing in the specified spot
+	CASE 903
+		PRINTFORM …Increases STA, ENE and VIG recovery during sleep
+	CASE 904
+		PRINTFORM …Improves the quality of %PARSE("your")% food
+	CASE 905
+		PRINTFORM …Increases efficiency of studying and mixing in %PARSE("your")% room
+	CASE 906
+		PRINTFORM …Increases STA, ENE and VIG recovery when resting in %PARSE("your")% room
+	CASE 907
+		PRINTFORM …Increases the efficiency of cleaning
+	CASEELSE
+		PRINT 
+ENDSELECT
+IF ITEM:ARG == 3
+	SETCOLOR C_ORANGE
+	PRINTFORML ▲▲
+ELSEIF ITEM:ARG == 2
+	SETCOLOR C_YELLOW
+	PRINTFORML ▲
+ELSE
+	PRINTL 
+ENDIF
+RESETCOLOR
+
+;-------------------------------------------------
+;家具注文で使用する各種数値をまとめた関数
+;現状は902～907
+;F_ID …家具のアイテム番号
+;ARGS 0= 補正価格(省略時)  1= 資材による軽減上限数
+;      2= 家具に対応する資材番号  3= 軽減最低額  
+;      4= 発注後の作成期間   を返す
+;EnhanceTime 0= 初発注(省略時)  1= 強化１  2= 強化２
+;        主にITEM:家具番号を入れて利用
+;-------------------------------------------------
+@FURNITURE(F_ID, ARGS, EnhanceTime = 0)
+#FUNCTION
+#DIM F_ID
+#DIM EnhanceTime
+#DIM DiscountRate
+#DIM MaxDiscount
+#DIM 資材番号
+#DIM 軽減上限
+#DIM 最低額
+#DIM 補正価格
+#DIM 期間
+
+;手持ち製材との調整価格を表記
+SELECTCASE F_ID
+	;ヒノキ風呂
+	CASE 902
+		資材番号 = 2;ヒノキ
+		軽減上限 = 50
+		最低額 = 250000
+		期間 = 15
+	;キリのベッド
+	CASE 903
+		資材番号 = 8;キリ
+		軽減上限 = 30
+		最低額 = 200000
+		期間 = 10
+	;イチョウのまな板
+	CASE 904
+		資材番号 = 6;イチョウ
+		軽減上限 = 10
+		最低額 = 50000
+		期間 = 5
+	;ケヤキの机椅子
+	CASE 905
+		資材番号 = 7;ケヤキ
+		軽減上限 = 30
+		最低額 = 200000
+		期間 = 10
+	;ナラのソファー
+	CASE 906
+		資材番号 = 9;ナラ
+		軽減上限 = 30
+		最低額 = 200000
+		期間 = 10
+	;カスタム竹箒
+	CASE 907
+		資材番号 = 12;竹
+		軽減上限 = 30
+		最低額 = 30000
+		期間 = 10
+ENDSELECT
+
+;Lv1→Lv2時は半分  Lv2→Lv3時は最初と同じで
+MaxDiscount = ITEMPRICE:F_ID - 最低額
+IF EnhanceTime == 1
+	軽減上限 /= 2
+	最低額 /= 2
+	期間 /= 2
+	MaxDiscount /= 2
+ENDIF
+
+SIF ARGS == "資材番号"
+	RETURNF 資材番号
+SIF ARGS == "軽減上限"
+	RETURNF 軽減上限
+SIF ARGS == "最低額"
+	RETURNF 最低額
+SIF ARGS == "期間"
+	RETURNF 期間
+	
+DiscountRate = 100 * MIN(LOG_SALES:資材番号, 軽減上限) / 軽減上限
+
+IF EnhanceTime == 1
+	補正価格 = (ITEMPRICE:F_ID / 2) - MaxDiscount * DiscountRate / 100
+ELSE
+	補正価格 = ITEMPRICE:F_ID - MaxDiscount * DiscountRate / 100
+ENDIF
+RETURNF 補正価格
+
+;custom code, process the completion of the orders
+@EVENTTRAIN
+#LATER
+
+SIF FLAG:家具作成残り > 0
+	FLAG:家具作成残り --
+IF FLAG:作成中家具 && FLAG:家具作成残り <= 0
+	PRINTFORML
+	PRINTFORMDW You find a letter stuffed under your door.
+	PRINTFORML
+	IF ITEM:(FLAG:作成中家具) && !GETBIT(nFurnitureUpgrade:(FLAG:作成中家具 % 100), ITEM:(FLAG:作成中家具))
+		PRINTFORMDL "Hey, I upgraded %ITEMNAME_TR(FLAG:作成中家具)% as you requested.
+		PRINTFORMDL Well, a few touch ups there and there, but I think it'll do. Come check it out.
+		PRINTFORMDL Don't keep me waiting though, I've got stuff to do."
+		PRINTFORML
+		PRINTFORMDL This handwriting seems familiar... Oh, that's right! The Furniture Store at the Village!
+		PRINTFORMDW It seems that you'll need to visit it sometime.
+		;per each lv of the item
+		SETBIT nFurnitureUpgrade:(FLAG:作成中家具 % 100), ITEM:(FLAG:作成中家具)
+	ELSEIF !GETBIT(nFurnitureComplete, FLAG:作成中家具 % 100)
+		PRINTFORMDL "Hello dumbass. Delivery is complete as promised.
+		PRINTFORMDL Yes, delivery of the letter that is. Get your ass back in my store and receive your order pronto.
+		PRINTFORMDL I ain't got enough space to store all this crap.
+		PRINTFORMDW Your brand new %ITEMNAME_TR(FLAG:作成中家具)% is waiting for you, I hope you didn't forget yet."
+		PRINTFORML
+		PRINTFORMDL This handwriting seems familiar... Oh, that's right! The Furniture Store at the Village!
+		PRINTFORMDW It seems that you'll need to visit it sometime.
+		SETBIT nFurnitureComplete, FLAG:作成中家具 % 100
+	ELSE
+		PRINTFORMDL "Hurry up already."
+		PRINTFORML
+		PRINTFORMDW Looks like that furniture store owner is getting impatient...
+	ENDIF 
+ENDIF

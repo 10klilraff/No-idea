@@ -1,0 +1,311 @@
+﻿@時間停止解除
+#DIM 追い出し
+#DIM 合計絶頂強度
+#DIM 絶頂人数
+#DIM 逸脱追加
+VARSET LOCAL
+FLAG:70 = 0
+絶頂人数 = 0
+TFLAG:運搬 = 0
+FOR LOCAL,0,CHARANUM
+	IF 睡眠時間(LOCAL)
+		;パジャマセット
+		CALL CTRL_CLOTHES_SET(LOCAL, "現在衣装の変更_パジャマ")
+		CFLAG:LOCAL:パジャマ = 1
+	ELSEIF TCVAR:LOCAL:アナザー普段着
+		;いつもと違う服
+		CALL CTRL_CLOTHES_SET(LOCAL, "現在衣装の変更_衣装セット", SPECIAL_OUTFIT(LOCAL))
+		CFLAG:LOCAL:パジャマ = 0
+	ELSE
+		;普段着セット
+		CALL CTRL_CLOTHES_SET(LOCAL, "現在衣装の変更_普段着")
+		CFLAG:LOCAL:パジャマ = 0
+	ENDIF
+	CALL CLOTHES_SETTING_TRAIN(LOCAL)
+NEXT
+
+PRINTFORMW %PARSE("You let")% time resume.
+追い出し = 0
+
+CALL FISHER_YATES_SHAFFLE(CHARANUM - 1)
+;custom code notice: between this and call to TIMESTOP_RESET, several now redundant lines have been commented
+FOR LOCAL:10 , 0 , CHARANUM - 1
+	LOCAL = SHAFFLE_ARRAY:(LOCAL:10) + 1
+	IF CFLAG:LOCAL:現在位置 == CFLAG:MASTER:現在位置 && !CFLAG:LOCAL:睡眠
+		合計絶頂強度 = EX:LOCAL:無自覚Ｃ絶頂 + EX:LOCAL:無自覚Ｖ絶頂 + EX:LOCAL:無自覚Ａ絶頂 + EX:LOCAL:無自覚Ｂ絶頂 + EX:LOCAL:無自覚Ｍ絶頂
+		IF 合計絶頂強度 > 30
+		;IF EX:LOCAL:Ｃ絶頂 + EX:LOCAL:Ｖ絶頂 + EX:LOCAL:Ａ絶頂 + EX:LOCAL:Ｂ絶頂 + EX:LOCAL:Ｍ絶頂 > 30
+			SETCOLOR 255,100,255
+			PRINTL 【Intense Pleasure】
+			RESETCOLOR
+			PRINTFORMW Suddenly assaulted by a heavy orgasm, %CALLNAME:LOCAL% let out an unsteady moan and collapsed on the spot.
+			IF CFLAG:LOCAL:時間停止バレ == 1
+				IF TALENT:LOCAL:恋慕
+					PRINTFORMW %CALLNAME:LOCAL% hugs %PARSE("you")% as %HIS_HER(LOCAL)% body endures orgasm after orgasm, whispering %PARSE("your")% name over and over.
+					SOURCE:LOCAL:欲情 += 500 + (CFLAG:2 - 1000) / 5
+					SOURCE:LOCAL:情愛 += 500 + (CFLAG:2 - 1000) / 5
+				ELSEIF TALENT:LOCAL:思慕
+					PRINTFORMW %CALLNAME:LOCAL% enjoys the pleasure, but stares at %PARSE("you")% a bit discontent.
+					SOURCE:LOCAL:欲情 += 300 + (CFLAG:2 - 1000) / 5
+					SOURCE:LOCAL:反感 += 300
+				ELSEIF TALENT:LOCAL:セフレ == 2
+					PRINTFORMW %CALLNAME:LOCAL% pants, and casts a gaze at %PARSE("you")%, inviting %PARSE("you",4)% to do more.
+					SOURCE:LOCAL:欲情 += 1000 + (CFLAG:2 - 1000) / 5
+				ELSEIF TALENT:LOCAL:セフレ == 1
+					PRINTFORMW %CALLNAME:LOCAL% pants in pleasure, catching %HIS_HER(LOCAL)% breath, but feels some animosity towards %PARSE("you")%.
+					SOURCE:LOCAL:欲情 += 500 + (CFLAG:2 - 1000) / 5
+					SOURCE:LOCAL:反感 += 300
+				ELSEIF TALENT:LOCAL:愛欲
+					PRINTFORMW %CALLNAME:LOCAL%'s face goes slack with joy, shivering with the pleasure that %PARSE("you")% gave her.
+					SOURCE:LOCAL:欲情 += 1000 + (CFLAG:2 - 1000) / 5
+				ELSE
+					PRINTFORMW %CALLNAME:LOCAL%'s body trembles with pleasure, but %HE_SHE(LOCAL)% stares at %PARSE("you")% with killing intent.
+					SOURCE:LOCAL:反感 += 10000
+				ENDIF
+			ENDIF
+			CFLAG:LOCAL:ディレイ += 20
+			絶頂人数 += 1
+			;恥情ボーナス
+			CALL JUEL_UP_SPECIAL(LOCAL,"恥情","露出癖",2,1)
+			
+			;逸脱追加 = MAX(1000 - ABL:LOCAL:露出癖 * 200, 0)
+			;SOURCE:LOCAL:逸脱 += 逸脱追加
+			CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,2,0)
+		ELSEIF 合計絶頂強度 > 0
+		;ELSEIF EX:LOCAL:Ｃ絶頂 + EX:LOCAL:Ｖ絶頂 + EX:LOCAL:Ａ絶頂 + EX:LOCAL:Ｂ絶頂 + EX:LOCAL:Ｍ絶頂 > 0
+			SETCOLOR 255,100,255
+			PRINTL 【Mysterious Pleasure】
+			RESETCOLOR
+			PRINTFORMW %CALLNAME:LOCAL%'s body stiffens from a mysterious pleasure.
+			IF CFLAG:LOCAL:時間停止バレ == 1
+				IF TALENT:LOCAL:恋慕
+					PRINTFORMW %CALLNAME:LOCAL% pretends to sway and falls into %PARSE("your")% chest, and with a quiet voice asks %PARSE("you",1)% to continue...
+					SOURCE:LOCAL:欲情 += 500 + (CFLAG:2 - 1000) / 5
+					SOURCE:LOCAL:情愛 += 500 + (CFLAG:2 - 1000) / 5
+				ELSEIF TALENT:LOCAL:思慕
+					PRINTFORMW %CALLNAME:LOCAL% blushes while staring at %PARSE("you")%.
+					SOURCE:LOCAL:欲情 += 300 + (CFLAG:2 - 1000) / 5
+					SOURCE:LOCAL:反感 += 300
+				ELSEIF TALENT:LOCAL:セフレ == 2
+					PRINTFORMW It seems it isn't enough, as %CALLNAME:LOCAL% stares at %PARSE("you")% with a dissatisfied look in %HIS_HER(LOCAL)% eyes...
+					SOURCE:LOCAL:欲情 += 1000 + (CFLAG:2 - 1000) / 5
+				ELSEIF TALENT:LOCAL:セフレ == 1
+					PRINTFORMW 
+					SOURCE:LOCAL:欲情 += 500 + (CFLAG:2 - 1000) / 5
+					SOURCE:LOCAL:反感 += 300
+				ELSEIF TALENT:LOCAL:愛欲
+					PRINTFORMW %CALLNAME:LOCAL% takes %PARSE("your")% hand while breathing hard, asking %PARSE("you",1)% to continue...
+					SOURCE:LOCAL:欲情 += 1000 + (CFLAG:2 - 1000) / 5
+				ELSE
+					PRINTFORMW %CALLNAME:LOCAL% stares at %PARSE("you")% with a suspicious look in %HIS_HER(LOCAL)% eyes.
+					SOURCE:LOCAL:反感 += 1000
+				ENDIF
+			ENDIF
+			絶頂人数 += 1
+			CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,1,0)
+		;custom code, CFLAG::295 is now used to track if the character reacted to loss of underwear
+		ELSEIF CFLAG:LOCAL:291 == 1 && CFLAG:LOCAL:295 == 2
+			SETCOLOR 150,150,250
+			PRINTL 【Unusual Sense of Liberation】
+			RESETCOLOR
+			PRINTFORMW %CALLNAME:LOCAL% notices that %HIS_HER(LOCAL)% underwear is suddenly missing.
+			;本来ならCFLAG:295は作らずCFLAG:LOCAL:291 == 3とかで対応したほうが良い
+			IF CFLAG:LOCAL:時間停止バレ == 1 ;&& CFLAG:LOCAL:295 == 0
+				IF TALENT:LOCAL:恋慕
+					PRINTFORMW 
+					SOURCE:LOCAL:欲情 += 500 + (CFLAG:2 - 1000) / 5
+					SOURCE:LOCAL:情愛 += 500 + (CFLAG:2 - 1000) / 5
+				ELSEIF TALENT:LOCAL:思慕
+					PRINTFORMW 
+					SOURCE:LOCAL:欲情 += 300 + (CFLAG:2 - 1000) / 5
+					SOURCE:LOCAL:反感 += 300
+				ELSEIF TALENT:LOCAL:セフレ == 2
+					PRINTFORMW 
+					SOURCE:LOCAL:欲情 += 1000 + (CFLAG:2 - 1000) / 5
+				ELSEIF TALENT:LOCAL:セフレ == 1
+					PRINTFORMW 
+					SOURCE:LOCAL:欲情 += 500 + (CFLAG:2 - 1000) / 5
+					SOURCE:LOCAL:反感 += 300
+				ELSEIF TALENT:LOCAL:愛欲
+					PRINTFORMW 
+					SOURCE:LOCAL:欲情 += 1000 + (CFLAG:2 - 1000) / 5
+				ELSE
+					PRINTFORMW 
+					SOURCE:LOCAL:反感 += 10000
+				ENDIF
+				;CFLAG:LOCAL:295 = 1
+			ENDIF
+			CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,3,0)
+		ENDIF
+		;無自覚絶頂カウントをリセットしておく
+		;FOR LOCAL:1,0,5
+		;	IF EX:LOCAL:(LOCAL:1)
+		;		EX:LOCAL:(LOCAL:1 + 20) = 0
+		;		EX:LOCAL:(LOCAL:1 + 50) = 0
+		;	ENDIF
+		;NEXT
+		IF BATHCHECK(CFLAG:MASTER:現在位置) && AT_HOME(MASTER) && LOCAL != MASTER
+			SIF 風呂追い出し条件(LOCAL) && CFLAG:LOCAL:現在位置 == CFLAG:MASTER:現在位置
+				CALL 風呂から追い出し(LOCAL)
+			SIF RESULT
+				追い出し ++
+		ELSE
+			IF CFLAG:LOCAL:287 == 2
+				SETCOLOR 255,100,255
+				PRINTL 【Unaware Anal Ejaculation】
+				RESETCOLOR
+				;感度も10超えがあるわけだし、地の文だけでもバリエーションを足してみた
+				SELECTCASE ABL:LOCAL:2
+					CASE 0 TO 2
+						PRINTFORMW %CALLNAME:LOCAL% lets out a small cry from the pleasure suddenly assaulting %HIS_HER(LOCAL)% anus.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,7,1)
+					CASE 3 TO 5
+						PRINTFORMW %CALLNAME:LOCAL% tenses up from suddenly having semen in %HIS_HER(LOCAL)% anus.
+						PRINTFORMW %HE_SHE(LOCAL,1)% lets out a small yelp.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,7,2)
+					;Custom code, enables last case if sensitivity is > 7
+					CASE 6 TO 7
+						PRINTFORMW It seems %CALLNAME:LOCAL% isn't able to endure the sensation of having %HIS_HER(LOCAL)% anus suddenly filled with hot semen.
+						PRINTFORMW %HE_SHE(LOCAL,1)% lets out a moan.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,7,2)
+					;現在ロック中。はたしてこの反応は有りか否か？
+					CASEELSE
+						PRINTFORMW Suddenly there is a hot sensation in %CALLNAME:LOCAL%'s anus.
+						PRINTFORMW But for %HIM_HER(LOCAL)% it's just moderately stimulating.
+						PRINTFORMW %HE_SHE(LOCAL,1)% lets out a moan without trying to conceal %HIS_HER(LOCAL)% face melting in pleasure.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,7,2)
+				ENDSELECT
+				;CFLAG:LOCAL:アナル射精 = 0
+			ENDIF
+			IF EX:LOCAL:処女喪失チェック
+				SETCOLOR 250,100,100
+				IF EX:LOCAL:処女喪失チェック == 1
+					PRINTL 【Unaware Virginity Loss】
+				ELSE
+					PRINTL 【Unaware Loss of Restored Virginity】
+				ENDIF
+				RESETCOLOR
+				PRINTFORMW %CALLNAME:LOCAL% winces from a sudden pain between %HIS_HER(LOCAL)% legs.
+				CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,8,0)
+			ENDIF
+			IF CFLAG:LOCAL:286 == 2
+				SETCOLOR 255,100,255
+				PRINTL 【Unaware Vaginal Ejaculation】
+				RESETCOLOR
+				IF EX:LOCAL:処女喪失チェック != 1 && TALENT:LOCAL:処女 != -1
+					IF TALENT:LOCAL:無知 && EXP:LOCAL:精液経験 < 100
+						PRINTFORML The semen inside %CALLNAME:LOCAL%'s vagina makes her experience sudden discomfort.
+						PRINTFORMW She fidgets, unable to tell just what's wrong...
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,9,3)
+					ELSEIF !TCVAR:LOCAL:ピル
+						PRINTFORMW The sensation of semen inside her vagina makes %CALLNAME:LOCAL% instantly aware she's been creampied.
+						PRINTFORMW She fidgets nervously, trying not to show it, but her face goes pale...
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,9,1)
+					ELSEIF EX:LOCAL:処女喪失チェック == 0 && TCVAR:LOCAL:ピル == 1
+						PRINTFORMW The sensation of semen inside her vagina makes %CALLNAME:LOCAL% instantly aware she's been creampied.
+						PRINTFORMW Because of the pill, she's only a bit embarrassed rather than panicked...
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,9,2)
+					ENDIF
+				ELSE
+					PRINTFORML The semen inside %CALLNAME:LOCAL%'s vagina makes her experience sudden discomfort.
+					PRINTFORMW But she doesn't understand what it means and just fidgets restlessly...
+					CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,9,3)
+				ENDIF
+				;CFLAG:LOCAL:286 = 0
+			ENDIF
+			;無自覚膣内射精の処理の後で無自覚処女喪失のフラグを折る
+				;EX:LOCAL:処女喪失チェック = 0
+			IF CFLAG:LOCAL:288 == 2
+				SETCOLOR 255,100,255
+				PRINTL 【Unaware Mouth Ejaculation】
+				RESETCOLOR
+				IF TALENT:MASTER:濃厚精液
+					PRINTFORM %CALLNAME:LOCAL% suddenly finds %HIS_HER(LOCAL)% mouth full of %SAMEN_DESCRIPTION(PLAYER)% 
+					IF ABL:LOCAL:精液中毒 < 3
+						PRINTFORML and begins choking on it.
+						PRINTFORML The semen clings to the roof of %HIS_HER(LOCAL)% mouth and throat, and %HE_SHE(LOCAL)% can't spit it out easily. Tears stream down %HIS_HER(LOCAL)% face as %HE_SHE(LOCAL)% tries to spit it out over and over in vain.
+						PRINTFORMW ... Feels like that was a pretty cruel thing to do.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,4,5)
+					ELSE
+						PRINTFORML but pretends nothing's wrong and swallows it.
+						PRINTFORMW %HE_SHE(LOCAL,1)% begins moving %HIS_HER(LOCAL)% tongue around, savoring the taste of the gelatinous lust...
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,4,6)
+					ENDIF
+				ELSEIF ABL:LOCAL:精液中毒 < 3
+					PRINTFORM %CALLNAME:LOCAL% chokes on the semen shot into %HIS_HER(LOCAL)% mouth 
+					IF !RAND:3
+						PRINTFORMW and accidentally swallows it.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,4,1)
+					ELSEIF !RAND:2
+						PRINTFORMW but manages to spit it out.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,4,2)
+					ELSE
+						PRINTFORMW and quickly covers %HIS_HER(LOCAL)% mouth.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,4,3)
+					ENDIF
+					PRINTFORMW The sudden coughing fit leaves %HIM_HER(LOCAL)% in tears...
+				ELSE
+					PRINTFORMW %CALLNAME:LOCAL% is surprised at suddenly having semen in %HIS_HER(LOCAL)% mouth, but %HE_SHE(LOCAL)% just swallows it, acting as if nothing happened.
+					PRINTFORMW %HE_SHE(LOCAL,1)% feels strangely excited...
+					CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,4,4)
+				ENDIF
+				;CFLAG:LOCAL:288 = 0
+			ENDIF
+			IF CFLAG:LOCAL:289 == 2
+				SETCOLOR 255,100,255
+				PRINTL 【Unaware Facial Ejaculation】
+				RESETCOLOR
+				IF ABL:LOCAL:精液中毒 < 3
+					IF TALENT:LOCAL:無知 && EXP:LOCAL:精液経験 < 100
+						PRINTFORMW %CALLNAME:LOCAL% wipes away the semen clinging to %HIS_HER(LOCAL)% face in disgust.
+						PRINTFORMW It seems %HE_SHE(LOCAL)% doesn't notice it's semen that's stuck on %HIS_HER(LOCAL)% face.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,5,1)
+					ELSE
+						PRINTFORMW %CALLNAME:LOCAL% notices semen sticking to %HIS_HER(LOCAL)% face and wipes it off in a panic.
+						PRINTFORMW Despite pretending nothing happened, %HIS_HER(LOCAL)% face is completely stiff.
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,5,2)
+					ENDIF
+				ELSE
+					PRINTFORMW %CALLNAME:LOCAL% cleans up the semen clinging to %HIS_HER(LOCAL)% face by using a finger and scooping bit after bit into %HIS_HER(LOCAL)% mouth.
+					PRINTFORMW %HE_SHE(LOCAL,1)% feels strangely excited...
+					CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,5,3)
+				ENDIF
+				;CFLAG:LOCAL:288 = 0
+			ENDIF
+			IF CFLAG:LOCAL:290 == 2
+				SETCOLOR 255,100,255
+				PRINTL 【Unaware Handjob Ejaculation】
+				RESETCOLOR
+				IF ABL:LOCAL:精液中毒 < 3
+					PRINTFORMW %CALLNAME:LOCAL% notices semen sticking to %HIS_HER(LOCAL)% palm and wipes it off in disgust.
+					CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,6,1)
+				ELSE
+					PRINTFORMW %CALLNAME:LOCAL% notices semen sticking to %HIS_HER(LOCAL)% palm and secretly licks it off.
+					PRINTFORMW %HE_SHE(LOCAL,1)% feels strangely excited...
+						CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,6,2)
+				ENDIF
+				;CFLAG:LOCAL:290 = 0
+			ENDIF
+			CALL KOJO_MESSAGE_SEND("EVENT",17,LOCAL,0,0)
+		ENDIF
+
+	ENDIF
+	;CFLAG:LOCAL:288 = 0
+	;CFLAG:LOCAL:289 = 0
+	;CFLAG:LOCAL:290 = 0
+	;CFLAG:LOCAL:344 = 0
+	
+	;custom code, unified post-timespot cleanup
+	CALL TIMESTOP_RESET(LOCAL)
+NEXT
+IF 絶頂人数 >= 1 && !追い出し
+	PRINTFORM %PARSE("You feign")% concern for the girl
+	SIF 絶頂人数 >= 2
+		PRINT s
+	PRINTW .
+ENDIF
+FOR LOCAL,1,CHARANUM
+	CALL 寝室から追い出し(LOCAL)
+NEXT
+RESETBGCOLOR
+

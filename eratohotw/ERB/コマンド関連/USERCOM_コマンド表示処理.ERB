@@ -1,0 +1,525 @@
+﻿;FileName_USERCOM.ERB ------------------------------ Rev1.00
+;コマンド表示処理
+;CALL		SYSTEM
+;ARG		VOID
+;RETURN		VOID
+;COMMENT	
+;-----------------------------------------------------------
+@SHOW_USERCOM
+TFLAG:100 = !TFLAG:101
+VARSET LOCAL
+;前ターンのMASTERが射精した相手をLOCAL:1へセット
+IF TCVAR:MASTER:112 == 1
+	;V
+	LOCAL:1 = MASTER_POSE(SET_V,SET_P,1)
+ELSEIF TCVAR:MASTER:112 == 2
+	;A
+	LOCAL:1 = MASTER_POSE(SET_A,SET_P,1)
+ENDIF
+
+
+CALL LOOK_AT
+PRINTL
+
+CALL フィルタ表示
+
+;コマンド表示
+FOR LOCAL,0,800
+	SIF LOCAL == 355 && (!FLAG:70 || CFLAG:TARGET:344 == 1)
+		CONTINUE
+	SIF LOCAL == 200 && TFLAG:102 == 2
+		PRINTL
+	SIF LOCAL == 350 && TFLAG:102 != 2
+		PRINTL
+	SIF LOCAL == 400 && TFLAG:102 != 2
+		PRINTL
+	SIF GLOBAL_COMABLE2(LOCAL)
+		CONTINUE
+	SIF GROUPMATCH(LOCAL,400,604)
+		CONTINUE
+	SIF TRAINNAME:LOCAL == "" ;bug fix, hide actions that have no train.csv entry but still have com files (they're unusable anyway)
+		CONTINUE
+	RESULT = 0
+	;現状で対象コマンドが使用可能かどうか判定
+	TRYCALLFORM COM_ABLE{LOCAL}
+	IF RESULT
+		SIF !QUICKFILTER(LOCAL)
+			CONTINUE
+		IF (LOCAL == 42 && TEQUIP:11) || (LOCAL == 43 && TEQUIP:12) || (LOCAL == 44 && TEQUIP:13) || (LOCAL == 45 && TEQUIP:14) || (LOCAL == 46 && TEQUIP:15) || (LOCAL == 47 && TEQUIP:16) || (LOCAL == 48 && TEQUIP:17)
+			;Custom code
+			PRINTFORMC Release %TRAINNAME_TR(LOCAL)%[{LOCAL,3}]
+		ELSEIF LOCAL == 15
+			IF CFLAG:MASTER:イタズラ
+				PRINTFORMC V Caress[{LOCAL,3}]
+			ELSE
+				PRINTFORMC Clit Caress[{LOCAL,3}]
+			ENDIF
+			
+		;custom code
+		ELSEIF LOCAL == 19 && TEQUIP:継続キス
+			PRINTFORMC Stop Kissing[{LOCAL,3}]
+		ELSEIF (LOCAL == 80 && TFLAG:103 == TARGET && TEQUIP:乳首吸い) || (TEQUIP:指接触部位 == 1 && TFLAG:103 == TARGET && LOCAL == 11 && PREVCOM != 11)
+			PRINTFORMC Nursing Handjob[{LOCAL,3}]
+		;--
+		
+		;com custom code
+		ELSEIF LOCAL == 312 && PREVCOM == 312 && !TFLAG:151 && !GROUPMATCH(TFLAG:193, 99, -1)
+			PRINTFORMC Continue Kissing[{LOCAL,3}]
+		ELSEIF LOCAL == 50 && (TEQUIP:PLAYER:コンドーム || TEQUIP:コンドーム)
+			PRINTFORMC Take Off Condom[{LOCAL,3}]
+		;--
+		
+		ELSEIF LOCAL == 81 && LOCAL:1
+			PRINTFORMC Cleaning Fellatio[{LOCAL,3}]
+		ELSEIF LOCAL == 82 && (TALENT:105 == -2 || TALENT:105 == -1)
+			PRINTFORMC Naizuri[{LOCAL,3}]
+		ELSEIF LOCAL == 60 && (!BEDROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20))
+			PRINTFORMC Standing Missionary[{LOCAL,3}]
+		ELSEIF LOCAL == 61 && (!INROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20))
+			PRINTFORMC Fuck From Behind[{LOCAL,3}]
+		ELSEIF LOCAL == 62 && (!BEDROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20))
+			PRINTFORMC Standing A Missionary[{LOCAL,3}]
+		ELSEIF LOCAL == 63 && (!INROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20))
+			PRINTFORMC Anal From Behind[{LOCAL,3}]
+		ELSEIF LOCAL == 73 && TCVAR:PLAYER:イきそう
+			IF TEQUIP:TARGET:体位 == 1 && (BEDROOM(CFLAG:PLAYER:現在位置) || (BATHROOM() && ITEM:20))
+				PRINTFORMC Mating Press[{LOCAL,3}]
+			ELSEIF TEQUIP:TARGET:体位 == 2
+				IF CFLAG:TARGET:生理周期 == 7
+					PRINTFORMC Beastly Insemination[{LOCAL,3}]
+				ELSE
+					PRINTFORMC Beastly Mating[{LOCAL,3}]
+				ENDIF
+			ELSE
+				;Custom code
+				PRINTFORMC %TRAINNAME_TR(LOCAL)%[{LOCAL,3}]
+			ENDIF
+		ELSEIF LOCAL == 92 && (!BEDROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20))
+			PRINTFORMC Catch St. A Missionary[{LOCAL,3}]
+		ELSEIF LOCAL == 93 && (!INROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20))
+			PRINTFORMC Catch St. A From Behind[{LOCAL,3}]
+		ELSEIF LOCAL == 100 && TALENT:TARGET:幼稚
+			PRINTFORMC Butt Spanking[{LOCAL,3}]
+		ELSEIF LOCAL == 124 && TEQUIP:TARGET:オナホール ;com custom code
+			PRINTFORMC Give Onaholejob[{LOCAL,3}]
+		ELSEIF LOCAL == 130 && (!BEDROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20))
+			PRINTFORMC Catch St. Missionary[{LOCAL,3}]
+		ELSEIF LOCAL == 131 && (!INROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20))
+			PRINTFORMC Catch St. From Behind[{LOCAL,3}]
+		ELSEIF LOCAL == 301 && CFLAG:TARGET:行動 == 5
+			PRINTFORMC Offer Refreshments[{LOCAL,3}]
+		ELSEIF LOCAL == 301 && GETBIT(TCVAR:MASTER:特別なお茶, 0)
+			PRINTFORMC Serve Black Tea[{LOCAL,3}]
+		ELSEIF LOCAL == 334 && CFLAG:TARGET:350 == 49 && (TALENT:TARGET:酒耐性 == -2 || CFLAG:TARGET:妊娠自覚状態 == 1)
+			PRINTFORMC Serve Dish[{LOCAL,3}]
+		ELSEIF LOCAL == 304 && CFLAG:TARGET:350 == 46
+			PRINTFORMC Participate In Play[{LOCAL,3}]
+		ELSEIF LOCAL == 315
+			IF GETBIT(TALENT:TARGET:性別,1)
+				PRINTFORMC Penis Caress[{LOCAL,3}]
+			ELSEIF CFLAG:MASTER:イタズラ
+				PRINTFORMC Pussy Caress[{LOCAL,3}]
+			ELSE
+				PRINTFORMC Clit Caress[{LOCAL,3}]
+			ENDIF
+		ELSEIF LOCAL == 350
+			IF FLAG:70 == 1 && CFLAG:TARGET:344 == 0
+				LOCALS = Start Mischief
+			ELSEIF (CFLAG:現在位置 == 連れ込み宿 || CFLAG:現在位置 == ラブホ)&& !CFLAG:うふふ
+				LOCALS = Draw Closer
+			ELSEIF CFLAG:現在位置 == 寺子屋
+				LOCALS = Start A Special Lesson
+			ELSEIF CFLAG:現在位置 == OMANEKIBEYA() && TARGET == 43
+				LOCALS = Practice Lovemaking
+			;ベッドがない
+			;室外
+			ELSEIF !INROOM(CFLAG:PLAYER:現在位置)
+				LOCALS = Draw Closer
+			ELSE
+				LOCALS = Push Down
+			ENDIF
+			SIF GET_TARGETNUM() > 1
+				LOCALS = %LOCALS% With All
+			PRINTFORMC %LOCALS%[{LOCAL,3}]
+		ELSEIF LOCAL == 351
+			IF CFLAG:TARGET:同行
+			ELSEIF COM_351_CONDITION(TARGET) == 1
+				SETCOLOR 100, 100, 100
+			ELSEIF CAN_IRAI_CHARA_GO_TOGATHER(TARGET)
+				SETCOLOR C_GREEN
+			ELSE
+				SETCOLOR C_AQUA
+			ENDIF
+			;Custom code
+			PRINTFORMC %TRAINNAME_TR(LOCAL)%[{LOCAL,3}]
+			RESETCOLOR
+		ELSEIF LOCAL == 491
+			SETCOLOR 255, 179, 167
+			PRINTFORMC %TRAINNAME_TR(LOCAL)%[{LOCAL,3}]
+			RESETCOLOR
+		ELSEIF LOCAL == 360 && BASE:MASTER:気力 <= 0
+			PRINTFORMC Be At Mercy[{LOCAL,3}]
+		ELSEIF LOCAL == 366 && GROUPMATCH(IRAI_CHARA_TO_PROGRESS(TARGET), "依頼達成", "依頼失敗")
+			SETCOLOR C_GREEN
+			PRINTFORMC Complete Request[{LOCAL,3}]
+			RESETCOLOR
+		ELSEIF LOCAL == 366 && GROUPMATCH(IRAI_CHARA_TO_PROGRESS(TARGET), "依頼未受託")
+			SETCOLOR C_GREEN
+			PRINTFORMC Listen To Request[{LOCAL,3}]
+			RESETCOLOR
+		ELSEIF LOCAL == 367
+			SETCOLOR C_GREEN
+			PRINTFORMC %NAME_IRAI_ACT()%[{LOCAL,3}]
+			RESETCOLOR
+		ELSEIF LOCAL == 368
+			PRINTFORMC %JOIN_IN_TR(FreeAct_Name(TARGET))%[{LOCAL,3}]
+		ELSEIF LOCAL == 337
+			PRINTFORMC %CHILD_INTERACT_TR(子供ふれあい名称(TFLAG:描写中の子供))%[{LOCAL,3}]
+		ELSEIF LOCAL == 417 && TIME >= 660 && TIME <= 900
+			PRINTFORMC Take A Nap[{LOCAL,3}]
+		ELSEIF LOCAL == 417
+			PRINTFORMC Doze Off[{LOCAL,3}]
+		ELSEIF LOCAL == 420
+			SELECTCASE MAIN_MAP
+				CASE 0
+					LOCALS = Ruukoto
+				CASE 3
+					LOCALS = Fairy Maid
+				CASE 9
+					LOCALS = Zombie Fairy
+			ENDSELECT
+			PRINTFORMC Speak With %LOCALS%[{LOCAL,3}]
+		ELSEIF LOCAL == 422 && CFLAG:MASTER:現在位置 == 103
+			PRINTFORMC Listen To God[{LOCAL,3}]
+		ELSEIF LOCAL == 431 && (CFLAG:MASTER:現在位置 == 24 || CFLAG:MASTER:現在位置 == 441)
+			PRINTFORMC Relax In Hot Spring[{LOCAL,3}]
+		ELSEIF LOCAL == 431 && (CFLAG:MASTER:現在位置 == 大衆浴場 || CFLAG:MASTER:現在位置 == 940)
+			PRINTFORMC Take A Bath[{LOCAL,3}]
+		ELSEIF LOCAL == 431 && OPENPLACE(CFLAG:MASTER:現在位置) && ITEM:簡易プール && !BATHCHECK(CFLAG:MASTER:現在位置)
+			PRINTFORMC Relax In The Pool[{LOCAL,3}]
+		ELSEIF LOCAL == 405 && CFLAG:TARGET:同行 && TARGET
+			PRINTFORMC Date[{LOCAL,3}]
+		ELSEIF LOCAL == 410 && OUTROOF(CFLAG:MASTER:現在位置) && DAY:2 == 4
+			PRINTFORMC Snow Shoveling[{LOCAL,3}]
+		ELSEIF LOCAL == 415 && TIME >= 300 && TIME <= 540 && (CFLAG:MASTER:現在位置 == 9 || CFLAG:MASTER:現在位置 == OMANEKIBEYA()) && !FLAG:70 ;com custom code
+			PRINTFORMC Serve Breakfast[{LOCAL,3}]
+		ELSEIF LOCAL == 415 && TIME >= 660 && TIME <= 900 && (CFLAG:MASTER:現在位置 == 9 || CFLAG:MASTER:現在位置 == OMANEKIBEYA()) && !FLAG:70 ;com custom code
+			PRINTFORMC Serve Lunch[{LOCAL,3}]
+		ELSEIF LOCAL == 415 && TIME >= 1020 && TIME <= 1200 && (CFLAG:MASTER:現在位置 == 9 || CFLAG:MASTER:現在位置 == OMANEKIBEYA()) && !FLAG:70 ;com custom code
+			PRINTFORMC Serve Dinner[{LOCAL,3}]
+		ELSEIF LOCAL == 415 && TIME >= 1200 && TIME <= 1440 && (CFLAG:MASTER:現在位置 == 9 || CFLAG:MASTER:現在位置 == OMANEKIBEYA()) && !FLAG:70 ;com custom code
+			PRINTFORMC Serve Supper[{LOCAL,3}]
+		ELSEIF LOCAL == 415 && TIME >= 0 && TIME <= 180 && (CFLAG:MASTER:現在位置 == 9 || CFLAG:MASTER:現在位置 == OMANEKIBEYA()) && !FLAG:70 ;com custom code
+			PRINTFORMC Serve A Night Meal[{LOCAL,3}]
+		ELSEIF LOCAL == 415 && CFLAG:TARGET:行動 == 5 && !FLAG:70 ;com custom code
+			PRINTFORMC Meal Break[{LOCAL,3}]
+		ELSEIF LOCAL == 443
+			;custom code to translate unique coms
+			PRINTFORMC %UNIQUE_COM_TR(NAME_UNIQUE_COM(TARGET))%[{LOCAL,3}]
+		ELSEIF LOCAL == 448
+			IF HUNTING_SPOT(CFLAG:MASTER:現在位置) && MUSHITORI_SPOT(CFLAG:MASTER:現在位置)
+				IF GET_MUSHIDATA(MUSHI_TRAP, "場所") && GROUPMATCH(GET_MUSHIDATA(MUSHI_TRAP, "場所"), TRAP_POINT:1, TRAP_POINT:2, TRAP_POINT:3)
+					PRINTFORMC Check Trap[{LOCAL,3}]
+				ELSE
+					PRINTFORMC %TRAINNAME_TR(LOCAL)%[{LOCAL,3}]
+				ENDIF
+			ELSEIF GROUPMATCH(CFLAG:MASTER:現在位置, TRAP_POINT:1, TRAP_POINT:2, TRAP_POINT:3)
+				PRINTFORMC Check Trap[{LOCAL,3}]
+			ELSEIF GROUPMATCH(CFLAG:MASTER:現在位置, GET_MUSHIDATA(MUSHI_TRAP, "場所"))
+				PRINTFORMC Check Bug Trap[{LOCAL,3}]
+			ELSEIF MUSHITORI_SPOT(CFLAG:MASTER:現在位置)
+				PRINTFORMC Set Bug Trap[{LOCAL,3}]
+			ELSE
+				PRINTFORMC %TRAINNAME_TR(LOCAL)%[{LOCAL,3}]
+			ENDIF
+		ELSEIF LOCAL == 464
+			SELECTCASE CFLAG:MASTER:現在位置
+				CASE 210
+					IF MAIN_MAP == 8
+						PRINTFORMC To Cableway[{LOCAL,3}]
+					ELSE
+						PRINTFORMC To Scenic Hill[{LOCAL,3}]
+					ENDIF
+				CASE 820
+					IF MAIN_MAP == 2
+						PRINTFORMC To North Street[{LOCAL,3}]
+					ELSE
+						PRINTFORMC To Plaza[{LOCAL,3}]
+					ENDIF
+				CASE 570
+					PRINTFORMC To Road of Liminality[{LOCAL,3}]
+				CASE 712,760 ;custom code, too long
+					PRINTFORMC To Remains of Blzng Hell[{LOCAL,3}]
+				CASE 928,970 ;custom code, too long
+					PRINTFORMC To Undrgnd Geyser Center[{LOCAL,3}]
+				CASEELSE
+					;Custom code
+					LOCALS = %STR_TR(6000 + SPECIAL_AREAMOVE() / 10)%
+					PRINTFORMC To %LOCALS%[{LOCAL,3}]
+			ENDSELECT
+		ELSEIF LOCAL == 482
+			PRINTFORMC Follow %CALLNAME:STALKED%[{LOCAL,3}]
+		ELSEIF LOCAL == 626
+			SIF FLAG:市場の神 == 10 ;qol custom code, highlight during market day
+				SETCOLOR 100, 250, 140
+			PRINTFORMC %GIFTSHOP_NAME_TR(GIFTSHOP_NAME(CFLAG:MASTER:デート中, 1))%[{LOCAL,3}]
+			RESETCOLOR
+		ELSEIF LOCAL == 603 && PREVCOM == 603
+			PRINTFORMC Lead By Hand[{LOCAL,3}]
+		ELSEIF LOCAL == 698
+			PRINTFORMC Go To %OMANEKI_PLACE()%[{LOCAL,3}]
+		;Custom code
+		ELSEIF STRLENS(TRAINNAME_TR(LOCAL))
+			PRINTFORMC %TRAINNAME_TR(LOCAL)%[{LOCAL,3}]
+		ENDIF
+	ENDIF
+NEXT
+RESULT = 0
+;自動実行中なら下記表示をスキップ
+SIF !TFLAG:100
+	GOTO SKIP
+PRINTL
+CALL PRINTBUTTON_EX(TFLAG:USERCOM非表示 ? "▽[＋][Commands] ==" # "▼[－][Commands] ==", 3002, TFLAG:USERCOM非表示)
+PRINTFORML %"=" * 130%
+SIF TFLAG:USERCOM非表示
+	GOTO SKIP
+;SIF !GETBIT (FLAG:USERCOMフィルタ, 12)
+;	PRINTC 履歴表示[800]
+IF GETBIT(FLAG:瞬間移動, 1) && !CFLAG:MASTER:同行
+	SETCOLOR 0x5090FF
+ELSE
+	SETCOLOR C_GREEN
+ENDIF
+RESULT = 0
+CALL COM_ABLE400
+SIF RESULT
+	PRINTC Move[400]
+IF GETBIT(FLAG:瞬間移動, 0) && !FLAG:デート相手
+	SETCOLOR 0x5090FF
+ELSE
+	SETCOLOR C_GREEN
+ENDIF
+RESULT = 0
+CALL COM_ABLE604
+SIF RESULT
+	PRINTC Explore[604]
+RESETCOLOR
+SIF !GETBIT (FLAG:USERCOMフィルタ, 0)
+	PRINTC Dirtiness[801]
+SIF !CFLAG:添い寝中 && GET_TARGETNUM() > 1 && !GETBIT (FLAG:USERCOMフィルタ, 1)
+	PRINTC Change Partner[802]
+SIF !GETBIT (FLAG:USERCOMフィルタ, 2)
+	PRINTC Abilities[803]
+SIF !GETBIT (FLAG:USERCOMフィルタ, 3)
+	PRINTC Abilities (Master)[804]
+SIF !GETBIT (FLAG:USERCOMフィルタ, 4)
+	PRINTC Item Config[805]
+SIF !GETBIT(FLAG:USERCOMフィルタ, 11)
+	PRINTC Command Filter[809]
+SIF FLAG:1005
+	PRINTC Config[810]
+SIF TALENT:MASTER:居場所察知 && !CFLAG:うふふ && !CFLAG:添い寝中 && !CFLAG:MASTER:イタズラ ;bug fix (includes qol change)
+	PRINTC Whereabouts Sense[811]
+SIF TALENT:MASTER:汚部屋察知 && AT_HOME(MASTER) && !CFLAG:うふふ && !CFLAG:添い寝中 && !CFLAG:MASTER:イタズラ ;bug fix
+	PRINTC Cleanliness Sense[812]
+SIF GETBIT(TALENT:MASTER:劣情察知, 1) && !CFLAG:うふふ && !CFLAG:MASTER:イタズラ ;bug fix
+	PRINTC Lust Detector[813]
+SIF FLAG:70 && CFLAG:TARGET:344 == 0 && !CFLAG:TARGET:睡眠 && AT_HOME(MASTER) == 1 && TARGET > 0 && !CFLAG:うふふ
+	PRINTC Carry[815]
+SIF FLAG:70 && TALENT:MASTER:集合 && AT_HOME(MASTER) == 1 && !CFLAG:うふふ
+	PRINTC Gather[817]
+SIF GATHERING_SPOT(CFLAG:MASTER:現在位置) != 0
+	PRINTC Foraging List[818]
+	
+;custom code
+SIF FISHING_SPOT(CFLAG:MASTER:現在位置) != 0 && ABL:MASTER:教養 >= 3
+	PRINTC Fishing List[890]
+	
+;addition custom code
+IF PLACE_SENTO(CFLAG:MASTER:現在位置) == 9 && CFLAG:64:現在位置 != CFLAG:MASTER:現在位置 && !FIRSTTIME("YuugiBath", 1, 64)
+	SETCOLOR 100, 250, 140
+	PRINTC Call Yuugi[891]
+	RESETCOLOR
+ENDIF
+
+SIF CAN_DATE(TARGET)
+	PRINTC Invite On A Date[992]
+SIF CFLAG:MASTER:現在位置 == CFLAG:MASTER:初期位置
+	PRINTC Calendar[993]
+SIF FLAG:パンツ輸送
+	PRINTC Check Pilfered Panties[994]
+IF AT_HOME(MASTER) && GETBIT(FLAG:瞬間移動, 1)
+	SETCOLOR 0x5090FF
+ELSEIF !AT_HOME(MASTER) && GETBIT(FLAG:瞬間移動, 0)
+	SETCOLOR 0x5090FF
+ENDIF
+SIF !GETBIT(FLAG:USERCOMフィルタ, 13)
+	PRINTC Auto-TSP Movement[995]
+RESETCOLOR
+
+;自動掃除
+IF AT_HOME(MASTER) && GETBIT(FLAG:自動掃除, 1)
+	SETCOLOR 0x5090FF
+ELSEIF !AT_HOME(MASTER) && GETBIT(FLAG:自動掃除, 0)
+	SETCOLOR 0x5090FF
+ENDIF
+SIF !GETBIT(FLAG:USERCOMフィルタ, 14) & AT_HOME(MASTER) && !CFLAG:うふふ && !CFLAG:添い寝中 && !CFLAG:MASTER:イタズラ ;bug fix
+	PRINTC Auto-Clean[996]
+RESETCOLOR
+
+PRINTL
+;custom, moved to its own line due to length
+IF CAN_DATE(TARGET)
+	LOCAL = TIME_REQUIRED(MAIN_MAP,CFLAG:MASTER:デート中)
+	LOCALS = ({LOCAL}min)
+	SIF LOCAL < 10
+		SETCOLOR 100, 250, 140
+	;ugly but this gets super long otherwise. perhaps move it to its own dedicated line instead?
+	;PRINTFORMC %SUBSTRING(@"Invite To %GET_MAPNAME(MAIN_MAP)%", 0, GETCONFIG("PRINTCの文字数") - (5 + STRLENS(LOCALS)) )%%LOCALS%[990]
+	PRINTFORMC %BL(6)%Invite To %GET_MAPNAME(MAIN_MAP)%%LOCALS%[990]
+	RESETCOLOR
+	PRINTL
+ENDIF
+
+IF FLAG:70 == 1 && CFLAG:TARGET:344 == 0
+	SIF EQUIP:0 && TARGET && CFLAG:うふふ
+		PRINTC Remove Clothes[820]
+	IF EQUIP:0 && TARGET && EQUIP:TARGET:下半身下着２ != 0
+		IF !PANTS_ALREADY_COLLECTED()
+			FONTBOLD
+			SETCOLOR COLOR("PINK")
+			PRINT  
+		ENDIF
+			PRINTC Pilfer Panties[821]
+			RESETCOLOR
+			FONTREGULAR
+	ENDIF
+	IF (TEQUIP:5 == 0 || EQUIP:TARGET:上半身下着１) && CFLAG:うふふ
+		SIF EQUIP:0 && TARGET && EQUIP:TARGET:上半身下着１ != 0 && (EQUIP:TARGET:着物 != 0 || EQUIP:TARGET:上半身上着２ != 0 || EQUIP:TARGET:ボディースーツ == 3)
+			PRINTC Remove Top & Bottom[822]
+	ENDIF
+	IF TEQUIP:5 == 0 && CFLAG:うふふ
+		SIF EQUIP:0 && TARGET && (EQUIP:TARGET:上半身下着１ || EQUIP:TARGET:上半身下着２ || EQUIP:TARGET:下半身下着１ || EQUIP:TARGET:下半身下着２ || EQUIP:TARGET:レオタード || EQUIP:TARGET:ボディースーツ) && (EQUIP:TARGET:上半身上着１ || EQUIP:TARGET:上半身上着２ || EQUIP:TARGET:ワンピース || EQUIP:TARGET:着物 || EQUIP:TARGET:外衣)
+			PRINTC Strip To Underwear[823]
+	ENDIF
+	IF MEASUREMENTCHECK(CFLAG:TARGET:現在位置)
+		IF CFLAG:TARGET:身体測定 != 2
+			PRINTC Measure Body[824]
+		ELSE
+			PRINTC Finish Body Measuring[824]
+		ENDIF
+	ENDIF
+	SIF TFLAG:パンツ収奪
+		PRINTC Take Panties[825]
+	IF TARGET
+		IF TEQUIP:焦らしモード
+			PRINTC End Denial[826]
+		ELSE
+			PRINTC Denial Mode[826]
+		ENDIF
+	ENDIF
+	IF CFLAG:うふふ
+		PRINTC Stop Mischief[999]
+	ELSE
+		PRINTC Resume Time[999]
+	ENDIF
+ELSEIF FLAG:70 == 1 && CFLAG:TARGET:344 == 1
+		PRINTC Resume Time[999]
+	IF CFLAG:うふふ
+		SIF EQUIP:0 && TARGET
+			PRINTC Strip Clothes[820]
+
+		IF CFLAG:うふふ == 2
+			IF TFLAG:抱きつきモード
+				PRINTC Shake Off[850]
+			ELSE
+				PRINTC Slip Out[850]
+			ENDIF
+			IF TEQUIP:焦らしモード
+				PRINTC End Denial[826]
+			ELSE
+				PRINTC Denial Mode[826]
+			ENDIF
+		ELSE
+			PRINTC End Session[999]
+		ENDIF
+	ENDIF
+ELSEIF CFLAG:うふふ && !CFLAG:イタズラ
+	SIF EQUIP:0 && TARGET && !(TFLAG:102 == 3 && TFLAG:抱きつきモード)
+		PRINTC Strip Clothes[820]
+		IF TARGET
+			IF TEQUIP:焦らしモード
+				PRINTC End Denial[826]
+			ELSE
+				PRINTC Denial Mode[826]
+			ENDIF
+		ENDIF
+	IF FLAG:70 == 1 && CFLAG:TARGET:344 == 0
+		PRINTC Resume Time[999]
+	ELSEIF CFLAG:うふふ == 2
+		IF TFLAG:抱きつきモード
+			PRINTC Shake Off[850]
+		ELSE
+			PRINTC Slip Out[850]
+		ENDIF
+	ELSE
+		PRINTC End Session[999]
+	ENDIF
+ENDIF
+
+IF CFLAG:イタズラ
+	SIF CFLAG:イタズラ < 2 && (EXP:TARGET:睡眠姦経験 > 100 || TCVAR:睡眠薬強度 || TCVAR:睡眠深度 > 2000)
+		PRINTC Unbutton Clothes[830]
+	IF CFLAG:イタズラ < 2
+		PRINTC Stop Mischief[999]
+		IF EQUIP:0 && TARGET && EQUIP:TARGET:下半身下着２ != 0 ;bug fix
+			IF !PANTS_ALREADY_COLLECTED()
+				FONTBOLD
+				SETCOLOR COLOR("PINK")
+				PRINT  
+			ENDIF
+			PRINTC Pilfer Panties[821]
+			RESETCOLOR
+			FONTREGULAR
+		ENDIF
+	ENDIF
+	SIF CFLAG:イタズラ > 1
+	PRINTC Stop Sleep Rape[999]
+ENDIF
+IF CFLAG:添い寝中
+	PRINTC Stop Sleeping Together[999]
+ENDIF
+IF CHK_DATENOW(CFLAG:MASTER:デート中) && (!FLAG:70 || CFLAG:TARGET:344 == 1) && !CFLAG:MASTER:うふふ && CFLAG:MASTER:現在位置 != OMANEKIBEYA() && TFLAG:妄想中 != 1
+	SIF TIME_REQUIRED(MAIN_MAP,CFLAG:MASTER:デート中) < 10
+		SETCOLOR 100, 250, 140
+	;custom code
+	PRINTFORMC \@ FLAG:デート相手 ? Finish Date # Return Home \@({TIME_REQUIRED(MAIN_MAP,CFLAG:MASTER:デート中)}min)[999]
+	RESETCOLOR
+ENDIF
+$SKIP
+IF PREVCOM >= 0
+	IF TFLAG:151
+		STR:0 = %STR_TR(1500 + TFLAG:151)%
+	ELSE
+		STR:0 = %TRAINNAME_TR(PREVCOM)%
+	ENDIF
+ENDIF
+SIF PREVCOM == 304 && CFLAG:TARGET:350 == 49 && TALENT:TARGET:酒耐性 != -2
+	STR:0 = Share Drink
+SIF PREVCOM == 304 && CFLAG:TARGET:350 == 49 && (TALENT:TARGET:酒耐性 == -2 || CFLAG:TARGET:妊娠自覚状態 == 1)
+	STR:0 = Serve Dish
+SIF PREVCOM == 304 && CFLAG:TARGET:350 == 51
+	STR:0 = Look After
+IF !TFLAG:USERCOM非表示
+	IF PREVCOM >= 0 && PREVCOM < 300
+		PRINTL 
+		PRINT <Last Training Command: 
+		PRINTS STR_TR(0)
+		SIF TFLAG:150
+			PRINT (Assistant)
+		PRINTL >
+	ELSE
+		PRINTL 
+		PRINTFORM <Last Command: %STR:0%>
+	ENDIF
+ENDIF

@@ -1,0 +1,489 @@
+﻿;貸本屋
+@COM620_TR
+#DIM CHARISMA
+#DIM ItemId
+#DIM nResult
+#DIM DYNAMIC nTimeSpent
+#DIM DYNAMIC nDouble
+
+#DIM nCost = 3000, 10
+
+gLineCount = LINECOUNT
+REDRAW 0
+DO
+	SIF LINECOUNT - gLineCount > 0
+		CLEARLINE LINECOUNT - gLineCount
+		
+	PRINTFORML Available \@ CHARISMA ? charisma:CM%DIGIT_GROUP(MONEY:2)% # money:\\%DIGIT_GROUP(MONEY)%\@
+
+	IF CFLAG:[[小鈴]]:現在位置 == CFLAG:PLAYER:現在位置 && ABL:[[小鈴]]:親密 >= 5
+		LOCALS '= @"「Oh hey, hello %CALLNAME:MASTER%! It's always nice to see you here.」/「Please choose whichever book you want, I'll make sure to get you one.」"
+		CALL COM620_SUZUSPEAK(LOCALS, "smile")
+		
+		LOCALS '= @"「As always, borrowing costs\@ CHARISMA ? , umm... {nCost:1} Charisma! # %" "%\\{nCost:0}.\@」"
+		CALL COM620_SUZUSPEAK(LOCALS)
+	ELSE
+		LOCALS '= @"「Hello, and welcome to Suzunaan!」/「Borrowing costs\@ CHARISMA ? , umm... {nCost:1} Charisma! # %" "%\\{nCost:0}.\@」"
+		CALL COM620_SUZUSPEAK(LOCALS)
+	ENDIF
+
+	;make a list
+	FOR LOCAL, 1, BookTitles + 1
+		ItemId = LOCAL + 100
+		SIF ItemId == GETNUM(ITEM,  "妖魔本") && (CFLAG:[[小鈴]]:現在位置 != CFLAG:PLAYER:現在位置 || ABL:[[小鈴]]:親密 < 5) ;don't show demon book if not friends with suzu
+			CONTINUE
+			
+		IF ITEM:ItemId
+			SETCOLOR C_YELLOW
+		ELSEIF GETBIT (FLAG:1011,LOCAL)
+			SETCOLOR C_GRAY
+		ENDIF
+		PRINTFORM [{LOCAL, 3}] %ITEMNAME_TR(ItemId)%
+		IF ITEM:ItemId
+			PRINTFORML (%PARSE("You are")% already borrowing it)
+		ELSEIF GETBIT (FLAG:1011,LOCAL)
+			PRINTL (Rented out)
+		ELSE
+			PRINTL 　
+		ENDIF
+		RESETCOLOR
+	NEXT
+	
+	PRINTL
+	SIF FLAG:貸本返却期限 > 0
+		PRINTFORML [ 97] Return all books
+	SIF !ITEM:GETNUM(ITEM,  "妖魔本") && INRANGE(FLAG:貸本返却期限, 1, 8) ;if not demon book, and have a borrowed book on a non-extended period
+		PRINTFORML [ 98] Extend the period
+	PRINTFORML [ 99] About books
+	IF !CHARISMA
+		PRINTFORML [100] Pay with Charisma
+	ELSE
+		PRINTFORML [100] Pay with money
+	ENDIF
+	DRAWLINE
+	PRINTL [  0] Leave
+
+	INPUT
+	
+	IF RESULT == 0
+		LOCALS '= "「Come back soon!」"
+		CALL COM620_SUZUSPEAK(LOCALS, "smile")
+		
+		TIME += nTimeSpent*30
+		RETURN !nTimeSpent ? -1 # 1
+	ENDIF
+	
+	nResult = RESULT
+	;check if trying to choose duplicate or many books at once
+	LOCAL:1 = 0
+	IF INRANGE(RESULT, 1, BookTitles)
+		FOR LOCAL, 1, BookTitles + 1
+			ItemId = LOCAL + 100
+			
+			IF (nResult+100) == ItemId && ITEM:ItemId
+				;demon book unique line
+				IF (nResult+100) == GETNUM(ITEM,  "妖魔本")
+					LOCALS '= "「Oh, you're returning it back so soon?」/"
+					LOCALS += "「The burden of having a Demon Book on you can be unbearable sometimes... I can understand.」/"
+					LOCALS += "「Please, hand it over, I can take care of it.」/「After that, you'll be allowed to take any other books, just as always!」"
+				ELSE
+					LOCALS '= "「I'm sorry, but you're already borrowing that one...」/"
+					LOCALS += "「Ah, so you mean that you'll return it?」/"
+					LOCALS += "「In that case, you'll have to return every other book that you may be renting.」/"
+					LOCALS += "「Is that okay?」"
+				ENDIF
+				CALL COM620_SUZUSPEAK(LOCALS)
+				CALL ASK_YN
+				
+				IF !RESULT
+					LOCALS '= @"「Great! \@ BORROWED_BOOKS() > 1 ? They seem in # It seems in a \@ perfect condition.」/"
+					LOCALS +=  "「Thank you for using our services! You may always borrow another book right away.」/"
+					LOCALS +=  "「In case you want it, you can still borrow it back at once!」"
+					CALL COM620_SUZUSPEAK(LOCALS, "smile")
+					WAIT
+					;reset every book
+					FOR LOCAL, 1,BookTitles + 1
+						SIF ITEM:(100 + LOCAL)
+							CLEARBIT FLAG:1011, LOCAL
+						ITEM:(100 + LOCAL) = 0
+					NEXT
+					FLAG:貸本返却期限 = 0
+				ELSE
+					LOCALS '= "「N-No? U-Uhh...」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					WAIT
+				ENDIF
+				;go back to start once you return books (or don't)
+				LOCAL:1 = 1
+				BREAK
+			ENDIF
+		NEXT
+		SIF LOCAL:1
+			CONTINUE
+		
+		LOCAL:1 = 0
+		FOR LOCAL, 1, BookTitles + 1
+			ItemId = LOCAL + 100
+			IF ITEM:ItemId
+				IF CFLAG:[[小鈴]]:現在位置 == CFLAG:PLAYER:現在位置 && ABL:[[小鈴]]:親密 >= 5
+					;demon book unique line
+					IF ITEM:GETNUM(ITEM,  "妖魔本")
+						LOCALS '= "「I'm sorry, but you are currently in possession of the Demon Book...」/"
+						LOCALS += "「You must return it at once before you can borrow any other book.」"
+						CALL COM620_SUZUSPEAK(LOCALS)
+						
+						CALL ASK_YN("Return it", "Don't return it yet")
+						IF !RESULT
+							LOCALS '= "「Okay, that's better... Ahem! It's dangerous to have one on you for too long, so I'm glad you returned it back.」/"
+							LOCALS += "「How was it? I hope it was helpful!」/"
+							LOCALS += "「Now, for your next book...」"
+							CALL COM620_SUZUSPEAK(LOCALS)
+							WAIT
+							;clear every book just in case
+							FOR LOCAL, 1,BookTitles + 1
+								SIF ITEM:(100 + LOCAL)
+									CLEARBIT FLAG:1011, LOCAL
+								ITEM:(100 + LOCAL) = 0
+							NEXT
+							FLAG:貸本返却期限 = 0
+							IF GETBIT (FLAG:1011,nResult)
+								GOTO RENTED
+							ELSE
+								GOTO BORROW
+							ENDIF
+						ELSE
+							LOCALS '= "「Eh? But...」"
+							CALL COM620_SUZUSPEAK(LOCALS)
+							WAIT
+							LOCAL:1 = 1
+							BREAK
+						ENDIF
+					ENDIF
+					;trying to take many books at once
+					LOCALS '= "「Umm... Normally, our readers are not allowed to borrow more than one book at a time, but I can trust you!」/"
+					CALL COM620_SUZUSPEAK(LOCALS, "smile")
+					WAIT
+					SELECTCASE ABL:[[小鈴]]:親密
+					CASE IS >= 10
+						LOCALS '= "「I think you can have three books in total... So many books! That must feel exhilarating, right?!」/"
+					CASE IS >= 5
+						LOCALS '= "「So I'll let you have just one more book... Two in total! But don't tell anyone about that, okay? That's a promise!」/"
+					ENDSELECT
+					IF BORROWED_BOOKS() >= 2 + (ABL:[[小鈴]]:親密 >= 10)
+						LOCALS += "「And speaking of which, it seems like you already have that much, so... I'm sorry!」"
+						CALL COM620_SUZUSPEAK(LOCALS)
+						WAIT
+						LOCAL:1 = 1
+						BREAK
+					ENDIF
+					CALL COM620_SUZUSPEAK(LOCALS)
+					WAIT
+					LOCALS '= "「On that note, all of the books will have the same return date and you'll have to pay for them separately.」/"
+					LOCALS += "「Also, no borrowing the same book! That wouldn't help you much anyway, would it now?」/"
+					LOCALS += "「Is that okay?」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					CALL ASK_YN
+					IF !RESULT
+						IF GETBIT (FLAG:1011,nResult)
+							GOTO RENTED
+						ELSE
+							GOTO BORROW
+						ENDIF
+					ENDIF
+				ELSE
+					LOCALS '= "「I'm sorry, but you're not allowed to borrow multiple books at once...」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					WAIT
+					SIF ABL:[[小鈴]]:親密 >= 5
+						PRINTW Darn, if only Kosuzu was here...
+				ENDIF
+				LOCAL:1 = 1
+				BREAK
+			ENDIF
+		NEXT
+		SIF LOCAL:1
+			CONTINUE
+	ENDIF
+	
+	;check selection
+	SELECTCASE RESULT
+		CASE 100
+			IF !CHARISMA
+				LOCALS '=  "「Pay with Charisma????」/"
+				LOCALS += @"「Uhh... Then, {nCost:1} Charisma...? Should be good enough I think...」"
+				CALL COM620_SUZUSPEAK(LOCALS)
+				WAIT
+				
+				IF MONEY:2 < nCost:1
+					PRINTFORML Not enough Charisma!
+					LOCALS '= "「That's too bad...」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					WAIT
+					CONTINUE
+				ENDIF
+			ELSE
+				LOCALS '= "「Ah, you'll pay with money then?」"
+				CALL COM620_SUZUSPEAK(LOCALS)
+				WAIT
+			ENDIF
+			CHARISMA = !CHARISMA
+		CASE 99 ;explanation
+			LOCALS '= "「The books you borrow are used automatically when you perform related actions.」/"
+			LOCALS += "「They may help you understand the material better. Not to mention, they're very interesting to read!」/"
+			LOCALS += "「It's not much, but when accumulated it can give a solid boost to whatever problem you're trying to solve.」"
+			SIF CFLAG:[[小鈴]]:現在位置 == CFLAG:PLAYER:現在位置
+				LOCALS += "/「At least it works that way for me, ehehe～」"
+			CALL COM620_SUZUSPEAK(LOCALS, "smile")
+			WAIT
+		CASE 98 ;extend
+			SIF ITEM:GETNUM(ITEM,  "妖魔本") || FLAG:貸本返却期限 == 0 || FLAG:貸本返却期限 > 8
+				CONTINUE
+				
+			CALL COM620_BOOKEXTEND(nCost, CHARISMA)
+		CASE 97 ;return
+			SIF !FLAG:貸本返却期限 ;bug failsafe, allow if it goes below 0 for whatever reason
+				CONTINUE
+			
+			PRINTFORML Confirm?
+			CALL ASK_YN
+			IF !RESULT
+				LOCALS '= "「Oh, you want to return the books? You still have more time to use them though...」/"
+				LOCALS += "「Oh well. Let me have a look...」/"
+				LOCALS += "「Mhmm... Seems all right to me. Let me take them off of you, and... done!」/"
+				CALL COM620_SUZUSPEAK(LOCALS)
+				WAIT
+				LOCALS '= "「Thank you very much for using our services!」"
+				CALL COM620_SUZUSPEAK(LOCALS, "smile")
+				PRINTFORMW Returned {BORROWED_BOOKS()} books.
+				FOR LOCAL, 1,BookTitles + 1
+					SIF ITEM:(100 + LOCAL)
+						CLEARBIT FLAG:1011, LOCAL
+					ITEM:(100 + LOCAL) = 0
+				NEXT
+				FLAG:貸本返却期限 = 0
+			ENDIF
+	CASEELSE
+		SIF !INRANGE(nResult, 1, BookTitles)
+			CONTINUE
+		SIF nResult == (GETNUM(ITEM,  "妖魔本")-100) && (CFLAG:[[小鈴]]:現在位置 != CFLAG:PLAYER:現在位置 || ABL:[[小鈴]]:親密 < 5)
+			CONTINUE
+			
+		IF GETBIT (FLAG:1011,RESULT)
+			$RENTED
+			LOCALS '= "「I'm sorry, but it's rented out.」"
+			CALL COM620_SUZUSPEAK(LOCALS)
+			WAIT
+			
+			IF CFLAG:[[小鈴]]:現在位置 == CFLAG:PLAYER:現在位置
+				IF ABL:[[小鈴]]:親密 < 5
+					LOCALS '= "「...However, I can offer you my own personal copy for triple the normal price.」/"
+					LOCALS += "「Are you interested?」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					nDouble = 2
+				ELSE
+					LOCALS '= @"「Ah, but %CALLNAME:MASTER%... I knew you'd ask, so I saved a copy just for you.」/"
+					LOCALS +=  "「And, um, no, you don't need to pay extra. I'd be glad to offer you one if you're okay with it.」"
+					CALL COM620_SUZUSPEAK(LOCALS, "smile")
+				ENDIF
+				CALL ASK_YN
+				IF RESULT
+					IF ABL:[[小鈴]]:親密 < 5
+						LOCALS '= "「Very well.」/"
+					ELSE
+						LOCALS '= "「Ah... Okay.」/"
+					ENDIF
+					LOCALS += "「Please come again tomorrow, it may be in stock by then!」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					WAIT
+					CONTINUE
+				ELSE
+					GOTO BORROW
+				ENDIF
+			ELSE
+				PRINTW Darn, if only Kosuzu was here...
+			ENDIF
+		ELSE
+			$BORROW
+			IF nResult == 6 ;picture story show, unused currently
+				LOCALS '= "「Oh! I think you should know...」/"
+				LOCALS += "「It may be pretty, but... There's no use for this little child... yet.」/"
+				LOCALS += "「Do you still want it?」"
+				CALL COM620_SUZUSPEAK(LOCALS)
+				
+				CALL ASK_YN
+				SIF RESULT
+					CONTINUE
+			ENDIF
+			;add demon book - increases given sexual experience
+			IF nResult == (GETNUM(ITEM,  "妖魔本")-100)
+				LOCALS '= @"「Oh, this one? You have a keen eye, %CALLNAME:MASTER%...」/"
+				LOCALS +=  "「This rare book is called a Demon Book and there are many of them. But unlike others, this has to be a very peculiar one.」/"
+				LOCALS +=  "「Allegedly, it was written by a renowned youkai whose quest was to, um... Woo every woman he'd come across.」/"
+				LOCALS +=  "「So I'm sure this book contains a lot of secrets related to that... But I wasn't able to read it.」"
+				CALL COM620_SUZUSPEAK(LOCALS)
+				WAIT
+
+				LOCALS '= "「Not that I want to! It's just... It seems that only a person of similar characteristic can open it.」"
+				CALL COM620_SUZUSPEAK(LOCALS, "blush")
+				WAIT
+
+				LOCALS '= "「I'm not trying to imply anything, but if you find a use for it, then by all means, you can have it...」/"
+				LOCALS += "「Ah, sorry but I'll have to charge extra for this one, I'm sure you understand. All other conditions apply as well!」/"
+				LOCALS += "「How much exactly? Umm... Please don't be angry, but it's... 10 times the usual fee. And you can't extend the period either.」/"
+				LOCALS += "「That means you'll have to return every other book you may have in possession too,/　and you can't borrow extra until you return the Demon Book.」/"
+				LOCALS += "「Yeah, I know it's a bit unreasonable, but, uhh.../　I'm not even supposed to let you have it! So, um... Take it or leave it!」"
+				CALL COM620_SUZUSPEAK(LOCALS)
+				CALL ASK_YN
+				
+				IF !RESULT
+					LOCALS '= "「Very well... Let's see where it is. Ah! Here you are...」/「Oh, it opened as soon as it touched your hand...?」/「Let me take a look. Strange, I still can't quite read it...」/「Huh, you can?! And it says that you must be in... \"action\" for it to work?! T-Th-That's...!」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					WAIT
+
+					LOCALS '= "「Awawa, uhh, err...! I-I'll leave it to you then!!!」"
+					CALL COM620_SUZUSPEAK(LOCALS, "blush")
+					WAIT
+					nDouble = 9
+				ELSE
+					LOCALS '= "「That's understandable.」/「Sorry I built up your hopes for nothing...」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					WAIT
+					CONTINUE
+				ENDIF
+			ENDIF
+			;price check (can be more than original price)
+			IF !CHARISMA
+				IF MONEY < nCost:0 + nCost:0*nDouble
+					LOCALS '= "「I'm sorry, but... You don't seem to have enough money.」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					WAIT
+					CONTINUE
+				ENDIF
+				MONEY -= nCost:0 + nCost:0*nDouble
+			ELSE
+				IF MONEY:2 < nCost:1 + nCost:1*nDouble
+					LOCALS '= "「I'm sorry, but... You don't seem to have enough Charisma.」"
+					CALL COM620_SUZUSPEAK(LOCALS)
+					WAIT
+					CONTINUE
+				ENDIF
+				MONEY:2 -= nCost:1 + nCost:1*nDouble
+			ENDIF
+			
+			SETBIT FLAG:1011, nResult
+			ITEM:(100 + nResult) = 1
+			SIF FLAG:貸本返却期限 < 8
+				FLAG:貸本返却期限 = 8
+			TFLAG:193 = 1
+			nTimeSpent = 1
+			PRINTFORML Paid \@ CHARISMA ? CM{nCost:1 + nCost:1*nDouble} # \\{nCost:0 + nCost:0*nDouble} \@.
+			nDouble = 0
+			PRINTFORML Borrowed %ITEMNAME_TR(100 + nResult)%.
+			LOCAL = BORROWED_BOOKS()
+			SIF nResult != (GETNUM(ITEM,  "妖魔本")-100) && LOCAL >= 2
+				PRINTFORML You have borrowed {BORROWED_BOOKS()} books in total.
+			
+			LOCALS '= "「Thank you very much!」/「The loan period is one week.」"
+			CALL COM620_SUZUSPEAK(LOCALS, "smile")
+			WAIT
+			
+			IF nResult == (GETNUM(ITEM,  "妖魔本")-100)
+				SIF LOCAL - (ITEM:GETNUM(ITEM,  "妖魔本") > 0)
+					PRINTFORMW Returned all other books.
+				FOR LOCAL, 1,BookTitles + 1
+					SIF LOCAL == (GETNUM(ITEM,  "妖魔本")-100) ;skip for demon book
+						CONTINUE
+					SIF ITEM:(100 + LOCAL)
+						CLEARBIT FLAG:1011, LOCAL
+					ITEM:(100 + LOCAL) = 0
+				NEXT
+				FLAG:貸本返却期限 = 8
+				CONTINUE
+			ENDIF
+			SIF FLAG:貸本返却期限 >= 15 ;already extended period
+				CONTINUE
+				
+			CALL ASK_YN("Extend the period", "Proceed")
+			SIF !RESULT
+				CALL COM620_BOOKEXTEND(nCost, CHARISMA)
+				
+			;since you can borrow more than one book in one sitting, we'll pass bits through a flag to check at the dialogue (otherwise we're limited to by item check which is fine, but it will also comment on stuff you already had earlier)
+			SETBIT TFLAG:193, nResult
+		ENDIF
+	ENDSELECT
+	
+LOOP 1
+
+@COM620_BOOKEXTEND(nCost, CHARISMA)
+#DIM REF nCost, 0
+#DIM CHARISMA
+IF INRANGE(FLAG:貸本返却期限, 1, 7) ;have to pay if not at the same day
+	LOCALS '= "「Ah, extending the period? That can be arranged, but...」/"
+	LOCALS += "「You'll have to pay extra for the next week as well. Are you okay with it?」"
+	IF ABL:[[小鈴]]:親密 >= 5 && CFLAG:[[小鈴]]:現在位置 == CFLAG:PLAYER:現在位置
+		LOCALS += "/「Sorry about that. Normally I'd let you, um, have it without any extra, but I've had some people trying to trick me.」/"
+		LOCALS += "「My parents gave me an earful for that after we started losing business because I was too accommodating.」"
+	ENDIF
+ELSE
+	IF ABL:[[小鈴]]:親密 < 5 || CFLAG:[[小鈴]]:現在位置 != CFLAG:PLAYER:現在位置
+		LOCALS '= "「Ah, extending the period? That can be arranged, but...」/"
+		LOCALS += "「You'll have to pay extra for the next week as well. Are you okay with it?」"
+	ELSE
+		LOCALS '= @"「Ah, extending the period? Sure thing! I'm so glad that you're interested in my humble books, %CALLNAME:MASTER%...」/"
+		LOCALS +=  "「What about extra? Oh, no, it's fine... Just make sure to return the book in time, okay?」"
+	ENDIF
+ENDIF
+CALL COM620_SUZUSPEAK(LOCALS)
+
+CALL ASK_YN
+IF !RESULT
+	IF INRANGE(FLAG:貸本返却期限, 1, 7) || ABL:[[小鈴]]:親密 < 5 || CFLAG:[[小鈴]]:現在位置 != CFLAG:PLAYER:現在位置
+		IF !CHARISMA
+			IF MONEY < nCost:0
+				LOCALS '= "「I'm sorry, but... You don't seem to have enough money.」"
+				CALL COM620_SUZUSPEAK(LOCALS)
+				WAIT
+				RETURN
+			ENDIF
+			MONEY -= nCost:0
+		ELSE
+			IF MONEY:2 < nCost:1
+				LOCALS '= "「I'm sorry, but... You don't seem to have enough Charisma.」"
+				CALL COM620_SUZUSPEAK(LOCALS)
+				WAIT
+				RETURN
+			ENDIF
+			MONEY:2 -= nCost:1
+		ENDIF
+		PRINTFORMW Paid \@ CHARISMA ? CM{nCost:1} # \\{nCost:0} \@.
+	ENDIF
+	LOCALS '= "「Thank you very much! Your renting period has been doubled per request.」/"
+	LOCALS += "「Hope you enjoy it!」"
+	CALL COM620_SUZUSPEAK(LOCALS, "smile")
+	WAIT
+	FLAG:貸本返却期限 = 15
+ENDIF
+
+@COM620_SUZUSPEAK(ARGS, ARGS:1 = "通常")
+SIF ARGS:1 == "smile"
+	ARGS:1 '= "笑顔"
+SIF ARGS:1 == "blush"
+	ARGS:1 '= "発情"
+IF CFLAG:[[小鈴]]:現在位置 == CFLAG:PLAYER:現在位置
+	CALL SPTALK, [[小鈴]], ARGS:1, 0, ARGS, 1
+ELSE
+	CALL SPTALK, 0, ARGS:1, 12, ARGS, 1
+ENDIF
+RESETCOLOR
+
+@BORROWED_BOOKS()
+#FUNCTION
+LOCAL:2 = 0
+
+FOR LOCAL, 1, BookTitles + 1
+	LOCAL:1 = LOCAL + 100
+	SIF ITEM:(LOCAL:1)
+		LOCAL:2 ++
+NEXT
+
+RETURNF LOCAL:2

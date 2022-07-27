@@ -1,0 +1,219 @@
+﻿;山の製材所
+@COM624
+#DIM 売値
+#DIM ループ数
+#DIM リザルト保管
+
+ループ数 = 0
+
+;開店時間・閉店時間
+IF INRANGE(TIME:0, 540, 1080) == 0
+	PRINTFORMW Outside of business hours.
+	RETURN -1
+ENDIF
+
+;初回イベント
+IF FLAG:最後に製材所に訪れた日 == 0
+	;初回イベント前は、丸太持ちでなければ店にも入れない
+	IF ITEM:丸太 == 0
+		PRINTFORML %PARSE("You have")% no particular use for this place right now...
+		PRINTFORMW Go and cut down some logs for sale first.
+		RETURN -1
+	ENDIF
+	;依頼の報酬など、伐採以外で丸太を入手してしまった場合の退避用
+	SIF !FLAG:丸太種類
+		FLAG:丸太種類 = MAX(RAND:12, 1)
+	
+	PRINTFORMW 「Finally we meet. Pleased to meet you, my sworn friend!」
+	SIF FLAG:なりきり == 0
+		PRINTFORMW 「I've heard so much about you after all. That there's this odd outsider roaming around and doing all sorts of activities.」
+	IF ABL:[[にとり]]:親密 >= 3
+		PRINTFORMW 「It looks like your kappa friend is taking care of you as well.」
+		PRINTFORMW 「I've been told that you're very good for busi-- ...Ahem, I mean, that you're a good and trustworthy person!」
+	ENDIF
+	PRINTFORMW 「So, what can I do for you?」
+	PRINTFORMW 「Heeeh, so you want me to mill you some lumber from logs? Sure thing, here's what I'll charge you――」
+	PRINTFORMW Dragging it on the floor, the kappa brings out a panel with the explanation how things work here...
+	PRINTFORMW Wait, isn't this much cheaper than the market price in the Village?
+	PRINTFORMW On top of that, they also accept Charisma for payment it seems.
+	PRINTFORMW 「Yup, you betcha! How can possibly a fully automatic mechanized sawmill lose to human labor?」
+	PRINTFORMW 「...Though that said, now that the temple construction and shrine restoration work has been completed...」
+	PRINTFORML 「I've been getting so few orders that the machine I spent so much time working on
+	PRINTFORMW 　is a bit too much for what we need, and it's mostly staying idle.」
+	PRINTFORML 「Oh, right! Say, if you promise to become my regular customer,
+	PRINTFORMW 　I'll do today's first service for absolutely free! How does that sound?」
+	PRINTFORML "...Isn't that just a way to show off your machine?", %PARSE("you were")% about to blurt out,
+	PRINTFORMW but instead %PARSE("you")% decided to take advantage of such kindness.
+	PRINTFORMW 「It's settled, then! Now, set the log over there please...」
+	PRINTFORMW 「Aaaand, there we go! Switch on! Full power! Fufufu, roar my machine! Behold the technological prowess of the kappa!」
+	PRINTFORMW Setting aside the strangely excited kappa, the machine finished milling the lumber with extreme precision and speed.
+	PRINTFORMW .........
+	PRINTFORMW ......
+	CALL LogRefine("製材所")
+	PRINTL 
+	PRINTFORMW 「Yup, it's all done now! How's that?!」
+	;it's probably a girl, but you don't know for sure...
+	PRINTFORMW The kappa strikes a pose with a very smug and self-satisfied look, as %PARSE("you")% humbly %PARSE("thank")% them for their service.
+	PRINTFORMW 「Hehe, I'm glad to hear that my work was well received. Then as promised, I will look forward to your patronage!」
+	PRINTL 
+	ループ数 = 1
+ENDIF
+
+$LOOP_SELECT
+gLineCount = LINECOUNT
+IF ループ数
+	PRINTL 
+	PRINTFORMW 「Come on, come on, come on! Bring me the next log!」
+ELSE
+	;平常来店
+	PRINTL 
+	IF FLAG:最後に製材所に訪れた日 == DAY:0
+		PRINTFORMW 「Oyo? What seems to be the matter?」
+	ELSE
+		PRINTFORM 「Heya, 
+		SELECTCASE TIME:0
+			CASE 540 TO 600
+				PRINTFORM good morning,
+			CASE 601 TO 1020
+				PRINTFORM hi there,
+			CASEELSE
+				PRINTFORM good evening,
+		ENDSELECT
+		PRINTFORM  my friend. 
+		IF DAY:0 - FLAG:最後に製材所に訪れた日 > 28
+			PRINTFORMW I haven't seen you for some time. I was worried about you, you know.」
+		ELSEIF DAY:0 - FLAG:最後に製材所に訪れた日 > 14
+			PRINTFORMW Long time no see!」
+		ELSE
+			PRINTFORMW What can I do for you today?」
+		ENDIF
+	ENDIF
+ENDIF
+
+ループ数 ++
+FLAG:最後に製材所に訪れた日 = DAY:0
+
+PRINTFORML 　　Money: \\%TOSTR(MONEY,"#,###")%　Charisma: CM%TOSTR(MONEY:2,"#,###")%
+DRAWLINE
+
+CALL ASK_M("Lumbering services", ITEM:丸太, "About the deal", 1, "Exit shop", 2)
+CLEARLINE LINECOUNT - gLineCount
+
+SELECTCASE RESULT
+	;製材してほしい
+	CASE 0
+		;依頼の報酬など、伐採以外で丸太を入手してしまった場合の退避用
+		SIF !FLAG:丸太種類
+			FLAG:丸太種類 = MAX(RAND:12, 1)
+
+		SETCOLOR 0x00FF00
+		PRINTFORMD 「So you want 
+		PRINTFORM %WOOD_NAME(FLAG:丸太種類)% lumber
+		PRINTFORMD  then. I'll do it for 
+		PRINTFORM \\%TOSTR(LUMBERING(FLAG:丸太種類, "製材所"),"#,###")%
+		PRINTFORMDL .
+		PRINTFORMD 　Oh, and if you prefer to pay with Charisma then it'll be 
+		PRINTFORM CM%TOSTR(LUMBERING_CMCOST(FLAG:丸太種類),"#,###")%
+		RESETCOLOR
+		PRINTFORMW . I don't mind either way!」
+		CALL ASK_M("Pay with \\", MONEY >= LUMBERING(FLAG:丸太種類, "製材所"), "Pay with Charisma", MONEY:2 >= LUMBERING_CMCOST(FLAG:丸太種類), "Cancel", 2)
+
+		リザルト保管 = RESULT
+		IF リザルト保管 == 0 || リザルト保管 == 1
+			IF リザルト保管 == 0
+				PRINTFORMW 　Money: \\%TOSTR(MONEY,"#,###")% → \\%TOSTR(MONEY - LUMBERING(FLAG:丸太種類, "製材所"),"#,###")%
+				PRINT 　
+				CALL PAY_MONEY_YEN(LUMBERING(FLAG:丸太種類, "製材所"), 2)
+			ELSE
+				PRINTFORMW 　Charisma: %TOSTR(MONEY:2,"#,###")% → %TOSTR(MONEY:2 - LUMBERING_CMCOST(FLAG:丸太種類),"#,###")%
+				PRINT 　
+				CALL PAY_MONEY_CM(LUMBERING_CMCOST(FLAG:丸太種類), 2)
+			ENDIF
+			PRINTL 
+			PRINTDATAL
+				DATAFORM 「Thank you for using our services～」
+				DATAFORM 「Thank you for your continued patronage!」
+				DATAFORM 「Pleasure doing business with you～」
+			ENDDATA 
+			PRINTDATAW
+				DATAFORM 「Aaaand, there we go! Switch on! Full power! Fufufu, roar my machine! Behold the technological prowess of the kappa!」
+				DATAFORM 「Just set the log here and let the fully automatic sawmill do the rest!」
+				DATAFORM 「Now, let me show you the essence of factory automation!」
+			ENDDATA
+			CALL LogRefine("製材所")
+			PRINTL 
+		ELSEIF リザルト保管 == 2
+			PRINTFORMW 「Uhh, just so you know I won't accept bargaining!」
+			PRINTL 
+			GOTO LOOP_SELECT
+		ENDIF
+	;取引内容を確認する
+	CASE 1
+		PRINTFORMW 「Here I turn logs into lumber for you at a reasonable price!」
+		PRINTFORMW 「What about buying logs and lumber?　You see, there's an oversupply of that kind of stuff here in the Mountain, so...」
+		PRINTFORMW 「You'd probably get a better price wholesale in the Village, I'm pretty sure.」
+		PRINTFORMW 「Can we make furniture or something? ...Nuh uh, I'm afraid not. That sounds like a drag.」
+		PRINTFORMW 「We get bored easily, so we're not really good at that kind of thing.」
+		PRINTFORMW 「That kind of elaborate work is better left to human craftsmen and artisans, I think.」
+		PRINTFORMW 「If we were to make it, it would quickly turn into typical kappa furniture with all kind of unnecessary features along the way.」
+		PRINTFORMW 「...Is that something you may be interested in?　Hehe, well, maybe one of these days...」
+		PRINTL 
+	CASE 2
+		PRINTFORMW 「Alright, until next time!」
+		PRINTL 
+		TIME += ループ数 * 5
+		RETURN 1
+ENDSELECT
+GOTO LOOP_SELECT
+
+;-------------------------------------------------
+;実行可能判定
+;-------------------------------------------------
+;山の製材所
+@COM_ABLE624
+;一括管理
+SIF GLOBAL_COMABLE(624)
+	RETURN RESULT
+
+IF !AT_HOME(MASTER)
+	SIF CFLAG:MASTER:現在位置 != 玄武の沢
+		RETURN 0
+ELSE
+	;山麓が拠点の場合は、河童のアジト
+	SIF CFLAG:MASTER:現在位置 != 704
+		RETURN 0
+ENDIF
+;睡眠中
+SIF CFLAG:MASTER:睡眠 || CFLAG:MASTER:イタズラ || CFLAG:うふふ ;custom code
+	RETURN 0
+;時間停止中
+SIF FLAG:70
+	RETURN 0
+RETURN 1
+
+
+;-------------------------------------------------
+;製材コストをカリスマに変換する関数
+;ARG …FLAG:丸太種類
+;-------------------------------------------------
+@LUMBERING_CMCOST(ARG)
+#FUNCTION
+#DIM 費用ベース
+
+費用ベース = LUMBERING(ARG, "製材所")
+
+;元値の幅がそんなに広くないので、一律で
+RETURNF 費用ベース / 300
+
+;-------------------------------------------------
+;製材結果の表示など
+;-----------------------------------------------
+@LogRefine(Craft)
+#DIMS Craft
+LOCAL = LUMBERING(FLAG:丸太種類, Craft, "QTY")
+SETCOLOR 0x00FF00
+PRINTFORMW 　%WOOD_NAME(FLAG:丸太種類, 1)% Lumber: {LOG_SALES:WOOD_NUM(FLAG:丸太種類)} → {LOG_SALES:WOOD_NUM(FLAG:丸太種類) + LOCAL}
+LOG_SALES:WOOD_NUM(FLAG:丸太種類) += LOCAL
+ITEM:丸太 = 0
+FLAG:丸太種類 = 0
+RESETCOLOR

@@ -1,0 +1,477 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;奉仕系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;80,手淫
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_80
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_80_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_80_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL You wrap Yuuka's small and feminine hand around your \@ BASE:MASTER:勃起 >= 1000 ? hard # still soft \@ cock, before you start masturbating right in front of %HIS_HER(TARGET)% face.
+		PRINTFORMDL Using %HIS_HER(TARGET)% elegant and snow-white hand as %HE_SHE(TARGET)% stares right at your penis spurs you on.
+		PRINTFORMDW You rub the glans against %HIS_HER(TARGET)% cheek, \@ NOWEX:MASTER:射精 ? and immediately start ejaculating # % TEQUIP:PLAYER:コンドーム == 1 ?"the sensation making you cum despite the condom"#"leaving sticky strands on the skin"% \@.
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		PRINTL 
+		PRINTFORMDL Yuuka's lovely palm is all you need to masturbate. 
+		PRINTFORMDW You masturbate using %HIS_HER(TARGET)% hand while admiring %HIS_HER(TARGET)% pretty sleeping face as %HE_SHE(TARGET)% sleeps blissfully unaware.
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL You wrap the dead drunk Yuuka's palm around your \@ BASE:MASTER:勃起 >= 1000 ? erect # still soft \@ penis.
+		PRINTFORML 「... The hell is that for... You want me to get it out...?」
+		PRINTFORMDW ... What is %HE_SHE(TARGET)% even saying?
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF NOWEX:MASTER:射精
+			IF ABL:68:技巧 > 3
+				PRINTFORM 「I know aaall about your weaknesses you know～ Hora, Don't hold it in, let it out in my palm...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW 「Huh, Something's coming...? Oh... Um... When will it show up...?」
+			ENDIF
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Nhh... Feeling good? Fufu, I can see it on your face.」
+				CASEELSE
+					PRINTFORM 「\@ BASE:MASTER:勃起 >= 1000 ? Haa... It's so hard # I'll make it bigger in a second \@... Fufu
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+			ENDSELECT
+			PRINTFORMDW Yuuka gives you an affectionate look as %HE_SHE(TARGET)% strokes your penis cheerfully.
+		ENDIF
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「Huh, are you cumming already...? Ho-Hold on just a bit... Gokkun.」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Well, I guess my hand is fine but... Make sure to tell me before you cum, got it...?」
+				CASEELSE
+					IF BASE:MASTER:勃起 >= 1000
+						PRINTFORML 「Oh, \@ TALENT:MASTER:形状 >= 5 ? When I look at it up close, it's seriously huge # It's already so hard, so warm  \@...」
+					ELSE
+						PRINTFORML 「This is going to make it bigger, right...? Wow, It's already getting harder and harder...」
+					ENDIF
+			ENDSELECT
+			PRINTFORMDW %HIS_HER(TARGET,1)% face a deep crimson, Yuuka strokes your penis as %HE_SHE(TARGET)% services you.
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+
+;==================================================
+;81,フェラチオ
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_81
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_81_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_81_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL
+		IF NOWEX:MASTER:射精
+			PRINTFORMDL Feeling your desire well up, you grab Yuuka's head and make %HIM_HER(TARGET)% taste your penis with the back of %HIS_HER(TARGET)% throat.
+			PRINTFORMDL You use Yuuka's mouth as an onahole, the teeth never getting in the way as time is stopped.
+			PRINTFORMDW You violate the great Youkai's mouth, the act itself spurring you on.
+		ELSE
+			PRINTFORMDL You force Yuuka's mouth open and \@ BASE:MASTER:勃起 >= 1000 ? thrust your hard penis inside# insert your still soft penis\@.
+			PRINTFORMDL Rubbing against not just %HIS_HER(TARGET)% tongue, but also %HIS_HER(TARGET)% inner cheeks, you stir %HIS_HER(TARGET)% mouth with your penis.
+			IF TEQUIP:PLAYER:コンドーム == 1 ;modded
+				PRINTFORMDW As you are wearing a condom, you sadly cannot repay %HIM_HER(TARGET)% all the saliva.
+			ELSE
+				PRINTFORMDW As a thanks for %HIS_HER(TARGET)% saliva, you coat %HIS_HER(TARGET)% tongue in precum.
+			ENDIF
+		ENDIF
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		PRINTL 
+		PRINTFORMDL You press your penis against Yuuka's glossy lips as %HE_SHE(TARGET)% sleeps, forcing %HIM_HER(TARGET)% to kiss the tip.
+		PRINTFORMDW Seeking more pleasure, you spread %HIS_HER(TARGET)% mouth open and insert your penis, entangling it with Yuuka's vibrantly colored tongue.
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL You bring your penis near the dead drunk Yuuka's mouth.
+		PRINTFORM 「What'sh this... Sho warm...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML  Aha, Can I have a bite...?」
+		PRINTFORMDW ... No.
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF NOWEX:MASTER:射精
+			IF ABL:68:舌 > 2
+				PRINTFORM 「Haa, Cum whenever you're ready... Chyuu～～～
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+			ELSE
+				PRINTFORMW 「You want to let it out in my mouth...? Oh well, I suppose... Aaam, Mmph...」
+			ENDIF
+		;お掃除フェラ
+		ELSEIF TCVAR:MASTER:112 == 1 || TCVAR:MASTER:112 == 2
+			PRINTFORMW 「Chyuu, Puhaa... You can still go on, right? \@ BASE:MASTER:勃起 >= 1000 ? You're still this hard after all# Although it's already limp \@...」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「I'm going to service you... Ufufu.」
+				CASEELSE
+					PRINTFORML 「I'm going to milk you dry with this... Chyuu, Jyupu.」
+			ENDSELECT
+			PRINTFORMDW Grabbing you tightly by the hips, Yuuka fellates you thoroughly and loudly. 
+		ENDIF
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「Make sure to tell me when you're about to cum, got it...? Chyuu...」
+		;お掃除フェラ
+		ELSEIF TCVAR:MASTER:112 == 1 || TCVAR:MASTER:112 == 2
+			PRINTFORML 「Really now, making me do something like this... Chyuu!」
+			PRINTFORMDW Although not amused, Yuuka doesn't seem to hate it.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Chyuu... Puhaa... It's really embarrassing when you stare at me like that...」
+					PRINTFORMDW Despite embarrassed, Yuuka continues teasing your %TINKO()% extensively, trying to make you cum.
+				CASEELSE
+					IF BASE:MASTER:勃起 >= 1000
+						PRINTFORML 「Jyu, Pah, Rero... Chyuu.」
+						PRINTFORMW （\@ TALENT:MASTER:形状 >= 5 ? Uuu～ It's way too big... My jaw is at it's limit # It's so stiff... I wonder if it feels good \@...）
+					ELSE
+						PRINTFORMW 「Hmm... It's still soft and limp...」
+					ENDIF
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+
+;==================================================
+;82,パイズリ
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_82
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_82_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_82_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+;Note: This action is female only so no his/her check for target.
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL No man could ever see such a powerful Youkai so helpless and resist having their way with her obscene breasts.
+		IF BASE:MASTER:勃起 >= 1000
+			PRINTFORMDL You wrap Yuuka's breasts around your hard penis, and begin ravaging them as you thrust your hips.
+		ELSE
+			PRINTFORMDL You sink your still soft penis into Yuuka's cleavage, feeling the softness of her skin.
+		ENDIF
+		PRINTFORMDW Savoring her breasts as if they were sexual organs to your heart's content, the desire to \@ NOWEX:MASTER:射精 ? ejaculate into her breasts instantly springs up in your mind # keep this woman for yourself becomes even stronger \@.
+		
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		PRINTL 
+		PRINTFORMDL Squishing Yuuka's breasts together, you squeeze your penis between then and begin thrusting right before her sleeping face.
+		PRINTFORMDL Seeing Yuuka sleeping despite having her chest being fucked right in front of her spurs you on.
+		PRINTFORMDW You find your hips are moving on their own, as if you're having actual sex.
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL After you somehow manage to tell Yuuka to squeeze her breasts together, she ends up doing so without understanding why.
+		PRINTFORMDL Despite your penis being sandwiched in her cleavage, Yuuka shows no intention of servicing you at all.
+		PRINTFORMDL In the end you're forced to do all the thrusting yourself.
+		PRINTFORMW 「Nhh... Aahh... Ahh, S-Stop shaking me...」
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF NOWEX:MASTER:射精
+			IF ABL:68:胸 >= 2
+				PRINTFORM 「At your limit already? That's rather quick... Well, shall I make you waste your shot between my breasts
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW ?」
+			ELSE
+				PRINTFORMW 「Nhh... Are you going to let it out between my breasts? It's fine, I don't mind...」
+			ENDIF
+		ELSE
+			IF ABL:68:胸 >= 2
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「And a squee～～eeze...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW  Ahaha, My, what a pleasant moan... Must be feeling way too good, huh?」
+					CASEELSE
+						PRINTFORMW 「Your hips are trembling... You're truly in love with my breasts...」
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Yeah yeah, my breasts, got it... You really like getting sandwiched, don't you...」
+					CASEELSE
+						PRINTFORML 「Hey, can't we just do it normally for once...?」
+				ENDSELECT
+				PRINTFORMDW She might be embarrassed, as she's not putting a lot of pressure on her breasts...
+			ENDIF
+		ENDIF
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORML 「Huh, are you cumming alrea-- Kyah?! W-Wait, hold on...」
+			PRINTFORMDW Seeing how you thrust frantically back and forth while squeezing her breasts together makes Yuuka stare at you stunned...
+		ELSE
+			IF ABL:68:胸 >= 2
+				PRINTFORMW 「Yeah yeah, you want to inseminate my breasts... This is quite tiring, so hurry up and let it out, okay?」
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Uuuh... What's so good about doing something this absurd...」
+					CASEELSE
+						PRINTFORMW 「... What, do you have any complaints...?」
+				ENDSELECT
+				PRINTFORMDW She might be embarrassed, as she's not putting a lot of pressure on her breasts...
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;83,素股
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_83
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_83_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_83_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL Yuuka's meaty and thick thighs graciously allow you to use them as a first-rate onahole.
+		PRINTFORMDL Hugging %HIM_HER(TARGET)% from behind, it's impossible for you to stop humping back and forth and making passionate love with Yuuka's lower body.
+		PRINTFORMDL You thrust in a fit of delirious stupor, thinking of nothing else but sating your desire.
+		PRINTFORMDW \@ NOWEX:MASTER:射精 ? You realize you want to cum here and speed up # Yuuka's labia is completely drenches in %HIS_HER(TARGET)% juices \@.
+		
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		RETURN 1
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL Giving the limp Yuuka a tight embrace, you sandwich your penis between %HIS_HER(TARGET)% thighs as you grope %HIS_HER(TARGET)% tender ass.
+		PRINTFORMW 「Nhh, Haa, Ahh... S-Stop shaking meee...」
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF NOWEX:MASTER:射精
+			PRINTFORM 「It's almost like we're doing the real thing... Ah, It's coming out...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Nnhh, Aah, Haa
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML  Darling, are you enjoying it?」
+				CASEELSE
+					PRINTFORM 「Haa, \@ BASE:MASTER:勃起 >= 1000 ? Rubbing against something so hard...feels good... # I can feel it growing harder and harder between my thighs... \@
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+			ENDSELECT
+			PRINTFORMDW Yuuka turns to you with a smile as %HE_SHE(TARGET)% continues servicing you affectionately with %HIS_HER(TARGET)% thighs.
+		ENDIF
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「Khu, Haa...! Nnhh, Stop, you're going too fast...!」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Fuuh, Haa, Aahh...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+					PRINTFORMDW Yuuka gasps enticingly, as if a prisoner to the pleasure as %HE_SHE(TARGET)% continues servicing your penis.
+				CASEELSE
+					IF BASE:MASTER:勃起 >= 1000
+						PRINTFORM 「Kuh, Ahh...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORML 」
+						PRINTFORMW （Haah, It feels much better than doing it alone...）
+					ELSE
+						PRINTFORMW 「Come on, just get big already...」
+					ENDIF
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;84,泡踊り
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_84
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_84_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_84_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;85,足扱き
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_85
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_85_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_85_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL
+		PRINTFORMDL After getting Yuuka barefoot, you elaborately imprint the smell of your penis on the soles of %HIS_HER(TARGET)% feet.
+		PRINTFORMDW You use %HIS_HER(TARGET)% beautiful, soft white skin as a sexual outlet no matter which part of %HIM_HER(TARGET)% it is.
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		PRINTL 
+		PRINTFORMDL You use the sleeping Yuuka's feet to masturbate, rubbing your penis against them.
+		PRINTFORMDW %HIS_HER(TARGET,1)% sweat coupled with the slick texture helps immensely.
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL You masturbate using Yuuka's soles, trying to not get caught as %HE_SHE(TARGET)% lies there nearly unconscious.
+		IF TEQUIP:PLAYER:コンドーム == 1 ;modded
+			PRINTFORMDW The softness and warmth manages to go even through the condom.
+		ELSE
+			PRINTFORMDW The liquid secreting from the tip of your penis sticks to Yuuka's feet, the thought of defiling %HIM_HER(TARGET)% spurring you on.
+		ENDIF
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF NOWEX:MASTER:射精
+			PRINTFORM 「Fufufu, I see that you're about to cum... Go ahead then, \@ TALENT:MASTER:性別 == 2 ? Mr. # Ms. \@ Pervert Who Loves Getting Milked By My Feet
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「It hurts? I figured you would say so, but your lower half keeps telling me something different...」
+				CASEELSE
+					PRINTFORML 「Making me do something like this... I wonder if normal sex doesn't sate you anymore, Hehe.」
+			ENDSELECT
+			PRINTFORMDW Yuuka keeps teasing your penis as %HE_SHE(TARGET)% watches your moaning entranced.
+		ENDIF
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「Haah, cumming like this suits a pervert like you... Hora, Hurry up and finish.」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Do you like getting kicked as well? Fufu, I'm starting to enjoy this even more...」
+				CASEELSE
+					PRINTFORML 「You like when I touch your glans? You'd enjoy it more if I got rougher, wouldn't you?」
+			ENDSELECT
+			PRINTFORMDW Ignoring your moaning, Yuuka kicks your penis, seemingly enjoying %HIMSELF_HERSELF(TARGET)%.
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;88,バキュームフェラ
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_88
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_88_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_88_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

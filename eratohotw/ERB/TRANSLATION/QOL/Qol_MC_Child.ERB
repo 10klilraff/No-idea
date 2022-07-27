@@ -1,0 +1,214 @@
+﻿;by AK Spectre (modified)
+
+@Qol_MC_CHILD
+PRINTL
+CALL PRINTLINE, "Children"
+PRINTL
+PRINTBUTTON "[See Children List]", 9998
+PRINTL
+
+@Qol_MC_CHILD_LIST
+#DIM MC_CHILD_PAGES
+#DIM MC_TH_TOTAL
+;number of children the touhou has 
+#DIM MC_TH_BELONG, 1500
+;list of children , number means who the touhou the child belongs to
+#DIM MC_TH_SEQ, 1500
+;which number is the ist child
+#DIM MC_TH_UPPER
+#DIM MC_TH_LOWER
+#DIM MC_TH_LL
+#DIM DRIP
+#DIM GOBLIN
+#DIM MC_TH_IN
+#DIM MC_TH_OUTA, 1500
+#DIM MC_TH_OUTB, 1500
+#DIM FUCKSAKE
+
+#DIM nLineCnt_Head
+#DIM nPage
+#DIM nSort
+#DIM nPageSize
+MC_TH_LL = CFLAG:MASTER:子供人数
+PRINTFORML
+LOCAL = CFLAG:MASTER:育児人数 * 1000 / (1 + FLAG:甲斐性無)
+LOCALS:99 = Total Children: {CFLAG:MASTER:子供人数}, Children Requiring Child Support: {CFLAG:MASTER:育児人数}, Estimated Child Support Payments: ～%金額表示(LOCAL)%; Current Day: {DAY}
+
+DRAWLINE
+nLineCnt_Head = LINECOUNT
+REDRAW 0
+DO
+	SIF LINECOUNT - nLineCnt_Head > 0
+		CLEARLINE LINECOUNT - nLineCnt_Head
+		
+	nPageSize = nSort ? 20 # 15
+	MC_CHILD_PAGES = ((CFLAG:MASTER:子供人数 - 1) / nPageSize) + 1
+		
+	IF nSort
+	;display by date
+		PRINTFORML  %LOCALS:99%　　  Sorted by : Date of birth
+		PRINTFORML
+		MC_TH_TOTAL = 0
+		FOR FUCKSAKE, 1, (DAY + 1)
+			FOR LOCAL, 1, CHARANUM - 1
+				IF CFLAG:LOCAL:子供人数 > 0
+					FOR COUNT, 1, (CFLAG:LOCAL:子供人数 + 1)
+						IF CHILD_BIRTHDAY:LOCAL:COUNT == FUCKSAKE
+							MC_TH_TOTAL += 1
+							MC_TH_OUTA:MC_TH_TOTAL = LOCAL
+							MC_TH_OUTB:MC_TH_TOTAL = COUNT
+						ENDIF	
+					NEXT	
+				ENDIF	
+			NEXT
+		NEXT
+
+		IF nPage < 0
+			nPage = MC_CHILD_PAGES - 1
+		ELSEIF nPage >= MC_CHILD_PAGES
+			nPage = 0
+		ENDIF	
+
+		MC_TH_UPPER = ((nPage * nPageSize) + (nPageSize+1))
+		MC_TH_LOWER = ((nPage * nPageSize) + 1)
+		FOR LOCAL, MC_TH_LOWER, MC_TH_UPPER
+			IF LOCAL <= MC_TH_LL
+				PRINTFORM    - #{LOCAL} - %CHILDNAME:(MC_TH_OUTA:LOCAL):(MC_TH_OUTB:LOCAL), 16, LEFT% \@ CHILD_SEX:(MC_TH_OUTA:LOCAL):(MC_TH_OUTB:LOCAL) == 1 ? ♀ # ♂ \@  Mother: %CALLNAME:(MC_TH_OUTA:LOCAL)%   %PRINT_DATE_F(CHILD_BIRTHDAY:(MC_TH_OUTA:LOCAL):(MC_TH_OUTB:LOCAL), 1)%
+				PRINTFORM (Day {CHILD_BIRTHDAY:(MC_TH_OUTA:LOCAL):(MC_TH_OUTB:LOCAL)})  
+				SELECTCASE CHILD_WEATHER:(MC_TH_OUTA:LOCAL):(MC_TH_OUTB:LOCAL)
+						;Custom code, uses LOCALS
+					CASE "Ｃ敏感"
+						LOCALS = on a day when everyone had sensitive clits
+					CASE "Ｖ敏感"
+						LOCALS = on a day when everyone had sensitive pussies
+					CASE "Ａ敏感"
+						LOCALS = on a day when everyone had sensitive butts
+					CASE "Ｂ敏感"
+						LOCALS = on a day when everyone had sensitive tits
+					CASE "Ｍ敏感"
+						LOCALS = on a day when everyone had sensitive lips
+					CASE "スカート"
+						LOCALS = on a day when skirt flipping was pleasurable
+					CASE "パンツ"
+						LOCALS = on a day when panties were flying about
+					CASEELSE
+						LOCALS '= @"on %CHILD_WEATHER(CHILD_WEATHER:(MC_TH_OUTA:LOCAL):(MC_TH_OUTB:LOCAL))%"
+				ENDSELECT
+				PRINTFORML Born %LOCALS%.　
+				PRINTFORM    - 
+				CALL Qol_Info_Child(MC_TH_OUTA:LOCAL, MC_TH_OUTB:LOCAL)
+				PRINTFORML
+			ENDIF		
+		NEXT
+
+	;start by touhou
+	;if birth date is smaller or same, put in list first
+	;repeat till number of kids added
+	;print list
+	ELSE
+		;display by Touhou
+		PRINTFORML  %LOCALS:99%　　  Sorted by : Mother
+		MC_TH_TOTAL = 0
+		FOR LOCAL, 1, CHARANUM - 1
+			IF CFLAG:LOCAL:子供人数 > 0
+				FOR COUNT, 1, (CFLAG:LOCAL:子供人数 + 1)
+					MC_TH_TOTAL += 1
+					MC_TH_BELONG:MC_TH_TOTAL = LOCAL
+					MC_TH_SEQ:MC_TH_TOTAL = COUNT
+				NEXT	
+			ENDIF	
+		NEXT
+		IF nPage < 0
+			nPage = MC_CHILD_PAGES - 1
+		ELSEIF nPage >= MC_CHILD_PAGES
+			nPage = 0
+		ENDIF		
+
+		MC_TH_UPPER = ((nPage * nPageSize) + (nPageSize+1))
+		MC_TH_LOWER = ((nPage * nPageSize) + 1)
+
+		FOR LOCAL, MC_TH_LOWER, MC_TH_UPPER
+			IF LOCAL <= MC_TH_LL
+				IF MC_TH_SEQ:LOCAL == 1 || LOCAL == MC_TH_LOWER
+					;line break here
+					PRINTFORML
+					PRINTFORM    - 
+					PRINTBUTTON @"[%CALLNAME:(MC_TH_BELONG:LOCAL)%]", 10000 + MC_TH_BELONG:LOCAL
+					PRINTFORML
+				ENDIF 	
+					PRINTFORM    - #{MC_TH_SEQ:LOCAL,2} - %CHILDNAME:(MC_TH_BELONG:LOCAL):(MC_TH_SEQ:LOCAL), 16, LEFT% \@ CHILD_SEX:(MC_TH_BELONG:LOCAL):(MC_TH_SEQ:LOCAL) == 1 ? ♀ # ♂ \@ %PRINT_DATE_F(CHILD_BIRTHDAY:(MC_TH_BELONG:LOCAL):(MC_TH_SEQ:LOCAL), 1)%
+					PRINTFORM (Day {CHILD_BIRTHDAY:(MC_TH_BELONG:LOCAL):(MC_TH_SEQ:LOCAL)})  
+					SELECTCASE CHILD_WEATHER:(MC_TH_BELONG:LOCAL):(MC_TH_SEQ:LOCAL)
+						;Custom code, uses LOCALS
+					CASE "Ｃ敏感"
+						LOCALS = on a day when everyone had sensitive clits
+					CASE "Ｖ敏感"
+						LOCALS = on a day when everyone had sensitive pussies
+					CASE "Ａ敏感"
+						LOCALS = on a day when everyone had sensitive butts
+					CASE "Ｂ敏感"
+						LOCALS = on a day when everyone had sensitive tits
+					CASE "Ｍ敏感"
+						LOCALS = on a day when everyone had sensitive lips
+					CASE "スカート"
+						LOCALS = on a day when skirt flipping was pleasurable
+					CASE "パンツ"
+						LOCALS = on a day when panties were flying about
+					CASEELSE
+						LOCALS '= @"on %CHILD_WEATHER(CHILD_WEATHER:(MC_TH_BELONG:LOCAL):(MC_TH_SEQ:LOCAL))%"
+					ENDSELECT
+					PRINTFORML Born %LOCALS%.
+					PRINTFORM %BL(31)%
+					CALL Qol_Info_Child(MC_TH_BELONG:LOCAL, MC_TH_SEQ:LOCAL)
+			ENDIF
+		NEXT	
+		PRINTFORML
+	;start by touhou
+	;print touhou by touhou
+	ENDIF
+	SIF MC_CHILD_PAGES > 1 ;spacing
+		CALL EQUATE_LINE, nSort ? (nLineCnt_Head + 2 + nPageSize*3) # nLineCnt_Head + MAX(CLIENTHEIGHT() / GETCONFIG("フォントサイズ")-7, 1)
+	DRAWLINE
+	PRINTFORM    
+	PRINTBUTTON "[Change Sorting Display]", 600
+	PRINTFORML
+	PRINTFORM   	 
+	
+	IF MC_CHILD_PAGES == 1
+		SETCOLOR 0x606060
+		PRINTFORM %"[Prev page]",15,LEFT%
+		RESETCOLOR 
+	ELSE
+		PRINTBUTTON @"%"[Prev page]",15,LEFT%", 888
+	ENDIF
+	PRINTFORM ({nPage+1}/{MC_CHILD_PAGES})%BL(6)%
+	PRINTFORM 
+	IF MC_CHILD_PAGES == 1
+		SETCOLOR 0x606060
+		PRINTFORM %"[Next page]",15,LEFT%
+		RESETCOLOR 
+	ELSE
+		PRINTBUTTON @"%"[Next page]",15,LEFT%", 777
+	ENDIF
+	
+	PRINTFORML
+	PRINTFORM    
+	PRINTBUTTON "[Return]", 900
+	PRINTFORML
+	
+	INPUT
+	SELECTCASE RESULT
+		CASE 900
+			RETURN
+		CASE 600
+			nSort = !nSort
+		CASE 777, 888
+			SIF MC_CHILD_PAGES == 1
+				CONTINUE
+			nPage = PAGE_HANDLE(RESULT, 888, nPage, 0, MC_CHILD_PAGES-1)
+		CASE 10000 TO 11000
+			SIF nSort
+				CONTINUE
+			RETURN RESULT
+	ENDSELECT
+LOOP 1

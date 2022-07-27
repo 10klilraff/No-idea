@@ -1,0 +1,267 @@
+﻿@UNIQUE_COM_厄を払う
+IF nHinaMisfortuneGone > 0
+	CALL SPTALK, [[雛]], "通常", 0, @"「I apologize, but I can still sense my powers about you.」/「Any more, and I may endanger your health or fortune in some way.」/「Let's see... I'd say there's only %PRINT_PLUR("day", nHinaMisfortuneGone)% left.」/「Once it wears off, feel free to see me again, okay?」", 1
+	RETURN -1
+ENDIF
+
+IF FIRSTTIME("MisfortuneCollect", 0, [[雛]])
+	PRINTFORMW You tell Hina that you're feeling extra unlucky as of late, and ask her if she specializes on collecting other's misfortune.
+
+	IF TALENT:[[雛]]:恋慕
+		CALL SPTALK, [[雛]], "通常", 0, @"「I do indeed! But why are you asking me all this? Are you having troubles of your own?」", 1
+		WAIT
+		PRINTFORMW She says, sounding quite surprised.
+		CALL SPTALK, [[雛]], "通常", 0, @"「What is it? I would like to hear about it if there's something troubling you.」", 1
+		WAIT
+	ELSE
+		CALL SPTALK, [[雛]], "Smug", 0, @"「You could say that.」", 1
+		WAIT
+		PRINTFORMW She says with a hint of a smirk.
+		CALL SPTALK, [[雛]], "通常", 0, @"「But you know, I don't normally get to speak with people about that sort of thing. They avoid me, after all.」", 1
+		WAIT
+		PRINTFORMW You tell her that you'd like your misfortune collected.
+		CALL SPTALK, [[雛]], "通常", 0, @"「It is a taboo to pay any attention to a misfortune god, don't you know? I told you myself, haven't I?」/「If you think you have become mired in misfortune, it's best to request a cleansing at a shrine or temple.」", 1
+		WAIT
+		PRINTFORMW You try to convince her...
+		CALL SPTALK, [[雛]], "笑顔", 0, @"「Oh? Are you that desperate?」", 1
+		WAIT
+		LOCALS '= "「But no matter how much misfortune I collect, there's always more.」/"
+		LOCALS += "「However, it's true that misfortune is just the opposite side of fortune. One may say that I'm a holder of good fortune as well...」/"
+		LOCALS += "「Well, I'll listen. What is it? I would like to hear about it if there's something troubling you.」"
+		CALL SPTALK, [[雛]], "通常", 0, LOCALS, 1
+		WAIT
+	ENDIF
+	PRINTFORMW "I'm tired of being unlucky all the time!" you plead.
+	IF TALENT:[[雛]]:恋慕
+		CALL SPTALK, [[雛]], "HINA", 0, @"「Mhmm... Oh, you poor thing. Then, I shall help you!」", 1
+		PRINTFORMW Hina grins widely.
+		PRINTFORMW Please do!
+		CALL SPTALK, [[雛]], "通常", 0, @"「Hm... Hmhm... Hmm? You don't have anything to give me?」", 1
+		PRINTFORMW She asks, tilting her head.
+	ELSE
+		CALL SPTALK, [[雛]], "通常", 0, @"「Ah, you're going to use my ability for good luck, huh?」/「That's unusual, but it's fine, I'll do it. Since you asked nicely like that... I may even do it free of charge.」", 1
+		WAIT
+		CALL SPTALK, [[雛]], "Smug", 0, @"「Or maybe I won't! After all, something must be given for a job well done, yes?」", 1
+		WAIT
+	ENDIF
+	CALL 厄を払う_PAYMENT
+	
+	CALL SPTALK, [[雛]], "通常", 0, @"「Well, with that out of the way, let's get started, shall we?」", 1
+	PRINTFORMW Hina says, coming closer.
+	CALL SPTALK, [[雛]], "通常", 0, @"「Oh yes-yes, I do sense a lot of misfortune hanging over you...」/「Hmm, oh yes, removing it will be a piece of cake. Stay still, if you will...」", 1
+	PRINTFORMW Hina starts spinning as red ribbons float out from her, wrapping themselves around your body.
+	CALL SPTALK, [[雛]], "笑顔", 0, @"「Just stay still, that's all. It's a simple ritual to collect your misfortune.」", 1
+	PRINTFORMW Hina says, smiling pleasantly.
+	PRINTFORMW She then extends her right arm.
+	PRINTFORMW A thick, purple-blueish cloud suddenly begins to form around her hand, which swiftly begins to crawl up towards you.
+	PRINTFORMW It quickly envelops your head, and you find yourself unable to resist its pressure. In an instant, your vision becomes blurry and unfocused.
+	CALL SPTALK, [[雛]], "通常", 0, @"「Shh, shhh, shhhh. Don't worry, everything will be fine soon. Just stay calm... Hmhm?」", 1
+	WAIT
+	PRINTFORMW You begin to hear a ringing sound in your ears. Your heart beats faster, and your chest begins to ache.
+	CALL SPTALK, [[雛]], "笑顔", 0, @"「You don't need to worry, %CALLNAME:MASTER%.」/「It's my spell, is all. If you don't trust me, we can stop right now.」", 1
+	WAIT
+	PRINTFORMW Hina reassures you with a gentle voice. You know that Hina is one of the nicest people in Gensokyo, so you decide to trust her.
+	CALL SPTALK, [[雛]], "笑顔", 0, @"「Thank you.」", 1
+	PRINTFORMW Hina says cheerfully. Her hair flutters around gently as she nods.
+	CALL SPTALK, [[雛]], "通常", 0, @"「But it's a very simple spell, so there shouldn't be any problems.」/「I am gathering and taking away all your misfortune, and then purifying it.」/「It'll all vanish once it's purified, though, so there's no need to worry...」", 1
+	WAIT
+	PRINTFORMW However, after a few minutes, everything goes dark...
+	FOR LOCAL, 0, 100
+		PRINTFORML
+	NEXT
+	PRINTFORMW You come to a bit later, finding yourself standing right in front of Hina on the same spot as before. She seems very cheerful.
+	CALL SPTALK, [[雛]], "HINA", 0, @"「Fufufu! Yes, very good. It's been a while since I collected someone's misfortune directly!」", 1
+	WAIT
+	CALL SPTALK, [[雛]], "笑顔", 0, @"「You're finally done. It was quite a struggle, but I got through it.」/「You could put all of your misfortune into a hina doll and send it along the river, but direct method is much faster.」", 1
+	WAIT
+	PRINTFORMW Hina says, laughing merrily. Looks like it wasn't all that easy if she puts it that way...
+	PRINTFORMW But now that you think of it... Your body feels lighter, as if the weight of the world has been lifted off your shoulders.
+	CALL SPTALK, [[雛]], "Smug", 0, @"「Anyway, it's done! The curse of being unlucky has left you, now...」", 1
+	PRINTFORMW Hina pauses and holds her hand out to you. You look at it curiously.
+	PRINTFORMW Oh, right, the payment...
+	PRINTFORML Charisma: %DIGIT_GROUP(MONEY:2)%
+	IF ITEM:497 > 0 ;hina doll
+		CALL ASK_YN("Pay with a Hina Doll", "Pay with Charisma")
+		IF !RESULT
+			CALL SPTALK, [[雛]], "笑顔", 0, @"「Oh yes, this will do, just as we agreed upon.」", 1
+			CALL COLORMESSAGE(@"Traded %ITEMNAME_TR(497)%.", C_YELLOW, 2)
+			ITEM:497 = MAX(ITEM:497 - 1, 0)
+			WAIT
+		ELSE
+			GOTO CHARISMA
+		ENDIF
+	ELSE
+		$CHARISMA
+		PRINTFORMW You ask her how much Charisma she thinks it's worth.
+		CALL SPTALK, [[雛]], "通常", 0, @"「Hm... Well, I did save you from your unfortunate fate, which is a big help to me as well.」", 1
+		WAIT
+		PRINTFORMW She then giggles to herself.
+		CALL SPTALK, [[雛]], "笑顔", 0, @"「Well, I suppose I can take 10. Or is it too much to ask?」", 1
+		WAIT
+		CALL SPTALK, [[雛]], "通常", 0, @"「As I understand it, Charisma is quite volatile... It can be worth a lot one day, and worth nothing the next.」", 1
+		CALL ASK_YN("Try to negotiate", "It's fine")
+		IF !RESULT
+			LOCALS '= "「Hmm... I remember stumbling upon several shops where they take Charisma as payment, and 10 seems to be the norm.」/"
+			LOCALS += "「I do believe that good service should be repaid accordingly, don't you agree?」/"
+			LOCALS += "「So I think we should settle on 10... Yes, 10 seems fine to me. Is it for you?」"
+			CALL SPTALK, [[雛]], "通常", 0, LOCALS, 1
+			WAIT
+			PRINTFORMW Looks like convincing Hina might be a waste of effort...
+			PRINTFORMW You decide to pay up instead.
+			GOTO PAY
+		ELSE
+			$PAY
+			CALL SPTALK, [[雛]], "笑顔", 0, @"「Okay, wonderful! Then, 10 Charisma please!」", 1
+			WAIT
+			CALL PAY_MONEY_CM(10, 2)
+		ENDIF
+	ENDIF
+	DOWNBASE:MASTER:体力 = 500
+	TIME += 30
+ELSE
+	CALL SPTALK, [[雛]], "通常", 0, @"「Oh? You want me to collect your misfortune again?」", 1
+	WAIT
+	CALL SPTALK, [[雛]], "HINA", 0, @"「Very well. I'll start shortly, if you don't mind.」", 1
+	WAIT
+	PRINTFORMW Hina smiles, waiting for your answer...
+	CALL ASK_YN("Please do", "Not today")
+	IF RESULT
+		CALL SPTALK, [[雛]], "通常", 0, @"「Changed your mind, I see? That's okay.」/「Please ask again next time, I'll be here whenever you're ready.」", 1
+		WAIT
+		RETURN -1
+	ENDIF
+	PRINTFORMW As you look around, you can see many frilled red ribbons covering you from head to toe.
+	PRINTFORMW Hina walks up next to you, and places both hands on your shoulders, shaking you once.
+	CALL SPTALK, [[雛]], "通常", 0, @"「Yes, this is good... Allow me to feast upon it, please.」", 1
+	WAIT
+	CALL SPTALK, [[雛]], "笑顔", 0, @"「Don't worry, I'm very good at this. There's no possible way I can mess this up. It's my job, after all.」", 1
+	WAIT
+	PRINTFORMW %BREAKENG(@"Within moments, you can feel the tension in my shoulders vanish. Your body feels lighter, as if the weight of the world has been lifted off your shoulders.")%
+	CALL SPTALK, [[雛]], "通常", 0, @"「Excellent... I'm very pleased by today's yield.」", 1
+	WAIT
+	SIF FIRSTTIME("MisfortuneCollect2")
+		PRINTFORMW It seems a lot faster this time around, too. Looks like Hina is more familiar with handling you now...
+	TIME += 5
+	DOWNBASE:MASTER:体力 = 100
+	PRINTFORML
+	IF ITEM:497 > 0 ;hina doll
+		CALL ASK_YN("Pay with a Hina Doll", "Pay with Charisma")
+		IF !RESULT
+			CALL SPTALK, [[雛]], "笑顔", 0, @"「Oh yes, this will do, just as we agreed upon.」", 1
+			CALL COLORMESSAGE(@"Traded %ITEMNAME_TR(497)%.", C_YELLOW, 2)
+			ITEM:497 = MAX(ITEM:497 - 1, 0)
+			WAIT
+		ELSE
+			GOTO CHARISMA2
+		ENDIF
+	ELSE
+		$CHARISMA2
+		CALL SPTALK, [[雛]], "笑顔", 0, @"「Thank you very much!」", 1
+		WAIT
+		CALL PAY_MONEY_CM(10, 2)
+	ENDIF
+ENDIF
+DOWNBASE:[[雛]]:気力 = 300
+TALENT:[[雛]]:機嫌 = 1
+PRINTFORML
+CALL 厄を払う_FORTUNE
+PRINTFORML
+
+IF TALENT:[[雛]]:恋慕
+	CALL SPTALK, [[雛]], "笑顔", 0, @"「Fufu... For you, any time, %CALLNAME:MASTER%.」/「Please don't hesitate to ask me if you ever feel down on your luck again, okay?」", 1
+	PRINTFORMW Hina says before placing a gentle kiss on your cheek...
+ELSE
+	CALL SPTALK, [[雛]], "通常", 0, @"「Go along now. If you stay here with me for too long, all that work is going to go to waste, you know?」", 1
+	WAIT
+	LOCALS '= SPLIT_G("Even if you see me again, pretend you didn't:Don't walk on the same road as me:Don't bring me up in a conversation:I may be a god, but I do not seek faith. Please do not worship me under any circumstances")
+	CALL SPTALK, [[雛]], "通常", 0, "「" + LOCALS + "!」", 1
+	PRINTFORMW Hina says sternly before seeing you off...
+ENDIF
+RETURN 1
+
+@厄を払う_FORTUNE
+SELECTCASE TFLAG:幸運補正
+	CASE -5
+		IF !RAND:10
+			TFLAG:幸運補正 = 5
+		ELSEIF !RAND:4
+			TFLAG:幸運補正 = 3
+		ELSEIF RAND:2
+			TFLAG:幸運補正 = 1
+		ELSE
+			TFLAG:幸運補正 = 0
+		ENDIF
+	CASE -3
+		IF !RAND:6
+			TFLAG:幸運補正 = 3
+		ELSEIF RAND:2
+			TFLAG:幸運補正 = 1
+		ELSE
+			TFLAG:幸運補正 = 0
+		ENDIF
+CASEELSE
+	TFLAG:幸運補正 = RAND:2 ? 1 # 0
+ENDSELECT
+
+SIF CFLAG:MASTER:今日の運勢 < 500
+	CFLAG:MASTER:今日の運勢 = 500
+
+IF nHinaMisfortuneGone == 0
+	PRINTFORMW For a few days, the misfortune is going to avoid you...
+	nHinaMisfortuneGone = 3
+ELSEIF nHinaMisfortuneGone > 0
+	PRINTFORMW Looks like some misfortune has gathered around you.
+	PRINTFORMW ...However, Hina's spell shields you from bad luck!
+ENDIF
+
+@厄を払う_PAYMENT
+CALL SPTALK, [[雛]], "通常", 0, @"「Money won't do. I have no use for it.」", 1
+WAIT
+PRINTFORMW Then how about... Charisma?
+CALL SPTALK, [[雛]], "通常", 0, @"「Charisma???」", 1
+PRINTFORMW Hina exclaims, confused.
+PRINTFORMW You explain it to her.
+CALL SPTALK, [[雛]], "通常", 0, @"「Ohhh. That sounds interesting.」", 1
+PRINTFORMW Hina seems intrigued. She then smiles happily before replying,
+CALL SPTALK, [[雛]], "笑顔", 0, @"「If I'm more charismatic, I'll be more popular, and if I'm more popular, more people will come to me for my services.」/「There will be less misfortune running rampant in the world; I'll be able to help everyone!」/「It's a win-win situation, right?!」", 1
+WAIT
+PRINTFORMW Uhh... Sure.
+CALL SPTALK, [[雛]], "笑顔", 0, @"「All right! Then, I accept!」", 1
+PRINTFORMW Hina claps her hands together and laughs in joy.
+PRINTFORMW Yay!
+PRINTFORML
+IF ITEM:497 > 0 ;hina doll
+	CALL SPTALK, [[雛]], "通常", 0, @"「Oh, wait a moment. What's that?」", 1
+	PRINTFORMW She points at the doll you're holding.
+	CALL SPTALK, [[雛]], "笑顔", 0, @"「Ah... What a lovely doll, it looks just like me...」", 1
+	WAIT
+ELSE
+	PRINTFORMW Hina then produces a doll from under her garments. It looks a lot like her...
+	CALL SPTALK, [[雛]], "笑顔", 0, @"「This is Nagashi-bina, or simply hina doll. Lovely, isn't it?」", 1
+	WAIT
+ENDIF
+LOCALS '= "「Say, if you find any more of these, I can take them as payment for my services. You can find them at Genbu River pretty regularly.」/"
+LOCALS += "「And if you decide to sell them... You will help me out a lot!」/"
+LOCALS += "「I try to sell them myself, but no one is buying. It seems that people are just too afraid to approach me...」/"
+LOCALS += "「Well, of course they are. And frankly, they should.」"
+CALL SPTALK, [[雛]], "通常", 0, LOCALS, 1
+WAIT
+
+
+;------------------------------------------------------
+;process the extra flags
+;when starting the day
+@EVENTTRAIN
+#LATER
+SIF nHinaMisfortuneGone > 0
+	nHinaMisfortuneGone --
+IF nHinaMisfortuneGone < 0 ;failsafe
+	nHinaMisfortuneGone = 0
+	PRINTFORMW Hina's spell effect has expired.
+ENDIF
+
+SIF (TFLAG:幸運補正 < 0 || CFLAG:MASTER:今日の運勢 < 500) && nHinaMisfortuneGone > 0
+	CALL 厄を払う_FORTUNE
+	
+@NG_CUSTOM_RESET_VAR_0
+nHinaMisfortuneGone = 0

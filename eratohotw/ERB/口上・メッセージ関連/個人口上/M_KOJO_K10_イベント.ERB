@@ -1,0 +1,2070 @@
+﻿;-------------------------------------------------
+; eraTheWorld proto4.27用 萃香口上（キャラクターの名前を入れる、下にコンセプトなど一言あれば入れる）
+;-------------------------------------------------
+
+;汎用でない口上書くのは始めてな萃香口上。
+;神社勢の口上全員分欲しかったんや。
+;でもこころちゃんもわかんないし三月精もあいまいだし旧作ほぼ知らんし萃香しか書けない。
+;[素直][生意気][プライド高い][好奇心][陽気][痛みに強い][倒錯的][魅惑][小柄体型][Ｃ敏感][貧乳][うわばみ][回復早い][鬼]
+;プレイしてると宴会の度に酔いつぶれてるので[介抱する]や[飲み交わす]の時に工夫したいよね。
+;まあこのERBにコマンド口上はないけど。
+
+;恋人 恋慕 思慕 愛欲 セフレ（愛人） 時姦刻印で分岐するようにしたい。 できればランダム４種類ずつくらい分岐したい。 全部はくどいだろうが。
+;発生頻度高い奴は分岐４つしたいところ。いろいろ埋めてから追々。
+
+;各陥落（など）について覚書
+;[恋人] セフレは取得時に消える。 取得後に改めてセフレが取れるのは正しいか謎。 人前でべたべたひっついたりさせ始める。 
+;[恋慕] 思慕愛欲セフレは取得時に消える。 以後取れない。 はっきりと気持ちがわかり行動に出させたり焦らせたり。
+;[思慕] 愛欲があると取れない。 無意識に気になるがはっきりとはわからないで戸惑っている感じにする。
+;[愛欲] 思慕は取得時に消える。 淫乱に近いが対象はあなただけ。 頻繁に性的なアプローチをしてくるように書く。 会釈して立ち去ろうとすると物陰に引きずり込んでちゅっちゅくするよ。
+;[セフレ] ちょっと面白い素質。 通常のセフレは愛欲よりやや控えめで書く。 思慕と一緒の時は愛人素質となり、複雑な気持ちとかセフレ口上からの変化を楽しんで書きたい。
+;[時姦刻印] 上記でない通常の口上に追記する形で無自覚発情させる。 でも欲情や潤滑ソースはあんまり口上で弄りたくはない。
+
+;※※※※※※他者による修正、加筆、改変についての但し書き※※※※※※
+;前提としてオリジナル作者以外が手を入れる場合は、オリジナル作者の許可を求めること
+;オリジナル作者とコンタクトが取れない場合には以下の但し書きに従ってUPできるかどうか判断してください。
+
+;------ ｷﾘﾄﾘ ｶｲｼ -----------
+;eraTheWorld proto4.07パッチ取り込み用 Ver1.13
+;テンプレートの使い方
+;初めに置換コマンド等により KX を K(キャラNo) に変更して下さい  
+;キャラNoはCSVフォルダのCharaファイルを参照　例(霧雨 魔理沙の場合)：KX =置換=> K11
+;
+;------ ｷﾘﾄﾘ ｵﾜﾘ -----------
+
+;**** Copyright ****************************************************************
+;本口上の修正について（許可する行為のみ残してください）
+;【誤字・脱字修正】【分岐条件・erb構文に関する修正】【本体Ver・Rev変更対応】【フラグの管理・修正】
+
+;本口上の加筆・改変について（許可する行為のみ残してください）
+;【未記入部位加筆】【ランダム分岐加筆】【記入済部位加筆】【記入済部位削除】【記入済部位コメントアウト】
+
+;本口上に対するメンテナンス禁止時限について（設定しない場合、未設定のみ残してください）
+;【未設定】
+
+;本口上に対するその他但し書き
+;【 今後eraTWがどのような変遷をしようと一切のNTR関連の加筆を禁止 】【 他バリアントにおいてもNTR要素のあるバリアントへの転用を禁止 】
+;******************************************************************************
+;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;
+;
+;
+;******************************************************************************
+
+;PS 寅の人
+;オリジナル作者と連絡が取れない場合、上記Copyrightに従い加筆改変を行って下さい
+;また本体処理・他口上処理等に干渉する異常処理がある場合でオリジナル作者による修正が
+;行われない・もしくは困難な場合、Copyrightに関わらず有志による修正を許可します
+;その際は元処理を削除せずコメントアウトし修正処理を挿入して下さい
+
+;### 口上存在判定 ###################################
+@M_KOJO_K10(ARG)
+;別人版を作成する際はこのテンプレではなく別人版用口上テンプレをご利用ください
+
+;口上存在判定です、けしてコメントアウトしないでください
+;他の処理は一切行わないように
+RETURN 1
+
+;### 口上基本フラグ設定 #############################
+@M_KOJO_FLAGSETTING_K10
+;基本フラグ設定はここで行ってください
+;共通の口上フラグは必要な箇所のコメントアウトを外してご利用ください
+;口上専用フラグはご自由に
+;Xにはキャラ番号を入れてください
+
+;眠姦口上有、時間停止口上有、なりきりに1を入れると、それぞれ時間停止時、眠姦時、なりきり時にコマンド口上が読み込まれるように
+;入れないと時間停止時、眠姦時、なりきり時は一切喋りません
+;CFLAG:X:眠姦口上有 = 0
+;CFLAG:X:時間停止口上有 = 0
+;CFLAG:X:なりきり口上有 = 0
+
+;破瓜キャンセル口上有に1を入れると、@M_KOJO_EVENT_KX_LOST_VIRGIN_STOPでキャンセルの成否を操作できます
+;CFLAG:X:破瓜キャンセル口上有 = 0
+
+;口上内抱き寄せ判定_初回と口上内抱き寄せ判定_通常に1を入れると、M_KOJO_EVENT_KX_PERMISSIONで押し倒しの成否を操作できます
+;CFLAG:X:口上内抱き寄せ判定_初回 = 0
+;CFLAG:X:口上内抱き寄せ判定_通常 = 0
+
+;押し倒し禁止に1を入れると、自分から押し倒してこなくなります
+;以下は恋慕かセフレがつくまで押し倒してこなくなる使用例
+;IF !TALENT:X:恋慕 && !TALENT:X:セフレ
+;	CFLAG:X:押し倒し禁止 = 1
+;ELSE
+;	CFLAG:X:押し倒し禁止 = 0
+;ENDIF
+
+;来訪不能に1を入れると、来訪してこなくなります
+;以下は面識があるまで来訪してこなくなる使用例
+;IF !CFLAG:X:面識
+;	CFLAG:X:来訪不能 = 1
+;ELSE
+;	CFLAG:X:来訪不能 = 0
+;ENDIF
+
+;### 口上色判定 ###################################
+@M_KOJO_COLOR_K10
+	SETCOLOR 0xD2691E
+
+;ここでSETCOLORすることで口上に色を付けられます
+;例：SETCOLOR 0xC07070
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"UPDATE判定"
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_UPDATE_K10
+;口上独自のUPDATE用
+;ENCOUNTER専用に独自分岐フラグを仕込んだ場合等にどうぞ
+;UPDATE判定でCFLAGを使う場合、キャラ番号の指定が必要になります
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"ENCOUNTER"系イベント（エクストラ構文）
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_ENCOUNTER_K10
+;初対面、挨拶のタイミング
+;TALENTの変更はここでどうぞ。
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"SP_EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;デート帰りにファーストKISS（合意も付く）
+;==================================================
+@M_KOJO_SPEVENT_K10_1(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+;CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTFORML 
+	PRINTFORMW 「Well, that was fun.」
+	PRINTFORMDW On the way back from the date, Suika acts just the same as always.
+	PRINTFORMDW She takes out her gourd of sake, breathing a relaxed sigh.
+	PRINTFORML 
+	PRINTFORMDW She seems to be in high spirits... You wonder if it's because of your date.
+	PRINTFORMDW Unfortunately, it is impossible to tell since she's always drinking anyway.
+	PRINTFORMDW ―――Well.
+	PRINTFORMDW She's just as enthusiastic about alcohol as always.
+	PRINTFORMDW You've never seen someone able to drink for a whole minute without even stopping to breathe.
+	PRINTFORMDW Suika looks from side to side to check if anyone's around before taking a deep gulp of sake and pulling you close.
+	PRINTFORML 
+	PRINTFORMDW Is she drunk? Suika inches closer with a gentle smile.
+	PRINTFORMDW In an instant, you feel a soft sensation on your lips followed by something extremely hot flowing into your mouth.
+	PRINTFORMW 
+	PRINTFORMW 「I'm sharing because its good sake.」
+	PRINTFORML 
+	PRINTFORMDW The sight of her rosy laughing face is imprinted into your mind.
+	PRINTFORMDW The strong sake hits your in the blink of an eye.
+	PRINTFORML 
+	PRINTFORMW （You both get completely wasted.）
+
+	BASE:MASTER:酒気 = MAXBASE:MASTER:酒気-1
+	BASE:TARGET:酒気 = MAXBASE:TARGET:酒気-1
+
+
+	;キスをキャンセルしたい場合は以下を開放
+	;TCVAR:キスキャンセル = 1
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰りに告白（恋人が付く）
+;==================================================
+@M_KOJO_SPEVENT_K10_2(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_2(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;告白内容
+	;この告白内容表示後に受けるかどうかの選択分が表示されます
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白オッケー（恋人が付く）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰り
+;==================================================
+@M_KOJO_SPEVENT_K10_3(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_3(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印消去イベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印2>1レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印3>2レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;部屋で遭遇
+;==================================================
+@M_KOJO_EVENT_K10_1(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF !CFLAG:TARGET:ブチギレ
+			PRINTFORMW 「Oh, %CALLNAME:MASTER%. What's up?」
+			SIF TALENT:思慕 || TALENT:恋慕
+				PRINTFORMW 「Hey, come over here for a second.」
+			IF TALENT:セフレ || TALENT:愛欲
+				PRINTFORMW 「...」
+				PRINTFORMW 「... Can we go somewhere more quiet?」
+			ENDIF
+			SIF TALENT:恋人
+				PRINTFORMDW Suika gently takes hold of your hand.
+			;時姦刻印があるとき時姦刻印/5で
+			IF MARK:時姦刻印 > 0 && RAND:5 < MARK:時姦刻印
+				;This line is stupid. I'm going to take liberties here
+				PRINTFORMDW Due to the lingering effects of the Time Stop rape, Suika's body relaxes in anticipation.
+				SIF MARK:時姦刻印 > 1
+					PRINTFORMDW Just by looking at you, Suika's body is reminded of the pleasure it received.
+				SIF MARK:時姦刻印 > 2
+					PRINTFORMDW Unbeknownst to Suika, her erogenous zones have already begun to prepare themselves for you.
+			ENDIF
+			PRINTFORMDW Suika gives you a warm smile.
+		ELSE
+			PRINTFORMDW Suika avoids making eye contact with you...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF !CFLAG:ブチギレ
+			PRINTFORM 「Hey
+			SIF TALENT:思慕 || TALENT:恋慕
+				PRINTFORM , are you in there? Come on, open up
+			PRINTFORMW .」
+			SIF TALENT:セフレ || TALENT:愛欲
+				PRINTFORMDW Suika enters and takes hold of your arm.
+			SIF TALENT:恋人
+				PRINTFORMDW Suika entwines her fingers with yours.
+			;時姦刻印があるとき時姦刻印/5の確率で
+			IF MARK:時姦刻印 > 0 && RAND:5 < MARK:時姦刻印
+				PRINTFORMDW Due to the influence of the Time Stop rape, a pleasurable warmth begins to build in the depths of her body.
+				SIF MARK:時姦刻印 > 1
+					PRINTFORMDW Her body vividly recalls the sexual events that she's unaware ever occurred.
+				SIF MARK:時姦刻印 > 2
+					PRINTFORMDW Without warning, her face flushes bright red at the sight of you.
+			ENDIF
+			PRINTFORMDW Suika approaches you.
+		ELSE
+			PRINTFORMDW Suika avoids making eye contact with you...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて一緒に入る
+	;TARGETが恋慕を持っている時のみ ＝ 思慕、愛欲、セフレはない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF TALENT:恋人
+			PRINTFORMW 「Oh, this is where you are.」
+			PRINTFORMW 「... Washing your own back is hard, I'll do it for you.」
+			PRINTFORMDW Suika comes into the bathroom and approaches your naked body.
+			SIF MARK:時姦刻印 && RAND:5 < MARK:時姦刻印-1
+				;really? Pavlov reference? Just stop.
+				PRINTFORMDW She salivates like an animal and her nipples become puffy and erect.
+		ELSE
+			PRINTFORMW 「Ahh, S-Sorry! ... I-I didn't know you were in here.」
+			PRINTFORMDW Suika notices your naked body and flushes bright red.
+			PRINTFORMDW Startled, can't help but to stare at you.
+			PRINTFORMDW She takes step into the bath and closes the door behind her.
+			PRINTFORMW 「I-I'll go.」
+			PRINTFORMDW Gulping deeply, she forgets to advert her eyes and just keeps staring.
+			SIF MARK:時姦刻印 && RAND:5 < MARK:時姦刻印
+				PRINTFORMDW Something transparent drips from between her thighs as she watches.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて出て行った
+	;通常はこちら
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		IF TALENT:思慕
+			PRINTFORMW 「Ahh, S-Sorry! ... I-I didn't know you were in here.」
+			PRINTFORMDW Suika notices your naked body and flushes bright red.
+			PRINTFORMDW She covers her eyes with both hands.
+			PRINTFORMW 「Pl-Please I'm s-sorry!」
+			PRINTFORMDW Suika rushes out of the bathroom, covering her eyes.
+		ELSEIF TALENT:愛欲
+			PRINTFORMW 「Oh, is someone in... %CALLNAME:MASTER%?」
+			PRINTFORMDW Suika opens the door with a blank expression.
+			PRINTFORMW 「Sorry sorry. I came in because you were taking so long.」
+			PRINTFORMDW Suika apologizes and waves as she leaves the bathroom.
+		ELSEIF TALENT:セフレ
+			PRINTFORMW 「Oh, someone's in, sorry.」
+			PRINTFORMDW Suika, having only opened the door slightly, shuts it and leaves.
+		ELSE
+			PRINTFORMW 「Ahh, is anyone in?」
+			PRINTFORMW 「Oops. I'm leaving, sorry.」
+			PRINTFORMDW Was that Suika just now?
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて追い出された
+	;TARGETが自分の弱みを握る異性のときのみ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORMW 「Hmm?」
+		;I disagree with adding an honorific to an English word. A name is fine, but pervert-san is a bit...
+		PRINTFORML 「Yo, pervert.」
+		PRINTFORML 「I'm coming in, get out.」
+		PRINTFORMDW Suika enters and immediately throws you out...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;外出先で遭遇した
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		IF CFLAG:ブチギレ
+			PRINTFORMW 「...」
+			PRINTFORMDW Suika clicks her tongue and silently glares.
+		;恋人の時1/2で
+		ELSEIF TALENT:恋人 && RAND:2 == 0
+			PRINTFORMW 「Ah? %CALLNAME:MASTER%, you came!」
+			PRINTFORMW 「Come on, take me on a date.」
+			PRINTFORMDW She huffs angrily.
+			PRINTFORMDW As soon as you try to respond, she laughs and smiles.
+		;恋慕の時3/5で
+		ELSEIF TALENT:恋慕 && RAND:5 < 3
+			PRINTFORMW 「Eh?」
+			PRINTFORMDW Suika has a dopey look on her face.
+			PRINTFORMW 「Ha, what a coincidence! Uhm, what are you up to?」
+			PRINTFORMDW Suika awkwardly shifts herself closer to you.
+		;思慕の時1/2で
+		ELSEIF TALENT:思慕 && RAND:2 == 0
+			PRINTFORMW 「Ah.」
+			PRINTFORMDW You encounter Suika and she assumes a ladylike posture.
+			PRINTFORMW 「Hehehe.」
+			PRINTFORMDW She seems proud of herself for some reason.
+		;愛欲の時1/2で、愛人のとき2/3
+		ELSEIF TALENT:愛欲 && RAND:(1+TALENT:セフレ) < TALENT:セフレ
+			PRINTFORMW 「Ahhn%UNICODE(0x2665)%」
+			PRINTFORMDW Suika involuntarily cries out as her lips curl into predatory smile.
+			PRINTFORMW 「Hey, %CALLNAME:MASTER%.」
+			PRINTFORMW 「Would you like to relax with me for a bit?」
+			PRINTFORMDW Suika invites you with a silky tone to her voice...
+		;セフレの時1/2、愛人の時2/3で
+		ELSEIF TALENT:セフレ && RAND:(1+TALENT:セフレ) < TALENT:セフレ
+			;外出先が人里
+			IF CFLAG:MASTER:現在位置 > 210 && CFLAG:MASTER:現在位置 > 290
+				;愛人分岐
+				IF TALENT:セフレ == 2
+					PRINTFORMDW You call out to Suika and she turns to greet you.
+					PRINTFORMW 「Ahh!? Oh, hello %CALLNAME:MASTER%.」
+					PRINTFORMW 「Ahh, no, th-this is nothing!」
+					PRINTFORMW 「Look! Come on, let's go over there!」
+					PRINTFORMDW She hurriedly pulls you to a nearby shop.
+					PRINTFORML 
+					PRINTFORMDW ... There was some kind of ornamental hairpin in the shop window.
+				;ただのセフレ
+				ELSE
+					PRINTFORMDW Suika calls out to you as you're browsing through a shop window.
+					PRINTFORMW 「Oh, %CALLNAME:MASTER%. What are you looking for?」
+					PRINTFORMW 「... A small shop? Wahaha!」
+					PRINTFORMW 「At least try and remember the name of the place.」
+					PRINTFORMW 「Though, because you're just a monkey, I don't know whether that's possible.」
+					PRINTFORML 「Nihihi...」
+					PRINTFORMDW Suika laughs as she teases you.
+				ENDIF
+			ELSE
+				;愛人分岐
+				IF TALENT:セフレ == 2
+					PRINTFORMDW You call out to Suika and she turns to greet you.
+					PRINTFORMW 「Ahh!? Oh, hello %CALLNAME:MASTER%.」
+					PRINTFORMW 「Ahh, no, th-this is nothing!」
+					PRINTFORML 
+					PRINTFORMW 「... By the way, today I... Uhm, I came to see you... So...」
+					PRINTFORMDW Suika turns away and whispers something inaudible.
+					PRINTFORML
+					PRINTFORMDW She begins to walk away, pretending as if nothing happened.
+				;ただのセフレ
+				ELSE
+					PRINTFORMW 「Ah, did you come here to shop as well?」
+					PRINTFORMW 「Or did you want to meet me? Hmn～?」
+					PRINTFORMW 「Hahaha! Don't worry, I'm only joking.」
+					PRINTFORMDW Suika laughs giddily as she teases you.
+				ENDIF
+			ENDIF
+		ELSE
+			;時姦刻印があるとき時姦刻印/5で
+			IF MARK:時姦刻印 > 0 && RAND:5 < MARK:時姦刻印
+				PRINTFORMW 「Ah...?」
+				PRINTFORMDW You stumble upon Suika having a drink.
+				SIF MARK:時姦刻印 > 1
+					PRINTFORMDW Beads of sweat form on her neck and her breathing shortens.
+				SIF MARK:時姦刻印 > 2
+					PRINTFORMDW She begins to lick her slightly parted lips at the sight of you.
+				PRINTFORMDW She breaks off her casual conversation, seeming embarrassed.
+			ENDIF
+			PRINTFORMW 「Oh? What are you doing here? I'm just having a drink, myself.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;他キャラとデート中に遭遇した
+	;ARG:1にデート相手
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;恋人
+		IF TALENT:恋人
+			PRINTFORMW 「... I won't forget this.」
+			PRINTFORMDW You freeze and a chill runs up your spine as she utters these words...
+			CALL GET_ANGRY(TARGET,1)
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「Ah...」
+			PRINTFORMDW Suika turns around and you hear the dull sound of something being crushed in her hands.
+			PRINTFORMW 「Ahh! Whaa～!? I've lost %HIM_HER(MASTER,,1)%...」
+			PRINTFORMDW Suika panics at the sight of you with someone else.
+		;思慕
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「Ah?」
+			PRINTFORMW 「...Hmpf.」
+			PRINTFORMDW Suika pouts at the sight of you with someone else.
+		;愛欲
+		ELSEIF TALENT:愛欲
+			PRINTFORMW Suika gives you a scornful look.
+		;セフレ
+		ELSEIF TALENT:セフレ
+			PRINTFORMW 「Heh～?」
+			PRINTFORMW 「Shouldn't annoying bugs just crawl away?」
+			PRINTFORMDW Suika's spiteful grin makes her rage evident.
+		;なんもない
+		ELSE
+			PRINTFORMW 「Yo. You two seem to be on good terms.」
+		ENDIF 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;朝起きたとき（おはよう口上）
+;==================================================
+@M_KOJO_EVENT_K10_2(ARG,ARG:1)
+CALL MESSAGE_GOODMONING(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;非同棲かつ相手が先に起きてる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;TARGET私室にMASTERが入っている（恋慕時添い寝中就寝時のみ？
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTER私室にTARGETが入ってきてる(恋慕無しでも入ってくる可能性有り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が起きている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が寝ている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERが起きていて、相手が起きてきた
+	;添い寝時TARGET起床はこちら（TARGET衰弱or添い寝中TARGET睡魔負け後そのままMASTERが起き続けた上で相手が起床した場合限定
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;-------------------------------------------------
+		;非同棲
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;同棲中
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;共通
+		;恋人
+		IF TALENT:恋人
+			IF RAND:4 == 0
+				PRINTFORMW 「Mn...」
+				PRINTFORMW 「Ahh...」
+				PRINTFORMW 「Morning, hehe.」
+				PRINTFORMDW Suika smiles at the sight of her beloved first thing in the morning.
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Fuaa...」
+				PRINTFORMW 「Ahh, %CALLNAME:MASTER%...」
+				PRINTFORMW 「Fufu.」
+				PRINTFORMDW Suika slowly gets up and demands to lay her head on your lap.
+			ELSEIF RAND:2 == 0
+				PRINTFORMDW Suika grumbles and rubs her eyes.
+				PRINTFORMW 「Ahh...」
+				PRINTFORMDW She clings to you, mumbling incoherently.
+				PRINTFORMW 「Good morning.」
+				PRINTFORMDW Suika grins.
+			ELSE
+				PRINTFORMW 「UhAh!?」
+				PRINTFORMDW Suika becomes pale and jumps out of bed.
+				PRINTFORMDW She runs around, relentlessly searching for you.
+				PRINTFORML 
+				PRINTFORMW 「Are you alive!?」
+				PRINTFORMDW What cruel treatment first in the morning.
+				PRINTFORMDW To check if you're alive, Suika pokes at you timidly.
+				PRINTFORMW 「Oh, a dream huh?」
+				PRINTFORMW 「I thought I broke and crushed you.」
+				PRINTFORMDW Suika seems relieved.
+				PRINTFORMDW ... Please don't do that again.
+			ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕
+			IF RAND:4 == 0
+				PRINTFORMW 「Mun～ya...」
+				PRINTFORMW 「N～fu～aaa...ahh...」
+				PRINTFORMDW Your eyes meet just as Suika is making embarrassing noises.
+				PRINTFORMW 「Ah...」
+				PRINTFORMDW Her face slowly begins to redden.
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Nmm... %CALLNAME:MASTER%...?」
+				PRINTFORMDW Suika was still half asleep.
+				PRINTFORMW 「Fufu～n....」
+				PRINTFORMDW Suika laughs and clings to you, full of satisfaction.
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Fuaa...eh.」
+				PRINTFORMDW Awakened, Suika meets your gaze and begins to blush.
+				PRINTFORMW 「Hey, were you watching my sleeping face?」
+				PRINTFORMDW Her eyes sparkle as she glances into yours.
+			ELSE
+				PRINTFORMW 「G'morning...」
+				PRINTFORMDW Suika greets you as she awakens.
+			ENDIF
+		;思慕
+		ELSEIF TALENT:思慕
+			IF RAND:4 == 0
+				PRINTFORMW 「Fu～a...n?」
+				PRINTFORMW 「Did you see my sleeping face?」
+				PRINTFORMDW Suika laughs.
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Naa.」
+				PRINTFORMW 「Ah, it's you.」
+				PRINTFORMW 「What? Do you want something?」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「...Ah.」
+				PRINTFORMW 「I'm sleepy. Can I go back to bed?」
+				PRINTFORMW 「No?」
+			ELSE
+				PRINTFORMW 「Nm...uh!?」
+				PRINTFORMDW Suika slowly opens her eyes and is taken by surprise.
+				PRINTFORMDW She blinks while staring at your face.
+			ENDIF
+		;愛欲
+		ELSEIF TALENT:愛欲
+			IF RAND:4 == 0
+				PRINTFORMW 「Nm..fua...」
+				PRINTFORMDW Suika looks up and lets out a sigh.
+				PRINTFORMDW She brings her face next to yours and gently brushes your chin.
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「...」
+				PRINTFORMDW Suika awakens and quietly watches you sleeping.
+			ELSEIF RAND:2 == 0
+				PRINTFORMDW Suika suddenly lifts her face from the bed and grabs you by the collar.
+				PRINTFORMDW She jerks your face toward hers and snatches a kiss.
+				PRINTFORMW 「Mn...Chi～u...Nm...mn～a...」
+				PRINTFORMDW After indulging first thing in the morning, Suika slowly releases you.
+				PRINTFORMW 「Morning... Fufu～.」
+				PRINTFORMDW Her face is flushed and she laughs indecently.
+			ELSE
+				PRINTFORMDW Suika quietly grumbles to herself as she rubs her thighs together.
+			ENDIF
+		;セフレ
+		ELSEIF TALENT:セフレ
+			IF RAND:4 == 0
+				PRINTFORMDW The first thing you see upon opening your eyes is underneath Suika's skirt.
+				PRINTFORMDW She pulls away as you awaken and begins to laugh.
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「What.」
+				PRINTFORMW 「... Do you?」
+				;she certainly is
+				PRINTFORMDW Suika is incoherent.
+			ELSEIF RAND:2 == 0
+				PRINTFORMDW Suika wakes up and slowly traces around your lips with her finger.
+			ELSE
+				PRINTFORMW 「Ah, I got all sweaty...」
+				PRINTFORMDW Suika's clothes are wet and stick to her body, outlining her small nipples.
+				PRINTFORMDW When she notices your gaze she pulls her top to the side to offer a better view...
+			ENDIF
+		;なんもない
+		ELSE
+				PRINTFORMW 「Fua～a～a」
+				PRINTFORMW 「I need a drink.」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常起床（定時になって起きる等）
+	;非神社在住キャラで恋慕未満の場合は、勝手に部屋に入り込んできてる状態
+	;記入チェック（=0, 非表示、1, 表示）
+	;口上主の起床でありあなた起床時に声をかけるとかではない(はず)。
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+	ENDIF 
+	RETURN 1
+	;-------------------------------------------------
+	;添い寝起床
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;4.27現在、ここは発生しない。 COM口上の方での制御？
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 2
+		;PRINTFORMW 
+		;RETURN 1
+	;ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;夜寝るとき（おやすみ口上）
+;==================================================
+@M_KOJO_EVENT_K10_3(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;自室に帰る（定時になって寝る）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;眠そうにしている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;睡眠中（起きていないので会話というよりは寝言？）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;イタズラ中
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 4
+		;PRINTFORMW 
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;衰弱中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERがダウン（部屋まで運ばれる）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが自室まで戻ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;-------------------------------------------------
+		;そのまま着替えて寝た
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 0
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部屋から追い出された
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;非在住TARGETがMAIN_MAPで休憩
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;移動時すれちがい
+;==================================================
+@M_KOJO_EVENT_K10_4(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;立ち止まった
+	;この後遭遇口上に接続
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;軽く会釈して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF CFLAG:ブチギレ
+			PRINTFORMDW Suika glares as you pass, huffing through her nose.
+		;恋人の時1/2で
+		ELSEIF TALENT:恋人 && RAND:2 == 0
+			IF RAND:4 == 0
+				PRINTFORML 「Good work. I'll see you later.」
+				PRINTFORMDW Suika is waves warmly.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「When I finish here, I'll be free.」
+				PRINTFORMDW Regretful, Suika tugs at your sleeve before letting go.
+			ELSEIF RAND:2 == 0
+				PRINTFORMDW Suika's face lights up when she sees you.
+			ELSE
+				PRINTFORMDL Suika gently moves her mouth toward your ear.
+				PRINTFORMW 「Tonight?」
+				PRINTFORMDW A pleasant scent wafts past your nose.
+			ENDIF
+		;恋慕の時3/5で
+		ELSEIF TALENT:恋慕 && RAND:5 < 3
+			IF RAND:4 == 0
+				PRINTFORML 「Where are you headed? I'll come too.」
+				PRINTFORMDW Suika runs her hand along your arm and laughs as she teases you.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「If anything goes wrong, you can count on me.」
+				PRINTFORMDW Suika brims with confidence.
+			ELSEIF RAND:2 == 0
+				;I'm guessing a little bit here.
+				PRINTFORMDW Suika approaches you, downing her sake with a grin.
+				PRINTFORML 「Isn't there something you need to do for me?」
+				PRINTFORMDW Uhh... No?
+				PRINTFORML 
+				PRINTFORML 「What? You need me to spell it out for you?」
+				PRINTFORMDW She raises her bottle and pretends to drink, secretly flashing a vulgar hand sign.
+				ELSE
+				PRINTFORML 「Ah! %CALLNAME:MASTER%! How about we...」
+				PRINTFORMW 「Uhm...」
+				PRINTFORMD Suika holds 
+				;This is idiotic... I'm using a switch here.
+				SELECTCASE RAND:5
+					CASE 0
+						PRINTFORMD two glasses 
+					CASE 1
+						PRINTFORMD a bento box full of rice balls 
+					CASE 2
+						PRINTFORMD a freshly laundered futon 
+					CASE 3
+						PRINTFORMD your travel coat 
+					CASE 4
+						PRINTFORMD two bath towels and a pail 
+				ENDSELECT
+				PRINTFORMDL in her hands.
+				PRINTFORMDW Her joyful demeanor almost makes you forget what you were doing.
+				PRINTFORMW 「Oh, it's nothing!」
+			ENDIF
+		;思慕の時1/2で
+		ELSEIF TALENT:思慕 && RAND:2 == 0
+			IF RAND:4 == 0
+				PRINTFORML 「Oh, you're busy? I see...」
+				PRINTFORMDW Suika seems lonely for a moment, but quickly hides it with a smile.
+			ELSEIF RAND:3 == 0
+				PRINTFORMDL Suika waves at you and cocks her head to the side.
+				PRINTFORMW 「Hnnn...?」
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「Who are you going to meet?」
+				PRINTFORMDW Suika seems a little disconcerted.
+			ELSE
+				PRINTFORML 「Ah, %CALLNAME:MASTER%. Have some sake. No? Oh, I see...」
+				PRINTFORMDW Having other business to attend to, you refuse politely. Suika seems a little annoyed.
+			ENDIF
+		;愛欲の時1/2で、愛人の時2/3
+		ELSEIF TALENT:愛欲 && RAND:(1+TALENT:セフレ) < TALENT:セフレ
+			IF RAND:4 == 0
+				PRINTFORMDL Suika stumbles into you.
+				PRINTFORMDW Suika sticks out her tongue and giggles as you pass.
+			ELSEIF RAND:3 == 0
+				PRINTFORMDW Suika lifts her bottle to take a drink.
+				PRINTFORMW 「Oh, %CALLNAME:MASTER%.」
+				PRINTFORMW 「Oops!」
+				PRINTFORMDW Just as Suika opens her mouth, she accidentally spills sake all over herself,
+				PRINTFORMW 「Ah, I wanted that.」
+				PRINTFORMW 「... Want a drink?」
+				PRINTFORMDW Suika pulls her wet clothing taut, showing off her feminine parts and giggling lustfully.
+			ELSEIF RAND:2 == 0
+				;同行者が居ない
+				IF !CFLAG:MASTER:同行
+					;お互いキス経験済みf
+					IF !TALENT:MASTER:キス未経験 && !TALENT:キス未経験
+						PRINTFORMDW You notice Suika standing in the shadows as you walk past.
+						PRINTFORMDW Suddenly, you're pulled into the darkness with tremendous force.
+						PRINTFORMDW Startled, you almost stop time reflexively.
+						PRINTFORMDW A blushing Suika immediately presses her lips against yours.
+						PRINTFORMDW There's a slurping sound as she grips your head and drives her tongue into your mouth.
+						PRINTFORMDW Each time you try to pull back, she attacks again with rewewed vigor.
+						PRINTFORMDW As your lips finally separate, a strand of saliva still connects the two of you.
+						PRINTFORMW 「When we have the time, okay?」
+						PRINTFORMDW Suika ceases her assault and you're finally able to catch your breath.
+						EXP:口淫経験 += 1
+						EXP:Ｍ経験 += 1
+						EXP:MASTER:口淫経験 += 1
+						EXP:MASTER:Ｍ経験 += 1
+						CALL MUTUAL_KISS
+					;どちらかがキス未経験
+					ELSE
+						PRINTFORMDW You notice Suika standing in the shadows as you walk past.
+						PRINTFORMDW Suddenly, you're pulled into the darkness with tremendous force.
+						PRINTFORMDW Startled, you almost stop time reflexively.
+						PRINTFORMDW The blushing Suika smiles and pulls up her dress.
+						PRINTFORMDW The soft flesh of her torso presses against you. She's quite small, but her breasts are perky.
+						PRINTFORMDW It's hard to believe she's an oni as you wrap your arms around her seemingly delicate body.
+						PRINTFORMDW As your hands slide up her waist, her body rocks and trembles.
+						PRINTFORMW 「When we have the time, okay?」
+						PRINTFORMDW Suika pulls her body back, slowing unfurling her fingers from yours.
+					ENDIF
+				;同行者が居る
+				ELSE
+					PRINTFORMDW You notice Suika standing in the shadows as you walk past.
+					PRINTFORMDW She reaches down and lifts her dress so only you can see.
+					PRINTFORMDW Just as her pale thighs are exposed, Suika winks at you pushes her dress back down.
+				ENDIF
+			ELSE
+				PRINTFORMW 「Oh, %CALLNAME:MASTER%. Where are you headed?」
+				PRINTFORMW 「Ah, really? When will you be back then?」
+				PRINTFORMW 「I see... Okay, catch you later.」
+				PRINTFORMDW As Suika talks, she slowly rubs her thighs together.
+			ENDIF
+		;セフレの時1/2、愛人の時2/3で
+		ELSEIF TALENT:セフレ && RAND:(1+TALENT:セフレ) < TALENT:セフレ
+			IF RAND:4 == 0
+				PRINTFORMW 「Ah, yes.」
+				PRINTFORMDW Suika turns her head in your direction, looking up and down your body.
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Hnnn?」
+				PRINTFORMDW Suika stares at you and licks her lips.
+			ELSEIF RAND:2 == 0
+				PRINTFORMDW Suika returned your greeting as usual.
+				PRINTFORMDW ... As you pass, she rubs her hands together.
+			ELSE
+				PRINTFORM 「Hey, %CALLNAME:MASTER%!
+				IF RAND:2 == 0
+					PRINTFORMW Have you been snacking?」
+				ELSE
+					PRINTFORMW Is that sake I smell?」
+				ENDIF
+				PRINTFORMDW Suika suddenly brings her face very close to yours.
+				PRINTFORMDW She pretends to sniff you and brings her lips to the side of your neck.
+				PRINTFORMW 「Would you like to try me as well?」
+				PRINTFORMDW Suika pulls back and starts laughing...
+			ENDIF
+		ELSE
+			;時姦刻印があるとき時姦刻印/5で
+			IF MARK:時姦刻印 > 0 && RAND:5 < MARK:時姦刻印
+				PRINTFORMW 「Hnnn, Fuah...?」
+				PRINTFORMDW Suika sees you and her body begins twitching.
+				SIF MARK:時姦刻印 > 1
+					PRINTFORMDW Though she may not recall the pleasure, her body certainly does.
+				SIF MARK:時姦刻印 > 2
+					PRINTFORMDW Suika smiles as she unknowingly shifts her hips back and fourth.
+			ENDIF
+			PRINTFORMW 「Oh, %CALLNAME:MASTER%.」
+			PRINTFORMDW Suika waves her hand and gives you a typical greeting.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無視して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF CFLAG:ブチギレ
+			PRINTFORMDW Suika grits her teeth in frustration as you pass by.
+			SIF TALENT:恋人 || TALENT:恋慕 || TALENT:思慕
+				PRINTFORMDL Her expression seems somewhat pained, however...
+			PRINTFORMD She angrily sloshes her bottle
+		ELSE
+			IF TALENT:恋人 && RAND:2 == 0
+				PRINTFORMD Suika gazes lovingly as you pass
+			ELSEIF TALENT:恋慕 && RAND:2 == 0
+				PRINTFORMD Suika leers lecherously as you pass
+			ELSEIF TALENT:愛欲 && RAND:2 == 0
+				PRINTFORMD Suika squirms oddly as you pass
+			ELSEIF TALENT:セフレ && RAND:2 == 0
+				PRINTFORMD Suika grins and laughs as you pass
+			ELSEIF TALENT:思慕 && RAND:2 == 0
+				PRINTFORMD Suika follows with her gaze as you pass
+			ELSEIF GETBIT(CFLAG:1,0) && RAND:2 == 0
+				;unsure about exact definition of ぽーっと
+				PRINTFORMD Suika blows a kiss as you pass
+			ELSEIF MARK:時姦刻印 > 0 && RAND:5 < MARK:時姦刻印
+				PRINTFORMDW Suika blushes as you pass.
+				SIF MARK:時姦刻印 > 1
+					PRINTFORMDL Her genitals flush with arousal at the sight of you.
+				SIF MARK:時姦刻印 > 2
+					PRINTFORMDL Her womb begins to twitch as well, reacting to your presence.
+				PRINTFORMD She sways her hands from side to side
+			ELSE
+				PRINTFORMD Suika pays you no heed
+			ENDIF
+			PRINTFORMDW , taking a swig of sake.
+		ENDIF
+	ENDIF
+	RETURN 1
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;他者介入でムード変化
+;==================================================
+@M_KOJO_EVENT_K10_5(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;霊夢が入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;る～ことが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を目撃した
+;==================================================
+@M_KOJO_EVENT_K10_6(ARG,ARG:1)
+;口上主はTARGET
+;ARGに情事相手
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を目撃した（馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;負けじと参加（馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;気まずそうに立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERに誘われて参加
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG:1 == 4
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を見られた
+;==================================================
+@M_KOJO_EVENT_K10_7(ARG,ARG:1)
+;口上主はTARGET
+;ARGに目撃者
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を見られた（目撃者の馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が負けじと参加（目撃者の馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERに誘われて目撃者も参加
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG:1 == 4
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;目撃した情事を問い詰める
+;==================================================
+@M_KOJO_EVENT_K10_8(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERだけ問い詰め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;二人とも説教
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;パンツ没収された
+;==================================================
+@M_KOJO_EVENT_K10_9(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;同じ場所に居てパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;遠距離移動中にパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;押し倒した
+;==================================================
+@M_KOJO_EVENT_K10_10(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERを押し倒した（開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;なだめられた（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;浴場で遭遇
+;==================================================
+@M_KOJO_EVENT_K10_11(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目が合った（追い出されない）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;寝床に忍び込み
+;==================================================
+@M_KOJO_EVENT_K10_12(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出される（怒り）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕・衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される（衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;お仕事中
+;==================================================
+@M_KOJO_EVENT_K10_13(ARG,ARG:1)
+;口上主はTARGET
+;ARG:1に残っている仕事量
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;仕事開始（職場へ移動する）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;業務中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;仕事終了
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;食事系
+;==================================================
+@M_KOJO_EVENT_K10_14(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;持っていた食物を食べられた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == -1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;MASTERが押し倒した
+;==================================================
+@M_KOJO_EVENT_K10_15(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;未実装（押し倒しコマンドに統合？
+	;MASTERが押し倒した（ウフフ開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;逢瀬終了（ウフフ終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;添い寝する
+;==================================================
+@M_KOJO_EVENT_K10_16(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;添い寝を始めた（開始時）(存在せず
+	;記入チェック
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;添い寝を終了した（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;時止め終了時
+;==================================================
+@M_KOJO_EVENT_K10_17(ARG,ARG:1)
+;口上主はTARGET
+;排他と明記されていないモノは状況によっては連続で表示されるので注意
+;ARGに射精状況
+;ARG:1に射精状態
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ARG=1～3は排他
+	;謎の快感
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;パンツ紛失
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚口内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;精液中毒低精飲
+		IF ARG:1 == 1
+		;精液中毒低吐き出し
+		ELSEIF ARG:1 == 2
+		;精液中毒低手で覆う
+		ELSEIF ARG:1 == 3
+		;精液中毒高精飲
+		ELSEIF ARG:1 == 4
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚顔面射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;精液経験ありぬぐい取り
+		IF ARG:1 == 1
+		;精液経験なしぬぐい取り
+		ELSEIF ARG:1 == 2
+		;顔射精液舐めとり
+		ELSEIF ARG:1 == 3
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚手淫射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;ぬぐい取り
+		IF ARG:1 == 1
+		;舐めとり
+		ELSEIF ARG:1 == 2
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚アナル射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;Ａ感覚0
+		IF ARG:1 == 1
+		;ソレ以外
+		ELSEIF ARG:1 == 2
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚処女喪失】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚膣内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		;非処女膣内射精ピルなし
+		IF ARG:1 == 1
+		;非処女膣内射精ピルあり
+		ELSEIF ARG:1 == 2
+		;処女膣内射精
+		ELSEIF ARG:1 == 3
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;ナマでやらせろ時
+;==================================================
+@M_KOJO_EVENT_K10_18(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;避妊要求台詞
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断ったのに粘られて切れた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日以外許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;神社暮らしを承認して貰う
+;==================================================
+@M_KOJO_EVENT_K10_19(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;認められる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;認められない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;帰宅時
+;==================================================
+@M_KOJO_EVENT_K10_20(ARG,ARG:1)
+;口上主はLOCALS or RESULT
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;デート中帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;玄関先でお見送り
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;陥落素質取得時
+;==================================================
+@M_KOJO_EVENT_K10_21(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛欲取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛人取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;セフレ取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;調教終了時に自慰
+;==================================================
+@M_KOJO_EVENT_K10_22(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;浴場連れだし
+;==================================================
+@M_KOJO_EVENT_K10_23(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;断られた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;一緒に入ってくれた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;懐妊
+;==================================================
+@M_KOJO_EVENT_K10_24(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;出産
+;==================================================
+@M_KOJO_EVENT_K10_25(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1

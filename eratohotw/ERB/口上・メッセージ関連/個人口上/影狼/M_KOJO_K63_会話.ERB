@@ -1,0 +1,1035 @@
+﻿;==================================================
+;300,会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K63_300
+;コマンド共通メッセージ(TRAIN_MESSAGE) 
+;削除すると「～話をした。」とかが消えます
+;CALL TRAIN_MESSAGE
+;口上メイン呼出
+CALL M_KOJO_MESSAGE_COM_K63_300_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K63_300_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70 
+;;満月で逃げる時
+;IF DAY:3 == 15 && !TALENT:恋慕
+;	;満月の下
+;	IF MOON_WATCH(DAY:3) == 9
+;		PRINTFORMW 「ぎゃあ！%CALLNAME:MASTER%！？」
+;		PRINTL 
+;		PRINTFORML ド－－－－－－－－ン！！！
+;		PRINTFORMW 
+;		PRINTFORMW 目の前が真っ暗になった！
+;	;まだ昼or夜だけど晴れてない
+;	ELSEIF TIME:2 >=1 && TIME:2 <= 4 || TIME:5 > 1
+;		PRINTFORMW 「う！あなたは%CALLNAME:MASTER%！」
+;	;夜で晴れてるけど室内
+;	ELSE
+;		PRINTFORMW 「ぎゃあ！%CALLNAME:MASTER%！？」
+;		PRINTL 
+;		PRINTFORML ド－－－－－－－－ン！！！
+;		PRINTFORMW 
+;		PRINTFORMW 目の前が真っ暗になった！
+;	ENDIF
+;	CALL KAGEROU_ESCAPE
+	IF TCVAR:発情
+		PRINTFORML 「……」
+		PRINTFORMW 影狼はどこかうわの空だ
+		PRINTFORML 「ふぇっ！？　ご、ごめんなさい、何の話だったかしら？」
+	ENDIF
+
+	;添い寝（住み込み前提）
+	IF CFLAG:添い寝中
+		SELECTCASE RAND:5
+		CASE 0
+	PRINTFORMW 「%CALLNAME:MASTER%... Do you not need to sleep...?」
+	PRINTFORMW 「Ah, So I'm the only one who's tired...」
+		CASE 1
+	PRINTFORMW 「Hey... Is it alright if I move a little closer...?」
+		CASE 2
+	PRINTFORMW 「...zzz......zzz......」
+		CASE 3
+	PRINTFORMW 「%CALLNAME:MASTER%... Are you awake...?」
+	PRINTFORMW 「Fufu...... Thank you......」
+		CASE 4
+	PRINTFORMW 「I've never had anyone to lay next to until now......」
+	PRINTFORMW 「I'm...so happy......」
+		ENDSELECT
+	;お月見の会話（挨拶を済ましてから）
+	ELSEIF TCVAR:350 && !TCVAR:351 && MOON_WATCH(DAY:3) > 0
+		CALL K63_OTSUKIMI_TALK
+	;人狼ゲーム
+	ELSEIF TALENT:恋慕 && (CFLAG:63:現在位置 == 9 || CFLAG:63:現在位置 == 10 || CFLAG:63:現在位置 == 15 || (FLAG:住み込みキャラ == 63 && CFLAG:63:現在位置 == 16)) && CFLAG:63:現在位置 == CFLAG:1:現在位置 && CFLAG:63:現在位置 == CFLAG:11:現在位置
+	PRINTFORMW 「That's right! Since we're finally all here let's play Werewolf!」
+		$JINROU_INPUT_LOOP
+	PRINTL ※You can play a simplified game of Werewolf called eratohoWerewolf.
+	PRINTL 　The game does not affect anything.
+	PRINTL  [0] Play!
+	PRINTL  [1] Pass!
+		INPUT
+		SIF !RESULT
+			CALL ERATOHO_JINROU_GAME
+		PRINTL
+	PRINTFORMW 「Ahー How fun! Want to go again?」
+
+	;お天気会話
+	ELSEIF !TCVAR:352 && TIME:2 >= 3
+		CALL K63_WEATHER
+		TCVAR:352 = 1
+	;デートの会話
+	ELSEIF CHK_DATENOW(CFLAG:TARGET:デート中)
+		SELECTCASE CFLAG:63:現在位置
+		;道中
+		CASE ROAD_TO(CFLAG:TARGET:デート中)
+			SELECTCASE RAND:10
+			CASE 0,1,2
+	PRINTFORMW 「Fufufu, I'm so excited to go on a date with %CALLNAME:MASTER%♪」
+			CASE 3,4,5
+	PRINTFORMW 「We've still got a ways to go, but are you alright? Not tired?」
+			CASE 6,7,8
+	PRINTFORMW 「Ah, wait a moment!」
+	PRINTFORMW 「Geez, Leaving a lady behind is a breach of manners, you know?」
+			CASE 9
+	PRINTFORMW 「Huh? Where are we headed now?」
+			ENDSELECT
+		;到着後
+		CASEELSE
+			;デート慣れ
+			IF EXP:63:デート経験 > 49 && TALENT:恋慕
+				SELECTCASE RAND:13
+				CASE 0,1,2
+					;場所の話,気が向いたら詳細分岐
+					SELECTCASE CFLAG:63:現在位置
+					;命蓮寺
+					CASE 110 TO 190
+	PRINTFORMW 「This is the rumored newly-built temple.」
+	PRINTFORMW 「I've heard there's an incredible monk living there......」
+	PRINTFORMW 「Is it really true she's even kind to Youkai?」
+	PRINTFORMW 「I wonder if that information is just a trap so she can exterminate them......」
+					;人里
+					CASE 210 TO 290
+	PRINTFORML 「I come to the Human Village on occasion.」
+	PRINTFORMW 「Of course, in disguise.」
+						SELECTCASE RAND:3
+						CASE 0
+	PRINTFORMW 「If you don't make a fuss no one will find out, so it's perfectly safe.」
+	PRINTFORMW 「The villagers are surprisingly kind when they don't suspect anything.」
+	PRINTFORMW 「Fufufu...... What simple people♪」
+						CASE 1
+	PRINTFORMW 「I most frequently visit butcher-san.」
+	PRINTFORMW 「Next is grocer-san and fishmonger-san......」
+	PRINTFORMW 「In other words, grocery shopping.」
+						CASE 2
+	PRINTFORMW 「Still, to come here on a date with %CALLNAME:MASTER%.」
+	PRINTFORMW 「We're attracting a lot of stares, so I'm feeling nervous......」
+	PRINTFORMW 「Hey, I look fine, right? My ears and such aren't poking out, right......?」
+						ENDSELECT
+					;紅魔館
+					CASE 310 TO 390
+	PRINTFORMW 「The vampire's mansion......」
+	PRINTFORMW 「I don't usually come here, so I'm a bit interested.」
+	PRINTFORMW 「For now we should investigate what they meant by Wolfman tag......」
+					;斜角の竹林
+					CASE 430
+	PRINTFORMW 「Fufu, My home is in this forest.」
+	PRINTFORMW 「Although I call it my home, it's more like a den...... In %CALLNAME:MASTER%'s eyes, it might just look like a nest......」
+	PRINTFORMW 「So I'm sorry, but there's no way I can let you see it!」
+					;迷いの竹林
+					CASE 410 TO 490
+						SELECTCASE RAND:3
+						CASE 0
+	PRINTFORMW 「Somewhere around here is the doctor's house, Eientei, and the Nameless Hill...」
+	PRINTFORMW 「Also, occasionally a night sparrow sets up a food cart by the entrance.」
+	PRINTFORMW 「Also, my home is here too♪」
+						CASE 1
+	PRINTFORMW 「This bamboo forest is a maze, so be careful.」
+	PRINTFORMW 「Even I haven't figured out the full extent of this mysterious forest.」
+	PRINTFORMW 「And there are various ghosts lurking about in addition.」
+	PRINTFORMW 「Don't separate from me, %CALLNAME:MASTER%.」
+						CASE 2
+	PRINTFORMW 「Even in the mysterious, mysterious Gensokyo, this is the most mysterious spot.」
+	PRINTFORMW 「Shining bamboo, ninjas, impossible to decode memos, there are a million strange rumours.」
+	PRINTFORMW 「Even the moon shines with a strange light, so it's easier for beast-type Youkai to gather here.」
+	PRINTFORMW 「I'm also one of them. Fufu, Home is where you make it.」
+						ENDSELECT
+					;魔法の森
+					CASE 510 TO 590
+						;	PRINTFORMW 「まだ」
+					;霧の湖
+					CASE 610 TO 690
+	PRINTFORMW 「I often come here to swim in the lake.」
+	PRINTFORMW 「Also, I have a mermaid friend here named Wakasagihime.」
+	PRINTFORMW 「I wonder if she's here today?」
+					;妖怪の山　山麓
+					CASE 710 TO 790
+					;	PRINTFORMW 「まだ」
+					;妖怪の山　山頂
+					CASE 810 TO 890
+					;	PRINTFORMW 「まだ」
+					;地霊殿
+					CASE 910 TO 990
+					;	PRINTFORMW 「まだ」
+					ENDSELECT
+				CASE 3
+	PRINTFORMW 「After all, a date is something you do stuff on.」
+	PRINTFORMW 「An outing with %CALLNAME:MASTER%.」
+	PRINTFORMW 「Playing around, making new memories.」
+	PRINTFORMW 「If I had to say, something like that.」
+				CASE 4
+					IF TIME:2 >=1 && TIME:2 <= 4
+	PRINTFORMW 「While it's bright out, there's nothing to worry about here, but...」
+	PRINTFORMW 「Once it darkens and people clear out, you'll see the night's true face.」
+	PRINTFORMW 「How about it, %CALLNAME:MASTER%? Want to try walk through the night next time?」
+					ELSE
+	PRINTFORMW 「Not to mention humans, there aren't even any fairies around at this hour.」
+	PRINTFORMW 「But that just means it's just the two of us......」
+	PRINTFORMW 「Fufu, It's nothing～♪」
+					ENDIF
+				CASE 5
+	PRINTFORMW 「It's a date... I can't calm down...」
+	PRINTFORMW 「A-After all, we're walking next to each other like this.」
+	PRINTFORMW 「If someone saw us, w-wouldn't they misunderstand...」
+					IF TALENT:63:恋人
+	PRINTFORMW 「Ah, It's not a misunderstanding anymore......」
+	PRINTFORMW 「That just makes me more nervous......」
+					ENDIF
+				CASE 6
+	PRINTFORMW 「Am I having fun?」
+	PRINTFORMW 「Of course, since I'm with %CALLNAME:MASTER%♪」
+	PRINTFORMW 「Wherever we go, whatever we do, if it's with %CALLNAME:MASTER% then it's fun♪」
+				CASE 7
+	PRINTFORMW 「Somehow, when I spend time with %CALLNAME:MASTER% like this,」
+	PRINTFORMW 「it almost seems like I'll forget I'm a wolf woman.」
+	PRINTFORMW 「Even though I'm quite proud of being a wolf woman.」
+	PRINTFORMW 「When I'm in front of %CALLNAME:MASTER%, it's almost like I've been declawed.」
+				CASE 8
+	PRINTFORMW 「Does %CALLNAME:MASTER% have an idea of what an ideal date would be like?」
+	PRINTFORMW 「Fufu, If you tell me I'll accompany you♪」
+				CASE 9
+	PRINTFORMW 「Hey, %CALLNAME:MASTER%, hey hey!」
+	PRINTFORMW 「Geez, What are you spacing our for.」
+	PRINTFORMW 「Thinking about something? About what? Tell me～!」
+				CASE 10
+	PRINTFORMW 「Fuu...... I feel a bit hungry.」
+					IF !TIME_PROGRESS(TCVAR:312)
+	PRINTFORMW 「Eh!? We just ate?」
+	PRINTFORMW 「Uu...... I see...」
+	PRINTFORMW 「No wayー Wouldn't that make me a glutton character!」
+					ELSE
+	PRINTFORMW 「Do you want to stop somewhere to eat?」
+					ENDIF
+				CASE 11
+					SELECTCASE TIME:5
+					CASE 0,1
+	PRINTFORMW 「It's great that today's clear.」
+	PRINTFORMW 「Perfect weather for a date♪」
+					CASE 2,3
+	PRINTFORMW 「Today's a bit overcast, huh.」
+	PRINTFORMW 「It'd be nice if it didn't rain......」
+					CASE 4,6,7
+	PRINTFORMW 「Hmm, Today's a rainy day.」
+	PRINTFORMW 「Next time, let me know what time you want to go out.」
+	PRINTFORMW 「That way I can make a teru-teru bozu♪」
+					CASE 8,10,11,12,13
+					;かげわかのイラストが凄くいいので一度見てくれ
+						IF TALENT:63:恋人
+	PRINTFORMW 「Being in the snow with my lover like this immerses me in a special feeling. I like it.」
+						ELSE
+	PRINTFORMW 「Being in the snow with the person I like immerses me in a special feeling. I like it.」
+						ENDIF
+	PRINTFORMW 「...... Sorry, I just wanted to try saying it......」
+	PRINTFORMW 「It's so embarrassing I could die......」
+					CASE 5,9
+	PRINTFORMW 「Umm, %CALLNAME:MASTER%, please take a look at the weather.」
+	PRINTFORMW 「Wouldn't it be best to head home for today...?」
+					ENDSELECT
+				CASE 12
+	PRINTFORMW 「Speaking of, what's %CALLNAME:MASTER%'s favorite place in Gensokyo?」
+					$DATESPOT_LOOP
+	PRINTL [0]Hakurei Shrine [1]Human Village [2]Misty Lake [3]Forest of the Lost
+				;	PRINTL [4]守矢神社 [5]竹林 [6]紅魔館 [7]妖怪の山 [8]命蓮寺 [9]魔法の森 [10]地底
+					INPUT
+					SELECTCASE RESULT
+					CASE 0
+	PRINTFORMW 「Fhuーn. Since you live there?」
+	PRINTFORMW 「Or because of that Miko......」
+	PRINTFORMW 「Juーst kidding.」
+					CASE 1
+	PRINTFORMW 「Fhuーn, Well it's pretty close.」
+						IF CFLAG:現在位置 >= 210 && CFLAG:現在位置 <= 290
+	PRINTFORMW 「We can have fun like this, so it's not like I hate it, but...」
+						ELSE
+	PRINTFORMW 「I go there often, so it's not like I hate it, but...」
+						ENDIF
+	PRINTFORMW 「It's not really somewhere Youkai should go.」
+					CASE 2
+						IF CFLAG:現在位置 >= 610 && CFLAG:現在位置 <= 690
+	PRINTFORMW 「Fufufu, So that's why you brought me here. Thank you.」
+	PRINTFORMW 「I come here often, and I have a friend here, so I like this lake.」
+						ELSE
+	PRINTFORMW 「Fhuーn. I come here a lot, and have a friend here, so I like it.」
+						ENDIF
+	PRINTFORMW 「Ah, do you perhaps like swimming?」
+					CASE 3
+						IF CFLAG:現在位置 >= 410 && CFLAG:現在位置 <= 490
+	PRINTFORMW 「Ehehe, It might've been silly to ask that here.」
+	PRINTFORMW 「Thank you for saying so, %CALLNAME:MASTER%♪」
+						ELSE
+	PRINTFORMW 「Ara, Is it because I live there?」
+	PRINTFORMW 「Well, even though there are a lot of Youkai, it's a place with many mysteries.」
+	PRINTFORMW 「Let's go there next time♪」
+						ENDIF
+					CASEELSE
+						GOTO DATESPOT_LOOP
+					ENDSELECT
+				ENDSELECT
+			;まだ慣れてない
+			ELSE
+				SELECTCASE RAND:9
+				CASE 0,1
+	PRINTFORMW 「I wonder what you're supposed to do during a date...」
+	PRINTFORMW 「I haven't really ever done it so I don't know.」
+				CASE 2,3
+					IF TIME:2 >=1 && TIME:2 <= 4
+	PRINTFORMW 「While it's bright out, there's nothing to worry about here, but...」
+	PRINTFORMW 「Once it darkens and people clear out, you'll see the night's true face.」
+					ELSE
+	PRINTFORMW 「As expected, at this time, not to mention humans, there aren't even any fairies around.」
+	PRINTFORMW 「But in exchange, I can feel the presence of Youkai......」
+	PRINTFORMW 「Next time, let's come here during the day.」
+					ENDIF
+				CASE 4,5
+	PRINTFORMW 「You called it a date so I was a bit nervous, but...」
+	PRINTFORMW 「This is just an extension of how we usually hang out, isn't it.」
+				CASE 6,7
+	PRINTFORMW 「Am I having fun?」
+	PRINTFORMW 「You didn't have to expressly ask, I'm having plenty of fun♪」
+				CASE 8
+	PRINTFORMW 「Hey, Can we head somewhere else?」
+	PRINTFORMW 「Umm, There's not really any meaning behind it.」
+	PRINTFORMW 「I just kind of want to.」
+				ENDSELECT
+			ENDIF
+		ENDSELECT
+	ELSEIF DAY:3 != 15 && !TCVAR:354
+		CALL K63_職場見学
+	;ウルフ・レッドムーン
+	ELSEIF !RAND:15
+		EXP:歌唱経験 ++
+		PRINTFORMW 「叫べーこの声がとーどくーかぎりー」
+		PRINTFORMW 「きりさーく静寂どーこまでーもー♪」
+	;恋慕の会話
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:41
+		;幻想郷に英語という概念はある
+		CASE 0
+	PRINTFORMW 「I've been called a "wolfman" quite often.」
+	PRINTFORMW 「In English the term is "werewolf", but...」
+	PRINTFORMW 「It seems the "were" also has the meaning of man.」
+	PRINTFORMW 「A wolfwoman's suffering is global, isn't it.」
+		CASE 1
+	PRINTFORMW 「I'm a Japanese Wolf woman.」
+	PRINTFORMW 「In the past there were many of us, but now I'm the only one left.」
+			$INPUT_LOOP_03
+		PRINTL [0]That's sad.　[1]Are you really the last?
+			INPUT
+			SELECTCASE RESULT
+			CASE 0
+	PRINTFORMW 「Fufu, it's okay. Since Gensokyo is a wonderful place.」
+	PRINTFORMW 「%CALLNAME:MASTER% is here too♪」
+			CASE 1
+	PRINTFORMW 「There might still be survivors in the outside world.」
+	PRINTFORMW 「To be able to survive in that harsh environment though...」
+	PRINTFORMW 「They'd have to be quite clever, or maybe possess some skillful method of concealment......」
+			CASEELSE
+				GOTO INPUT_LOOP_03
+			ENDSELECT
+		CASE 2
+	PRINTFORMW 「I'm not scary even though I'm a Youkai?」
+	PRINTFORMW 「That's because I'm a human right now.」
+	PRINTFORMW 「I'll transform into a wolf on the night of the full moon.」
+			$INPUT_LOOP_04
+		PRINTL [0]（How troubling）　[1]（How cute）
+			INPUT
+			SELECTCASE RESULT
+			CASE 0
+	PRINTFORMW 「But too much power will ruin the body.」
+	PRINTFORMW 「If you give in to the power, then you'll rampage for 3 days and 3 nights without being able to return to human form.」
+	PRINTFORMW 「Until you finally collapse from exhaustion.」
+			CASE 1
+	PRINTFORMW 「But I get all hairy, so I don't want you to see......」
+	PRINTFORMW 「Eh? My cuticles?」
+	PRINTFORMW 「I, I'm happy......」
+	PRINTFORMW 「But, no! Absolutely notー!」
+			CASEELSE
+				GOTO INPUT_LOOP_04
+			ENDSELECT
+		CASE 3
+	PRINTFORMW 「I can't hide my ears.」
+	PRINTFORMW 「That's why when I go to the Human Village I normally cover them up with a hood.」
+	PRINTFORMW 「But with %CALLNAME:MASTER% there's no need.」
+	PRINTFORMW 「Thinking back on it, why were you fine with it from the start? How mysterious.」
+		CASE 4
+			IF FLAG:住み込みキャラ == 63
+	PRINTFORMW 「I'm gradually getting used to living at the shrine.」
+	PRINTFORMW 「I was perplexed at first, but it's surprisingly enjoyable.」
+	PRINTFORMW 「Since %CALLNAME:MASTER% is also there, fufu, it's a luxurious lifestyle♪」
+			ELSE
+	PRINTFORMW 「I wonder how life at the shrine is.」
+	PRINTFORMW 「Is it okay if I help out with whatever I can?」
+	PRINTFORMW 「Umーm...... Cleaning...is no good, Uhhh......」
+	PRINTFORMW 「Ah! Something like grocery shopping!」
+			ENDIF
+		CASE 5
+	PRINTFORMW 「My mermaid friend, Wakasagihime, lives at the Misty Lake.」
+	PRINTFORMW 「She's very quiet and gentle.」
+	PRINTFORMW 「She's got a strange hobby of collecting stones...」
+	PRINTFORMW 「And she's also great at singing. The sight of her singing on the shore is amazing.」
+	PRINTFORMW 「I was unintentionally captivated～」
+		CASE 6
+	PRINTFORMW 「Whenever I'm hungry but there's no food, I sneak out to the Human Village.」
+	PRINTFORMW 「I'm always afraid that I'll be discovered......」
+	PRINTFORMW 「But there's a surprising number of Youkai mixed in with the villagers.」
+	PRINTFORMW 「Fufun♪ They can't fool my nose.」
+		CASE 7
+	PRINTFORMW 「Humans also live in the bamboo forest. I was surprised.」
+	PRINTFORMW 「Moreover, they occasionally have really inhuman fights......」
+	PRINTFORMW 「Anyway, it's best not to get involved......」
+		CASE 8
+	PRINTFORMW 「I heard some of the rules about the outside world's Werewolf game!」
+	PRINTFORMW 「The werewolf blends in with the humans and then eats them one by one every night.」
+	PRINTFORMW 「There's no way I could do something so scary......」
+		CASE 9
+	PRINTFORMW 「Hey %CALLNAME:MASTER%, do you happen to have an unusual stone or something?」
+	PRINTFORMW 「It's just, my friend Wakasagihime likes stones.」
+	PRINTFORMW 「When I feel like it, I sometimes like to help her look.」
+	PRINTFORMW 「So if you don't, that's fine.」
+		CASE 10
+	PRINTFORMW 「%CALLNAME:MASTER%, what comes to mind when you hear the word "wolf"?」
+			$INPUT_LOOP_05
+		PRINTL [0]Strong sense of smell　[1]Tough teeth and claws 　[2]Echoing howl　[3]Mofu Mofu
+			INPUT
+			SELECTCASE RESULT
+			CASE 0
+	PRINTFORMW 「I see. It's especially sensitive to the smell of blood...... Well, not really.」
+	PRINTFORMW 「It feels more like it's for chasing down the opponent.」
+	PRINTFORMW 「Ah, I think I can use that for a new Danmaku.」
+			CASE 1
+	PRINTFORMW 「So it's that after all～」
+	PRINTFORMW 「I was thinking of using your response for a new Danmaku idea, but...」
+	PRINTFORMW 「I guess it's better to just shred them to pieces.」
+			CASE 2
+	PRINTFORMW 「Awooo～n♪ Right!」
+	PRINTFORMW 「It's exhilarating when transformed, but in human form it's embarrassing......」
+	PRINTFORMW 「The roaring types are powerful, but they don't really have much elegance.」
+	PRINTFORMW 「Ah, I think I can use that for a new Danmaku.」
+			CASE 3
+	PRINTFORMW 「Wha-!? Geezー! I wanted to use that for a new Danmaku idea!」
+	PRINTFORMW 「What's with that Mofu Mofu～! I can't use that at all～」
+	PRINTFORMW 「I wonder if it was a mistake to ask %CALLNAME:MASTER%......」
+			CASEELSE
+				GOTO INPUT_LOOP_05
+			ENDSELECT
+		CASE 11
+	PRINTFORMW 「If you hear any howling at night, it's not me, okay!」
+	PRINTFORMW 「I only howl on the full moon!」
+	PRINTFORMW 「Since, when I'm transformed, it's exhilarating♪」
+	PRINTFORMW 「But in human form it's only embarrassing......」
+		CASE 12
+			IF FLAG:住み込みキャラ ==63
+	PRINTFORMW 「Living in the shrine is pretty fun.」
+	PRINTFORMW 「It's quite disconcerting to live with that Miko...」
+	PRINTFORMW 「But I'm glad she's as tolerant as the rumors said.」
+	PRINTFORMW 「Most importantly, %CALLNAME:MASTER% is here too♪」
+			ELSE
+	PRINTFORMW 「Let me know about any interesting stories about the shrine.」
+	PRINTFORMW 「Do you have anything like that?」
+	PRINTFORMW 「Things like that Miko's weaknesses, or so.」
+	PRINTFORMW 「Or conversely, if anyone has grasped %CALLNAME:MASTER% weaknesses?」
+			ENDIF
+		CASE 13
+	PRINTFORMW 「In the past, when I announced I was a werewolf, people were afraid.」
+	PRINTFORMW 「But eventually the number of suppression parties decreased.」
+	PRINTFORMW 「I stopped being a target of fear, and in the end my existence was completely forgotten.」
+	PRINTFORMW 「Before I realized it I had drifted here.」
+		CASE 14
+	PRINTFORMW 「What the Grassroots Youkai Network is?」
+	PRINTFORMW 「It's mostly a network for the independent Youkai to share information.」
+	PRINTFORMW 「The participating members areー......」
+	PRINTFORMW 「Whoops, Even if it's %CALLNAME:MASTER%, telling humans is against the rules.」
+		CASE 15
+	PRINTFORMW 「Occasionally a night sparrow sets up a food cart at the entrance of the Bamboo Forest.」
+	PRINTFORMW 「Lamprey have quite a distinct taste, but it's quite good.」
+	PRINTFORMW 「If you'd like, should we go together next time?」
+		CASE 16
+	PRINTFORMW 「Wolfpeople aren't the only Youkai who transform during a full moon.」
+	PRINTFORMW 「Those『Uwah』......umm, what was it......」
+	PRINTFORMW 「Right! Not『uwah』, it was『were』...」
+	PRINTFORMW 「So, umm... Were...... Are? What was it again?」
+		CASE 17
+	PRINTFORMW 「Uuuー I'm hungry～」
+	PRINTFORMW 「I want to eat meat～」
+	PRINTFORMW 「Hey %CALLNAME:MASTER%, aren't you hungry too?」
+	PRINTFORMW 「Let's go eat somewhere～」
+		CASE 18
+	PRINTFORMW 「Munya Munya......」
+	PRINTFORMW 「I didn't sleep yesterday, so I'm tired......」
+		CASE 19
+	PRINTFORMW 「Recently the Human Village has been noisy, so I wonder if something happened.」
+	PRINTFORMW 「Well, Youkai are hidden surprisingly nearby, after all.」
+	PRINTFORMW 「That's the case even now......」
+	PRINTFORMW 「It, It wasn't me!」
+		CASE 20
+	PRINTFORMW 「In the outside world there's apparently the werewolf's sacred land, called "Kessig".」
+	PRINTFORMW 「But there are no werewolves outside of Gensokyo, so it must've already disappeared.」
+	PRINTFORMW 「To begin with, just what kind of place is a werewolf's sacred land supposed to be?」
+	PRINTFORMW 「There's probably howling throughout the night.」
+		CASE 21
+			IF FLAG:住み込みキャラ == 63
+			ELSE
+	PRINTFORMW 「I live on a slope in the Bamboo Forest.」
+	PRINTFORMW 「Since who knows when, that area has been a moon-viewing spot, and before I knew it that was where I lived.」
+	PRINTFORMW 「I have a few rabbit acquaintances from Eientei, but...」
+	PRINTFORMW 「Is it true the residents there came from the moon?」
+			ENDIF
+		CASE 22
+	PRINTFORMW 「The full moon is my favorite, but I also like the elegance of the crescent moon.」
+	PRINTFORMW 「The half-moon somehow looks tasty......」
+	PRINTFORMW 「“Rather than the full moon which will be lacking the next night, the 14th moon is the best.”」
+	PRINTFORMW 「Sometimes I have that thought.」
+	PRINTFORMW 「Fufu, I say some amusing things.」
+		CASE 23
+	PRINTFORMW 「Long ago I used to hunt, and even now I still hunt small animals.」
+	PRINTFORMW 「But if I don't transform I'm not very good, and I'm afraid I'll go after humans if I do.」
+	PRINTFORMW 「I might be a failure as a werewolf.」
+	PRINTFORMW 「For better or worse, thanks to that I remained to the end.」
+		CASE 24
+	PRINTFORMW 「Udon or soba? Of course it's moon-viewing soba!」
+	PRINTFORMW 「Eh, moon-viewing udon?」
+			PRINTW 
+	PRINTFORMW 「So such a thing exists.」
+	PRINTFORMW 「It's unrelated, but I've heard the reason the egg is used to dissolve into the broth was because it resembled the moon so closely.」
+	PRINTFORMW 「Hmーmm, But it's tasty either way.」
+		CASE 25
+	PRINTFORMW 「It looks like the recently built temple is pretty successful.」
+	PRINTFORMW 「Seems like humans and Youkai really are getting along.」
+	PRINTFORMW 「Hopefully they don't wind up screwing up the balance, though.」
+	PRINTFORMW 「...... Wait, that's not something I'm in a position to say, Ahaha......」
+		CASE 26
+	PRINTFORMW 「This dress's pattern?」
+	PRINTFORMW 「Well, why don't you take a guess!?」
+		CALL ASK_YN("Susuki Moon","What is it?")
+		IF !RESULT
+			PRINTFORMW 「Correct～! It's the Susuki Moon! 20 points!」
+			PRINTFORMW 「Susuki is August, with the 8th moon, that card.」
+			PRINTFORMW 「Together with September's Kiku you get sake together to make moon-viewing sake!」
+			PRINTFORMW 「I love this design♪」
+		ELSE
+			PRINTFORMW 「It's hanafuda's Susuki Moon card.」
+			PRINTFORMW 「So you haven't seen it. Umm, It has a black semi-circle in front of a red sky.」
+			PRINTFORMW 「The white full moon asserts itself in the upper-left, giving a strong impression.」
+		ENDIF
+		CASE 27
+	PRINTFORMW 「Hey %CALLNAME:MASTER%, do you prefer the day or the night?」
+			$INPUT_LOOP_07
+		PRINTL [0] Day
+		PRINTL [1] Night
+			INPUT
+			SELECTCASE RESULT
+			CASE 0
+	PRINTFORMW 「Ara, How honest.」
+				SELECTCASE TIME:3
+				;18時以降起き
+				CASE 1080 TO 1440,0 TO 240
+	PRINTFORMW 「For saying that, aren't you up quite late～?」
+	PRINTFORMW 「I don't think I've ever seen %CALLNAME:MASTER% getting up before noon?」
+				CASEELSE
+	PRINTFORMW 「Well, %CALLNAME:MASTER% is a human after all.」
+	PRINTFORMW 「It's only proper to live your life in the light.」
+	PRINTFORMW 「It's not really a matter of like or dislike, huh.」
+				ENDSELECT
+			CASE 1
+	PRINTFORMW 「Fufu, The same as me.」
+				SELECTCASE TIME:3
+				;18時以降起き
+				CASE 1080 TO 1440,0 TO 240
+	PRINTFORMW 「You've completely become a human of the night.」
+	PRINTFORMW 「Before long you'll realize how strange you've become.」
+	PRINTFORMW 「You're no longer walking the path of a human.」
+				CASEELSE
+	PRINTFORMW 「The stillness of the night, the clear atmosphere, the feelings of anxiety and excitement.」
+	PRINTFORMW 「Once the charm of the night takes hold of you,」
+	PRINTFORMW 「you'll also become a human of the night.」
+				ENDSELECT
+			CASEELSE
+				GOTO INPUT_LOOP_07
+			ENDSELECT
+		CASE 28
+	PRINTFORMW 「Hey hey, I was thinking I should try writing a book.」
+	PRINTFORMW 「A book written by a wolfwoman should sell for quite a lot!」
+	PRINTFORMW 「The problem is what I should write about...」
+	PRINTFORMW 「What do you think would be best?」
+			$INPUT_LOOP_08
+		PRINTL [0] “The Great Werewolf's　Mysterious Lifestyle”
+		PRINTL [1] “A Werewolf's Lessons in Youkai Concealment Techniques”
+			INPUT
+			SELECTCASE RESULT
+			CASE 0
+	PRINTFORMW 「I see. In that case it'd be fine to just write about myself.」
+	PRINTFORMW 「The problem is if it's alright to for a Youkai like me to just write honestly.」
+	PRINTFORMW 「Ah, but if I make something suitable up that might increase the value even more!」
+			CASE 1
+	PRINTFORMW 「I see. In that case it'd be fine to just write about my field of expertise.」
+	PRINTFORMW 「The problem is if it's alright to teach that to humans......」
+	PRINTFORMW 「Rather, what if I sold it to Youkai instead!」
+			CASEELSE
+				GOTO INPUT_LOOP_08
+			ENDSELECT
+		CASE 29
+			$INPUT_LOOP_09
+	PRINTFORMW 「Hey %CALLNAME:MASTER%, what is your specialty?」
+		PRINTL [0]Cleaning [1]Cooking [2]Fighting [3]Sex
+			INPUT
+			SELECTCASE RESULT
+			CASE 0
+	PRINTFORMW 「Heeh～! Contrary to appearances, you like to keep things tidy.」
+				IF  EXP:MASTER:異常清掃経験 > 100
+	PRINTFORMW 「But there's a strange feeling to those words......」
+	PRINTFORMW 「K-keep it in moderation, okay...?」
+				ELSEIF ABL:MASTER:清掃技能 > 2
+	PRINTFORMW 「Certainly, the Shrine is always clean whenever I visit...」
+	PRINTFORMW 「I never thought that was %CALLNAME:MASTER%'s doing.」
+				ELSE
+	PRINTFORMW 「Well, since you're living with that Miko.」
+	PRINTFORMW 「Even if you didn't want to you probably had no choice......」
+				ENDIF
+			CASE 1
+	PRINTFORMW 「Hoee～! You're surprisingly handy.」
+				IF ABL:MASTER:料理技能 > 2
+	PRINTFORMW 「Hey hey, next time teach me how to cook!」
+	PRINTFORMW 「I normally just take the whole thing, then eat it like that, so I'm not really used to it......」
+	PRINTFORMW 「Ah! When I say 'like that', I'm only talking about the times I'm transformed!!」
+				ELSE
+	PRINTFORMW 「I can't cook at all so I'm jealous～」
+	PRINTFORMW 「Ah, do you get put on cooking duty?」
+				ENDIF
+			CASE 2
+	PRINTFORMW 「Hmーmm, You're talking about Danmaku battles, right?」
+				IF ABL:MASTER:戦闘能力 > 2
+	PRINTFORMW 「I'm pretty confident in that myself, but...」
+	PRINTFORMW 「I wonder if we should do some training next time.」
+				ELSE
+	PRINTFORMW 「Fufun, Even then you still can't beat me.」
+	PRINTFORMW 「Even I'm a Stage 3 B...... No, quite a big shot you know?」
+				ENDIF
+			CASE 3
+	PRINTFORMW Pfff!
+				PRINTL
+	PRINTFORMW 「What are you saying, geez? Geho Geho!」
+	PRINTFORMW 「I, I wasn't asking about that! Idiot!」
+			CASEELSE
+				GOTO INPUT_LOOP_09
+			ENDSELECT
+		CASE 30
+			;怪物くんを見ておけばと思った
+	PRINTFORMW 「Do you know about the vampire's mansion, the Scarlet Devil Mansion?」
+	PRINTFORMW 「The maid there said they play Wolfman tag.」
+	PRINTFORMW 「Mumu...... I'm sure she said it because she was making fun of me, but......」
+	PRINTFORMW 「I can't help but be curious as to what kind of game it is......」
+		CASE 31
+	PRINTFORMW 「Eintei is located in the Bamboo Forest, so if I want to go I can just head over, but...」
+	PRINTFORMW 「It doesn't really give off the feeling of a place you can just go over to and play.」
+	PRINTFORMW 「Whenever I get close they really get on guard.」
+	PRINTFORMW 「Is it because I'm a wolf......?」
+		CASE 32
+	PRINTFORMW 「Youkai Mountain? Do I know about it?」
+	PRINTFORMW 「It's far away so I've never been, but I'm still a Youkai.」
+	PRINTFORMW 「But if I'm honest, there's only strong people gathered there, so it's a bit scary......」
+	PRINTFORMW 「The Miko of that mountain must have nerves of steel......」
+		CASE 33
+	PRINTFORMW 「Heeh～, So there's a hot spring in the former Hell.」
+	PRINTFORMW 「Ah, Which reminds me, there's a hot spring at the Shrine too.」
+	PRINTFORMW 「Hell's boiling bath...... I'd like to try it sometime......」
+		CASE 34
+			;少なくとも面識はあるでしょうから
+	PRINTFORMW 「The Kirisame Magic Shop in the Forest of Magic is a merchant house.」
+	PRINTFORMW 「The other day, I went to have a look, and was almost forced to buy some strange thing.」
+	PRINTFORMW 「Also, there were a ton of mushrooms. She must love them.」
+	PRINTFORMW 「I'd prefer meat, though.」
+		CASE 35
+	PRINTFORMW 「Nn?...Kon Kon.」
+			SELECTCASE TIME:5
+			;そんな機能はない
+			CASE 0,1,2,3
+	PRINTFORMW 「Seems like it's about to rain...」
+			CASEELSE
+	PRINTFORMW 「Seems like it's about to clear up...」
+			ENDSELECT
+		CASE 36
+	PRINTFORMW 「The wind is strong today.」
+			IF DAY:2 == 3 && DAY:3 == 1
+	PRINTFORMW 「Ah! Today's the storm day!」
+			ELSEIF DAY:2 == 1 && DAY:3 < 11
+	PRINTFORMW 「I wonder if it's the first storm of spring?」
+			ELSEIF DAY:2 == 4
+	PRINTFORMW 「It's cold, but it can't be helped......」
+			ELSE
+	PRINTFORMW 「Nn～ It's cool and feels good♪」
+			ENDIF
+		CASE 37
+	PRINTFORMW 「Umーm, This month's schedule is......」
+			SELECTCASE DAY:2
+			CASE 1
+	PRINTFORMW 「New Year's, Girl's Festival, Mother's Day, White Day, Reitaisai.」
+			CASE 2
+	PRINTFORMW 「Tanabata, O-Bon.」
+			CASE 3
+	PRINTFORMW 「Storm Day, The Harvest Moon, The Harvest Festival, Halloween.」
+			CASE 4
+	PRINTFORMW 「Setsubun, Valentine's Day, Christmas Eve, New Year's Eve.」
+			ENDSELECT
+	PRINTFORMW 「That's all!」
+	PRINTFORMW 「Festival plans complete♪」
+			SIF DAY:2 == 3 && DAY:3 < 15
+	PRINTFORMW 「I'm looking forward to the Harvest Moon～♪」
+		CASE 38
+			SELECTCASE ABL:MASTER:話術技能
+			CASE IS > 4
+				PRINTFORMW 「%CALLNAME:MASTER% is quite an eloquent smooth-talker.」
+				PRINTFORMW 「It's not a skill you can just copy.」
+				IF RAND:2
+					PRINTFORMW 「I wonder if you could pull off advertising for the shrine?」
+				ELSE
+					PRINTFORMW 「I wonder if you could pull off a play-by-play of a Danmaku battle?」
+				ENDIF
+			CASE 4
+	PRINTFORMW 「I like talking with %CALLNAME:MASTER%.」
+	PRINTFORMW 「I enjoy our chats, and the conversation flows naturally.」
+	PRINTFORMW 「How about trying to become a counselor?」
+			CASE 3
+	PRINTFORMW 「%CALLNAME:MASTER%, do you like talking?」
+	PRINTFORMW 「No, I just thought you were quite good at it.」
+	PRINTFORMW 「You can get along with anybody, I'm jealous.」
+			CASEELSE
+			;いくらでもではない
+	PRINTFORMW 「I'm sorry that I'm always the only one talking.」
+	PRINTFORMW 「Occasionally %CALLNAME:MASTER% should talk as well.」
+	PRINTFORMW 「I'll accompany you as much as you'd like.」
+			ENDSELECT
+		CASE 39
+	PRINTFORMW 「Kon Kon...... I'm a wolf, so... Kon Kon...」
+	PRINTFORMW 「My nose is quite effective... Kon Kon...」
+			CALL KUNKUN_KAGEROU
+		ENDSELECT
+
+	;会話不能
+	ELSEIF TCVAR:302
+	PRINTFORMW 「Ara? What's wrong?」
+	PRINTFORMW 「.....................」
+
+	;普段の会話
+	ELSE
+		SELECTCASE RAND:30
+		CASE 0
+	PRINTFORMW 「I'm often called a “wolfman”.」
+	PRINTFORMW 「The image that werewolf ＝ wolfman is just too strong.」
+	PRINTFORMW 「I wonder if it's because wolfman has a better ring to it.」
+		CASE 1
+	PRINTFORMW 「I'm a Japanese Wolf woman.」
+	PRINTFORMW 「There were a lot of us in the past, but now I'm the only one left.」
+	PRINTFORMW 「Although, I'm not really sad about it.」
+	PRINTFORMW 「Since I've found such a wonderful place.」
+		CASE 2
+	PRINTFORMW 「I'm not scary?」
+	PRINTFORMW 「That's because I'm in my human form right now.」
+	PRINTFORMW 「On the night of the full moon I become quite the dreadful, violent wolf.」
+			IF TALENT:思慕
+				SELECTCASE RAND:2
+				CASE 0
+	PRINTFORMW 「Fufufu...... The power of a wolf is terrifying. Before you could say:」
+	PRINTFORMW 「Ah」
+	PRINTFORMW 「I could tear you into pieces.」
+				CASE 1
+	PRINTFORMW 「But I become all hairy, and cleaning up all the hair after is troublesome......」
+	PRINTFORMW 「Ahー It's such a pain, anyway don't come near me on the night of a full moon.」
+				ENDSELECT
+			ELSE
+	PRINTFORMW 「Fufufu...... If you value your life, be careful when the full moon is out.」
+			ENDIF
+		CASE 3
+	PRINTFORMW 「I can't hide my ears.」
+	PRINTFORMW 「That's why when I normally go out in public, I cover them physically, but......」
+	PRINTFORMW 「There's no need for that with you.」
+	PRINTFORMW 「I've always wondered why that is......」
+		CASE 4
+	PRINTFORMW 「How's life at the shrine?」
+	PRINTFORMW 「It's always crowded so it seems like you'd never be bored.」
+	PRINTFORMW 「That's why I sometimes visit myself, but...」
+	PRINTFORMW 「Since that Miko's there it's always a bit of a thrill.」
+		CASE 5
+	PRINTFORMW 「A mermaid lives in the Misty Lake.」
+			IF TALENT:思慕
+	PRINTFORMW 「Her name is Wakasagihime.」
+	PRINTFORMW 「When we first met I accidentally tried to eat her♪」
+	PRINTFORMW 「Ahaha, But we get along now so it's okay.」
+			ELSE
+	PRINTFORMW 「Did you know?」
+			ENDIF
+		CASE 6
+	PRINTFORMW 「Whenever I'm hungry but there's no food around, I sneak out to the Human Village.」
+	PRINTFORMW 「As long as I hide my ears I'm fine, but... Umm......」
+	PRINTFORMW 「I'm always worried whether my scent will give me away......」
+		CASE 7
+	PRINTFORMW 「There are humans who also live in the Bamboo Forest. I was surprised.」
+	PRINTFORMW 「It seems like they've lived there for quite a long time, and occasionally I can hear them shooting......」
+	PRINTFORMW 「Are they really humans?」
+		CASE 8
+	PRINTFORMW 「In the outside world, there seems to be a game called "Werewolf".」
+	PRINTFORMW 「I wonder what kind of game it is?」
+	PRINTFORMW 「Do they gather up to howl at the moon or something?」
+		CASE 9
+	PRINTFORMW 「Hey, do you happen to have an unusual stone or something?」
+	PRINTFORMW 「No, it's not like I want one......」
+	PRINTFORMW 「If you don't it's fine, really.」
+		CASE 10
+	PRINTFORMW 「You, you thought I was a type of dog Youkai, didn't you.」
+	PRINTFORMW 「I'm gonna punish you for that. You better watch out tonight.」
+	PRINTFORMW 「Juーst kidding, there's a guard much scarier than any Youkai around, so even if I wanted to I couldn't do anything.」
+		CASE 11
+	PRINTFORMW 「Any howling you hear in the middle of the night isn't me!」
+	PRINTFORMW 「I don't do those kinds of things!」
+	PRINTFORMW 「...... Except during the full moon.」
+		CASE 12
+	PRINTFORMW 「Let me know about any interesting stories about the shrine.」
+	PRINTFORMW 「Do you have anything like that?」
+	PRINTFORMW 「Things like that Miko's weaknesses, or so.」
+		CASE 13
+	PRINTFORMW 「In the past, when I announced I was a werewolf, people were afraid.」
+	PRINTFORMW 「That's why sometimes I got a little carried away, but...」
+	PRINTFORMW 「Now that I think about it, that didn't really suit me.」
+	PRINTFORMW 「It's not all fun and games for Youkai, either.」
+		CASE 14
+	PRINTFORMW 「The Grassroots Youkai Network?」
+	PRINTFORMW 「Why do you know about that?」
+	PRINTFORMW 「That's for Youkai like me, Umm......」
+	PRINTFORMW 「For the sake of weak Youkai!」
+		CASE 15
+	PRINTFORMW 「Sometimes a night sparrow sets up a food stall at the entrance of the Bamboo Forest.」
+	PRINTFORMW 「It's nearby so I often visit, but it's quite delicious.」
+		CASE 16
+	PRINTFORMW 「Wolfmen aren't the only Youkai who transform during the full moon.」
+	PRINTFORMW 「Those『Uwah』......umm, What was it......」
+	PRINTFORMW 「Anyway, the point is that all ones with『Uwah』in their name do too.」
+		CASE 17
+	PRINTFORMW 「Uuー I'm hungry～」
+	PRINTFORMW 「I want to eat meat～」
+		CASE 18
+	PRINTFORMW 「Munya Munya......」
+	PRINTFORMW 「I didn't sleep much yesterday so I'm tired......」
+		CASE 19
+	PRINTFORMW 「Lately the Human Village has been noisy, so I wonder if something happened.」
+	PRINTFORMW 「Me? I, Uh, I don't know anything about it.」
+		CASE 20
+	PRINTFORMW 「In the outside world there's apparently the werewolf's sacred land called "Kessig".」
+	PRINTFORMW 「But there are no werewolves outside of Gensokyo, so it must've already disappeared.」
+		CASE 21
+	PRINTFORMW 「I live on a slope in the Bamboo Forest.」
+	PRINTFORMW 「Since who knows when that area became a moon-viewing spot, and before I knew it that was where I lived.」
+		CASE 22
+	PRINTFORMW 「The full moon is my favorite, but I also like the elegance of the crescent moon.」
+	PRINTFORMW 「The half-moon somehow looks tasty......」
+		CASE 23
+	PRINTFORMW 「Long ago I used to hunt, and even now I still hunt small animals.」
+	PRINTFORMW 「But if I don't transform I'm not very good at it.」
+		CASE 24
+	PRINTFORMW 「Udon or soba? Of course it's moon-viewing soba!」
+	PRINTFORMW 「Eh, Moon-viewing udon?」
+			PRINTW 
+	PRINTFORMW 「So such a thing exists.」
+		CASE 25
+	PRINTFORMW 「Umm, This is quite late to say but...」
+	PRINTFORMW 「Please don't tell anyone in the Human Village I'm a werewolf.」
+	PRINTFORMW 「It's a matter of life and death for me.」
+		CASE 26
+	PRINTFORMW 「It looks like the recently built temple is pretty successful.」
+	PRINTFORMW 「Seems like humans and Youkai really are getting along.」
+	PRINTFORMW 「Hopefully they don't wind up screwing up the balance, though.」
+			SIF TALENT:思慕
+	PRINTFORMW 「It, it's not like I'm jealous or anything!」
+		CASE 27
+	PRINTFORMW 「This dress is pretty? Thank you!」
+	PRINTFORMW 「Do you know what this pattern is based off?」
+			$INPUT_LOOP_01
+		PRINTL [0] I do　[1] I don't
+			INPUT
+			SELECTCASE RESULT
+			CASE 0
+	PRINTFORMW 「Right right, hanafuda. The Susuki Moon 20-point design.」
+	PRINTFORMW 「I love this design!」
+			CASE 1
+	PRINTFORMW 「Hanafuda's Susuki Moon face card was the model.」
+	PRINTFORMW 「I don't own the card myself, but if I find someone who does I'll have them show it to you.」
+			CASEELSE
+				GOTO INPUT_LOOP_01
+			ENDSELECT
+		CASE 28
+	PRINTFORMW 「Hey, which do you prefer, the day or the night?」
+			$INPUT_LOOP_02
+		PRINTL [0] Day　[1] Night
+			INPUT
+			SELECTCASE RESULT
+			CASE 0
+	PRINTFORMW 「Well, that's normal. The night is the domain of us Youkai, so be careful.」
+			CASE 1
+	PRINTFORMW 「A rebel, Huh. Are your days and nights reversed? That's bad for your skin.」
+			CASEELSE
+				GOTO INPUT_LOOP_02
+			ENDSELECT
+		CASE 29
+	PRINTFORMW 「Kon Kon... I'm a wolf, so... Kon Kon...」
+	PRINTFORMW 「My nose is quite effective... Kon Kon...」
+			CALL KUNKUN_KAGEROU
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+
+
+@K63_WEATHER
+;百:季節 十:昼夜 一:天気 0,虹 9,DD 1,晴れ 2,曇り 3,雨 4,大雨 5,雪 6,吹雪
+CALL OTENKI_KAGEROU(DAY:2)
+SELECTCASE RESULT
+		CASE 110,210,310,410
+	PRINTFORMW 「Ah! %CALLNAME:MASTER%! Rainbow, it's a rainbow!」
+	PRINTFORMW 「It feels like it'll be a favorable day!」
+		CASE 120,220,320,420
+	PRINTFORMW 「Ah! %CALLNAME:MASTER%! Rainbow, it's a rainbow!」
+	PRINTFORMW 「To see a rainbow in the moonlight, how romantic～♪」
+		CASE 419,429
+		;見てみたい
+	PRINTFORMW 「Ara? It's sparkling.」
+	PRINTFORMW 「Eh, So they call this diamond dust.」
+	PRINTFORMW 「It's really like a gem, how pretty～♪」
+		CASE 111
+	PRINTFORMW 「Ahー Balmy days feel so good～」
+	PRINTFORMW 「I want to just lay down and take a nap......」
+		CASE 211
+	PRINTFORMW 「It's so hot today......」
+	PRINTFORMW 「These clothes are pretty breezy, so they're cooler than they appear at first glance.」
+	PRINTFORMW 「Still, when it's hot, it's hot......」
+		CASE 311
+	PRINTFORMW 「Mmーーmm, What refreshing weather.」
+	PRINTFORMW 「I wonder if it'll stay clear all day.」
+		CASE 411
+	PRINTFORMW 「Cold...... So cold......」
+	PRINTFORMW 「It's days like this I'm glad I'm a wolf......」
+		CASE 121
+		;仕様上夜の時間帯は一定である
+	PRINTFORMW 「Nights in this season end so quickly.」
+	PRINTFORMW 「Almost like a midsummer's night dream... Aha.」
+			SIF FLAG:住み込みキャラ == 63
+	PRINTFORMW 「Although that means an arm pillow should be fine, right♪」
+		CASE 221
+	PRINTFORMW 「At least it's a bit cooler at night.」
+	PRINTFORMW 「I don't know if I could endure it otherwise......」
+	PRINTFORMW 「This season is quite rough on my hairbrush......」
+		CASE 321
+			SELECTCASE DAY:3
+			CASE 1 TO 14
+	PRINTFORMW 「The harvest moon occurs this month.」
+	PRINTFORMW 「I wonder if it'll be clear, I'm a little worried.」
+				SIF TALENT:恋慕
+	PRINTFORMW 「Well, if I have to...... No, it's nothing.」
+			CASE 15
+				IF TCVAR:351
+	PRINTFORMW 「Let's go moon viewing again next year, %CALLNAME:MASTER%!」
+				ELSE
+	PRINTFORMW 「Hey hey, %CALLNAME:MASTER%! Tonight's the harvest moon!」
+	PRINTFORMW 「Let's go moon viewing together!」
+				ENDIF
+			CASE 16 TO 31
+	PRINTFORMW 「The sky really is clearest in fall, and the temperature is comfortable, too.」
+	PRINTFORMW 「The moon is also pretty, so everything is perfect～!」
+			ENDSELECT
+		CASE 421
+	PRINTFORMW 「The sky is really clear in winter, so the stars are in their full glory～」
+	PRINTFORMW 「I wonder what he's up to, that Mitsuboshi...」
+	PRINTFORMW 「... Also, the winter triangle is also pretty♪」
+		CASE 112,212,312,412
+	PRINTFORMW 「What gloomy weather, Huh.」
+	PRINTFORMW 「Hopefully it doesn't rain......」
+		CASE 122,222,322,422
+	PRINTFORMW 「Can't see the moon behind the clouds......」
+	PRINTFORMW 「I like watching the moon even when it's not full.」
+		CASE 113,123
+	PRINTFORMW 「What unfortunate weather......」
+	PRINTFORMW 「Harusame (春雨)...... I wonder why it's spring's (春)  rain (雨)?」
+		CASE 213,223
+	PRINTFORMW 「Uuuー...... I dislike this humid kind of rain.」
+	PRINTFORMW 「I wonder why it's not cool even though it's rain.」
+		CASE 313,323
+		;そんなことはない
+	PRINTFORMW 「What unfortunate weather......」
+	PRINTFORMW 「Well, it's the rainy season, so it can't be helped.」
+			SIF TIME:3 == 3
+	PRINTFORMW 「Truly a rainy moon.」
+		CASE 413,423
+	PRINTFORMW 「Uuu...... The freezing rain pierces you to the core......」
+	PRINTFORMW 「I'd rather it just snowed instead......」
+CASE 114,124,214,224,314,324,414,424
+		PRINTFORMW 「Stormy weather today, Huhー」
+	IF AT_HOME(MASTER) == 0
+		PRINTFORMW 「I wonder if it'd be better to just head home.」
+	ELSEIF OUTROOF(CFLAG:MASTER:現在位置)
+		IF FLAG:住み込みキャラ == 63
+			PRINTFORMW 「Now now, let's go back to the room!」
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「Umm...... If you'd like, do want to come to my room...?」
+		ELSE
+			PRINTFORMW 「%CALLNAME:MASTER%, aren't you going to get out from the rain?」
+		ENDIF
+	ELSE
+	IF FLAG:住み込みキャラ == 63
+			PRINTFORMW 「Today we'll just lounge around the room♪」
+		ELSE
+			PRINTFORMW 「Seems like it's house arrest for now......」
+		ENDIF
+	ENDIF
+CASE 415,425
+;狼は庭駆け回る
+	PRINTFORMW 「Hey it's snowing! Snowing!」
+	PRINTFORMW 「I don't like the cold, but somehow snow just gets me excited!」
+CASE 416,426
+	PRINTFORMW 「Hyaー! What a blizzard!」
+	IF AT_HOME(MASTER) == 0
+		PRINTFORMW 「If you don't go back soon you might not be able to－!?」
+	ELSEIF OUTROOF(CFLAG:MASTER:現在位置)
+		IF FLAG:住み込みキャラ == 63
+			PRINTFORMW 「Hurry and get inside!」
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「Please! Let me enter your room～!」
+		ELSE
+			PRINTFORMW 「Hm～m, How am I going to get home.」
+		;	PRINTFORMW 「ごめんなさい、今日は今のうちに帰るとするわ……」
+		;	CALL KAGEROU_ESCAPE
+		ENDIF
+	ELSE
+		IF FLAG:住み込みキャラ == 63
+			PRINTFORMW 「Let's warm ourselves inside for today♪」
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「I won't be going home for now......」
+		ELSE
+			PRINTFORMW 「Hm～m, How am I going to get home.」
+		;	PRINTFORMW 「ごめんなさい、今日は今のうちに帰るとするわ……」
+		;	CALL KAGEROU_ESCAPE
+		ENDIF
+	ENDIF
+;漏れがあったら適当に眠い影狼（「～」で判別）
+CASEELSE
+	PRINTFORMW 「Munya Munya......」
+	PRINTFORMW 「I didn't get much sleep yesterday～...」
+ENDSELECT

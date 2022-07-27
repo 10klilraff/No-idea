@@ -1,0 +1,3142 @@
+﻿;------------------------------------------
+;1～9 コミュニケーション
+;------------------------------------------
+;距離が近い
+@EVENT_COUNTE_MESSAGE1_TR
+PRINTFORML %CALLNAME:TARGET% gets a little closer to %PARSE("you")%...
+RETURN 1
+
+;チラ見
+@EVENT_COUNTE_MESSAGE2_TR
+PRINTFORML %PARSE("You")% can feel %CALLNAME:TARGET%'s glances...
+SIF !RAND:4
+	PRINTFORML When %PARSE("your",2)% eyes meet, %CALLNAME:TARGET% \@ TALENT:TARGET:恋慕 ? laughs bashfully # looks away in a hurry\@.
+RETURN 1
+
+;おはなし
+@EVENT_COUNTE_MESSAGE3_TR
+LOCALS '= @"%CALLNAME:TARGET% tells %PARSE("you")% a story"
+LOCALS += @":%CALLNAME:TARGET% talks with %PARSE("you")% for a while"
+PRINTFORML %SPLIT_G(LOCALS)%...
+PRINTFORML 
+RETURN 1
+
+;いい匂い
+@EVENT_COUNTE_MESSAGE4_TR
+LOCALS '= @"A nice and gentle fragrance comes from %CALLNAME:TARGET%"
+LOCALS += @":%CALLNAME:TARGET% wears a pleasant fragrance"
+PRINTFORML %SPLIT_G(LOCALS)%...
+RETURN 1
+
+;中だし後(?)
+@EVENT_COUNTE_MESSAGE9_TR
+;PRINTFORML \@ TALENT:MASTER:濃厚精液? Thick semen # Semen\@ sloshes around in %CALLNAME:TARGET%'s womb...
+;両方の穴に射精していた場合、かつ2分の1
+IF 充填率(TARGET,1) > 0 & 充填率(TARGET,2) > 0 & RAND:2 == 0
+	IF 充填率(TARGET,3) >= 1000
+		IF TALENT:MASTER:濃厚精液
+			PRINTFORML Thick semen leaks ceaselessly from both of %CALLNAME:TARGET%'s holes, leaving her reeking of sex...
+		ELSE
+			PRINTFORML Semen leaks ceaselessly from both of %CALLNAME:TARGET%'s holes...
+		ENDIF
+	ELSEIF 充填率(TARGET,3) >= 100
+		PRINTFORML Both of %CALLNAME:TARGET%'s holes are filled with \@ TALENT:MASTER:濃厚精液? thick semen # semen\@, overflowing with the white liquid...
+	ELSEIF 充填率(TARGET,3) >= 50
+		PRINTFORML Both of %CALLNAME:TARGET%'s holes are filled with \@ TALENT:MASTER:濃厚精液? thick semen # semen\@, overflowing with the white liquid...
+	ENDIF
+ELSE
+	IF 充填率(TARGET,1) >= 1000
+		PRINTFORML %CALLNAME:TARGET%'s womb is packed full with \@ TALENT:MASTER:濃厚精液? thick semen # semen\@, the white liquid dripping from her hole...
+	ELSEIF 充填率(TARGET,1) >= 100
+		PRINTFORML \@ TALENT:MASTER:濃厚精液? Thick semen # Semen\@ leaks out from %CALLNAME:TARGET%'s womb and trickles down her leg...
+	ELSEIF 充填率(TARGET,1) >= 50
+		PRINTFORML \@ TALENT:MASTER:濃厚精液? Thick semen # Semen\@ sloshes around in %CALLNAME:TARGET%'s womb...
+	ENDIF
+
+	IF 充填率(TARGET,2) >= 1000
+		PRINTFORML %CALLNAME:TARGET%'s intestines is so full of \@ TALENT:MASTER:濃厚精液? thick semen# semen\@ the white liquid spills out from %HIS_HER(TARGET)% anus...
+	ELSEIF 充填率(TARGET,2) >= 100
+		PRINTFORML %CALLNAME:TARGET%'s intestines is full of \@ TALENT:MASTER:濃厚精液? thick semen# semen\@...
+	ELSEIF 充填率(TARGET,2) >= 50
+		PRINTFORML \@ TALENT:MASTER:濃厚精液? Thick semen # Semen\@ sloshes around in %CALLNAME:TARGET%'s intestines...
+	ENDIF
+ENDIF
+RETURN 1
+;------------------------------------------
+;10～19 ベリーソフト
+;------------------------------------------
+;近寄ってくる
+@EVENT_COUNTE_MESSAGE11_TR
+PRINTFORM %CALLNAME:TARGET% draws closer to %PARSE("you")%
+;気弱系
+IF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORM , albeit timidly
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORM , despite %HIS_HER(TARGET)% sullen look
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORM  cheerfully
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORM  casually
+;その他
+ELSEIF CFLAG:TARGET:性格傾向 == 5
+	PRINTFORM 
+ENDIF
+PRINTFORML ...
+RETURN 1
+
+;笑顔を浮かべる
+@EVENT_COUNTE_MESSAGE12_TR
+PRINTFORM 
+;気弱系
+IF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML %PNAME(TARGET, 1, 1)% smiles bashfully at %PARSE("you")%...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML %PNAME(TARGET, 1, 1)%'s smile is a little less scornful than usual...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORML A Hyottoko mask floats around %PNAME(TARGET, 0, 1)%...
+	ELSE
+		PRINTFORML %PNAME(TARGET, 1, 1)% smiles warmly at %PARSE("you")%...
+	ENDIF
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML %PNAME(TARGET, 1, 1)% smiles slightly at %PARSE("you")%...
+;その他
+ELSEIF CFLAG:TARGET:性格傾向 == 5
+	PRINTFORML %PNAME(TARGET, 1, 1)% smiles gently at %PARSE("you")%...
+ENDIF
+RETURN 1
+
+;構って欲しがる
+@EVENT_COUNTE_MESSAGE13_TR
+PRINTFORM %CALLNAME:TARGET% 
+;気弱系
+IF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML tugs lightly at %PARSE("your")% sleeve...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML pokes %PARSE("you")% in the side...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORML takes %PARSE("your")% arm and wraps %HIM_HER(TARGET)%self around it...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML takes %PARSE("your")% arm and rubs %HIM_HER(TARGET)%self against it...
+;その他
+ELSEIF CFLAG:TARGET:性格傾向 == 5
+	PRINTFORML reaches %HIS_HER(TARGET)% hand towards %PARSE("your")% shoulder, but pulls it back in the last second...
+ENDIF
+RETURN 1
+
+;身をすり寄せる
+@EVENT_COUNTE_MESSAGE14_TR
+PRINTFORM 
+;気弱系
+IF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML %CALLNAME:TARGET% seems embarrassed as %HE_SHE(TARGET)% cuddles with %PARSE("you")%.
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML %CALLNAME:TARGET% puts %HIS_HER(TARGET)% arm around %PARSE("your")% shoulder as if %HE_SHE(TARGET)% has something to say...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM A Hyottoko mask floats around %CALLNAME:TARGET%
+	ELSE
+		PRINTFORM %CALLNAME:TARGET% smiles warmly
+	ENDIF
+	PRINTFORML  as %HE_SHE(TARGET)% leans against %PARSE("you")%...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML %CALLNAME:TARGET% wears a dignified expression as %HE_SHE(TARGET)% gets right up next to %PARSE("you")%...
+;その他
+ELSEIF CFLAG:TARGET:性格傾向 == 5
+	PRINTFORML %CALLNAME:TARGET% looks content as %HE_SHE(TARGET)% cuddles with %PARSE("you")%...
+ENDIF
+RETURN 1
+
+;見つめてくる
+@EVENT_COUNTE_MESSAGE15_TR
+PRINTFORM %CALLNAME:TARGET% 
+;気弱系
+IF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML blushes as %HE_SHE(TARGET)% stares at %PARSE("you")%...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML bites %HIS_HER(TARGET)% lip for some reason while staring at %PARSE("you")%...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORM stares at %PARSE("you")% 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORML while a Hyottoko mask floats around %HIM_HER(TARGET)%...
+	ELSE
+		PRINTFORML with an entranced look on %HIS_HER(TARGET)% face...
+	ENDIF
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML stares at %PARSE("you")% with a soft smile on %HIS_HER(TARGET)% face...
+;その他
+ELSEIF CFLAG:TARGET:性格傾向 == 5
+	PRINTFORML stares at %PARSE("you")%, %HIS_HER(TARGET)% face hard to read...
+ENDIF
+RETURN 1
+
+;肩にあご乗せ
+@EVENT_COUNTE_MESSAGE16_TR
+PRINTFORML %CALLNAME:TARGET% wraps %HIS_HER(TARGET)% arms around %PARSE("your")% neck and lays %HIS_HER(TARGET)% head on %PARSE("your",1)% shoulder.
+RETURN 1
+
+;差し入れ
+@EVENT_COUNTE_MESSAGE17_TR
+PRINTFORML %CALLNAME:TARGET% gives %PARSE("you")% a snack...
+RETURN 1
+;------------------------------------------
+;20～29 誘惑
+;------------------------------------------
+;色っぽい仕草
+@EVENT_COUNTE_MESSAGE20_TR
+PRINTFORM %CALLNAME:TARGET% tempts %PARSE("you")% with an amorous gesture 
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML despite blushing...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML with passion in %HIS_HER(TARGET)% eyes...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORML while an Okina mask floats around %HIM_HER(TARGET)%...
+		ELSE
+			PRINTFORML with an enchanted expression...
+		ENDIF
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML despite seeming a bit embarrassed...
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML with a soft smile...
+	ENDIF
+ENDIF
+RETURN 1
+
+;見つめる
+@EVENT_COUNTE_MESSAGE21_TR
+PRINTFORM %CALLNAME:TARGET% gazes at %PARSE("you")% 
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || (!FLAG:カウンター地の文制御 && (TARGET != 57 || (TARGET == 57 && TALENT:恋慕)))
+	PRINTFORML with a feverish look...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML with passion in %HIS_HER(TARGET)% eyes...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML with a sharp but flirtatious look...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORML while a Hyottoko mask floats around %HIM_HER(TARGET)%...
+	ELSE
+		PRINTFORML with an enchanted expression...
+	ENDIF
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML with an affectionate look...
+ENDIF
+RETURN 1
+
+;体を摺り寄せる
+@EVENT_COUNTE_MESSAGE22_TR
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML %CALLNAME:TARGET% gets close and rubs %HIS_HER(TARGET)% body against %PARSE("you")%...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML %CALLNAME:TARGET% is a bit shy, but presses %HIS_HER(TARGET)% body against %PARSE("you")%...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML %CALLNAME:TARGET% pulls %PARSE("you")% close and leans %HIS_HER(TARGET)% head on %PARSE("your",1)% shoulder...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM A Hyottoko mask floats around %CALLNAME:TARGET%
+	ELSE
+		PRINTFORM %CALLNAME:TARGET% wears a warm smile
+	ENDIF
+	PRINTFORML  as %HE_SHE(TARGET)% cuddles with %PARSE("you")%...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML %CALLNAME:TARGET% gets so close %HIS_HER(TARGET)% body is touching %PARSE("yours")%...
+ENDIF
+RETURN 1
+
+;スカートめくり
+@EVENT_COUNTE_MESSAGE23_TR
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML %CALLNAME:TARGET% suddenly flips %PARSE("your")% skirt.
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML %CALLNAME:TARGET% circles around %PARSE("you")% and flips %PARSE("your",1)% skirt.
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML While standing right in front of %PARSE("you")%, %CALLNAME:TARGET% suddenly flips %PARSE("your",1)% skirt.
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORM %CALLNAME:TARGET% draws close 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM while an Okina mask floats around %HIM_HER(TARGET)%
+	ELSE
+		PRINTFORM with a smile on %HIS_HER(TARGET)% lips
+	ENDIF
+	PRINTFORML , and suddenly flips %PARSE("your")% skirt.
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML %CALLNAME:TARGET% sneaks a hand down and flips %PARSE("your")% skirt.
+ENDIF
+IF !EQUIP:PLAYER:下半身下着２
+	PRINTFORML %PARSE("Your",1)% bare crotch is completely exposed...
+ELSE
+	;Custom code
+	PRINTFORML %PARSE("Your",1)% %PANTS_DESCRIPTION_TR(PLAYER)% are completely exposed...
+ENDIF
+RETURN 1
+
+;息を吹きかける
+@EVENT_COUNTE_MESSAGE24_TR
+PRINTFORML %CALLNAME:TARGET% sneaks up behind %PARSE("you")% and blows warm air in %PARSE("your",1)% ear...
+IF FLAG:カウンター地の文制御
+	PRINTFORM Startled, %PARSE("you jump")% to and %PARSE("turn")% around
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML , and %CALLNAME:TARGET% takes a few steps back.
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML , and %PARSE("are")% greeted by a triumphant face.
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORML , and %PARSE("are")% greeted by a Hyotto mask.
+		ELSE
+			PRINTFORML , and %PARSE("are")% greeted by a smile.
+		ENDIF
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML , and %PARSE("are")% greeted by a blushing %CALLNAME:TARGET%.
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML  to see %CALLNAME:TARGET% staring at %PARSE("you",5)% nonchalantly.
+	ENDIF
+ENDIF
+RETURN 1
+
+;尻を撫でる
+@EVENT_COUNTE_MESSAGE25_TR
+PRINTFORM %CALLNAME:TARGET% 
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML gropes %PARSE("your")% ass timidly.
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML holds onto %PARSE("your")% ass as %HE_SHE(TARGET)% gropes it.
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORML gropes %PARSE("your")% ass while an Okina mask floats around %HIM_HER(TARGET)%.
+		ELSE
+			PRINTFORML gropes %PARSE("your")% ass with a smile on %HIS_HER(TARGET)% face.
+		ENDIF
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML holds onto %PARSE("your")% ass as %HE_SHE(TARGET)% starts massaging it.
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML caresses %PARSE("your")% ass lightly.
+	ENDIF
+ENDIF
+RETURN 1
+
+;腕抱き付き
+@EVENT_COUNTE_MESSAGE26_TR
+PRINTFORM %CALLNAME:TARGET% 
+IF !FLAG:カウンター地の文制御
+	PRINTFORML clings to %PARSE("your")% arm.
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML holds onto %PARSE("your")% arm and hugs it gently.
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML grabs %PARSE("your")% arm and %PARSE("pulls you",1)% into an embrace.
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORM grabs %PARSE("your")% arm
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM , blushing despite having an otherwise expressionless face
+	ENDIF
+	PRINTFORML .
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML grabs %PARSE("your")% hand and holds onto it.
+;その他
+ELSEIF CFLAG:TARGET:性格傾向 == 5
+	PRINTFORML holds onto %PARSE("your")% arm and hugs it tightly.
+ENDIF
+SIF TALENT:TARGET:バストサイズ > 0
+	PRINTFORML %HE_SHE(TARGET,1)% presses %PARSE("your")% hand against %HIS_HER(TARGET)% breasts...
+RETURN 1
+
+;谷間を見せる
+@EVENT_COUNTE_MESSAGE27_TR
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORM Blushing profusely, %CALLNAME:TARGET%
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM %CALLNAME:TARGET%
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORM %CALLNAME:TARGET%
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORM %CALLNAME:TARGET%
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORM %CALLNAME:TARGET% looks happy as %HE_SHE(TARGET)%
+	ENDIF
+;Custom code
+ELSE
+	PRINTFORM %CALLNAME:TARGET%
+ENDIF
+LOCAL = 0
+LOCAL:1 = 0
+FOR LOCAL,1,CHARANUM
+	SIF CFLAG:PLAYER:現在位置 == CFLAG:LOCAL:現在位置 && LOCAL != TARGET
+		LOCAL:1 ++
+	SIF TCVAR:LOCAL:馴れ合い >= 2
+		LOCAL:1 --
+NEXT
+IF GETBIT (TEQUIP:TARGET:1,0) && !LOCAL:1
+	SIF !FLAG:カウンター地の文制御
+		PRINTFORM  boldly
+	PRINTFORM  exposes
+ELSE
+	PRINT  shows off 
+ENDIF
+IF TALENT:TARGET:バストサイズ >= 1
+	PRINTFORM the cleavage of %HIS_HER(TARGET)% \@ TALENT:TARGET:バストサイズ > 1 ? voluptuous breasts # breasts \@ to %PARSE("you")%
+ELSEIF TALENT:TARGET:バストサイズ == 0
+	PRINTFORM a hint of cleavage to %PARSE("you")%
+ENDIF
+IF CFLAG:TARGET:性格傾向 == 3 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM  while a Hyottoko mask floats around %HIM_HER(TARGET)%
+	ELSE
+		PRINTFORM  with a smile on %HIS_HER(TARGET)% face
+ENDIF
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORM  while %PARSE("looking you",1)% straight in the eyes
+ENDIF
+PRINTL ...
+RETURN 1
+
+;尻ズリ
+[SKIPSTART]
+;mistranslated or old description
+@EVENT_COUNTE_MESSAGE28_TR
+PRINTFORM %CALLNAME:TARGET% 
+IF HAS_PENIS(PLAYER)
+	LOCALS '= @"rubbing %PARSE("your",1)% penis through %PARSE("your",1)% clothes"
+ELSE
+	LOCALS '= @"rubbing against %PARSE("your",1)% crotch"
+ENDIF
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORM grinds %HIS_HER(TARGET)% ass against %PARSE("your")% lower body, %LOCALS% albeit hesitantly...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM grinds %HIS_HER(TARGET)% ass roughly against %PARSE("your")% crotch, %LOCALS%...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORM pants with laboured breath as %HE_SHE(TARGET)% grinds %HIS_HER(TARGET)% ass against %PARSE("your")% lower body, %LOCALS%...
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORM casts %HIS_HER(TARGET)% eyes aside and awkwardly grinds %HIS_HER(TARGET)% butt against %PARSE("you")%, %LOCALS%...
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML grinds %HIS_HER(TARGET)% ass against %PARSE("your")% lower body, %LOCALS%...
+	ENDIF
+ENDIF
+[SKIPEND]
+@EVENT_COUNTE_MESSAGE28_TR
+SELECTCASE CFLAG:TARGET:性格傾向
+	CASE 1
+		LOCALS = %SPLIT_G("slowly:hesitantly")%
+		LOCALS += " rubs"
+	CASE 2
+		LOCALS = grinds
+	CASE 3
+		LOCALS = pants with laboured breath as %HE_SHE(TARGET)% rubs
+	CASE 4
+		LOCALS = casts %HIS_HER(TARGET)% eyes aside while rubbing
+	CASE 5
+		LOCALS = grinds
+ENDSELECT
+PRINTFORM %CALLNAME:TARGET% %LOCALS% %HIS_HER(TARGET)% %TINKO(TARGET)% against your %HIP_TR(MASTER)%
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORM , albeit being quite embarrassed about it
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM  %SPLIT_G("vigorously:roughly")%
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORM %SPLIT_G(" awkwardly:, looking uncomfortable")%
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+	ENDIF
+ENDIF
+PRINTFORML ...
+RETURN 1
+
+;------------------------------------------
+;30～44 着衣セクハラ
+;------------------------------------------
+;キス
+@EVENT_COUNTE_MESSAGE30_TR
+SELECTCASE RAND:4
+	CASE 0
+		PRINTFORM %CALLNAME:TARGET% 
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML pulls %PARSE("your")% face in and steals a kiss...
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML pulls %PARSE("your")% face in presses %HIS_HER(TARGET)% lips weakly against %PARSE("yours",1)%...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML grabs onto %PARSE("your")% chin and forcefully steals a kiss...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM gives %PARSE("you")% a kiss 
+				IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORML while an Okina mask floats around %HIM_HER(TARGET)%...
+				ELSE
+				PRINTFORML with a dreamy look on %HIS_HER(TARGET)% face...
+				ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM gives %PARSE("you")% a gentle kiss...
+		ENDIF
+	CASE 1
+		PRINTFORM %CALLNAME:TARGET% 
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML gives %PARSE("you")% a light kiss...
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML kisses %PARSE("you")%, but immediately breaks off and averts %HIS_HER(TARGET)% gaze while blushing profusely...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML looks %PARSE("you")% dead in the eye while kissing %PARSE("you",5)%...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+				PRINTFORM strokes %PARSE("your")% lips with %HIS_HER(TARGET)% finger before planting a kiss
+				IF TARGET == 57 && !TALENT:恋慕
+					PRINTFORM , blushing despite having an otherwise expressionless face
+				ENDIF
+				PRINTFORML ...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML gives %PARSE("you")% a quick kiss on the lips...
+		ENDIF
+	CASE 2
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML %CALLNAME:TARGET% gives %PARSE("you")% a long, deep kiss...
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% kisses %PARSE("you")% repeatedly, before unexpectedly parting %PARSE("your",1)% lips and pushing %HIS_HER(TARGET)% tongue inside...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% presses %HIS_HER(TARGET)% lips against %PARSE("yours")%, and forces %HIS_HER(TARGET)% tongue into %PARSE("your",1)% mouth...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+				IF TARGET == 57 && !TALENT:恋慕
+					PRINTFORM While an Okina mask floats around %HIM_HER(TARGET)%, 
+				ELSE
+					PRINTFORM With a dreamy expression, 
+				ENDIF
+				PRINTFORML %CALLNAME:TARGET% gives %PARSE("you")% an open-mouthed kiss...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% presses %HIS_HER(TARGET)% mouth against %PARSE("yours")%, and slowly pushes %HIS_HER(TARGET)% tongue inside...
+		ENDIF
+	CASE 3
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || CFLAG:TARGET:性格傾向 == 4 || !FLAG:カウンター地の文制御
+			PRINTFORML %CALLNAME:TARGET% places %HIS_HER(TARGET)% hand on %PARSE("your")% cheek and kisses %PARSE("you",5)%...
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% timidly places %HIS_HER(TARGET)% hands on %PARSE("your")% cheeks, hesitates for a moment, and then gives %PARSE("you",5)% a kiss...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% takes ahold of %PARSE("your")% chin and kisses %PARSE("you",5)% firmly...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+				IF TARGET == 57 && !TALENT:恋慕
+					PRINTFORM An Okina mask floats around %CALLNAME:TARGET% and %HE_SHE(TARGET)% blushes expressionlessly
+				ELSE
+					PRINTFORM %CALLNAME:TARGET% smiles warmly
+				ENDIF
+				PRINTFORML  as %HE_SHE(TARGET)% place both %HIS_HER(TARGET)% hands on %PARSE("you")% and gives %PARSE("you",5)% a kiss...
+		ENDIF
+ENDSELECT
+RETURN 1
+
+;後ろから抱きつく
+@EVENT_COUNTE_MESSAGE31_TR
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML %CALLNAME:TARGET% embraces %PARSE("you")% from behind...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML %CALLNAME:TARGET% sneaks up behind %PARSE("you")% and embraces %PARSE("you",5)%, albeit nervously...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML %CALLNAME:TARGET% sneaks up behind %PARSE("you")% and embraces %PARSE("you",5)% tightly...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORM %CALLNAME:TARGET% embraces %PARSE("you")% from behind 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM while an Okina mask floats around %HIM_HER(TARGET)%
+	ELSE
+		PRINTFORM while giggling
+	ENDIF
+	PRINTFORML ...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML %CALLNAME:TARGET% embraces %PARSE("you")% gently from behind...
+ENDIF
+SIF TALENT:TARGET:バストサイズ > 0
+	PRINTFORML %CALLNAME:TARGET%'s soft breasts pushes against %PARSE("your")% back...
+RETURN 1
+
+;前から抱きつく
+@EVENT_COUNTE_MESSAGE32_TR
+PRINTFORM %CALLNAME:TARGET% 
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML hugs %PARSE("you")%.
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML gives %PARSE("you")% a reluctant hug.
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML laughs boastfully as %HE_SHE(TARGET)% embraces %PARSE("you")%...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORM hugs %PARSE("you")% 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORML while a Hyottoko mask floats around %HIM_HER(TARGET)%.
+	ELSE
+		PRINTFORML with a smile.
+	ENDIF
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML gives %PARSE("you")% a tender hug...
+ENDIF
+IF TALENT:TARGET:体型 > TALENT:PLAYER:体型
+	PRINTFORML %PARSE("Your",1)% face gets \@ TALENT:TARGET:バストサイズ > 0 ? wrapped between %HIS_HER(TARGET)% ample breasts # pressed against %HIS_HER(TARGET)% chest \@...
+ELSE
+	PRINTFORML %CALLNAME:TARGET%'s breathing gets rougher as %PARSE("your",2)% bodies are pushed together...
+ENDIF
+;IF CFLAG:うふふ && TALENT:TARGET:バストサイズ >= 0
+;	PRINTFORML %CALLNAME:MASTER%の
+RETURN 1
+
+;胸を揉ませる
+@EVENT_COUNTE_MESSAGE33_TR
+PRINTFORM %CALLNAME:TARGET% grabs %PARSE("your")% hand and 
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML places it on %HIS_HER(TARGET)% chest nervously...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML places it on %HIS_HER(TARGET)% chest with a cocky grin...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORM places it on %HIS_HER(TARGET)% chest 
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORML while an Okina mask floats around %HIM_HER(TARGET)%...
+		ELSE
+			PRINTFORML with a full smile on %HIS_HER(TARGET)% lips...
+		ENDIF
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML mechanically places it on %HIS_HER(TARGET)% chest with an awkward movement...
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML places it on %HIS_HER(TARGET)% chest with a smile...
+	ENDIF
+ENDIF
+PRINTFORML %PARSE("You")% can feel %CALLNAME:TARGET%'s heartbeat...
+RETURN 1
+
+;股間をまさぐる
+@EVENT_COUNTE_MESSAGE34_TR
+PRINTFORM %CALLNAME:TARGET% moves %HIS_HER(TARGET)% hand down to %PARSE("your")% crotch 
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML and starts groping it...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML and nervously touches it...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML and starts roughly stroking it...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORML and begins to gently touch it...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML and traces it with %HIS_HER(TARGET)% hand...
+ENDIF
+RETURN 1
+
+;スカートの中を見せる
+@EVENT_COUNTE_MESSAGE35_TR
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1 || TALENT:羞恥心 > 0
+		PRINTFORM With tears in %HIS_HER(TARGET)% eyes, 
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM Smiling to %HIM_HER(TARGET)%self, 
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM With a Hyotto mask floating around %HIM_HER(TARGET)%, 
+		ELSE
+			PRINTFORM Smiling warmly, 
+		ENDIF
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORM With a beet-red face, 
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORM With a nonchalant look, 
+	ENDIF
+ENDIF
+;Custom code, SHOW_BOTTOM might be empty
+PRINTFORM %CALLNAME:TARGET% 
+IF STRLENS(SHOW_BOTTOM(TARGET,1))
+	LOCALS = ing
+	PRINTFORM lifts %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET,1)%\@ TALENT:羞恥心 > 0 ? %" "%hesitantly # \@, 
+ELSE
+	LOCALS = s
+ENDIF
+IF TEQUIP:TARGET:50 == MASTER
+	PRINTFORM %CONJUGATOR(@"expose:%LOCALS%")% %PARSE("your",2)% intimate connection
+ELSEIF 充填率(TARGET,1) > 100 || 充填率(TARGET,2) > 100
+	PRINTFORM %CONJUGATOR(@"show:%LOCALS%")% off the semen gushing out of %HIM_HER(TARGET)%
+ELSEIF 充填率(TARGET,1) > 50 || 充填率(TARGET,2) > 50
+	IF !EQUIP:下半身下着２
+		PRINTFORM %CONJUGATOR(@"show:%LOCALS%")% off the semen spilling out of %HIM_HER(TARGET)%
+	ELSE
+		PRINTFORM %CONJUGATOR(@"reveal:%LOCALS%")% %HIS_HER(TARGET)% semen-permeated %PANTS_DESCRIPTION_TR(TARGET,1)%
+	ENDIF
+ELSEIF !EQUIP:下半身下着２
+	PRINTFORM %CONJUGATOR(@"expose:%LOCALS%")% that %HE_SHE(TARGET)% isn't wearing anything underneath
+ELSE
+	;Custom code
+	PRINTFORM %CONJUGATOR(@"show:%LOCALS%")% off %HIS_HER(TARGET)% %PANTS_DESCRIPTION_TR(TARGET,1)%
+ENDIF
+PRINTFORML  to %PARSE("you")%...
+RETURN 1
+
+;後ろから胸もみもみ
+@EVENT_COUNTE_MESSAGE36_TR
+PRINTFORM %CALLNAME:TARGET% gropes %PARSE("your")% breasts from behind
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORM  timidly
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM  forcefully
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORM 
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORM  gently
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORM , barely putting any strength into it
+	ENDIF
+ENDIF
+PRINTFORML ...
+RETURN 1
+
+;飴強奪
+@EVENT_COUNTE_MESSAGE39_TR
+PRINTFORML %CALLNAME:TARGET% steals some candy from %PARSE("you")%...
+RETURN 1
+;------------------------------------------
+;40～49 おねだり
+;------------------------------------------
+
+@EVENT_COUNTE_MESSAGE41_TR
+CALL SET_HININ_TR(TARGET,1)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORM %CALLNAME:TARGET%\@ BEDROOM() ? %" "%lays down on %HIS_HER(TARGET)% back while spreading#spreads\@ %HIS_HER(TARGET)% legs a bit, 
+		IF TALENT:TARGET:処女 == 1 || TALENT:TARGET:処女 == -1
+			PRINTFORM and despite being nervous 
+		ELSE
+			SIF EX:Ｖ寸止め
+				PRINTFORM %HIS_HER(TARGET)% eyes pleading for release as %HE_SHE(TARGET)% 
+			PRINTFORM parts %HIS_HER(TARGET)% lips and 
+		ENDIF
+		PRINTFORML seduces %PARSE("you")%...
+	CASE 1
+		PRINTL .
+		PRINTFORM %HE_SHE(TARGET,1)% \@ BEDROOM() ? lays down on %HIS_HER(TARGET)% back while spreading#spreads\@ %HIS_HER(TARGET)% legs
+		IF TALENT:TARGET:処女 == 1 || TALENT:TARGET:処女 == -1
+			PRINTFORM  and nervously 
+		ELSE
+			IF EX:Ｖ寸止め
+				PRINTFORM , %HIS_HER(TARGET)% eyes pleading for release as %HE_SHE(TARGET)%
+			ELSE
+				PRINTFORM ,
+			ENDIF
+			PRINTFORM  parts %HIS_HER(TARGET)% lips and 
+		ENDIF
+		PRINTFORML seduces %PARSE("you")%...
+	CASE 2
+		PRINTL
+		CLEARLINE 1
+		PRINTFORML %CALLNAME:TARGET% \@ BEDROOM() ? lays down on %HIS_HER(TARGET)% back and spreads#spreads\@ %HIS_HER(TARGET)% legs.
+		PRINTFORML %HE_SHE(TARGET,1)% stares at %PARSE("you")%, \@EX:Ｖ寸止め?eyes full of want%" "%#\@and asks %PARSE("you",5)% if %PARSE("you",1)% want to make a baby, parting %HIS_HER(TARGET)% lips as %HE_SHE(TARGET)% does so.
+	CASE 3, 4, 5
+		PRINTFORM , \@ BEDROOM() ? lays down on %HIS_HER(TARGET)% back while spreading#spreads\@ %HIS_HER(TARGET)% legs
+		IF TALENT:TARGET:処女 == 1 || TALENT:TARGET:処女 == -1
+			PRINTFORM  and nervously 
+		ELSE
+			IF EX:Ｖ寸止め
+				PRINTFORM , %HIS_HER(TARGET)% eyes pleading for release as %HE_SHE(TARGET)%
+			ELSE
+				PRINTFORM ,
+			ENDIF
+			PRINTFORM  parts %HIS_HER(TARGET)% lips and 
+		ENDIF
+		PRINTFORML seduces %PARSE("you",GET_HININ(TARGET)==3?5#0)%...
+ENDSELECT
+
+;==================================================
+;後背位Ｖ挿入おねだり - Invite to V doggy style
+;==================================================
+;相手主導であなたがＶに挿入させられる
+;==================================================
+@EVENT_COUNTE_MESSAGE43_TR
+#DIM DYNAMIC CONDOM
+CALL SET_HININ_TR(TARGET,1)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORM %CALLNAME:TARGET%%COND_STR(@"'s ears stand on end as %HE_SHE(TARGET)%",TALENT:動物耳)%%COND_STR(" nervously", TALENT:TARGET:処女 == 1 || TALENT:TARGET:処女 == -1)% 
+		IF !INROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20)
+			PRINTFORM \@ OPENPLACE(CFLAG:MASTER:現在位置) == 2 ? sticks %HIS_HER(TARGET)% butt out # places %HIS_HER(TARGET)% hands on the wall \@
+		ELSE
+			PRINTFORM gets down on all four
+		ENDIF
+		IF EX:Ｖ寸止め
+			PRINTFORM , %HIS_HER(TARGET)% eyes pleading for release as %HE_SHE(TARGET)% 
+		ELSE
+			PRINTFORM  and 
+		ENDIF
+		PRINTFORML swings %HIS_HER(TARGET)% %HIP_TR(TARGET)% seductively at %PARSE("you")%...
+		SIF CFLAG:TARGET:生解禁 == 2 && ESTRUS_CYCLE(TARGET) == 150
+			PRINTFORM %CALLNAME:TARGET%'s womb aches, eagerly awaiting %PARSE("your",1)% \@ TALENT:MASTER:動物耳 ? seeding %HIM_HER(TARGET)% # semen \@...
+	CASE 1
+		PRINTL
+		CLEARLINE 1
+		PRINTFORML %CALLNAME:TARGET% has completely lost %HIMSELF_HERSELF(TARGET)% to %HIS_HER(TARGET)% female instincts%COND_STR(@", %HIS_HER(TARGET)% ears standing on end in excitement",TALENT:動物耳)%.
+		IF !INROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20)
+			PRINTFORM %HE_SHE(TARGET,1)% \@ OPENPLACE(CFLAG:MASTER:現在位置) == 2 ? sticks %HIS_HER(TARGET)% butt out # places %HIS_HER(TARGET)% hands on the wall \@
+		ELSE
+			PRINTFORM %HE_SHE(TARGET,1)% gets down on all four
+		ENDIF
+		IF EX:Ｖ寸止め
+			PRINTFORM , %HIS_HER(TARGET)% eyes pleading for release as %HE_SHE(TARGET)% 
+		ELSE
+			PRINTFORM  and 
+		ENDIF
+		PRINTFORML swings %HIS_HER(TARGET)% %HIP_TR(TARGET)% seductively, asking %PARSE("you")% to take %HIM_HER(TARGET)% raw...
+		SIF CFLAG:TARGET:生解禁 == 2 && ESTRUS_CYCLE(TARGET) == 150
+			PRINTFORML %CALLNAME:TARGET%'s womb aches, eagerly awaiting %PARSE("your",1)% \@ TALENT:MASTER:動物耳 ? seeding %HIM_HER(TARGET)% # semen \@...
+	CASE 2, 3, 4, 5
+		PRINTFORM  %COND_STR("nervously ", TALENT:TARGET:処女 == 1 || TALENT:TARGET:処女 == -1)%as %HE_SHE(TARGET)% 
+		IF !INROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20)
+			PRINTFORM \@ OPENPLACE(CFLAG:MASTER:現在位置) == 2 ? sticks %HIS_HER(TARGET)% butt out # places %HIS_HER(TARGET)% hands on the wall \@ 
+		ELSE
+			PRINTFORM gets down on all four 
+		ENDIF
+		PRINTFORML and swings %HIS_HER(TARGET)% %HIP_TR(TARGET)% seductively at %PARSE("you")%.
+		IF EX:Ｖ寸止め
+			PRINTFORM %HIS_HER(TARGET,1)% eyes pleads for release%COND_STR(@" as %HIS_HER(TARGET)% ears stand on end with excitement",TALENT:動物耳)%
+			SIF CFLAG:TARGET:生解禁 == 2 && ESTRUS_CYCLE(TARGET) == 150
+				PRINTFORM , %HIS_HER(TARGET)% womb aching, eagerly awaiting %PARSE("your",1)% \@ TALENT:MASTER:動物耳 ? seeding %HIM_HER(TARGET)% # semen \@
+			PRINTL ...
+		ELSEIF CFLAG:TARGET:生解禁 == 2 && ESTRUS_CYCLE(TARGET) == 150
+			PRINTFORML %CALLNAME:TARGET%'s %COND_STR(@"ears stand on end and %HIS_HER(TARGET)% ",TALENT:動物耳)%womb aches, eagerly awaiting %PARSE("your",1)% \@ TALENT:MASTER:動物耳 ? seeding %HIM_HER(TARGET)% # semen \@...
+		ENDIF
+ENDSELECT
+
+;==================================================
+;後背位Ａ挿入おねだり
+;==================================================
+;相手主導であなたがＡに挿入させられる
+;==================================================
+@EVENT_COUNTE_MESSAGE44_TR
+
+PRINTFORM %CALLNAME:TARGET%%COND_STR(@"'s ears stand on end as %HE_SHE(TARGET)% ",TALENT:動物耳)%%COND_STR(" nervously", TALENT:TARGET:処女 == 1 || TALENT:TARGET:処女 == -1)% 
+IF !INROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20)
+	PRINTFORM \@ OPENPLACE(CFLAG:MASTER:現在位置) == 2 ? sticks %HIS_HER(TARGET)% butt out # places %HIS_HER(TARGET)% hands on the wall \@
+ELSE
+	PRINTFORM gets down on all four
+ENDIF
+IF EX:Ａ寸止め
+	PRINTFORM , %HIS_HER(TARGET)% eyes pleading for release as %HE_SHE(TARGET)% 
+ELSE
+	PRINTFORM  and 
+ENDIF
+PRINTFORML \@ BEDROOM()?spreads#swings\@ %HIS_HER(TARGET)% %HIP_TR(TARGET)% seductively at %PARSE("you")%...
+
+;@EVENT_COUNTE_MESSAGE45
+;PRINTFORM %CALLNAME:TARGET%は
+;
+;PRINTFORML 仰向けになって股を開き
+;PRINTFORML 四つん這いになって尻を向け
+;地の文不足に悩む作者の為に書いてみた
+;PRINTFORML 恥ずかしいんだから早くしてとねだってきた
+;PRINTFORML 少し拗ねながら女に恥をかかせないでとねだってきた
+;------------------------------------------
+;50～69 脱衣セクハラ(愛撫)
+;------------------------------------------
+;手淫
+@EVENT_COUNTE_MESSAGE50_TR
+IF TALENT:PLAYER:2 & 2
+	IF (TCVAR:PLAYER:12 != 1 && CFLAG:TARGET:うふふ != 2) || (!TCVAR:PLAYER:12 && CFLAG:TARGET:うふふ == 2)
+		SIF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+			TEQUIP:PLAYER:3 = 1
+		PRINTFORM %CALLNAME:TARGET% 
+		IF TEQUIP:PLAYER:50 == TARGET
+			PRINTFORM ravages %PARSE("you")%
+		ELSEIF TEQUIP:PLAYER:51 == TARGET
+			PRINTFORM ravages %PARSE("your")% anus
+		ELSEIF TEQUIP:シックスナイン
+			PRINTFORM straddles %PARSE("your")% face
+		ELSE
+			PRINTFORM stares at %PARSE("your")% face
+		ENDIF
+		PRINTFORM  as %HE_SHE(TARGET)% 
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORM strokes %PARSE("your",1)% penis
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM timidly but precisely strokes %PARSE("your",1)% penis
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM takes a firm grip of %PARSE("your",1)% penis and strokes it forcefully
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM takes a light grip of %PARSE("your",1)% penis but strokes it with high speed
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM takes a light grip of %PARSE("your",1)% penis and strokes it
+		ENDIF
+		PRINTFORML , working %PARSE("you",5)% towards ejaculation...
+	ELSE
+		PRINTFORM %CALLNAME:TARGET% 
+		IF TEQUIP:PLAYER:50 == TARGET
+			PRINTFORM ravages %PARSE("you")%
+		ELSEIF TEQUIP:PLAYER:51 == TARGET
+			PRINTFORM ravages %PARSE("your")% anus
+		ELSEIF TEQUIP:シックスナイン
+			PRINTFORM straddles %PARSE("your")% face
+		ENDIF
+		PRINTFORM  as %HE_SHE(TARGET)% 
+		IF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+			TEQUIP:PLAYER:3 = 1
+			PRINTFORM takes out %PARSE("your",1)% penis from %PARSE("your",1)% underwear and 
+		ELSE
+			PRINTFORM exposes %PARSE("your",1)% penis and 
+		ENDIF
+		IF FLAG:カウンター地の文制御
+			;気弱系
+			IF CFLAG:TARGET:性格傾向 == 1
+				PRINTFORM timidly grasps it in a weak grip
+			;強気系
+			ELSEIF CFLAG:TARGET:性格傾向 == 2
+				PRINTFORM grasps it in a strong grip
+			;素直系
+			ELSEIF CFLAG:TARGET:性格傾向 == 3
+				PRINTFORM grasps it in a weak grip
+			;真面目系
+			ELSEIF CFLAG:TARGET:性格傾向 == 4
+				PRINTFORM gently grasps it
+			;その他
+			ELSEIF CFLAG:TARGET:性格傾向 == 5
+				PRINTFORM gently squeezes it
+			ENDIF
+		ENDIF
+		PRINTFORML  before beginning to stroke it...
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:TARGET% 
+	IF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+		TEQUIP:PLAYER:3 = 1
+		PRINTFORM shifts aside %PARSE("your")% underwear, exposing %PARSE("your",1)% secret place and 
+	ELSE
+		PRINTFORM exposes %PARSE("your",1)% secret place and 
+	ENDIF
+	
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM caresses it timidly with %HIS_HER(TARGET)% fingers
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM caresses it to %HIS_HER(TARGET)% heart's content
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM plays with it with %HIS_HER(TARGET)% fingers
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM traces the the contours of it with %HIS_HER(TARGET)% fingers
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM gently strokes it with %HIS_HER(TARGET)% fingers
+		ENDIF
+	ENDIF
+	PRINTFORML ...
+ENDIF
+RETURN 1
+
+;口淫
+@EVENT_COUNTE_MESSAGE51_TR
+IF TALENT:PLAYER:2 & 2
+	PRINTFORM %CALLNAME:TARGET% 
+	IF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+		TEQUIP:PLAYER:3 = 1
+		PRINTFORM pulls out %PARSE("your")% %TINKO(PLAYER)% from %PARSE("your",1)% underwear
+	ELSE
+		PRINTFORM takes out %PARSE("your")% %TINKO(PLAYER)%
+	ENDIF
+	IF TALENT:TARGET:恋慕
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML  and begins sucking on it...
+			CASE 1
+				PRINTFORML , covers it with plenty of saliva, and begins fellating it...
+			CASE 2
+				PRINTFORML  and kisses the tip...
+			CASE 3
+				PRINTFORML  and rubs %HIS_HER(TARGET)% cheeks against it...
+			CASE 4
+				PRINTFORML  and pushes it all the way into %HIS_HER(TARGET)% throat...
+		ENDSELECT
+	ELSEIF TALENT:TARGET:愛欲
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML  and pushes it all the way into %HIS_HER(TARGET)% throat...
+			CASE 1
+				PRINTFORML  and sucks on it greedily...
+			CASE 2
+				PRINTFORML  and licks the tip with %HIS_HER(TARGET)% tongue...
+			CASE 3
+				PRINTFORML , covers it with plenty of saliva, and begins fellating it...
+
+		ENDSELECT
+	ELSE
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML  and begins sucking on it...
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML , approaches it timidly, and begins licking it...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML  and engulfs it, licking the length while bobbing %HIS_HER(TARGET)% head...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORML  and kisses the tip lightly before starting to lick it...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML  and puts it in %HIS_HER(TARGET)% mouth while holding %HIS_HER(TARGET)% breath...
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORM %CALLNAME:TARGET% 
+	IF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+		TEQUIP:PLAYER:3 = 1
+		PRINTFORM shifts aside %PARSE("your")% underwear, exposing %PARSE("your",1)% secret place
+	ELSE
+		PRINTFORM exposes %PARSE("your")% secret place
+	ENDIF
+	;その他
+	IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+		PRINTFORML  and begins licking it...
+	;気弱系
+	ELSEIF CFLAG:TARGET:性格傾向 == 1 || CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML  and begins licking it gently...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML , spreads %PARSE("your",1)% lips and begins licking %PARSE("your",1)% clitoris...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORML  and begins licking it diligently like a dog...
+	ENDIF
+ENDIF
+RETURN 1
+
+;素股
+@EVENT_COUNTE_MESSAGE52_TR
+IF TALENT:PLAYER:2 & 2
+	PRINTFORM %CALLNAME:TARGET% straddles %PARSE("you")%
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM  timidly
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM  after gleefully pushing %PARSE("you",5)% over
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM  with an Okina mask floating around %HIM_HER(TARGET)%
+			ELSE
+				PRINTFORM  while smiling cheerfully
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM  carefully
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM  with a smile on %HIS_HER(TARGET)% face
+		ENDIF
+	ENDIF
+	PRINTFORM  and begins rubbing %PARSE("your",1)% %TINKO(PLAYER)% against %HIS_HER(TARGET)% vulva...
+ELSE
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM %CALLNAME:TARGET% blushes profusely 
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM %CALLNAME:TARGET% smiles in a terrifying way
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM A Hyotto mask floats around %CALLNAME:TARGET%
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% smiles warmly
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM %CALLNAME:TARGET% seems a bit embarrassed
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM %CALLNAME:TARGET% seems a bit happy
+		ENDIF
+	ENDIF
+	PRINTFORML  as %HE_SHE(TARGET)% begins rubbing %HIS_HER(TARGET)% vulva against %PARSE("yours",1)%...
+ENDIF
+RETURN 1
+
+;パイズリ
+@EVENT_COUNTE_MESSAGE53_TR
+PRINTFORM %CALLNAME:TARGET% 
+IF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+	TEQUIP:PLAYER:3 = 1
+	PRINTFORM pulls out %PARSE("your")% %TINKO_TR(PLAYER)% from %PARSE("your",1)% underwear and 
+ELSE
+	PRINTFORM takes out %PARSE("your")% %TINKO_TR(PLAYER)% and 
+ENDIF
+IF TALENT:TARGET:愛欲
+	PRINTFORML stares at it for a moment, %HIS_HER(TARGET)% eyes full of lust.
+ELSE
+	PRINTFORML stares at it for a moment.
+ENDIF
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORM %HE_SHE(TARGET,1)% holds it hesitantly
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM %HE_SHE(TARGET,1)% grins as %HE_SHE(TARGET)% holds it
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM An Okina mask floats around %HIM_HER(TARGET)% as %HE_SHE(TARGET)% holds it
+		ELSE
+			PRINTFORM %HE_SHE(TARGET,1)% smiles warmly as %HE_SHE(TARGET)% holds it
+		ENDIF
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORM %HE_SHE(TARGET,1)% holds it gently
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORM %HE_SHE(TARGET,1)% seems happy as %HE_SHE(TARGET)% holds it
+	ENDIF
+ENDIF
+PRINTFORML  between %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% and begins servicing %PARSE("you")%...
+RETURN 1
+
+;足コキ
+@EVENT_COUNTE_MESSAGE54_TR
+IF TEQUIP:PLAYER:0 > 3 || (TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3)
+	PRINTFORML %CALLNAME:TARGET% rubs %PARSE("your")% crotch through %PARSE("your",1)% clothes with %HIS_HER(TARGET)% foot...
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% looks amused at the sole of %HIS_HER(TARGET)% foot starts becoming wet...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% frowns at %PARSE("you")% as %HE_SHE(TARGET)% presses down %HIS_HER(TARGET)% foot hard and grinds against %PARSE("you",5)% furiously...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM A Hyotto mask floats around %CALLNAME:TARGET%
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% grins and laughs
+			ENDIF
+			PRINTFORML  as %PARSE("you")% surrender %PARSE("yourself",1)% to the pleasure of %HIS_HER(TARGET)% foot...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% stares at %PARSE("you")% in half-disgust, but seems to be having fun...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %CALLNAME:TARGET% looks delighted as %HE_SHE(TARGET)% tramples %PARSE("you")% with %HIS_HER(TARGET)% foot, enjoying the pleasure %PARSE("you're",1)% showing...
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:TARGET% rubs %PARSE("your")% penis with %HIS_HER(TARGET)% foot...
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %HE_SHE(TARGET,1)% looks a bit worried, but doesn't stop moving...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %HE_SHE(TARGET,1)% grins broadly as %HE_SHE(TARGET)% tramples %PARSE("you",5)%...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM A Hyotto mask floats around %HIM_HER(TARGET)%
+			ELSE
+				PRINTFORM %HE_SHE(TARGET,1)% smiles warmly
+			ENDIF
+			PRINTFORML  as %PARSE("you")% surrender %PARSE("yourself",1)% to the pleasure of %HIS_HER(TARGET)% foot...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %HE_SHE(TARGET,1)% cannot hide %HIS_HER(TARGET)% excitement which boils up from within...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %HE_SHE(TARGET,1)% seems to enjoy stepping on %PARSE("you",5)%...
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;アナル愛撫
+@EVENT_COUNTE_MESSAGE55_TR
+PRINTFORM %CALLNAME:TARGET% caresses %PARSE("your")% anus, 
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORM stroking one of the creases
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		;PRINTFORM ぐりっと肛門を貫くように
+		PRINTFORM pushing hard enough to penetrate
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		;PRINTFORM くにくにとなで擦るように
+		PRINTFORM gently rubbing in a circular motion
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		;PRINTFORM つんつんと突くように
+		PRINTFORM pecking lightly at it
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		;PRINTFORM 表面を軽くいじるように
+		PRINTFORM gently rubbing the surface
+	ENDIF
+ENDIF
+PRINTFORML ...
+RETURN 1
+
+;アナル舐め
+@EVENT_COUNTE_MESSAGE56_TR
+PRINTFORML %CALLNAME:TARGET% starts licking %PARSE("your")% anus thoroughly...
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML Flickering %HIS_HER(TARGET)% tongue over %PARSE("your",1)% ring, %HE_SHE(TARGET)% manages to elicit moans from %PARSE("you",5)%...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML More than just licking, %HE_SHE(TARGET)% pushes %HIS_HER(TARGET)% tongue inside and twirls it around...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORML Licking %PARSE("you",5)% zealously, %HE_SHE(TARGET)% pleasures %PARSE("you")% enthusiastically...
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML Licking more than just %PARSE("your",1)% anus, %HIS_HER(TARGET)% tongue wanders all over %PARSE("your",1)% behind...
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML %HE_SHE(TARGET,1)% pushes %HIS_HER(TARGET)% tongue against %PARSE("your",1)% ring over and over, applying just a bit of pressure...
+	ENDIF
+ENDIF
+RETURN 1
+
+;指挿入
+@EVENT_COUNTE_MESSAGE57_TR
+PRINTFORM %CALLNAME:TARGET% 
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML slowly inserts %HIS_HER(TARGET)% fingers into %PARSE("your")% pussy...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML timidly inserts %HIS_HER(TARGET)% fingers into %PARSE("your")% pussy...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML forces %HIS_HER(TARGET)% fingers into %PARSE("your")% pussy and begins pistoning in and out of %PARSE("you",5)%...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORML inserts %HIS_HER(TARGET)% fingers into %PARSE("your")% pussy and starts rubbing %PARSE("your",1)% folds carefully... 
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML inserts %HIS_HER(TARGET)% fingers into %PARSE("your")% pussy, slowly moving them around inside...
+ENDIF
+RETURN 1
+
+;胸愛撫
+@EVENT_COUNTE_MESSAGE58_TR
+IF TEQUIP:PLAYER:1 & 1 && !TEQUIP:PLAYER:4
+	TEQUIP:PLAYER:4 = 1
+	LOCAL = 1
+ELSE
+	LOCAL = 0
+ENDIF
+IF TALENT:PLAYER:2 & 1
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% \@LOCAL?bares %PARSE("your")% breasts timidly and caresses them#caresses %PARSE("your")% breasts bashfully\@...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% grins as %HE_SHE(TARGET)% \@LOCAL?bares %PARSE("your")% breasts and fondles them#fondles %PARSE("your")% breasts\@...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM %CALLNAME:TARGET% blushes expressionlessly
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% smiles warmly
+			ENDIF
+			PRINTFORML  as %HE_SHE(TARGET)% \@LOCAL?bares %PARSE("your")% breasts and caresses them#caresses %PARSE("your")% breasts\@...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% \@LOCAL?bares %PARSE("your")% breasts and caresses them#caresses %PARSE("your")% breasts\@ just to check their size...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %CALLNAME:TARGET% \@LOCAL?bares %PARSE("your")% breasts nonchalantly and caresses them#caresses %PARSE("your")% breasts nonchalantly\@...
+		ENDIF
+	ENDIF
+ELSE
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% \@LOCAL?bares %PARSE("your")% nipples timidly and pinches them#pinches %PARSE("your")% nipples\@ between %HIS_HER(TARGET)% fingers...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			;PRINTFORM ニヤニヤと笑いながら
+			PRINTFORML %CALLNAME:TARGET% grins as %HE_SHE(TARGET)% \@LOCAL?bares %PARSE("your")% nipples timidly and pinches them#pinches %PARSE("your")% nipples\@ between %HIS_HER(TARGET)% fingers...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM %CALLNAME:TARGET% blushes expressionlessly
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% smiles warmly
+			ENDIF
+			PRINTFORML  \@LOCAL?bares %PARSE("your")% nipples timidly and pinches them#pinches %PARSE("your")% nipples\@ between %HIS_HER(TARGET)% fingers...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% \@LOCAL?bares %PARSE("your")% nipples timidly and pinches them#pinches %PARSE("your")% nipples\@ between %HIS_HER(TARGET)% fingers carefully so as not to hurt you...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %CALLNAME:TARGET% \@LOCAL?bares %PARSE("your")% nipples timidly and pinches them#pinches %PARSE("your")% nipples\@ between %HIS_HER(TARGET)% fingers, satisfying %HIS_HER(TARGET)% curiosity...
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;乳首吸い
+@EVENT_COUNTE_MESSAGE59_TR
+IF TEQUIP:PLAYER:1 & 1 && !TEQUIP:PLAYER:3
+	TEQUIP:PLAYER:4 = 1
+	PRINTFORM %CALLNAME:TARGET% bares %PARSE("your")% chest and 
+	LOCAL = 1
+ELSE
+	PRINTFORM %CALLNAME:TARGET% 
+	LOCAL = 0
+ENDIF
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML sucks on %PARSE("your",LOCAL)% nipples...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML nervously brings %HIS_HER(TARGET)% lips closer before sucking on %PARSE("your",LOCAL)% nipples...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML engulfs %PARSE("your",LOCAL)% nipples and starts sucking on them violently...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORML sucks on %PARSE("your",LOCAL)% nipples as %HE_SHE(TARGET)% caresses them with %HIS_HER(TARGET)% tongue...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML licks all over %PARSE("your",LOCAL)% nipples...
+ENDIF
+RETURN 1
+
+;ディープキス
+@EVENT_COUNTE_MESSAGE60_TR
+PRINTFORM %CALLNAME:TARGET% 
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML grabs %PARSE("your")% face and kisses %PARSE("you",5)%, passionately entwining %PARSE("your",2)% tongues...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML kisses %PARSE("your")% lips over and over, nervously pushing %HIS_HER(TARGET)% tongue inside...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML steals %PARSE("your")% lips, pushing %HIS_HER(TARGET)% tongue inside violently...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORML lifts %PARSE("your")% chin and %PARSE("you",2)% make out, sucking on each other's tongues...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML whispers words of love to %PARSE("you")% and pushes %HIS_HER(TARGET)% tongue inside...
+ENDIF
+RETURN 1
+
+
+;誤爆挿入
+@EVENT_COUNTE_MESSAGE61_TR
+PRINTFORML Losing %HIM_HER(TARGET)%self to the pleasure, %CALLNAME:TARGET% grinds %PARSE("your")% cock against %HIS_HER(TARGET)% %SLIT(TARGET, 1)%, accidentally pushing the head inside.
+PRINTFORML \@ TALENT:処女 ? Easily tearing up her maidenhood# Guided inside by the warm slimy walls\@, %PARSE("you find yourself")% suddenly deep inside %TNAME(TARGET)%.
+
+;------------------------------------------
+;70～79 脱衣セクハラ(強要)
+;------------------------------------------
+;クンニ強制
+@EVENT_COUNTE_MESSAGE70_TR
+PRINTFORM %CALLNAME:TARGET% 
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML gently presses %HIS_HER(TARGET)% pussy against %PARSE("your")% mouth...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML timidly straddles %PARSE("your")% face and lowers %HIM_HER(TARGET)%self onto it...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML presses %HIS_HER(TARGET)% pussy into %PARSE("your")% face, urging %PARSE("you",5)% to lick it...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORML straddles %PARSE("your")% face and spreads %HIS_HER(TARGET)% labia, urging %PARSE("you",5)% to lick...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML presses down %HIS_HER(TARGET)% pussy on %PARSE("your")% face, making sure not to add too much weight...
+ENDIF
+RETURN 1
+
+;フェラチオ強制
+@EVENT_COUNTE_MESSAGE71_TR
+PRINTFORML %CALLNAME:TARGET% uses %PARSE("your")% mouth to service %HIS_HER(TARGET)% %TINKO(TARGET)%...
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML %CALLNAME:TARGET% apologizes over and over while drooling in ecstasy...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML %CALLNAME:TARGET% grins triumphantly as %HE_SHE(TARGET)% pushes into %PARSE("your",1)% throat...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM An Okina floats around %CALLNAME:TARGET%
+		ELSE
+			PRINTFORM %CALLNAME:TARGET% smiles warmly
+		ENDIF
+		PRINTFORML  as %HE_SHE(TARGET)% strokes %PARSE("your",1)% head...
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML %CALLNAME:TARGET%'s face says %HE_SHE(TARGET)%'s feeling guilty, but %HE_SHE(TARGET)% can't fight the pleasure...
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML %CALLNAME:TARGET% moans how amazing it feels...
+	ENDIF
+ENDIF
+RETURN 1
+
+;アナル奉仕
+@EVENT_COUNTE_MESSAGE72_TR
+PRINTFORM %CALLNAME:TARGET% straddles %PARSE("your")% face and 
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORM timidly
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM forcibly
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORM cautiously
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORM lightly
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORM softly
+	ENDIF
+ENDIF
+PRINTFORML  presses %HIS_HER(TARGET)% anus against %PARSE("your",1)% mouth...
+RETURN 1
+
+;ぱふぱふ
+@EVENT_COUNTE_MESSAGE73_TR
+VARSET LOCAL
+IF !TFLAG:60
+	IF TALENT:TARGET:バストサイズ >= 0
+		IF TALENT:TARGET:恋慕
+			SELECTCASE RAND:8
+				CASE 0
+					PRINTFORM %CALLNAME:TARGET% smiles warmly
+				CASE 1
+					PRINTFORM %CALLNAME:TARGET% has an entranced look on %HIS_HER(TARGET)% face
+				CASE 2
+					PRINTFORM With an enraptured look on %HIS_HER(TARGET)% face, %CALLNAME:TARGET% 
+					LOCAL = 1
+				CASE 3
+					PRINTFORM %CALLNAME:TARGET% pants heavily
+				CASE 4
+					PRINTFORM %CALLNAME:TARGET% whispers words of love
+				CASE 5
+					PRINTFORM %CALLNAME:TARGET% stares at %PARSE("you")% affectionately
+					LOCAL:1 = 1
+				CASE 6
+					PRINTFORM %CALLNAME:TARGET%'s nipples stand firm
+				CASE 7
+					IF TALENT:TARGET:献身的
+						PRINTFORM With a diligence bordering on indulgence, %CALLNAME:TARGET%
+						LOCAL = 1
+					ELSE
+						PRINTFORM %CALLNAME:TARGET% longs for %PARSE("you")% to touch %HIM_HER(TARGET)%
+						LOCAL:1 = 1
+					ENDIF
+			ENDSELECT
+			SIF !LOCAL
+				PRINTFORM  as %HE_SHE(TARGET)% 
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML wraps both sides of %PARSE("your",LOCAL:1)% face between %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+				CASE 1
+					PRINTFORML rubs %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your",LOCAL:1)% face...
+				CASE 2
+					PRINTFORML presses %PARSE("your",LOCAL:1)% face between %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+				CASE 3
+					PRINTFORML caresses %PARSE("your",LOCAL:1)% face with %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+				CASE 4
+					PRINTFORML sandwiches %PARSE("your",LOCAL:1)% face between %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+			ENDSELECT
+		ELSEIF TALENT:TARGET:思慕
+			IF TARGET == 57
+				PRINTFORM A Hyotto mask floats around %CALLNAME:TARGET% as %HE_SHE(TARGET)% 
+			ELSE
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORM %CALLNAME:TARGET% has a delighted look on %HIS_HER(TARGET)% face as %HE_SHE(TARGET)% 
+					CASE 1
+						PRINTFORM %CALLNAME:TARGET% looks embarrassed as %HE_SHE(TARGET)% 
+					CASE 2
+						PRINTFORM %CALLNAME:TARGET% bashfully 
+					CASE 3
+						PRINTFORM %CALLNAME:TARGET% blushes heavily as %HE_SHE(TARGET)% 
+				ENDSELECT
+			ENDIF
+			SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML gently wraps %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% %PARSE("your")% face...
+				CASE 1
+					PRINTFORML rubs %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your")% face, teasing %PARSE("you",5)%...
+				CASE 2
+					PRINTFORML pushes %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your")% face...
+				CASE 3
+					PRINTFORML holds %PARSE("your")% face between %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+				CASE 4
+					PRINTFORML sandwiches %PARSE("your")% face between %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+			ENDSELECT
+		ELSE
+			IF TARGET == 57
+				PRINTFORM A Hyotto mask floats around %CALLNAME:TARGET% as %HE_SHE(TARGET)% 
+			ELSE
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORM %CALLNAME:TARGET% seems a bit embarrassed as %HE_SHE(TARGET)% 
+					CASE 1
+						PRINTFORM %CALLNAME:TARGET% bashfully 
+					CASE 2
+						PRINTFORM %CALLNAME:TARGET% awkwardly 
+					CASE 3
+						PRINTFORM %CALLNAME:TARGET% burns red as %HE_SHE(TARGET)% 
+				ENDSELECT
+			ENDIF
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML rubs %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% on %PARSE("your")% face...
+				CASE 1
+					PRINTFORML presses %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% down on %PARSE("your")% face...
+				CASE 2
+					PRINTFORML sandwiches %PARSE("your")% face between %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+			ENDSELECT
+		ENDIF
+	ELSE
+		PRINTFORML %CALLNAME:TARGET% holds %PARSE("your")% face against %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+	ENDIF
+ELSE
+	IF TALENT:TARGET:バストサイズ >= 0
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML %CALLNAME:TARGET% caresses the side of %PARSE("your")% head with %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%...
+			CASE 1
+				PRINTFORML %CALLNAME:TARGET% presses %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your")% face...
+			CASE 2
+				PRINTFORML %CALLNAME:TARGET% rubs %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your")% face...
+		ENDSELECT
+	ELSE
+		PRINTFORML %CALLNAME:TARGET% presses %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your")% face...
+	ENDIF
+ENDIF
+RETURN 1
+
+;乳合わせ
+@EVENT_COUNTE_MESSAGE74_TR
+IF TALENT:PLAYER:2 == 2
+	PRINTFORM %CALLNAME:TARGET% 
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM trembles nervously as %HE_SHE(TARGET)% presses %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your")% chest
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM presses against you, intentionally squishing %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your",1)% chest
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM says %HE_SHE(TARGET)% wants to make %PARSE("you",5)% feel good as %HE_SHE(TARGET)% presses %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your")% chest
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM presses %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your")% chest as if trying to hug %PARSE("you",5)%
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM calmly presses %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% against %PARSE("your")% chest
+		ENDIF
+	ENDIF
+	PRINTFORML ...
+ELSE
+	;Oppai description normally has an anti-duplication, but i disable it to encourage same-descriptions
+	LOCALS = %OPPAI_DESCRIPTION_TR(TARGET,1)%
+	LOCALS:1 = %OPPAI_DESCRIPTION_TR(MASTER,1)%
+	PRINTFORML %CALLNAME:TARGET% presses %HIS_HER(TARGET)% %LOCALS% against \@LOCALS==LOCALS:1?%PARSE("yours",1)%#%LOCALS:1%\@...
+	IF FLAG:カウンター地の文制御
+		PRINTFORM %CALLNAME:TARGET%
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML 's moans reveal how much %HE_SHE(TARGET)% enjoys it, but %HE_SHE(TARGET)% still wants to make sure %PARSE("you feel")% good too... 
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML  grins broadly as %PARSE("your",2)% nipples rub together...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORML  lets out sweet moans as %PARSE("your",2)% nipples rub together...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML 's whole body trembles each time %PARSE("your",2)% nipples rub together...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML  twitches and trembles as %PARSE("your",2)% nipples rub together, the feeling mutual...
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;タワシ洗い
+@EVENT_COUNTE_MESSAGE75_TR
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML %CALLNAME:TARGET% straddles %PARSE("your")% arm timidly and rubs her genitals against it...
+		RETURN 1
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM %CALLNAME:TARGET% laughs
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM A Hyotto mask trembles around %CALLNAME:TARGET%
+		ELSE
+			PRINTFORM %CALLNAME:TARGET% smiles warmly
+		ENDIF
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML %CALLNAME:TARGET% straddles %PARSE("your")% arm timidly and rubs her genitals against it while staring %PARSE("you",5)% in the eyes...
+		RETURN 1
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML %CALLNAME:TARGET% straddles %PARSE("your")% arm nonchalantly and rubs her genitals against it while staring %PARSE("you",5)% in the eyes...
+		RETURN 1
+	ENDIF
+ENDIF
+PRINTFORML  as she straddles %PARSE("your")% arm and rubs her genitals against it...
+RETURN 1
+
+;強制アソコ愛撫
+@EVENT_COUNTE_MESSAGE76_TR
+PRINTFORM %CALLNAME:TARGET% holds %PARSE("your")% fingers in %HIS_HER(TARGET)% mouth, licking them before guiding them to %HIS_HER(TARGET)% 
+IF TALENT:TARGET:処女
+	PRINTFORML secret place...
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %HIS_HER(TARGET,1)% shoulders tremble for a moment, before giving %HIM_HER(TARGET)%self to %PARSE("you")%...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %HE_SHE(TARGET,1)% stiffens up a bit, but after a while a smile appears on %HIS_HER(TARGET)% face and %HE_SHE(TARGET)% urges %PARSE("you")% to move faster...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORML %HIS_HER(TARGET,1)% shoulders twitch, but %HE_SHE(TARGET)% quickly starts moaning from %PARSE("your")% ministrations...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %HE_SHE(TARGET,1)% has a resolute look on %HIS_HER(TARGET)% as %HE_SHE(TARGET)% accepts the pleasure from %PARSE("you")%...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %HIS_HER(TARGET,1)% body twitches, %HIS_HER(TARGET)% insides struggling with the foreign object...
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML vagina...
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML As %PARSE("your")% finger pushes inside %CALLNAME:TARGET%'s %SLIT(TARGET)%, %HE_SHE(TARGET)% begins moaning with a sweet voice...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% moves %HIS_HER(TARGET)% hips lewdly, grinding against %PARSE("your")% hand, seeking pleasure...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORML %CALLNAME:TARGET% spreads %HIS_HER(TARGET)% labia for easier access, and begins moaning loudly...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% gasps as the fingers move around inside %HIM_HER(TARGET)%, %HIS_HER(TARGET)% nether region on full display for %PARSE("you")%...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %CALLNAME:TARGET% moans as %HE_SHE(TARGET)% constricts around the fingers as if milking them, telling just how much %HE_SHE(TARGET)%'s enjoying it...
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;乳を吸わせる
+@EVENT_COUNTE_MESSAGE77_TR
+PRINTFORML %CALLNAME:TARGET% puts %HIS_HER(TARGET)% hard %NIPPLE_DESCRIPTION(TARGET)% in %PARSE("your")% mouth...
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML Although %CALLNAME:TARGET% looks guilty, %HE_SHE(TARGET)% lets out a moan each time %PARSE("you suck")% on them.
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML %CALLNAME:TARGET% speaks to %PARSE("you")% as if %PARSE("you",1)% were a child.
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORM %CALLNAME:TARGET% 
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM has an Okina mask floating around
+		ELSE
+			PRINTFORM smiles warmly
+		ENDIF
+		PRINTFORML  as %PARSE("you suck")% on %HIS_HER(TARGET)% nipples, stroking %PARSE("your",1)% head.
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML Every time %PARSE("you suck")% %CALLNAME:TARGET%'s nipples, %HE_SHE(TARGET)% lets out a happy pant.
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML You say nothing as %CALLNAME:TARGET% strokes your head, immersed in lust and focusing only on stimulating %HIS_HER(TARGET)% nipples.
+	ENDIF
+ENDIF
+SIF TALENT:TARGET:母乳体質
+	PRINTFORML Sweet milk oozes from the tips...
+RETURN 1
+
+;尻ズリ
+@EVENT_COUNTE_MESSAGE78_TR
+PRINTFORM %CALLNAME:TARGET% 
+IF FLAG:カウンター地の文制御
+	;強気系
+	IF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML grasps %PARSE("your")% ass in a tight grip, puts %HIS_HER(TARGET)% penis between %PARSE("your",1)% cheeks, and begins thrusting %HIS_HER(TARGET)% hips...
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML is puzzled by %HIS_HER(TARGET)% uncontrollable excitement as %HE_SHE(TARGET)% awkwardly rubs %HIS_HER(TARGET)% penis between %PARSE("your")% cheeks...
+	;その他
+	ELSE
+		PRINTFORML rubs %HIS_HER(TARGET)% penis against %PARSE("your")% butt in a state of complete arousal...
+	ENDIF
+ELSE
+	PRINTFORML rubs %HIS_HER(TARGET)% penis against %PARSE("your")% butt in a state of complete arousal...
+ENDIF
+RETURN 1
+
+;------------------------------------------
+;80～89 性交
+;------------------------------------------
+;==================================================
+;正常位Ｖ挿入される - Move V Missionary
+;==================================================
+;相手主導正常位であなたがＶに挿入される
+;==================================================
+@EVENT_COUNTE_MESSAGE80_TR
+IF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+	TEQUIP:PLAYER:3 = 1
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM and gulps audibly
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM and smiles obscenely
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM an Okina mask floating around %HIM_HER(TARGET)%
+			ELSE
+				PRINTFORM and smiles warmly
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM and smiles at %PARSE("you",5)%
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM and looks a bit happy
+		ENDIF
+	ENDIF
+	PRINTFORML  as %HE_SHE(TARGET)% shifts aside %PARSE("your")% underwear, pushes %HIS_HER(TARGET)% %TINKO(TARGET)% into %PARSE("your",1)% secret place, and starts shaking %HIS_HER(TARGET)% hips...
+ELSE
+	PRINTFORM %CALLNAME:TARGET% pushes %HIS_HER(TARGET)% %TINKO(TARGET)% into %PARSE("your")% secret place from the front, 
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML drooling from the pleasure as %HE_SHE(TARGET)% starts moving %HIS_HER(TARGET)% waist...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML grinning broadly as %HE_SHE(TARGET)% starts swinging %HIS_HER(TARGET)% hips without holding back...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM an Okina mask floating around %HIM_HER(TARGET)%
+			ELSE
+				PRINTFORM smiling warmly
+			ENDIF
+			PRINTFORML  as %HE_SHE(TARGET)% gives in to the pleasure and starts swinging %HIS_HER(TARGET)% hips...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML closing %HIS_HER(TARGET)% eyes trying to endure the pleasure as %HE_SHE(TARGET)% starts moving %HIS_HER(TARGET)% waist...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %HIS_HER(TARGET)% face slack with pleasure as %HE_SHE(TARGET)% starts moving %HIS_HER(TARGET)% waist...
+		ENDIF
+	ENDIF
+ENDIF
+IF TALENT:MASTER:処女 && TALENT:2 >= 1 && TALENT:PLAYER:処女 != -1
+	PRINTFORML Virginal blood seeps down from where %PARSE("you",2)% are connected...
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML Despite saying sorry and acting apologetic, %CALLNAME:TARGET% can't stop moving %HIS_HER(TARGET)% hips...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% seems happy with how faithful %PARSE("you've")% been as %HE_SHE(TARGET)% smiles at %PARSE("you",5)%...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORML Despite moving without a care in the world, as soon as %CALLNAME:TARGET% notices it %HE_SHE(TARGET)% slows down and becomes gentle...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% freezes up for a second, before slowly beginning to move %HIS_HER(TARGET)% hips...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %CALLNAME:TARGET% has an enraptured look on %HIS_HER(TARGET)% face, but doesn't slow down %HIS_HER(TARGET)% thrusts...
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML %PARSE("Your")% pussy overflows with %PARSE("your",1)% and %CALLNAME:TARGET%'s sexual fluids...
+ENDIF
+RETURN 1
+
+;==================================================
+;後背位Ｖ挿入される - Move V Doggy Style
+;==================================================
+;相手主導後背位でＶにあなたが挿入される
+;==================================================
+@EVENT_COUNTE_MESSAGE83_TR
+IF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+	TEQUIP:PLAYER:3 = 1
+	PRINTFORM %CALLNAME:TARGET% shifts %PARSE("your")% underwear aside and thrusts %HIS_HER(TARGET)% %TINKO(TARGET)% into %PARSE("you",5)% from behind, 
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM hesitantly asking how %PARSE("you're",1)% doing
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM holding onto %PARSE("your",1)% hips firmly
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM hugging %PARSE("you",5)% tightly
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM whispering sweet nothings into %PARSE("your",1)% ear
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM panting in excitement
+		ENDIF
+	ENDIF
+	PRINTFORML  as %HE_SHE(TARGET)% begins moving %HIS_HER(TARGET)% hips...
+ELSE
+	PRINTFORM %CALLNAME:TARGET% thrusts %HIS_HER(TARGET)% %TINKO(TARGET)% into %PARSE("you")% from behind
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM  furiously despite apologizing
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM , groping %PARSE("your",1)% ass intensely
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM , moaning in pleasure
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM  violently despite worrying about %PARSE("you",5)%
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM  violently, just seeking %HIS_HER(TARGET)% own pleasure
+		ENDIF
+	ENDIF
+	PRINTFORML  as %HE_SHE(TARGET)% begins moving %HIS_HER(TARGET)% hips...
+ENDIF
+IF TALENT:MASTER:処女 && TALENT:2 >= 1 && TALENT:PLAYER:処女 != -1
+	PRINTFORML Virginal blood seeps down from where %PARSE("you",2)% are connected...
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% apologizes over and over, but doesn't slow down %HIS_HER(TARGET)% thrusts...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% surprisingly asks %PARSE("you")% if %PARSE("you're",1)% fine and slows down %HIS_HER(TARGET)% thrusts...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORML %CALLNAME:TARGET% says %HE_SHE(TARGET)% is happy to have been given %PARSE("your")% virginity and slows down, thrusting passionately...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% stops mid-thrust, and waits until %PARSE("you've")% settled down before slowly starting to thrust again...
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %CALLNAME:TARGET% laughs delightedly and starts swinging %HIS_HER(TARGET)% hips immediately...
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML %PARSE("Your")% pussy overflows with %PARSE("your",1)% and %CALLNAME:TARGET%'s sexual fluids...
+ENDIF
+RETURN 1
+
+;==================================================
+;腰振りＶ受け
+;==================================================
+;相手主導であなたがＶに挿入される
+;==================================================
+;
+@EVENT_COUNTE_MESSAGE84_TR
+IF RAND:2
+	IF TEQUIP:MASTER:体位 == 1
+		LOCALS = 正面から
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML %CALLNAME:TARGET% thrusts into %PARSE("your")% pussy from the front while looking at %PARSE("you",5)% lovingly.
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% thrusts into %PARSE("your")% pussy from the front while bashfully asking if it feels good...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% thrusts into %PARSE("your")% pussy from the front while listening to %PARSE("your",1)% moans that reveal just how much %PARSE("you love",1)% it...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORML %CALLNAME:TARGET% thrusts into %PARSE("your")% pussy from the front while staring at %PARSE("your",1)% face...
+			ELSE
+				PRINTFORML %CALLNAME:TARGET% thrusts into %PARSE("your")% pussy from the front while smiling at %PARSE("you",5)%...
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% thrusts into %PARSE("your")% pussy from the front while staring at %PARSE("you",5)%, %HIS_HER(TARGET)% eyes full of love...
+		ENDIF
+	ELSE
+		LOCALS = 
+		IF TEQUIP:MASTER:体位 == 2
+			LOCALS '= " from behind"
+		ENDIF
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML %CALLNAME:TARGET% holds onto %PARSE("your")% hips while thrusting %HIS_HER(TARGET)% penis deep into %PARSE("your",1)% pussy%LOCALS%...
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% holds onto %PARSE("your")% hips while pistoning in and out of %PARSE("you",5)% violently like a beast...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% stabs at %PARSE("your")% womb%LOCALS% with strong thrusts, as if demanding %PARSE("you",1)% moan louder...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORML %CALLNAME:TARGET% holds onto %PARSE("your")% hips, pinning %PARSE("you",5)% down with %HIS_HER(TARGET)% body, and thrusts %HIS_HER(TARGET)% hips into %PARSE("you",5)%...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% holds onto %PARSE("your")% hips while thrusting lightly into %PARSE("your",1)% pussy%LOCALS% trying to make %PARSE("you",5)% feel better...
+		ENDIF
+	ENDIF
+ELSE
+	IF TEQUIP:MASTER:体位 == 1
+		LOCALS '= " from above"
+	ELSEIF TEQUIP:MASTER:体位 == 2
+		LOCALS '= " from behind"
+	ELSE
+		LOCALS = 
+	ENDIF
+	;その他
+	IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+		PRINTFORML %CALLNAME:TARGET% is inserted in %PARSE("you")%%LOCALS% as %HE_SHE(TARGET)% thrusts violently...
+	;気弱系
+	ELSEIF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML %CALLNAME:TARGET% just ignores %PARSE("you")% while thrusting into %PARSE("you",5)% violently%LOCALS%...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML %CALLNAME:TARGET% holds onto %PARSE("your")% hips preventing %PARSE("you",5)% from escaping as %HE_SHE(TARGET)% thrusts into %PARSE("you",5)% violently%LOCALS%...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORML %CALLNAME:TARGET% doesn't hold back %HIS_HER(TARGET)% voice, moaning loudly in pleasure as %HE_SHE(TARGET)% thrusts into %PARSE("you")%%LOCALS%...
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML %CALLNAME:TARGET% struggles desperately to hold back %HIS_HER(TARGET)% voice as %HE_SHE(TARGET)% thrusts into %PARSE("you")%%LOCALS%...
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;挿入 
+;==================================================
+;相手主導であなたがＶに挿入させられる
+;==================================================
+@EVENT_COUNTE_MESSAGE85_TR
+CALL SET_HININ_TR(TARGET,1)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML %CALLNAME:TARGET% hovers %HIS_HER(TARGET)% wet opening over %PARSE("your")% %TINKO(PLAYER)% before sitting down...
+	CASE 1
+		PRINTL
+		CLEARLINE 1
+		PRINTFORML %CALLNAME:TARGET% has completely lost %HIMSELF_HERSELF(TARGET)% to %HIS_HER(TARGET)% female instincts.
+		PRINTFORML %HE_SHE(TARGET,1)% hovers %HIS_HER(TARGET)% wet opening over %PARSE("your")% %TINKO(PLAYER)% before sitting down...
+	CASE 2
+		PRINTFORML  as %HE_SHE(TARGET)% hovers %HIS_HER(TARGET)% wet opening over %PARSE("your")% %TINKO(PLAYER)% before sitting down...
+	CASE 3, 4, 5
+		PRINTFORML , hovers %HIS_HER(TARGET)% wet opening over %PARSE("your")% %TINKO(PLAYER)%, and sits down...
+ENDSELECT
+IF FLAG:カウンター地の文制御
+	IF TALENT:TARGET:処女 == 1
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML A tear rolls down %CALLNAME:TARGET%'s cheek as %HE_SHE(TARGET)% endures the pain, but is happy to have given away %HIS_HER(TARGET)% virginity.
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% lets out a low grunt of pain, but still looks happy.
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM %CALLNAME:TARGET% can't move from the pain, but 
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM an Okina mask dances around %HIM_HER(TARGET)% 
+			ELSE
+				PRINTFORM smiles warmly 
+			ENDIF
+			PRINTFORML as %HE_SHE(TARGET)%'s filled with joy.
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% smiles with tears in %HIS_HER(TARGET)% eyes, saying something that sounds like a marriage proposal.
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %CALLNAME:TARGET% furrows %HIS_HER(TARGET)% brows from the pain, but seems otherwise happy.
+		ENDIF
+	ELSE
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% can't even hide the fact %HE_SHE(TARGET)%'s feeling pleasure as %HE_SHE(TARGET)% pumps %HIS_HER(TARGET)% hips up and down.
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% grins victoriously as %HE_SHE(TARGET)% slowly grinds %HIS_HER(TARGET)% hips, wanting to savor the pleasure.
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORML %CALLNAME:TARGET% shows off where %HE_SHE(TARGET)% is connected with %PARSE("you")%, spreading %HIS_HER(TARGET)% legs and bending back.
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% whispers sweets words of love to %PARSE("you")% before starting to move %HIS_HER(TARGET)% waist.
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML %CALLNAME:TARGET%'s lower half seems to enjoy it as it jumps to, lusting for more pleasure.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;だいしゅきホールド
+;==================================================
+@EVENT_COUNTE_MESSAGE86_TR
+PRINTFORM Noticing %PARSE("your")% imminent ejaculation, %CALLNAME:TARGET% 
+IF TEQUIP:TARGET:体位 == 3
+	;その他
+	IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+		PRINTFORML puts her weight down on %PARSE("your",1)% %TINKO_TR(PLAYER)%, forcing it deep inside her as she milks %PARSE("you",5)% to orgasm...
+	;気弱系
+	ELSEIF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML slams her waist down, wanting %PARSE("you",5)% to cum inside her.
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML slams her waist down, whispering she wants %PARSE("you",5)% to cum inside her.
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORML pushes down as far as she can while
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM an Okina mask floats around %HIM_HER(TARGET)%
+		ELSE
+			PRINTFORM laughing
+		ENDIF
+		PRINTFORML , her insides tightening around %PARSE("your",1)% %TINKO_TR(PLAYER)%.
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML sits down on %PARSE("your",1)% %TINKO_TR(PLAYER)%, forcing it all the way inside her as she makes %PARSE("you",5)% to cum.
+	ENDIF
+ELSE
+	;その他
+	IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+		PRINTFORM embraces %PARSE("you",5)% and locks her legs behind %PARSE("your",1)% back
+	;気弱系
+	ELSEIF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORM nervously reaches her legs behind %PARSE("your",1)% back
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM wraps her arms and legs around %PARSE("you",5)% and locks %PARSE("you",5)% in place
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORM embraces %PARSE("you",5)% weakly but %PARSE("you",1)% can't get loose
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORM wraps her arms and legs around %PARSE("you",5)% in an iron grip
+	ENDIF
+	PRINTFORML , forcing %PARSE("you")% to cum inside her...
+ENDIF
+RETURN 1
+
+;A挿入
+@EVENT_COUNTE_MESSAGE87_TR
+PRINTFORML %CALLNAME:TARGET% aligns %HIS_HER(TARGET)% anus with %PARSE("your")% %TINKO(PLAYER)% and lowers %HIM_HER(TARGET)%self...
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML Despite blushing, %CALLNAME:TARGET% trembles from the pleasure %HE_SHE(TARGET)% is feeling from such an unclean spot...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML %CALLNAME:TARGET% is engrossed in pleasure as %PARSE("you remark")% how easily %HIS_HER(TARGET)% perverse anus swallowed it up...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORML %CALLNAME:TARGET% is cries out how amazing %HIS_HER(TARGET)% ass feels when %PARSE("you ravish")% it...
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML Despite shaking %HIS_HER(TARGET)% head in denial, %CALLNAME:TARGET%'s facial expression belies the truth...
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORML %CALLNAME:TARGET%'s anus accepts %PARSE("your")% %TINKO(PLAYER)%, and %HE_SHE(TARGET)% moans in pleasure from the sensation...
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;腰振りV
+;==================================================
+;あなたが相手にＶに挿入させられる
+;==================================================
+@EVENT_COUNTE_MESSAGE88_TR
+SELECTCASE RAND:3
+	CASE 2
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML %CALLNAME:TARGET% barely move %HIS_HER(TARGET)% hips, drunk with the feeling of %PARSE("your")% %TINKO(PLAYER)% gouging out %HIS_HER(TARGET)% vaginal walls.
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% moves %HIS_HER(TARGET)% hips timidly, throaty and hot sighs escaping %HIS_HER(TARGET)% lips...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% clamps down on %PARSE("your")% %TINKO(PLAYER)%, every fold of her vagina quivering in ecstasy...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORML The tip of %PARSE("your")% penis knocks repeatedly against %CALLNAME:TARGET%'s uterus, kissing the opening.
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORML An Okina mask floats around her as she clamps down harder...
+			ELSE
+				PRINTFORML She lets out a beaming smile...
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% rotates her hips as if to figure out the shape of %PARSE("your")% %TINKO(PLAYER)%, her movements bewitching...
+		ENDIF
+	CASE 1
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML %CALLNAME:TARGET% moves %HIS_HER(TARGET)% waist with long, slow strokes, while asking %PARSE("you")% if it feels good...
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% moves with long, slow strokes, asking if %PARSE("you're",1)% feeling good...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET%'s slippery and warm pussy sucks in %PARSE("your")% %TINKO(PLAYER)%, as she smiles from the pleasure.
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM %CALLNAME:TARGET% moves with long, slow strokes, 
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM a Hyotto mask floating around her
+			ELSE
+				PRINTFORM smiling warmly
+			ENDIF
+			PRINTFORML  while saying it feels good...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %PARSE("You",3)% two are as one, %CALLNAME:TARGET% moving with slow, long strokes, not in any hurry to end this fast...
+		ENDIF
+	CASE 0
+		IF FLAG:カウンター地の文制御
+			;気弱系
+			IF CFLAG:TARGET:性格傾向 == 1
+				PRINTFORM %CALLNAME:TARGET% apologizes over and over
+			;強気系
+			ELSEIF CFLAG:TARGET:性格傾向 == 2
+				PRINTFORM %CALLNAME:TARGET% laughs while asking if %PARSE("you're",1)% feeling good
+			;素直系
+			ELSEIF CFLAG:TARGET:性格傾向 == 3
+				PRINTFORM %CALLNAME:TARGET% says she wants to feel good together with %PARSE("you",1)%
+			;真面目系
+			ELSEIF CFLAG:TARGET:性格傾向 == 4
+				PRINTFORM Tears of joy trail down %CALLNAME:TARGET%'s cheeks
+			;その他
+			ELSEIF CFLAG:TARGET:性格傾向 == 5
+				PRINTFORM %CALLNAME:TARGET% has a smile on %HIS_HER(TARGET)% lips
+			ENDIF
+		ENDIF
+		PRINTFORML  as %HE_SHE(TARGET)% shakes %HIS_HER(TARGET)% hips in delirium...
+ENDSELECT
+RETURN 1
+
+;==================================================
+;腰振りA
+;==================================================
+;相手主導であなたがＡに挿入させられる
+;==================================================
+@EVENT_COUNTE_MESSAGE89_TR
+SELECTCASE RAND:3
+	CASE 2
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML %CALLNAME:TARGET% barely moves %HIS_HER(TARGET)% hips, drunk with the feeling of %PARSE("your")% %TINKO(PLAYER)% gouging out %HIS_HER(TARGET)% intestinal walls.
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% moves %HIS_HER(TARGET)% hips timidly, throaty and hot sighs escaping %HIS_HER(TARGET)% lips...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET% clamps down on %PARSE("your")% %TINKO(PLAYER)%, every fold of %HIS_HER(TARGET)% anus quivering in ecstasy...
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM An Okina mask dances around %CALLNAME:TARGET% 
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% smiles warmly 
+			ENDIF
+			PRINTFORML as %HE_SHE(TARGET)% moves %HIS_HER(TARGET)% hips, clamping %HIS_HER(TARGET)% anus down on %PARSE("you")%...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% moans in pleasure despite being embarrassed at moving %HIS_HER(TARGET)% hips on %HIS_HER(TARGET)% own...
+		ENDIF
+	CASE 1
+		;その他
+		IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+			PRINTFORML %CALLNAME:TARGET% moves %HIS_HER(TARGET)% waist with long, slow strokes, while asking %PARSE("you")% if it feels good...
+		;気弱系
+		ELSEIF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML %CALLNAME:TARGET% moves with long, slow strokes, asking if %PARSE("you're",1)% feeling good...
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML %CALLNAME:TARGET%'s slippery and warm intestinal walls suck in %PARSE("your")% %TINKO(PLAYER)%, as %HE_SHE(TARGET)% smiles from the pleasure.
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM %CALLNAME:TARGET% moves with long, slow strokes, 
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM a Hyotto mask floating around %HIM_HER(TARGET)%
+			ELSE
+				PRINTFORM smiling warmly
+			ENDIF
+			PRINTFORML  while saying it feels good...
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML %CALLNAME:TARGET% moves %HIS_HER(TARGET)% hips slowly, trying not to be overcome with pleasure...
+		ENDIF
+	CASE 0
+		IF FLAG:カウンター地の文制御
+			;気弱系
+			IF CFLAG:TARGET:性格傾向 == 1
+				PRINTFORM %CALLNAME:TARGET% apologizes over and over
+			;強気系
+			ELSEIF CFLAG:TARGET:性格傾向 == 2
+				PRINTFORM %CALLNAME:TARGET% laughs while asking if %PARSE("you're",1)% feeling good
+			;素直系
+			ELSEIF CFLAG:TARGET:性格傾向 == 3
+				PRINTFORM %CALLNAME:TARGET% says %HE_SHE(TARGET)% wants to feel good together with %PARSE("you")%
+			;真面目系
+			ELSEIF CFLAG:TARGET:性格傾向 == 4
+				PRINTFORM %CALLNAME:TARGET% clenches %HIS_HER(TARGET)% teeth
+			;その他
+			ELSEIF CFLAG:TARGET:性格傾向 == 5
+				PRINTFORM %CALLNAME:TARGET% has a smile on %HIS_HER(TARGET)% lips
+			ENDIF
+		ENDIF
+		PRINTFORML  as %HE_SHE(TARGET)% shakes %HIS_HER(TARGET)% hips in delirium...
+ENDSELECT
+RETURN 1
+
+;==================================================
+;後背位A挿入される
+;==================================================
+;相手主導であなたがＡに挿入される
+;==================================================
+@EVENT_COUNTE_MESSAGE90_TR
+IF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+	TEQUIP:PLAYER:3 = 1
+	PRINTFORML %CALLNAME:TARGET% shifts %PARSE("your")% underwear aside and thrusts %HIS_HER(TARGET)% %TINKO(TARGET)% into %PARSE("your",1)% anus from behind...
+ELSE
+	PRINTFORML %CALLNAME:TARGET% thrusts %HIS_HER(TARGET)% %TINKO(TARGET)% into %PARSE("your")% anus from behind...
+ENDIF
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML %PARSE("Your")% anus overflows with %PARSE("your",1)% and %CALLNAME:TARGET%'s sexual fluids...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML Unlike %HIS_HER(TARGET)% usually shy self, %CALLNAME:TARGET% screws %PARSE("your")% anus violently, thrusting %HIS_HER(TARGET)% hips like a beast...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML %CALLNAME:TARGET% laughs at how %PARSE("your")% hole changes shape, %HIS_HER(TARGET)% %TINKO(TARGET)% twitching from pleasure...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORML %CALLNAME:TARGET% informs %PARSE("you")% how good %PARSE("your",1)% ass feels as %HE_SHE(TARGET)% swings %HIS_HER(TARGET)% hips...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML %CALLNAME:TARGET% seems apologetic but still revels in %PARSE("your")% anus as %HE_SHE(TARGET)% thrusts %HIS_HER(TARGET)% hips...
+ENDIF
+RETURN 1
+;==================================================
+;イラマチオされる
+;==================================================
+;相手主導であなたの口に挿入される
+;==================================================
+;
+@EVENT_COUNTE_MESSAGE91_TR
+PRINTFORM %CALLNAME:TARGET% violently thrusts %HIS_HER(TARGET)% %TINKO(TARGET)% into %PARSE("your",1)% throat
+IF FLAG:カウンター地の文制御
+	;気弱系
+	IF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORM , showing no restraint
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORM  while grinning broadly
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORM  while asking %PARSE("you",5)% to make %HIM_HER(TARGET)% feel good
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORM , making sure not to hurt %PARSE("you",5)%
+	;その他
+	ELSEIF CFLAG:TARGET:性格傾向 == 5
+		PRINTFORM  while holding onto %PARSE("your",1)% head
+	ENDIF
+ENDIF
+PRINTFORML ...
+RETURN 1
+
+;==================================================
+;アナル開発許可を求める（現状では表示されない
+;==================================================
+@EVENT_COUNTE_MESSAGE92_TR
+;気弱系
+IF CFLAG:TARGET:性格傾向 == 1
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORM 
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+;その他
+ELSEIF CFLAG:TARGET:性格傾向 == 5
+ENDIF
+	PRINTFORML %CALLNAME:TARGET% brings up the topic of training %PARSE("your")% ass...
+	PRINTFORML [0] No, sorry
+	PRINTFORML [1] Be gentle
+	$LOOP
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW %CALLNAME:TARGET% looks regretful...
+		CASE 1
+			PRINTFORMW %CALLNAME:TARGET%'s eyes start gleaming...
+			CFLAG:TARGET:アナル開発許可 = 1
+		CASEELSE
+			GOTO LOOP
+	ENDSELECT
+RETURN 1
+
+;==================================================
+;腰振り逆A
+;==================================================
+;相手主導であなたがＡに挿入される
+;==================================================
+@EVENT_COUNTE_MESSAGE93_TR
+IF RAND:2
+	IF TEQUIP:MASTER:体位 == 1
+		LOCALS '= " from above"
+	ELSEIF TEQUIP:MASTER:体位 == 2
+		LOCALS '= " from behind"
+	ELSE
+		LOCALS = 
+	ENDIF
+	;その他
+	IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+		PRINTFORML %CALLNAME:TARGET% embraces %PARSE("you")% tightly%LOCALS% while thrusting into %PARSE("your",1)% anus with long, deep strokes, sating %HIS_HER(TARGET)% lust...
+	;気弱系
+	ELSEIF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML %CALLNAME:TARGET% embraces %PARSE("you")% tightly%LOCALS%, panting while thrusting into %PARSE("your",1)% anus, sating %HIS_HER(TARGET)% lust...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML %CALLNAME:TARGET% embraces %PARSE("you")% tightly%LOCALS% while thrusting relentlessly into %PARSE("your",1)% anus, not giving %PARSE("you",5)% a moment's rest...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORML %CALLNAME:TARGET% embraces %PARSE("you")% tightly%LOCALS%, enjoying %HIM_HER(TARGET)%self as %HE_SHE(TARGET)% thrusts into %PARSE("your",1)% anus...
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML %CALLNAME:TARGET% embraces %PARSE("you")% tightly%LOCALS% while thrusting into %PARSE("your",1)% anus in delirium, sating %HIS_HER(TARGET)% lust...
+	ENDIF
+ELSE
+	IF TEQUIP:MASTER:体位 == 1
+		IF !BEDROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20)
+			LOCALS '= " from the front"
+		ELSE
+			LOCALS '= " from above"
+		ENDIF
+	ELSEIF TEQUIP:MASTER:体位 == 2
+		IF !INROOM(CFLAG:PLAYER:現在位置) && !(BATHROOM() && ITEM:20)
+			LOCALS '= " from behind"
+		ELSE
+			LOCALS '= " from behind"
+		ENDIF
+	ELSE
+		LOCALS = 
+	ENDIF
+	;その他
+	IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+		PRINTFORML %CALLNAME:TARGET% is inserted in %PARSE("your")% anus as %HE_SHE(TARGET)% begins thrusting %HIS_HER(TARGET)% hips violently%LOCALS%...
+	;気弱系
+	ELSEIF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML %CALLNAME:TARGET% lets out the occasional apology while screwing %PARSE("your")% anus violently%LOCALS%...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML %CALLNAME:TARGET% abuses %PARSE("you")% verbally while screwing %PARSE("your",1)% anus violently%LOCALS%...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORML %CALLNAME:TARGET%'s face has gone slack from pleasure as %HE_SHE(TARGET)% screws %PARSE("your")% anus violently%LOCALS%...
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML Unlike %HIS_HER(TARGET)% usually serious self, %CALLNAME:TARGET% screws %PARSE("your")% anus violently%LOCALS% like a beast...
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;正常位A挿入される
+;==================================================
+;相手主導であなたがＡに挿入される
+;==================================================
+@EVENT_COUNTE_MESSAGE94_TR
+IF TEQUIP:PLAYER:0 & 2 && !TEQUIP:PLAYER:3
+	TEQUIP:PLAYER:3 = 1
+	PRINTFORML %CALLNAME:TARGET% presses into %PARSE("you")% from the front as %HE_SHE(TARGET)% shifts aside %PARSE("your",1)% underwear and thrusts into %PARSE("your",1)% anus...
+ELSE
+	PRINTFORML %CALLNAME:TARGET% presses into %PARSE("you")% from the front as %HE_SHE(TARGET)% thrusts into %PARSE("your",1)% anus...
+ENDIF
+;その他
+IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+	PRINTFORML %CALLNAME:TARGET% holds %PARSE("you")% tight as %HE_SHE(TARGET)% begins swinging %HIS_HER(TARGET)% hips wildly...
+;気弱系
+ELSEIF CFLAG:TARGET:性格傾向 == 1
+	PRINTFORML %CALLNAME:TARGET% apologizes over and over, but %HIS_HER(TARGET)% face has melted from the pleasure...
+;強気系
+ELSEIF CFLAG:TARGET:性格傾向 == 2
+	PRINTFORML %CALLNAME:TARGET% pummels %PARSE("your")% anus while staring intently at %PARSE("your",1)% face with a grin...
+;素直系
+ELSEIF CFLAG:TARGET:性格傾向 == 3
+	PRINTFORML %CALLNAME:TARGET% moans in pleasure while holding onto %PARSE("your")% leg, thrusting with wild abandon...
+;真面目系
+ELSEIF CFLAG:TARGET:性格傾向 == 4
+	PRINTFORML %CALLNAME:TARGET% ignores %PARSE("you")% completely, focusing only on pleasure as %HE_SHE(TARGET)% thrust in and out of %PARSE("you",5)%...
+ENDIF
+RETURN 1
+
+;------------------------------------------
+;100～119 挿入中専用
+;------------------------------------------
+;------------------------------------------
+;120～139 抱きつきモード
+;------------------------------------------
+;頭撫で
+@EVENT_COUNTE_MESSAGE120_TR
+PRINTFORML %CALLNAME% gently strokes %PARSE("your")% head...
+RETURN 1
+
+;髪梳き
+@EVENT_COUNTE_MESSAGE121_TR
+PRINTFORML %CALLNAME% runs %HIS_HER(TARGET)% fingers through %PARSE("your")% hair...
+RETURN 1
+
+;抱きつき
+@EVENT_COUNTE_MESSAGE122_TR
+PRINTFORM %CALLNAME% hugs %PARSE("you")% from the front, 
+IF TALENT:MASTER:バストサイズ >= 1
+	PRINTFORML burying %HIS_HER(TARGET)% face in %PARSE("your",1)% cleavage...
+ELSE
+	PRINTFORML acting like a spoiled child as %HE_SHE(TARGET)% rubs %HIS_HER(TARGET)% cheeks against %PARSE("you",5)%...
+ENDIF
+RETURN 1
+
+;抱きしめ
+@EVENT_COUNTE_MESSAGE123_TR
+PRINTFORM %CALLNAME:TARGET% 
+IF RAND:2
+	IF TALENT:バストサイズ >= 1
+		PRINTFORML hugs from the front, burying %PARSE("your")% face in %HIS_HER(TARGET)% cleavage...
+	ELSE
+		PRINTFORML wraps %HIS_HER(TARGET)% arms around %PARSE("you")% in a hug, the two of %PARSE("you",4)% can feel each others' warmth...
+	ENDIF
+ELSE
+	PRINTFORM hugs %PARSE("you")% from behind, holding %PARSE("you",5)% tight...
+ENDIF
+RETURN 1
+
+;頬撫で
+@EVENT_COUNTE_MESSAGE124_TR
+PRINTFORML %CALLNAME:TARGET% just looks at %PARSE("your")% face, staring, before %HE_SHE(TARGET)% brushes %PARSE("your",1)% cheek...
+RETURN 1
+
+;くすぐり
+@EVENT_COUNTE_MESSAGE125_TR
+PRINTFORM %CALLNAME:TARGET% grins broadly as %HE_SHE(TARGET)% tickles %PARSE("your")% 
+SELECTCASE RAND:4
+	CASE 0
+		PRINT neck
+	CASE 1
+		PRINT sides
+	CASE 2
+		PRINT feet
+	CASE 3
+		PRINT armpits
+ENDSELECT
+PRINTFORML !
+PRINTFORML %PARSE("You start")% laughing uncontrollably despite not being that ticklish...
+RETURN 1
+
+;膝枕させる
+@EVENT_COUNTE_MESSAGE126_TR
+PRINTFORML %CALLNAME:TARGET% forces %PARSE("you")% to kneel down, and %HE_SHE(TARGET)% rests %HIS_HER(TARGET)% head on %PARSE("your",1)% lap, while asking %PARSE("you",5)% to brush %HIS_HER(TARGET)% hair...
+RETURN 1
+
+;匂いを嗅ぐ
+@EVENT_COUNTE_MESSAGE127_TR
+PRINTFORML %CALLNAME:TARGET% holds %PARSE("you")% tight while sniffing, taking a whiff of %PARSE("your",1)% scent...
+RETURN 1
+
+;話しかける
+@EVENT_COUNTE_MESSAGE128_TR
+IF RAND:2
+	PRINTFORML %CALLNAME:TARGET% embraces %PARSE("you")% as %HE_SHE(TARGET)% starts talking with %PARSE("you",5)%...
+ELSE
+	PRINTFORML %CALLNAME:TARGET% holds %PARSE("you")% tight as %HE_SHE(TARGET)% starts talking with %PARSE("you",5)%...
+ENDIF
+RETURN 1
+
+;首筋舐め
+@EVENT_COUNTE_MESSAGE129_TR
+PRINTFORML %CALLNAME:TARGET% holds %PARSE("you")% tight as %HE_SHE(TARGET)% begins tracing %HIS_HER(TARGET)% tongue along the nape of %PARSE("your",1)% neck...
+RETURN 1
+
+;==================================================
+;服を脱がせる
+;==================================================
+@DATUI_MESSAGE_TR
+VARSET LOCAL
+IF TCVAR:TARGET:22 == 1
+;Target removes all of Player's lower clothes
+	;Custom code, ensures it prints, and avoids duplication
+	IF (STRLENS(SHOW_BOTTOM(MASTER,9)) > 0 && SHOW_BOTTOM(MASTER,9) != "no underwear") || (STRLENS(SHOW_下半身下着(MASTER,6)) > 0 && SHOW_下半身下着(MASTER,6) != "no underwear")
+		PRINTFORM %CALLNAME:TARGET% strips off %PARSE("your")% 
+		IF ((TEQUIP:MASTER:0 & 9) > 0) && ((TEQUIP:MASTER:0 & 6) > 0)
+			IF (STRLENS(SHOW_BOTTOM(MASTER,9)) > 0 && SHOW_BOTTOM(MASTER,9) != "no underwear") && (STRLENS(SHOW_下半身下着(MASTER,6)) > 0 && SHOW_下半身下着(MASTER,6) != "no underwear")
+				PRINTFORML %SHOW_BOTTOM(MASTER,9)% and %SHOW_下半身下着(MASTER,6)%.
+			ELSEIF STRLENS(SHOW_BOTTOM(MASTER,9)) > 0 && SHOW_BOTTOM(MASTER,9) != "no underwear"
+				PRINTFORML %SHOW_BOTTOM(MASTER,9)%.
+			ELSE
+				PRINTFORML %SHOW_下半身下着(MASTER,6)%.
+			ENDIF
+		ELSEIF ((TEQUIP:MASTER:0 & 9) > 0) && ((TEQUIP:MASTER:0 & 6) == 0) 
+			PRINTFORML %SHOW_BOTTOM(MASTER,9)%.
+		ELSEIF ((TEQUIP:MASTER:0 & 9) == 0) && ((TEQUIP:MASTER:0 & 6) > 0)
+			PRINTFORML %SHOW_下半身下着(MASTER,6)%.
+		ENDIF
+	ENDIF
+	IF FLAG:カウンター地の文制御
+		PRINTFORM %HE_SHE(TARGET,1)% 
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML gulps as %HE_SHE(TARGET)% stares at %PARSE("your",1)% lower body.
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML grins broadly as %HE_SHE(TARGET)% mockingly asks if %PARSE("you're")% not ashamed of being half-nude.
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM stares \@TARGET == 57 && !TALENT:恋慕?#entranced%" "%\@at %PARSE("your",1)% half-naked form and mutters how pretty it is
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM  while an Okina mask floats around %HIM_HER(TARGET)%
+			ENDIF
+			PRINTFORML .
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML averts %HIS_HER(TARGET)% gaze and folds the clothes neatly.
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML tries to look calm but mutters something nervously, unsure of what to do next.
+		ENDIF
+	ENDIF
+	LOCAL = 1
+ELSEIF TCVAR:TARGET:22 == 2
+	;remove everything under the first layer of cloth (like panties behind skirt)
+	;Custom code, prevents "no underwear"
+	IF TEQUIP:PLAYER:0 & 1 && STRLENS(SHOW_BOTTOM(MASTER, 1)) > 0 && SHOW_BOTTOM(MASTER, 1) != "no underwear" && STRLENS(SHOW_下半身下着(MASTER,6)) > 0 && SHOW_下半身下着(MASTER,6) != "no underwear"
+		PRINTFORM %CALLNAME:TARGET% reaches %HIS_HER(TARGET)% hand in under %PARSE("your")% %SHOW_BOTTOM(MASTER, 1)% and 
+		PRINTFORML strips off the %SHOW_下半身下着(MASTER,6)% %PARSE("you were",1)% wearing underneath.
+		IF FLAG:カウンター地の文制御
+			;気弱系
+			IF CFLAG:TARGET:性格傾向 == 1
+				PRINTFORML %HE_SHE(TARGET,1)% apologizes while staring at %PARSE("your")% underwear.
+			;強気系
+			ELSEIF CFLAG:TARGET:性格傾向 == 2
+				PRINTFORML %HE_SHE(TARGET,1)% unfolds the stolen underwear and makes a mocking remark on how brazen they are.
+			;素直系
+			ELSEIF CFLAG:TARGET:性格傾向 == 3
+				IF TARGET == 57 && !TALENT:恋慕
+					PRINTFORM A Hyotto mask floats around %HIM_HER(TARGET)% as %HE_SHE(TARGET)%
+				ELSE
+					PRINTFORM %HE_SHE(TARGET,1)% smiles as %HE_SHE(TARGET)%
+				ENDIF
+				PRINTFORML  comments on how cute %PARSE("your",1)% underwear is before pocketing them.
+			;真面目系
+			ELSEIF CFLAG:TARGET:性格傾向 == 4
+				PRINTFORML %HE_SHE(TARGET,1)% lets out a chuckle as %HE_SHE(TARGET)% examines %PARSE("your")% underwear.
+			;その他
+			ELSEIF CFLAG:TARGET:性格傾向 == 5
+				PRINTFORML %HE_SHE(TARGET,1)% shows off %HIS_HER(TARGET)% trophy while cracking a smile.
+			ENDIF
+		ENDIF
+
+	ELSEIF TEQUIP:PLAYER:0 & 8 && STRLENS(SHOW_BOTTOM(MASTER, 9)) > 0 && SHOW_BOTTOM(MASTER, 9) != "no underwear" && STRLENS(SHOW_下半身下着(MASTER,6)) > 0 && SHOW_下半身下着(MASTER,6) != "no underwear"
+		;Target removes Player's lower clothes
+		PRINTFORML %CALLNAME:TARGET% strips off %PARSE("your")% %SHOW_BOTTOM(MASTER,9)% and %SHOW_下半身下着(MASTER,6)%.
+		IF FLAG:カウンター地の文制御
+			PRINTFORM %HE_SHE(TARGET,1)% 
+			;気弱系
+			IF CFLAG:TARGET:性格傾向 == 1
+				PRINTFORML gulps as %HE_SHE(TARGET)% stares at %PARSE("your",1)% lower body.
+			;強気系
+			ELSEIF CFLAG:TARGET:性格傾向 == 2
+				PRINTFORML grins broadly as %HE_SHE(TARGET)% mockingly asks if %PARSE("you're")% not ashamed of being half-nude.
+			;素直系
+			ELSEIF CFLAG:TARGET:性格傾向 == 3
+				PRINTFORM stares \@TARGET == 57 && !TALENT:恋慕?#entranced%" "%\@at %PARSE("your",1)% half-naked form and mutters how \@TALENT:MASTER:性別 == 2?amazing#pretty\@ it is
+				IF TARGET == 57 && !TALENT:恋慕
+					PRINTFORM  while an Okina mask floats around %HIM_HER(TARGET)%
+				ENDIF
+				PRINTFORML .
+			;真面目系
+			ELSEIF CFLAG:TARGET:性格傾向 == 4
+				PRINTFORML averts %HIS_HER(TARGET)% gaze and folds the clothes neatly.
+			;その他
+			ELSEIF CFLAG:TARGET:性格傾向 == 5
+				PRINTFORML tries to look calm, but mutters something nervously, unsure of what to do next.
+			ENDIF
+		ENDIF
+	ENDIF
+	LOCAL = 1
+ELSEIF TCVAR:TARGET:22 == 3 && STRLENS(SHOW_BOTTOM(MASTER,9)) > 0 && SHOW_BOTTOM(MASTER,9) != "no underwear"
+	;remove upper layer of clothing
+	PRINTFORML %CALLNAME:TARGET% strips off %PARSE("your")% %SHOW_BOTTOM(MASTER,9)%.
+	IF FLAG:カウンター地の文制御
+		PRINTFORM 
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM %HE_SHE(TARGET,1)% apologizes while staring at %PARSE("your")% 
+			IF TEQUIP:MASTER:0 & 6
+				PRINTFORML half-naked form.
+			ELSE
+				PRINTFORML exposed lower half.
+			ENDIF
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM %HE_SHE(TARGET,1)% makes a mocking remark on how brazen %PARSE("your")% attire is while staring at %PARSE("your",1)% 
+			IF TEQUIP:MASTER:0 & 6
+				PRINTFORML half-naked form.
+			ELSE
+				PRINTFORML exposed lower half.
+			ENDIF
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM A Hyotto mask floats around %HIM_HER(TARGET)% 
+			ELSE
+				PRINTFORM %HE_SHE(TARGET,1)% smiles 
+			ENDIF
+			PRINTFORM as %HE_SHE(TARGET)% 
+			IF TEQUIP:MASTER:0 & 6
+				PRINTFORML %HE_SHE(TARGET,1)% stares at %PARSE("your")% half-naked form, commenting on how cute %PARSE("your",1)% underwear is.
+			ELSE
+				PRINTFORML %HE_SHE(TARGET,1)% stares at %PARSE("your")% naked form, commenting on how beautiful it is.
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM %HE_SHE(TARGET,1)% lets a chuckle slip out as %HE_SHE(TARGET)% stares at %PARSE("your")% 
+			IF TEQUIP:MASTER:0 & 6
+				PRINTFORML half-naked form.
+			ELSE
+				PRINTFORML exposed lower half.
+			ENDIF
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM %HE_SHE(TARGET,1)% cracks a smile as %HE_SHE(TARGET)% stares transfixed at %PARSE("your")% 
+			IF TEQUIP:MASTER:0 & 6
+				PRINTFORML half-naked form.
+			ELSE
+				PRINTFORML exposed lower half.
+			ENDIF
+		ENDIF
+	ENDIF
+	LOCAL = 1
+ENDIF
+IF LOCAL && (TCVAR:TARGET:23 == 1 || (TCVAR:TARGET:23 == 2 && (TEQUIP:TARGET:0 & 1 || TEQUIP:TARGET:0 & 8)))
+	PRINT Then 
+	;Custom code
+	LOCAL:1 = 1
+	LOCAL = 0
+ENDIF
+IF TCVAR:TARGET:23 == 1 && ((STRLENS(SHOW_BOTTOM(TARGET,9)) > 0 && SHOW_BOTTOM(TARGET,9) != "no underwear") || (STRLENS(PANTS_DESCRIPTION_TR(TARGET,1)) > 0 && PANTS_DESCRIPTION_TR(TARGET,1) != "no underwear"))
+	;target removes own lower clothing
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM %CALLNAME:TARGET% blushes profusely as %HE_SHE(TARGET)%
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM %CALLNAME:TARGET% grins as %HE_SHE(TARGET)%
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM An Okina mask floats around %CALLNAME:TARGET% as %HE_SHE(TARGET)%
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% laughs delightedly as %HE_SHE(TARGET)%
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM %CALLNAME:TARGET% is embarrassed %HE_SHE(TARGET)%'s watched as %HE_SHE(TARGET)%
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM %CALLNAME:TARGET% nonchalantly
+		ENDIF
+	ENDIF
+	PRINTFORM  removes %HIS_HER(TARGET)% 
+	IF ((TEQUIP:TARGET:0 & 9) > 0) && ((TEQUIP:TARGET:0 & 6) > 0)
+		IF (STRLENS(SHOW_BOTTOM(TARGET,9)) > 0 && SHOW_BOTTOM(TARGET,9) != "no underwear") && (STRLENS(PANTS_DESCRIPTION_TR(TARGET,1)) > 0 && PANTS_DESCRIPTION_TR(TARGET,1) != "no underwear")
+			PRINTFORML %SHOW_BOTTOM(TARGET,9)% and %PANTS_DESCRIPTION_TR(TARGET,1)%.
+		ELSEIF STRLENS(SHOW_BOTTOM(TARGET,9)) > 0 && SHOW_BOTTOM(TARGET,9) != "no underwear"
+			PRINTFORML %SHOW_BOTTOM(TARGET,9)%.
+		ELSE
+			PRINTFORML %PANTS_DESCRIPTION_TR(TARGET,1)%.
+		ENDIF
+	ELSEIF (TEQUIP:TARGET:0 & 9) > 0
+		PRINTFORML %SHOW_BOTTOM(TARGET,9)%.
+	ELSEIF (TEQUIP:TARGET:0 & 6) > 0
+		PRINTFORML %PANTS_DESCRIPTION_TR(TARGET,1)%.
+	ENDIF
+	LOCAL = 1
+;remove everything under the first layer of cloth (like panties behind skirt)
+ELSEIF TCVAR:TARGET:23 == 2
+	;removing panties behind the skirt
+	IF TEQUIP:TARGET:0 & 1 && STRLENS(SHOW_BOTTOM(TARGET, 1)) > 0 && SHOW_BOTTOM(TARGET, 1) != "no underwear" && STRLENS(SHOW_下半身下着(TARGET, 6)) > 0 && SHOW_下半身下着(TARGET, 6) != "no underwear"
+		PRINTFORM %CALLNAME:TARGET% lifts up %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET, 1)%
+		IF FLAG:カウンター地の文制御
+			;気弱系
+			IF CFLAG:TARGET:性格傾向 == 1
+				PRINTFORM  and bashfully
+			;強気系
+			ELSEIF CFLAG:TARGET:性格傾向 == 2
+				PRINTFORM  and grins broadly as %HE_SHE(TARGET)%
+			;素直系
+			ELSEIF CFLAG:TARGET:性格傾向 == 3
+				IF TARGET == 57 && !TALENT:恋慕
+					PRINTFORM  and has a Hyotto mask on as %HE_SHE(TARGET)%
+				ELSE
+					PRINTFORM  and smiles warmly as %HE_SHE(TARGET)%
+				ENDIF
+			;真面目系
+			ELSEIF CFLAG:TARGET:性格傾向 == 4
+				PRINTFORM , takes a deep breath, and
+			;その他
+			ELSEIF CFLAG:TARGET:性格傾向 == 5
+				PRINTFORM  and nonchalantly
+			ENDIF
+		ENDIF
+		PRINTFORML  pulls down %HIS_HER(TARGET)% %SHOW_下半身下着(TARGET, 6)%.
+	ELSEIF TEQUIP:TARGET:0 & 8 && STRLENS(SHOW_BOTTOM(TARGET,9)) > 0 && SHOW_BOTTOM(TARGET,9) != "no underwear" && STRLENS(SHOW_下半身下着(TARGET,6)) > 0 && SHOW_下半身下着(TARGET,6) != "no underwear"
+		;removing both if there's no skirt-like cloth
+		IF FLAG:カウンター地の文制御
+			;気弱系
+			IF CFLAG:TARGET:性格傾向 == 1
+				PRINTFORM %CALLNAME:TARGET% blushes profusely as %HE_SHE(TARGET)%
+			;強気系
+			ELSEIF CFLAG:TARGET:性格傾向 == 2
+				PRINTFORM %CALLNAME:TARGET% laughs at %PARSE("your")% wanting to see %HIS_HER(TARGET)% body as %HE_SHE(TARGET)%
+			;素直系
+			ELSEIF CFLAG:TARGET:性格傾向 == 3
+				IF TARGET == 57 && !TALENT:恋慕
+					PRINTFORM A Kodomo mask floats around %CALLNAME:TARGET% as %HE_SHE(TARGET)%
+				ELSE
+					PRINTFORM %CALLNAME:TARGET% seems happy as %HE_SHE(TARGET)%
+				ENDIF
+			;真面目系
+			ELSEIF CFLAG:TARGET:性格傾向 == 4
+				PRINTFORM %CALLNAME:TARGET% is embarrassed %HE_SHE(TARGET)%'s watched as %HE_SHE(TARGET)%
+			;その他
+			ELSEIF CFLAG:TARGET:性格傾向 == 5
+				PRINTFORM %CALLNAME:TARGET% nonchalantly
+			ENDIF
+		ENDIF
+		PRINTFORML  throws off %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET, 9)% and %SHOW_下半身下着(TARGET, 6)%.
+	ENDIF
+	LOCAL = 1
+ELSEIF TCVAR:TARGET:23 == 3 && STRLENS(SHOW_BOTTOM(TARGET, 1)) > 0 && SHOW_BOTTOM(TARGET, 1) != "no underwear"
+;removing skirt
+	PRINTFORM %CALLNAME:TARGET%
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM  bashfully
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM  grins broadly as %HE_SHE(TARGET)%
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM  has a Hyotto mask on as %HE_SHE(TARGET)%
+			ELSE
+				PRINTFORM  smiles warmly as %HE_SHE(TARGET)%
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM  takes a deep breath, and
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM  nonchalantly
+		ENDIF
+	ENDIF
+	PRINTFORML  throws off %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET, 1)%.
+	LOCAL = 1
+ENDIF
+IF LOCAL
+	;Custom code
+	SIF (TCVAR:TARGET:24 == 1 || TCVAR:TARGET:24 == 2)
+		LOCAL:3 = 1
+	PRINTFORM \@LOCAL:1 && LOCAL:3 == 0?Finally,#%LOCAL:1 && LOCAL:3 ? "After that," # "Then"%\@ 
+	LOCAL:2 = 1
+	LOCAL = 0
+ENDIF
+;Target removes Player's upper clothes
+IF TCVAR:TARGET:24 == 1
+	IF STRLENS(SHOW_TOP(MASTER,2)) > 0 || STRLENS(SHOW_上半身下着(MASTER,2)) > 0
+		PRINTFORM %CALLNAME:TARGET% strips %PARSE("you")% of %PARSE("your",1)% 
+		IF ((TEQUIP:MASTER:1 & 6) > 0) && ((TEQUIP:MASTER:1 & 1) > 0)
+			IF STRLENS(SHOW_TOP(MASTER,2)) > 0 && STRLENS(SHOW_上半身下着(MASTER,2)) > 0
+				PRINTFORML %SHOW_TOP(MASTER,2)% and %SHOW_上半身下着(MASTER,2)%.
+			ELSEIF STRLENS(SHOW_TOP(MASTER,2)) > 0
+				PRINTFORML %SHOW_TOP(MASTER,2)%.
+			ELSE
+				PRINTFORML %SHOW_上半身下着(MASTER,2)%.
+			ENDIF
+		ELSEIF ((TEQUIP:MASTER:1 & 6) > 0) && ((TEQUIP:MASTER:1 & 1) == 0)
+			PRINTFORML %SHOW_TOP(MASTER,2)%.
+		ELSEIF ((TEQUIP:MASTER:1 & 6) == 0) && ((TEQUIP:MASTER:1 & 1) == 0)
+			PRINTFORML %SHOW_上半身下着(MASTER,2)%.
+		ENDIF
+	ENDIF
+	IF FLAG:カウンター地の文制御
+		PRINTFORM %HE_SHE(TARGET,1)% 
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML murmurs how pretty it is before letting go as %HIS_HER(TARGET)% face turns red.
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML brags how %PARSE("you",1)% should be grateful for receiving this attention as %HE_SHE(TARGET)% stares at %PARSE("you",5)% intently.
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM says that %HE_SHE(TARGET)% enjoys gazing at %PARSE("you")% like this while staring at %PARSE("you",5)%
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORML , an Okina mask floating around %HIM_HER(TARGET)%.
+			ELSE
+				PRINTFORML  with a warm look in %HIS_HER(TARGET)% eyes.
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML lets %HIS_HER(TARGET)% hands move across %PARSE("your",1)% chest a bit before folding %PARSE("your",1)% clothes neatly.
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML sounds like %HE_SHE(TARGET)%'s pleased with %HIM_HER(TARGET)%self as %HE_SHE(TARGET)% examines %PARSE("you",5)% carefully from top to bottom.
+		ENDIF
+	ENDIF
+	LOCAL = 1
+;Target removes Player's upper clothes (apparently both the same description wise?)
+ELSEIF TCVAR:TARGET:24 == 2
+	IF STRLENS(SHOW_TOP(MASTER,2)) > 0 || STRLENS(SHOW_上半身下着(MASTER,2)) > 0
+		PRINTFORM %CALLNAME:TARGET% strips off %PARSE("your")% 
+		IF ((TEQUIP:MASTER:1 & 6) > 0) && ((TEQUIP:MASTER:1 & 1) > 0)
+			IF STRLENS(SHOW_TOP(MASTER,2)) > 0 && STRLENS(SHOW_上半身下着(MASTER,2)) > 0
+				PRINTFORML %SHOW_TOP(MASTER,2)% and %SHOW_上半身下着(MASTER,2)%.
+			ELSEIF STRLENS(SHOW_TOP(MASTER,2)) > 0
+				PRINTFORML %SHOW_TOP(MASTER,2)%.
+			ELSE
+				PRINTFORML %SHOW_上半身下着(MASTER,2)%.
+			ENDIF
+		ELSEIF ((TEQUIP:MASTER:1 & 6) > 0) && ((TEQUIP:MASTER:1 & 1) == 0)
+			PRINTFORML %SHOW_TOP(MASTER,2)%.
+		ELSEIF ((TEQUIP:MASTER:1 & 6) == 0) && ((TEQUIP:MASTER:1 & 1) > 0)
+			PRINTFORML %SHOW_上半身下着(MASTER,2)%.
+		ENDIF
+	ENDIF
+	IF FLAG:カウンター地の文制御
+		PRINTFORM %HE_SHE(TARGET,1)% 
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORML murmurs on how pretty it is before letting go as %HIS_HER(TARGET)% face turns red.
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORML brags on how %PARSE("you",1)% should be grateful for even having this attention as %HE_SHE(TARGET)% stares at %PARSE("you",5)% intently.
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			PRINTFORM says that %HE_SHE(TARGET)% enjoys gazing at %PARSE("you")% like this while staring at %PARSE("you",5)%
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORML , an Okina mask floating around %HIM_HER(TARGET)%.
+			ELSE
+				PRINTFORML  with a warm look in %HIS_HER(TARGET)% eyes.
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORML fondles %PARSE("your",1)% chest a bit and then folds %PARSE("your",1)% clothes neatly.
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORML sounds like %HE_SHE(TARGET)%'s pleased with %HIM_HER(TARGET)%self as %HE_SHE(TARGET)% examines %PARSE("you",5)% carefully from top to bottom.
+		ENDIF
+	ENDIF
+	LOCAL = 1
+ENDIF
+IF LOCAL
+	;Custom code
+	PRINTFORM \@LOCAL:1 || LOCAL:2 ?Finally,#Then,\@ 
+	LOCAL = 0
+ENDIF
+IF TCVAR:TARGET:25 == 1 && ((STRLENS(SHOW_TOP(TARGET,2)) > 0 && SHOW_TOP(TARGET,2) != "topless") || (STRLENS(SHOW_上半身下着(TARGET,2)) > 0 && SHOW_上半身下着(TARGET,2) != "topless"))
+;Target removes own upper clothes
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM %CALLNAME:TARGET% blushes heavily as %HE_SHE(TARGET)%
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM %CALLNAME:TARGET% laughs boldly as %HE_SHE(TARGET)%
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM A Kodomo mask floats around %CALLNAME:TARGET%
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% smiles joyfully
+			ENDIF
+			PRINTFORM , wanting %PARSE("you")% to see more as %HE_SHE(TARGET)%
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM %CALLNAME:TARGET% doesn't mind %PARSE("your")% looking as %HE_SHE(TARGET)%
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM %CALLNAME:TARGET% nonchalantly
+		ENDIF
+	ENDIF
+	PRINTFORM  removes %HIS_HER(TARGET)% 
+	IF ((TEQUIP:TARGET:1 & 6) > 0) && ((TEQUIP:TARGET:1 & 1) > 0)
+		;custom code at the end, make sure both parts aren't the same
+		IF STRLENS(SHOW_TOP(TARGET,2)) > 0 && SHOW_TOP(TARGET,2) != "topless" && STRLENS(SHOW_上半身下着(TARGET,2)) > 0 && SHOW_上半身下着(TARGET,2) != "topless" && SHOW_TOP(TARGET,2) != SHOW_上半身下着(TARGET,2)
+			PRINTFORML %SHOW_TOP(TARGET,2)% and %SHOW_上半身下着(TARGET,2)%.
+		ELSEIF STRLENS(SHOW_TOP(TARGET,2)) > 0 && SHOW_TOP(TARGET,2) != "topless"
+			PRINTFORML %SHOW_TOP(TARGET,2)%.
+		ELSE
+			PRINTFORML %SHOW_上半身下着(TARGET,2)%.
+		ENDIF
+	ELSEIF ((TEQUIP:TARGET:1 & 6) > 0 && SHOW_TOP(TARGET,2) != "topless") && ((TEQUIP:TARGET:1 & 1) == 0)
+		PRINTFORML %SHOW_TOP(TARGET,2)%.
+	ELSEIF ((TEQUIP:TARGET:1 & 6) == 0) && ((TEQUIP:TARGET:1 & 1) > 0)
+		PRINTFORML %SHOW_上半身下着(TARGET,2)%.
+	ENDIF
+	LOCAL = 1
+ELSEIF TCVAR:TARGET:25 == 2 && (STRLENS(SHOW_TOP(TARGET,2)) > 0 || STRLENS(SHOW_上半身下着(TARGET,2)) > 0)
+	;Target removes own upper clothes
+	IF FLAG:カウンター地の文制御
+		;気弱系
+		IF CFLAG:TARGET:性格傾向 == 1
+			PRINTFORM %CALLNAME:TARGET% blushes profusely
+		;強気系
+		ELSEIF CFLAG:TARGET:性格傾向 == 2
+			PRINTFORM %CALLNAME:TARGET% laughs at %PARSE("your")% wanting to see %HIS_HER(TARGET)% body
+		;素直系
+		ELSEIF CFLAG:TARGET:性格傾向 == 3
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM A Kodomo mask floats around %CALLNAME:TARGET%
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% seems happy
+			ENDIF
+		;真面目系
+		ELSEIF CFLAG:TARGET:性格傾向 == 4
+			PRINTFORM %CALLNAME:TARGET% doesn't mind %PARSE("you")%
+		;その他
+		ELSEIF CFLAG:TARGET:性格傾向 == 5
+			PRINTFORM %CALLNAME:TARGET% looks nonchalant
+		ENDIF
+	ENDIF
+	PRINTFORM  as %HE_SHE(TARGET)% removes %HIS_HER(TARGET)% 
+	IF ((TEQUIP:MASTER:1 & 6) > 0) && ((TEQUIP:MASTER:1 & 1) > 0)
+		IF STRLENS(SHOW_TOP(TARGET,2)) > 0 && STRLENS(SHOW_上半身下着(TARGET,2)) > 0
+			PRINTFORML %SHOW_TOP(TARGET,2)% and %SHOW_上半身下着(TARGET,2)%.
+		ELSEIF STRLENS(SHOW_TOP(TARGET,2)) > 0
+			PRINTFORML %SHOW_TOP(TARGET,2)%.
+		ELSE
+			PRINTFORML %SHOW_上半身下着(TARGET,2)%.
+		ENDIF
+	ELSEIF ((TEQUIP:MASTER:1 & 6) > 0) && ((TEQUIP:MASTER:1 & 1) == 0)
+		PRINTFORML %SHOW_TOP(TARGET,2)%.
+	ELSEIF ((TEQUIP:MASTER:1 & 6) == 0) && ((TEQUIP:MASTER:1 & 1) > 0)
+		PRINTFORML %SHOW_上半身下着(TARGET,2)%.
+	ENDIF
+	LOCAL = 1
+ENDIF
+
+;ARG:1 makes it return the last returned thing, as GET_HININ doesn't work
+@SET_HININ_TR(ARG, ARG:1)
+;Check for both in case this was printed after one of those "Finally, "-things.
+IF ARG:1 == 1 && (LOCAL:1 == LINECOUNT + 1 || LOCAL:1 == LINECOUNT)
+	RETURN LOCAL
+ENDIF
+IF 妊娠可否(ARG) && CFLAG:ARG:生解禁 < 2 && !TALENT:ARG:無知 && !TCVAR:ARG:泥酔
+	LOCAL:1 = LINECOUNT
+	IF CHK_HININ_LOVE(ARG) > CHK_HININ_REASON(ARG,"COUNTER") * 150 / 100
+		IF TCVAR:ARG:発情
+			LOCAL = 1
+			PRINTFORM Having lost %HIM_HER(TARGET)%self to %HIS_HER(TARGET)% female instincts, %CALLNAME:TARGET% wants %PARSE("your")% children
+		ELSE
+			LOCAL = 2
+			PRINTFORM %CALLNAME:TARGET% asks %PARSE("you")% if %PARSE("you want",1)% to make a baby
+			CFLAG:ARG:生解禁 = 2
+		ENDIF
+	ELSEIF TALENT:ARG:調合知識
+		LOCAL = 3
+		;TCVAR:ARG:避妊 = 2
+		TCVAR:ARG:ピル = 1
+		PRINTFORM %CALLNAME:TARGET% takes a pill
+	ELSEIF CHK_HININ_LOVE(ARG) > CHK_HININ_REASON(ARG,"COUNTER") && CFLAG:ARG:生理周期 != 7
+		LOCAL = 4
+		PRINTFORM %CALLNAME:TARGET% asks if %PARSE("you want")% to do it raw
+		CFLAG:ARG:生解禁 = 1
+	ELSE
+		LOCAL = 5
+		;TCVAR:ARG:避妊 = 1
+		TEQUIP:PLAYER:コンドーム = 1
+		PRINTFORM %CALLNAME:TARGET% puts a condom on %PARSE("you")%
+	ENDIF
+ENDIF
+;LOCAL = 0
+
+;Function for checking what has already been printed for reaction text
+@GET_HININ(ARG)
+#FUNCTION
+IF TCVAR:避妊 && 妊娠可否(ARG) && CFLAG:ARG:生解禁 < 2 && !TALENT:ARG:無知 && !TCVAR:ARG:泥酔
+	IF CHK_HININ_LOVE(ARG) > CHK_HININ_REASON(ARG,"COUNTER") * 6 / 5
+		IF TCVAR:ARG:発情
+			;Having lost herself to her female instincts, %CALLNAME:TARGET% wants your children
+			RETURNF 1
+		ELSE
+			;%CALLNAME:TARGET% asks you if you want to make a baby
+			RETURNF 2
+		ENDIF
+	ELSEIF TALENT:ARG:調合知識
+		;%CALLNAME:TARGET% takes a pill
+		RETURNF 3
+	ELSEIF CHK_HININ_LOVE(ARG) > CHK_HININ_REASON(ARG,"COUNTER") && CFLAG:ARG:生理周期 != 7
+		;%CALLNAME:TARGET% asks if you can do it raw
+		RETURNF 4
+	ELSE
+		;%CALLNAME:TARGET% puts a condom on you
+		RETURNF 5
+	ENDIF
+ENDIF
+;Nothing printed
+RETURNF 0

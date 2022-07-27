@@ -1,0 +1,1482 @@
+﻿;==================================================
+;弾幕勝負（固有コマンド）
+;==================================================
+;
+;一応テンプレっぽく
+;CFLAG:1800と1801を使います
+;
+
+@M_KOJO_MESSAGE_COM_K68_DANMAKU(ARGS, 相手残機)
+#DIM 相手残機
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;戦闘前
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘前"
+		;勝利済みフラグ（現状口上の表示に使うためだけのフラグなので、口上で自由に使用できる場所を使用）
+		;when yuuka had lost previously
+		IF CFLAG:68:1800
+			PRINTFORMW 「Hmm, I can't afford being a loser on this one... Let's begin.」
+		;if you didn't win previously
+		;勝負済みフラグ（現状口上の表示に使うためだけのフラグなので、口上で自由に使用できる場所を使用）
+		ELSEIF CFLAG:68:1801
+			PRINTFORML 「Have you come to lose to me again?」
+			PRINTFORML 「Even though it's clear that no matter how many times we fight, a simpleton such as you will never defeat me.」
+			PRINTFORMW 「But if you want to be bullied so much... Very well, I shall make you a sunflower.」
+		;first time or when neither losing/winning
+		ELSE
+			PRINTFORML 「... Danmaku? My, you've got some confidence if you dare to challenge me.」
+			PRINTFORMW 「I don't mind indulging you. On one condition however...」
+			PRINTFORMW 「I shall have you bet the most valuable thing you're in possession right now.」
+			PRINTFORML 「Why would I want that?」
+			PRINTFORMW 「Well, having this very thing crushed right in front of you would be the most enjoyable, isn't it obvious?」
+		ENDIF
+		PRINTFORML 「So, what shall be your bet?」
+		$INPUT_LOOP
+		RESETCOLOR
+		;modded conditions so that you can only bet it if you have it
+		CALL ASK_M("Never mind", 1, "Money (\\5000)", MONEY > 0, "Charisma (25CM)", MONEY:2 > 0, "A child", 1, "My virginity", TALENT:MASTER:非童貞 == 0 && TALENT:MASTER:性別 == 2)
+		LOCAL:2 = RESULT
+		SIF FLAG:口上色
+			TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+		SELECTCASE LOCAL:2
+			CASE 0
+				PRINTFORML 「I wonder where did all your courage that you just had a moment ago go?」
+				RESETCOLOR
+				RETURN -1
+			CASE 1
+				PRINTFORML 「Sure, that's adequate enough.」
+				PRINTFORMW 「Well now, shall I be your opponent?」
+				TCVAR:68:398 = 1
+				RESETCOLOR
+				RETURN 1
+			CASE 2
+				PRINTFORML 「C-Charisma? What even is that...? Well, as long as it's valuable to you, it should do just fine.」
+				PRINTFORMW 「Well now, shall I be your opponent?」
+				TCVAR:68:398 = 2
+				RESETCOLOR
+				RETURN 1
+			CASE 3
+				PRINTFORML 「No, that would be a little...」
+				PRINTL
+				GOTO INPUT_LOOP
+			CASE 4
+				;1回負けてる
+				IF CFLAG:68:1804 == 1
+					PRINTFORML 「So you've come again just to embarrass yourself even more before me.」
+					PRINTFORMW 「Well, I already knew that you were a die-hard pervert though.」
+					PRINTFORMW 「You know what must be done, hurry up and chug this down.」
+					PRINTFORMDL You drink the special Aphrodisiac mix Yuuka gives you...
+					PRINTFORMDW Swallowing just a little bit is enough to give you an unstoppable rush of excitement!
+					PRINTFORML 「Obviously there's no way I would lose to you in such state.」
+					PRINTFORMW 「I'll toy with you. This shall be just another easy win.」
+					HANDICAP_FIXED = 5 * ABL:MASTER:戦闘能力
+					HANDICAP_RAND = 6 * ABL:MASTER:戦闘能力
+					TCVAR:68:398 = 3
+					RESETCOLOR
+					RETURN 1
+				ELSE
+					;Custom code, modded in a response when coming back after refusing once
+					IF CFLAG:68:1844
+						PRINTFORML 「I take it you've changed your mind, haven't you?」
+						PRINTFORMDW Yuuka comes closer, %HIS_HER(TARGET)% irresistible fragrance floating about as %HE_SHE(TARGET)% reaches with %HIS_HER(TARGET)% hand for your crotch.
+						PRINTFORML 「Haah, I can almost see you humping my palm like an animal... You want it, right? Then you know what to do.」
+						PRINTFORMDW %HE_SHE(TARGET,1)% grabs your arm and places a vial in your hand.
+						PRINTFORML 「Go ahead. This is the requirement. You have to drink it.」
+						PRINTFORMW 「Or what, do you think I would ever sleep with you willingly? Ahahaha...!」
+						PRINTFORMDW Yuuka says so as she makes a cheeky and suggestive penetration gesture with %HIS_HER(TARGET)% hands.
+						PRINTFORMDL So what shall it be?
+						RESETCOLOR
+						CALL ASK_M(@"Show %HIM_HER(TARGET)%", 1, "Might be a poison",1)
+					ELSE
+						PRINTFORML 「...Huh?」
+						PRINTFORMDL Yuuka glares at you with a harsh, cold stare as if you're nothing more than walking garbage...
+						SIF CFLAG:68:好感度 < 500
+							GOTO INPUT_LOOP
+						PRINTFORMW 「What kind of foolish nonsense are you blabbing about... Won't that be just a reward to you?」
+						PRINTFORMW 「You're probably even thinking about losing on purpose, aren't you? That wouldn't make it a proper match.」
+						SIF TALENT:68:性別 == 2
+							PRINTFORMW 「Besides, I'm a man. Are you seriously willing to have your first with a man?」
+						PRINTFORML 「So you would go for it then? No matter what?」
+						PRINTFORMW 「Don't you even feel a little bit of shame as a man? Or are you just incapable of that?」
+						PRINTFORMW 「Let me see... Alright, here you go, take it.」
+						PRINTFORMDL Yuuka produces a small vial filled with some suspicious-looking liquid and passes it to you...
+						PRINTFORMW 「Go ahead and drink it, and if you win... I shall be having your virginity.」
+						PRINTFORMDL It's impossible to tell what will happen if you drink this thing... So what shall it be?
+						RESETCOLOR
+						CALL ASK_M("Drink", 1, "Don't drink",1)
+					ENDIF
+					LOCAL:3 = RESULT
+					SIF FLAG:口上色
+						TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+					SELECTCASE LOCAL:3
+						CASE 0
+							PRINTFORMDL With a timid motion, you begin consuming the contents of the vial.
+							PRINTFORMDL Yuuka watches you very carefully with a grin on %HIS_HER(TARGET)% face...
+							PRINTFORMW 「Oh by the way, you'll die if you drink all of it, just so you know.」
+							PRINTFORMDW There's no way to tell what is a proper dose... What kind of medicine even is this?
+							PRINTFORML 「That was supposed to be a potent drug where Aphrodisiac and a Vigora are mixed in one... A failed product.」
+							PRINTFORMDW ... Sure enough, a short moment later and your crotch is on fire with a sudden rush of dizziness...!
+							PRINTFORML 「Apparently it's a failure because the effect seemed to be way too strong.」
+							PRINTFORMW 「I thought it to be interesting, so I stole it from Marisa.」
+							PRINTFORMDL An uncontrollable amount of blood has gathered in your lower half.
+							PRINTFORMDW Your emotions are about to erupt any moment now just by looking at Yuuka who is smiling mischievously...!
+							PRINTFORML 「Fufu, it does seem to be pretty effective, doesn't it?」
+							PRINTFORMW 「I do wonder whether you would be able to fight at all in this state.」
+							PRINTFORMW 「Well now, shall I be your opponent?」
+							SIF BASE:MASTER:精力 < MAXBASE:MASTER:精力
+								BASE:MASTER:精力 = MAXBASE:MASTER:精力
+							SIF BASE:MASTER:勃起 < 1500
+								BASE:MASTER:勃起 = 1500
+							HANDICAP_FIXED = 5 * ABL:MASTER:戦闘能力
+							HANDICAP_RAND = 6 * ABL:MASTER:戦闘能力
+							TCVAR:68:398 = 3
+							RESETCOLOR
+							RETURN 1
+						CASE 1
+							;modded in a response when coming back after refusing once
+							IF CFLAG:68:1844
+								PRINTFORML 「Haah... You're testing my patience. Come back when you've grown some balls.」
+							ELSE
+								PRINTFORMDL Things are getting pretty serious for a simple joke. Let's stop this.
+								PRINTFORML 「A joke? Haah... It's not funny.」
+							ENDIF
+							RESETCOLOR
+							
+							CFLAG:68:1844 ++
+							RETURN -1
+					ENDSELECT
+				ENDIF
+		ENDSELECT
+		;選択肢を消した時用
+		RETURN -1
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;ハンデを設定してる場合のみ表示
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "ハンデ"
+		SETCOLOR C_RED
+		PRINTDATAL
+			DATAFORM Your throbbing erection is making it rather difficult to maneuver...
+			DATAFORM You find it hard to concentrate with Yuuka showing off her cleavage to you in a provocative manner...
+			DATAFORM Just the chafing of your underwear alone is making you feel like cumming...
+		ENDDATA
+		RESETCOLOR
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;被弾、残り残機2
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" && 相手残機 == 2
+		IF TCVAR:68:398 == 3 ;modded, make Yuuka taunt you even more
+			PRINTFORML 「Hmmm, is the desire to lose your virginity the thing making you work harder than usual?」
+			PRINTFORML 「We'll see. The real match is just starting.」
+		;勝利済みフラグ
+		ELSEIF CFLAG:68:1800
+			PRINTFORML 「I-It was just a warm up...」
+			PRINTFORML 「I won't go down as easy next time.」
+		ELSE
+			PRINTFORML 「Ara～ You're holding up surprisingly well.」
+			PRINTFORML 「Shall I get a bit more serious then?」
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;被弾、残り残機1
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" && 相手残機 == 1
+		IF TCVAR:68:398 == 3 ;modded, make Yuuka taunt you even more
+			PRINTFORML 「Ugh... I can't believe you're still so strong.」
+			PRINTFORML 「You're getting close. Just a little bit, and you might become less of a loser. But don't think I would allow it so easily.」
+		;勝利済みフラグ
+		ELSEIF CFLAG:68:1800
+			PRINTFORML 「Ugh, there's no way I would lose again...!」
+		ELSE
+			PRINTFORML 「Uugh, you're strong...」
+			PRINTFORML 「... This is not child's play anymore.」
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;被弾、残り残機0
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" && 相手残機 == 0
+		;勝利済みフラグ
+		IF CFLAG:68:1800
+			PRINTFORML 「...Haa, I've lost again.」
+		ELSE
+			PRINTFORML 「N-No way...! To think I...」
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【残忍酷薄】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "残忍酷薄"
+		IF 相手残機 == 3
+			PRINTFORML 「Ara, You don't think you can win against me, do you? Struggle some more for me.」
+		ELSEIF 相手残機 == 2
+			PRINTFORML 「Fu, Fun... I wonder, how will you make do with one less?」
+		ELSEIF 相手残機 == 1
+			PRINTFORML 「I- I will not lose...!」
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;戦闘後
+	;幽香の残機3
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" && 相手残機 == 3
+		;童貞賭け
+		IF TCVAR:68:398 == 3
+			PRINTFORML 「That's right, you lose. Even without a handicap, you're way too weak.」
+			PRINTFORMW 「Or what, want to make an excuse that the medicine made your lower body dominate over your brain? What a pathetic man you are...」
+		ELSE
+			;勝利済みフラグ
+			IF CFLAG:68:1800
+				PRINTFORMW 「Are you feeling unwell? No matter how you put it, that was way too weak.」
+			ELSE
+				PRINTFORMW 「Haa, this was such a joke... What a waste of time.」
+			ENDIF
+			IF TALENT:68:恋人 || TALENT:68:恋慕
+				PRINTFORMW 「What about your bet? Ah... I was just saying things to make you get serious, that's all.」
+				PRINTFORMW 「Do you really think I would steal from you? ... Any objections?」
+			ELSE
+				PRINTFORMW 「Now then...as promised, I will have you receive the punishment.」
+			ENDIF
+		ENDIF
+		CALL K68_DANMAKU_PENALTY()
+	ENDIF
+	;-------------------------------------------------
+	;戦闘後
+	;幽香の残機2
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" && 相手残機 == 2
+		;童貞賭け
+		IF TCVAR:68:398 == 3
+			PRINTFORML 「Too bad, you lose.」
+			PRINTFORMW 「How does it feel, losing to a woman you wanted to ravish so much? Haa, so desperate, what a disgraceful \@TALENT:MASTER:性別 == 2?guy#girl\@...」
+		ELSE
+			;勝利済みフラグ
+			IF CFLAG:68:1800
+				PRINTFORMW 「Well, this is what happens when I get serious.」
+			ELSE
+				PRINTFORMW 「Ugh, what a disappointment... It was just a lucky hit then.」
+			ENDIF
+			IF TALENT:68:恋人 || TALENT:68:恋慕
+				PRINTFORMW 「What about your bet? Ah... I was just saying things to make you get serious, that's all.」
+				PRINTFORMW 「Do you really think I would steal from you? ... Any objections?」
+			ELSE
+				PRINTFORMW 「Now then...as promised, I will have you receive the punishment.」
+			ENDIF
+		ENDIF
+		CALL K68_DANMAKU_PENALTY()
+	ENDIF
+	;-------------------------------------------------
+	;戦闘後
+	;幽香の残機1
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" && 相手残機 == 1
+		;童貞賭け
+		IF TCVAR:68:398 == 3
+			PRINTFORML 「Phew... Too bad, but %SPLIT_G("you won't be getting your dick wet this time:I won't be relieving you of your virginity this time:your virginity graduation will have to wait")%.」
+			PRINTFORMW 「You don't really have to endure it any longer, just go ahead and pleasure yourself with your hands and keep shooting that virgin semen in vain.」
+			SIF CFLAG:68:1804 == 1 ;modded in, extra taunt
+				PRINTFORMW 「You might as well even fantasize about me doing it with you in a self-congratulatory masturbatory imagination!」
+		ELSE
+			;勝利済みフラグ
+			IF CFLAG:68:1800
+				PRINTFORMW 「Phew... I win this time.」
+			ELSE
+				PRINTFORMW 「Phew... Making me actually get serious, you're quite something. I won't be surprised if that was your best.」
+			ENDIF
+			PRINTFORML 「As for the bet... Never mind, I don't really need it.」
+			IF TALENT:68:恋人 || TALENT:68:恋慕
+				PRINTFORMW 「Do come again... If not today, I will always be glad to be your partner...」
+			ELSE
+				PRINTFORMW 「I'm looking forward for another chance to beat the crap out of you.」
+			ENDIF
+		ENDIF
+		CALL K68_DANMAKU_PENALTY()
+	ENDIF
+	;-------------------------------------------------
+	;戦闘後
+	;幽香の残機0
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" && 相手残機 == 0
+		;童貞賭け
+		IF TCVAR:68:398 == 3
+			PRINTFORML 「I can't believe it... I lost, even with a handicap...!」
+			PRINTFORMW 「Alright, I'll do it! I just have to pop your cherry, that's all, right?!」
+		ELSE
+			PRINTFORML 「... I hate to lose, but you fought well. Feel free to brag about beating me.」
+			;勝利済みフラグ
+			IF CFLAG:68:1800
+				PRINTFORML 「...Huh? You want a reward...again? What a shameless \@TALENT:MASTER:性別 == 2?guy#girl\@...」
+			ELSE
+				PRINTFORMW 「Huh? You want a reward...? Was defeating me not enough for you?」
+				PRINTFORML 「Humph... Very well, anything in particular you wish for?」
+			ENDIF
+			;勝負済みフラグをオン
+			CFLAG:68:1801 = 1
+			;勝利済みフラグをオン
+			CFLAG:68:1800 = 1
+		ENDIF
+		CALL K68_DANMAKU_REWARD()
+	ENDIF
+	RESETCOLOR
+	ENDIF
+	RETURN 1
+
+	@K68_DANMAKU_PENALTY(ARG)
+		;童貞賭け
+		IF TCVAR:68:398 == 3
+			PRINTFORMDL Trying to catch your ragged breath, you look at the sky before collapsing on the ground.
+			PRINTFORMDW Your crotch is on fire, completely incomparable to what it was in the beginning. It feels like your semen will burst out any second...!
+			PRINTFORMDL Not being able to take it any longer, you remove your underwear as fast as possible.
+			PRINTFORMDL Your %TINKO(MASTER)% immediately bursts out as if powered by a coil, you can't get possibly any harder than this...
+			IF CFLAG:68:1804 == 1
+				PRINTFORML 「This never ceases amazing me...」
+				PRINTFORML 「To think you would make anyone believe that you can still participate in Danmaku match in such sorry state... It's making me laugh.」
+			ELSE
+				PRINTFORML 「Whoa, it's becoming quite something... This thing was indeed a very potent aphrodisiac, huh.」
+			ENDIF
+			PRINTFORMDL Going completely out of control, it grows harder than you've ever seen it before.
+			PRINTFORMDW It's almost as if someone is tugging on it with all their might...
+			PRINTFORMW 「Agonizing, isn't it? Go ahead and masturbate away, let it all out.」
+			PRINTFORMDW Yuuka gets very close as %HE_SHE(TARGET)% looks down on you with a spiteful grin.
+			PRINTFORMDW Just a faint smell of %HIS_HER(TARGET)% fresh sweat is enough to incite an extremely strong desire to jerk off as hard as possible...!
+			RESETCOLOR
+			CALL ASK_M("Submit to the desire and do it", 1, "Resist",1)
+			LOCAL:2 = RESULT
+			SIF FLAG:口上色
+				TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+			SELECTCASE LOCAL:2
+				CASE 0
+					PRINTFORMDL Losing to the desire and feeling Yuuka's gaze on yourself, you begin jerking off like crazy in a daze.
+					PRINTFORMDW Already on the verge of ejaculating, it takes mere seconds for you to start shooting your %SAMEN_DESCRIPTION(MASTER)% all over the place.
+					PRINTFORMW 「Whoa, What a mess... Can you stop staring at me?」
+					PRINTFORMDL Load after load of semen continues spurting out with an intense force like from a squirt gun. 
+					PRINTFORMDW Every single drop of it scatters and falls on the ground in vain, never to fulfill its purpose.
+					PRINTFORMDW It feels like you're about to lose consciousness from the spikes of pleasure and Yuuka's scornful glare.
+					PRINTFORML 「Haah, jerking yourself desperately like a monkey in heat and then soiling everything in the vicinity...」
+					PRINTFORML 「I can't imagine anything more stupid than this.」
+					PRINTFORMDW Even after this long, long ejaculation ends, it is barely enough to appease the lust of your raging penis.
+					PRINTFORMDW Afterwards, the deplorable ejaculation session continues, accompanied by Yuuka's resentful taunts...
+				CASE 1
+					PRINTFORMW 「Are you trying to endure it? Fufu, seems like a waste since you won't be getting laid.」
+					PRINTFORMDW With these words, Yuuka kneels in front of you and opens %HIS_HER(TARGET)% outer garment a bit.
+					PRINTFORMDW The sight of %HIS_HER(TARGET)% perfectly shaped cleavage alone makes your %TINKO(MASTER)% start twitching on its own.
+					PRINTFORMW 「Aha, I get it... You're lusting after my body.」
+					PRINTFORMW 「Hey, why won't you hurry up and let it out? Nothing good will happen even if you keep holding it.」
+					PRINTFORMDW Yuuka sticks out %HIS_HER(TARGET)% tongue and leans closer to your tensely erect penis, tempting it even more.
+					PRINTFORMDW That sleek and alluring tongue, glistening with saliva is just begging for it...
+					PRINTFORMDW It would be very possible to ejaculate right away if you would just rub your penis against it...!
+					RESETCOLOR
+					CALL ASK_M("Submit to the desire and do it", 1, "Resist",1)
+					LOCAL:3 = RESULT
+					SIF FLAG:口上色
+						TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+					SELECTCASE LOCAL:3
+						CASE 0
+							PRINTFORMDL The temptation is completely irresistible after being teased over and over by Yuuka.
+							PRINTFORMDL Pressing the tip of your %TINKO(MASTER)% against %HIS_HER(TARGET)% tongue feels incredible, being soft, wet, and lightly textured.
+							PRINTFORMDW Almost immediately afterwards you feel your %SAMEN_DESCRIPTION(MASTER)% begin to rush forth.
+							PRINTFORM 「Mph
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM 　Haa, Aahhh
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDL You fire spurt after spurt of semen into the Youkai's mouth.
+							PRINTFORMDW They swim looking for eggs fruitlessly, mistakenly assuming they have ended up in vagina, but instead landing all over Yuuka's tongue.
+							PRINTFORMDL The sheer volume of the ejaculation causes it to spill out %HIS_HER(TARGET)% immediately.
+							PRINTFORMDW Yuuka's face quickly turns into a complete sticky white mess.
+							PRINTFORMW 「Haah, this stuff you're letting out is too thick even for a virgin... And yet it will end up being completely wasted.」
+							PRINTFORMW 「Nee～ How do you think you're going to make up for it after staining my face so much?」
+							PRINTFORMDW Your still hard penis twitches with a sudden jerk, as if reacting to Yuuka's voice.
+							PRINTFORMW 「Aha, I see... Rather than obeying you, it certainly seems to obey me instead.」
+							PRINTFORMDW Afterwards, you end up ejaculating many times more in an attempt to sate your desire, accompanied by Yuuka's resentful taunts...
+						CASE 1
+							PRINTFORML 「Ahaha, aren't you showing off... How amusing.」
+							PRINTFORMDL Motivated by your stubborn attitude, Yuuka takes off %HIS_HER(TARGET)% jacket and exposes %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)%.
+							PRINTFORMDW Despite being hidden behind %HIS_HER(TARGET)% bra, your eyes wander all over them.
+							PRINTFORMW 「You're testing my resolve, aren't you? If so, as a \@ TALENT:TARGET:性別 == 2 ? fellow man # woman\@, I will absolutely crush you.」
+							PRINTFORMDW With these words, Yuuka gets rid of %HIS_HER(TARGET)% bra and puts %HIS_HER(TARGET)% sensational tits right on top of your penis...!
+							PRINTFORML 「Come on now, try inserting it right here... Who knows, it might as well be the only time you will ever be able to insert it into something...」
+							PRINTFORM 「I'll give you a ve～ery nice squeeze and milk you dry real good...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDL Seems like your passion has started to affect Yuuka too, clearly getting %HIM_HER(TARGET)% quite aroused.
+							PRINTFORMDL You get a slight preview of the pleasure as just the tip of the glans is enveloped by the soft texture...
+							PRINTFORMDW It will surely feel like heaven if you would just stick it in there...!
+							RESETCOLOR
+							CALL ASK_M("Submit to the desire and do it", 1, "Resist",1)
+							LOCAL:4 = RESULT
+							SIF FLAG:口上色
+								TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+							SELECTCASE LOCAL:4
+								CASE 0
+									PRINTFORMDL There's no way anyone can put up with this after being exposed to a such sight.
+									PRINTFORMDW You plunge forward with all your might, getting assailed by a tremendous pleasure in an instant, almost enough to you cum right away.
+									PRINTFORM 「Aha
+									CALL HEARTCB_K68(0xD02830)
+									PRINTFORM  Yes, that's right. And now I only have to rub you here for just a little bit to ensure an easy win...
+									CALL HEARTCB_K68(0xD02830)
+									PRINTFORMW 」
+									PRINTFORMDW Yuuka squeezes %HIS_HER(TARGET)% boobs around your penis, and the pressure alone quickly finishes you off.
+									PRINTFORM 「Nhh
+									CALL HEARTCB_K68(0xD02830)
+									PRINTFORM  Here it comes... But isn't it a little...premature
+									CALL HEARTCB_K68(0xD02830)
+									PRINTFORMW ?」
+									PRINTFORMDL A seemingly endless stream of white sticky liquid erupts from the glans poking out from the cleavage.
+									PRINTFORMDL It shoots up and stains Yuuka's chest and face.
+									PRINTFORMDW Entrapped in the pleasure, you begin grinding your hips back and forth subconsciously...
+									PRINTFORMW 「Ahaha, this really is pitiful... Aren't you ashamed of yourself, madly trying to hopelessly copulate with my chest like this?」
+									PRINTFORMDW Even after your long ejaculation ends, your raging penis shows absolutely no signs of going limp.
+									PRINTFORMW 「Still not satisfied? Hm, I have an idea... Let's see how much you can ejaculate in a row, shall we?」
+									PRINTFORMDW Afterwards, you continue getting milked dry by Yuuka's breasts over and over again, accompanied by your own shameful moans...
+								CASE 1
+									PRINTFORM 「Haah, still holding it...? You're really going to test my own patience at this rate...
+									CALL HEARTCB_K68(0xD02830)
+									PRINTFORMW 」
+									PRINTFORMDL Having said so, Yuuka then takes %HIS_HER(TARGET)% panties off and opens %HIS_HER(TARGET)% legs before you.
+									PRINTFORMDW %HE_SHE(TARGET,1)% spreads %HIS_HER(TARGET)% \@ TALENT:TARGET:性別 == 2 ? anus # vagina\@ wide, shamelessly showing off its pretty colored insides to you...!
+									PRINTFORMW 「Fufu, I'm so wet right now... You're dying to have a chance to stick it in here, aren't you?」
+									PRINTFORMW 「Hey, lick it...」
+									PRINTFORMDW Still lying on the ground, you immediately cling to Yuuka's alluring opening and start sucking it in a daze.
+									PRINTFORMW 「Nhh, That's not too bad... Haah, I bet yours is making you go crazy just as much, huh...」
+									PRINTFORMDL Yuuka licks %HIS_HER(TARGET)% lips as %HE_SHE(TARGET)% throws a glance at your pulsating penis... 
+									PRINTFORMDW Noticing that, you unconsciously swallow saliva.
+									PRINTFORMW 「Aa-ah, I can't take it any longer... Just this once, I'm going to pop your cherry with my body...」
+									PRINTFORMW 「Or so you thought I would say, right?」
+									PRINTFORMDW Yuuka takes %HIS_HER(TARGET)% boots off and then...treads mercilessly on your penis with %HIS_HER(TARGET)% feet!
+									PRINTFORML 「I can almost imagine you thinking that you would get laid if you just keep on doing this, aren't you? Well aren't you?」
+									PRINTFORMDW Yuuka quickly prevents any attempts to talk back as %HE_SHE(TARGET)% presses down %HIS_HER(TARGET)% entire bodyweight on your mouth.
+									PRINTFORMW 「Don't get too cocky, you virgin loser! You lost, and you lost to me! Know your place!」
+									PRINTFORMDL Yuuka's right foot steps on your penis, while %HIS_HER(TARGET)% right foot rubs your glans.
+									PRINTFORMDW You end up approaching your limit at a rapid pace.
+									PRINTFORM 「Ahaha, here it comes
+									CALL HEARTCB_K68(0xD02830)
+									PRINTFORMW  How does it feel, letting it out just from getting rubbed a little by my feet?」
+									PRINTFORMDL Having Yuuka's entire weight on you, you can do nothing but groan.
+									PRINTFORMW 「I can't hear you, you perverted masochist pig... Wow, it's still coming.」
+									PRINTFORMDL The pleasure proves to be way too strong, causing your penis to fire %SAMEN_DESCRIPTION(MASTER)% like a fountain.
+									PRINTFORMDW Yuuka kicks it mercilessly, which only triggers another ejaculation almost unintentionally...
+									PRINTFORMW 「Oh no, look what it's doing... Scattering it all around, when it was supposed to go in here, right?」
+									PRINTFORMDL Yuuka then presses against you with %HIS_HER(TARGET)% \@ TALENT:TARGET:性別 == 2 ? anus # vagina\@ again. 
+									PRINTFORMDW You can't seem to push %HIM_HER(TARGET)% away no matter how hard you try either...
+									PRINTFORMW 「This is what happens if you ever try to be cheeky with me... You understand?」
+									PRINTFORMDW Even after your ejaculation finishes, your dick continues to stand tall. Seeing that, Yuuka lets out a fearless laughter.
+									PRINTFORMW 「Hmmm... Looks like you still have to reflect on this some more...」
+									PRINTFORMDW After getting in the mood, Yuuka continues kicking you over and over again, causing you to ejaculate numerous times...
+							ENDSELECT
+					ENDSELECT
+			ENDSELECT
+			EXP:MASTER:絶頂経験 += 6
+			EXP:MASTER:射精経験 += 6
+			BASE:MASTER:精力 /= 2
+		;恋人or恋慕だとペナルティ無し
+		ELSEIF TALENT:68:恋人 || TALENT:68:恋慕
+			
+		;MASTERが女orショタならエロイベ
+		ELSEIF (TALENT:MASTER:性別 != 2) || (TALENT:MASTER:性別 == 2 && (TALENT:MASTER:年齢 == -1 || TALENT:MASTER:幼稚) && (TALENT:MASTER:体型 == -2 || TALENT:MASTER:体型 == -1))
+			PRINTFORMW 「Ah... I just realized...what you cherish the most.」
+			PRINTFORMDW Letting out a creepy smile for a moment, Yuuka quickly drags your beat up body away to an empty place.
+			PRINTFORMW 「What you cherish the most is...your own life. Fufu, Aren't you scared?」
+			PRINTFORMW 「You're such a non-threat, I wonder if I should just kill you.」
+			;if pc is a girl
+			IF TALENT:MASTER:性別 != 2 || TALENT:68:性別 == 2
+				PRINTFORMDL Yuuka places %HIS_HER(TARGET)% hands on your neck and starts choking you a little.
+				PRINTFORMDW Naturally seeking oxygen, you open your mouth as Yuuka forces %HIS_HER(TARGET)% tongue in.
+				PRINTFORM 「Jiyu, Ero, Rero... Chyuu
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM 　Jyururu, Nhh...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+				EXP:68:キス経験 ++
+				EXP:MASTER:キス経験 ++
+				IF TALENT:MASTER:キス未経験
+					;just a poke
+					PRINTFORMW 「Was that your first kiss perhaps? Fufu... Now it's mine.」
+					CALL SET_FIRSTKISS(MASTER, 68, 0)
+				ENDIF
+				IF TALENT:68:キス未経験
+					CALL SET_FIRSTKISS(68, MASTER, 0)
+				ENDIF
+				SIF FLAG:口上色
+					TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+				PRINTFORMDL After having a thorough taste of your mouth, Yuuka finally decides to let go of your neck.
+				PRINTFORMW 「Ahaha, are you crying? So cute... It just makes me want to bully you even more.」
+				;if yuuka is futa or a male (modded condition, just in case)
+				IF TALENT:68:性別 == 3 || TALENT:68:性別 == 2
+					PRINTFORMDW Standing up, Yuuka \@ EQUIP:68:下半身下着２ ? takes off %HIS_HER(TARGET)% panties and%" "% #  \@lifts %HIS_HER(TARGET)% skirt, revealing %HIS_HER(TARGET)% rock-hard and drooling %TINKO(TARGET)%.
+					PRINTFORMW 「If you'd just be a good girl and do what I say, I might just spare you... Heh.」
+					PRINTFORMDW Guessing what must be done after seeing Yuuka in such excitement, you begin licking %HIS_HER(TARGET)% cock as best as you can.
+					PRINTFORMW 「Fufu, that's right... But if you really want to live, you must try even harder...」
+					PRINTFORMDL Having said so, Yuuka grabs you by the hair and rams %HIS_HER(TARGET)% penis deep into your throat to the base.
+					PRINTFORMDW The strong impact distorts your vision, causing you to let out a muffled scream from the surprise.
+					PRINTFORMW 「What is it, I ca-an't he-ear you... What, it hurts so much you gonna die? Ahahaha, then go ahead and die!」
+					PRINTFORMDL Ignoring the protests of %HIS_HER(TARGET)% frightened toy, Yuuka keeps grinding away, giving %HIM_HER(TARGET)%self to the pleasure.
+					PRINTFORM 「Haa, Haah
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM 　Your throat-pussy feels sho goood
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW 」
+					PRINTFORMDL Despite it hurting so much you're about to faint, you desperately try to pleasure your tormentor, just wanting it to be over.
+					PRINTFORMDL Your tongue can barely do anything pinned in place, but you lick the length regardless.
+					PRINTFORMDW Just what kind of face you are making right now in contrast to Yuuka's ecstatic expression...? It's better not to think about it.
+					PRINTFORM 「Haa, Ah... That's it, cummming...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM 　Nnhh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW 」
+					PRINTFORMDL Yuuka's grip gets stronger and %HIS_HER(TARGET)% movements become more rigid as %HE_SHE(TARGET)% keeps violating your mouth without a care in the world. 
+					PRINTFORMDW It's clear that %HE_SHE(TARGET)%'ll be finishing right into your throat whether you like it or not - you are too powerless to resist.
+					PRINTFORM 「Haa～, Aahhh～
+					CALL HEARTCB_K68(0xD02830,2)
+					PRINTFORMW 」
+					PRINTFORMDL %HIS_HER(TARGET, 1)% cock begins to pulsate, and a huge stream of hot sticky liquid rushes forth into the depth of your throat.
+					PRINTFORMDL As your throat gets filled, you hear nothing but Yuuka's heated moans of pleasure.
+					PRINTFORMDW With a pathetic whimper, you have no other choice but to accept all of it.
+					PRINTFORM 「Haah, haaa...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM 　That was amazing... I've let out so much...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW 」
+					PRINTFORMDL Yuuka enjoys the afterglow as %HE_SHE(TARGET)% slowly pulls %HIS_HER(TARGET)% penis out.
+					PRINTFORMDW Just as it leaves your mouth, the white mix of saliva and %SEMEN()% begins to spill over.
+					PRINTFORML 「Fufu... You couldn't even swallow all of it? Bah, just how useless are you?」
+					PRINTFORMDW Yuuka grabs your hair as you are trying to vomit the disgusting liquid out and then uses it to wipe %HIS_HER(TARGET)% penis clean.
+					PRINTFORMW 「Haah... I guess that should be enough for the cruel stuff.」
+					PRINTFORMW 「Now that you've learned by experience, I sure hope you will never challenge me in a Danmaku match ever again.」
+					PRINTFORMW 「Although... I'm more than happy enough to have another shot at your wonderful throat-pussy, I'm sure it would give me a warm welcome... Hehe.」
+					;経験操作他
+					EXP:MASTER:口淫経験 ++
+					EXP:MASTER:精液経験 ++
+					DOWNBASE:68:精力 = 200
+					SIF BASE:68:精力 < 0
+						BASE:68:精力 = 0
+				;yuri
+				ELSE
+					PRINTFORMDL Yuuka places %HIS_HER(TARGET)% hands on your clothes and forcibly strips you stark naked.
+					PRINTFORMW 「Hmmm... The way you look all vulnerable and embarrassed is quite the sight to behold...」
+					PRINTFORMDW Yuuka gets behind your back as you try to cover your chest and crotch and starts caressing your naked body gently.
+					PRINTFORMW 「Fufu... \@ GETBIT(CFLAG:68:既成事実 , 1) ? This should be like a routine for us at this point. # Did you think it's impossible to do something like this between us, fellow girls? \@」
+					PRINTFORMDL Yuuka gives your neck and ears a playful lick while caressing your thighs and belly, without touching anything that you keep covering.
+					PRINTFORMDL %HE_SHE(TARGET,1)% caresses places you don't consider erogenous, but %HIS_HER(TARGET)% skills are just too great.
+					PRINTFORMDW Your body triggers in response and you begin to moan beside yourself.
+					PRINTFORML 「Why won't she tease my spots here... Is that what you're thinking right now, girl?」
+					PRINTFORMDW Without realizing it, you are already surrendering yourself to Yuuka, thinking about letting %HIM_HER(TARGET)% touch more sensitive places.
+					PRINTFORMW 「Fufu... Don't get so impatient, it's all fine as long as you keep letting out those girly moans...」
+					PRINTFORMDL Yuuka is about to reach out to your breasts and clit... Or so you thought.
+					PRINTFORMDL Instead %HE_SHE(TARGET)% just keeps tracing around your nipples with %HIS_HER(TARGET)% fingers and rubbing your inner thighs.
+					PRINTFORMDL Feeling quite frustrated at this point, you try to stifle your moans once again, but to no avail.
+					PRINTFORMDW Yuuka suddenly blows a warm breath towards your ear causes you to let out a shrill squeal.
+					PRINTFORMW 「Haah, So cute... Bending your back so much too～」
+					PRINTFORMDL Despite not being touched even once, your nipples and clit were standing rock hard, desperately asking for attention.
+					PRINTFORMDL Expressing your desire to hurry up and touch them there, you push your body towards %HIM_HER(TARGET)%.
+					PRINTFORMDW Your eyes are full of tears as you give Yuuka a pleading look.
+					PRINTFORML 「My, what an obscene girl you are... To think you would beg for it so much on your own.」
+					PRINTFORMW 「Or rather, was that your true nature showing perhaps? If so, I shall drive you insane with my fingers, just as you wish.」
+					PRINTFORMDL Having said so, Yuuka suddenly gives your nipple and clit a strong twist at the same time.
+					PRINTFORMDL Compared to previously mild and sporadic stimulus, this abrupt and powerful sensation pushes you over the edge.
+					PRINTFORMDW You climax immediately without even giving a chance to resist it.
+					PRINTFORMW 「Ahaha, what a reaction, your body is twitching so much... But we're only getting started.」
+					PRINTFORMDL Not wasting any time nor letting you recover from the orgasm, Yuuka once again starts caressing your entire body.
+					PRINTFORMDW The added stimulation runs through your body like electricity, causing even the slightest spikes of pleasure to make your body writhe.
+					PRINTFORMDL However it is clear that in order to reach the same orgasm like before, this amount of stimulation is not nearly enough. 
+					PRINTFORMDW You are unable to forget the mind-shattering pleasure, and the current stimulation is not enough to finish you off, driving you crazy.
+					PRINTFORMW 「Go ahead and beg for it, if you so desire... You wanton girl.」
+					PRINTFORMDL Hearing Yuuka's words causes your last bit of sanity to snap.
+					PRINTFORMDL Are are unable to think about anything but the pleasure she can bring.
+					PRINTFORMDW You beg her for the release over and over again as if obsessed, trying to appeal to her good nature.
+					PRINTFORMW 「Hehe... Aa～h, Just look at you, you turned into an idiot... Even though this was supposed to be your punishment.」
+					PRINTFORMDW Afterwards, taking a fancy in your body, she makes you climax many many times over...
+					;経験操作他
+					EXP:MASTER:Ｃ経験 += 6
+					EXP:MASTER:Ｂ経験 += 6
+					EXP:MASTER:絶頂経験 += 6
+				ENDIF
+			;if pc is a shota, yuuka is a girl
+			ELSE
+				PRINTFORMDL Yuuka embraces your small body from behind, as she starts to lick your neck and cheeks.
+				PRINTFORMDW Although your limbs are free, the instinctive fear paralyzes you.
+				PRINTFORMW 「Fufu... Don't you know...young boys like you are Youkai's favorite delicacy～」
+				PRINTFORMDW Yuuka then lets out a laughter worthy of a Youkai, and proceeds stripping you of your pants forcibly, exposing your lower body.
+				PRINTFORMW 「You won't be able to escape now... Now, first of all, I want you to get an erection. If I won't find a use for you, I'll end you.」
+				PRINTFORMDL Hearing her threating tone of voice just makes it worse, replacing any kind of excitement with sheer terror.
+				PRINTFORMDW It just makes your penis stay limp and ignore any kind of stimulation.
+				PRINTFORML 「Huuh? You're so scared you can't get it up? Even though I told you I'm going to kill you otherwise...」
+				PRINTFORMW 「Are you stupid? Listen, nothing bad will happen if you just do what I say.」
+				PRINTFORMDW With a sigh, Yuuka decides to help out you a little. She takes off %HIS_HER(TARGET)% outerwear and exposes %HIS_HER(TARGET)% breasts hidden behind the bra.
+				PRINTFORMDW You gasp at the sight, at the same time completely captivated by Yuuka's \@ TALENT:TARGET:バストサイズ > 0 ? bouncy boobs # perfectly shaped chest \@ as she takes off her bra.
+				PRINTFORMW 「It's okay, don't be scared... Just keep still...」
+				PRINTFORMDL Uttering these words with a sweet voice, Yuuka lifts you up and puts a breast your mouth before reaching for your %TINKO(MASTER)%.
+				PRINTFORMDL Being wrapped in her soft cleavage certainly helps to finally achieve some peace of mind, eliminating all the fear. 
+				PRINTFORMDW Your penis meantime is getting remarkably bigger as it gets gently caressed.
+				;ショタちんorその他
+				PRINTFORM 「\@ TALENT:MASTER:形状 < 3 ? Fufu, this childish size just makes it even more cute... # Wow, you're packing quite something for a kid...! \@ Haah, I'm getting turned on
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+				PRINTFORMDL Getting in the mood herself, Yuuka almost clings to your penis as %HE_SHE(TARGET)% starts sucking it hungrily while grasping your hips tight.
+				PRINTFORM 「Jyuu, Chyupu, Jyuru, Hnn
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM  Chyuu, Reroo...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+				PRINTFORMDW The intense pleasure almost makes you ejaculate right away, however Yuuka pulls away when you're right at the edge.
+				PRINTFORMW 「Fufu... No you don't, I decided that all of your semen shall be going in here...」
+				PRINTFORMDL Yuuka pulls down her panties and rolls her skirt over, revealing her already sopping wet vagina. 
+				PRINTFORMDW Just imagining what it would be like to stick it inside almost makes you ejaculate hands-free.
+				PRINTFORMW 「\@!TALENT:MASTER:非童貞 ? Hey, is this your first time...? Aha, I'll turn you into an adult man then... # Well now, let's stick it in slowly, no need to rush...\@」
+				PRINTFORMDL Feeling as through you're in a dream, you give in to the temptation.
+				PRINTFORMDL You align your %TINKO(MASTER)% with Yuuka's opening and push it in slowly.
+				PRINTFORMDL At this point any leftover fear or desire to resist has evaporated.
+				PRINTFORMDW The only thing you can think about is the desire to fill Yuuka's insides with sperm.
+				IF !TALENT:MASTER:非童貞
+					FONTBOLD
+					SETCOLOR 255,100,255
+					PRINTFORMW Male Virginity Loss
+					FONTREGULAR
+					RESETCOLOR
+					SIF FLAG:口上色
+						TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+					TALENT:MASTER:非童貞 = 1
+					LOCAL:2 = 1
+				ENDIF
+				IF TALENT:68:処女 == 1
+					CALL SET_HISTORY_LOST_V(68, MASTER, "ペニス")
+					SETCOLOR 247,171,166
+					PRINTFORMW Virginity Loss
+					RESETCOLOR
+					SIF FLAG:口上色
+						TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+				ENDIF
+				PRINTFORM 「Ahh
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW  It's i- inside?!」
+				PRINTFORMDL Just inserting the tip is more than enough to push you over the limit.
+				PRINTFORMDW Being guided by the instinctual desire to impregnate, you jam the entirety of your %TINKO(MASTER)% deep inside.
+				PRINTFORMDL Your penis twitches inside Yuuka's first-rate vagina, your %SAMEN_DESCRIPTION(MASTER)% traveling up from the base.
+				PRINTFORMDW It quickly shoots out, making its way to her womb and filling it to the brim.
+				PRINTFORM 「Ah, Haaa
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM ! Did you come already? Haah, \@ LOCAL:2 ? Virgin semen is sure amazing, never thought it would be so thick # This child is being so excited \@...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML 」
+				PRINTFORM 「Hold on, why isn't it stopping yet...?
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+				PRINTFORMDW Not being able to control own lust over Yuuka's female body, you start grinding your hips as the ejaculation continues raging.
+				PRINTFORMDW Her vagina too, clings to your dick as if trying to milk it of all %SEMEN()%.
+				PRINTFORMDW You experience an impossible pleasure and find it impossible to stop moving back and forth.
+				PRINTFORM 「Ahh, Haaa
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM  We're totally breeding right now
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM  It's fine, go ahead and finish it all inside me
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+				PRINTFORMDL You thrust away, hammering into Yuuka, slamming your hips into hers over and over.
+				PRINTFORMDW In contrast, she just just pats you on the head gently as if lulling a small animal.
+				PRINTFORMDL You continue making out with Yuuka and grinding your hips to exhaustion.
+				PRINTFORMDW The fact that you're being milked by a Youkai has long since left your mind...
+				PRINTFORMDW ...
+				PRINTFORM 「Fuua, Haaa
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM  Aha, it's coming out again
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW  I wonder how many times it's been at this point～」
+				PRINTFORMDL You mate with Yuuka in the lotus position, and reach yet another orgasm - the number lost to both of you.
+				PRINTFORMDW You spurt out a pathetically small trickle of %SEMEN()% into her womb.
+				PRINTFORMDL Having clearly gone past the human limit at this point, you start to feel faint.
+				PRINTFORMDW However, the feeling of Yuuka's soft breasts on your face spurs you on.
+				PRINTFORMW 「I knew it, small young studs are the best... They get so obedient and devoted so quickly.」
+				PRINTFORMDL As if to show your own absolute submission, Yuuka's feet are already submerged in a milky white puddle.
+				PRINTFORMW 「And I was actually trying to make you hate me and sever all of our connections...」
+				PRINTFORMDW You continue grinding your hips like a monkey while clinging to Yuuka, even though you won't be able to ejaculate at all anymore for today.
+				PRINTFORM 「I didn't mean for it to be like this, it was supposed to be your punishment, but it resulted in nothing but a reward in the end...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+				;射精処理
+				CALL ADD_SAMEN_V(68, BASE:MASTER:精力)
+				;経験操作他
+				EXP:68:精液経験 += 8
+				EXP:68:膣射経験 += 8
+				EXP:68:Ｖ性交経験 += 8
+				EXP:MASTER:絶頂経験 += 8
+				EXP:MASTER:射精経験 += 8
+				EXP:MASTER:挿入経験 += 6
+				CFLAG:68:1802 = 1
+			ENDIF
+		;金を賭けた時
+		ELSEIF TCVAR:68:398 == 1
+			PRINTFORMW 「What worthless scraps of paper, hardly worth anything～」
+			PRINTFORMDL %CALLNAME:TARGET% grabs the money from your wallet and throws it in the air.
+			PRINTFORMDW Then, as it is scattering... %CALLNAME:TARGET% unleashes a powerful beam, turning it to dust in an instant...
+			IF MONEY < 5000
+				SETCOLOR C_RED
+				PRINTFORMW You lose all your money...
+				RESETCOLOR
+				MONEY -= MONEY
+			ELSE
+				SETCOLOR C_RED
+				PRINTFORMW You lose \\5000...
+				RESETCOLOR
+				MONEY -= 5000
+			ENDIF
+		;カリスマを賭けた時
+		ELSEIF TCVAR:68:398 == 2
+			PRINTFORMW 「This fake money isn't worth much～」
+			PRINTFORMDL %CALLNAME:TARGET% grabs the Charisma from your wallet and throws it in the air.
+			PRINTFORMDW Then, as it is scattering...%CALLNAME:TARGET% unleashes a powerful beam, turning it to dust in an instant...
+			IF MONEY:2 < 25
+				SETCOLOR C_RED
+				PRINTFORMW You lose all your Charisma...
+				RESETCOLOR
+				MONEY:2 -= MONEY:2
+			ELSE
+				SETCOLOR C_RED
+				PRINTFORMW You lose 25 Charisma...
+				RESETCOLOR
+				MONEY:2 -= 25
+			ENDIF
+		ENDIF
+	
+		;童貞賭け
+		IF TCVAR:68:398 == 3
+			PRINTFORML 「Hopefully there will be a day when you will stop wasting your semen. Fufu.」
+			PRINTFORMW 「I'll play with you again later.」
+			;童貞賭け負けフラグ
+			CFLAG:68:1804 = 1
+		ELSEIF TALENT:68:恋人 || TALENT:68:恋慕
+			PRINTFORML 「But you know, I will have to make you stronger.」
+			PRINTFORMW 「I'm always there if you need some practice.」
+		ELSE
+			PRINTFORML 「Aren't you frustrated? Fufu, Sure you are... Be sure to rematch me any time.」
+			PRINTFORMW 「I will beat the crap out of you just like I did today.」
+		ENDIF
+		;勝負済みフラグをオン
+		CFLAG:68:1801 = 1
+	@K68_DANMAKU_REWARD(ARG)
+		;童貞賭け
+		;winning the bet and getting laid
+		IF TCVAR:68:398 == 3
+			PRINTFORMDL Your crotch is on fire, completely incomparable to what it was in the beginning. It feels like your semen will burst out any second...!
+			PRINTFORMDL Just as you get rid of your underwear, erect erect penis immediately springs out and exposes itself, ready for action.
+			PRINTFORMW 「W- Wait a... This kind of thing requires preparation...」
+			PRINTFORMDL Did %HE_SHE(TARGET)% seriously expect someone to hear that and choose to stop?
+			PRINTFORMDW Yuuka opens %HIS_HER(TARGET)% eyes wide in a surprise as you hug %HIM_HER(TARGET)% and join your lips together in a fervent kiss.
+			EXP:68:キス経験 ++
+			EXP:MASTER:キス経験 ++
+			IF TALENT:MASTER:キス未経験
+				CALL SET_FIRSTKISS(MASTER, 68, 0)
+			ENDIF
+			IF TALENT:68:キス未経験
+				CALL SET_FIRSTKISS(68, MASTER, 0)
+			ENDIF
+			SIF FLAG:口上色
+				TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+			PRINTFORM 「Mmmnnph?! Chyu, Fuah, Ahh...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDL Yuuka blushes but reciprocates even when you force your tongue in, responding and exchanging saliva.
+			PRINTFORMDW %HE_SHE(TARGET,1)% lets out a muffled moan as you start rubbing %HIM_HER(TARGET)% through %HIS_HER(TARGET)% underwear.
+			PRINTFORM （What's with this \@TALENT:MASTER:性別 == 2?guy#girl\@...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW  Being so infatuated with me, it's almost as if...）
+			PRINTFORMDL You continue your passionate make out with each other before you realize that Yuuka's panties got completely sopping wet.
+			PRINTFORMDW After finishing your extended kiss, Yuuka - who is now completely ready - fixes %HIS_HER(TARGET)% gaze on you almost reluctantly.
+			PRINTFORM 「Haa, Haaa～
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW  Let me handle this part at least...!」
+			PRINTFORMDL You let yourself be pushed down by the horny Flower Youkai. 
+			PRINTFORMDW You find yourself unable to move as Yuuka throws off %HIS_HER(TARGET)% panties and spreads %HIS_HER(TARGET)% \@ TALENT:68:性別 == 2 ? glistening anus # wet vagina \@ open...
+			PRINTFORM 「I shall accept your virginity...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW !」
+			PRINTFORMDL Being erect to its limits, your cock immediately twitches as Yuuka's soft opening comes close enough to touch it.
+			PRINTFORMDW Just imagining what it would be like to stick it inside makes you swallow your saliva in anticipation.
+			PRINTFORMDL Resisting at this point is just impossible... 
+			PRINTFORMDW So not waiting for Yuuka to insert it, you push your hips forward and thrust it in all at once!
+			FONTBOLD
+			SETCOLOR 255,100,255
+			PRINTFORMW Male Virginity Loss
+			FONTREGULAR
+			RESETCOLOR
+			SIF FLAG:口上色
+				TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+			TALENT:MASTER:非童貞 = 1
+			;modded in, in case we got malehus
+			IF TALENT:68:性別 == 2
+				IF CFLAG:アナル処女喪失対象 & 喪失_時間停止 || !CFLAG:アナル処女喪失記念日
+					CALL SET_HISTORY_LOST_A(68, MASTER, "ペニス")
+					SETCOLOR 255,100,255
+					PRINTFORMW Anal Virginity Loss
+					RESETCOLOR
+					SIF FLAG:口上色
+						TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+				ENDIF
+			ELSE
+				IF TALENT:68:処女 == 1
+					CALL SET_HISTORY_LOST_V(68, MASTER, "ペニス")
+					SETCOLOR 247,171,166
+					PRINTFORMW Virginity Loss
+					RESETCOLOR
+					SIF FLAG:口上色
+						TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+				ENDIF
+			ENDIF
+			PRINTFORM 「Uaahh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW ?! N-No way...?!」
+			PRINTFORMDL Yuuka's \@ TALENT:68:性別 == 2 ? anus # vagina \@ proves to be much softer than you imagined, it's warm flesh gobbles up your dick and coils around it snugly.
+			PRINTFORMDL This kind of pleasure proves far too much for your first time.
+			PRINTFORMDW Coupled with the Aphrodisiac effect it results in an instant ejaculation right on the very first stroke.
+			PRINTFORM 「Nhooo! Don't
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORM !!! I never shaid you can do it inside, you idioot
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORMW !」
+			PRINTFORMDL Yuuka has lost all %HIS_HER(TARGET)% composure, doing little more than making assorted moans and gasps of pleasure.
+			PRINTFORMDW You use this chance to grab %HIS_HER(TARGET)% legs and pour all of your thick %SEMEN()% deep to your heart's content.
+			PRINTFORMDL Perhaps due to yet another Aphrodisiac effect, the ejaculation doesn't seem to end.
+			PRINTFORMDL The effect is amplified by Yuuka's \@ TALENT:68:性別 == 2 ? anus # vagina \@ trying to milk you of every last drop of %SEMEN()% instinctively
+			PRINTFORMDW Your mind goes white from the pleasure.
+			PRINTFORM 「Haah, haah
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORM  I never thought it would be possible to let out so much...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDL Seeing how Yuuka casts %HIS_HER(TARGET)% gaze down while blushing profusely causes the makings of a sadist to stir within you.
+			PRINTFORMDL If that's how it is, this might be a wonderful opportunity to pump Yuuka full of baby batter.
+			PRINTFORMDW The thought alone reignites the fire in you and you feel yourself hardening once more.
+			PRINTFORML 「Hiyaah?! H-Hey, let's stop it here, okay...?」
+			PRINTFORMW 「You've taken my \@ TALENT:68:性別 == 2 ? first time # virginity \@ so you should be satisfied, right? Rig--... Aaaah!」
+			PRINTFORMDL Embracing Yuuka in a lotus position, the intense insemination procedure commences anew.
+			PRINTFORMDW Although Yuuka keeps staring daggers at you, %HE_SHE(TARGET)% still kissed back in a passionate way when prompted.
+			PRINTFORM 「Chyuu, Rero, Nhh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML  Haah, doing all these things with me\@ TALENT:68:恋人 ?  # , as if we were a couple \@...!」
+			PRINTFORM 「You're not getting off the hook that easily if you anger me... Nhh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW !」
+			PRINTFORMDL Despite the proud Yuuka's sneering smile, or perhaps because of it, you find her irresistible.
+			PRINTFORMDW The way %HE_SHE(TARGET)% clearly enjoys it but refuses to show it causes you to speed up your thrusts...
+			PRINTFORMDW ...
+			PRINTFORM 「Haah, haah
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORM  Pleashe, give it to me, your shemen
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORM  Uwah, here it comesh
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORMW 」
+			PRINTFORMDL Yuuka receives yet another shot of semen deep inside %HIM_HER(TARGET)% just as %HE_SHE(TARGET)% wishes.
+			PRINTFORMDW You have long since lost count of how many times you have ejaculated, never having pulled out once since the beginning...
+			PRINTFORM 「Haah, is that it...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW ? Did the aphrodisiac wear off?」
+			PRINTFORMDL After you put Yuuka in the mood, you were milked by %HIS_HER(TARGET)% insatiable lust until you almost blacked out.
+			PRINTFORMDW Apparently %HE_SHE(TARGET)% even wants you to drink the Aphrodisiac again, still not being quite satisfied...
+			PRINTFORML 「Huh? You're going to die if this goes on?」
+			PRINTFORMW 「Haah, and you have the gall to say this after pumping me full of your virgin semen against my will?」
+			PRINTFORMDW When Yuuka pulls out your withered penis of %HIS_HER(TARGET)% \@ TALENT:68:性別 == 2 ? anus # vagina \@, an incredible amount of %SEMEN()% starts flowing out.
+			PRINTFORMW 「Don't remember? Look, this is how much you've done it...」
+			PRINTFORMDW %HIS_HER(TARGET,1)% face, %HIS_HER(TARGET)% "smile", is absolutely terrifying...
+			;射精処理
+			;modded in, in case we got malehus
+			IF TALENT:68:性別 == 2
+				CALL ADD_SAMEN_A(68, BASE:MASTER:精力)
+				EXP:68:Ａ性交経験 += 8
+				EXP:68:肛射経験 += 8
+			ELSE
+				CALL ADD_SAMEN_V(68, BASE:MASTER:精力)
+				EXP:68:Ｖ性交経験 += 8
+				EXP:68:膣射経験 += 8
+			ENDIF
+			BASE:MASTER:精力 = 0
+			BASE:MASTER:勃起 = 0
+			;経験操作他
+			EXP:68:精液経験 += 8
+			EXP:68:絶頂経験 += 6
+			EXP:MASTER:絶頂経験 += 8
+			EXP:MASTER:射精経験 += 8
+			EXP:MASTER:挿入経験 += 1
+			CFLAG:68:1803 = 1
+		ELSE
+		$INPUT_LOOP2
+		RESETCOLOR
+		CALL ASK_M("Permission to have sex on dangerous days", CFLAG:68:生解禁 < 2 && TALENT:MASTER:性別 != 1, "Gimme your panties", EQUIP:68:下半身下着２, "Seedlings please", CFLAG:68:1899 != 1, "Let's be friends", 1, "Money", 1, "Sex!", 1)
+		LOCAL:2 = RESULT
+		SIF FLAG:口上色
+			TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+		SELECTCASE LOCAL:2
+			CASE 0
+				;-------------------------------------------------
+				;勝利後
+				;生えっち許可
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:3 = 1
+				;-------------------------------------------------
+				IF LOCAL:3
+					IF TALENT:68:恋人 || TALENT:68:恋慕
+						PRINTFORML 「H-Huh?! You do understand what that means, right...?」
+						PRINTFORMW 「... I wish I had told you that sooner...」
+						PRINTFORMDL Yuuka gives permission right away as while blushing deeply.
+					;うふふ合意あり
+					ELSEIF GETBIT(CFLAG:68:既成事実 , 1)
+						PRINTFORMW 「What? Do you even realize what you're saying?」
+						PRINTFORMDL Yuuka's oppressive stare does neither discourage nor deter you.
+						PRINTFORMDL You take %HIS_HER(TARGET)% hand and convey your willingness to make a child with a serious expression.
+						PRINTFORMW 「H-Huh, huuuh? What are you saying all of a sudden... Are you... Are you actually serious...?」
+						PRINTFORML 「... V-Very well, alright! It's not like I'm against it or anything...」
+						PRINTFORMDL Yuuka is surprisingly easy to persuade, as %HE_SHE(TARGET)% gives permission without really understanding what's happening.
+					ELSE
+						PRINTFORML 「... Are you sure you got the right person?」
+						PRINTFORML 「I don't remember ever allowing you to have my body.」
+						PRINTFORMDW Since Yuuka has not given %HIS_HER(TARGET)% consent yet, %HE_SHE(TARGET)% will not consent to this...
+						PRINTL
+						GOTO INPUT_LOOP2
+					ENDIF
+					PRINTFORMDW %PARSE("You receive")% consent to make children with Yuuka!
+					CFLAG:68:生解禁 = 2
+					PRINTFORMW 「I will never, ever lose again... Remember that.」
+				ENDIF
+			CASE 1
+				;-------------------------------------------------
+				;勝利後
+				;パンツ
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:3 = 1
+				;-------------------------------------------------
+				IF LOCAL:3
+					IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+						PRINTFORMW 「My p-panties...? Well, if you insist, I don't really mind...」
+						PRINTFORMDL Yuuka rolls up %HIS_HER(TARGET)% skirt and starts removing %HIS_HER(TARGET)% panties before you tell %HIM_HER(TARGET)% to show off.
+						PRINTFORMDL %HE_SHE(TARGET,1)% blushes profusely but complies, showing off %UNDER_SKIRT_DESCRIPTION_TR(TARGET,1)%.
+						PRINTFORMW 「Ugh, Uuugh...! This is so embarrassing... Don't stare so much...」
+						PRINTFORMDW As %HE_SHE(TARGET)% gets half-nude and exposes %HIS_HER(TARGET)% genitalia, you attempt to dive right in, only for Yuuka to squeal and cover your face.
+						PRINTFORML 「Hold on, not so close...! D-Don't stare at it so intently...!」
+						PRINTFORMDL You continue staring at the blushing Yuuka and %HIS_HER(TARGET)% shameful parts until %HE_SHE(TARGET)% finally takes off %HIS_HER(TARGET)% %PANTSNAME(EQUIP:68:下半身下着２, 68)%.
+						PRINTFORMDW Yuuka obediently hands over %HIS_HER(TARGET)% still warm %PANTSNAME(EQUIP:68:下半身下着２, 68)%, but it takes a while before %HE_SHE(TARGET)% stops hiding %HIS_HER(TARGET)% blushing face...
+					ELSE
+						PRINTFORMW 「My p-panties...? Have you gone mad? Though knowing you, you've probably been like this since birth...」
+
+						PRINTFORMDL Yuuka rolls up %HIS_HER(TARGET)% skirt and starts removing %HIS_HER(TARGET)% panties before you tell %HIM_HER(TARGET)% to show off.
+						PRINTFORMDL %HE_SHE(TARGET,1)% raises %HIS_HER(TARGET)% voice and begins complaining.
+						PRINTFORMW 「W-What kind of stupid drivel are you saying?! As if anyone would do that for the...likes of...you...!」
+						PRINTFORMDL Yuuka continues glaring at you for a while before having some sort of change of heart and finally submitting
+						PRINTFORMDW %HE_SHE(TARGET,1)% quickly lifts %HIS_HER(TARGET)% skirt, exposing %UNDER_SKIRT_DESCRIPTION_TR(TARGET,1)%.
+						PRINTFORMW 「Ahh... My pride was already at all times low after losing to you, you know?! This, this...is *nothing* in comparison!!!」
+						PRINTFORMDL Yuuka keeps blushing as %HE_SHE(TARGET)% pulls %HIS_HER(TARGET)% %PANTSNAME(EQUIP:68:下半身下着２, 68)% down with one hand. 
+						PRINTFORMDW The way %HE_SHE(TARGET)% glares at you with %HIS_HER(TARGET)% clenched teeth the entire time makes it look very cute.
+						PRINTFORML 「Don't you stare, you pervert...! Hiyah?! Get away from me, idiot!!」
+						PRINTFORMDW You attempt to dive right in as Yuuka gets half-nude and exposes %HIS_HER(TARGET)% genitalia, only for %HIM_HER(TARGET)% to squeal and cover your face.
+						PRINTFORML 「Uuugh... To think you would keep humiliating me this far...! I swear I will hate you for this for the rest of my life...!!!」
+						PRINTFORMDL You continue staring at the blushing Yuuka and %HIS_HER(TARGET)% shameful parts until %HE_SHE(TARGET)% finally takes off %HIS_HER(TARGET)% %PANTSNAME(EQUIP:68:下半身下着２, 68)%.
+						PRINTFORMDW Yuuka then throws %HIS_HER(TARGET)% still warm %PANTSNAME(EQUIP:68:下半身下着２, 68)% at your face roughly, almost as if trying to slap you...
+					ENDIF
+					;ふんどしでも怒らないでね
+					PRINTFORMDW %PARSE("You receive")% freshly worn %PANTSNAME(EQUIP:68:下半身下着２, 68)% from Yuuka!
+					RESETCOLOR
+					CALL PANTS_GET(68, "もらう")
+					SIF FLAG:口上色
+						TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+					PRINTFORMW 「I will never, ever lose again... Remember that.」
+				ENDIF
+			CASE 2
+				;-------------------------------------------------
+				;勝利後
+				;苗受け取り
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:3 = 1
+				;-------------------------------------------------
+				IF LOCAL:3
+					PRINTFORML 「So you're a farmer?」
+					PRINTFORMW 「Well... I'll bring the appropriate plant seedlings every day, so be sure to come and pick them up, alright?」
+					PRINTFORMDW You can now receive plant seedlings once a day from Yuuka!
+					CFLAG:68:1899 = 1
+					PRINTFORMW 「I will never, ever lose again... Remember that.」
+				ENDIF
+			CASE 3
+				;-------------------------------------------------
+				;勝利後
+				;仲良く
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:3 = 1
+				;-------------------------------------------------
+				IF LOCAL:3
+					PRINTFORML 「...Eh? O-Okay...」
+					PRINTFORML 「At any rate, you are \@ TALENT:68:恋人 || TALENT:68:恋慕 ?  # surprisingly%" "%\@strong... I sure got a better opinion of you.」
+					PRINTFORMW 「\@ TALENT:68:恋人 || TALENT:68:恋慕 ? This is my spouse after all, I should only be glad... Right...? # You will protect me when push comes to shove, right? Fufu. \@」
+					SOURCE:歓楽 += MAX(1, ABL:親密) * 50 ;fixed here to have it add at least some if intimacy was 0
+				ENDIF
+			CASE 4
+				;-------------------------------------------------
+				;勝利後
+				;金
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:3 = 1
+				;-------------------------------------------------
+				IF LOCAL:3
+					IF TALENT:68:恋人 || TALENT:68:恋慕
+						PRINTFORMW 「... Money? Aw, why would you be so indirect...」
+						PRINTFORMW 「Since it's you, I'll give you some if you want.」
+						PRINTFORMDW %PARSE("You receive")% \\5000
+						MONEY += 5000
+						PRINTFORMW 「But don't waste it, okay? If you like, I'd be more than glad to manage your funds...」
+					ELSE
+						PRINTFORMW 「Haah, you actually manage to defeat me and the first thing you do is scrounge?」
+						PRINTFORMW 「Unfortunately I'm not a very rich person...」
+						PRINTFORMDW %PARSE("You receive")% \\2000
+						MONEY += 2000
+						PRINTFORMW 「Don't get ahead of yourself and stop begging for money after you beat one Youkai one after another. That's the Miko's specialty.」
+					ENDIF
+				ENDIF
+			CASE 5
+				;-------------------------------------------------
+				;勝利後
+				;セックス
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:3 = 1
+				;-------------------------------------------------
+				IF LOCAL:3
+					;asking for sex
+					;when pc is a girl, yuuka is also a girl/futa (modded condition in case of malehus)
+					IF TALENT:MASTER:性別 == 1 && TALENT:性別 != 2
+						PRINTFORML 「Eh? But we're both girls, what are you...」
+						PRINTFORMDW Aroused by the silky smooth porcelain skin peeking through Yuuka's torn clothes, you quickly take %HIM_HER(TARGET)% to an empty spot.
+						PRINTFORML 「Kiyaaah?! What do you think you're doing, you idiot?!」
+						;check difference instead of the size directly just in case Yuuka's tits ever change
+						PRINTFORMDL You tear off what little remains of Yuuka's blouse, caring not for %HIS_HER(TARGET)% objections.
+						PRINTFORMDL %HIS_HER(TARGET,1)% underwear is exposed, and you grab hold of %HIS_HER(TARGET)% \@ TALENT:MASTER:バストサイズ < 1 ? enviably large  # pliable and soft \@ breasts.
+						PRINTFORML 「No, don't... St-- Stop it, you little...! Haah...!」
+						PRINTFORMDW Yuuka's resistance seems to fade every time you fondle %HIS_HER(TARGET)% chest as %HE_SHE(TARGET)% clearly lets out sweet moans.
+						PRINTFORMDW Getting in the mood, you nimbly get rid of Yuuka's bra and cling to %HIS_HER(TARGET)% now exposed pale pink nipples.
+						PRINTFORM 「Nhhh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW ! Stop...sucking that... Ahh...!」
+						PRINTFORMDW Yuuka lacks the strength to push you away and submits to the sensation, clearly showing %HE_SHE(TARGET)% likes it to some extent.
+						PRINTFORM 「Haa, Nhoo, Aahh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM ?! Hiyaaa
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORML !」
+						PRINTFORMDL You finally let go of %HIS_HER(TARGET)% nipples after having sucked on them will all your might.
+						PRINTFORMDW The pleasure and embarrassment proves too much for Yuuka who lets out a squeal before sinking to the ground.
+						PRINTFORML 「Haah, Haah... Uh?!」
+						PRINTFORMDL Yuuka sits there stunned for a while before regaining %HIS_HER(TARGET)% composure and looking up.
+						PRINTFORMDW %HE_SHE(TARGET,1)% sees you grinning triumphantly, your skirt rolled up\@EQUIP:MASTER:下半身下着２?, your %PANTS_DESCRIPTION_TR(MASTER)% slid down#\@, and your %SLIT_TR(MASTER, 1)% exposed.
+						PRINTFORML 「Hey, what are you... Guh?!」
+						PRINTFORMDL You grab Yuuka's head firmly and press it against your vagina. 
+						PRINTFORMDL Yuuka glares daggers at you, but realizes that %HE_SHE(TARGET)% has no choice in this matter. 
+						PRINTFORMDW %HE_SHE(TARGET,1)% eventually sticks out %HIS_HER(TARGET)% tongue and starts licking it.
+						PRINTFORML 「Mnnphh, Kh...! Rero, Pwhaaah...?!」
+						PRINTFORMDW You use your toes to rub Yuuka roughly between %HIS_HER(TARGET)% legs, revealing just how \@TALENT:性別==0?wet#hard\@ %HE_SHE(TARGET)% is.
+						PRINTFORMDW Looking down on Yuuka holding back some moans while licking you like an obedient dog makes you rub more ruthlessly with your foot.
+						PRINTFORM 「Don't get ahead of yourself... Hhaaa
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORML ! Hiyaa, S-Stop it...!」
+						PRINTFORMDW You push %HIM_HER(TARGET)% down\@ EQUIP:68:下半身下着２ ? , quickly get rid of %HIS_HER(TARGET)% panties # \@, you push your groin into Yuuka's face.
+						PRINTFORML 「Nnguh! D-Don't mess with me...!」
+						PRINTFORMDW You say %HE_SHE(TARGET)% won't be released until %HE_SHE(TARGET)% finishes, and begin teasing Yuuka's \@ TALENT:68:性別 == 3 ? %TINKO(TARGET)% # clit \@ in earnest.
+						PRINTFORM 「Argh, fine, I guess I have to... Nhh, Rero... Khh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORML !」
+						PRINTFORMDL Yuuka keeps complaining as %HE_SHE(TARGET)% begins servicing you again with %HIS_HER(TARGET)% tongue.
+						PRINTFORMDW However, the spikes of sudden pleasure prevents %HIM_HER(TARGET)% from focusing.
+						PRINTFORMDW Whenever %HE_SHE(TARGET)% slacks off even a little bit, you immediately force %HIS_HER(TARGET)% face against your crotch without mercy.
+						PRINTFORM 「Hiyaahn, Cummiingh...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM ! Mmnngghh?! Mmmmmmmnnn～～～～
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORMW !」
+						PRINTFORMD While having %HIS_HER(TARGET)% face ridden by you, Yuuka experiences %HIS_HER(TARGET)% first of many orgasms.
+						;Custom code
+						IF TALENT:68:性別 == 3
+							PRINTFORMDL
+							PRINTFORMD %HIS_HER(TARGET,1)% %TINKO(TARGET)% fires uselessly on the the ground, painting it white.
+						ENDIF
+						PRINTFORMDW
+						PRINTFORMDW Even when Yuuka's lower body continues quivering from the orgasm, you never stop stimulating the weak spot between %HIS_HER(TARGET)% legs.
+						PRINTFORM 「Haah, Shtop, I'm already cumming... I'm cummingh againn
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW !」
+						PRINTFORMDL You ask %HIM_HER(TARGET)% just how many times %HE_SHE(TARGET)% intends to cum while laughing maliciously.
+						PRINTFORMDW Saying that just seems to turn Yuuka on, as %HE_SHE(TARGET)% starts moaning again.
+						PRINTFORMDW ...
+						PRINTFORM 「Haah, Not aghainn, I'm gonna cum...againnn～～～
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW !」
+						PRINTFORMDW In the end, Yuuka is too busy climaxing to make you orgasm even once.
+						PRINTFORMDW Amazed by the laughably poor performance, you lay across Yuuka, raise %HIS_HER(TARGET)% leg and begin rubbing your genitals together.
+						PRINTFORM 「Ahh, Shtop! I don't wanna cum anymoreee, Hiyaa
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORML !」
+						PRINTFORMDW Completely drenched already, you rub yourself against %HIM_HER(TARGET)% in a state of delirium.
+						PRINTFORM 「Aaaa, HHaa, Nhooo
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORML 」
+						PRINTFORMDW Doing nothing to suppress their moans, you can only think about pursuing pleasure and climaxing.
+						PRINTFORMDW Feeling yourself approaching your peak, you begin rubbing your clit against Yuuka while calling out %HIS_HER(TARGET)% name in a daze.
+						PRINTFORM 「Fuahh, Ahhh, I'm cummiiiinngghh～～～～
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORMW !」
+						PRINTFORMDW You two reach orgasm simultaneously before exhaustion makes you collapse.
+						PRINTFORM 「Haa, Haaa, Haah...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+						PRINTFORMDW You look at Yuuka a bit embarrassed, and %HE_SHE(TARGET)% stares back, %HIS_HER(TARGET)% face a deep red.
+						PRINTFORMDW You join your hands together and stare at each other as you bask in the afterglow.	
+						;経験操作他
+						EXP:68:Ｃ経験 += 6
+						EXP:68:Ｂ経験 += 3
+						EXP:68:絶頂経験 += 6
+						EXP:MASTER:Ｃ経験 += 1
+						EXP:MASTER:絶頂経験 += 1
+					ELSE
+						;lovey-dovey scenario
+						IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+							;うふふ合意あり
+							IF GETBIT(CFLAG:68:既成事実 , 1)
+								PRINTFORMW 「... Eh? If you want to do that, we could just pick a time and place...」
+							ELSE
+								PRINTFORMW 「... Eh? You never told me about it, so I thought you weren't interested...」
+							ENDIF
+							PRINTFORMDW 「Just take me by force」is what Yuuka's bitter face is saying.
+							PRINTFORMW 「... The extent of your stupidity is beyond shocking, but so be it, I shall play along just this once.」
+							PRINTFORMDL Wasting no time you take Yuuka with you to a more private spot away from prying eyes.
+							PRINTFORMDL You quickly take out your %TINKO(MASTER)% and stick it right in Yuuka's face.
+							PRINTFORMDW You smack Yuuka's cheeks with your half-erect penis a bit before %HE_SHE(TARGET)% humbly opens %HIS_HER(TARGET)% mouth.
+							PRINTFORM 「Mm...mph! Chyuu, Mmnn, Mmphh, Fuwah...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORML 」
+							PRINTFORMDL %HE_SHE(TARGET,1)% stares at you right in the eyes, %HIS_HER(TARGET)% full with disdain.
+							PRINTFORMDW Despite that, Yuuka focuses on making it as pleasurable as possible as %HE_SHE(TARGET)% services your dick.
+							PRINTFORMDW Satisfied by the performance you pull it out of Yuuka's mouth, leaving a wet stand of saliva hanging in the air.
+							PRINTFORML 「Kyan! Wait a...!」
+							PRINTFORMDL You push Yuuka on all four, \@ EQUIP:68:下半身下着２ ? shift %HIS_HER(TARGET)% panties aside and # and \@ begin stimulating %HIS_HER(TARGET)% \@ TALENT:68:性別 == 2 ? anus # %SLIT(TARGET)% \@ with your tongue.
+							PRINTFORMDW You tongue delves deep inside while you caress %HIS_HER(TARGET)% \@ TALENT:68:性別 >= 2 ? %TINKO(TARGET)% # clit \@ as well.
+							PRINTFORM 「Noo...! Stop...it! Fuaahh
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW !」
+							PRINTFORMDL Yuuka tries to push your face away, but having %HIS_HER(TARGET)% \@ TALENT:68:性別 >= 2 ? cock # clit \@ caressed saps %HIM_HER(TARGET)% of all strength.
+							PRINTFORMDW Meanwhile having %HIS_HER(TARGET)% \@ TALENT:68:性別 == 2 ? anus # %SLIT(TARGET)% \@ played with in a such vigorous fashion leaves %HIM_HER(TARGET)% \@TALENT:性別==0?sopping wet#rock hard\@.
+							PRINTFORMW 「Ha, haah! N-No, don't, don't put it in, stop... Ahh!」
+							PRINTFORMDW You thrust into Yuuka from behind, thrusting all the way inside %HIM_HER(TARGET)% in one go.
+							IF !TALENT:MASTER:非童貞
+								FONTBOLD
+								SETCOLOR 255,100,255
+								PRINTFORMW Male Virginity Loss
+								FONTREGULAR
+								RESETCOLOR
+								SIF FLAG:口上色
+									TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+								TALENT:MASTER:非童貞 = 1
+							ENDIF
+							;modded in, in case we got malehus
+							IF TALENT:68:性別 == 2
+								IF CFLAG:アナル処女喪失対象 & 喪失_時間停止 || !CFLAG:アナル処女喪失記念日
+									CALL SET_HISTORY_LOST_A(68, MASTER, "ペニス")
+									SETCOLOR 255,100,255
+									PRINTFORMW Anal Virginity Loss
+									RESETCOLOR
+									SIF FLAG:口上色
+										TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+								ENDIF
+							ELSE
+								IF TALENT:68:処女 == 1
+									CALL SET_HISTORY_LOST_V(68, MASTER, "ペニス")
+									SETCOLOR 247,171,166
+									PRINTFORMW Virginity Loss
+									RESETCOLOR
+									SIF FLAG:口上色
+										TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+								ENDIF
+							ENDIF
+							PRINTFORM 「N, Nhoooo
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW !」
+							PRINTFORMDL You grab Yuuka's %HIP_TR(TARGET)% and begin pistoning like a \@TALENT:MASTER:性別 == 2?man#woman\@ possessed.
+							PRINTFORMDL The sound of a flesh striking flesh fills the air, fanning the flames of desire.
+							PRINTFORM 「Nhh, Fuuh, Hnnn
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM  NNah... Kkhu, Haaah
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDW Having %HIS_HER(TARGET)% insides gouged out makes Yuuka obedient, but %HE_SHE(TARGET)% still holds a hand over %HIS_HER(TARGET)% mouth, stifling %HIS_HER(TARGET)% moans.
+							PRINTFORM 「Hnngh, Ahh?! N-No, don't, Fuaaahh
+							CALL HEARTCB_K68(0xD02830,2)
+							PRINTFORML !」
+							PRINTFORMDW You grab Yuuka's arm and wrestle it away from %HIS_HER(TARGET)% mouth, ensuring %HE_SHE(TARGET)% moans properly as you begin thrusting faster.
+							PRINTFORMDW Yuuka seems turned on by being forced against %HIS_HER(TARGET)% will as %HE_SHE(TARGET)% begins clamping down hard on your penis.
+							PRINTFORMDW Having lost whatever patience you had left, you whisper in Yuuka's ear that you will finish inside %HIM_HER(TARGET)%.
+							PRINTFORM 「Ah, Haa, Nhooo
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM ! Not inshide! Don't do it inshideee...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDL Hearing Yuuka's girlish squeals of protest pushes you over the edge.
+							PRINTFORMDW You pick up the pace, thrusting like an animal and reach your limit.
+							PRINTFORM 「HaaAAAAA
+							CALL HEARTCB_K68(0xD02830,2)
+							PRINTFORM ! Aah, Your semen... It'sh flowing inshideee...
+							CALL HEARTCB_K68(0xD02830,2)
+							PRINTFORMW 」
+							PRINTFORMDW Feeling your %SEMEN()% flowing inside %HIM_HER(TARGET)%, Yuuka forgets the act, becoming entranced by ecstasy.
+							PRINTFORMDL Seemingly intent on milking every last drop of semen from you, %HIS_HER(TARGET)% \@ TALENT:68:性別 == 2 ? anus # vagina \@ starts churning your penis.
+							PRINTFORMDW The stimulation causes you to harden again, and you begin thrusting once more.
+							PRINTFORM 「Hiyah, Ahnn
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM  Darling... Please keep going
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORML 」
+							PRINTFORMDW You continue making love, your lips joined in a heated kiss as you focus on nothing but each other.
+							PRINTFORM 「Chyuu, Mnn
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM  Nnhh, Mmpph, Puwah
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM  Darling, I love you, I love you so...
+							CALL HEARTCB_K68(0xD02830,2)
+							PRINTFORMW 」
+							EXP:68:キス経験 ++
+							EXP:MASTER:キス経験 ++
+							IF TALENT:MASTER:キス未経験
+								CALL SET_FIRSTKISS(MASTER, 68, 0)
+							ENDIF
+							IF TALENT:68:キス未経験
+								CALL SET_FIRSTKISS(68, MASTER, 0)
+							ENDIF
+							;Custom code, readd colors again
+							SIF FLAG:口上色
+								TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+							PRINTFORMDW Yuuka holds you tight and wraps %HIS_HER(TARGET)% legs around your hips, making it impossible to separate.
+							PRINTFORMDW At this point it isn't rape anymore, but a passionate lovemaking where you two continue longing for each other in a genuine act of love.
+							PRINTFORMDW ...
+							PRINTFORM 「Haah, Aaahh
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM  I'm feeling it again... Dear, more, please give me moreee...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDL Having completely lost track of it at this point, you reach yet another ejaculation, flooding Yuuka's \@ TALENT:68:性別 == 2 ? intestines # womb \@ with another load of semen.
+							;Custom code, ensures yuuka is not a man
+							IF BASE:MASTER:精力 >= 1200 && (TALENT:68:恋人 || TALENT:68:恋慕) && TALENT:68:性別 != 2
+								PRINTFORMDW You are approaching your limit, but the satisfied Yuuka finally relents, letting go of you.
+								PRINTFORM 「Haa...
+								CALL HEARTCB_K68(0xD02830)
+								PRINTFORMW  Being pumped full feels sho divine... Should I get pregnant, be sure to make my child just as happy...」
+								PRINTFORMDW Yuuka gives you a smile as %HE_SHE(TARGET)% brushes %HIS_HER(TARGET)% belly that bulges slightly from all the semen inside.
+							ELSE
+								PRINTFORMDW Although it seems Yuuka isn't quite satisfied yet, you are already far past your limit.
+								PRINTFORMW 「Eh, nothing more...? Haah, is that all you got...?」
+								PRINTFORMDW Despite winning at Danmaku, this doesn't feel like a victory anymore...
+							ENDIF
+							;射精処理
+							;it's weird that it's being written this way since it just copies ADD_SAMEN_V
+							;Custom code, changed and replaced
+							;TCVAR:68:自覚 = 1
+							;EX:68:膣内精液 += BASE:MASTER:精力
+							;CFLAG:68:累計膣内精液 += BASE:MASTER:精力
+							;CALL SAMEN_SHOOT3(BASE:MASTER:精力, MASTER, 68)
+							;BASE:MASTER:精力 = 0
+							
+							;Custom code, in case we got malehus
+							IF TALENT:68:性別 == 2
+								CALL ADD_SAMEN_A(68, BASE:MASTER:精力)
+								EXP:68:Ａ性交経験 += 8
+								EXP:68:肛射経験 += 8
+							ELSE
+								CALL ADD_SAMEN_V(68, BASE:MASTER:精力)
+								EXP:68:Ｖ性交経験 += 8
+								EXP:68:膣射経験 += 8
+							ENDIF
+							BASE:MASTER:精力 = 0
+							BASE:MASTER:勃起 = 0
+							;経験操作他
+							EXP:68:精液経験 += 8
+							EXP:68:絶頂経験 += 6
+							EXP:MASTER:絶頂経験 += 8
+							EXP:MASTER:射精経験 += 8
+							EXP:MASTER:挿入経験 += 6
+						;usual scenario
+						ELSE
+							PRINTFORML 「...Ugh, Low-life scum...!」
+							PRINTFORMDW Aroused by the silky smooth porcelain skin peeking through Yuuka's torn clothes, you quickly take %HIM_HER(TARGET)% to an secluded spot.
+							PRINTFORML 「N-Nhoo!」
+							PRINTFORMDW You tear open the hole in %HIS_HER(TARGET)% blouse, exposing %HIS_HER(TARGET)% bra and cleavage.
+							PRINTFORMDW You order Yuuka to squeeze %HIS_HER(TARGET)% breasts together before inserting your half-erect penis between them, using it like an improvised onahole.
+							PRINTFORML 「...Kh, Ugh...! Y-You bastard...!」
+							PRINTFORMDL Yuuka glares at you, %HIS_HER(TARGET)% eyes filled with nothing but scorn. It works well as a masturbatory aid.
+							PRINTFORMDW You grab %HIS_HER(TARGET)% shoulders, and begin thrusting violently into %HIS_HER(TARGET)% cleavage.
+							PRINTFORMDW Done with that, you pull out your cock from Yuuka's cleavage and stick it right into %HIS_HER(TARGET)% face, showing off \@ TALENT:MASTER:形状 >= 5 ? its mighty size and vigor # erect and throbbing it is \@.
+							PRINTFORML 「Wh- What are you trying do to me...?!」
+							PRINTFORMDL You order Yuuka to masturbate while looking at your %TINKO(MASTER)%, and to not look away under any circumstances.
+							PRINTFORMDW %HE_SHE(TARGET,1)% stares back with a look that could kill, %HIS_HER(TARGET)% eyes full of murderous intent.
+							PRINTFORMW 「...～～～! ... I shall never forgive you, I shall absolutely never forgive you... This is... Ugh!」
+							PRINTFORMDL You slap Yuuka with your penis across the cheeks, urging %HIM_HER(TARGET)% to hurry up.
+							PRINTFORMDW Albeit reluctantly, %HE_SHE(TARGET)% begins masturbating, %HIS_HER(TARGET)% face burning red.
+							PRINTFORMDL As you rub it against Yuuka's face %HE_SHE(TARGET)% distorts in anger and disgust, but %HE_SHE(TARGET)% doesn't put up any resistance.
+							PRINTFORMW （Uuu～ What a strong male scent... \@ TALENT:MASTER:形状 >= 5 ? And it's so big... If this gets inside me # This %TALENT:MASTER:性別 == 2?"guy"#"girl"% is lusting for my body this much, how shameful \@...）
+							PRINTFORM （Aah～ To think I'm going to get raped by this \@TALENT:MASTER:性別 == 2?guy#girl\@... This is... Disgusting... Wrong... But...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW ）
+							PRINTFORMDL Completely engrossed in it, Yuuka gets gradually absorbed in the world of %HIS_HER(TARGET)% own.
+							PRINTFORMDW Even if %HE_SHE(TARGET)% was reluctant at first, %HIS_HER(TARGET)% movements become more and more enthusiastic.
+							PRINTFORMDL Yuuka finds %HIMSELF_HERSELF(TARGET)% completely entranced by your %TINKO(MASTER)%, 
+							PRINTFORMDW %HIS_HER(TARGET,1)% gaze affixed on it as you begin masturbating right in %HIS_HER(TARGET)% face
+							PRINTFORMDW Not having any patience left at this point, you hold Yuuka down and insert your dick into %HIS_HER(TARGET)% wet \@ TALENT:68:性別 == 2 ? anus # vagina \@.
+							PRINTFORMW 「Kiyah, Aaah?! Wa--! No! Shtoop...?!」
+							IF !TALENT:MASTER:非童貞
+								FONTBOLD
+								SETCOLOR 255,100,255
+								PRINTFORMW Male Virginity Loss
+								FONTREGULAR
+								RESETCOLOR
+								SIF FLAG:口上色
+									TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+								TALENT:MASTER:非童貞 = 1
+							ENDIF
+							;Custom code, in case we got malehus
+							IF TALENT:68:性別 == 2
+								IF CFLAG:アナル処女喪失対象 & 喪失_時間停止 || !CFLAG:アナル処女喪失記念日
+									CALL SET_HISTORY_LOST_A(68, MASTER, "ペニス")
+									SETCOLOR 255,100,255
+									PRINTFORMW Anal Virginity Loss
+									RESETCOLOR
+									SIF FLAG:口上色
+										TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+								ENDIF
+							ELSE
+								IF TALENT:68:処女 == 1
+									CALL SET_HISTORY_LOST_V(68, MASTER, "ペニス")
+									SETCOLOR 247,171,166
+									PRINTFORMW Virginity Loss
+									RESETCOLOR
+									SIF FLAG:口上色
+										TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+								ENDIF
+							ENDIF
+							PRINTFORMDW Completely drenched in anticipation, Yuuka's hole accepts your penis, clinging to it.
+							PRINTFORMDW By the time you reach all the way inside, you're already quivering from the sensation.
+							PRINTFORM 「Hnn, Haah
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM ! Ahh～ N-No, Don't...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORML 」
+							PRINTFORMDW Yuuka's resistance seems weak as you are left to focus on nothing but your own movement.
+							PRINTFORMDW Showing %HIS_HER(TARGET)% denial only through the words, Yuuka keeps running %HIS_HER(TARGET)% hands all over your back.
+							PRINTFORM 「Fuuh, Nhooo
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM  Aahh, that's th- the spot
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDW Every time you hit Yuuka's weak point, %HIS_HER(TARGET)% embrace gets stronger.
+							PRINTFORMDW At some point you find yourself face to face with Yuuka, and you join your lips in a fervent kiss.
+							EXP:68:キス経験 ++
+							EXP:MASTER:キス経験 ++
+							IF TALENT:MASTER:キス未経験
+								CALL SET_FIRSTKISS(MASTER, 68, 0)
+							ENDIF
+							IF TALENT:68:キス未経験
+								CALL SET_FIRSTKISS(68, MASTER, 0)
+							ENDIF
+							SIF FLAG:口上色
+								TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+							PRINTFORM 「...Chyuu, Nnhh
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM  Fuah, Haah, Haa...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDW Feeling yourself approaching your limit, you whisper in Yuuka's ear that you will finish inside %HIM_HER(TARGET)%.
+							PRINTFORMDW Yuuka doesn't say anything in response, only blushing as %HE_SHE(TARGET)% averts %HIS_HER(TARGET)% gaze and holds you closer.
+							PRINTFORM 「Ohhh, Nhooo
+							CALL HEARTCB_K68(0xD02830,2)
+							PRINTFORM ! ...Haa, It's coming out
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDW Matching the pulsation of your penis, Yuuka's \@ TALENT:68:性別 == 2 ? anus # vagina \@ clamps down hard as %HE_SHE(TARGET)% climaxes, squeezing every last drop of %SEMEN()%.
+							PRINTFORMDW After relishing in the afterglow for a while, you begin moving once again instinctively.
+							PRINTFORM 「Haa... You idiot... But I'll play along... You can do as you like...for now
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDW You two keep going at it for some time in a state of delirium, focusing only on each other and ignoring everything else.
+							PRINTFORMDW ...
+							PRINTFORM 「Fuuhh, Aaaaahhhh
+							CALL HEARTCB_K68(0xD02830,2)
+							PRINTFORM ! Aahh, Haa, Haaaa...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+							PRINTFORMDL After reaching the last of innumerable orgasms, you finally pull out of Yuuka.
+							PRINTFORMDW You two continue lying together for a while, far too exhausted to get up.
+							PRINTFORMW 「Haah... \@ BASE:MASTER:精力 >= 600 ? You came so much inside of me # To think you would do it inside \@... \@ TALENT:68:性別 == 2 ? Do you even know how hard it is to clean it # What if I get pregnant\@...?」
+							PRINTFORMDW \@ TALENT:68:性別 == 2 ? You apologize to the bewildered Yuuka # You promise to the bewildered Yuuka to take responsibility if that ever happens\@.
+							;射精処理
+							;it's weird that it's being written this way since it just copies ADD_SAMEN_V
+							; IF BASE:MASTER:精力 >= 600
+								; TCVAR:68:自覚 = 1
+								; EX:68:膣内精液 += 600
+								; CFLAG:68:累計膣内精液 += 600
+								; CALL SAMEN_SHOOT3(600, MASTER, 68)
+								; BASE:MASTER:精力 -= 600
+							; ELSE
+								; TCVAR:68:自覚 = 1
+								; EX:68:膣内精液 += BASE:MASTER:精力
+								; CFLAG:68:累計膣内精液 += BASE:MASTER:精力
+								; CALL SAMEN_SHOOT3(BASE:MASTER:精力, MASTER, 68)
+								; BASE:MASTER:精力 = 0
+							; ENDIF
+							;modded in, in case we got malehus
+							IF TALENT:68:性別 == 2
+								CALL ADD_SAMEN_A(68, (BASE:MASTER:精力 >= 600 ? 600 # BASE:MASTER:精力) )
+								EXP:68:Ａ性交経験 += 4
+								EXP:68:肛射経験 += 4
+							ELSE
+								CALL ADD_SAMEN_V(68, (BASE:MASTER:精力 >= 600 ? 600 # BASE:MASTER:精力) )
+								EXP:68:Ｖ性交経験 += 4
+								EXP:68:膣射経験 += 4
+							ENDIF
+							BASE:MASTER:勃起 = 0
+							;経験操作他
+							EXP:68:精液経験 += 4
+							EXP:68:絶頂経験 += 3
+							EXP:MASTER:絶頂経験 += 4
+							EXP:MASTER:射精経験 += 4
+							EXP:MASTER:挿入経験 += 3
+							CFLAG:68:1803 = 1
+						ENDIF
+					ENDIF
+				ENDIF
+		ENDSELECT
+		ENDIF
+
+

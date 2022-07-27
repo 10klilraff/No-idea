@@ -1,0 +1,191 @@
+﻿;--------------------------------------------------
+;地点名変更関数
+;--------------------------------------------------
+@MAP_PLACENAME_5(ARG)
+#FUNCTIONS
+IF GET_MAPID(ARG) == MAIN_MAP
+	SELECTCASE ARG
+		CASE P515魔理沙宅・倉庫 ;qol custom code
+			IF CFLAG:MASTER:初期位置 == ARG
+				RETURNF "Marisa's House・" + CALLNAME:MASTER + "'s Room"
+			ELSE
+				RETURNF "Marisa's House・Warehouse"
+			ENDIF
+		CASE P536エレン宅・倉庫 ;qol custom code
+			IF CFLAG:MASTER:初期位置 == ARG
+				RETURNF "Ellen's House・" + CALLNAME:MASTER + "'s Room"
+			ELSE
+				RETURNF "Ellen's House・Warehouse"
+			ENDIF
+		;---------------------------------------------
+	
+		CASE P531人形の館・空き部屋
+			IF CFLAG:MASTER:初期位置 == ARG
+				RETURNF "Dollhouse・" + CALLNAME:MASTER + "'s Room"
+			ELSE
+				RETURNF "Dollhouse・Vacant Room"
+			ENDIF
+		CASE SUMIKOMI_ROOM
+			;※このマップでは未実装
+			IF FLAG:住み込みキャラ
+				RETURNF CALLNAME:(FLAG:住み込みキャラ) + "'s Room"
+			ELSE
+				RETURNF "Vacant Room"
+			ENDIF
+		CASE MINROOM() TO (MAXROOM - 1)
+			RETURNF STR_TR(ARG + 8000)
+		CASE OMANEKIBEYA()
+			RETURNF OMANEKI_PLACE()
+		CASE SUKIMA()
+			RETURNF "Gap Space"
+		CASE MAXROOM
+			RETURNF "Outside the Forest"
+		CASEELSE
+			RETURNF "Unknown"
+	ENDSELECT
+ELSE
+	RETURNF "Outside the Forest"
+ENDIF
+
+;--------------------------------------------------
+;場所ARGがどのエリアにあるか
+;表示するマップの番号と連動（TFLAG:マップ切り替え）
+;ARG     場所ID
+;--------------------------------------------------
+@MAP_AREASELECT_5(ARG)
+#FUNCTION
+SELECTCASE ARG
+	;魔理沙宅
+	CASE P510霧雨魔法店 TO P515魔理沙宅・倉庫
+		RETURNF 3
+	;人形の洋館
+	CASE P521人形の館・アリスの部屋 TO P531人形の館・空き部屋
+		RETURNF 2
+	;ふわふわエレンの店
+	CASE P534ふわふわエレン魔法の店 TO P537エレン宅・風呂
+		RETURNF 4
+	;魔法の森
+	CASEELSE
+		RETURNF 1
+ENDSELECT
+
+;--------------------------------------------------
+;内部構造がある場所の内部の判定
+;TFLAG:マップ切り替え  内部察知が必要なマップ番号
+;                P_ID  表示ボタンの場所ID
+;                Q_ID  判定する内部の場所ID,必ずP_IDと一致した数値も含める
+;--------------------------------------------------
+@GETMAP_BUILDING_5(P_ID, Q_ID)
+#FUNCTION
+#DIM P_ID
+#DIM Q_ID
+IF TFLAG:マップ切り替え == 1
+	SELECTCASE P_ID
+		;魔理沙宅
+		CASE P510霧雨魔法店
+			SELECTCASE Q_ID
+			CASE P510霧雨魔法店 TO P514魔理沙宅・風呂
+				RETURNF 1
+			ENDSELECT
+		;人形の館
+		CASE P525人形の館・リビング
+			SELECTCASE Q_ID
+			CASE P521人形の館・アリスの部屋 TO P531人形の館・空き部屋
+				RETURNF 1
+			ENDSELECT
+		;エレン宅
+		CASE P534ふわふわエレン魔法の店
+			SELECTCASE Q_ID
+			CASE P534ふわふわエレン魔法の店 TO P537エレン宅・風呂
+				RETURNF 1
+			ENDSELECT
+	ENDSELECT
+ENDIF
+RETURNF 0
+
+;--------------------------------------------------
+;移動制限設定
+;ARG    場所ID
+;CHARA  移動するキャラID
+;RETURNF 1=移動できる,0=移動できない
+;TFLAG:移動不能メッセージ   ↓の@MAP_CANNOT_WORD用の設定
+;--------------------------------------------------
+@MAP_CAN_MOVE_5(ARG, CHARA)
+#FUNCTION
+#DIM CHARA
+SELECTCASE ARG
+	;香霖堂,10時～18時
+	CASE P502香霖堂
+		IF !INRANGE(TIME, 600, 1080)
+			TFLAG:移動不能メッセージ = 1
+			RETURNF 0
+		ENDIF
+ENDSELECT
+RETURNF 1
+
+;--------------------------------------------------
+;移動不能時に表示されるメッセージ
+;--------------------------------------------------
+@MAP_CANNOT_WORD_5(ARG)
+SELECTCASE TFLAG:移動不能メッセージ
+	CASE 1
+		PRINTFORMW Outside of business hours.
+		CLEARLINE 2
+ENDSELECT
+REUSELASTLINE
+
+;-----------------------------------------
+;拠点専用の情景描写
+;WAITはかけないように
+;-----------------------------------------
+@MAP_UNIQUEMESSAGE_5
+SELECTCASE CFLAG:MASTER:現在位置
+	CASE P502香霖堂
+		PRINTFORML Various goods are lined tightly on the small shelves.
+		PRINTFORML You spot a lot of "not for sale" labeling all over them...
+	CASE P503分かれ道
+		PRINTFORML The backdoor of Marisa's house and a well can be seen.
+;	CASE 520
+;		PRINTFORML Large garlands of flowers line the street, each labeled "housewarming party."
+	CASE P524人形の館・研究室
+		PRINTFORML Medicine bottles and dolls line the shelf.
+	CASE P543ルーミアの棲み処
+		PRINTFORML Unidentifiable bones are scattered in the corners.
+ENDSELECT
+
+RETURN 1
+;-----------------------------------------
+;非自宅時に差し替える場所IDを返す関数
+;ARG,対象ID
+;RETURNF,差し替え済み対象ID
+;-----------------------------------------
+@MAP_SEARCH_REPLACEMENT_5(ARG)
+#FUNCTION
+SELECTCASE ARG
+	CASE P502香霖堂
+		RETURNF 香霖堂
+	CASE P540古木の大樹 TO P544成美の小屋
+		RETURNF 古木の大樹
+	CASE P510霧雨魔法店 TO P515魔理沙宅・倉庫
+		RETURNF 霧雨魔法店
+	CASE P520人形の館前 TO P531人形の館・空き部屋
+		RETURNF 人形の洋館
+	CASE P506無縁塚
+		RETURNF 無縁塚
+	CASE P509再思の道
+		RETURNF 再思の道
+	CASEELSE
+		RETURNF 森の入り口
+ENDSELECT
+RETURNF 0
+
+;--------------------------------------------------
+;マップの紹介文
+;--------------------------------------------------
+@マップ紹介_5
+;とりあえず5行
+PRINTFORML This area is centered around Marisa's house, the Dollmaker's mansion, and Fluffy Ellen's shop.
+PRINTFORML It features facilities for mixing without a mixing set, and several foraging points.
+PRINTFORML Among them,「Mushroom Colony」can only be used while living here, a recommended spot for mushroom lovers.
+PRINTFORML There are lots of rooms to clean, but not that much work to assist with.
+PRINTFORML There is also a shortcut to the Road of Liminality via Muenzuka.

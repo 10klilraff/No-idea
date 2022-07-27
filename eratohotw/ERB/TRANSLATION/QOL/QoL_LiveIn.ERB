@@ -1,0 +1,144 @@
+﻿@恋慕ルーム_TR
+#DIM nMode
+#DIMS strChoices = "Choose a different room", "Choose a landlord"
+#DIMS strLandlord
+DRAWLINE
+PRINTL Here it's possible to change one's quarters.
+
+;check if you can change the landlord on the current map
+LOCAL:1 = 0
+FOR LOCAL,1,CHARANUM
+	;Custom code, bugfix, prevents people from asking to stay over multiple times in a row
+	IF CFLAG:LOCAL:神社在住 && !CFLAG:LOCAL:出禁 && FLAG:一時滞在 != LOCAL
+	 	SIF CFLAG:LOCAL:大家候補
+			LOCAL:1 ++
+	ENDIF
+NEXT
+
+IF LOCAL:1
+	CALL ASK_CHOICES(strChoices, 100, "Cancel")
+	SIF RESULT == 100
+		RETURN 1
+	nMode = RESULT
+	DRAWLINE
+ELSE
+	nMode = 0
+ENDIF
+
+IF !nMode
+	SIF 拠点_大家 > 0
+		PRINTFORML Moving from here doesn't change the landlord (Current: %CALLNAME:拠点_大家%)
+	SIF CFLAG:MASTER:初期位置 == デフォルト初期位置
+		SETCOLOR C_AQUA
+	PRINTFORML [  0] - %NAME_FROM_PLACE(デフォルト初期位置)% (Default)
+	RESETCOLOR
+	FOR LOCAL,1,CHARANUM
+		SIF !CFLAG:LOCAL:神社在住
+			CONTINUE
+		SIF CFLAG:MASTER:初期位置 == CFLAG:LOCAL:初期位置
+			SETCOLOR C_AQUA
+		SIF IS_LOVER(LOCAL)
+			PRINTFORML [{LOCAL, 3}] - %NAME_FROM_PLACE(CFLAG:LOCAL:初期位置)%
+		RESETCOLOR
+	NEXT
+	DRAWLINE
+	PRINTFORML [999] - Cancel
+	$INPUT_LOOP2
+	INPUT
+	IF RESULT == 999
+		RETURN 1
+	ELSEIF RESULT < 0 || RESULT >= CHARANUM
+		CLEARLINE 1
+		GOTO INPUT_LOOP2
+	ELSEIF RESULT == 0
+	;初期あなた私室
+		CFLAG:MASTER:初期位置 = デフォルト初期位置
+	ELSEIF RESULT == [[針妙丸]] && TALENT:MASTER:体型 >= -4 && IS_LOVER(RESULT)
+		PRINTFORMW Impossible to live together since you are not an inchling.
+		CLEARLINE 2
+		GOTO INPUT_LOOP2
+	ELSEIF IS_LOVER(RESULT) && CFLAG:RESULT:神社在住
+		CFLAG:MASTER:初期位置 = CFLAG:RESULT:初期位置
+		CALL KOJO_MESSAGE_SEND("EVENT", 19, RESULT, 3, 0)
+	ELSE
+		CLEARLINE 1
+		GOTO INPUT_LOOP2
+	ENDIF
+	
+	PRINTFORML Set to %NAME_FROM_PLACE(CFLAG:MASTER:初期位置)%.
+ELSE
+	;extract default landlord of the map
+	LOCAL:0 = 拠点_大家
+	LOCAL:1 = デフォルト初期位置
+	TRYCCALLFORM DEFAULT_OWNER_{MAIN_MAP}
+		strLandlord '= CALLNAME:拠点_大家
+		拠点_大家 = LOCAL:0
+		;デフォルト初期位置 = LOCAL:1
+	CATCH
+	ENDCATCH
+	PRINTFORML %PRINT_COLOR("This map has more than one ", C_WHITE) + PRINT_COLOR("room choice", C_ORANGE) + PRINT_COLOR(".", C_WHITE)%
+	PRINTFORML Current: %NAME_FROM_PLACE(CFLAG:MASTER:初期位置)%　Landlord: %CALLNAME:拠点_大家%
+	SIF DAY <= 1
+		PRINTFORML The first day, any room can be chosen regardless of reliability.
+	PRINTL 
+	
+	FOR LOCAL, 1, CHARANUM
+		IF CFLAG:LOCAL:神社在住 && CFLAG:LOCAL:大家候補
+			SIF CFLAG:LOCAL:住み込み必要信頼度 > CFLAG:LOCAL:信頼度 && DAY > 1
+				SETCOLOR C_L_GRAY
+			PRINTBUTTON @"[{CFLAG:LOCAL:大家候補 % 100, 3}] - %NAME_FROM_PLACE(CFLAG:LOCAL:大家候補), 36, LEFT%　Landlord:%CALLNAME:LOCAL, 15, LEFT%　Require Reliability:{CFLAG:LOCAL:住み込み必要信頼度, 4}, Current: {CFLAG:LOCAL:信頼度}", LOCAL
+			PRINTL 
+			RESETCOLOR
+		ENDIF
+	NEXT
+	PRINTFORML [  0] - ({デフォルト初期位置 % 100, 2}) %NAME_FROM_PLACE(デフォルト初期位置)%（Default room） Default Landlord: %strLandlord%
+	
+	gLineCount = LINECOUNT
+	DO
+		SIF LINECOUNT - gLineCount > 0
+			CLEARLINE LINECOUNT - gLineCount
+		INPUT
+		IF RESULT == 0
+			CALL デフォルト引っ越し
+			CFLAG:MASTER:初期位置 = デフォルト初期位置
+			RETURN 1
+		ELSEIF RESULT < CHARANUM && CFLAG:RESULT:神社在住 && CFLAG:RESULT:大家候補
+			LOCAL = RESULT
+			IF LOCAL != 0 && CFLAG:LOCAL:住み込み必要信頼度 > CFLAG:LOCAL:信頼度 && DAY > 1
+				PRINTFORMW %CALLNAME:LOCAL% doesn't trust %PARSE("you")% enough...
+			ELSE
+				拠点_大家 = LOCAL
+				デフォルト初期位置 = CFLAG:LOCAL:大家候補
+				CFLAG:MASTER:初期位置 = デフォルト初期位置
+				ROOMDATA:(デフォルト初期位置 % 100) |= 場所_布団
+				ROOMDATA:(デフォルト初期位置 % 100) |= 場所_プライベート
+				PRINTFORML Moved into %NAME_FROM_PLACE(CFLAG:LOCAL:大家候補)%.
+				PRINTFORML Landlord has been set to %CALLNAME:拠点_大家%.
+				RETURN 1
+			ENDIF
+		ENDIF
+	LOOP 1
+ENDIF
+
+@Qol_MoveIn_Omikuji
+;mirrors the section from 日時天候管理.ERB
+IF FLAG:おみくじ契約
+	FLAG:おみくじ契約 = 0
+	LOCAL = 50
+	SIF !MAIN_MAP
+		LOCAL = 30
+	PRINTFORML Once you move, the Omikuji contract will be terminated.
+	PRINTFORML Renew the Omikuji contract? (CM{LOCAL}, Current Charisma:CM%三桁区切(MONEY:2)%)
+	CALL ASK_YN
+	IF !RESULT
+		IF MONEY:2 < LOCAL
+			PRINTFORML Ran out of charisma, so the Omikuji contract has ended.
+		ELSE
+			PRINTFORML The contract has been renewed.
+			CALL PAY_MONEY_CM(LOCAL, 2)
+			FLAG:おみくじ契約 = 1
+		ENDIF
+	ENDIF
+ELSE
+	FLAG:おみくじ契約 = 0
+ENDIF

@@ -1,0 +1,309 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
+;汎用喘ぎ声関数
+;@KX_AEGI(ARGS,ARG)
+;
+;○式中関数として呼べる喘ぎ声
+;○CALL HPH_PRINT,@"「%KX_AEGI()%」" 
+;　とか
+;　CALL PRINT_STR,@"「%KX_AEGI()%」"
+;　とかいう形式で呼び出しすれば、ハートマークにも対応可。
+;
+;・第一引数は喘ぎ時のシチュエーション
+;	ARGS == "控えめ"みたいに喘ぎ時のシチュエーションを指定。
+;	
+;	
+;・第二引数は最大喘ぎ回数の制限
+;	特に指定しないなら、PALAM:欲情に応じて変化
+;	「%KX_AEGI("んほお")%おまんこズボズボされてこわれちゃうのぉっ！！！」
+;	のように記述した時に
+;	「あ～～～～～っ！！んおおおお～～～～～っ！！しゅごひっ！！しゅごひのぉっ！！！！おま
+;	んこズボズボされてこわれちゃうのぉっ！！！」
+;	みたいに変なタイミングで改行が挟まらないように制御したい
+;※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※
+;----------------------------------------------------------------------------------------
+;
+;----------------------------------------------------------------------------------------
+
+@K65_AEGI(ARGS,ARG)
+#FUNCTIONS
+#DIMS AEGI					; 喘ぎ声本体
+#DIM RAND_MAX				; 喘ぎ回数の指定
+#DIMS AEGI_TYPE,10			; 喘ぎ声タイプの指定
+#DIMS IKITSUGI_TYPE,10		; 息継ぎタイプの指定
+#DIMS MATSUBI_TYPE,10		; 末尾タイプの指定
+#DIM NUM_TYPEA				; 喘ぎ声タイプの要素数
+#DIM NUM_TYPEI				; 息継ぎタイプの要素数
+#DIM NUM_TYPEM				; 末尾タイプの要素数
+
+;初期化
+VARSET AEGI
+VARSET LOCAL
+VARSET AEGI_TYPE
+VARSET IKITSUGI_TYPE
+VARSET MATSUBI_TYPE
+
+;喘ぎ回数の指定
+IF ARG == 0
+	RAND_MAX = 2 + RAND:3 + (PALAM:欲情 >= 500) + (PALAM:欲情 >= 3000) + (PALAM:欲情 >= 30000)
+ELSE
+	RAND_MAX = ARG
+ENDIF
+
+;----------------------------------------------------------------------------------------
+;喘ぎ声タイプの指定
+;第一引数で指定したシチュごとに喘ぎ声/息継ぎ/末尾タイプを定義する。
+;----------------------------------------------------------------------------------------
+
+SELECTCASE ARGS
+	CASE "控えめ"
+		IF CUP:TARGET:快Ｍ > 0
+			AEGI_TYPE:0 '= "吐息", "キス軽め", "キス軽め", "キス軽め"
+		ELSE
+			AEGI_TYPE:0 '= "吐息", "控えめ", "控えめ"
+		ENDIF
+		IKITSUGI_TYPE:0 '= ", ", ", ",  ", ",  "...",  "... ",  "... "
+		MATSUBI_TYPE:0 '= " ",  " ",  "...",  "...", "... ",  "... "
+	CASE "フェラ音"
+		AEGI_TYPE:0 '= "吐息",  "キス",  "ディープキス", "ディープキス"
+		IKITSUGI_TYPE:0 '= ", ",  ", ",  "...",  "... ",  ", "
+		MATSUBI_TYPE:0 '= "",  "... "
+		;技巧が高い場合、じゅぼ音も加える。
+		IF ABL:TARGET:技巧 > 4
+			AEGI_TYPE:4 '= "ディープフェラ","ディープフェラ"
+			IKITSUGI_TYPE:5 '= "...!","...!"
+			MATSUBI_TYPE:3 '= "...!","...!"
+			;精液中毒高い場合、ハートマーク付与
+			IF ABL:TARGET:精液中毒 > 4
+				IKITSUGI_TYPE:7 '= "HPH", "HPH"
+				MATSUBI_TYPE:5 '= "HPH", "HPH"
+			ENDIF
+		ENDIF
+	;追加用
+	;CASE ""
+	;	AEGI_TYPE:0 '=
+	;	IKITSUGI_TYPE:0 '=
+	;	MATSUBI_TYPE:0 '=
+	
+	CASEELSE
+		IF CUP:TARGET:快Ｍ > 0
+			AEGI_TYPE:0 '= "吐息", "キス", "キス","キス軽め"
+			IKITSUGI_TYPE:0 '= ", ", "... ",", ",", "
+			MATSUBI_TYPE:0 '= "", "... ", "... "
+			
+			SIF ABL:TARGET:技巧 > 4
+				AEGI_TYPE:4 '= "吐息", "ディープキス", "ディープキス"
+		ELSE
+			AEGI_TYPE:0 '= "吐息", "控えめ"
+			IKITSUGI_TYPE:0 '= ", " ,"... ", ", ",", "
+			MATSUBI_TYPE:0 '= "", "... ", "... "
+		ENDIF
+ENDSELECT
+
+NUM_TYPEA = 10 - MATCH(AEGI_TYPE,"")
+NUM_TYPEI = 10 - MATCH(IKITSUGI_TYPE,"")
+NUM_TYPEM = 10 - MATCH(MATSUBI_TYPE,"")
+
+;恋慕時はハートの抽選率UP
+IF TALENT:恋慕 && NUM_TYPEI <=9
+	IKITSUGI_TYPE:NUM_TYPEI '= "HPH"
+	NUM_TYPEI += 1
+ENDIF
+IF TALENT:恋慕 && NUM_TYPEM <=8
+	MATSUBI_TYPE:NUM_TYPEM '= "HPH", "HPH"
+	NUM_TYPEM += 1
+ENDIF
+
+;発情時はハートの抽選率UP
+IF TCVAR:発情 && NUM_TYPEI <=8
+	IKITSUGI_TYPE:NUM_TYPEI '= "HPH", "HPH"
+	NUM_TYPEI += 2
+ENDIF
+IF TCVAR:発情 && NUM_TYPEM <=8
+	MATSUBI_TYPE:NUM_TYPEM '= "HPH", "HPH"
+	NUM_TYPEM += 2
+ENDIF
+
+WHILE (RAND_MAX - LOCAL) > 0
+
+;----------------------------------------------------------------------------------------
+;喘ぎ声本体部
+;
+
+SELECTCASE AEGI_TYPE:(RAND:NUM_TYPEA)
+	CASE "吐息"
+		SELECTCASE RAND:8
+			CASE 0
+				AEGI += "Wa"
+			CASE 1
+				AEGI += "Haーah"
+			CASE 2
+				AEGI += "Hafuu～"
+			CASE 3
+				AEGI += "Fu"
+			CASE 4
+				AEGI += "Fuーu"
+			CASE 5
+				AEGI += "Nn"
+			CASE 6
+				AEGI += "Mnnn"
+			CASE 7
+				AEGI += "Ku"
+		ENDSELECT
+	CASE "控えめ"
+		SELECTCASE RAND:11
+			CASE 0
+				AEGI += "Ah"
+			CASE 1
+				AEGI += "Fu"
+			CASE 2
+				AEGI += "Ya"
+			CASE 3
+				AEGI += "Ahn～"
+			CASE 4
+				AEGI += "Haーa"
+			CASE 5
+				AEGI += "Un～"
+			CASE 6
+				AEGI += "Ahh"
+			CASE 7
+				AEGI += "Auu"
+			CASE 8
+				AEGI += "Hiuu"
+			CASE 9
+				AEGI += "Uu"
+			CASE 10
+				AEGI += "Aaー"
+			CASE 11
+				AEGI += "Nuu"
+		ENDSELECT
+	CASE "喘ぎ"
+		SELECTCASE RAND:11
+			CASE 0
+				AEGI += "Ahn"
+			CASE 1
+				AEGI += "Kyaa"
+			CASE 2
+				AEGI += "Haーahn"
+			CASE 3
+				AEGI += "Fuaa"
+			CASE 4
+				AEGI += "Yaーa"
+			CASE 5
+				AEGI += "Auuー"
+			CASE 6
+				AEGI += "Hiaa"
+			CASE 7
+				AEGI += "Aah"
+			CASE 8
+				AEGI += "Kuu"
+			CASE 9
+				AEGI += "Ahh"
+			CASE 10
+				AEGI += "Waa～"
+		ENDSELECT
+	CASE "キス"
+		SELECTCASE RAND:8
+			CASE 0
+				AEGI += "Chiyu"
+			CASE 1
+				AEGI += "Chuu～"
+			CASE 2
+				AEGI += "Chiyuu～"
+			CASE 3
+				AEGI += "Churu"
+			CASE 4
+				AEGI += "Chyumu"
+			CASE 5
+				AEGI += "Chiyuku"
+			CASE 6
+				AEGI += "Nyuchu"
+			CASE 7
+				AEGI += "Nchyuu"
+			CASE 8
+				AEGI += "Nmu～"
+		ENDSELECT
+	CASE "キス軽め"
+		SELECTCASE RAND:3
+			CASE 0
+				AEGI += "Chyuu"
+			CASE 1
+				AEGI += "Chiyu"
+			CASE 2
+				AEGI += "Chuu"
+		ENDSELECT
+	CASE "ディープキス"
+		SELECTCASE RAND:14
+			CASE 0
+				AEGI += "Chyuru"
+			CASE 1
+				AEGI += "Reyru"
+			CASE 2
+				AEGI += "Ryuju"
+			CASE 3
+				AEGI += "Chyruru"
+			CASE 4
+				AEGI += "Chuu～"
+			CASE 5
+				AEGI += "Nyuru"
+			CASE 6
+				AEGI += "Rerorero"
+			CASE 7
+				AEGI += "Reruyu"
+			CASE 8
+				AEGI += "Nyuru"
+			CASE 9
+				AEGI += "Ryupu"
+			CASE 10
+				AEGI += "chyuku"
+			CASE 11
+				AEGI += "Nyuju"
+			CASE 12
+				AEGI += "Reruru"
+			CASE 13
+				AEGI += "Nchyuu"
+			CASE 14
+				AEGI += "Rerorero"
+		ENDSELECT
+	CASE "ディープフェラ"
+		SELECTCASE RAND:11
+			CASE 0
+				AEGI += "Jyubu"
+			CASE 1
+				AEGI += "Jyubo"
+			CASE 2
+				AEGI += "Kupu"
+			CASE 3
+				AEGI += "Kupo"
+			CASE 4
+				AEGI += "Jyuruchu"
+			CASE 5
+				AEGI += "Chyububu"
+			CASE 6
+				AEGI += "Jyururu～～"
+			CASE 7
+				AEGI += "Gupo"
+			CASE 8
+				AEGI += "Mugu"
+			CASE 9
+				AEGI += "Zyuru"
+			CASE 10
+				AEGI += "Nyupo"
+		ENDSELECT
+	CASEELSE
+		AEGI += "ほげ"
+ENDSELECT
+
+;RAND_MAX回喘ぎ声代入後、末尾へ
+SIF RAND_MAX - LOCAL <= 1
+	BREAK
+
+;息継ぎの挿入
+AEGI += IKITSUGI_TYPE:(RAND:NUM_TYPEI)
+
+LOCAL++
+WEND
+
+;末尾部の挿入
+AEGI += MATSUBI_TYPE:(RAND:NUM_TYPEM)
+
+RETURNF AEGI

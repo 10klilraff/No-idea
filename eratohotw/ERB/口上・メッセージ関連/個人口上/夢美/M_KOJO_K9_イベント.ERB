@@ -1,0 +1,4250 @@
+﻿;-------------------------------------------------
+; eraTheWorld 4.740用 岡崎夢美口上
+;-------------------------------------------------
+;他者による修正、加筆、改変については、同梱のライセンス条項に従ってください。
+
+;------ ｷﾘﾄﾘ ｶｲｼ -----------
+;eraTheWorld proto4.07パッチ取り込み用 Ver1.13
+;テンプレートの使い方
+;初めに置換コマンド等により KX を K(キャラNo) に変更して下さい  
+;キャラNoはCSVフォルダのCharaファイルを参照　例(霧雨 魔理沙の場合)：KX =置換=> K11
+;
+;------ ｷﾘﾄﾘ ｵﾜﾘ -----------
+
+;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;CFLAG:K9:1000    ;# AFTERTRAニー実行フラグ(0:してない 1:我慢した 2:シた, 追い出し以外の遭遇時、0にリセット)
+;CFLAG:K9:1001    ;# 日常パートでおもらし(0:してない 1:漏らした)
+;
+;******************************************************************************
+
+;### 口上存在判定 ###################################
+@M_KOJO_K9(ARG)
+;別人版を作成する際はこのテンプレではなく別人版用口上テンプレをご利用ください
+
+;口上存在判定です、けしてコメントアウトしないでください
+;他の処理は一切行わないように
+RETURN 1
+
+;### 口上基本フラグ設定 #############################
+@M_KOJO_FLAGSETTING_K9
+;基本フラグ設定はここで行ってください
+;共通の口上フラグは必要な箇所のコメントアウトを外してご利用ください
+;口上専用フラグはご自由に
+;Xにはキャラ番号を入れてください
+
+;眠姦口上有、時間停止口上有、なりきりに1を入れると、それぞれ時間停止時、眠姦時、なりきり時にコマンド口上が読み込まれるように
+;入れないと時間停止時、眠姦時、なりきり時は一切喋りません
+;CFLAG:X:眠姦口上有 = 0
+;CFLAG:X:時間停止口上有 = 0
+;CFLAG:X:なりきり口上有 = 0
+
+;破瓜キャンセル口上有に1を入れると、@M_KOJO_EVENT_KX_LOST_VIRGIN_STOPでキャンセルの成否を操作できます
+;CFLAG:X:破瓜キャンセル口上有 = 0
+
+;口上内抱き寄せ判定_初回と口上内抱き寄せ判定_通常に1を入れると、M_KOJO_EVENT_KX_PERMISSIONで押し倒しの成否を操作できます
+;CFLAG:X:口上内抱き寄せ判定_初回 = 0
+;CFLAG:X:口上内抱き寄せ判定_通常 = 0
+
+;押し倒し禁止に1を入れると、自分から押し倒してこなくなります
+;以下は恋慕かセフレがつくまで押し倒してこなくなる使用例
+;IF !TALENT:X:恋慕 && !TALENT:X:セフレ
+;	CFLAG:X:押し倒し禁止 = 1
+;ELSE
+;	CFLAG:X:押し倒し禁止 = 0
+;ENDIF
+
+;来訪不能に1を入れると、来訪してこなくなります
+;以下は面識があるまで来訪してこなくなる使用例
+;IF !CFLAG:X:面識
+;	CFLAG:X:来訪不能 = 1
+;ELSE
+;	CFLAG:X:来訪不能 = 0
+;ENDIF
+
+;### 口上色判定 ###################################
+@M_KOJO_COLOR_K9
+
+;赤っぽい色をセット
+;SETCOLOR 0xf01e00
+SETCOLOR 0xdc4664
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"UPDATE判定"
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_UPDATE_K9
+;口上独自のUPDATE用
+;ENCOUNTER専用に独自分岐フラグを仕込んだ場合等にどうぞ
+;UPDATE判定でCFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"ENCOUNTER"系イベント（エクストラ構文）
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_ENCOUNTER_K9
+;初対面、挨拶のタイミング
+;TALENTの変更はここでどうぞ。
+;経験の変更は齟齬が出る場合がありますので、CSVを修正し同梱する事を推奨します
+
+	PRINTFORML 「Ara, I haven't seen you around before.」
+	PRINTFORMDW As you turn towards the direction of the voice, your vision is suddenly filled with red.
+	PRINTFORMDW The intense red stings your eyes and you can't see much else.
+	PRINTFORMDW As your vision slowly accustoms to the sight, you finally begin to make out the figure of a girl.
+	PRINTFORMDW Now that you think about it, it's just the girl that's red. Her surroundings look normal.
+	PRINTFORMDW You introduce yourself to the girl.
+	PRINTFORML 「Hmm, so you're %CALLNAME:MASTER%. I'm Okazaki Yumemi, a university professor.」
+	PRINTFORMDW You ask if there's really a university in Gensokyo.
+	PRINTFORML 「No, there aren't any universities here. I'm just here for research.」
+	PRINTFORML 「I brought an assistant along too... Well, she's around here somewhere so I'm sure you'll run into her eventually.」
+	PRINTFORML 「At any rate, it's nice to meet you, %CALLNAME:MASTER%.」
+
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"SP_EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;デート帰りにファーストKISS（合意も付く）
+;==================================================
+@M_KOJO_SPEVENT_K9_1(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+;CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+;地の文
+CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+IF LOCAL
+	PRINTFORML 「Hey %CALLNAME:MASTER%, can you close your eyes, just for a bit?」
+	PRINTFORMDW As you agree and close your eyes, your nose is suddenly filled with a light, pleasant scent.
+	PRINTFORMDW You feel something soft press against your lips.
+	PRINTFORMDW Opening your eyes in surprise, you see Yumemi standing before you, blushing.
+	PRINTFORML 「Fufu, that was my first kiss, you know?」
+	;キスをキャンセルしたい場合は以下を開放
+	;TCVAR:キスキャンセル = 1
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰りに告白（恋人が付く）
+;==================================================
+@M_KOJO_SPEVENT_K9_2(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_2(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;告白内容
+	;この告白内容表示後に受けるかどうかの選択分が表示されます
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		IF FIRSTTIME("告白")
+			;初回
+			PRINTFORMDW Yumemi watches you as you wave your hand goodbye and turn away.
+			PRINTFORML （What should I do... Should I say it? Is there any turning back if I do?）
+			PRINTFORML （I don't know. I can't figure it out no matter how much I think.）
+			PRINTFORML （In that case, there's no use thinking. There's no other choice but to say it.）
+			PRINTFORML （If I'm ever going to tell %CALLNAME:MASTER% I like %HIM_HER(MASTER,,1)%...）
+			PRINTFORML 「... If I'm ever going to tell %HIM_HER(MASTER,,1)%...」
+			PRINTFORML （I don't know if I'm ready...but now's my only chance.）
+			PRINTFORMDW Steeling her resolve, she calls out to you.
+			PRINTFORML 「Wait.」
+			PRINTFORMDW As you are just about to leave, you hear Yumemi's voice behind you.
+			PRINTFORMDW You look back and ask what's on her mind.
+			PRINTFORMDW Yumemi stands there looking at you with a serious expression, her face slightly blushing.
+			PRINTFORML 「I have something...I need to tell you.」
+			PRINTFORMDW She takes a deep breath, and speaks.
+			PRINTFORML 「I love you.」
+			PRINTFORMDW You look at her with a dazed expression.
+			PRINTFORML 「I, Okazaki Yumemi, have fallen in love with you. So... So...」
+			PRINTFORML 「Please...let me become your girlfriend!」
+			PRINTFORMDW There's no hint of joking. She's completely serious.
+			PRINTFORMDW She's also not the type of person who would joke about something like this.
+			PRINTFORMDW You've known her long enough to know that about her.
+			PRINTFORMDW Yumemi is confessing her true feelings to you.
+		ELSE
+			;2回目以降
+			PRINTFORML 「I know you turned me down last time...but my feelings for you haven't changed.」
+			PRINTFORML 「I still love you.」
+			PRINTFORMDW Yumemi is smiling at you, as if your last rejection never happened.
+			PRINTFORML 「Have you thought about it a little more since then?」
+			PRINTFORML 「I'll ask again.」
+			PRINTFORML 「Would you...let me be your girlfriend? \/\/\/」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白オッケー（恋人が付く）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF CFLAG:1101 == 0
+			PRINTFORML 「Really...? Are you really okay with me...? No way, I can't believe it... Uuu... Aa... %CALLNAME:MASTER%!」
+			PRINTFORMDW Yumemi runs and leaps straight into your chest.
+			PRINTFORML 「... I'm so happy... If you'd said no, I wouldn't have known what to do...! Uwaaa...!」
+			PRINTFORMDW Looking at her clinging to you with tears streaming down her face, you can only imagine how much courage it took her to confess.
+			PRINTFORMDW Before you've realized it, you're gently patting her head.
+			PRINTFORML 「Nn... Fufu, I'm so happy... Can you keep patting my head?」
+			PRINTFORMDW Having stained your clothes with tears, Yumemi looks at you.
+			PRINTFORMDW You feel a stronger feeling of love towards Yumemi than you've ever felt before.
+			PRINTFORMDW Unable to bear it, you move your lips to Yumemi's.
+			PRINTFORMDW After exchanging a long kiss, the two of you pull your lips away, and Yumemi smiles at you as she speaks.
+			PRINTFORML 「I'll be in your care from now on... My beloved %CALLNAME:MASTER%.」
+		ELSE
+			PRINTFORML 「I, I finally did it～～～...Do you have any idea how long I've waited...」
+			PRINTFORML 「It's... Uu...been a long road... Wah... Sniff...」
+			PRINTFORMDW You ask her why she's crying.
+			PRINTFORML 「No! I'm not crying...! Uuu～...!」
+			PRINTFORMDW Despite her denial, her face is becoming more and more disheveled.
+			PRINTFORML 「Aaaahh～! I'm so happy! You big dummy～!」
+			PRINTFORMDW Yumemi leaps into your arms and starts beating her fists into your chest.
+			PRINTFORML 「There's no way I'm ever letting you go now... Fufu.」
+			PRINTFORMDW Yumemi gives you a satisfied smile.
+			PRINTFORMDW What a fearsome girl... You'd better not let your guard down around her.
+			;断られフラグをOFF
+			CFLAG:1101 = 0
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF CFLAG:1101 == 0
+			PRINTFORML 「... Mm, Mmm～～... I, see... No, huh...」
+			PRINTFORML 「Uu... I'm, not... Sniff... crying...!」
+			PRINTFORML 「I'm not crying, not crying...! Stupid...!」
+			PRINTFORMDW You couldn't accept her feelings, but...
+			PRINTFORMDW You also can't bear to see her like this.
+			PRINTFORMDW You gently hug Yumemi, and patiently hold her until her tears have stopped.
+			PRINTFORML 「... Idiot, why are you being so nice... I don't get it at all.」
+			PRINTFORMDW "I couldn't just leave you alone like that."
+			PRINTFORML 「... Even though you just turned me down...」
+			PRINTFORMDW "Well, that's a separate mat――"
+			PRINTFORML 「If you treat me this kindly... It's going to make me not want to give up, you know...?」
+			PRINTFORMDW ――Eh?
+			PRINTFORML 「So that said, I'm not going to give up on you!」
+			PRINTFORMDW No way?!
+			PRINTFORML 「I thought I was plenty cute already, but it looks like I've got a long way to go. So...」
+			PRINTFORML 「I'm going to become even cuter, so much that even you won't be able to help looking at me!」
+			;断られフラグをON
+			CFLAG:1101 = 1
+		ELSE
+			PRINTFORML 「Mmmm～, I guess it's still no good...」
+			PRINTFORML 「Turning me down so many times makes me think you've got your heart already set on someone else.」
+			PRINTFORMDW You mumble something and try to evade the subject.
+			PRINTFORML 「Ara ara? Did I hit the mark?～」
+			PRINTFORML 「... Well, if that's the case, just tell me and I'll give up like a good girl.」
+			PRINTFORML 「But until then, you haven't gotten rid of me yet!」
+			PRINTFORML 「I'll see you later then, %CALLNAME:MASTER%.」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰り
+;==================================================
+@M_KOJO_SPEVENT_K9_3(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_3(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORML 「That was fun, %CALLNAME:MASTER%. Take me out again sometime.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印消去イベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Thanks for taking me out today, %CALLNAME:MASTER%.」
+		PRINTFORML 「I had a lot of fun...so uh, I'd be happy if we go out again sometime.」
+		PRINTFORML 「I'm over that stuff from before, so...let's just put it behind us, ok?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印2>1レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「... Thanks, for today...」
+		PRINTFORML 「I guess I wouldn't mind going out again sometime...if it's as much as fun as today.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印3>2レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「... Hmph.」
+		PRINTFORML （I'm still upset...but I guess %HE_SHE(MASTER)%'s not so bad.）
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;部屋で遭遇
+;==================================================
+@M_KOJO_EVENT_K9_1(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERが入ってきた
+	;追い出される以外の遭遇を統合
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && (ARG == 1 || ARG == 2 || ARG == 3 || ARG == 6 || ARG == 7 || ARG == 8 || ARG == 9)
+	;2022/02/05 ARG = 8, 9を追加
+		CALL M_KOJO_EVENT_K9_1_NOT_OIDASHI(ARG)
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて出て行った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 「Oh, someone's here already... Excuse me.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML 「I'm coming in now, so please leave.」
+		PRINTFORMDW Protesting the tyranny of it all, you are quickly chased out.
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;------------------------------------------------
+; 追い出される以外の遭遇関数
+;------------------------------------------------
+@M_KOJO_EVENT_K9_1_NOT_OIDASHI(ARG)
+
+	;前日晩、オナったか
+	;オナニーした
+	IF CFLAG:1000 == 2
+		IF TALENT:3
+			PRINTFORML 「Ah, %CALLNAME:MASTER%...\/\/\/」
+			PRINTFORML （I fingered myself again last night thinking about %CALLNAME:MASTER%...\/\/\/）
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「Ara, %CALLNAME:MASTER%, today it's the real you.」
+			PRINTFORMDW "What are you talking about?"
+			PRINTFORML 「What do you mean, last night I got myself off imagining fucking you.」
+			PRINTFORMDW "Don't say that out loud so casually!"
+			PRINTFORML 「Why, what's wrong with that? Aren't we buddies?」
+		ELSEIF TALENT:8
+			PRINTFORML 「Ah... %CALLNAME:MASTER%...\/\/\/」
+			PRINTFORML （Every time I've been doing it myself lately, %CALLNAME:MASTER%'s keeps coming to mind...\/\/\/）
+		ELSE
+			PRINTFORML 「Ara, %CALLNAME:MASTER%... What's the matter? Is there something on my face?」
+		ENDIF
+		;初期化
+		CFLAG:1000 = 0
+	;我慢した
+	ELSEIF CFLAG:1000 == 1
+		IF TALENT:3
+			PRINTFORML 「Ah, %CALLNAME:MASTER%...」
+			PRINTFORML （I've been feeling pretty pent up lately... I wonder if he'll do it with me soon...\/\/\/）
+		ELSEIF TALENT:184
+			PRINTFORML 「Ara, %CALLNAME:MASTER%, you came at a good time.」
+			PRINTFORMDW "What do you mean?"
+			PRINTFORML 「We haven't seen each other lately so I've really gotten into the mood to fuck.」
+			PRINTFORMDW "Don't say that out loud so casually!"
+			PRINTFORML 「Why, what's wrong with that? Aren't we buddies?」
+		ELSEIF TALENT:8
+			PRINTFORML 「Ah... %CALLNAME:MASTER%...」
+			PRINTFORML （I've been feeling pretty pent up lately... I'm a little embarrassed at myself, but I'd really like to do it now...）
+		ELSE
+			PRINTFORML 「Ara, %CALLNAME:MASTER%.」
+			PRINTFORML （I'd be fine doing it with %CALLNAME:MASTER%, if it'll get my mind off these things...）
+		ENDIF
+		;初期化
+		CFLAG:1000 = 0
+	
+	;オナバレしているか
+	;IF CFLAG:41 == 2
+	ELSEIF CFLAG:41 == 2
+		;ヤると2
+		IF TALENT:3
+			PRINTFORML 「Ah... %CALLNAME:MASTER%... A-About what we did the last time...」
+			PRINTFORML 「I really enjoyed that...so uh, if it's ok with you, can do we do it again?」
+		ELSEIF TALENT:184
+			PRINTFORML 「Ara, it's the one with perverted tastes %UNICODE(0x2764)% Last time was amazing %UNICODE(0x2764)%」
+			PRINTFORML 「If you like... I'd love to indulge in such acts again.」
+		ELSEIF TALENT:8
+			PRINTFORML 「Uu... %CALLNAME:MASTER%... I-I, uh...\/\/\/」
+			PRINTFORML 「L-Let's keep that a secret, ok? What we did last time...」
+		ELSE
+			PRINTFORML 「U, Um... Wh-What we did last time... I-I guess I'd never considered that before...\/\/\/」
+			PRINTFORML （And it felt amazing...）
+		ENDIF
+	ELSEIF CFLAG:41 == 3
+		;鑑賞は3
+		IF TALENT:3
+			IF ABL:14 > 6 && ABL:11 > 9
+				PRINTFORML 「Ah, %CALLNAME:MASTER%, about that time when you watched me masturbate...\/\/\/」
+				PRINTFORML 「That felt so amazing...%UNICODE(0x2764)% This kind of thing isn't so bad every once in a while...」
+				PRINTFORML 「Since you've already seen it, feel free to come watch again %UNICODE(0x2764)%」
+				PRINTFORML 「Fingering myself while you're watching is just so hot %UNICODE(0x2764)%」
+			ELSE
+				PRINTFORML 「Ah... %CALLNAME:MASTER%... About what happened the other day...\/\/\/」
+				PRINTFORML 「Wh-When you...watched me fingering myself...」
+				PRINTFORML 「It was really embarrassing, so I'd like it if you don't bring it up much...」
+				PRINTFORML （... Although it felt amazing \/\/\/）
+			ENDIF
+		ELSEIF TALENT:184
+			PRINTFORML 「Ara, %CALLNAME:MASTER%%UNICODE(0x2764)% Letting you watch me masturbate was amazing...%UNICODE(0x2764)%」
+			PRINTFORML 「I had no idea it would feel so good... What a wonderful discovery.」
+			PRINTFORML 「But next time, I'd prefer if you were more...active %UNICODE(0x2764)%」
+			PRINTFORML （Although if it's just masturbating, I'd let %HIM_HER(MASTER,,1)% watch anytime %HE_SHE(MASTER)% likes.）
+		ELSEIF TALENT:8
+			PRINTFORML 「Uu... %CALLNAME:MASTER%... I-I, uh...\/\/\/」
+			PRINTFORML 「L-Let's keep that a secret, ok? When you watched me finger myself...」
+		ELSE
+			PRINTFORML 「Wh-When I let you watch... L-Let's keep that a secret, ok?」
+		ENDIF
+	ELSEIF CFLAG:41 == 1
+		;とんずらしたとき
+		IF TALENT:3 || TALENT:8
+			PRINTFORML 「I-I have times when I'm in the mood too, you know?」
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「You know, it was pretty frustrating for me when you just left without doing anything with me.」
+		ELSE
+			PRINTFORML 「... Don't you dare tell anyone about that, ok?」
+		ENDIF
+	;通常
+	ELSEIF ARG == 1
+		;(拠点MAPで)会いに行った
+		IF TALENT:3
+			PRINTFORML 「Hey %CALLNAME:MASTER%, did you come to see me?」
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「Oh, it's you, did you come to have some fun with me?」
+			PRINTFORMDW "No. No I didn't."
+		ELSEIF TALENT:8
+			PRINTFORML 「Ah, %CALLNAME:MASTER%. What are you up to today?」
+		ELSE
+			PRINTFORML 「Ara, %CALLNAME:MASTER%. Do you need something?」
+		ENDIF
+	ELSEIF ARG == 2
+		;(拠点MAPで)遭った
+		IF TALENT:3
+			PRINTFORML 「Oh, %CALLNAME:MASTER%. It's good to see you.」
+		ELSEIF TALENT:184
+			PRINTFORML 「Ara, %CALLNAME:MASTER%, so this is where you were. Not that I was looking for you in particular, or anything.」
+		ELSEIF TALENT:8
+			PRINTFORML 「Ah, %CALLNAME:MASTER%, you're here too.」
+		ELSE
+			PRINTFORML 「Ah, excuse me.」
+		ENDIF
+	ELSEIF ARG == 3
+		;風呂に入ってきた
+		IF TALENT:3
+			PRINTFORML 「Ara, so you were in the bath, too. I'll join you.」
+			PRINTFORMDW Without waiting for you to respond, Yumemi moves over to you.
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「Hmm... Today, it'll be in the bath... That doesn't sound so bad either.」
+			PRINTFORMDW Seems like Yumemi is already in the mood for sex.
+		ELSE
+			PRINTFORML 「Oh, you're also in the bath... Well, whatever. I'm coming in, too.」
+		ENDIF
+	ELSEIF ARG == 6
+		;外出先
+		IF TALENT:3
+			PRINTFORML 「Ara %CALLNAME:MASTER%, it's great meeting you here.」
+		ELSE
+			PRINTFORML 「Hello, %CALLNAME:MASTER%.」
+		ENDIF
+	ELSE
+		;2022/02/05 MEMO ARG=8と9の分岐を追加したいな、え、10もあるのか。
+		;デート中
+		IF TALENT:3
+			PRINTFORML 「Ara, seems like you're in the middle of a date. Mind if I join?」
+			PRINTFORMDW "A d-double date...?!"
+			PRINTFORML 「Haha, I'm just joking, hope you enjoy yourselves.」
+		ELSEIF TALENT:184
+			PRINTFORML 「Oh, is this who you've got your eyes on today?」
+			PRINTFORMDW "I'd appreciate it if you don't phrase it that way!"
+			PRINTFORML 「Oh, was I wrong? Well, have fun, you two.」
+		ELSE
+			PRINTFORML 「Ara, %CALLNAME:MASTER%.」
+			PRINTFORML 「Did I catch you during a date? Sorry if I interrupted anything.」
+		ENDIF
+		
+	ENDIF
+;----------遭遇関数ここまで------------------------
+
+
+;==================================================
+;朝起きたとき（おはよう口上）
+;==================================================
+@M_KOJO_EVENT_K9_2(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;非同棲かつ相手が先に起きてる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;TARGET私室にMASTERが入っている（恋慕時添い寝中就寝時のみ？
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORML 「Good morning, %CALLNAME:MASTER%. Did you sleep well last night?」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTER私室にTARGETが入ってきてる(恋慕無しでも入ってくる可能性有り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「Sorry, did I wake you?」
+			RETURN 1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が起きている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Come on, it's morning. It's time to wake up.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が寝ている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「Nnn... Just a little longer, Chiyuri...」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERが起きていて、相手が起きてきた
+	;添い寝時TARGET起床はこちら（TARGET衰弱or添い寝中TARGET睡魔負け後そのままMASTERが起き続けた上で相手が起床した場合限定
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;-------------------------------------------------
+		;非同棲
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;同棲中
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;夜寝るとき（おやすみ口上）
+;口上主はTARGET
+;==================================================
+@M_KOJO_EVENT_K9_3(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;自室に帰る（定時になって寝る）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 1
+		IF ARG:1
+			;デート中に眠くて帰って寝る（拠点キャラのみ）
+			IF TALENT:3
+				PRINTFORML 「Mmm... Sorry %CALLNAME:MASTER%, I'm just too sleepy...」
+				PRINTFORML 「I really wish I could stay longer, but I really need to head back now.」
+			ELSEIF TALENT:8
+				PRINTFORML 「Fwaa～... Sleepy... Sorry %CALLNAME:MASTER%, I'm going to head back...」
+				PRINTFORML 「I hate to leave in the middle of things, but I'll see you later.」
+			ELSEIF TALENT:184
+				PRINTFORML 「Fwaa～～... I know we're in the middle of a date but I'm going to head back...」
+				PRINTFORML 「Otherwise I'll just fall asleep in the middle of sex.」
+			ELSE
+				PRINTFORML 「Hey %CALLNAME:MASTER%, I hate to interrupt our date but I really need to get going.」
+				PRINTFORML 「I'm really sleepy...」
+			ENDIF
+		ELSEIF CFLAG:うふふ
+			;うふふ中に眠くて自室に帰って寝る（拠点キャラのみ）
+			IF TALENT:3
+				PRINTFORML 「Haa... Haa...\/\/\/　Ah～... Fwaa～～... No...energy...」
+				PRINTFORML 「... Sleep. Zzz」
+			ELSEIF TALENT:8
+				PRINTFORML 「... Haa, Haa, A-At, my limit...」
+				PRINTFORML 「Good night～...」
+			ELSEIF TALENT:184
+				PRINTFORML 「Haaa...%UNICODE(0x2764)%　Haa...%UNICODE(0x2764)% I, c-can't go any longer...%UNICODE(0x2764)%」
+				PRINTFORML 「Good night, %CALLNAME:MASTER%...\/\/\/」
+			ELSE
+				PRINTFORML 「Haa... Haa... A-At, my limit...」
+				PRINTFORML 「Good...night... Zzz」
+			ENDIF
+		ELSE
+			IF TALENT:3
+				PRINTFORML 「Ara, it's already gotten so late... I wish I could stay longer, but...」
+				PRINTFORML 「I'm too sleepy, so I'm going to head back.」
+			ELSEIF TALENT:8
+				PRINTFORML 「Ah, look at the time! No wonder I'm getting sleepy.」
+				PRINTFORML 「Sorry %CALLNAME:MASTER%, I'm going to head back.」
+			ELSEIF TALENT:184
+				PRINTFORML 「Ara, it's gotten so late, no wonder I'm getting sleepy.」
+				PRINTFORML 「Good night, %CALLNAME:MASTER%.」
+			ELSE
+				PRINTFORML 「Fwaa～ Sleepy... I'm heading back.」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;眠そうにしている
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Mmm... I'm getting sleepy...」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;睡眠中（起きていないので会話というよりは寝言？）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 3
+		IF TALENT:恋慕
+			PRINTFORML 「Where do you think you're touching me %CALLNAME:MASTER%～... Fufu... Zzz.」
+			PRINTFORMDW Just what is she dreaming about...
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「Nn... Nnah... Naughty %CALLNAME:MASTER%... Touching me...down there...」
+			PRINTFORMDW Yumemi's lewd sleep talk starts to rouse your lust.
+			PRINTFORMDW You wonder if she's actually awake and doing it on purpose.
+		ELSE
+			PRINTFORML 「Magic is the last frontier for humanity... Zzz.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;イタズラ中
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 1
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 4
+		;PRINTFORMW 
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;衰弱中（恋慕付き拠点内キャラがMAIN_MAPで衰弱状態になった場合か、お招き部屋で相手が衰弱した場合に発生
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		IF CFLAG:うふふ
+			;うふふ中にダウン
+			PRINTFORMW 
+		ELSE
+			PRINTFORML 「Chiyuri... Hurry and bring me an energy drink... Nnn.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERがダウン（部屋まで運ばれる）
+	;記入チェック（=0, 非表示、1, 表示）
+	;-------------------------------------------------
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 6
+		;お酒でダウン
+		IF BASE:MASTER:酒気 >= MAXBASE:MASTER:酒気
+			IF ARG:1
+				;自室でダウン,（～が【MASTER】をベッド（布団）へと運んでくれた…）
+				PRINTFORMW 
+			ELSE
+				;部屋まで運ばれる,（～が【MASTER】を私室へと運んでくれた…）
+				PRINTFORML 「You're really just going to collapse here!? Seriously, whatever am I going to do with you...」
+			ENDIF
+		;体力切れでダウン
+		ELSE
+			IF ARG:1
+				;自室でダウン,（～が【MASTER】をベッド（布団）へと運んでくれた…）
+				PRINTFORMW 
+			ELSE
+				;部屋まで運ばれる,（～が【MASTER】を私室へと運んでくれた…）
+				PRINTFORML 「You're really just going to collapse here!? Seriously, whatever am I going to do with you...」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが自室まで戻ってきた
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 7
+		PRINTFORML 「I'm home～」
+		;-------------------------------------------------
+		;そのまま着替えて寝た
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		IF LOCAL:1 && ARG:1 == 0
+			PRINTFORML 「Pajamas, pajamas... Ah, here they are.」
+			PRINTFORMDW Yumemi changes into her pajamas right in front of you and crawls into bed.
+			PRINTFORML 「Good night～... Zzz.」
+			PRINTFORMDW While you appreciate getting to see her in her underwear, you feel like she's a bit too careless...
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部屋から追い出された
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		IF LOCAL:1 && ARG:1 == 1
+			IF CFLAG:前ターン位置 == CFLAG:現在位置
+				;前のターンまで一緒に部屋にいた
+				PRINTFORMW 
+			ELSE
+				;寝るために部屋に帰ってきたところ
+				PRINTFORML 「Hmm? Why are you here? I'm going to sleep, so please leave.」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;他キャラとのＨを止めさせて寝た
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「What do you think you're doing in someone else's room, at this time of night!?」
+			PRINTFORML 「Go find somewhere else to do that, seriously...」
+			PRINTFORML 「And the bed is soaked... Haa... You've got to be kidding me.」
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;来訪キャラが拠点で休憩（～は疲れ切っている→ちょっと休んでいきなよ）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		IF CFLAG:うふふ
+			;うふふ中に寝る
+			PRINTFORMW 
+		ELSE
+		PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝室に居る状態でその場で寝る（～は眠気に負け、眠りについた…）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+			PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	;-------------------------------------------------
+	;拠点外で自宅前に居るキャラが自室に帰って寝る（眠くなった～は自室に帰って行きました）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 10
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;移動時すれちがい
+;口上主はTARGET
+;==================================================
+@M_KOJO_EVENT_K9_4(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;立ち止まった
+	;この後遭遇口上に接続
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:3
+			PRINTFORML 「Ah, %CALLNAME:MASTER%! Over here!」
+			PRINTFORMDW Excited to see you, Yumemi enthusiastically waves you over.
+		ELSEIF TALENT:8
+			PRINTFORML 「Ah, %CALLNAME:MASTER%, what's up, all of a sudden?」
+			PRINTFORMDW Seeing you stop so suddenly, Yumemi has a faint smile as she looks at you curiously.
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「Ara ara, what's the matter, all of a sudden? Maybe you couldn't help but stop and appreciate my beauty?」
+			PRINTFORMDW Despite her teasing words, she beams at you warmly.
+		ELSE
+			PRINTFORML 「Ara? If it isn't %CALLNAME:MASTER%. Do you need something?」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;軽く会釈して通り過ぎた
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:3
+			PRINTFORML 「Mmm.」
+			PRINTFORMDW You give a quick greeting to Yumemi, who sees you off with a warm smile.
+		ELSEIF TALENT:8
+			PRINTFORML 「Mmm.」
+			PRINTFORMDW You give a quick greeting to Yumemi, and she returns it in kind.
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「Mm.」
+			PRINTFORMDW You give a quick greeting to Yumemi, who gives you a sly wink in return.
+		ELSE
+			PRINTFORMDW You give a quick greeting to Yumemi, but she doesn't seem to notice.
+			PRINTFORMDW You don't see a point waiting for a response, so you move on ahead.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無視して通り過ぎた
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 3
+		IF TALENT:恋慕
+			PRINTFORML 「%CALLNAME:MASTER%! Ah... %HE_SHE(MASTER, 1)% left. Maybe %HE_SHE(MASTER)% didn't notice me.」
+			PRINTFORML 「... Mmm～, maybe I'm overthinking it.」
+			PRINTFORML （Am I being too self-conscious...?）
+		ELSEIF TALENT:8
+			PRINTFORML 「Ah, %CALLNAME:MASTER%... %HE_SHE(MASTER,1)%'s gone...」
+			PRINTFORML 「Maybe %HE_SHE(MASTER)%'s busy...」
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「Ara, %CALLNAME:MASTER%... Ah, %HE_SHE(MASTER)%'s gone. How cold.」
+			PRINTFORML 「Maybe %CALLNAME:MASTER%'s got another partner to attend to.」
+		ELSE
+			PRINTFORML 「Wonder what's %HIS_HER(MASTER)% rush.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;他者介入でムード変化
+;口上主はTARGET
+;ARGに入ってきたキャラ（人数が膨大なので、自己把握自己責任で
+;==================================================
+@M_KOJO_EVENT_K9_5(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;-------------------------------------------------
+	;る～ことが入ってきた
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 2
+		;2022/02/06 る～こと口上のスケベモードを意識して素質に応じて分岐追加
+		IF TALENT:3
+			PRINTFORML 「Argh, who is it... Ah, it's Ruukoto.」
+			PRINTFORML （And things were just getting good, too...）
+			IF TALENT:2:184 || TALENT:2:185
+				PRINTFORMDW Ruukoto gives Yumemi a curt greeting and a dirty look.
+				PRINTFORMDW Making no effort to hide an obscenely lustful look, Ruukoto then snuggles up to you.
+				PRINTFORML 「Wh-Wha, Ruukoto!? Since when are you so...!? \/\/\/」
+				PRINTFORMDW Startled by Ruukoto assertively taking her position, Yumemi looks at you two with a complicated expression.
+			ELSE
+				PRINTFORMDW As Yumemi glares at her with dissatisfaction, Ruukoto bows her head in apology.
+				PRINTFORML 「... Ah～, sorry, maybe I said too much. It's just that, when it comes to %CALLNAME:MASTER%, I get a little... You know. \/\/\/」
+			ENDIF
+		ELSEIF TALENT:8
+			PRINTFORML 「Tch... Ara, Ruukoto. Do you have business with %CALLNAME:MASTER%?」
+			PRINTFORMDW Putting on an air of composure, Yumemi separates from you a little.
+			IF TALENT:2:184 || TALENT:2:185
+				PRINTFORMDW Giving Yumemi just a curt greeting, Ruukoto quickly embraces you with a blissful look.
+				PRINTFORML 「Wha!? R-Ruukoto!? Since when are you so....!? \/\/\/」
+				PRINTFORMDW Yumemi can't hide her shock at Ruukoto's unexpected assertiveness.
+			ELSE
+				PRINTFORMDW Noticing Yumemi, Ruukoto gives a quick bow in apology.
+			ENDIF
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「Mmm... Ara, Ruukoto. Do you need something?」
+			PRINTFORMDW Separating from you a little, Yumemi questions Ruukoto.
+			IF TALENT:2:184 || TALENT:2:185
+				PRINTFORMDW Giving Yumemi just a curt greeting, Ruukoto slides her arms around yours.
+				PRINTFORML 「Ara, ara ara ara... Ruukoto, were you always such a naughty little child? %UNICODE(0x2764)%」
+				PRINTFORMDW Though Yumemi is a little taken aback by Ruukoto's assertiveness, her voice has a hint of playfulness to it.
+				PRINTFORMDW Yumemi grabs onto your other arm, and whispers into your ear with a devilish look.
+				PRINTFORML 「Fufu, what are you going to do now...? Maybe a little ménage à trois...?」
+			ELSE
+				PRINTFORMDW Noticing Yumemi, Ruukoto gives a quick bow in apology.
+			ENDIF
+		ELSE
+			PRINTFORML 「Ara, Ruukoto. Do you need something?」
+			PRINTFORMDW Yumemi quickly separates from you and puts on an air of composure.
+			IF TALENT:2:184 || TALENT:2:185
+				PRINTFORMDW Giving Yumemi just a curt greeting, Ruukoto quickly glues herself to your body.
+				PRINTFORML 「Wha, eh!? ...R-Ruukoto, were you always like this!? \/\/\/」
+				PRINTFORMDW Yumemi is shocked speechless by Ruukoto's unexpected assertiveness, and she blushes furiously.
+			ELSE
+				PRINTFORMDW Noticing Yumemi, Ruukoto gives a quick bow in apology.
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;ちゆりが入ってきた
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 8
+		;2022/02/06 分岐追加
+		IF TALENT:3
+			PRINTFORML 「Yes～, who is it... Oh, it's just Chiyuri... What do you want?」
+			PRINTFORML （And things were just getting good... Read the mood a little!）
+			PRINTFORMDW Yumemi unconsciously shakes her fist at Chiyuri.
+		ELSEIF TALENT:8
+			PRINTFORML 「Yes～... Oh, it's Chiyuri. What, don't give me that look.」
+			PRINTFORMDW Discreetly separating from you, Yumemi puts on an air of composure.
+		ELSEIF TALENT:184 || TALENT:185
+			PRINTFORML 「What is it...? Oh, Chiyuri... Do you need something?」
+			PRINTFORML （And things were getting pretty hot and heavy, too. %UNICODE(0x2764)%）
+		ELSE
+			PRINTFORML 「Mm, Chiyuri. What's up?」
+			PRINTFORMDW Separating from you, Yumemi acts as if nothing was happening.
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;その他（キャラ指定なし
+	;2022/02/06 分岐追加
+	IF TALENT:3
+		PRINTFORML 「Hey, read the mood a little, okay...?」
+		PRINTFORMDW Yumemi has a dissatisfied look on her face, clearly annoyed that her precious time with you was interrupted.
+	ELSEIF TALENT:8
+		PRINTFORML 「A-Ara, is it someone for you?」
+		PRINTFORMDW Pretending nothing was happening, Yumemi separates from you.
+	ELSEIF TALENT:184 || TALENT:185
+		PRINTFORML 「Looks like someone's interrupting... And just when things were getting good, too.」
+		PRINTFORMDW Yumemi separates from you, but not before seductively rubbing against your body one last time.
+		PRINTFORML 「... Let's continue later, okay?」
+	ELSE
+		PRINTFORML 「Ack... Maybe someone's here to see you?」
+		PRINTFORMDW Yumemi hastily separates from you and puts on an air of composure.
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を目撃した
+;口上主はTARGET
+;ARGに情事相手
+;==================================================
+@M_KOJO_EVENT_K9_6(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を目撃した（馴れ合い度:低）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG:1 == 1
+		IF ARG == 8
+			;あなたの相手がちゆりちゃんのときはちゃんとオカズにしてオナニーします
+			PRINTFORML （No way, Chiyuri!?）
+			;面識がない場合はあなたをあなたと認識しない
+			IF CFLAG:18 == 0
+				PRINTFORML （That girl... She really does stuff like this...）
+			ELSE
+				PRINTFORML （Even though she's so small... She really does do that kind of stuff...with %CALLNAME:MASTER%...）
+			ENDIF
+			PRINTFORML （Wh-What is this... I've never seen Chiyuri...with that kind of lewd expression before...\/\/\/）
+			PRINTFORMDW Before she realizes it, Yumemi's thighs are impatiently rubbing together, and her breathing has become heavier.
+			PRINTFORML （Wh-What am I getting so worked up over?! \/\/\/）
+			PRINTFORML （But...maybe I'll watch a little longer...）
+			PRINTFORMDW Swallowing hard, Yumemi keeps watching Chiyuri and you.
+			PRINTFORMDW One of Yumemi's hands moves to fondle her breasts, while the other starts fingering her %FSYN("vagina")%.
+			PRINTFORML （Nnah... Doing this while watching Chiyuri have sex... I shouldn't...）
+			PRINTFORMDW But the perversity of her actions only serves to fuel Yumemi's lust.
+			PRINTFORML （Wow, Chiyuri's really doing some amazing things... Aah... I'm, about to...）
+			PRINTFORMDW As Yumemi approaches her peak, her fingers begin moving faster and more vigorously, spraying more of her love juice around.
+			PRINTFORMDW Her %FSYN("vagina")% makes an obscene, wet sound.
+			PRINTFORML （Cum...ming... Ah...! %UNICODE(0x2764)%）
+			PRINTFORMDW Watching Chiyuri and you, Yumemi's vagina gushes with juice as she climaxes.
+			PRINTFORML （I came...watching other people have sex...\/\/\/）
+			PRINTFORML （Aah, I'd better...get away...before anyone sees...\/\/\/）
+			PRINTFORMDW Yumemi moves away while feeling the afterglow of climax...
+		ELSE
+			PRINTFORML （Uwaa... They're having sex...\/\/\/）
+			PRINTFORML （Just watching them is making me getting into it too...）
+			PRINTFORML （If I move my hands that way too... Would it feel good?）
+			PRINTFORMDW Yumemi unconsciously moves her hands to her breasts and %FSYN("vagina")%.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;負けじと参加（馴れ合い度:高）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG:1 == 2
+		;MASTERがちゆりとヤってる時だけ分岐
+		IF ARG == 8
+			IF TALENT:3
+				PRINTFORML 「Chiyuri, you little, how dare you play with my %CALLNAME:MASTER% like that...」
+				PRINTFORMDW 『Whoa, whoa, since when is %CALLNAME:MASTER% Master's exclusive possession?』
+				PRINTFORMDW Ignoring Chiyuri's counterattack, Yumemi storms over to the two of you in a huff.
+				PRINTFORML 「Q-Quiet, you! I'm joining in, too! I'd never let you have %CALLNAME:MASTER% all to yourself!」
+			ELSEIF TALENT:8
+				;馴れ合い度の程度が分からないけど思慕もいちおう作っておく
+				PRINTFORML 「Chiyuri... What do you think you're doing...?」
+				PRINTFORMDW 『What am I doing? Why, it's just as you see, I'm having sex with %CALLNAME:MASTER%.』
+				PRINTFORMDW At Chiyuri's blunt reply, Yumemi blushes with a complicated expression on her face.
+				PRINTFORML 「Uu... Uuu～...」
+				PRINTFORML 「... joining too.」
+				PRINTFORMDW Chiyuri tilts her head inquisitively.
+				PRINTFORML 「I-I'm joining too! With you! And %CALLNAME:MASTER%! Together!」
+				PRINTFORMDW 『Ehh... Are you serious, Master? Well, I guess if %CALLNAME:MASTER%'s okay with it...』
+				PRINTFORMDW Seeing no other way out of this, you give Chiyuri the OK sign.
+				PRINTFORMDW Blushing furiously, Yumemi slowly makes her way over to the two of you.
+				PRINTFORML 「... Yeah, th-that's right, this is fine.../\/\/\/」
+			ELSEIF TALENT:184 || TALENT:185
+				;愛欲も。セフレは……どうなんだろうなあ一応入れとこ
+				PRINTFORML 「Ara... Chiyuri? You seem to be enjoying yourself.」
+				PRINTFORMDW Chiyuri is a little taken aback, but Yumemi calmly moves closer.
+				PRINTFORML 「It's okay, I'm not going to stop you. Instead, let me join in on the fun.」
+				PRINTFORMDW Gazing at you with overflowing lust in her eyes, Yumemi slowly slides a finger across Chiyuri's bare skin.
+				PRINTFORML 「You're okay with that, right...? I think a ménage à trois might be quite stimulating...%UNICODE(0x2764)%」
+				PRINTFORML 「Besides, leaving me all alone and having fun with just Chiyuri... That's a little cold, don't you think?」
+			ENDIF
+		ELSE
+			IF TALENT:3
+				;The original pun was「突き」合い
+				PRINTFORML 「Wha, %CALLNAME:MASTER%！ What do you think you're doing with another woman, and not me!?」
+				PRINTFORMDW "As you can see, I'm just ac'cum'panying another person."
+				PRINTFORML 「Shaddup! I'm joining in too! You have no say in this! \/\/\/」
+			ELSEIF TALENT:184 || TALENT:185
+				PRINTFORML 「Ara %CALLNAME:MASTER%, it looks quite lively over here, mind if I join in?」
+				PRINTFORML 「I was just thinking about how my body misses you.」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;気まずそうに立ち去る
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML 「S-S-S-S-S-S-Sorry to interrupt! I-I-I-I was just leaving!」
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を見られた
+;口上主はTARGET
+;ARGに目撃者
+;==================================================
+@M_KOJO_EVENT_K9_7(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を見られた（目撃者の馴れ合い度:低）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG:1 == 1
+		IF ARG == 8
+			IF TALENT:3
+				PRINTFORML 「Ara, Chiyuri...? Fufu, maybe she's a little young to handle this kind of thing?」
+				PRINTFORML 「Like peeking in on our passionate lovemaking? %UNICODE(0x2764)%」
+			ELSEIF TALENT:8
+				PRINTFORML 「No way, Chiyuri...!? Why is she...\/\/\/」
+				PRINTFORML 「For her of all people to see us... Although...」
+				PRINTFORML 「Given that reaction, maybe it's not as big a deal as I thought...」
+			ELSEIF TALENT:184 || TALENT:185
+				PRINTFORML 「Ara...? Chiyuri?」
+				PRINTFORML 「Fufu... Maybe this was a little too intense for her...? %UNICODE(0x2764)%」
+				PRINTFORML （This side of her is rather endearing... It makes me want to tease her all the more.）
+				PRINTFORML 「Maybe she'll get herself off to this later... Fufu.」
+			ELSE
+				PRINTFORML 「Mm...? Chiyuri? No way, did she see us...?」
+				PRINTFORML （O-Of all times for her to show up...\/\/\/）
+			ENDIF
+		ELSE
+			IF TALENT:3 || TALENT:8
+				PRINTFORML 「Wait a moment, I think someone was here just now...」
+				PRINTFORML 「They probably saw us having sex...\/\/\/」
+			ELSEIF TALENT:184 || TALENT:185 
+				PRINTFORML 「Ara... Seems like someone saw our lovemaking...?」
+				PRINTFORML 「It's not exactly public material, but getting seen like that makes me a little excited...%UNICODE(0x2764)%」
+			ELSE
+				PRINTFORML 「Hey, I think someone just saw us...\/\/\/」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が負けじと参加（目撃者の馴れ合い度:高）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG:1 == 2
+		IF ARG == 8
+			;ちゆりの場合
+			IF TALENT:3
+				PRINTFORML 「And we'd finally gotten some time alone... Why are you...」
+				PRINTFORML 「Eh? You want to join in?」
+				PRINTFORML 「Such a needy girl... Alright, fine, come on in.」
+			ELSEIF TALENT:8
+				PRINTFORML 「Wh-Wha!? Chiyuri?! Why are you coming in?」
+				PRINTFORML 「E-eh? You want to...join in?」
+				PRINTFORML 「It seems like we've gotten more company... Is that okay with you, %CALLNAME:MASTER%?」
+			ELSEIF TALENT:184 || TALENT:185
+				PRINTFORML 「Chiyuri? You're joining in? What a sly little girl you are...%UNICODE(0x2764)%」
+				PRINTFORML 「Fufu... Sure, let's give %CALLNAME:MASTER% an experience %HE_SHE(MASTER)%'ll never forget, together.」
+				PRINTFORML 「To think both of us enjoy fucking %CALLNAME:MASTER%... I look forward to future sessions.」
+			ELSE
+				PRINTFORML 「H-Haa!? Y-You're joining in!?」
+				PRINTFORML 「Umm, %CALLNAME:MASTER%, are you okay with that?」
+				PRINTFORML 「Ah, s-so it's fine... How does sex with this many people even work...」
+			ENDIF
+		ELSE
+			IF TALENT:3
+				PRINTFORML 「Hey, why are you getting closer...」
+				PRINTFORML 「Eh!? You want to join in!? A-Are you really okay with that...?」
+				PRINTFORML 「%CALLNAME:MASTER%... Ah, so you're fine with that... And we'd finally gotten some time alone...」
+				PRINTFORML 「Well, whatever. The more the merrier, I suppose.」
+			ELSEIF TALENT:8
+				PRINTFORML 「E-Eh? Wait, why are you coming in?」
+				PRINTFORML 「Haa!? Doing it, t-together!? Eh, are you serious...?」
+				PRINTFORML 「... Well, this doesn't seem like some kind of prank...」
+				PRINTFORML 「How about you, %CALLNAME:MASTER%? Ah, so you're fine with it... I'm not sure how to feel about this.」
+			ELSEIF TALENT:184 || TALENT:185
+				PRINTFORML 「You want to join in? Sure, I guess.」
+				PRINTFORML 「This seems interesting in its own right, too...%UNICODE(0x2764)%」
+				PRINTFORML 「Let's have fun, the three of us together.」
+			ELSE
+				PRINTFORML 「Wh-Wha, Eh...? T-Together? Is that just how it is in Gensokyo?」
+				PRINTFORML 「U-Umm, are you okay with that, %CALLNAME:MASTER%? Ah, so you are...」
+				PRINTFORML 「I didn't really even know sex was something you do in a group...」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が立ち去る
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG:1 == 3
+		IF ARG == 8
+			IF TALENT:3 ||  TALENT:8
+				PRINTFORML 「Chiyuri? ... Looks like she's gone.」
+				PRINTFORML 「I guess she's still a little young for this kind of thing.」
+			ELSEIF TALENT:184 || TALENT:185
+				PRINTFORML 「Chiyuri...? Fufufu, I guess this was a little too intense for her.」
+			ELSE
+				PRINTFORML 「I could have sworn Chiyuri was just here... Maybe it was just my imagination.」
+			ENDIF
+		ELSE
+			PRINTFORML 「I guess someone saw us, but they left...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;目撃した情事を問い詰める（現在無し
+;==================================================
+@M_KOJO_EVENT_K9_8(ARG,ARG:1)
+	IF TALENT:3
+		PRINTFORML 「If you wanted sex, you could have just asked me. Am I not good enough?」
+		PRINTFORMDW "No, well... It's not that..."
+		PRINTFORML 「... Well, whatever. Don't be getting too loose on me now, ok?」
+	ELSEIF TALENT:8
+		PRINTFORML 「I guess...you do these kinds of things...with other people.」
+		PRINTFORMDW "Y-Yes..."
+		PRINTFORML 「Well, I don't really know how to say this well... But please try to restrain yourself.」
+		PRINTFORML 「I don't want to end up snapping at you and making things awkward for a while...」
+	ELSEIF TALENT:184 || TALENT:185
+		PRINTFORML 「If you wanted to fuck, all you had to was ask...」
+		PRINTFORMDW You mumble some excuses.
+		PRINTFORML 「Seriously... Doing it that passionately, it'll make me horny, too.」
+	ELSE
+		PRINTFORML 「Haa... I don't really care what you do, but do it somewhere more private next time.」
+		PRINTFORMDW "Sorry..."
+	ENDIF
+RETURN 1
+
+;==================================================
+;パンツ没収された
+;口上主はTARGET
+;==================================================
+@M_KOJO_EVENT_K9_9(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG:1 == 1
+
+		PRINTFORML 「Hold it right there. You're acting suspicious.」
+		PRINTFORMDW Uh oh...
+		PRINTFORML 「This'll be quick, so stay still and don't try anything funny, or I'm blowing you up with Mimi-chan.」
+		PRINTFORMDW "That'd leave no trace of me so I'd rather you not..."
+		PRINTFORMDW Yumemi begins body-searching you, and before long she's pulled out the panties you've been hiding.
+		PRINTFORML 「...」
+
+		IF TALENT:恋慕
+			PRINTFORML 「What do you think you're doing carrying these around!? Have you lost your mind?!」
+			PRINTFORMDW Whack! Whack! Yumemi's merciless blows rain down on your head!
+			PRINTFORMDW "Ow! That hurts!"
+			PRINTFORML 「Why can't you consider others' feelings...」
+			PRINTFORMDW "I'd like you to consider this pain, too!"
+			PRINTFORML 「Quit your whining!」
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「I can't believe there are still panty thieves in this day and age...」
+					PRINTFORML 「And to think one was so close to me... (And to think I love that person... Haa...)」
+					PRINTFORMDW Yumemi's strains her words, but your heart also strains at the loss of your panties.
+					PRINTFORML 「In any case, I'm confiscating these!」
+					PRINTFORMDW Your precious panties have been confiscated...
+				CASE 1
+					PRINTFORML 「If you wanted panties so badly, all you had to do was ask...」
+					PRINTFORML 「I'll give you as many as you want, so you don't have to steal them from who-knows-where.」
+					PRINTFORMDW "Sometimes I want them from someone else! It's a different experience!"
+					PRINTFORML 「Wha...!? Anyway! I'm confiscating these.」
+					PRINTFORML 「Learn your lesson and don't steal any more panties, are we clear?」
+					PRINTFORMDW Yes, professor～...
+					PRINTFORML 「Hah... Are mine not good enough? \/\/\/ Or does %HE_SHE(MASTER)% have some other reason...?」
+			ENDSELECT
+		ELSEIF TALENT:184
+			PRINTFORML 「... Well, well, what do we have here?」
+			PRINTFORMDW You defiantly prepare to stand your ground.
+			PRINTFORML 「Haa, if all you want are panties, I'd be happy to give you mine, you know...?」
+			PRINTFORMDW "What... Really!? Ah, but, sometimes I'd rather..."
+			PRINTFORML 「Eh, you want panties from other girls? Aww...」
+			PRINTFORML 「That hurts a little... Well, in any case, I'll be holding on these now.」
+		ELSEIF TALENT:185
+			PRINTFORMDW Whack! Slap!
+			PRINTFORML 「To think my fuck buddy was a panty thief... I should really just slug you right now...」
+			PRINTFORML 「Hmm? I'm already hitting you? Ah, now that you mention it...」
+			PRINTFORMDW "Have you finally lost your marbles?"
+			PRINTFORMDW Whack! Pow!
+			PRINTFORMDW You grunt in pain.
+			PRINTFORML 「In any case, you're going into rehab. I'll start by confiscating these.」
+			PRINTFORML 「What do you even use these for in the first place? Don't tell me you put them on and run around, or something...」
+			PRINTFORMDW She probably wouldn't understand your feelings even if you told her, so you decide not to answer...
+		ELSE
+			PRINTFORML 「Uweeh... No way, a panty thief... You're the worst...」
+			PRINTFORML 「Hand them over, I'm confiscating them.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;押し倒した
+;口上主はTARGET
+;==================================================
+@M_KOJO_EVENT_K9_10(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;うふふ==2（開始時）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;MASTERを押し倒した（開始時）
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		IF LOCAL:1 && !ARG:1
+			IF TCVAR:140 == 210 || TCVAR:142 == 210
+				;えっちになるおくすりがインした
+				IF TALENT:恋慕
+					PRINTFORML 「Haa %UNICODE(0x2764)% Haa %UNICODE(0x2764)% My body is burning...%UNICODE(0x2764)% I can't wait any longer...%UNICODE(0x2764)%」
+					PRINTFORML 「Let's do it here %UNICODE(0x2764)% I won't take no for an answer...%UNICODE(0x2764)%」
+				ELSE
+					PRINTFORML 「Haa...%UNICODE(0x2764)% I can't wait any longer... You're mine until my body is satisfied %UNICODE(0x2764)%」
+				ENDIF
+			ELSE
+				IF TALENT:恋慕
+					;恋慕
+					SELECTCASE RAND:3
+						CASE 1
+							;しまった！カラテトラップだ！
+							PRINTFORML 「You're open! %UNICODE(0x2764)%」
+							PRINTFORML 「Fufu... %UNICODE(0x2764)% Aren't you a little too careless?」
+							PRINTFORML 「Not that I'm complaining...%UNICODE(0x2764)%」
+						CASE 2
+							;べろちゅーから
+							PRINTFORML 「Hey, %CALLNAME:MASTER%?」
+							PRINTFORMDW As soon as you turn around, Yumemi steals a kiss.
+							PRINTFORML 「Nn...%UNICODE(0x2764)% %KISS()%... %FSYN("lips_over")%...%UNICODE(0x2764)%」
+							PRINTFORML 「%CALLNAME:MASTER%... I can't wait any longer...%UNICODE(0x2764)% So let's have some fun...ok?」
+							PRINTFORMDL The two of you slowly lay down together...
+						CASEELSE
+							PRINTFORML 「Ara ara? How unexpectedly obedient.」
+							PRINTFORML 「By any chance, were you waiting for this...? %UNICODE(0x2764)%」
+					ENDSELECT
+				ELSE
+					;その他
+					PRINTFORML 「Sorry, but you're mine for a little longer...%UNICODE(0x2764)%」
+				ENDIF
+			ENDIF
+			PRINTFORML 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTERに抱きついた（開始時）
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		IF LOCAL:1 && ARG:1 == 1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Nfuu～%UNICODE(0x2764)% %CALLNAME:MASTER%～%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORML 「Eii, %CALLNAME:MASTER% Gyuu～%UNICODE(0x2764)%」
+			ENDSELECT
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;なだめられた（終了時）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 2
+		;-------------------------------------------------
+		;抜け出した
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		IF LOCAL:1 && !ARG:1
+			PRINTFORML 「What, hey, %CALLNAME:MASTER%～!」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;抱き着きモード満足終了
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「Nn～ That's better %UNICODE(0x2764)%」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;抱き着きモード強制終了
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「... And things were just getting good, too.」
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;抜け出す失敗
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 3
+		;-------------------------------------------------
+		;好きにして状態から抜け出せなかった
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;欲求不満が高くて抜け出せなかった
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「There's no way I'm letting you go until I'm satisfied...%UNICODE(0x2764)%」
+			RETURN 1
+		ENDIF
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;浴場で遭遇
+;口上主はTARGET
+;==================================================
+@M_KOJO_EVENT_K9_11(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出された
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「How long are you going to stand there staring!? Hurry up and get out!」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目が合った（追い出されない）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Ara, %CALLNAME:MASTER%, are you here for a bath too?」
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;寝床に忍び込み
+;口上主はTARGET
+;==================================================
+@M_KOJO_EVENT_K9_12(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出される（怒り）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Nnn...?」
+		PRINTFORML 「What!? What are you doing here!? Hurry up and get out!」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG:1 == 1
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Nnn... Zzz... Stop playing around and work, Chiyuri...」
+			CASE 1
+				PRINTFORML 「Zzz... Zzz... It's strawberry-flavored, as I thought... Ufu...」
+			CASEELSE
+				PRINTFORML 「... You call yourself, scientists... Remember this... Zzz...」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML 「Nnn... Who...?」
+		PRINTFORML 「Ah, %CALLNAME:MASTER%...%UNICODE(0x2764)% Want to sleep together...?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕・衰弱）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML 「Uu... Nnn... Zzz... Nn...」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG:1 == 4
+		PRINTFORML 「I'm going to bed, so please leave.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される（衰弱）
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG:1 == 5
+		PRINTFORML 「Sorry, I'm beat... I'm going to sleep, so please leave...」
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;お仕事中
+;ARG:1に残っている仕事量
+;==================================================
+@M_KOJO_EVENT_K9_13(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;仕事開始（職場へ移動する）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TCVAR:141
+			PRINTFORML 「... I'd better get going.」
+			PRINTFORML 「I'll, Nnn...see you, later...」
+			PRINTFORML （Please, don't leak... I beg you...）
+			PRINTFORMDW Yumemi slowly hobbles off towards the lab...
+		ELSEIF ABL:欲望 >= 5 && PALAM:欲情 >= PALAMLV:7
+			PRINTFORML 「... I've, got research to do, now... \/\/\/」
+			PRINTFORML 「I'll, Nnn...see you, later...」
+			PRINTFORML （... Gotta control myself, at least until today's research is done...）
+			PRINTFORMDW Although she tries to look composed, Yumemi's face is flushed and her breathing is heavy as she heads towards the lab...
+		ELSE
+			PRINTFORML 「Ara, look at the time. I've got things to do, so I'll see you later.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;業務中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TCVAR:141
+			;利尿剤盛られた状態でお仕事
+			SELECTCASE RAND:3
+				;運が悪い(良い？)と連続で漏らしたりするよ。解除しても良いけどね。
+				CASE 0
+					;耐える
+					PRINTFORML 「...This goes...like this, maybe?」
+					PRINTFORML （Uuu... I can't focus at all... It'll leak if I lose any concentration...）
+					PRINTFORMDW Thanks to the diuretic, Yumemi fidgets constantly and can't seem to concentrate.
+					PRINTFORMDW She doesn't seem to acknowledge your presence, either.
+				CASE 1
+					;緊急回避
+					PRINTFORML 「I can't...hold it in any longer... It's gonna leak...!」
+					PRINTFORML 「I'm done with this, gotta go quick...!」
+					IF CFLAG:291
+						PRINTFORMDW Without noticing your presence, Yumemi lifts up her skirt and exposes her bare vagina.
+					ELSE
+						PRINTFORMDW Without noticing your presence, Yumemi lifts up her skirt and pulls down her %PANTSNAME(EQUIP:TARGET:下半身下着２, TARGET)% with all her might.
+					ENDIF
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORMDW She takes a nearby beaker, puts it on the ground, and squats over it.
+						CASE 1
+							PRINTFORMDW She takes a nearby bottle and holds it up to her crotch.
+						CASE 2
+							PRINTFORMDW She takes a nearby washbasin, puts it on the ground, and squats over it.
+					ENDSELECT
+					PRINTFORML 「Nn... Haa... Ah, it's coming out...」
+					PRINTFORMDW Presently, golden liquid begins gushing out of Yumemi's urethra.
+					PRINTFORML 「Ahh, it just keeps coming...\/\/\/」
+					PRINTFORMDW The container quickly fills up to the brim with Yumemi's urine.
+					PRINTFORML 「Haa... Haa... Fuu... I made it...」
+					PRINTFORML 「I'd better dispose of this later...」
+				CASEELSE
+					;漏れる
+					IF TALENT:57
+						;2022/02/03　おもらし癖を活用していく強い（略
+						PRINTFORML 「Nnn...%UNICODE(0x2764)%」
+						PRINTFORMDW Yumemi's face is flushed and unfocused, as if her body is urgently awaiting something...
+						PRINTFORML （Ah, oh no %UNICODE(0x2764)% It's starting to leak %UNICODE(0x2764)%）
+						PRINTFORML 「Fwaa, Ah, Ahー%UNICODE(0x2764)%」
+						PRINTFORMDW Her face melts into ecstasy as her body begins to twitch and convulse violently.
+						PRINTFORMDW The next instant, a pool of warm liquid is forming under feet.
+						PRINTFORMDW Having become addicted to this sensation, Yumemi's body shivers from a light orgasm.
+						PRINTFORML 「Ah...%UNICODE(0x2764)% Haa... Ahh... Ahー%UNICODE(0x2764)% I did it again...%UNICODE(0x2764)%」
+						PRINTFORMDW
+						PRINTFORML （This feeling of indecency, peeing right onto the lab floor... My pussy is soaked %UNICODE(0x2764)%）
+						PALAM:欲情 += 2000
+						PALAM:潤滑 += 500
+					ELSE
+						PRINTFORML 「Ah... No...! Ah, Aaa...\/\/\/」
+						PRINTFORMDW Yumemi shudders and a puddle of liquid begins to form under her feet.
+						PRINTFORMDW She appears to have wet herself.
+						PRINTFORML 「... Sniff... No... I can't believe... I wet myself...」
+						PRINTFORMDW Yumemi squats and cries as more urine leaks out from under her skirt, widening the puddle on the floor.
+						PRINTFORML 「Haa... Haa... Aa... Haa... I'd better clean this up later...」
+					ENDIF
+			ENDSELECT
+		ELSEIF ABL:欲望 >= 6 && PALAM:欲情 >= PALAMLV:10 && PALAM:9 >= 10000
+			;えっちな気分でお仕事（すごくえっちだったので咲夜さん口上のを流用……）
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTFORML 「Haa %UNICODE(0x2764)%, Haa %UNICODE(0x2764)%...」
+					PRINTFORMDW Even in the middle of her research, her body is in a state of lust.
+					IF EXP:Ｖ絶頂経験 >= 300 || FLAG:異常気象 == 2
+						PRINTFORMDW Yumemi wriggles about as she remembers the feeling of her %FSYN("vagina")% being churned up, and can't focus at all.
+					ELSEIF EXP:Ａ絶頂経験 >= 300 || FLAG:異常気象 == 3
+						PRINTFORMDW Yumemi is overcome by lust from having had her insides repeatedly dug out through her anus, and can't focus at all.
+					ELSEIF EXP:Ｂ絶頂経験 >= 300 || FLAG:異常気象 == 4
+						PRINTFORMDW Yumemi shudders from every brush of her clothes over her sensitive, rock-hard nipples, and can't focus at all.
+					ELSEIF EXP:Ｃ絶頂経験 >= 300 || FLAG:異常気象 == 5
+						PRINTFORMDW Yumemi's clit stands erect just by imagining you teasing it roughly, and can't focus at all.
+					ELSEIF EXP:Ｍ絶頂経験 >= 300 || FLAG:異常気象 == 1
+						PRINTFORMDW Yumemi's mouth-pussy convulses from remembering your %FSYN("penis")% sliding through her lips all the way down her throat, and can't focus at all.
+					ENDIF
+					PRINTFORMDW Yumemi still tries to wrestle with her unsolved research, but her sexual organs spill love juice onto the floor.
+					PRINTFORMDW The room fills with a sensual feminine scent, and Yumemi unconsciously moves her fingers over her breasts and under her skirt, seeking pleasure.
+					PRINTFORMDW In the end, she ends up pleasuring her today, too...
+					PRINTFORML 「Nn... Nhaa... Haa...%UNICODE(0x2764)%」
+					PRINTFORMW （I want to touch myself...so bad...but, I've got...to hold it in...%UNICODE(0x2764)%%UNICODE(0x2764)%）
+				CASE 1
+					PRINTFORML 「... Nfuu, Fuuー%UNICODE(0x2764)% Fuuー%UNICODE(0x2764)%)」
+					PRINTFORMDW Pretending to read a book, Yumemi lies flat on a desk and slides her fingers over her crotch.
+					PRINTFORML （I shouldn't be doing this...%UNICODE(0x2764)% But %UNICODE(0x2764)%
+					PRINTFORMDW An audible wet sound begins to fill the air.
+					PRINTFORML （Ah I'm cumming, cum...ming）
+					PRINTFORML 「Cumming...! %UNICODE(0x2764)%」
+					PRINTFORMDW Having watched the whole ordeal, you leave the room for a bit...
+				CASE 2
+					PRINTFORML 「... Nfuu, Fuuー%UNICODE(0x2764)% Fuah %UNICODE(0x2764)%)」
+					PRINTFORMDW While pretending to work on research, Yumemi begins doing something else...
+					PRINTFORMDW She appears to be inserting a whiteboard marker into her %FSYN("vagina")%.
+					PRINTFORML （I shouldn't be doing this...%UNICODE(0x2764)% But my pussy can't wait any longer %UNICODE(0x2764)%）
+					PRINTFORML （Ah %UNICODE(0x2764)% I'm gonna cum %UNICODE(0x2764)% It's coming %UNICODE(0x2764)%）
+					PRINTFORML 「Ah cum, c-cumming...! %UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					PRINTFORMDW Yumemi thrusts the pen one last time all the way into her %FSYN("vagina")%, and sprays love juice all over the floor as she climaxes.
+					PRINTFORMDW After watching the whole ordeal, you leave for a little bit...
+				CASEELSE
+					PRINTFORML 「Ara, a stain in a place like this... Hey, Chiyu...」
+					PRINTFORML 「... Hmm? But I don't think we used any chemicals today...」
+					PRINTFORML 「Nn, Nnn? Here too...? Eh...?」
+					PRINTFORML 
+					PRINTFORML 「... What could be the cause... Wait, maybe...?」
+					IF CFLAG:291
+						PRINTFORMDW Realization dawning on her face, Yumemi rolls up her skirt and exposes her bare pussy.
+					ELSE
+						PRINTFORMDW Realization dawning on her face, Yumemi rolls up her skirt and pulls down her %PANTSNAME(EQUIP:TARGET:下半身下着２, TARGET)%.
+					ENDIF
+					PRINTFORMDW A large quantity of love juice is dropping to the floor from her exposed, hairy vagina.
+					PRINTFORMDW A sensual feminine scent is suddenly released from her clothing, filling the room.
+					PRINTFORML 「I'm, completely soaked... so this was the reason... \/\/\/」
+					PRINTFORMDW Yumemi's dripping love juices appear to have been the culprit.
+			ENDSELECT
+		ELSEIF ABL:欲望 >= 5 && PALAM:欲情 >= PALAMLV:7 && PALAM:9 >= 4000
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「... Nn, Fuu... 」
+					PRINTFORMDW Even in the middle of research, Yumemi's body is in a state of lust.
+					IF EXP:Ｖ絶頂経験 >= 200 || FLAG:異常気象 == 2
+						PRINTFORMDW Her vagina convulses from the memories of being violated, impeding her research progress.
+					ELSEIF EXP:Ａ絶頂経験 >= 200 || FLAG:異常気象 == 3
+						PRINTFORMDW Her anus twitches from craving impalement, impeding her research progress.
+					ELSEIF EXP:Ｂ絶頂経験 >= 200 || FLAG:異常気象 == 4
+						PRINTFORMDW Her nipples stand erect in anticipation of being caressed, impeding her research progress.
+					ELSEIF EXP:Ｃ絶頂経験 >= 200 || FLAG:異常気象 == 1
+						PRINTFORMDW Her clit stand erect from the slightest touch from her clothes, impeding her research progress.
+					ELSEIF EXP:Ｍ絶頂経験 >= 200 || FLAG:異常気象 == 5
+						PRINTFORMDW Her lips and tongue convulse from craving sexual fluids, impeding her research progress.
+					ENDIF
+					PRINTFORML 「Nn, Hyuu... Control yourself, control...」
+				CASE 1
+					PRINTFORML 「... Nfu, Fuuー %UNICODE(0x2764)% Fuuー %UNICODE(0x2764)%)」
+					PRINTFORMDW Yumemi seems to be reading a book, but she's doing something else...
+					PRINTFORMDW Pretending to lie down on the desk, Yumemi's fingers are sliding over her crotch.
+					PRINTFORML （I shouldn't be doing this...%UNICODE(0x2764)% But I can't stop %UNICODE(0x2764)%
+					PRINTFORML 「... Ah.」
+					PRINTFORMDW She seems to have noticed you peeking. Yumemi blushes as she looks at you.
+					PRINTFORML 「I-I-I-I-I'm not doing anything! You didn't see anything, right?! ... Please say you didn't.」
+				CASEELSE
+					PRINTFORML 「Ara, a stain in a place like this... Hey, Chiyu...」
+					PRINTFORML 「... Hmm? But I don't think we used any chemicals today...」
+					PRINTFORML 「Nn, Nnn? Here too...? Eh...?」
+					PRINTFORML 
+					PRINTFORML 「... What is all this!?!? ... Wait, could it be...」
+					PRINTFORMDW Yumemi timidly checks her vagina. Even now, it is overflowing with love juice, dripping to the floor.
+					PRINTFORML 「O-Oh... I-It's my... l-love juices...\/\/\/」
+					PRINTFORMDW Yumemi's dripping love juices appear to have been the culprit.
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:4
+				CASE 1
+					PRINTFORML 「Nnn...? This goes like this, maybe?」
+					PRINTFORMDW Yumemi stands and begins drawing something on the whiteboard.
+				CASE 2
+					PRINTFORML 「...」
+					PRINTFORMDW Yumemi is looking over some complicated-looking documents.
+				CASE 3
+					PRINTFORML 「This one goes like this, maybe?」
+					PRINTFORMDW Yumemi picks up a nearby piece of paper and begins writing a complicated-looking equation.
+				CASEELSE
+					PRINTFORML 「Chiyuri～, tea please.」
+					PRINTFORMDW You hear a voice telling her to get it herself.
+					PRINTFORML 「What a useless assistant.」
+					PRINTFORMDW That treatment seems a bit unreasonable.
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;仕事終了
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF TCVAR:141
+			PRINTFORML 「Th-That's enough for today...!」
+			PRINTFORML （Pee...! Toilet...! Gotta peeepeepee it's leakingleakingleaking...!）
+			PRINTFORMDW Desperately needing to urinate, Yumemi flies out of the lab as she says this.
+			PRINTFORMDW As Yumemi sprints down the stairs towards the toilet, you stop time and follow her.
+			IF CFLAG:291
+				PRINTFORMDW Yumemi immediately rolls up her skirt with no hesitation, exposing her bare vagina.
+			ELSE
+				PRINTFORMDW Yumemi frantically rolls up her skirt and slips down her panties.
+			ENDIF
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMDW Relieved that she made it in time, she begins to urinate vigorously.
+					PRINTFORMDW Afterwards, she carefully wipes any residual urine from her hairy vagina.
+				CASE 1
+					PRINTFORMDW Not having quite made it in time, a bit of urine dribbles out on the floor and rim of the toilet.
+					PRINTFORMDW Still, most of it makes it into the toilet bowl.
+					IF !CFLAG:291
+						PRINTFORMDW Afterwards, she carefully wipes any residual urine from her hairy vagina, and dabs at some stains on her panties.
+					ELSE
+						PRINTFORMDW Afterwards, she carefully wipes any residual urine from her hairy vagina.
+					ENDIF
+			ENDSELECT
+			PRINTFORMDW The full scene is burned into your retinas.
+		ELSEIF ABL:欲望 >= 6 && PALAM:欲情 >= PALAMLV:10 && PALAM:9 >= 4000
+			PRINTFORML 「Haa... Th-That's enough...for today...」
+			PRINTFORML （%CALLNAME:MASTER%... Let's fuck... I can't, wait any longer...\/\/\/）
+		ELSE
+			PRINTFORML 「Nn～～! That's enough for today!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;食事系
+;==================================================
+@M_KOJO_EVENT_K9_14(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;持っていた食物を食べられた
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	IF LOCAL:1 && ARG == -1
+		PRINTFORML 「Ara %CALLNAME:MASTER%, that looks delicious.」
+		PRINTFORML 「You brought that for me, didn't you? Either way, thanks %UNICODE(0x2764)%」
+		PRINTFORMDW She begins to gobble it down noisily.
+		PRINTFORMDW Oh, my...
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;MASTERが押し倒した
+;==================================================
+@M_KOJO_EVENT_K9_15(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;未実装（押し倒しコマンドに統合？
+	;MASTERが押し倒した（ウフフ開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 1
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;逢瀬終了（ウフフ終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+	;-------------------------------------------------
+	;事後描写
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 3
+		;-------------------------------------------------
+		;精液が垂れてきた
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「Nn %UNICODE(0x2764)% It's leaking out...%UNICODE(0x2764)%」
+			PRINTFORML 「Don't you think you came a little much? %UNICODE(0x2764)%」
+			PRINTFORML 「But...\/\/\/」
+			PRINTFORML 「It felt amazing, so let's do it again sometime, ok? %UNICODE(0x2764)%」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;愛液が垂れてきた
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「Haanh...%UNICODE(0x2764)% I'm completely soaked...%UNICODE(0x2764)%」
+			PRINTFORML 「Even though I came so much, my love juices just won't stop...%UNICODE(0x2764)%」
+			PRINTFORML 「To think I'll be like this all night...%UNICODE(0x2764)% Nnn %UNICODE(0x2764)% Just imagining it...%UNICODE(0x2764)%」
+			PRINTFORMDW "Looks like your body is still in the mood."
+			PRINTFORML 「No...%UNICODE(0x2764)% Don't say that %CALLNAME:MASTER% %UNICODE(0x2764)% Nnn %UNICODE(0x2764)%」
+			PRINTFORMDW You enjoy some pillow talk with Yumemi as you savor the afterglow a bit longer.
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;事後のムード
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+
+		IF LOCAL:1 && ARG:1 == 3
+			IF TALENT:恋慕
+				PRINTFORML 「Fufu, since I finally get the one I love to myself, won't you stay with me a little longer?」
+			ELSEIF TALENT:8
+				PRINTFORML 「Nn... Done already...? Ah, no, I didn't mean it that way.」
+				PRINTFORML （Although I wish we could stay together a little longer...）
+			ELSEIF TALENT:184
+				PRINTFORML 「Today was fantastic... When will you visit me again, I wonder?」
+				PRINTFORML 「Fufu, I'm ready to go anytime.」
+			ELSEIF TALENT:185
+				PRINTFORML 「I guess we're done for today. I look forward to next time.」
+			ELSE
+				PRINTFORML 「... Are we done?」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;服を着る
+		;-------------------------------------------------
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+
+		IF LOCAL:1 && ARG:1 == 4
+			PRINTFORMW 
+			PRINTFORML 「After seeing my body so much, you still want to keep looking?」
+			PRINTFORML 「Eh? Watching me put on clothes has its own charm? I don't get it...」
+			RETURN 1
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;添い寝する
+;==================================================
+@M_KOJO_EVENT_K9_16(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;添い寝を始めた（開始時）(存在せず
+	;記入チェック
+	;LOCAL:1 = 1
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;添い寝を終了した（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;時止め終了時
+;口上主はTARGET
+;排他と明記されていないモノは状況によっては連続で表示されるので注意
+;ARGに射精状況
+;ARG:1に射精状態
+;==================================================
+@M_KOJO_EVENT_K9_17(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;ARG=1～3は排他
+	;-------------------------------------------------
+	;謎の快感(絶頂0～軽度の絶頂)
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Nnnn...!」
+		PRINTFORML （Eh... What... My body just jumped... Did that, feel good?）
+		PRINTFORML 「I-It's nothing, nothing at all! Yeah...」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;絶頂(多重絶頂:へたり込むやつ)
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Hnnnnnnn～%UNICODE(0x2764)% Nnnuu %UNICODE(0x2764)% Uuu～ %UNICODE(0x2764)%」
+		PRINTFORML （Oh no, I'm suddenly cumming, with %CALLNAME:MASTER% right here...!）
+		PRINTFORML 「Hyaa %UNICODE(0x2764)% Why... Feelsh goo... %UNICODE(0x2764)% No, wha, what ish thish... %UNICODE(0x2764)%」
+		PRINTFORMDW As a Yumemi expresses a mixture of shame and pleasure, her body twists with intense pleasure as she climaxes.
+		PRINTFORML 「Ahaa... Hii... Can't, take it...\/\/\/」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;パンツ紛失
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 3
+		IF ABL:露出癖 >= 8
+			PRINTFORML 「... Ara?」
+			PRINTFORMDW Yumemi stands frozen in place as she realizes her panties are gone.
+			PRINTFORMDW Her cheeks are blushing, but it seems to be from pleasure instead of shame.
+			PRINTFORML （Sometimes I intentionally don't wear panties... If people see, that just turns me on more...%UNICODE(0x2764)%）
+			PRINTFORML 「...%UNICODE(0x2764)%」
+			PRINTFORML （Oh no...%UNICODE(0x2764)% Just imagining it is making me wet...%UNICODE(0x2764)%）
+			PRINTFORML 「Ah, it's nothing at all %UNICODE(0x2764)%」
+			PALAM:潤滑 += 500
+		ELSEIF ABL:露出癖 < 8 && ABL:露出癖 >= 4
+			PRINTFORML 「Nnn... Eh? What...?」
+			PRINTFORML （They're gone...? But I seem to have gotten used to this lately...）
+			PRINTFORML （Rather, I feel like I want to be watched more...%UNICODE(0x2764)%）
+			PRINTFORML 「Ah, it's nothing. Nothing at all.」
+			PALAM:潤滑 += 300
+		ELSE
+			PRINTFORML 「Eh... You're kidding...?」
+			PRINTFORML （Why are they gone...? What happened...?）
+			PRINTFORML 「Ah, sorry, it's nothing... Yeah.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚口内射精】
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 4
+		;精液中毒低精飲
+		IF ARG:1 == 1
+			PRINTFORML 「Nguu!? ... What is this...?」
+			PRINTFORML （What did I just swallow...?）
+		;精液中毒低吐き出し
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「Bwehh, Uehhh, Peh... Khaa... Gack...」
+			PRINTFORML 「What the...」
+		;精液中毒低手で覆う
+		ELSEIF ARG:1 == 3
+			PRINTFORML 「Gack... Nnnn...」
+			PRINTFORML （I want to puke... But in a place like this... Uuu...）
+		;精液中毒高精飲
+		ELSEIF ARG:1 == 4
+			PRINTFORML 「Nnnn!? Mmm... Nguu... Nkuu...」
+			PRINTFORML （There's suddenly semen inside %UNICODE(0x2764)% I don't really understand but it's tasty %UNICODE(0x2764)%）
+			PRINTFORML 「Fuu %UNICODE(0x2764)%... Nnn... %UNICODE(0x2764)% Haa... Thanks for the treat %UNICODE(0x2764)%」
+			PALAM:潤滑 += 250
+		;濃厚精液＆精液中毒低吐き出し
+		ELSEIF ARG:1 == 5
+			PRINTFORML 「Ngohh!? Bwehhh... Khaa, Gack... Peh, Pehhh...」
+			PRINTFORML 「What is this... Gross...」
+		;濃厚精液＆精液中毒高精飲
+		ELSEIF ARG:1 == 6
+			PRINTFORML 「Nguu, Nfuun, Nnn... Nguu...%UNICODE(0x2764)%」
+			PRINTFORML （Amazing %UNICODE(0x2764)% So thick... So much... %UNICODE(0x2764)%%UNICODE(0x2764)%）
+			PRINTFORML （If I swallow this %UNICODE(0x2764)%... I might cum from just that %UNICODE(0x2764)%）
+			PRINTFORMDW Yumemi savors the taste of semen with an ecstatic expression as her whole body shudders.
+			PRINTFORML 「I don't whose that was, but it was delicious %UNICODE(0x2764)% Thanks for the treat %UNICODE(0x2764)%」
+			PALAM:潤滑 += 300
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚顔面射精】
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 5
+		;無知持ち＆精液経験100未満
+		IF ARG:1 == 1
+		;通常ぬぐい取り
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「Hii!? Wh-What's all this sticky stuff...!?」
+			PRINTFORML 「Why is it on my face...」
+		;顔射精液舐めとり
+		ELSEIF ARG:1 == 3
+			PRINTFORML 「Puaa...?! Ah...  Nnn...」
+			PRINTFORML 「Eh, what's this %UNICODE(0x2764)% Semen %UNICODE(0x2764)%」
+			PRINTFORML 「When did... Nchuu... Ahhn, tashty... Shlurp... %FSYN("lips_over")% %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi lewdly scoops the semen off her face with a finger and licks it.
+			PRINTFORML 「Nfuu... Thanks for the treat\/\/\/」
+			PRINTFORMDW Seeing as she enjoyed it, you think to yourself you'd like to treat her again sometime.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚手淫射精】
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 6
+		;ぬぐい取り
+		IF ARG:1 == 1
+			PRINTFORML 「Wha, what's this?! When did this stuff...」
+			PRINTFORML 「Where'd my handkerchief go...」
+		;舐めとり
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「Eh...?」
+			PRINTFORMDW Yumemi realizes her hand is suddenly covered in semen.
+			PRINTFORML 「How did semen get on my hand...%UNICODE(0x2764)%」
+			PRINTFORML （Ahh, I can't stop myself... Let me lick some...）
+			PRINTFORML 「Where did this come from %UNICODE(0x2764)% Shlurp... Nnn... %FSYN("lips_over")%... Afuu... Tashty %UNICODE(0x2764)%」
+			PRINTFORML 「... Fuu, thanks for the treat.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚アナル射精】
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 7
+		;Ａ感覚2以下
+		IF ARG:1 == 1
+			PRINTFORML 「Gyaa... Ku...? Eh...」
+			PRINTFORML （Eh? Something warm is in my butt...?! What is this...?）
+		;ソレ以外
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「Khuuun...?! Ha %UNICODE(0x2764)% It's...hot...%UNICODE(0x2764)%」
+			PRINTFORML （Ah, I'm getting addicted... I shouldn't, but...%UNICODE(0x2764)%）
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚処女喪失】
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 8
+		PRINTFORML 「%FSYN("hii")%...! Ow... Huurts...!」
+		PRINTFORML 「Wh-Why does it suddenly hurt down there... %GROAN()%」
+		PRINTFORML 「%GROAN()%... Ah... Sorry... Let me rest a bit.. Uuu.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚膣内射精】
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 9
+		;非処女膣内射精ピルなし
+		IF ARG:1 == 1
+			PRINTFORML 「Nn?! No way, this feeling... Inside my...?」
+			PRINTFORML 「You can't be serious...」
+		;非処女膣内射精ピルあり
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「Nnu?! No way... Someone came inside...!?」
+			PRINTFORML （I'm glad I took a pill, just in case something like this happened...）
+		;処女膣内射精
+		ELSEIF ARG:1 == 3
+			PRINTFORML 「%GROAN()%!? Ow... Eh, wh-what...? What is this feeling...」
+			PRINTFORML 「Eh... Eh...? Something...is inside my body...?」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;時間停止解除共通
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;ナマでやらせろ時
+;口上主はTARGET
+;==================================================
+@M_KOJO_EVENT_K9_18(ARG,ARG:1)
+
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;避妊要求台詞
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Wait %CALLNAME:MASTER%, even though we're doing these kinds of things, we should be prudent.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断った
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「No way. What'll we do if I get pregnant? Are you going to take responsibility?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断ったのに粘られて切れた
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「Ahh, is that how it's going to be?! Whatever! You insensitive clod!」
+		PRINTFORML 「If you want to do it raw so badly, go find someone else!」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日以外許可
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 「Hmm... I guess it's okay... As long as it's not a dangerous day.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日許可
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML 「I take that to mean you want to have children, right?」
+		PRINTFORMDW "Of course", you respond.
+		PRINTFORML 「... Ok, if it's with you... I suppose I want children too.」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;神社暮らしを承認して貰う
+;==================================================
+@M_KOJO_EVENT_K9_19(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;認められる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;認められない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;帰宅時
+;==================================================
+@M_KOJO_EVENT_K9_20(ARG,ARG:1)
+;口上主はLOCALS or RESULT
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Ara, it's already gotten this late.」
+		PRINTFORML 「I'll be taking my leave now, I'll see you later.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;デート中帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Ah, it's already this late! I lost track of time.」
+		PRINTFORML 「Sorry %CALLNAME:MASTER%, I've got to get going.」
+		PRINTFORML 「I'll see you later, I'd love to go on another date sometime.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;玄関先でお見送り
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「Fuaaa～, I'll be leaving now.」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;陥落素質取得時
+;==================================================
+@M_KOJO_EVENT_K9_21(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:8:恋人
+			PRINTFORML 「... Haa.」
+			PRINTFORMDW Yumemi broods alone in her room, occasionally sighing to herself.
+			PRINTFORMDW She could never have imagined such a thing would ever happen to her.
+			PRINTFORML 「I can't believe I've fallen for %CALLNAME:MASTER%, too.」
+			PRINTFORMDW She puts an emphasis on the word "too".
+			PRINTFORML 「After all, %CALLNAME:MASTER% and Chiyuri are already...」
+			PRINTFORML 「Ha... What a laughable state I'm in.」
+			PRINTFORMDW Not only does her romantic interest already have a partner, it's with her own assistant.
+			PRINTFORML 「What am I going to do...」
+			PRINTFORMDW She wonders if she can keep acting like nothing's wrong.
+			PRINTFORMDW Particularly when you come to visit Chiyuri, she's not confident she can keep her feelings bottled up.
+			PRINTW
+			PRINTFORML 「I can't stop myself from loving you, %CALLNAME:MASTER%. Tell me, what should I do...?」
+			PRINTFORMDW For all her scientific brilliance, Yumemi can't come to an answer.
+			PRINTFORMDW 
+		ELSEIF TALENT:8:3
+			PRINTFORML 「%CALLNAME:MASTER%... Haa...\/\/\/」
+			PRINTFORMDW Yumemi sighs as she stares up at the sky with a troubled expression.
+			PRINTFORMDW Lately, her brilliant scientific mind has been dominated by nothing but thoughts of you.
+			PRINTFORML 「... I've fallen in love with you.」
+			PRINTFORML 「I love you, %CALLNAME:MASTER%...」
+			PRINTFORMDW But as she fantasizes about you, thoughts of another close acquaintance drifts into her mind.
+			PRINTFORML 「Chiyuri... It seems that girl has feelings for %CALLNAME:MASTER%, too...」
+			PRINTFORML 「They seem really close, and she makes some pretty obvious passes at him.」
+			PRINTFORMDW And to boot, Chiyuri probably fell in love first.
+			PRINTFORML 「I'm probably too late by now... Hmm..? Actually, wait...」
+			PRINTFORMDW That hypothesis is wrong. Yumemi still has a chance.
+			PRINTFORMDW The evidence: Chiyuri hasn't actually formally become your lover yet.
+			PRINTFORMDW Besides, there's no way an assistant would surpass the professor. Although some might disagree.
+			PRINTFORML 「Yes, that's right. I'm not out of the running yet...!」
+			PRINTFORMDW 
+			PRINTFORML 「There's no way I'm losing to my own assistant. You'll never have %CALLNAME:MASTER% while I'm around, Chiyuri!」
+			PRINTFORML （And, well, in the worst case... Maybe we can make %CALLNAME:MASTER% a joint project...?）
+		ELSEIF TALENT:8:8
+			PRINTFORML 「Mmm... How about this...?」
+			PRINTFORMDW Yumemi is plagued by indecision, looking at clothes she hasn't worn in ages.
+			PRINTFORMDW Standing in front of a body mirror, she tries on this outfit and that, not quite satisfied by any of them.
+			PRINTFORML 「I wonder which one %CALLNAME:MASTER% would like best...」
+			PRINTFORMDW She's like a stereotypical young maiden in love.
+			PRINTFORMDW 
+			PRINTFORML 「... Haa!? What am I even doing!? I haven't even scheduled any dates with %HIM_HER(MASTER,,1)%!」
+			PRINTFORML 「But... It seems like %HE_SHE(MASTER)%'s got a lot of other girls on %HIS_HER(MASTER)% arm.」
+			PRINTFORML 「If I'm going to win, I'd best be prepared for anything...」
+			PRINTFORMDW And sometimes it's darkest at the base of the lighthouse.
+			PRINTFORML 「Chiyuri...」
+			PRINTFORMDW The sharp-minded girl who works in her lab, Yumemi's own assistant.
+			PRINTFORML 「It seems like she hasn't quite realized her feelings for %CALLNAME:MASTER% yet.」
+			PRINTFORML 「It might best to discourage her by making my position clear...」
+			PRINTFORML 「In that case... M-Maybe I should invite %CALLNAME:MASTER% on a date, after all.」
+			PRINTFORMDW For this young maiden in love, her sleepless night of agonizing is just beginning.
+		ELSEIF TALENT:8:184 || TALENT:8:185
+			PRINTFORML 「... Hey...%CALLNAME:MASTER%...%UNICODE(0x2764)%」
+			PRINTFORML 「I・love・you...%UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi twists her body seductively, whispering words of love to you.
+			PRINTFORMDW Not that you're actually there, of course.
+			PRINTFORML 「... No, that's not quite right.」
+			PRINTFORML 「Maybe I should put on some sexy lingerie and act more naturally...?」
+			PRINTFORMDW 
+			PRINTFORML 「Mmm, maybe taking this kind of approach isn't best.」
+			PRINTFORMDW Yumemi is trying to improve her seductive game, but Chiyuri already has a deep physical relationship with you.
+			PRINTFORMDW This kind of surface-level theorizing probably won't help Yumemi match that.
+			PRINTFORML 「... Mmm, that's right. I'm not like Chiyuri.」
+			PRINTFORMDW Every theory has multiple approaches. Just because her assistant built a physical relationship, doesn't mean Yumemi has to follow.
+			PRINTFORML 「And besides, %CALLNAME:MASTER% hasn't necessarily fallen in love with her, yet...\/\/\/」
+			PRINTFORMDW But there's no telling what'll happen in the future.
+			PRINTFORMDW This potential rival might very well become a real contender.
+			PRINTW 
+			PRINTFORML 「... In that case, I'd better strike while the iron is hot, and let %CALLNAME:MASTER% know how I feel.」
+			PRINTW 
+			PRINTFORML 「...I love you so much, %CALLNAME:MASTER%...」
+			PRINTW 
+		ELSE
+			PRINTFORML 「%CALLNAME:MASTER%...」
+			PRINTFORMDW Yumemi mutters your name alone in her room.
+			PRINTFORMDW Just this alone is enough to cause her chest to tighten painfully.
+			PRINTFORMDW She had never thought such a thing could happen to her.
+			PRINTFORMDW Though the feeling is painful, there is also a comforting warmth to it.
+			PRINTFORMDW She realizes that this feeling is a happiness that comes from thinking of you.
+			PRINTFORMDW Her heartbeat also seems to quicken a little.
+			PRINTFORML 「... I guess not even the powers of science can help me here.」
+			PRINTFORMDW With a slightly bittersweet smile, she mutters.
+			PRINTFORML 「... I like you.」
+			PRINTFORMDW She feels embarrassed.
+			PRINTFORML 「... No, I love you.」
+			PRINTFORMDW Her mind feels like it's boiling over, but her heart is at peace. The bitterness fades from her smile.
+			PRINTFORML 「I love you, %CALLNAME:MASTER%...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF FLAG:1030 == 8
+			PRINTFORMDW Yumemi thinks of the person she has been together with long before she came to this world.
+			PRINTFORML 「Chiyuri...」
+			PRINTFORMDW Her cheeky assistant, who retaliates with a folding chair when pushed around even a little.
+			PRINTFORMDW Yumemi didn't have any particular feelings towards her until recently.
+			PRINTFORML 「Lately it feels like our relationship has changed a little. Like I'm happy every time I see her...」
+			PRINTFORMDW It seems like more research in this topic is required.
+			PRINTFORML 「Well, I'm sure I'll understand it soon enough.」
+		ELSE
+			PRINTFORMDW Yumemi thinks of the person who's recently been visiting the lab a lot.
+			PRINTFORML 「%CALLNAME:MASTER%...was it. %HE_SHE(MASTER,1)%'s been helping out a lot, but...」
+			PRINTFORMDW Of course, that's not all. Yumemi knows there's some other feeling mixed in.
+			PRINTFORML 「I don't really understand this feeling all that well, though.」
+			PRINTFORMDW It's definitely not a negative feeling. It's a positive one. But still, it's perplexing.
+			PRINTFORML 「Well, I'll come to understand it soon enough.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛欲取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「Haa %UNICODE(0x2764)% Haa %UNICODE(0x2764)%... It's not enough... I need more... %CALLNAME:MASTER%...」
+		PRINTFORML 「I want more sex... I want it now... But you're not here.」
+		PRINTFORMDW Yumemi is completely absorbed in pleasuring herself.
+		PRINTFORMDW As she wildly thrashes her fingers around in her vagina, she's already lost count of how many times she's climaxed.
+		PRINTFORMDW But it's not anywhere near enough for her.
+		PRINTFORMDW Yumemi finally realizes she can't be satisfied unless it's with you.
+		PRINTFORML 「Even though you're the one that made my body like this... Nnah %UNICODE(0x2764)%」
+		PRINTFORML 「I can't hold it in %UNICODE(0x2764)% Even though my fingers just aren't enough %UNICODE(0x2764)% I can't stop %UNICODE(0x2764)%」
+		PRINTFORML 「Ah, I'm cumming again, cum...ming...%UNICODE(0x2764)%」
+		PRINTFORMDW Even as she climaxes again, her fingers continue to wriggle.
+		PRINTFORML 「Haa...%UNICODE(0x2764)% It's still, not enough...%UNICODE(0x2764)% You have to, take responsibility and fuck me more... %UNICODE(0x2764)%」
+		PRINTFORMDW Wet noises and sweet moans continue to be heard from Yumemi's room throughout the night...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛人取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 「%CALLNAME:MASTER%... I'm starting to get addicted to sleeping with %HIM_HER(MASTER,,1)%.」
+		PRINTFORML 「I've just been having sex with %HIM_HER(MASTER,,1)% because it felt good... But lately, it's felt a bit different...」
+		PRINTFORML 「It's like I specifically want to have sex with %HIM_HER(MASTER,,1)%.」
+		PRINTFORML 「... Whenever I think of %HIM_HER(MASTER,,1)%, I get in the mood.」
+		PRINTFORML 「I guess I'll get off to %CALLNAME:MASTER% before I go to bed...」
+		PRINTFORML 「Nn... Nnn... %CALLNAME:MASTER%!」
+		PRINTFORMDW Yumemi slips off her clothing and begins to pleasure herself.
+		PRINTFORML 「Ah, Ahh... Hey, %CALLNAME:MASTER%, what do you... Nn... think of me?」
+		PRINTFORMDW Yumemi asks into the air as she masturbates.
+		PRINTFORML 「Haa, Aah... Cumming, %CALLNAME:MASTER%... I'm... Aa...!」
+		PRINTFORMDW Yumemi's body trembles and her vagina gushes love juice as she reaches her climax.
+		PRINTFORML 「Ah... Uu... %CALLNAME:MASTER%...」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;セフレ取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML 「It felt good today, too... Sex with %CALLNAME:MASTER%...」
+		PRINTFORML 「%HE_SHE(MASTER,1)%'s always willing whenever I get in the mood... And we both seem to enjoy it...」
+		PRINTFORML 「This kind of thing isn't so bad, either...」
+		PRINTFORML 「My pussy is twitching...just from thinking about it...\/\/\/」
+		PRINTFORMDW As she says this, she's already slipped down her panties, and her fingers have started playing with her vagina.
+		PRINTFORML 「Aah, I'll just have to settle...for fingering myself, this time... Nnah %UNICODE(0x2764)%」
+		PRINTFORMDW Yumemi continues to pleasure herself for a long time, climaxing several times before she finally falls asleep.
+		RETURN 1
+	ENDIF
+
+	;2022/01/15 ADD START キス魔、自慰狂い、ポルチオ性感、おもらし癖の追加対応
+	;-------------------------------------------------
+	;キス魔取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		PRINTFORML 「Nn...」
+		PRINTFORMDW Yumemi puts a finger to her lips, and has a somewhat unsatisfied look on her face.
+		PRINTFORMDW The scene is reminiscent of a beautiful girl deep in thought.
+		PRINTFORMDW But before long, she unconsciously begins to suck on that finger, intertwining her tongue with it.
+		PRINTFORMDW With the other hand, she begins to play with her body.
+		PRINTFORML 「Nn... Shlurp... I want to kiss someone... Anyone...」
+		PRINTFORMDW As Yumemi is alone, there is naturally no one there to satisfy her craving.
+		PRINTFORMDW She pushes her other fingers into her %FSYN("vagina")%, and an obscene wet sound echoes through the room.
+		PRINTFORML 「Nmuu, Mmm... Nn...%UNICODE(0x2764)%」
+		PRINTFORMDW Her upper and lower mouths emit different but equally obscene sounds.
+		PRINTFORMDW Her sensitive, aroused body quickly approaches climax.
+		PRINTFORML 「Nnaaaaahhhhh～～～～～～～%UNICODE(0x2764)%%UNICODE(0x2764)%」
+		PRINTFORML 「Haa, Haa...\/\/\/」
+		PRINTFORMDW Yumemi extracts her fingers from both of her orifices with a wet, plopping sound.
+		PRINTFORML 「Someone... Anyone... Kiss me...%UNICODE(0x2764)%」
+		PRINTFORMDW Her desperate, lustful pleas only echo throughout the empty room.
+		IF !FLAG:なりきり
+			PRINTFORMDW Her face melting with pleasure, Yumemi's mind drifts to those close to her.
+			PRINTFORML 「%CALLNAME:MASTER% would be best... But right now, even Chiyuri...%UNICODE(0x2764)%」
+			PRINTFORMDW For a single moment, she wonders how her assistant would react to being kissed, but she soon banishes the thought.
+			PRINTFORML 「This isn't really the time for that...%UNICODE(0x2764)%」
+			PRINTFORML 「I've got to control...this aching feeling...%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;自慰狂い取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		PRINTFORML （Gotta...finger myself...right this moment...%UNICODE(0x2764)%）
+		PRINTFORMDW As soon as she's back in her room, Yumemi locks the door. She hastily pulls up her skirt and slides a finger into her aching %FSYN("vagina")%.
+		PRINTFORMDW Her %FSYN("vagina")% is already moist from anticipation, and she feels the slick sensation of love juices on her finger.
+		PRINTFORML 「Nnaaahh %UNICODE(0x2764)%」
+		PRINTFORMDW She teases her clit with short, quick motions. Her body shudders from the long awaited pleasure.
+		PRINTFORMDW The room echoes with Yumemi's ragged breathing and the obscene wet sounds of her self-pleasuring.
+		PRINTFORMDW Her other hand plays with her breasts, exposed through her disheveled clothes.
+		PRINTFORML 「Haa, Haa %UNICODE(0x2764)% I can finally...finger myself like this %UNICODE(0x2764)%」
+		PRINTFORMDW Her panties already having been thrown aside, her %FSYN("juice")% spills onto the floor.
+		PRINTFORML 「Hii %UNICODE(0x2764)% I can't, stop fingering myself %UNICODE(0x2764)% I'm becoming a slave to this %UNICODE(0x2764)%」
+		PRINTFORMDW Despite her words, there isn't a hint of regret or shame in her euphoric expression.
+		PRINTFORML 「It's amazing～ %UNICODE(0x2764)% Fingering myself feels so good %UNICODE(0x2764)%」
+		PRINTFORMDW As she moves from teasing her clit to inserting her finger into her %FSYN("vagina")%, her body wriggles violently.
+		PRINTFORML 「Hii, Cumming, I'm cumming %UNICODE(0x2764)% I'm cumming from fingering myself today too %UNICODE(0x2764)%」
+		PRINTFORML 「Ahhaaaaaaaa～～～～～～ %UNICODE(0x2764)%」
+		PRINTFORMDW A fountain of love juice gushes from her %FSYN("vagina")% as a powerful orgasm rocks her body.
+		PRINTFORML 「Ahaa...%UNICODE(0x2764)% Haa... Haa...%UNICODE(0x2764)%」
+		PRINTFORMDW 
+		PRINTFORMDW Until now, she has only masturbated on rare occasions.
+		PRINTFORMDW But you've changed the act of masturbation into a normal, daily routine for her.
+		PRINTFORMDW Thanks to you, she's become a woman completely obsessed with masturbating, and does so at every opportunity.
+		PRINTFORMDW 
+		PRINTFORML 「It's not enough...%UNICODE(0x2764)% One more time... Just one more...%UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;ポルチオ性感取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		PRINTFORML 「Well, I'll be...%UNICODE(0x2764)% Looks like I've gotten addicted to this...%UNICODE(0x2764)%」
+		PRINTFORMDW At first, cervical stimulus only brought pain.
+		PRINTFORMDW But thanks to repeated "development", her womb has transformed into a sexual organ capable of intense pleasure.
+		PRINTFORMDW She imagines your %FSYN("penis")% pressing against the entrance to her womb.
+		PRINTFORMDW 
+		PRINTFORMDW Kyun～
+		PRINTFORMDW 
+		PRINTFORML 「Nn...%UNICODE(0x2764)% Ah, it's twitching...\/\/\/」
+		PRINTFORMDW Her freshly changed panties are already stained with love juices.
+		PRINTFORML 「I don't know if I can replicate the experience with this, but...%UNICODE(0x2764)%」
+		PRINTFORMDW Yumemi pulls down her panties, takes out a vibrator, and slams it all the way into the back of her %FSYN("vagina")% in one motion.
+		PRINTFORML 「Nnaaaah %UNICODE(0x2764)% This is it %UNICODE(0x2764)%」
+		PRINTFORMDW Adjusting the angle to directly strike her cervix, she continues to violently insert the vibrator into her %FSYN("vagina")%.
+		PRINTFORML 「Aah %UNICODE(0x2764)% Yes, right there, I love it there %UNICODE(0x2764)%」
+		PRINTFORMDW Unsatisfied with just insertion, she flips on the vibration, which brings even stronger waves of pleasure.
+		PRINTFORMDW The fast vibration tickles and stimulates her cervix, and Yumemi emits a lustful voice. 
+		PRINTFORML 「Uunnn %UNICODE(0x2764)% Haaahhhh %UNICODE(0x2764)%」
+		PRINTFORMDW Her %FSYN("vagina")% spraying love juices from orgasm, Yumemi flops onto her bed, drained.
+		PRINTFORMDW 
+		PRINTFORML 「Ahaa, Hii %UNICODE(0x2764)% Amazing... If it was %CALLNAME:MASTER%'s %FSYN("penis")% instead...%UNICODE(0x2764)%」
+		PRINTFORMDW The anticipation of the pleasure causes Yumemi's %FSYN("vagina")% to begin secreting even more love juice.
+		RETURN 1
+	ENDIF
+	
+	;-------------------------------------------------
+	;おもらし癖取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		PRINTFORML 「Ah, cumming, cumming cumming...cum...\/\/\/」
+		IF TALENT:73 || ABL:30 > 3
+			PRINTFORMDW Yumemi's masturbation has incorporated another daily routine function.
+			PRINTFORMDW Today as well, Yumemi's body shudders as she reaches climax, her %FSYN("vagina")% spraying love juice.
+			PRINTFORMDW And at the same time...
+			PRINTFORML 「Haa... Ah... It's coming out %UNICODE(0x2764)% Can't stop it %UNICODE(0x2764)%」
+			PRINTFORMDW With a gushing sound, urine begins to stream out of Yumemi's urethra.
+			PRINTFORMDW The urine splatters onto her bed and soaks into it.
+			PRINTFORML 「Ahaa... I did it again... Peeing while I cum...%UNICODE(0x2764)%」
+			PRINTFORMDW Breathing heavily, Yumemi has nothing but euphoria on her face as she basks in the afterglow of climax.
+			PRINTFORMDW Having experienced simultaneous urination and orgasm so many times while having sex with you, the two have become permanently intertwined.
+			PRINTFORMDW Even when urinating normally, Yumemi occasionally orgasms a little.
+			PRINTFORMDW 
+			PRINTFORML 「There's no way I can get married with a body like this...%UNICODE(0x2764)%」
+			PRINTFORMDW Though she complains about you under her breath, her face is glowing with pleasure.
+			PRINTFORML 「Ah, it's still coming out...%UNICODE(0x2764)% Uhaa...%UNICODE(0x2764)%」
+			PRINTFORMDW Her urethra emits small spurts of urine, and she wets the bed again.
+			PRINTFORML 「Peeing... feelsh good...%UNICODE(0x2764)% %CALLNAME:MASTER% had better take responsibility for making me like this...%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMDW Yumemi urinates and orgasms simultaneously, drawing a complex pattern of stains onto the bed.
+			PRINTFORML 「Uwaa, I peed again...%UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi basks in the afterglow of orgasm, her face a mixture of pleasure and shame.
+			PRINTFORMDW The urination that comes with orgasm, and the pleasure it brings.
+			PRINTFORMDW The two have become a single, inseparable sensation for Yumemi.
+			PRINTFORML 「What am I going to do...\/\/\/」
+			PRINTFORML （Feeling pleasure from peeing... This is just perversion, no matter how I look at it %UNICODE(0x2764)%）
+			PRINTFORML （But...）
+			PRINTFORML 「There's no way I can stop myself... It feels too good... Ah %UNICODE(0x2764)%」
+			PRINTFORML 「It's still, c-coming out...\/\/\/」
+			PRINTFORMDW As she says this, Yumemi begins urinating again as she experiences another light orgasm.
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;2022/01/15 ADD END キス魔、自慰狂い、ポルチオ性感、おもらし癖の追加対応
+ENDIF
+RETURN 1
+;==================================================
+;調教終了時に自慰
+;==================================================
+@M_KOJO_EVENT_K9_22(ARG,ARG:1)
+;口上主はARG
+;ARG:0に自慰状況
+;ARG:1に自慰種類
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;通常自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		CALL M_KOJO_EVENT_K9_SET_ONAFLAG(ARG)
+		PRINTFORML 「Nnn... It's a bit hard to hold it in... Let's do it, just a little.」
+		PRINTFORML 「Nn... Nnn... Man, I'm already this wet... I guess it's a bit pent up...\/\/\/」
+		PRINTFORMDW The pleasure from Yumemi's fingers are heightened by her sensitive body, and her movements become fiercer.
+		PRINTFORML 「Haa, Ah, Ah... I'm...cum...ming...%UNICODE(0x2764)%」
+		;2022/01/15 ADD START おもらし癖を活用していく強い意志
+		IF TALENT:57
+			PRINTFORMDW Yumemi's vision goes pure white as she climaxes and urinates simultaneously.
+			PRINTFORML 「Nnn... Haa... Aa... I, did it again...%UNICODE(0x2764)%」
+			PRINTFORML 「I've got, to change the sheets...%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMDW Yumemi's vision goes pure white as she climaxes.
+			PRINTFORML 「Nnn... Haa... Fuu... Ah, my fingers are drenched...%UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi licks her own love juices off of her fingers, and rolls over in her bed.
+		ENDIF
+		;2022/01/15 ADD END おもらし癖を活用していく強い意志
+
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同室時自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		CALL M_KOJO_EVENT_K9_SET_ONAFLAG(ARG)
+		PRINTFORML 「Nnn, Aah, even though %CALLNAME:MASTER% is right here... My fingers, won't stop...」
+		PRINTFORML 「But... I'm completely turned on... Ah, Ah, Ah %UNICODE(0x2764)%」
+		PRINTFORMDW "If you moan that loudly, I can't help but wake up..."
+		PRINTFORMDW Pretending to just wake up, you make an exaggerated stirring motion and look at Yumemi.
+		PRINTFORML 「Ah, oh no, %CALLNAME:MASTER%, don't wake up, Ahh cumming, cumming %UNICODE(0x2764)% I'm cummingcumming %UNICODE(0x2764)%」
+		;2022/01/15 ADD START おもらし癖を活用していく強い意志
+		IF TALENT:57
+			PRINTFORMDW Now wide awake, you watch Yumemi reach a particularly powerful orgasm while simultaneously urinating.
+			PRINTFORMDW Her pajamas become soaked with urine, and she draws an complex pattern of stains across her bed.
+			PRINTFORML 「Uwaa, Haa...%UNICODE(0x2764)%」
+			PRINTFORMDW You remark that this is going to be rather troublesome to clean up in the morning.
+			PRINTFORML （Idiot, why would you wake up now of all times...）「That felt refreshing... Ah \/\/\/」
+			PRINTFORML 「No no no I take that back, you didn't hear anything～! But man, it really did feel good, ah, no, I didn't mean that!」
+		ELSE
+			PRINTFORMDW Now wide awake, you watch Yumemi reach an unusually powerful climax.
+		ENDIF
+		;2022/01/15 ADD END おもらし癖を活用していく強い意志
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;中だし精液自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		CALL M_KOJO_EVENT_K9_SET_ONAFLAG(ARG)
+		PRINTFORML 「Nhaa... There's so much of %CALLNAME:MASTER%'s semen...%UNICODE(0x2764)%」
+		PRINTFORML 「Deeper, deeper...%UNICODE(0x2764)% Swirling around...%UNICODE(0x2764)%」
+		PRINTFORML 「Ah %UNICODE(0x2764)% I'm gonna cum...%UNICODE(0x2764)%」
+		PRINTFORMDW Yumemi climaxes as she churns your semen around her vagina.
+		;2022/01/15 ADD START おもらし癖を活用していく強い意志
+		IF TALENT:57
+			PRINTFORML 「Uwaa, Haa... it's coming, it's coming out...! Fuaa...\/\/\/」
+			PRINTFORMDW Urine sprays from her urethra as she orgasms, soaking her pajamas and bed.
+			PRINTFORML 「Ahaa... Fuu... I wet myself again...%UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi has a euphoric expression as she basks in the twin pleasures of climax and urination.
+		ENDIF
+		;2022/01/15 ADD END おもらし癖を活用していく強い意志
+		PRINTFORML 「Haa... Haa...%UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無知持ち（自慰経験(調教自慰経験は差し引き)による分岐あり
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		CALL M_KOJO_EVENT_K9_SET_ONAFLAG(ARG)
+		LOCAL:2 = EXP:自慰経験 - EXP:調教自慰経験
+		;無知消去イベントあり（表示は一度だけ
+		IF LOCAL:1 >= 25
+		;地の文分岐。書きたい場合は[SKIPSTART][SKIPEND]を削除してください
+		[SKIPSTART]
+		ELSEIF LOCAL:1 >= 20
+		ELSEIF LOCAL:1 >= 15
+		ELSEIF LOCAL:1 >= 10
+		ELSEIF LOCAL:1 >= 5
+		[SKIPEND]
+		ELSE
+		ENDIF
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質あり自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		CALL M_KOJO_EVENT_K9_SET_ONAFLAG(ARG)
+		;-------------------------------------------------
+		;Ｃ敏感orＣ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「Aah, ah, my clit, feels so good %UNICODE(0x2764)% It feels so good %UNICODE(0x2764)%」
+			PRINTFORMDW Playing with her highly sensitive clitoris, Yumemi falls deeper into her self-pleasure.
+			PRINTFORML 「Rubbing it with my fingers, feels good %UNICODE(0x2764)% I can't stop %UNICODE(0x2764)%」
+			PRINTFORML 「Ah it's coming %UNICODE(0x2764)% I'm gonna cum %UNICODE(0x2764)% My clit is cumming %UNICODE(0x2764)%」
+			PRINTFORML 「Ahhー %UNICODE(0x2764)% Cumming, cumming...! %UNICODE(0x2764)%%UNICODE(0x2764)%」
+			;2022/01/15 ADD START おもらし癖を活用していく強い意志
+			IF TALENT:57
+				PRINTFORMDW An incredible amount of love juice and urine gushes from Yumemi's crotch, and she collapses onto her soaked bedsheets.
+			ELSE
+				PRINTFORMDW An incredible amount of love juice gushes from Yumemi's vaginal lips, and she collapses onto her soaked bedsheets.
+			ENDIF
+			;2022/01/15 ADD END おもらし癖を活用していく強い意志
+			PRINTFORML 「My clit... feels good... %UNICODE(0x2764)% Ah, my fingers are moving on their own %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi savors the post-orgasm afterglow as her fingers continue to slowly play with her clit.
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｖ敏感orＶ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「Haa %UNICODE(0x2764)% It's good, my fingers %UNICODE(0x2764)% Feels good %UNICODE(0x2764)%」
+			PRINTFORML 「One finger isn't enough...%UNICODE(0x2764)% Two fingers...%UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi takes two fingers together and thrusts them into her honeypot.
+			PRINTFORMDW Her fingers slide easily into her well-developed fuckhole, and more love juice flows out from the heightened anticipation.
+			PRINTFORML 「Nnaaah %UNICODE(0x2764)% My fingers...are in %UNICODE(0x2764)% I'm, going to move them %UNICODE(0x2764)%」
+			PRINTFORML 「Two fingers feels amazing %UNICODE(0x2764)% I'm gonna cum %UNICODE(0x2764)% Gonna cum %UNICODE(0x2764)%」
+			PRINTFORML 「%CALLNAME:MASTER%, I'm cumming, cumming... Cum...ming...%UNICODE(0x2764)%」
+			;2022/01/15 ADD START おもらし癖を活用していく強い意志
+			IF TALENT:57
+				PRINTFORMDW After climaxing and urinating simultaneously, Yumemi slowly pulls out her fingers and spreads them apart.
+				PRINTFORMDW Her fingers are covered in love juices, and they smell faintly of urine.
+			ELSE
+				PRINTFORMDW After climaxing, Yumemi slowly pulls out her fingers and spreads them apart.
+			ENDIF
+			;2022/01/15 ADD END おもらし癖を活用していく強い意志
+			PRINTFORML 「... Haa %UNICODE(0x2764)% So sticky %UNICODE(0x2764)% That felt amazing %UNICODE(0x2764)%」
+			PRINTFORML （My fingers are good too... But I want to do it with %CALLNAME:MASTER% instead...）
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ａ敏感orＡ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 3
+			PRINTFORML 「Oh no... My ass, it's twitching...%UNICODE(0x2764)%」
+			PRINTFORMDW As she says this, Yumemi has already slipped down her panties and she begins caressing her asshole.
+			PRINTFORML 「Nnah %UNICODE(0x2764)% My ass, feels good...%UNICODE(0x2764)% Nnn...%UNICODE(0x2764)%」
+			PRINTFORML 「Fuaa... It's getting good...%UNICODE(0x2764)% Let's put it in %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi's finger easily slides into her well-developed anus.
+			PRINTFORML 「Nnnn... It's in... Move it around... Aah, it feels good %UNICODE(0x2764)%」
+			PRINTFORML 「Ah my ass is cumming %UNICODE(0x2764)% I shouldn't, I'm cumming from fingering my own ass %UNICODE(0x2764)%」
+			PRINTFORML 「Nnnnnuh....! Aaaa...!」
+			;2022/01/15 ADD START おもらし癖を活用していく強い意志
+			IF TALENT:57
+				PRINTFORMDW Yumemi thrusts her finger all the way inside her anus just as she cums, and her body trembles and urinates from its strongest climax today.
+			ELSE
+				PRINTFORMDW Yumemi thrusts her finger all the way inside her anus just as she cums, and her body trembles from its strongest climax today.
+			ENDIF
+			;2022/01/15 ADD END おもらし癖を活用していく強い意志
+			PRINTFORML 「... Haa, Haa, my ass... I'm going to get addicted to this.」
+			PRINTFORML （I wonder if %CALLNAME:MASTER% will do it in my ass next time...）
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｂ敏感orＢ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 4
+			PRINTFORML 「... Haa, my boobs, are so sensitive... Gotta calm them down...%UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi slips out of her clothes and begins fondling her exposed breasts.
+			PRINTFORML 「Nnn... Just a little longer... Aa...」
+			PRINTFORMDW Yumemi's movements slowly become more frantic, and her fingers finally reach her nipples.
+			PRINTFORML 「Nfuu...! They're so stiff... I need to, relax them...」
+			PRINTFORML 「Aah, it's better than usual! My boobs feel so good %UNICODE(0x2764)%」
+			PRINTFORML 「Fuaa, cumming, I'm cumming from my boobs %UNICODE(0x2764)%」
+			;2022/01/15 ADD START おもらし癖を活用していく強い意志
+			IF TALENT:57
+				PRINTFORMDW Even though she's just climaxed from her breasts, her urethra loosens and begins to urinate.
+				PRINTFORML 「Fuaa... Even though I wasn't touching my pussy, I ended up peeing anyway %UNICODE(0x2764)%... So good %UNICODE(0x2764)%」
+			ELSE
+				PRINTFORML 「... Fuu... To think I can feel this good just from my boobs...%UNICODE(0x2764)%」
+			ENDIF
+			;2022/01/15 ADD END おもらし癖を活用していく強い意志
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部位指定無し
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 5
+			PRINTFORML 「Aah %UNICODE(0x2764)% %CALLNAME:MASTER%, %CALLNAME:MASTER%...」
+			PRINTFORMDW Yumemi single-mindedly rubs her fingers all over her body as she thinks of you.
+			PRINTFORML 「I can't hold it in...%UNICODE(0x2764)%」
+			PRINTFORML 「... Cumming...! %CALLNAME:MASTER%... Aa...!」
+			;2022/01/15 ADD START おもらし癖を活用していく強い意志
+			IF TALENT:57
+				PRINTFORMDW Yumemi's body shudders intensely as a mixture of love juices and urine spray from her crotch.
+				PRINTFORML 「Ahii, itsh leaking, I'm peeing... It feels good...%UNICODE(0x2764)%」
+			ENDIF
+			;2022/01/15 ADD END おもらし癖を活用していく強い意志
+			PRINTFORML 「... Fuu... Haa.. Haa!」
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで陥落素質あり自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		CALL M_KOJO_EVENT_K9_SET_ONAFLAG(ARG)
+		;-------------------------------------------------
+		;尻穴膣腔同時
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「Aah yes! It's good %UNICODE(0x2764)% My ass %UNICODE(0x2764)% More %UNICODE(0x2764)%」
+			PRINTFORMDW While disheveling her hair, Yumemi single-mindedly stimulates her vagina and anus.
+			PRINTFORML 「My pussy also feels good %UNICODE(0x2764)% This feeling is amazing %UNICODE(0x2764)%」
+			PRINTFORML 「Fuaaa, Aah, I'm cumming %UNICODE(0x2764)% Cumming %UNICODE(0x2764)% From both sides %UNICODE(0x2764)%」
+			PRINTFORML 「My ass and pussy are cumming～～%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+			;2022/01/15 ADD START おもらし癖を活用していく強い意志
+			IF TALENT:57
+				PRINTFORMDW The vibrators in her vagina and anus are pushed out together by the violent orgasm, and her urethra loosens and begins urinating.
+				PRINTFORMDW The vibrators are covered in urine, but Yumemi leaves them as they are.
+				PRINTFORMDW Savoring the twin pleasures, she mutters with ecstasy on her face.
+			ELSE
+				PRINTFORMDW The vibrators in her vagina and anus are pushed out together by the violent orgasm. Savoring the feeling, Yumemi mutters with ecstasy on her face.
+			ENDIF
+			;2022/01/15 ADD END おもらし癖を活用していく強い意志
+			PRINTFORML 「Hafuu... %UNICODE(0x2764)% That was amazing... %UNICODE(0x2764)%」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;膣腔のみ
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「Nnaaahhh! More %UNICODE(0x2764)% Fuck my pussy harder %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi appears to be absorbed in masturbation as she imagines being fucked by you.
+			PRINTFORML 「Feels good %UNICODE(0x2764)% Deeper %UNICODE(0x2764)%%UNICODE(0x2764)%」
+			PRINTFORMDW Firmly gripping the vibrator with both hands, Yumemi thrusts it inside, alternating slow and fast movements.
+			PRINTFORML 「Ah I'm about to cum %UNICODE(0x2764)% I'm gonna cum %UNICODE(0x2764)%」
+			PRINTFORML 「Aah cumming, I'm cumming %CALLNAME:MASTER% %UNICODE(0x2764)% Cumming cumming %UNICODE(0x2764)%」
+			;2022/01/15 ADD START おもらし癖を活用していく強い意志
+			IF TALENT:57
+				PRINTFORMDW As she throws back her body and climaxes, a thin stream of urine traces out an arc from her urethra.
+				PRINTFORML 「Haaa～... Ah, Hii... I-I even peed...%UNICODE(0x2764)%」
+			ENDIF
+			;2022/01/15 ADD END おもらし癖を活用していく強い意志
+			PRINTFORML 「Aa... Fuaa... Haa...」
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;我慢
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		CALL M_KOJO_EVENT_K9_SET_ONAFLAG(ARG)
+		PRINTFORML 「Uuu... I'm so horny...」
+		PRINTFORML 「... Haa, I want sex %UNICODE(0x2764)% I wonder if I can have sex with %CALLNAME:MASTER% tomorrow.」
+		PRINTFORML 「Aah～ I want to do it... I want to finger myself... Haa...」
+		PRINTFORML 「Rubbing my boobs, teasing my nipples, churning up my pussy... I want to do it so bad...%UNICODE(0x2764)%」
+		;2022/01/15 ADD START おもらし癖を活用していく強い意志
+		IF TALENT:57
+			PRINTFORML 「And while I'm at it, peeing as I cum...%UNICODE(0x2764)%」
+		ENDIF
+		;2022/01/15 ADD START おもらし癖を活用していく強い意志
+		PRINTFORMDW As dirty thoughts fill her mind, Yumemi's hands naturally begin to move to her breasts and vagina...
+		PRINTFORMDW But Yumemi somehow manages to stop herself just in time.
+		PRINTFORML 「... Hah! No no, calm down, Okazaki Yumemi! Let's just go to sleep today!」
+		PRINTFORML 「... Haa, I want to do it...」
+		PRINTFORMDW It seems like Yumemi can't completely drive her desires from her mind.
+		RETURN 1
+	ENDIF
+	;その他
+	;上の分岐を一切書かずに、ここに書くことで自慰の共通口上を表示することが出来ます
+	PRINTFORML  
+	RETURN 1
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;AFTERTRAニーフラグセット関数
+;-------------------------------------------------
+@M_KOJO_EVENT_K9_SET_ONAFLAG(ARG)
+IF ARG == 7
+	;我慢した
+	CFLAG:1000 = 1
+ELSE
+	;オナった
+	CFLAG:1000 = 2
+ENDIF
+
+
+;==================================================
+;浴場連れだし
+;==================================================
+@M_KOJO_EVENT_K9_23(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;断られた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;一緒に入ってくれた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;懐妊
+;==================================================
+@M_KOJO_EVENT_K9_24(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;出産
+;==================================================
+@M_KOJO_EVENT_K9_25(ARG,ARG:1)
+;口上主はLOCAL
+;ARG:1	何人目の子供か
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;オナバレ
+;==================================================
+@M_KOJO_EVENT_K9_26(ARG,ARG:1)
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;見られた瞬間
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:3
+				PRINTFORML 「Haa... Haa... %CALLNAME:MASTER%...」
+				PRINTFORML 「Getting me worked up like this... Nnn... %UNICODE(0x2764)% And then not being here when I need you... Dummy.」
+				PRINTFORML 「Ah... Uu... Nnah...%UNICODE(0x2764)%」
+				PRINTFORML 「The next time I see you, I'll make you have lots of sex with me... So for now... This will do...\/\/\/」
+				PRINTFORML 「Nnn I'm gonna cum...%UNICODE(0x2764)% ... Huh? %CALLNAME:MASTER%...?」
+			ELSEIF TALENT:184
+				PRINTFORML 「Nn... Ah %UNICODE(0x2764)% Haa %UNICODE(0x2764)%... %CALLNAME:MASTER%...%UNICODE(0x2764)%」
+				PRINTFORML 「There... It's good %UNICODE(0x2764)% More %UNICODE(0x2764)% Fuaah, Aah %UNICODE(0x2764)% I'm, gonna cum... It's coming %UNICODE(0x2764)%」
+				PRINTFORML 「Nnaaah %UNICODE(0x2764)% Aaah %UNICODE(0x2764)% Cumming %UNICODE(0x2764)% I'm cumming %UNICODE(0x2764)% %CALLNAME:MASTER% %UNICODE(0x2764)%」
+				PRINTFORML 「Aah I'm cumming %UNICODE(0x2764)% Ah, Ah, Eh, %CALLNAME:MASTER%? What...\/\/\/」
+			ELSEIF TALENT:8
+				PRINTFORML 「Nnn... Ah... Nnn...%UNICODE(0x2764)%」
+				PRINTFORML 「Haa... Nn %UNICODE(0x2764)%... It feels good... %UNICODE(0x2764)%」
+				PRINTFORML （Why now... Why am I thinking about %CALLNAME:MASTER%...）
+				PRINTFORML 「Nn Nnn... I'm gonna... %CALLNAME:MASTER%... Huh, Eh...?」
+			ELSE
+				PRINTFORML 「Nn... Nn... Yes, there...%UNICODE(0x2764)% Just a little more... %UNICODE(0x2764)%」
+				PRINTFORML 「Ah %UNICODE(0x2764)% That's good %UNICODE(0x2764)% Nnah %UNICODE(0x2764)% Yeah... Eh?」
+			ENDIF
+			
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;何もしない
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:3
+				PRINTFORML 「I-It's not like I wanted sex with you, or that I'm doing this because you wouldn't... Huh?」
+				PRINTFORML 「Wha, where are you going?! Are you seriously just going to pretend like you didn't see anything?」
+				PRINTFORMDW Although you sorely want to continue with Yumemi, you drive such worldly desires from your mind and leave the room...
+				PRINTFORML 「Don't come crying to me if you end up in the mood later!」
+			ELSEIF TALENT:184 || TALENT:185
+				PRINTFORML 「Ara... %CALLNAME:MASTER%... %UNICODE(0x2764)% I've been waiting for you...%UNICODE(0x2764)%」
+				PRINTFORML 「I've been fingering myself from wanting to do it with you so bad... And now you're finally here.」
+				PRINTFORML 「You'll have sex with me, right～... Wait, you're leaving? You can't be serious!」
+				PRINTFORML 「H-Hey, wait a second!? I can't hold it in any longer!」
+				PRINTFORML 「You idiot! I'll definitely get you to fuck me!」
+			ELSEIF TALENT:8
+				PRINTFORML 「Uh... Well... I-I'm only human after all, I get in the mood from time to time too...」
+				PRINTFORML 「As for why I called out your name... Well, I don't know why you're here in the first place...」
+				PRINTFORMDW Yumemi starts mumbling excuses, but you just turn and leave the room...
+				PRINTFORML 「So, well, you know... Wait, %HE_SHE(MASTER)%'s gone... What's up with %HIM_HER(MASTER,,1)%...」
+			ELSE
+				PRINTFORML 「Haha, I guess you saw me doing something like this...」
+			ENDIF
+
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;そのまま続行
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:3
+				PRINTFORML 「I'll keep going, then...\/\/\/」
+				PRINTFORML 「Look %CALLNAME:MASTER%, I got this wet thinking of you...%UNICODE(0x2764)% Did you know?」
+				PRINTFORML 「When I get lonely... I always touch myself, like this... Ah %UNICODE(0x2764)%」
+				PRINTFORML 「I actually, Fuaa, want to have sex with you, right now...%UNICODE(0x2764)% But for now, Nnaah, just this...\/\/\/」
+			ELSEIF TALENT:184 || TALENT:185
+				PRINTFORML 「Haa...%UNICODE(0x2764)% You want me...to keep going? %UNICODE(0x2764)%... You're such, a pervert...%UNICODE(0x2764)%」
+				PRINTFORMDW "Of course", you tell her.
+				PRINTFORML 「Is that so...%UNICODE(0x2764)% Then, make sure you watch closely...as I make myself feel good... Ok? %UNICODE(0x2764)%」
+				PRINTFORML 「Nnah %UNICODE(0x2764)% Yes %UNICODE(0x2764)% Fingering myself while you see everything, feels amazing %UNICODE(0x2764)%」
+				PRINTFORML 「I shouldn't do this %UNICODE(0x2764)% Fuaa %UNICODE(0x2764)% I'm going to get addicted %UNICODE(0x2764)%」
+			ELSEIF TALENT:8
+				PRINTFORML 「Nn... You want to watch me touch myself...?」
+				PRINTFORML 「That sounds super embarrassing, but if it's you, I guess it's okay...」
+				PRINTFORML （Why is this... I feel like if it's %CALLNAME:MASTER%, I actually want him to watch me...）
+				PRINTFORML 「Then...I'm going to start... Nnn %UNICODE(0x2764)% %CALLNAME:MASTER%... Fuaa... Nnn%UNICODE(0x2764)%」
+				PRINTFORML 「It's getting wetter than usual... Aah %UNICODE(0x2764)% It's so weird... Aah... Even though you're right here %UNICODE(0x2764)%」
+			ELSE
+				;ここに入ることはあるのか
+				PRINTFORML 「Ehh... Wanting to watch someone else touch themselves, that's so weird...」
+				PRINTFORML （... I guess it's okay if it's just watching... And I'll feel good either way.）
+				PRINTFORML 「Well, sure, I guess. I'll make a special exception this time and let you watch.」
+				PRINTFORML 「But leave as soon as I'm done, okay...? Nnah %UNICODE(0x2764)%」
+			ENDIF
+
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;追い出し
+			;記入チェック（=0, 非表示、1, 表示）
+			LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「Wha... Get out of here! Idiot!」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 4
+		;やっちゃう
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:処女
+				PRINTFORML 「Wait, umm, this is... first time...」
+				PRINTFORML 「It's my...first time, doing this, so...」
+				PRINTFORML 「Please...be gentle, okay?」
+			ELSEIF TALENT:3 || TALENT:184 || TALENT:185
+				PRINTFORML 「...%UNICODE(0x2764)% You're going to finger me? %UNICODE(0x2764)%... Come here then, %CALLNAME:MASTER% %UNICODE(0x2764)%」
+				PRINTFORMDW Yumemi turns toward you and exposes her twitching, %FSYN("wet")% %FSYN("vagina")%.
+				PRINTFORML 「My %FSYN("vagina")%'s gotten like this, waiting for you...%UNICODE(0x2764)%」
+				PRINTFORML 「Make me feel really good...%UNICODE(0x2764)%」
+			ELSEIF TALENT:8
+				PRINTFORML 「%CALLNAME:MASTER%... You want to do it, with me?」
+				PRINTFORMDW You tell her yes.
+				PRINTFORML 「It feels really embarrassing, but if it's you, maybe it's okay...」
+				PRINTFORML （Why is it... I feel like if it's %CALLNAME:MASTER%, I actually want to do it...）
+				PRINTFORML 「Then...let's do it... Come closer, %CALLNAME:MASTER%...%UNICODE(0x2764)%」
+			ELSE
+				;ここに入ることはあるのか
+				PRINTFORML 「... You want to do it, with me?」
+				PRINTFORML （... Well, if %HE_SHE(MASTER)%'s going to make me feel good, I guess it's okay...?）
+				PRINTFORML 「Ok, I'll let you do it. I wanted to feel good, anyway.」
+				PRINTFORML 「But leave as soon as we're done... Fuaa %UNICODE(0x2764)%」
+			ENDIF
+
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 5
+		;事後
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:3 || TALENT:184 || TALENT:185
+				PRINTFORML 「Haa, Haa... That was amazing %UNICODE(0x2764)%」
+				PRINTFORML 「I came, so much...%UNICODE(0x2764)%」
+				PRINTFORMDW Yumemi looks at you as she struggles to control her breathing.
+			ELSEIF TALENT:8
+				PRINTFORML 「Haa, Haa...」
+				PRINTFORML 「You saw such an embarrassing side of me...」
+				PRINTFORML （But... If it's %CALLNAME:MASTER%... It's okay...）
+			ELSE
+				;ここに入ることはあるのか
+				PRINTFORML 「Haa... Haa... That was way better than I expected...\/\/\/」
+				PRINTFORML 「Maybe I'll call you again some time %UNICODE(0x2764)%」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 6
+		;事後お泊り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:3 || TALENT:184
+				PRINTFORML 「You want to stay over? Sure %UNICODE(0x2764)%」
+				PRINTFORML 「Fufu %UNICODE(0x2764)% Shall we enjoy tonight to the fullest, then? %CALLNAME:MASTER%...%UNICODE(0x2764)%」
+			ELSE
+				PRINTFORML 「Hmm? You want to stay over? Sure, I guess...」
+				PRINTFORML 「Did I have a spare bed...」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDSELECT
+ENDIF
+
+;==================================================
+;相手からデートのお誘い
+;==================================================
+@M_KOJO_EVENT_K9_27(ARG,ARG:1)
+;口上主はLOCAL
+;ARG:1は目的地
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;誘い文句
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:3
+				PRINTFORML 「Ara, %CALLNAME:MASTER%, are you free right now?」
+				PRINTFORML 「Would you like to go on a date together?」
+			ELSEIF TALENT:8
+				PRINTFORML 「Ah, %CALLNAME:MASTER%... U-Umm... If it's okay with you...」
+				PRINTFORML 「D-Do you want to...go on a d-date? \/\/\/」
+			ELSEIF TALENT:184
+				PRINTFORML 「Oh, %CALLNAME:MASTER%, good timing. You're free right now, right?」
+				PRINTFORML 「Do you want to go to a lov... go on a date together?」
+				PRINTFORMDW You're pretty sure you heard something suspicious there, but you let it slide.
+			ELSE
+				;セフレとか無印で誘われるのかという疑問はあれど
+				PRINTFORML 「I was just looking for someone to go out with me somewhere.」
+				PRINTFORML 「Would you like to come along?」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;受けた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:3
+				PRINTFORML 「Yay! It's decided, then. Let's go!」
+				PRINTFORMDW Yumemi looks at you, smiling from ear to ear.
+			ELSEIF TALENT:8
+				PRINTFORML 「Eh, really? Is it okay?」
+				PRINTFORML 「Umm... Th-Thanks...\/\/\/」
+			ELSEIF TALENT:184
+				PRINTFORML 「Fufu, I'm glad.」
+				PRINTFORML 「Let's go right away, then.」
+			ELSE
+				;セフレとか無印で誘われるのかという疑問はあれど
+				PRINTFORML 「Let's go, then.」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;断った
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:3 || TALENT:184
+				PRINTFORML 「Ara, that's too bad. I guess today wasn't good for you?」
+			ELSEIF TALENT:8
+				PRINTFORML 「Ah... O-Okay...」
+				PRINTFORML （Th-There'll be other chances...right?）
+			ELSE
+				;セフレとか無印で誘われるのかという疑問はあれど
+				PRINTFORML 「Oh, okay then.」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;部屋に誘われた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			;流石にセフレのみとか無印は部屋に呼ばれやすまいよ
+			IF TALENT:3
+				PRINTFORML 「Rather than go out, would you like to spend time together in my room?」
+			ELSEIF TALENT:8
+				PRINTFORML 「Hey, %CALLNAME:MASTER%... Do you want to come into my room today?」
+			ELSEIF TALENT:184
+				PRINTFORML 「Don't you want to come into my room...? %UNICODE(0x2764)%」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 4
+		;部屋に誘われたのを受けた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:3
+				PRINTFORML 「Thanks. Let's go, then.」
+			ELSEIF TALENT:8
+				PRINTFORML 「Ok... Shall we go, then?」
+				PRINTFORML （I-I cleaned things up, right...? I hope my clothes and underwear aren't scattered around...）
+			ELSEIF TALENT:184
+				PRINTFORML 「Fufu, then...shall we go? %UNICODE(0x2764)%」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 5
+		;部屋に誘われたのを断った
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			;Case 2に統合しても良いかもね
+			IF TALENT:3 || TALENT:184
+				PRINTFORML 「Ara, that's too bad. I guess today wasn't good for you?」
+			ELSEIF TALENT:8
+				PRINTFORML 「Ah... O-Okay...」
+				PRINTFORML （Was that too pushy...? I hope %HE_SHE(MASTER)% doesn't think I'm weird...）
+			ELSE
+				;セフレとか無印で誘われるのかという疑問はあれど
+				PRINTFORML 「Oh, okay then.」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;脱衣口上
+;==================================================
+@M_KOJO_EVENT_K9_28(ARG,ARG:1)
+;口上主はTARGET
+;ARGに脱がし方選択
+;ARG:1（ARG=3の場合のみあり）地の文の反応
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		;全裸にする
+		;-------------------------------------------------
+		CASE 0
+			;記入チェック（=0, 非表示、1, 表示）
+			LOCAL:1 = 1
+
+			IF LOCAL:1
+				;時間停止時
+				IF FLAG:70
+				;通常
+				ELSE
+					IF TALENT:3 || TALENT:184 || TALENT:185
+						PRINTFORML 「... I can't hold it in any longer, either... Shall we get right to it? %UNICODE(0x2764)%」
+					ELSE
+						PRINTFORML 「Don't look so closely like that... It's embarrassing.」
+					ENDIF
+				ENDIF
+				RETURN 1
+			ENDIF
+		;-------------------------------------------------
+		;下着姿にする
+		;-------------------------------------------------
+		CASE 1
+			;記入チェック（=0, 非表示、1, 表示）
+			LOCAL:1 = 1
+
+			IF LOCAL:1
+				;時間停止時
+				IF FLAG:70
+				;通常
+				ELSE
+					PRINTFORML 「You want me to leave my underwear on?」
+				ENDIF
+				RETURN 1
+			ENDIF
+		;-------------------------------------------------
+		;半脱ぎ
+		;-------------------------------------------------
+		CASE 2
+			;記入チェック（=0, 非表示、1, 表示）
+			LOCAL:1 = 1
+
+			IF LOCAL:1
+				;時間停止時
+				IF FLAG:70
+				;通常
+				ELSE
+					PRINTFORML 「I don't really understand, but...」
+					PRINTFORML 「Somehow, this feels dirtier than being nude... It's kind of exciting.」
+				ENDIF
+				RETURN 1
+			ENDIF
+		;-------------------------------------------------
+		;パンツちょうだい
+		;-------------------------------------------------
+		CASE 3
+			;記入チェック（=0, 非表示、1, 表示）
+			LOCAL:1 = 1
+
+			IF LOCAL:1
+				SELECTCASE ARG:1
+					;-------------------------------------------------
+					;交換です
+					;-------------------------------------------------
+					CASE 0
+						;記入チェック（=0, 非表示、1, 表示）
+						LOCAL:1 = 1
+
+						IF LOCAL:1
+							PRINTFORML 「Hmm, I'm fine with that, but...」
+							PRINTFORML 「Mind if I take yours, too?」
+							RETURN 1
+						ENDIF
+					;-------------------------------------------------
+					;OK（嬉々
+					;-------------------------------------------------
+					CASE 1
+						;記入チェック（=0, 非表示、1, 表示）
+						LOCAL:1 = 1
+
+						IF LOCAL:1
+							PRINTFORML 「Eh? You want my panties? You're such a pervert...%UNICODE(0x2764)%」
+							IF ABL:露出癖 > 5
+								PRINTFORMDW Undressing in plain view, Yumemi removes her panties while clearly showing off her crotch to you.
+							ELSEIF ABL:露出癖 > 2
+								PRINTFORMDW Lifting up her %SHOW_BOTTOM(TARGET,1)%, Yumemi slowly removes her panties to inflame you further.
+							ELSE
+								PRINTFORMDW Lifting up her %SHOW_BOTTOM(TARGET,1)%, Yumemi awkwardly removes her panties in embarassment.
+							ENDIF
+							PRINTFORMDW While she's taking them off, you see her freshly exposed %FSYN("vagina")%. You can also see her well-developed pubic hair...
+							PRINTFORMDW As you stare intently at her %FSYN("vagina")%, Yumemi hands you the panties she just took off right in front of you.
+							
+							IF PALAM:潤滑 >= 5000
+								PRINTFORMDW Yumemi's panties are completely drenched in love juices, and a dizzying feminine scent radiates off of them in waves.
+								PRINTFORMDW You feel your lust welling up uncontrollably.
+								PRINTFORMDW A few moist strands of pubic hair are stuck to the inside, accentuating them with color.
+								PRINTFORML 「They're completely soaked, but here you go...%UNICODE(0x2764)%」
+							ELSEIF PALAM:潤滑 > 2000
+								PRINTFORMDW Her panties are visibly stained with love juices, and you can detect a feminine scent coming off of them.
+								PRINTFORMDW There are even a few strands of pubic hair stuck to the inside...
+								PRINTFORML 「They're a bit wet, but... Eh? It's better that way? Oh, you...%UNICODE(0x2764)%」
+							ELSE
+								PRINTFORMDW The faint warmth, and the smell wafting up from where it touched her %FSYN("vagina")%... You find it irresistible.
+								PRINTFORML （Ah, he's sniffing them... There's probably even a little pee left on them...\/\/\/）
+								PRINTFORML 「I-I hope they're useful, %CALLNAME:MASTER%...\/\/\/」
+							ENDIF
+							RETURN 1
+						ENDIF
+					;-------------------------------------------------
+					;OK（渋々
+					;-------------------------------------------------
+					CASE 2
+						;記入チェック（=0, 非表示、1, 表示）
+						LOCAL:1 = 1
+
+						IF LOCAL:1
+							PRINTFORML 「Haa... You want my panties...? Ehh... Are you serious...?」
+							
+							IF ABL:露出癖 > 5
+								PRINTFORML （It's a bit embarrassing to say, but I kind of want %HIM_HER(MASTER,,1)% to see... What should I do...）
+								PRINTFORML 「I-I guess I have no choice... F-Fine, you can have them... My p-panties...」
+								PRINTFORML （What does %HE_SHE(MASTER)% even want them for...\/\/\/）
+							ELSEIF ABL:露出癖 > 2
+								PRINTFORML 「Wh-Wh-Wh-Wh-What are you saying...\/\/\/」
+								PRINTFORML （B-But I guess it's just panties...）
+								PRINTFORML 「I-I guess I have no choice... D-Don't look too closely, okay? \/\/\/」
+							ELSE
+								PRINTFORML 「It's just a piece of fabric... I don't get you at all...」
+								PRINTFORML 「H-Hey, stop looking so closely! \/\/\/」
+							ENDIF
+
+							PRINTFORMDW While covering herself with her %SHOW_BOTTOM(TARGET,1)%, she takes off her panties.
+							PRINTFORMDW You try to peek under her %SHOW_BOTTOM(TARGET,1)% while she's taking them off, but it's a fruitless effort...
+							PRINTFORMDW %CALLNAME:MASTER%が夢美の下半身に集中していると、目の前に脱ぎたての夢美の下着が差し出された。
+							
+							IF PALAM:潤滑 >= 5000
+								PRINTFORML 「Th-They're pretty soaked... I-Is that okay? \/\/\/」
+								PRINTFORML 「Eh? You prefer them that way... You can be pretty weird sometimes...」
+							ELSEIF PALAM:潤滑 > 2000
+								PRINTFORML 「U-Umm～... Th-They're a little wet, but...\/\/\/」
+								PRINTFORML 「Eh? They're fine that way? O-Ok, I guess...\/\/\/」
+							ELSE
+								PRINTFORML 「H-How am I supposed to feel about this...\/\/\/」
+								PRINTFORML 「Wh-What do you even need them for? Eh? It's a secret? Ok...」
+								PRINTFORML （Don't tell me he's going to sniff them, or j-j-jack off to them...? \/\/\/）
+							ENDIF
+							RETURN 1
+						ENDIF
+					;-------------------------------------------------
+					;嫌です
+					;-------------------------------------------------
+					CASE 3
+						;記入チェック（=0, 非表示、1, 表示）
+						LOCAL:1 = 1
+
+						IF LOCAL:1
+							IF PALAM:潤滑 >= 5000
+								PRINTFORML 「... Eh, my panties...? You...want to have them?」
+								PRINTFORML 「Eh... N-N-N-No way!! Th-Th-There's no way! \/\/\/」
+								PRINTFORML （They're completely soaked through... There's no way I could ever give them to anyone...）
+							ELSEIF PALAM:潤滑 > 2000
+								PRINTFORML 「Eh!? You want my p-panties...!?」
+								PRINTFORML 「U-Umm～... That's a little... No! No way!\/\/\/」
+								PRINTFORML （They're kind of wet, anyway...\/\/\/）
+							ELSE
+								PRINTFORML 「You want my panties? No way. Did you hit your head?」
+							ENDIF
+							RETURN 1
+						ENDIF
+
+				ENDSELECT
+			ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;怒り口上
+;==================================================
+@M_KOJO_EVENT_K9_29(ARG,ARG:1)
+;口上主はTARGET
+;ARGはTARGETの度胸で分岐
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;怒らせてしまった
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;泣かせてしまった　[臆病]持ち
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;相手が押し倒しを解除
+;==================================================
+@M_KOJO_EVENT_K9_30(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+	;疲れた
+		PRINTFORML 「Playing with you so much has made me tired... Let's take a break.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+	;満足して解放
+		PRINTFORML 「Nnn～ All filled up on %CALLNAME:MASTER% energy! I feel so refreshed %UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+	;満足したところを押し倒された
+		PRINTFORML 「Eh, you're still not satisfied... Ok, come closer %UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+	;壊れるまでしてあげる
+		PRINTFORML 「Ara, did you want some supplementary lessons...? %UNICODE(0x2764)%」
+		PRINTFORML 「Fufu %UNICODE(0x2764)%, I'll give you plenty... I'll warn you though, they're pretty tough...%UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+
+;==================================================
+;一日の終了時(AFTERTRAニーの前)、面識がなければ呼び出されない
+;==================================================
+@M_KOJO_EVENT_K9_31(ARG,ARG:1)
+;口上主はTARGET
+;ARGは会ってない日数
+;何日以上会ってなかったら愚痴を言うとかできます
+;CFLAG:オナバレで分岐入れてもよさそう
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;今日会っていない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;今日会っている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		RETURN 1
+	ENDIF
+ENDIF
+
+;おもらしフラグを初期化
+;CFLAG:1001 = 0
+
+RETURN 1
+
+;-------------------------------------------------
+;オナバレ遭遇時の地の文をデフォルトのものから変更したい場合用。
+;その場合は上下のSKIPSTART~SKIPENDを外してください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;-------------------------------------------------
+[SKIPSTART]
+@M_KOJO_EVENT_K9_ONABARE_1(ARG)
+
+	IF ARG
+		PRINTFORML A弄ってる場合
+	ELSE
+		PRINTFORML V弄ってる場合
+	ENDIF
+
+[SKIPEND]
+
+;-------------------------------------------------
+;オナバレでそのまま続けてもらう場合の地の文をデフォルトのものから変更したい場合用。
+;その場合は上下のSKIPSTART~SKIPENDを外してください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;-------------------------------------------------
+[SKIPSTART]
+@M_KOJO_EVENT_K9_ONABARE_2(ARG)
+
+	IF ARG
+		PRINTFORML A弄ってる場合
+	ELSE
+		PRINTFORML V弄ってる場合
+	ENDIF
+
+[SKIPEND]
+
+;-------------------------------------------------
+;オナバレなし崩しックスの地の文をデフォルトのものから変更したい場合用。
+;その場合は上下のSKIPSTART~SKIPENDを外してください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;-------------------------------------------------
+[SKIPSTART]
+@M_KOJO_EVENT_K9_ONABARE_3(前戯１,本番はどっちか,回数,注入量)
+
+	#DIM 前戯１
+	;1=C 2=B 3=M
+	#DIM 本番はどっちか
+	;0でＶ、1でＡ
+	#DIM 注入量
+	#DIM 回数
+
+	:口上色を付けるならコメントアウトを外しXをキャラ番号に
+	;CALL M_KOJO_COLOR_KX
+
+	SELECTCASE 前戯１
+		CASE 1
+			PRINTFORML Ｃ責め
+		CASE 2
+			PRINTFORML Ｂ責め
+		CASE 3
+			PRINTFORML Ｍ責め
+	ENDSELECT
+
+	IF 本番はどっちか
+		PRINTFORML Aで本番
+	ELSE
+		PRINTFORML Vで本番
+	ENDIF
+
+[SKIPEND]
+
+
+;-------------------------------------------------
+;処女・無自覚非処女に挿入する直前の口上
+;RETURN 1するとコマンドをキャンセルします
+;RETURN 0なら通します
+;CFLAG:破瓜キャンセル口上有がオンになってないと読み込まれないので注意
+;-------------------------------------------------
+@M_KOJO_EVENT_K9_LOST_VIRGIN_STOP
+;-------------------------------------------------
+PRINTFORML 
+RETURN 1
+
+;-------------------------------------------------
+;CFLAG:口上内抱き寄せ判定_初回がオンになっている場合のみ有効。
+;初めて押し倒した時、ここでRETURN -1すると押し倒しを強制的にキャンセルします。
+;RETURN 0なら通常の判定を行い、RETURN 1すると無条件に成功させます。
+;特定のイベント（デート帰りキスなど）を見るまでうふふできないようにしたいときなどにどうぞ。
+;-------------------------------------------------
+@M_KOJO_EVENT_K9_PERMISSION_1
+;-------------------------------------------------
+PRINTFORML 
+;RETURN -1
+RETURN 0
+;RETURN 1
+;-------------------------------------------------
+
+
+;-------------------------------------------------
+;CFLAG:口上内抱き寄せ判定_通常がオンになっている場合のみ有効。
+;合意付きで押し倒した時、ここでRETURN -1すると押し倒しを強制的にキャンセルします。
+;RETURN 0なら通常通り成功させます。
+;合意があっても何らかの理由でうふふできないようにしたいときなどにどうぞ。
+;-------------------------------------------------
+@M_KOJO_EVENT_K9_PERMISSION_2
+;-------------------------------------------------
+PRINTFORML 
+RETURN 0
+;RETURN -1
+;-------------------------------------------------
+
+;-------------------------------------------------
+;部屋描写用関数
+;口上キャラのOMANEKIBEYAか拠点の描写に使います
+;記入する際はコメントアウトを外してください
+;-------------------------------------------------
+@K9_ROOM_DESCRIPTION
+;あんまり部屋の模様替えをする印象がないのでエロ系以外の分岐はおおざっぱ
+IF TALENT:184 || TALENT:185
+	SELECTCASE RAND:14
+		CASE 0
+			PRINTFORMDL Various articles of underwear are scattered about to dry.
+		CASE 1
+			PRINTFORMDL There's a heart-shaped strawberry-patterned pillow on the bed...
+		CASE 2
+			PRINTFORMDL The monitor displays a bunch of images of Yumemi masturbating.
+		CASE 3
+			PRINTFORMDL There's a box packed with adult toys.
+		CASE 4
+			PRINTFORMDL There's a document titled「How to have an Amazing Threesome with your Assistant」.
+		CASE 5
+			PRINTFORMDL There's a manuscript titled「Regarding the Emission of Fluids During Orgasm」on the desk.
+		CASE 6
+			PRINTFORMDL The scent of female pheromones fills the room.
+		CASE 7
+			PRINTFORMDL There's a seedy-looking file titled「Study on Forbidden Lesbian Erotic Play in the Lab - Vol. 1」.
+		CASE 8
+			PRINTFORMDL The trash can is filled with tissues covered in dried love juices.
+		CASE 9
+			PRINTFORMDL The monitor displays numerous images of Yumemi bathing.
+		CASE 10
+			PRINTFORMDL The monitor displays several images of Yumemi using the toilet.
+		CASE 11
+			PRINTFORMDL There's a video of Yumemi using the toilet being edited on the monitor.
+		CASE 12
+			PRINTFORMDL There's a video of Yumemi bathing being edited on the monitor.
+		CASE 13
+			PRINTFORMDL There's a video of Yumemi masturbating being edited on the monitor.
+	ENDSELECT
+ELSE
+	SELECTCASE RAND:6
+		CASE 0
+			PRINTFORMDL There are a number of research-related files lined up on the shelves.
+		CASE 1
+			PRINTFORMDL There's a pillow with a strawberry-patterned cover on the bed...
+		CASE 2
+			PRINTFORMDL The monitor displays various images.
+		CASE 3
+			PRINTFORMDL There's a box packed with crucifixes, magic-looking items, and various pieces of machinery.
+		CASE 4
+			PRINTFORMDL There's a document titled「How to Deal with a Tyrannical Assistant」.
+		CASE 5
+			PRINTFORMDL There's a manuscript titled「Theory of Magic」on the desk.
+	ENDSELECT
+ENDIF
+
+;PRINTFORML It's a barren room devoid of any signs of life.
+;-------------------------------------------------
+
+
+;==================================================
+;贈り物イベント
+;==================================================
+@M_KOJO_EVENT_K9_GIFT(ARG, GIFT_ID, 評価点, GIFT_NAME, SENSE)
+#DIM GIFT_ID
+#DIM 評価点
+#DIMS GIFT_NAME
+#DIMS SENSE
+;---------------------------------------------------------------------------------------------------
+;評価点       贈り物の評価点（1～999）,口上主があげた場合でも口上主の評価点
+;GIFT_NAME    贈り物の名称
+;SENSE        贈り物に設定された属性。STRCOUNT(DISH_TASTE, "ほげほげ/")を使うと特定の属性を判定できます。
+;GIFT_ID      これ単体では使いません。以下の式内関数を使うとデータを抽出できます（こだわりたい人用）
+;　GET_GIFTDATA(GIFT_ID, "回数")    貰った（あげた）回数
+;　GET_GIFTDATA(GIFT_ID, "得点")    得点（1～999）,口上テンプレ内では用意されてます。
+;　GET_GIFTDATA(GIFT_ID, "日付")    貰った（あげた）日付（1～9999）
+;　GET_GIFTDATA(GIFT_ID, "場所")    買った場所（デートの行き先）
+;　GET_GIFTDATA(GIFT_ID, "形容詞")  形容詞番号（贈り物_形容詞.erb参照）
+;　GET_GIFTDATA(GIFT_ID, "本体")    本体番号（贈り物_本体.erb参照）
+;--------------------------------------------------------------------------------------------------
+;デート帰りに口上主があなたに贈り物を渡す（陥落や好感度に関わらず親密5以上から発生）
+;評価点は701～999（渡すキャラ本人の評価）
+;--------------------------------------------------------------------------------------------------
+IF ARG == 1
+	;PRINTFORMW 「I'll give you this %GIFT_NAME%, so please treat it well.」
+	RETURN 1
+;--------------------------------------------------------------------------------------------------
+;一日の終わりに今日貰った贈り物を大事にする（700点以上）
+;--------------------------------------------------------------------------------------------------
+ELSEIF ARG == 2
+	;IF STRCOUNT(SENSE, "かわいい/")
+	;	PRINTFORMW 「I got such a cute present.」
+	;ELSEIF 評価点 >= 800
+	;	PRINTFORMW 「I got such a wonderful present.」
+	;ELSE
+	;	PRINTFORMW 「I got a nice present.」
+	;ENDIF
+	RETURN 1
+;--------------------------------------------------------------------------------------------------
+;一日の終わりに今日貰った贈り物をお気に入りにする（↑の大事にするから続き）（700点以上かつ最高得点）
+;--------------------------------------------------------------------------------------------------
+ELSEIF ARG == 3
+	;IF STRCOUNT(SENSE, "身につける/")
+	;	PRINTFORMW 「Maybe I'll start wearing this from tomorrow.」
+	;ELSE
+	;	PRINTFORMW 「Maybe I'll start carrying this from tomorrow.」
+	;ENDIF
+	RETURN 1
+;--------------------------------------------------------------------------------------------------
+;一日の終わりに今日貰った贈り物をとりあえず保管する（400～699点）
+;--------------------------------------------------------------------------------------------------
+ELSEIF ARG == 4
+	;PRINTFORMW 「Let's put this on display.」
+	RETURN 1
+;--------------------------------------------------------------------------------------------------
+;一日の終わりに今日貰った贈り物をこっそり質に入れる（400点未満）
+;--------------------------------------------------------------------------------------------------
+ELSEIF ARG == 5
+	;PRINTFORMW 「I don't really like this～」
+	RETURN 1
+ENDIF
+RETURN 1
+
+
+;==================================================
+;ムシバトル
+;ムシバトルの口上は少し特殊で、PRINTを使うのではなく、
+;台詞一行のみをRESULTSに入れてください
+;ムシの名前は %MUSHI_NAME% で表示できます
+;ムシの名前の最長はアレキサンドラトリバネアゲハの全角14文字です
+;文字数制限があります。はみ出ないように気をつけてください
+;ARGは残りムシ数か順位です
+;==================================================
+;生○科学研究所ですって？私のログには何もないな(ADD 2022/01/23)
+@M_KOJO_MESSAGE_COM_K9_MUSHI_BATTLE(ARGS, ARG)
+#DIM 残りムシ数
+#DIM 順位
+SELECTCASE ARGS
+	CASE "試合前"
+		;-------------------------------------------------
+		;キャラセレクト時,ARGは使えません
+		;全角50文字くらいまで
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE RAND:4
+				CASE 0
+					RESULTS = 「Ara, good day. To challenge me to a bug fight, you're quite the diligent student.」
+				CASE 1
+					RESULTS = 「You're a new challenger (specimen), huh?」
+				CASE 2
+					RESULTS = 「It's not like I like (dueling) or anything!」
+				CASE 3
+					RESULTS = 「Took you long enough! Let's get this duel started.」
+			ENDSELECT
+	;		RESULTS = 「I'll clean the floor with you!」
+		ENDIF
+	CASE "戦場に出した"
+		;-------------------------------------------------
+		;"【（キャラ）】は《（ムシ）》を戦場に出した！」"の直後
+		;全角40文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		残りムシ数 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			RESULTS = 「Take a look at my %MUSHI_NAME%!」
+	;		RESULTS = 「%MUSHI_NAME%! I choose you!」
+		ENDIF
+	CASE "攻撃時"
+		;-------------------------------------------------
+		;"【（キャラ）】《（ムシ）》の『（攻撃名）』！」"の直前
+		;全角40文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		残りムシ数 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			RESULTS = 「This is the power of research!」
+	;		RESULTS = 「Knock them out! %MUSHI_NAME%!」
+		ENDIF
+	CASE "倒れた時"
+		;-------------------------------------------------
+		;"【（キャラ）】《（ムシ）》は倒れた！！"の直後
+		;全角40文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		残りムシ数 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			RESULTS = 「How could this happen... Did I make a mistake?」
+	;		RESULTS = 「Ahh! My %MUSHI_NAME%!」
+		ENDIF
+	CASE "敗退時"
+		;-------------------------------------------------
+		;"【（キャラ）】敗退！！"の直後
+		;全角40文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		残りムシ数 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE RAND:3
+				CASE 0
+					RESULTS = 「I just wanted to know the taste of victory...」
+				CASE 1
+					RESULTS = 「Don't look at me with those eyes!」
+				CASE 2
+					RESULTS = 「Noooooo～～～...!」
+			ENDSELECT
+	;		RESULTS = 「All of my bugs were wiped out...」
+		ENDIF
+	CASE "タイマン：勝ち"
+		;-------------------------------------------------
+		;順位は1位
+		;全角20文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		順位 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE RAND:3
+				CASE 0
+					RESULTS = 「This is what happens when you challenge me.」
+				CASE 1
+					RESULTS = 「Let's duel again, if we have the chance.」
+				CASE 2
+					RESULTS = 「This is the power of research!」
+			ENDSELECT
+	;		RESULTS = 「You're so weaaak～!」
+		ENDIF
+	CASE "タイマン：負け"
+		;-------------------------------------------------
+		;順位は2位
+		;全角20文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		順位 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE RAND:6
+				CASE 0
+					RESULTS = 「Not bad, %CALLNAME:MASTER%.」
+				CASE 1
+					RESULTS = 「Gah, I lost. I'll win next time, though.」
+				CASE 2
+					RESULTS = 「Hmm, I guess this kind of thing happens sometimes.」
+				CASE 3
+					;汎用性高杉問題
+					RESULTS = 「How could this happen... Did I make a mistake?」
+				CASE 4
+					;クワドロプルインセクティサァイド (略)[4]
+					RESULTS = 「Maybe I should develop some specialized bug weapons...?」
+				CASE 5
+					;(略) オブガルガンチュア
+					RESULTS = 「Maybe I should research some special bug armor...?」
+			ENDSELECT
+	;		RESULTS = 「You're too strooong～!」
+		ENDIF
+	CASE "バトルロイヤル：優勝"
+		;-------------------------------------------------
+		;順位は1位
+		;全角30文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		順位 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			RESULTS = 「I won!」
+	;		RESULTS = 「I did it～！」
+		ENDIF
+	CASE "バトルロイヤル：２位以下"
+		;-------------------------------------------------
+		;順位は2～4位
+		;全角30文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		順位 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE RAND:2
+				CASE 0
+					RESULTS = 「How could this happen... Did I make a mistake?」
+				CASE 1
+					RESULTS = 「While I still have reason... I won't lose next time!」
+			ENDSELECT
+	;		RESULTS = 「Noo～！」
+		ENDIF
+	CASE "チーム戦：勝ち"
+		;-------------------------------------------------
+		;順位は1位（やられていても）
+		;全角32文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		順位 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE RAND:2
+				CASE 0
+					RESULTS = 「This is only natural when you're with me.」
+				CASE 1
+					RESULTS = 「My victory is decided. I'll also pray for your success...」
+			ENDSELECT
+	;		RESULTS = 「It's all thanks to me!」
+		ENDIF
+	CASE "チーム戦：負け"
+		;-------------------------------------------------
+		;順位は2位
+		;全角32文字まで（カギカッコ含む）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		順位 = ARG
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE RAND:2
+				CASE 0
+					RESULTS = 「I just want to go home...and revise my battle strategy.」
+				CASE 1
+					RESULTS = 「How could this happen... Did I make a mistake?」
+			ENDSELECT
+	;		RESULTS = 「You guys are so weak!!」
+		ENDIF
+ENDSELECT
+SIF RESULTS != ""
+	RETURN 1
+

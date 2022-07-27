@@ -1,0 +1,1885 @@
+﻿;-------------------------------------------------
+;奴隷の絶頂時の口上
+;NOWEX:0～4 CVABM絶頂
+;NOWEX:6 二重絶頂
+;NOWEX:7 三重絶頂
+;NOWEX:8 四重絶頂
+;NOWEX:9 五重絶頂
+;NOWEX:10 噴乳
+;NOWEX:11 射精
+;NOWEX:12 放尿
+;適当に組み合わせて使ってください
+;-------------------------------------------------
+@M_KOJO_MESSAGE_PALAMCNG_B_K65
+CALL PALAM_MESSAGE_B
+;-------------------------------------------------
+;噴乳
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && NOWEX:噴乳
+	PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;射精
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && NOWEX:射精
+	PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;放尿
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && NOWEX:放尿
+	PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;絶頂
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;五重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:五重絶頂
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;四重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:四重絶頂 && LOCAL:1
+		SELECTCASE NOWEX:四重絶頂
+			;Ｃ＆Ｖ＆Ａ＆Ｂ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｍ絶頂あり
+			CASEELSE
+				;おしゃぶり中
+				IF TEQUIP:65:口接触部位 == 1
+					PRINTFORMW 
+				ELSE
+					PRINTFORMW 
+				ENDIF
+				RETURN 1
+		ENDSELECT
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		[SKIPSTART]
+		SELECTCASE NOWEX:四重絶頂
+			;Ｃ＆Ｖ＆Ａ＆Ｂ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ａ＆Ｍ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｂ＆Ｍ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ＆Ｂ＆Ｍ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ａ＆Ｂ＆Ｍ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		[SKIPEND]
+	ENDIF
+	;-------------------------------------------------
+	;三重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF NOWEX:三重絶頂 && LOCAL:1
+		;Ｍ絶頂あり
+		IF NOWEX:Ｍ絶頂
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Muphm...HPH Puah! Haa, AAaahhh～～～HPH」","L"
+						PRINTFORMDW Unable to stand the fierce climax, Momiji lets out a cry of pleasure as her lips part...
+					CASE 1
+						CALL HPH_PRINT,@"「Mugu... Nm, Mu!? MMMmm～～～～～～HPH」","L"
+						LOCALS = Holding Momiji's head as she recoils from the intense pleasure, you 
+						;キス中
+						IF EXP_UP(27,TARGET)
+							PRINTFORMDW %BREAKENG(@"%LOCALS% press your lips together even harder...")%
+						ELSE
+							PRINTFORMDW %BREAKENG(@"%LOCALS% thrust your dick towards the back of her throat...")%
+						ENDIF
+				ENDSELECT
+			RETURN 1
+		;Ｖ or Ａセックス中
+		ELSEIF TEQUIP:Ｖセックス == PLAYER || TEQUIP:Ａセックス == PLAYER
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「No, please! If you do that with it in-...」
+					CALL HPH_PRINT,@"「Nn～～HPH Hiaa, Uhh, Ah, AhaaAaahh...!!」","L"
+					PRINTFORMDL %BREAKENG(@"Momiji's body stiffens like a board as an intense climax flows through her, then finally drops limp as it subsides.")%
+					PRINTFORMW 「Haah... It was too amazing, Mn... I thought I wouldn't be able to come back...」
+				CASE 1
+					CALL HPH_PRINT,@"「ThiIis, Issh...HPH Too much, too muUUuuch～...HPH」","L"
+					CALL HPH_PRINT,@"「Haah, I'm going crazy, I'm, coming～! Ah... A, aAAaaaAahh～～～～HPH」","W"
+			ENDSELECT
+			RETURN 1
+		ELSE
+			CALL HPH_PRINT,@"「Hiuu～... Oh no, Not all at once, AhnHPH」","L"
+			CALL HPH_PRINT,@"「No～HPH I'm gonna cum, Cumming... CummmMMming～～HPH」","W"
+			RETURN 1
+		ENDIF
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		[SKIPSTART]
+		SELECTCASE NOWEX:三重絶頂
+			;Ｃ＆Ｖ＆Ａ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｖ＆Ａ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ＆Ａ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｂ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｍ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｖ＆Ｍ絶頂
+			CASE 6
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｖ＆Ｍ絶頂
+			CASE 7
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ＆Ｍ絶頂
+			CASE 8
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｂ＆Ｍ絶頂
+			CASE 9
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ＆Ｍ絶頂
+			CASE 10
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		[SKIPEND]
+	ENDIF
+	;-------------------------------------------------
+	;二重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF NOWEX:二重絶頂 && LOCAL:1
+		;Ｍ絶頂あり
+		IF NOWEX:Ｍ絶頂
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"Muphm...HPH Fuu, Mmmmmm～...HPH」","L"
+						PRINTFORMDW Trying to endure the furious climax, Momiji clings tightly to your \@ EXP_UP(27,TARGET) ? head # waist \@...
+					CASE 1
+						CALL HPH_PRINT,@"「Mugu... Nm, Mmm～～～～～HPH」","L"
+						PRINTFORMD Holding Momiji's head as she writhes in intense pleasure, you 
+						;キス中
+						IF EXP_UP(27,TARGET)
+							PRINTFORMDW press your lips together even harder...
+						ELSE
+							PRINTFORMDW thrust your dick towards the back of her throat...
+						ENDIF
+				ENDSELECT
+			RETURN 1
+		;Ｖ or Ａセックス中
+		ELSEIF TEQUIP:Ｖセックス == PLAYER || TEQUIP:Ａセックス == PLAYER
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「No, please! If you do that with it in-...」
+					CALL HPH_PRINT,@"「Nno, s-stop... Ah, Cum, I'm cummMming～～HPH」","W"
+				CASE 1
+					CALL HPH_PRINT,@"「ThiIis, Issh...HPH I c-can't, Stand it...HPH」","L"
+					CALL HPH_PRINT,@"「Haaah, Cumming, Cumming sho haaaard...～～～～～HPH」","W"
+			ENDSELECT
+			RETURN 1
+		ELSE
+			CALL HPH_PRINT,@"「Hiuu... That's, Not fair, It's not, AhnHPH」","L"
+			CALL HPH_PRINT,@"「No～HPH I'm gonna cum, Cumming... Cummmmming～～HPH」","W"
+			RETURN 1
+		ENDIF
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		[SKIPSTART]
+		SELECTCASE NOWEX:二重絶頂
+			;Ｃ＆Ｖ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ａ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ｂ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｂ絶頂
+			CASE 6
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｍ絶頂
+			CASE 7
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ｍ絶頂
+			CASE 8
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｍ絶頂
+			CASE 9
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｍ絶頂
+			CASE 10
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		[SKIPEND]
+	ENDIF
+	
+	;ここから単部位絶頂
+	
+	;うふふ中でなければ人目があるか判定　LOCAL:1 > 0で人目あり。
+	;うふふ中は人目を気にする余裕ないよね、ってことで。
+	LOCAL:1 = 0
+	IF !CFLAG:うふふ
+		FOR LOCAL,1,CHARANUM
+		SIF LOCAL != 65 && CFLAG:LOCAL:現在位置 == CFLAG:MASTER:現在位置
+			LOCAL:1 ++
+		SIF (CAN_MOVE(CFLAG:MASTER:現在位置, CFLAG:LOCAL:現在位置) & 2) && !FLAG:70 == 1
+			LOCAL:1 ++
+		NEXT
+		SIF DATE_HITOGOMI()
+			LOCAL:1 ++
+	ENDIF
+	;周りにバレないように声を押し殺してイクってシチュエーション、萌えません？
+	
+	
+	IF NOWEX:Ｃ絶頂
+		;クンニ、素股絶頂時の分岐は作りたい気もします。
+		
+		;記入時はコメントアウトを外してください。
+		;IF TCVAR:発情
+		;	;強絶頂Ｃ
+		;	IF NOWEX:Ｃ絶頂 >= 2
+		;		PRINTFORMW
+		;	;絶頂Ｃ
+		;	ELSE
+		;		PRINTFORMW
+		;	ENDIF
+		;RETURN 1
+		;ENDIF
+		
+		;非発情
+		;強絶頂Ｃ
+		IF NOWEX:Ｃ絶頂 >= 2
+			;人目がある
+			;人目がある時は現状Ｃ,Ａ,Ｖのどこで絶頂しても同じ口上になっちゃってます。正直手抜きです。
+			;加筆・改変してくださるととても嬉しいです。
+			IF LOCAL:1 > 0
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「～～～Mph! Mn, Muphm...HPH」","L"
+						PRINTFORMDL Momiji quickly clamps down on her mouth for fear of attracting attention,
+						PRINTFORMDW But the pleasure is so intense that she can't hold back and lets out a cry...
+					CASE 1
+						PRINTFORML 「Ah!! Ku, uu～～～!!」
+						PRINTFORMDW You hold Momiji as she nearly collapses from the intense orgasm.
+						PRINTFORML
+						PRINTFORML 「Haah, Haaー... Uuu. I'm pretty sure someone noticed that...」
+						PRINTFORMDW Momiji's shoulders shake and she squirms in embarrassment.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Sto, -p... This ish～HPH Too strong, Mm, FuaAAah!HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「～～～MnHPH Fu, AaAahn～...HPH」","L"
+						PRINTFORMDW The pleasure is so intense it stuns Momiji, and her whole body shakes...
+				ENDSELECT
+			ENDIF
+		;絶頂Ｃ
+		ELSE
+			;人目がある
+			IF LOCAL:1 > 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「～～～Mn!」
+						PRINTFORMDW Concerned about being seen, Momiji stifles her voice as she orgasms.
+					CASE 1
+						PRINTFORML 「Ku, uu, Nnnmm～...!」
+						PRINTFORMDW %BREAKENG(@"Painfully aware of the presence of potential onlookers, Momiji bites her lip and fights to endure her climax...")%
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Ah, Cum, Cumming...MMmm～～～」
+					CASE 1
+						PRINTFORMW 「Hia～, Haahn...～～～～」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｖ絶頂
+		;MASTERと同時絶頂時の分岐は作りたい気もします。
+		
+		;発情
+		IF TCVAR:発情
+			;イキすぎ
+			;IF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0 && CFLAG:うふふ == 1
+			;ELSEIF NOWEX:Ｖ絶頂 >= 2
+			;強絶頂Ｖ
+			IF NOWEX:Ｖ絶頂 >= 2
+				;恋慕
+				IF TALENT:恋慕 && RAND:3 == 0
+					CALL HPH_PRINT,@"「Fuuu～, Ha, HaahHPH %CALLNAME:MASTER%-sa, nnNNMmm～HPH」","L"
+					CALL HPH_PRINT,@"「I loove you!！ Love, love, loooove～HPH」","W"
+					RETURN 1
+				ENDIF
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Haa-ahHPH Mmnn～HPH %CALLNAME:MASTER%-san, AhHPH CumHPH Cumming...HPH」","L"
+						PRINTFORMD Momiji's vaginal folds, in full rut, grip and clench as she climaxes, 
+						;おちんちん
+						IF TEQUIP:Ｖ接触部位 == 1
+							PRINTFORMDW trying to milk the semen out of your dick...
+						;ゆび
+						ELSEIF TEQUIP:Ｖ接触部位 == 3
+							PRINTFORMDW tightly squeezing your fingertips...
+						;バイブ？
+						ELSE
+							PRINTFORMDW working themselves on the bewitching, writhing sex toy...
+						ENDIF
+					CASE 1
+						CALL HPH_PRINT,@"「AahhhHPH My pussy... My pussy's gonna cum～HPH Cummmming～HPH AhHPH Haahn～HPH」","L"
+						PRINTFORMDW Momiji's eyes flutter as she's wracked by orgasm, her body twitching and writhing as it rolls through her...
+				ENDSELECT
+			;絶頂Ｖ
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「AahhHPH HnnnHPH I'm cummmingg!!HPH HaannHPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Haa, %CALLNAME:MASTER%-san, it feels so goodHPH AhhHPH CummingHPH Cumming!!HPH」","W"
+				ENDSELECT
+			ENDIF
+		RETURN 1
+		ENDIF
+		
+		;Ｖ絶頂　非発情
+		;イキすぎ
+		;IF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0 && CFLAG:うふふ == 1
+		;ELSEIF NOWEX:Ｖ絶頂 >= 2
+		;強絶頂Ｖ
+		IF NOWEX:Ｖ絶頂 >= 2
+			;人目がある
+			IF LOCAL:1 > 0
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「～～～! Hnn...HPH」","L"
+						PRINTFORMDL Momiji is concerned with being in public, so she holds her mouth shut.
+						PRINTFORMDW But the pleasure proves too much and she cracks, letting out a moan...
+					CASE 1
+						PRINTFORML 「...!! Kuh～～～!!」
+						PRINTFORMDW Momiji holds onto you as she is brought to her peak and orgasms.
+						PRINTFORML 「Haa, Haaa... This time, someone must have noticed it...」
+						PRINTFORMDW Momiji's shoulders tremble, and she twists and turns in embarrassment.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Hyaa!! Aahh... Aahh～～～～～!!」
+						CALL HPH_PRINT,@"「Haa...HPH」","L"
+						PRINTFORMDW Momiji's entire body trembles, as her eyes melt in pleasure...
+					CASE 1
+						CALL HPH_PRINT,@"「Ya- Ah, %CALLNAME:MASTER%-san, %CALLNAME:MASTER%-san... Ah～～～～HPH」","W"
+				ENDSELECT
+			ENDIF
+		;絶頂Ｖ
+		ELSE
+			;人目がある
+			IF LOCAL:1 > 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「～～～！」
+						PRINTFORMDW Worried about being seen, Momiji stifles her moan as she reaches orgasm.
+					CASE 1
+						PRINTFORMDW Feeling the looks of everyone around, Momiji sews her lips shut and endures the orgasm.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Haa...! I'm- Ah! I'm cumming!」
+					CASE 1
+						PRINTFORMW 「Ah, Cu... Cumming...～～～～!」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+	IF NOWEX:Ａ絶頂
+		;発情
+		;記入時はコメントアウトを外してください。
+		;IF TCVAR:発情
+		;	;強絶頂Ａ
+		;	IF NOWEX:Ａ絶頂 >= 2
+		;		PRINTFORMW
+		;	;絶頂Ａ
+		;	ELSE
+		;		PRINTFORMW
+		;	ENDIF
+		;RETURN 1
+		;ENDIF
+		
+		;強絶頂Ａ
+		IF NOWEX:Ａ絶頂 >= 2
+			;人目がある
+			IF LOCAL:1 > 0
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「～～～Mph! Mn, Muphm...HPH」","L"
+						PRINTFORMDL Momiji quickly clamps down on her mouth for fear of attracting attention,
+						PRINTFORMDW But the pleasure is so intense that she can't hold back and lets out a cry...
+					CASE 1
+						PRINTFORML 「Ah!! Ku, uu～～～!!」
+						PRINTFORMDW You hold Momiji as she nearly collapses from the intense orgasm.
+						PRINTFORML
+						PRINTFORML 「Haah, Haaー... Uuu. I'm pretty sure someone noticed that...」
+						PRINTFORMDW Momiji's shoulders shake and she squirms in embarrassment.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 
+					CASE 1
+						PRINTFORMW 
+				ENDSELECT
+			ENDIF 
+		;絶頂Ａ
+		ELSE
+			;人目がある
+			IF LOCAL:1 > 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「～～～Mn!」
+						PRINTFORMDW Concerned about being seen, Momiji stifles her voice as she orgasms.
+					CASE 1
+						PRINTFORMDW %BREAKENG(@"Painfully aware of the presence of potential onlookers, Momiji bites her lip and fights to endure her climax...")%
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 
+					CASE 1
+						PRINTFORMW 
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｂ絶頂
+		;発情
+		;記入時にはコメントアウトを外してください。
+		;IF TCVAR:発情
+		;	;強絶頂Ｂ
+		;	IF NOWEX:Ｂ絶頂 >= 2
+		;		PRINTFORMW
+		;	;絶頂Ｂ
+		;	ELSE
+		;		PRINTFORMW
+		;	ENDIF
+		;RETURN 1
+		;ENDIF
+		
+		;強絶頂Ｂ
+		IF NOWEX:Ｂ絶頂 >= 2
+			;パイズリ中に絶頂
+			IF TEQUIP:Ｂ接触部位 == 1
+				CALL HPH_PRINT,@"「Uaah, Ahn, Mmmmnnn～HPH」","L"
+				IF TCVAR:発情
+					CALL HPH_PRINT,@"「Ahn, Your cock, It's making my tits cumMm...HPH」","W"
+				ELSE
+					CALL HPH_PRINT,@"（\@ TALENT:MASTER:性別 == 2 ? his # her \@ dick, it made me cum with my boobs...HPH）","W"
+				ENDIF
+				RETURN 1
+			ENDIF
+			;人目がある
+			IF LOCAL:1 > 0
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「～～～Mm! Fuaan～...HPH」","L"
+						PRINTFORMDL %BREAKENG(@"The relentless caressing of her breasts drives Momiji to the point where she doesn't even have the presence of mind to worry about being seen...")%
+						PRINTFORMW 「...At least take me to a place where no one is around, please...」
+					CASE 1
+						PRINTFORML 「Hm!!～～～!!」
+						PRINTFORMDL Momiji climaxes, screaming inaudibly from the sheer pleasure...
+						PRINTFORMW （Uu... My nipples are so sensitive after being played with like this, that even rubbing against my clothes turns me on...）
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「FuaaAah... My boobs, they're... AhnHPH Aaah～～～～HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Ah... My boobs... No～HPH UuuHPH UaaAAahHPH」","W"
+				ENDSELECT
+			ENDIF 
+		;絶頂Ｂ
+		ELSE
+			;パイズリ中に絶頂
+			IF TEQUIP:Ｂ接触部位 == 1
+				CALL HPH_PRINT,@"「Afu, Ah, Aaahn...HPH」","L"
+				IF TCVAR:発情
+					CALL HPH_PRINT,@"「Y-your cock, it's making my tits cummMMm...HPH」","W"
+				ELSE
+					CALL HPH_PRINT,@"（Your dick is gonna make me... Cum from my booOObs～...HPH）","W"
+				ENDIF
+				RETURN 1
+			ENDIF
+			;人目がある
+			IF LOCAL:1 > 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Mm...! Haa, Ah...」
+						PRINTFORMDL Momiji writhes as she orgasms, but somehow manages to keep her voice down and take a breath.
+						PRINTFORMW 「You're terrible... What if someone notices...」
+					CASE 1
+						PRINTFORML 「Nmm, Kuu...～～～！」
+						PRINTFORMDW Feeling people's eyes on her, Momiji bites her lip and endures the building climax...
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Ah, Stop, My nipples, Are～...」
+					CASE 1
+						PRINTFORMW 「No, Ah...Cumming...」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｍ絶頂
+		;発情
+		;記入時はコメントアウトを外してください。
+		;IF TCVAR:発情
+		;	;強絶頂Ｍ
+		;	IF NOWEX:Ｍ絶頂 >= 2
+		;		PRINTFORMW
+		;	;絶頂Ｍ
+		;	ELSE
+		;		PRINTFORMW
+		;	ENDIF
+		;RETURN 1
+		;ENDIF
+		
+		;強絶頂Ｍ
+		IF NOWEX:Ｍ絶頂 >= 2
+			;フェラ中に絶頂
+			IF TEQUIP:65:口接触部位 == 1
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Nghnmmm...! Fuhm, Nmu, %RANDKISS("suck")%...HPH」","L"
+						PRINTFORMDL Momiji twitches and twitches with your penis in her mouth...
+						CALL HPH_PRINT,@"（Uuu... I can't believe I'm getting all like this just from sucking your dick...HPH）","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Numm...HPH Nmu, Fuu, Fuuー...HPH %RANDKISS("suck")%...HPH」","L"
+						PRINTFORMDW Momiji sucks on your meat stick and smacks her lips with a debauched expression...
+				ENDSELECT
+			;人目がある
+			;ELSEIF LOCAL:1 > 0
+				
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Fuu～, Mmmngh...HPH Puah, Hahー, HaahーHPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Nmuu... %RANDKISS("kiss")%, Mnn...HPH Hafu, Nmu, %RANDKISS("kiss")%～...HPH」","W"
+				ENDSELECT
+			ENDIF
+		;絶頂Ｍ
+		ELSE
+			;フェラ中に絶頂
+			IF TEQUIP:65:口接触部位 == 1
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Mmmn...! Nm, %FSYN("lips_muffle")%, Chuu～...HPH」","L"
+						PRINTFORMDL Momiji seems to have climaxed just from the stimulation of your penis brushing against her lips...
+						PRINTFORMW （...I came just by sucking his cock...）
+					CASE 1
+						CALL HPH_PRINT,@"「Nuu～...HPH Nmm, %FSYN("lips_muffle")%, Fuuu～...HPH」","L"
+						PRINTFORMDW Momiji sucks avidly on your meat stick, smacking her lips with a fascinated expression...
+				ENDSELECT
+			;人目がある
+			;ELSEIF LOCAL:1 > 0
+			
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Nmm...HPH Fu, %RANDKISS("kiss")%, %RANDKISS("kiss")%...」","L"
+						PRINTFORMDW Momiji tenses up slightly and kisses you harder...
+					CASE 1
+						CALL HPH_PRINT,@"「Mugu...! Fu, Mn, Puah～...HPH」","L"
+						PRINTFORMDW Momiji's eyes are full of debauchery as she nuzzles your overlapping lips...
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;奴隷の睡眠絶頂時の口上
+;-------------------------------------------------
+@M_KOJO_MESSAGE_PALAMCNG_B2_K65
+CALL PALAM_MESSAGE_B
+;-------------------------------------------------
+;噴乳
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && NOWEX:噴乳
+	PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;射精
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && NOWEX:射精
+	PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;放尿
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && NOWEX:放尿
+	PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;絶頂
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;五重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:五重絶頂
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;四重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:四重絶頂
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		;[SKIPSTART]
+		SELECTCASE NOWEX:四重絶頂
+			;Ｃ＆Ｖ＆Ａ＆Ｂ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ａ＆Ｍ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｂ＆Ｍ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ＆Ｂ＆Ｍ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ａ＆Ｂ＆Ｍ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		;[SKIPEND]
+	ENDIF
+	;-------------------------------------------------
+	;三重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:三重絶頂
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		;[SKIPSTART]
+		SELECTCASE NOWEX:三重絶頂
+			;Ｃ＆Ｖ＆Ａ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｖ＆Ａ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ＆Ａ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｂ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｍ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｖ＆Ｍ絶頂
+			CASE 6
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｖ＆Ｍ絶頂
+			CASE 7
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ＆Ｍ絶頂
+			CASE 8
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｂ＆Ｍ絶頂
+			CASE 9
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ＆Ｍ絶頂
+			CASE 10
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		;[SKIPEND]
+	ENDIF
+	;-------------------------------------------------
+	;二重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:二重絶頂
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		;[SKIPSTART]
+		SELECTCASE NOWEX:二重絶頂
+			;Ｃ＆Ｖ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ａ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ｂ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｂ絶頂
+			CASE 6
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｍ絶頂
+			CASE 7
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ｍ絶頂
+			CASE 8
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｍ絶頂
+			CASE 9
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｍ絶頂
+			CASE 10
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		;[SKIPEND]
+	ENDIF
+	IF NOWEX:Ｃ絶頂
+		;超強絶頂Ｃ
+		IF NOWEX:Ｃ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ｃ
+		ELSEIF NOWEX:Ｃ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ｃ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｖ絶頂
+		;超強絶頂Ｖ
+		IF NOWEX:Ｖ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ｖ
+		ELSEIF NOWEX:Ｖ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ｖ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+	IF NOWEX:Ａ絶頂
+		;超強絶頂Ａ
+		IF NOWEX:Ａ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ａ
+		ELSEIF NOWEX:Ａ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ａ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｂ絶頂
+		;強絶頂Ｂ
+		IF NOWEX:Ｂ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ｂ
+		ELSEIF NOWEX:Ｂ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ｂ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｍ絶頂
+		;超強絶頂Ｍ
+		IF NOWEX:Ｍ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ｍ
+		ELSEIF NOWEX:Ｍ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ｍ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+ENDIF
+
+
+;-------------------------------------------------
+;射精に関する口上の表示
+;一時的にTARGETを口上主に設定している
+;-------------------------------------------------
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_00(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;TARGETの手による射精で、射精対象が非TARGET
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_0(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;コンドーム
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;これってどのタイミングで表示されるんだろう…
+;-------------------------------------------------
+IF LOCAL
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	;ＶまたはＡ挿入中
+	IF TEQUIP:50 == PLAYER || TEQUIP:51 == PLAYER
+		PRINTFORML 「Mnnn...!」
+		PRINTFORMDL As soon as you reach orgasm, Momiji lets out a muffled breath.
+		PRINTFORML （Ah, %CALLNAME:MASTER%-san, you came...）
+		PRINTFORMW （Even through the rubber, I can feel his penis twitching...）
+	ELSE
+		PRINTFORMD Momiji watches the tip of the condom as it fills with your sperm, 
+		IF ABL:精液中毒 >= 4
+			PRINTFORMD with a look of ecstasy on her face
+		ELSE
+			PRINTFORMD with a curious look
+		ENDIF
+		PRINTFORMDL ...
+		IF EXP:精液経験 < 100
+			PRINTFORML （Uwaa, So much semen comes out...）
+		ELSE
+			PRINTFORML （Wa, As I thought, it's a huge amount...）
+		ENDIF
+		PRINTFORMW （Watching the condom fill with sperm like this, somehow it's very erotic...）
+	ENDIF
+	SIF CFLAG:生理周期 == 7 && RAND:2
+		PRINTFORMW （If this much went in my pussy, I'd get pregnant for sure...）
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_23(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;イラマチオ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_22(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;シックスナイン
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;同時射精
+	IF NOWEX:射精 && NOWEX:MASTER:射精
+		;MASTERの射精回数を加算
+		SIF !CFLAG:睡眠 && !FLAG:70
+			TCVAR:350 += NOWEX:MASTER:射精
+		PRINTFORMW
+		RETURN 1
+	;TARGETだけ射精
+	ELSEIF NOWEX:射精
+		;PLAYERについてる
+		IF GETBIT(TALENT:PLAYER:性別,1)
+			PRINTFORMW
+			RETURN 1
+		;付いてない
+		ELSE
+			PRINTFORMW
+			RETURN 1
+		ENDIF
+	;PLAYERだけ射精
+	ELSE
+		;MASTERの射精回数を加算
+		SIF !CFLAG:睡眠 && !FLAG:70
+			TCVAR:350 += NOWEX:MASTER:射精
+		;TARGETについてる
+		IF GETBIT(TALENT:性別,1)
+			PRINTFORMW
+			RETURN 1
+		;付いてない
+		ELSE
+			PRINTFORMW
+			RETURN 1
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_21(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;パイズリフェラ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	;パイフェラ専用
+	;IF RAND:3 == 0
+	;	PRINTFORMW 
+	;ENDIF
+	IF RAND:2 == 0 
+		;フェラチオ射精と共通
+		CALL M_KOJO_MESSAGE_PALAMCNG_A_K65_4(ARG)
+	ELSE
+		;パイズリ射精と共通
+		CALL M_KOJO_MESSAGE_PALAMCNG_A_K65_5(ARG)
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_20(ARG)
+;CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;手淫フェラ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;フェラチオ射精と共通に
+	CALL M_KOJO_MESSAGE_PALAMCNG_A_K65_4(ARG)
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_9(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;アナル奉仕
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_8(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;泡踊り
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;同時射精
+	IF NOWEX:射精 && NOWEX:MASTER:射精
+		;MASTERの射精回数を加算
+		SIF !CFLAG:睡眠 && !FLAG:70
+			TCVAR:350 += NOWEX:MASTER:射精
+		PRINTFORMW
+		RETURN 1
+	;TARGETだけ射精
+	ELSEIF NOWEX:射精
+		;PLAYERについてる
+		IF GETBIT(TALENT:PLAYER:性別,1)
+			PRINTFORMW
+			RETURN 1
+		;付いてない
+		ELSE
+			PRINTFORMW
+			RETURN 1
+		ENDIF
+	;PLAYERだけ射精
+	ELSE
+		;MASTERの射精回数を加算
+		SIF !CFLAG:睡眠 && !FLAG:70
+			TCVAR:350 += NOWEX:MASTER:射精
+		;TARGETについてる
+		IF GETBIT(TALENT:性別,1)
+			PRINTFORMW
+			RETURN 1
+		;付いてない
+		ELSE
+			;精液中毒高め
+			IF ABL:精液中毒 >= 3 && RAND:3
+				IF TCVAR:発情
+					CALL HPH_PRINT,@"「Awaa～HPH Everything, it all came out...HPH」","L"
+					PRINTFORMDL Momiji spreads your semen all over her body with a debauched expression on her face, as though she were lathering up with soap.
+					PRINTFORMDL The white frothy juice makes squelching sounds, emphasizing the obscene atmosphere.
+					CALL HPH_PRINT,@"「My whole body is covered with %CALLNAME:MASTER%-san's smell...HPH Ehehe, I'm so happy...HPH」","W"
+				ELSE
+					PRINTFORML 「Hafu, The smell of %CALLNAME:MASTER%-san's semen is so strong all over my body...」
+					PRINTFORML （It smells so naughty... My head is starting to feel fuzzy...）
+					PRINTFORMDW You quickly apologize to Momiji, who's covered in your spunk with a dumbfounded expression on her face, and you start trying to wipe her off.
+					PRINTFORML
+					PRINTFORML 「Ah, Stop that, It's such a waste!」
+					PRINTFORML 「Well, I mean... Umm, I appreciate your concern, but I'm fine now...」
+					PRINTFORMW 「I like the smell of your semen a lot, %CALLNAME:MASTER%-san...」
+					PRINTFORML 
+					PRINTFORML 「No, wait... Uuu, That makes me sound like a pervert...」
+					PRINTFORMDW Momiji's shamefaced expression ignites your lust even more.
+				ENDIF
+			ELSE
+				IF TCVAR:発情
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「Wow... You sure shot out a lot of semen... Did that feel good?HPH」","L"
+							PRINTFORML 「Ehehe, While I'm at it, I think I'll squeeze all the cum out of your shaft, to make it nice and clean～」
+							PRINTFORMDL Momiji slides her chest down to your crotch and starts squeezing your dick between her breasts.
+							PRINTFORMDW It's just after your ejaculation, so you're extra-sensitive, and the pleasure of her cleanup job is shockingly intense.
+							PRINTFORML 
+							CALL HPH_PRINT,@"「Aha, %CALLNAME:MASTER%-san you're so cute when you twitchHPH I'm going to rub you even more nowHPH」","L"
+							PRINTFORMDW The wolfgirl keeps working her toned body against yours, watching with glee as you moan in painful pleasure...
+						CASE 1
+							CALL HPH_PRINT,@"「Mmmn, It's so hot...HPH」","L"
+							CALL HPH_PRINT,@"「Ehehe, Did my body feel good...?HPH」","L"
+							PRINTFORMDW You nod gently, and Momiji sniffs happily and mounts on top of you.
+							PRINTFORML
+							CALL HPH_PRINT,@"「So much shot out, didn't it... Fufu, There's such a naughty smellHPH」","L"
+							PRINTFORMDW Momiji scoops up the white cloudiness onto her fingertips and sniffs it, while swaying her hips and rubbing her pussy lips against you...
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「Wow... You sure shot out a lot of semen... Did that feel good?」
+							PRINTFORML 「Ehehe, While I'm at it, I think I'll squeeze all the cum out of your shaft, to make it nice and clean～」
+							PRINTFORMDL Momiji slides her chest down to your crotch and starts squeezing your dick between her breasts.
+							PRINTFORMDW It's just after your ejaculation, so you're extra-sensitive, and the pleasure of her cleanup job is shockingly intense.
+						CASE 1
+							PRINTFORML 「Mmmn, It's so hot...」
+							PRINTFORML 「Did my body feel good...?」
+							PRINTFORMDW When you nod gently, Momiji sniffs happily and softly rubs her body against yours.
+					ENDSELECT
+				ENDIF
+			ENDIF
+			PRINTFORMW
+			RETURN 1
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_7(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;足コキ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_6(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;素股
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	;発情
+	IF TCVAR:発情
+		IF ABL:膣射中毒 > 3 && RAND:2
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Ah, Ahh...」
+					CALL HPH_PRINT,@"「I swear. It's such a waste...」","L"
+					PRINTFORMDW Momiji scoops up the spattered semen and lovingly licks it off her fingertips.
+					PRINTFORML
+					CALL HPH_PRINT,@"「...MmHPH」","L"
+					CALL HPH_PRINT,@"「Next time you cum, please make sure you do it in my bellyHPH」","W"
+				CASE 1
+					PRINTFORML 「Muー...」
+					CALL HPH_PRINT,@"「Mnn. Fuu...HPH Nmn...HPH」","L"
+					PRINTFORMDL Momiji keeps on stimulating your dick, even though it's very sensitive just after ejaculation.
+					PRINTFORMDW The sexual sensations are so strong it's almost painful, but you don't try to stop her hips.
+					PRINTFORML 
+					PRINTFORML 「I would have preferred to have you come inside me...」
+					PRINTFORML 「So, I'm going to punish %CALLNAME:MASTER%-san for coming on my bare bottom...」
+					CALL HPH_PRINT,@"「Right here, just shoot it out... Please shoot out eーverything you haveHPH」","W"
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					CALL HPH_PRINT,@"「Aha～, You shot out a lotHPH」","L"
+					CALL HPH_PRINT,@"「%TEXTR("Your semen.../My crotch.../")% %TEXTR("It feels so hot.../It's so goopey.../")%HPH」","W"
+				CASE 1
+					CALL HPH_PRINT,@"「Ahh, Mn～HPH Amazing...HPH」","L"
+					CALL HPH_PRINT,@"「Every time semen comes out... Your cock goes bouncyHPH bounceHPH and hits me in a really nice spot...HPH」","L"
+					CALL HPH_PRINT,@"「I think, I'm about to go crazy...HPH」","W"
+				CASE 2
+					CALL HPH_PRINT,@"「Ehehe, Here it coーmes～HPH」","L"
+					CALL HPH_PRINT,@"「Please give me more and moーre～HPH」","L"
+					PRINTFORMDW Momiji grinds her toned thighs together around your dick, trying to squeeze out as much of your sperm as she can...
+			ENDSELECT
+		ENDIF
+	;非発情
+	ELSE
+		IF ABL:膣射中毒 > 3 && RAND:2
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML （Uwa... The smell of semen is so great ... It makes my head all fuzzy～...）
+					PRINTFORMDW Momiji massages your goopey ejaculate into her crack with a glazed-over look in her eyes...
+				CASE 1
+					CALL HPH_PRINT,@"「Ah, Ooh... It's shivering and trembling... It's amazing...HPH」","L"
+					CALL HPH_PRINT,@"（My tummy is all gummy... If I get this in my pussy, I'd...HPH）","L"
+					PRINTFORMDW Momiji scoops up your white slime onto her fingertips and spreads it over her slippery lower belly in ecstasy.
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Mmmn, It's so jumpy... There's so much coming out...」
+					PRINTFORMW 「Did that feel good?」
+				CASE 1
+					PRINTFORML 「Mm.... So hot...」
+					PRINTFORMDL Momiji sits up a little when your orgasm has subsided.
+					PRINTFORMDL Strings of white mucus drip like threads from her lower belly and connect your cock to her secret cleft.
+					PRINTFORMW 「Wa... Ahaha... That's really kind of perverted isn't it...」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_5(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;パイズリ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	IF TALENT:恋慕
+		;恋慕かつ発情
+		IF TCVAR:発情
+			;精液中毒高め
+			IF ABL:精液中毒 >= 3 && RAND:2 == 0
+				;巨乳で1/2
+				IF TALENT:バストサイズ > 0 && RAND:2
+					CALL HPH_PRINT,@"「Wa, Ah...HPH Amazing...HPH」","L"
+					PRINTFORMDL Your semen splashes on Momiji's white skin, slowly dripping down the curves of her full breasts.
+					PRINTFORMDW The sight is so indecent that it makes your dick twitch again even though you just came...
+					PRINTFORML
+					CALL HPH_PRINT,@"「Ahh... Fufu～HPH」","L"
+					PRINTFORMDL Noticing your blissed out gaze, Momiji smirks mischievously and lifts her cum-coated milk tanks up to her mouth.
+					CALL HPH_PRINT,@"「Nm, Chuu...HPH Lick, %RANDKISS("suck")%...HPH %RANDKISS("kiss")%, %RANDKISS("kiss")%～...HPH」","L"
+					PRINTFORMDW %BREAKENG(@"Cupping her own soft tits in her hands, she provocatively licks off your white slime with her tongue while wearing a teasing smile.")%
+					PRINTFORML
+					PRINTFORMDL %BREAKENG(@"After her breasts are all cleaned up, the wolfgirl sucks on her perky nipples as a finishing touch and casts her seductive eyes at you.")%
+					CALL HPH_PRINT,@"「Fuu～HPH Nmn...HPH %RANDKISS("kiss")%, %FSYN("lips_over")%...HPH ...Fufu, Tasty～...HPH」","L"
+					PRINTFORMDW By the time her obscene cleaning wraps up, your dick is starting to get hard again...
+				ELSE
+					CALL HPH_PRINT,@"「%MOAN()%, %FSYN("lips_muffle")%HPH %MOAN("l:m")%HPH... More, give me more...HPH」","L"
+					PRINTFORMDL Even after your ejaculation dies down, Momiji keeps on attacking your meat pole while her eyes glitter with pleasure.
+					PRINTFORMDW %BREAKENG(@"Your white goop gets flung all over the place from the tip of your cock as it flails around under the pressure of her bouncing boobies.")%
+					PRINTFORML
+					CALL HPH_PRINT,@"「%CALLNAME:MASTER%-san's favorite tits, I'll squeeze～ you all up with them...HPH」","L"
+					CALL HPH_PRINT,@"「HaahHPH... %CALLNAME:MASTER%-san... Everything... Please give me everything you've got...HPH」","L"
+					PRINTFORMDL %BREAKENG(@"Momiji is so engrossed in the mammaryjob that she doesn't even notice you choking up as she ravages your over-sensitive dick.")%
+					PRINTFORMDW %BREAKENG(@"Your semen lubricates her cleavage with a gurgling sound, increasing the lewd frictional sensation to a dramatic level...")%
+				ENDIF
+			ELSE
+				;MASTERが何度も射精している
+				IF TCVAR:350 > 3 && RAND:2 == 0
+					CALL HPH_PRINT,@"「Hyaah, Ah...HPH %CALLNAME:MASTER%-san's smell is all over me...HPH」","L"
+					CALL HPH_PRINT,@"「I've been marked...HPH」","L"
+					PRINTFORMDW Momiji murmurs in ecstasy, as if whispering to herself.
+					PRINTFORML
+					CALL HPH_PRINT,@"「Umm... Lots more, I want you to shoot more on me...」","L"
+					CALL HPH_PRINT,@"「%CALLNAME:MASTER%-san, cover me with your scent...HPH」","L"
+					CALL HPH_PRINT,@"「Make sure everyone can understand...HPH That I belong to you, %CALLNAME:MASTER%-san...HPH」","W"
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「Kyau～HPH So hot...HPH」","L"
+							CALL HPH_PRINT,@"「Ehehe, You shot out a bunch...HPH」","L"
+							PRINTFORMDW Momiji smiles happily, scooping up the fluid staining her breasts onto her fingertips and playing around with it...
+						CASE 1
+							CALL HPH_PRINT,@"「Aha, There it is...HPH」","L"
+							CALL HPH_PRINT,@"「I'll squish～ you with my tits, so please let it all out...HPH」","W"
+					ENDSELECT
+				ENDIF
+			ENDIF
+		;恋慕かつ非発情
+		ELSE
+			IF ABL:精液中毒 >= 3 && RAND:2 == 0
+				IF ABL:Ｂ感覚 > 4 && RAND:2
+					CALL HPH_PRINT,@"「Wa... That's a ton of white stuff... %MOAN()%, %FSYN("lips_muffle")%HPH %MOAN(,,2)%HPH」","L"
+					PRINTFORMDL Momiji lets out heated sighs as she wipes her palms of the mess on her chest.
+					PRINTFORMDL %BREAKENG(@"The way your white muck smears thinly over her soft skin, it looks like she's masturbating with the semen smeared on her breasts.")%
+					PRINTFORMDL The sticky juice bubbles and chirps, adding to the obscene atmosphere...
+					CALL HPH_PRINT,@"「%MOAN(,,3,"dot")%HPH」","W"
+					PRINTFORML
+					PRINTFORML 「...Ahh」
+					PRINTFORMDW Lost in her lewd play, Momiji suddenly notices your amused gaze, and turns red with embarrassment. 
+				ELSE
+					PRINTFORML 「Fuuu... Aha... You got all sticky...」
+					PRINTFORMDL Momiji scoops up your semen with her fingertips and brings it to her mouth without hesitation.
+					CALL HPH_PRINT,@"「Chuu, Mn...HPH」","L"
+					PRINTFORMDL %BREAKENG(@"Her eyes flutter as the taste of your baby batter fills her mouth, and she gives a small shake of her shoulders as she swallows it down.")%
+					PRINTFORMDL She seems intoxicated by the taste and smell of your cum...
+					CALL HPH_PRINT,@"「...Was that good for you? Fufu. ...I want more, %CALLNAME:MASTER%-san～...HPH」","W"
+				ENDIF
+			ELSE
+				;MASTERが何度も射精している
+				IF TCVAR:350 > 3 && RAND:2 == 0
+					PRINTFORML 「Wa, Hyaa... Amazing, You haven't lost any momentum at all...」
+					PRINTFORMDL Momiji blurts out in admiration as she watches your baby batter shoot up and fall back down to stick to her perky tits.
+					PRINTFORML 「Umm... Can you still do it?」
+					CALL HPH_PRINT,@"「...Fufu. I want to do more...HPH」","W"
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「%MOAN(,,2,"dot")%HPH %FSYN("lips_muffle")%ー... You're really going for it...」","L"
+							PRINTFORMW 「...Ehehe, I'm kind of flattered♪」
+						CASE 1
+							PRINTFORML 「Haah, Ahhh... It's really hot...」
+							PRINTFORML 「That was a lot of cum... Did my boobs feel that amazing...?」
+							CALL HPH_PRINT,@"「...Fufu, That's good. %TEXTR("I'll do more...if you want, as many times as you want.../Then, let's keep going...HPH/")%」","W"
+					ENDSELECT
+				ENDIF
+			ENDIF
+		ENDIF
+	;非恋慕
+	ELSE
+		IF TCVAR:発情
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「Kyau～HPH So hot...HPH」","L"
+					CALL HPH_PRINT,@"「Ehehe, You shot out a lot...HPH」","L"
+					PRINTFORMDW Momiji smiles happily, scooping up the fluid staining her breasts onto her fingertips and playing around with it...
+				CASE 1
+					CALL HPH_PRINT,@"「Aha, There it is...HPH」","L"
+					CALL HPH_PRINT,@"「I'll squish～ you with my tits, so please let it all out...HPH」","W"
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「%MOAN()%HPH %FSYN("lips_muffle")%HPH %MOAN("l:m")%... You've sure got a lot of energy...」","L"
+					PRINTFORMW 「Does this feel that good?」
+				CASE 1
+					PRINTFORMW 「Haah, Ahhh... It's really hot...」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_4(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;フェラチオ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	;長いし頻出しない方が良かろう
+	IF TALENT:精愛味覚 && RAND:3 == 0
+		IF TCVAR:発情
+			CALL HPH_PRINT,@"「Nmu...Mn, MmmmーHPH %RANDKISS("suck")%HPH %RANDKISS("kiss")%～HPH %RANDKISS("suck")%HPH %RANDKISS("suck")%～HPH」","L"
+			PRINTFORMDL As the tip of her tongue effortlessly catches your gushing semen,
+			PRINTFORMDW %BREAKENG(@"Momiji clamps her small lips around you and pushes her way up the shaft, trying to suck out every last drop of cum.")%
+			PRINTFORML
+			PRINTFORMDL She relentlessly sucks your freshly-climaxed and very sensitive cock,
+			PRINTFORMDW Sending violent pangs of pleasure up your spine and making you groan involuntarily.
+			PRINTFORMDL %BREAKENG(@"Momiji smiles contentedly at the sight, pulls off your cock with a lewd slurp, and merrily chews the semen still in her mouth.")%
+			PRINTFORML
+			CALL HPH_PRINT,@"「...HPH...Nchu, %FSYN("lips_muffle")%, Slurp...HPH %FSYN("lips_muffle")%HPH ChewHPH Nchmm...HPH」","L"
+			PRINTFORMDW %BREAKENG(@"She squints her eyes as if enjoying the taste, mixing the white slime into a froth with the tip of her tongue while making obscene sounds.")%
+			PRINTFORML
+			PRINTFORMDL After putting on a perverted performance that would be unimaginable to those who only know her normal appearance,
+			PRINTFORMDL Momiji finally gulps down your semen with a slurping sound, then lets out a satisfied sigh...
+			CALL HPH_PRINT,@"「Glup... Mmmmm... \@ TALENT:MASTER:濃厚精液 ? Today it was even thicker and tastier than normal # %CALLNAME:MASTER%-san, thank you for the feast～ \@...HPH」","W"
+		ELSE
+			;YMの精飲絶頂ってのはワタシ興奮しちゃいましたねえ
+			CALL HPH_PRINT,@"「Nm...Mmmm...!? Nmu～...HPH Ngh, %FSYN("lips_muffle")%...HPH」","L"
+			PRINTFORMDW Momiji jumps as ropes of your baby batter suddenly start blasting into the back of her throat.
+			PRINTFORML
+			PRINTFORMDW Apparently, the stimulation from your cum flooding her palate was enough that she reached a light orgasm...
+			PRINTFORML
+			CALL HPH_PRINT,@"（I'm not even in heat, I can't believe I came just from the smell of %CALLNAME:MASTER%-san's semen...）","L"
+			CALL HPH_PRINT,@"（Uuu... I've become such a pervert that I can't ever go back...HPH）","W"
+		ENDIF
+	ELSEIF EXP:精飲経験 == 0 || TCVAR:精飲経験 == 0
+		PRINTFORML 「Kya...!? Hya, Awww...」
+		PRINTFORMDW Momiji doesn't react in time, and catches a gooey white rope full in the face...
+		PRINTFORML
+		IF TCVAR:発情
+			CALL HPH_PRINT,@"「WaaAahn...HPH This is, %CALLNAME:MASTER%-san's...HPH」","L"
+			PRINTFORMDL %BREAKENG(@"With her heat hormones clouding her mind, the fishy-smelling goop dripping down her face only makes Momiji more excited...")%
+			PRINTFORMDW She deeply sniffs and sniffs with an ecstatic expression, tracing her puffy cleft with her fingers all the while...
+		ELSE
+			PRINTFORML 「Th-This is %CALLNAME:MASTER%-san's...」
+			PRINTFORMDL Momiji dabs a little semen with her fingertips and brings it to her mouth with a dumbfounded expression.
+			PRINTFORMW （It's kind of bitter and sour, I don't know if I can get used to it...）
+		ENDIF
+	ELSEIF EXP:精飲経験 < 20 && CFLAG:うふふ != 2
+		IF TCVAR:発情
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Nmu, Nm. Ngu...!! Cough, Cough...!」
+					PRINTFORMDL The semen spurting into the back of her throat seems to send Momiji into a coughing fit.
+					PRINTFORMW 「Nm, Hah... I want to drink %CALLNAME:MASTER%-san's semen, but...」
+				CASE 1
+					PRINTFORML 「Nn... Ku, Puah...」
+					PRINTFORMDL Momiji tries to swallow your semen, but ends up spitting it out.
+					PRINTFORMW 「Uuu... It got stuck in my throat, I just couldn't get it to go down...」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Nmu, Nm. Ngu...!! Cough, Cough...!」
+					PRINTFORMDW The semen spurting into the back of her throat seems to send Momiji into a coughing fit.
+				CASE 1
+					PRINTFORML 「Nn... Ku, Puah...」
+					PRINTFORMDL Momiji tries to swallow your semen, but ends up spitting it out.
+					PRINTFORML 「Uuu... It got stuck in my throat, I just couldn't get it to go down...」
+					PRINTFORMW 「...Umm, It does make guys happy when girls drink it for them, right?」
+			ENDSELECT
+		ENDIF
+	ELSEIF TALENT:恋慕
+		;恋慕かつ発情
+		IF TCVAR:発情
+			;精液中毒高め　追加予定だが予定は未定
+			;IF ABL:精液中毒 >= 3 && RAND:2 == 0
+			;ELSE
+				;MASTERが何度も射精している
+				IF TCVAR:350 > 3 && RAND:2 == 0
+					PRINTFORML 「%RANDKISS("kiss")%, Chuuu～, %RANDKISS("kiss")%, Chu...」
+					PRINTFORML 「I think you've already ejaculated about {TCVAR:350} times now...」
+					CALL HPH_PRINT,@"「You can still cum, can't you...? Please give me more and more...HPH」","W"
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「Nmmn, Nmu... Gulp～HPH」","L"
+							CALL HPH_PRINT,@"「Haah, %CALLNAME:MASTER%-san's seーmen, I love it...HPH」","W"
+						CASE 1
+							CALL HPH_PRINT,@"「Mmmn... Ehehe, You shot out a lot this time...HPH」","L"
+							PRINTFORMW Momiji kisses your glans lovingly after it finishes spitting out sperm.
+					ENDSELECT
+				ENDIF
+			;ENDIF
+		;恋慕かつ非発情
+		ELSE
+			;IF ABL:精液中毒 >= 3 && RAND:2 == 0
+			;ELSE
+				;MASTERが何度も射精している
+				IF TCVAR:350 > 3 && RAND:2 == 0
+					PRINTFORML 「%RANDKISS("kiss")%, Chuuu～, %RANDKISS("kiss")%, Chu...」
+					PRINTFORML 「I think you've already ejaculated about {TCVAR:350} times now...」
+					PRINTFORMW 「It makes me happy to think that I made you orgasm so many times...」
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「Nmmn, Nmu... Gulp～」
+							PRINTFORMW 「Fufu... You're getting so much pleasure from my mouth...」
+						CASE 1
+							CALL HPH_PRINT,@"「Mmmn... Ehehe, You shot out a lot this time...HPH」","L"
+							PRINTFORMDW Momiji kisses your glans lovingly after it finishes spitting out sperm.
+					ENDSELECT
+				ENDIF
+			;ENDIF
+		ENDIF
+	;非恋慕
+	ELSE
+		IF TCVAR:発情
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「Nmu, Chu, Gulp...HPH」","L"
+					CALL HPH_PRINT,@"「Puah～... %CALLNAME:MASTER%-san's seーmen...HPH」","W"
+				CASE 1
+					CALL HPH_PRINT,@"「Gulp...HPH Ehehe, I'll squeeze more out of you...HPH」","W"
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Wa, That sure is a lot...」
+				CASE 1
+					PRINTFORMW 「Wawawa...! ...If you feel like you're about to shoot, please tell me first...」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_3(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;手淫
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	IF TCVAR:発情
+		IF ABL:精液中毒 >= 3 && RAND:2
+			SELECTCASE RAND:3
+				CASE 0
+					CALL HPH_PRINT,@"「Haah, Ahn...HPH It came outttt...HPH」","L"
+					CALL HPH_PRINT,@"「Mnh, Sluurrp...HPH Fufu, %CALLNAME:MASTER%-san's semen tastes so good♪」","L"
+					PRINTFORMDW Momiji licks off the white slime from her fingertips, her reddened cheeks slack with ecstasy...
+				CASE 1
+					CALL HPH_PRINT,@"「Ahhhn♪ A lot of cum came out, huh...HPH」","L"
+					CALL HPH_PRINT,@"「Fufu, Good boy, good boyHPH Pat patーHPH」","L"
+					PRINTFORMDL The palm of the wolfgirl's hand wraps around your glans, gently petting it.
+					PRINTFORMDW The intense stimulation given to your most sensitive place makes your whole body tremble...
+				CASE 2
+					CALL HPH_PRINT,@"「Ahaha...HPH My hands, you made them all sticky...HPH Lick, %RANDKISS("kiss")%...」","L"
+					PRINTFORMDL Momiji shoots you a provocative glance as she licks the white goo from her palm...
+					CALL HPH_PRINT,@"「%RANDLIPS(,"suck")%...HPH Puah... Tasty...HPH」","W"
+					PRINTFORML
+					IF ABL:膣射中毒 > 3 && RAND:2
+						CALL HPH_PRINT,@"「Fufu, Can you keep going...? Next, do it in hereHPH OkaaayHPH」","L"
+						PRINTFORMDW Momiji smiles lasciviously and smears her labia with the last drops of white slime from her fingertips...
+					ELSE
+						CALL HPH_PRINT,@"「Ehe, I want you to shoot it straight into my mouth next time～HPH」","L"
+						PRINTFORMDW Momiji smiles lasciviously and gently strokes your scrotum...
+					ENDIF
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					CALL HPH_PRINT,@"「Aha, It's going Pew Pew～ so much, amazing...HPH」","L"
+					CALL HPH_PRINT,@"「I'm going to keep squeezing you until everything comes out...HPH」","W"
+				CASE 1
+					CALL HPH_PRINT,@"「Auuu, So hot...HPH」","L"
+					CALL HPH_PRINT,@"「Mn...HPH It smells so naughty...」","L"
+					CALL HPH_PRINT,@"「My head is dizzy, and my heart is pounding so hard...HPH」","W"
+				CASE 2
+					CALL HPH_PRINT,@"「Wa, It's so sticky...HPH」","L"
+					PRINTFORMDL Momiji smears your semen all over her fingers, playing with the mess...
+					CALL HPH_PRINT,@"「It smells so good... I wonder what would happen if I had it inside me...HPH」","W"
+			ENDSELECT
+		ENDIF
+	;非発情
+	ELSE
+		IF ABL:精液中毒 >= 3 && RAND:2
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「Ooh, It's so hot... Nm, %RANDKISS("suck")%, Chuu... Haah...HPH」","L"
+					PRINTFORMDW Breathlessly, the wolfgirl laps at the gooey slime staining her hands...
+					PRINTFORML
+					CALL HPH_PRINT,@"「Nm... Now let's squeeze out what's left in your dick...HPH」","L"
+					PRINTFORMDL Her delicate fingers lovingly trace over your penis from root to tip, reverently memorizing its shape and heft.
+					PRINTFORMDW The wolfgirl seems to have become completely intoxicated by your cum...
+				CASE 1
+					PRINTFORML 「Nmmm... Fufu, That's a lot of cum...」
+					PRINTFORMDL You smile with satisfaction and pet Momiji's head to reward her for a job well done, and call out to her...
+					IF ABL:膣射中毒 > 3 && RAND:2
+						PRINTFORML 「What do you mean, "next time in my vagina"...? Uuu, %CALLNAME:MASTER%-san, you don't have to say that every time...」
+					ELSE
+						PRINTFORML 「What do you mean, "next time in my mouth"...? Well... %CALLNAME:MASTER%-san, it's not like I was expecting it, exactly...」
+					ENDIF
+					PRINTFORMDW Momiji blushes bright red and averts her gaze from you, but her tail betrays her by wagging vigorously...
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Wa, Wa, Amazing... It's all white...」
+					PRINTFORMDW Momiji lets out excited squeals as she admires the cloudy liquid staining her palms...
+				CASE 1
+					PRINTFORMW 「Ah, Ooh... It's hot... And, it smells so good...」
+				CASE 2
+					PRINTFORML 「Auu... It's so sticky...」
+					PRINTFORMDL Momiji fiddles with the spattered slime with her fingers, and the bubbling liquid makes an obscene squelch.
+					PRINTFORMW 「...Did it feel good? Fufu, I'm glad.」
+			ENDSELECT
+		ENDIF
+	ENDIF 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_2(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;アナル
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K65_1(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;膣内
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML
+	;MASTERの射精回数を加算
+	SIF !CFLAG:睡眠 && !FLAG:70
+		TCVAR:350 += NOWEX:MASTER:射精
+	;イキすぎ
+	IF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0 && CFLAG:うふふ == 1
+		SELECTCASE RAND:3
+			CASE 0
+				CALL HPH_PRINT,@"「Haah...! Uu, Aah...! It's shooting o-out...HPH」","L"
+				PRINTFORMDW At the end of an intense lovemaking session, you and Momiji both reach climax at the same time.
+				PRINTFORML
+				PRINTFORMDL Your dick trembles with the joy of corrupting a woman, and starts to spill its seed deep inside her.
+				PRINTFORMDW It keeps pumping and pumping gooey baby batter into the wolfgirl, painting her womb white...
+				PRINTFORML
+				SIF ABL:65:膣射中毒 > 3
+					PRINTFORML （I can feel %CALLNAME:MASTER%-san's warmth spreading slowly through the depths of my belly... Somehow, it makes me happy...）
+				PRINTFORMW （I can't live without you, %CALLNAME:MASTER%-san...）
+			CASE 1
+				PRINTFORML 「Kuu, AwaaaAAa...!!」
+				PRINTFORMDL As Momiji arches her back in climax, her slippery vaginal walls undulate rhythmically around your meat rod.
+				PRINTFORMDW %BREAKENG(@"Giving in to her luscious pussy massage, you push your glans to the mouth of her womb and squirt your first spurts directly inside.")%
+				PRINTFORML
+				PRINTFORML 「Aaah～～～!! ...It's hot～...! Hii, Akuu, HaAAahn～!!」
+				PRINTFORMDL Even as you cum, you keep pumping your hips forward, spreading sperm throughout every corner and crevice of Momiji's pussy.
+				CALL HPH_PRINT,@"「Awooooo... I'm being stirred up... Hiuu, UaAah, Ahn～...HPH」","W"
+			CASE 2
+				CALL HPH_PRINT,@"「HiaaAAaAaah...! So hot...HPH」","L"
+				PRINTFORMDW Even after repeated climaxes, you mercilessly keep pouring more hot, sticky slime into Momiji's womb.
+				PRINTFORML
+				CALL HPH_PRINT,@"「Hah, Haa, Haahー...HPH」","L"
+				PRINTFORMD Although Momiji is out of breath, she looks blissfully happy as she strokes her underbelly
+					SIF EQUIP:上半身上着１ || EQUIP:上半身上着２
+						PRINTFORMD  through her clothes 
+				PRINTFORMDW , \@ ABL:65:膣射中毒 > 3 ? with glazed-over eyes... # sighing in satisfaction... \@
+		ENDSELECT
+	ELSEIF TALENT:恋慕
+		;恋慕かつ発情
+		IF TCVAR:発情
+			;何度も射精
+			IF TCVAR:350 > 3 && RAND:2 == 0
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「～～～～～MmHPH」","L"
+						CALL HPH_PRINT,@"「More～...HPH Please, cum more～...HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Here it comes again～...HPH」","L"
+						PRINTFORM 「Pour it all in, Pour it all in my belly
+							SIF !TCVAR:ピル && !TALENT:妊娠
+								PRINTFORM  and impregnate me
+						CALL HPH_PRINT,@"～～...HPH」","W"
+				ENDSELECT
+			;キスもしてる
+			ELSEIF CUP:TARGET:快Ｍ > 0 && RAND:2 == 0
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「%TEXTR("Cumm～, -ing/Haah, Hiii～/")%...HPH %CALLNAME:MASTER%-san...！」","L"
+						PRINTFORMDL %BREAKENG(@"At the moment of your climax, Momiji kisses you so hard you think she might be about to bite you, and her tongue crazily laps around your lips.")%
+						CALL HPH_PRINT,@"「%TEXTR("Smooch/Nmuu/")%... %MOAN()%, %FSYN("lips_muffle")%HPH %MOAN("l:m")%... Fu, Mnnn～HPH」","L"
+						PRINTFORMDW Momiji blinks as your cloudy pulsating flow is poured into her, and continues to kiss you passionately...
+					CASE 1
+						CALL HPH_PRINT,@"「A-AaahHPH Ah, AaaAAahh～～～～～HPHHPH」","L"
+						PRINTFORMDL %BREAKENG(@"As she receives your hot, sticky semen, the stimulation drives Momiji over the edge and she spasms, hunching over...")%
+						PRINTFORMW
+						SIF ABL:膣射中毒 > 3
+							CALL HPH_PRINT,@"「Wa, Ahn...HPH %CALLNAME:MASTER%-san is filling up my belly... I'm so happy...HPH」","L"
+						PRINTFORML 「Mn... %FSYN("lips_muffle")%, %RANDKISS("kiss")%... %RANDKISS("kiss")%, Chuuu～...」
+						PRINTFORMDW %BREAKENG(@"With an almost delirious expression on her face, Momiji \@ TEQUIP:体位２ != 2 && TEQUIP:体位２ != 5 ? hugs your head and # looks at you hungrily and \@ begs for a kiss...")%
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Ahaan...HPH %CALLNAME:MASTER%-san's seーmen, it's warm...HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Mnnn...HPH I can feel it squirting in my belly...」","L"
+						CALL HPH_PRINT,@"「Ehehe, Did I make you feel good? %CALLNAME:MASTER%-san...HPH」","W"
+				ENDSELECT
+			ENDIF
+		;恋慕かつ非発情
+		ELSE
+			;何度も射精
+			IF TCVAR:350 > 3 && RAND:2 == 0
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「～～～～～MmHPH」","L"
+						CALL HPH_PRINT,@"「Amazing, that's... Still so much...HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Here it comes, again...HPH」","L"
+						PRINTFORMW 「This one's... Gonna be really big...」
+				ENDSELECT
+			;キスもしてる
+			ELSEIF CUP:TARGET:快Ｍ > 0 && RAND:2 == 0
+			;	SELECTCASE RAND:2
+			;		CASE 0
+						CALL HPH_PRINT,@"「%TEXTR("Smooch/Nmu/")%... Nm, Mmmn～HPH」","L"
+						PRINTFORMDL You hug Momiji's petite body and glue yourself to her cherry-colored lips.
+						PRINTFORMDL The pumping of your hips suddenly stops, and the final moment arrives.
+						CALL HPH_PRINT,@"「Nmm, Fu... %MOAN("l:m")%HPH %MOAN("l:m",,2)%HPH... Puah...HPH」","L"
+						PRINTFORMDW %BREAKENG(@"When you pull back your mouth after pouring generous amount of baby batter into her pussy, your lips are joined by a silvery thread for a moment...")%
+			;		CASE 1
+						
+			;	ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Haa... It's so warm inside...」
+					CASE 1
+						PRINTFORMW 「Haa... Ah... %CALLNAME:MASTER%-san, I love you...」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ELSE
+		PRINTFORMW 「Ah, inside...」
+	ENDIF
+	RETURN 1
+	;IF 充填率
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;眠姦射精に関する口上の表示
+;一時的にTARGETを口上主に設定している
+;-------------------------------------------------
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K65_0(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;コンドーム
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K65_23(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;イラマチオ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K65_7(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;足コキ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K65_5(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;パイズリ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K65_4(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;フェラチオ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K65_3(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;手淫
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K65_2(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;アナル
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K65_1(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;膣内
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW
+	RETURN 1
+ENDIF
+RETURN 1
+
+
+@M_KOJO_MESSAGE_PALAMCNG_F_K65(ARG)
+CALL PALAM_MESSAGE_F
+;-------------------------------------------------
+;焦らし
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1

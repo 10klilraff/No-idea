@@ -1,0 +1,189 @@
+﻿;added, original
+
+;-------------------------------------------
+;調教後のテキスト
+;-------------------------------------------
+@M_KOJO_MESSAGE_PALAMCNG_C_K33
+CALL PALAM_MESSAGE_C
+
+SIF FLAG:70 || CFLAG:MASTER:イタズラ == 2 ;ignore when sleep-rape/time-rape
+	RETURN 0
+	
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	
+;added, suwako taking your first kiss (doesn't matter if she's kissing for the first time)
+IF !TALENT:MASTER:キス未経験 && CFLAG:MASTER:ファーストキス喪失相手 == TARGET && FIRSTTIME("SuwakoFirstKiss")
+	SIF TCVAR:抱き寄せ初回 == 10
+		RETURN 0
+	PRINTFORML 「What's the matter, you wanna kiss me that much? C'mon, I'll make it easy for you...」
+	PRINTFORMDW Suwako sticks out her face for you as you lean in closer.
+	PRINTFORMDW A little fearful, you peck her on the cheek gingerly.
+	PRINTFORMDW But Suwako only grins at you ever so smugly, as if saying "is that it, %K33_BOY()%?"
+	PRINTFORMDW Feeling awkward, you're about to pull away, but she grabs your head and pushes it to her lips.
+	PRINTFORMDW You're forced into a long, sloppy kiss as her other hand grabs your butt and pulls you forward.
+	PRINTFORML 「%RANDLIPS(,"kiss")%...%UNICODE(0x2764)%」
+	PRINTFORMDW %BREAKENG(@"Her long tongue forces its way into your mouth, swirling around yours. Tears well in your eyes as you start moaning into her mouth.")%
+	PRINTFORMDW %BREAKENG(@"Your heart beats faster, and you almost feel like you're about to get swallowed, but Suwako pulls away just in time before you start panicking.")%
+	PRINTFORMW 「Puhaaaa... Hehe, how's that? Not bad for yer first kiss, eh? Hehe～」
+ELSEIF !TALENT:キス未経験 && CSTR:ファーストキス喪失履歴 != "" && CFLAG:ファーストキス喪失記念日 > 0 && FIRSTTIME("SuwakoFirstKiss")
+	SIF TCVAR:抱き寄せ初回 == 10
+		RETURN 0
+	;moved from sekuhara kissing com
+	PRINTFORML 「!」
+	PRINTFORMDW Realizing that she just got kissed, Suwako seems startled for a moment, but then...
+	PRINTFORML 「.........Smoooch...」
+	PRINTFORMDW Suwako \@ TALENT:MASTER:100 < 0 ? leans over # stands on tiptoes, desperately trying to reach you \@ and locks her lips with yours.
+	PRINTFORML 「...Fufu～」
+	PRINTFORMDL Soon after parting, she touches her lips, as if tracing the residues of warmth.
+	PRINTFORMDW While a smug, self-satisfied smile adorns her expression, you can see a tinge of vermilion on her cheeks, if ever so slightly...
+ENDIF
+
+IF TCVAR:MASTER:筆下ろし && !CFLAG:[[諏訪子]]:1900
+	SIF TCVAR:抱き寄せ初回 == 10
+		RETURN 0
+	PRINTFORMW 「So tell me, %K33_BOY()%... How does your first time inside a woman feel?」
+	PRINTFORMW 「It's soft and warm, isn't it?%UNICODE(0x2764)%」
+	SIF CFLAG:うふふ == 2
+		PRINTFORML 「Heh, 'course I knew, that's why I decided to just help myself to it. No need to thank me～」
+	PRINTFORMW 「Enveloping the whole length, clenching around every inch... It's been a long time since I used it, so it must be pretty tight%UNICODE(0x2764)%」
+	PRINTFORMW 「Does it feel good? Or is it so tight it hurts?%UNICODE(0x2764)%」
+	PRINTFORMW 「You'll never experience a \@ CATCHER_ORIFICE:TARGET:0 == DT_ANUS ? butt#\@pussy as young as this in the real world, your world%UNICODE(0x2764)%」
+	PRINTFORMW 「So take yer time enjoying... the tightness of a child%UNICODE(0x2764)%%UNICODE(0x2764)%」
+	PRINTFORMW 「Use me as your little onahole, I'll allow it!%UNICODE(0x2764)%」
+	PRINTFORML
+	PRINTFORMDW You smile at Suwako's words and begin to thrust into her slowly. You feel the snugness of her \@ CATCHER_ORIFICE:TARGET:0 == DT_ANUS ? anus # cunny \@ squeeze your cock.
+	PRINTFORMDW It's so warm and wet. You feel like your whole body is going to explode from this sensation alone.
+	PRINTFORMDW In this moment you feel the bliss that's hard to explain, being one with God in every sense of the word.
+	IF GROUPMATCH(TEQUIP:TARGET:体位, 3, 4, 5) ;cowgirl/in lap
+		PRINTFORMDW She begins to bounce up and down on your cock. You feel it sliding in and out of her little hole, as your eyes savor her lewd body.
+	ELSE ;you doing it
+		PRINTFORMDW %BREAKENG(@"You can hear wet squishing noises as your cock slides in and out of her tight little hole as you put your hips to use, following your instincts.")%
+	ENDIF
+	PRINTFORMDW %BREAKENG(@"It's very tight, warm, wet and gripping. She feels like the best thing ever and you never want to stop. In no time at all you can already feel yourself getting closer and closer to the edge.")%
+	CALLF IKISOU()
+	PRINTFORMDW This is... incredible...!
+	PRINTFORMW 「A god's pussy is a powerful thing, %K33_BOY()%～」
+	PRINTFORMW 「Let's keep goin' and have fun all we want%UNICODE(0x2764)%」
+	PRINTFORML
+	;flag for showing conclusion text after it's done
+	CFLAG:1900 = 1
+ENDIF
+
+;処女喪失
+IF TCVAR:破瓜
+	IF TCVAR:破瓜 == 2
+		PRINTFORMW （Auu... This is so silly... %HE_SHE(MASTER,1)% really went and made me do this, huh.）
+		PRINTFORMW （Concept of virginity doesn't even exist for a God, and yet...）
+		PRINTFORMW （Sigh, if this is what makes %HIM_HER(MASTER, , 1)% happy, then it's whatever, I guess?）
+	ELSE
+		PRINTFORMW （H-Huh...? Blood? What in my name...?! This is impossible!）
+		PRINTFORMW （What's the implication of this even?! That someone believed so hard that my body gave in to the influence...?）
+		PRINTFORMW （Auu... I should probably be quiet about it, lest this anomaly might just break this world apart.）
+	ENDIF
+	PRINTFORML
+ENDIF
+
+;Ａ処女喪失
+IF TCVAR:Ａ破瓜
+	PRINTFORMW （Auugh! Ahh! This is way rougher than I thought it'd be! ...But I gotta start somewhere!）
+	PRINTFORMW 「I-It's okay, %K33_BOY()%... Please continue, alright? I'm sure it's gonna feel good soon...%UNICODE(0x2764)%」
+ENDIF
+	
+;フェラで射精後のお掃除
+IF (TCVAR:MASTER:112 == 1 || TCVAR:MASTER:112 == 2) && SELECTCOM == 81
+	
+ENDIF
+
+;-------------------------------------------
+;刻印取得
+;-------------------------------------------
+@M_KOJO_MESSAGE_MARKCNG_K33
+;このままだと地の文が表示されません
+;地の文を表示したい方は、下記のコメントアウトを削除して下さい
+CALL MARK_MESSAGE
+IF !FLAG:70
+	;苦痛刻印
+	IF TFLAG:22 == 1
+		PRINTFORMW 「Gaah, geez! What a jerk you are!」
+		PRINTFORMW 「To hurt a precious little girl's body like mine... Sob-sob...」
+	ELSEIF TFLAG:22 == 2
+		PRINTFORMW 「I know that you know that this is just my physical body...」
+		PRINTFORMW 「But seriously, are you trying to kill me or somethin'?」
+	ELSEIF TFLAG:22 == 3
+		PRINTFORMW 「Aaargghh, that does it!」
+		PRINTFORMW 「I don't remember ever feelin' so much pain short of gettin' torn to pieces!」
+		PRINTFORMW 「How 'bout you taste even just a lil' bit of it in return, huh?!」
+		CALL K33_TATARI_COUNTER(5)
+	ENDIF
+
+	;快楽刻印
+	IF TFLAG:23 == 1
+		PRINTFORMW 「Ooohhh... This brings me back...」
+		PRINTFORMW 「My body... is starting to remember these feelings again... %K33_MOAN()%%UNICODE(0x2764)%」
+	ELSEIF TFLAG:23 == 2
+		PRINTFORMW 「Whoaaaahh... That's crazyyyy... I don't remember ever feelin' like this!%UNICODE(0x2764)%」
+		PRINTFORMW 「Haaah... Yer pretty darn scary when you get serious, ain'tcha %K33_BOY()%%UNICODE(0x2764)%」
+	ELSEIF TFLAG:23 == 3
+		PRINTFORMW 「Ahhiiiiiiiii...! Haaah, haa, phew...%UNICODE(0x2764)%」
+		PRINTFORMW 「Now that's one way to break meeee...%UNICODE(0x2764)%」
+		PRINTFORMW 「I hope you can handle me now that I've known this pleasure...%UNICODE(0x2764)%」
+	ENDIF
+
+	;不埒刻印
+	;快楽による刻印
+	;LV1
+	IF TFLAG:24 == 11
+		PRINTFORMW 「Uehehe... Yer quite cheeky, I like that...」
+		PRINTFORMW 「C'mon then, show me some more%UNICODE(0x2764)%」
+	;LV2
+	ELSEIF TFLAG:24 == 12
+		PRINTFORMW 「Oh my, you do realize you're committing blasphemy with acts like that, hmm～?」
+		PRINTFORMW 「I don't mind though. Yer right, I *do* need to let off some steam... And I've got plenty%UNICODE(0x2764)%」
+	;LV3
+	ELSEIF TFLAG:24 == 13
+		PRINTFORMW 「Ufufu, indulgin' this little Suwako like this...」
+		PRINTFORMW 「You will... keep goin', right? Don't leave me behind like this, the fun is just about to begin%UNICODE(0x2764)%」
+		PRINTFORMDW Suwako says as she presses herself against you with a sly grin, staring deep into your eyes...
+	;屈服、恭順による刻印
+	;LV1
+	ELSEIF TFLAG:24 == 31
+		PRINTFORMW 「Umm, well... I think I'll give you a special permission to get a bit more intimate with me... Yeah, that'll do～」
+	;LV2
+	ELSEIF TFLAG:24 == 32
+		PRINTFORMW 「Heee-eh, you have some gall... But I don't mind, y'know%UNICODE(0x2764)%」
+		PRINTFORMW 「I love it when you show me some backbone, %K33_BOY()%～」
+	;LV3
+	ELSEIF TFLAG:24 == 33
+		PRINTFORMW 「Ahh... Well, that does it then.」
+		PRINTFORMW 「You've been pushin' me to this point on purpose, right?」
+		PRINTFORMW 「I hope you don't have any regrets about what's gonna happen next, riiiight?～%UNICODE(0x2764)%」
+	ENDIF
+
+	;反発刻印
+	IF TFLAG:21 && IS_COM_SEKUHARA(SELECTCOM) && FIRSTTIME("SuwakoWhoops",, [[諏訪子]]) ;forgive the naughty missclick one time
+		PRINTFORMDW Suwako seems really angry for a moment, but as she looks at you...
+		PRINTFORMW 「Oohh... Hahaha...」
+		PRINTFORMW 「W-Well, I assume yer hand might've just slipped there, sooo...」
+		PRINTFORMW 「But even if you did try to worship me in this way, it's still a very rude and profane thing to do, y'know?」
+		PRINTFORMW 「I'll, uh... Overlook it this time. Don't squander my goodwill, 'kay?」
+		PRINTFORMDW %BREAKENG(@"Suwako smiles at you cheerfully, but something tells you that she is glaring at your very soul through the tiniest gap between her squinted eyelids, telling you to \"behave, or else\"\@ TCVAR:[[諏訪子]]:360 > 0 ? , as evident by the curse still coursing through you #\@...")%
+		
+		CFLAG:[[諏訪子]]:ブチギレ = 0
+		TALENT:[[諏訪子]]:機嫌 = 0
+		MARK:[[諏訪子]]:反発刻印 = 0
+	ELSEIF TFLAG:21 == 1
+		PRINTFORMW 「Oho...」
+		PRINTFORMW 「Not sure if you're gutsy or just plain stupid.」
+	ELSEIF TFLAG:21 == 2
+		PRINTFORMW 「Wow, to think there'd be someone to make an enemy of a Goddess of all things.」
+		PRINTFORMW 「Welp, sucks to be you I guess!～」
+	ELSEIF TFLAG:21 == 3
+		PRINTFORMW 「Hmm.」
+		PRINTFORMW 「Y'know, I might be relatively outta juice in terms of faith, but...」
+		PRINTFORMW 「I think I've got just enough to punish one insolent brat like you!」
+		CALL COLORMESSAGE("「Ｒ Ｅ Ｐ Ｅ Ｎ Ｔ !!!」",C_RED,2,1)
+		CALL K33_TATARI_COUNTER(10)
+	ENDIF
+ENDIF
+

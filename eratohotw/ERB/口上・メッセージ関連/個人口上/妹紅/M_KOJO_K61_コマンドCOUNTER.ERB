@@ -1,0 +1,1088 @@
+﻿;SOURCEやNOWEXを使ってSELECTCOMに依存しない口上があってもいいんじゃない
+@M_KOJO_MESSAGE_COM_K61_00
+;性交処女喪失をRETURN 100して
+;IF RESULT == 100 でまとめるとか
+;苦痛や快楽のSOURCEをトリガーとして汎用あえぎ口上を作るとか
+;いろいろ利用方法は考えられますが適当にやってください
+
+
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"COUNTER"系口上
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;-------------------------------------------------
+;コミュニケーション
+;-------------------------------------------------
+;==================================================
+;距離が近い
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_1
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_1_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_1_1
+;was commented out originally, seems complete enough
+IF 陥落状態() >= 4
+	PRINTFORML 「Aren't we a little too far apart?」
+	;that's probably some proverb, might be better to just go "follow closely"
+	PRINTFORML 「A wife is supposed to stay no farther than three steps back from her husband after all.」
+ELSEIF 陥落状態() == 3
+	PRINTFORML 「...Yeah, I just kinda wanted to do it, I guess.」
+	PRINTFORML 「You want me closer? Well then, what should I do...」
+ELSEIF 陥落状態() == 2
+	PRINTFORML 「I'm kinda too close? Fufu, well I wonder what's that all about?」
+ELSEIF 陥落状態() == 1
+	PRINTFORML 「I just felt like doing this for a moment.」
+ELSE
+	PRINTFORML 「...Am I bothering you?」
+ENDIF
+RETURN 1
+
+;==================================================
+;チラ見
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_2
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_2_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_2_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSEIF 陥落状態() == 2
+ELSEIF 陥落状態() == 1
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;おはなし
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_3
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_3_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_3_1
+VARSET LOCAL
+IF LIMIT(BASE:ムード / 200,0,5) >= 3 && !RAND:2
+	PRINTFORM 「"
+	;my attempt at translating these
+	;these are all taken from various classical japanese literature it seems, the modern excerpts for some, some had typos/different particles too (maybe it's moko poorly remembering it)
+	;fuck searching proper translation for these though, but if that happens replace them
+	;wrote them like poems with splitting lines
+	;interestingly enough, many of those are related to fujiwara or were written by them, especially the second one
+	SELECTCASE RAND:4
+		;万葉集恋
+		;book available here https://www.gwern.net/docs/japanese/1940-nippongakujutsushinkokai-manyoshu.pdf
+		;partially used russian translation for most of those for manyou when unavailable http://riichitheory.ru/manyou/ ?p=tags&id=164
+		CASE 0
+			SIF !陥落状態()
+				GOTO MUJOU
+			SELECTCASE RAND:10
+				CASE 0
+					;source http://manyou.plabot.michikusa.jp/manyousyu4_659.html
+					;https://art-tags.net/manyo/four/m0659.html
+					PRINTFORM It is still but young,\n　Yet here we are, swamped by scuttlebutt,\n　So loathsome and unbearable.\n　Doomed we are, shall it continue any longer! Say, my love,\n　What shall become of us hereafter?
+				CASE 1
+					;http://tomoko.yamatoblog.net/万葉たまゆら/人言は　夏野の草の繁くとも　妹と我とし　携はり寝ば
+					;https://art-tags.net/manyo/ten/m1983.html
+					PRINTFORM May their hearsay spread and grow,\n　Like a thick field of summer grass,\n　But care I little,\n　For when you, and I\n　Hand in hand, fall asleep together here!
+				CASE 2
+					;https://art-tags.net/manyo/eleven/m2711.html
+					;https://manyoshu-japan.com/10867/
+					PRINTFORM Waters, that flow in the mountain gorge,\n　Hidden from all behind the forest thicket,\n　Can only be heard as a faint murmur...\n　I heard about you but once—\n　Yet my thoughts can never let go of it since!
+				CASE 3
+					;http://manyou.plabot.michikusa.jp/okureite_kohi.html
+					;https://art-tags.net/manyo/two/m0115.html
+					;translation https://archive.org/stream/Manyoshu/Anonymous%201000%20Poems%20from%20the%20Manyoshu%20The%20Complete%20Nippon%20Gakujutsu%20Shinkokai%20Translation%20%20%20%201965_djvu.txt
+					PRINTFORM Rather than stay behind to languish,\n　I will come and overtake you—\n　Tie at each turn of your road\n　A guide-knot, my lord!
+					;my variant
+					;PRINTFORM Rather than seeing you off,\n　And be left alone, suffering in yearning,\n　I shall share your path instead...\n　So I ask of you, prithee, mark your way for me, Milord!
+				CASE 4
+					;https://art-tags.net/manyo/ten/m1894.html
+					PRINTFORM In the long long day of spring,\n　The day when mist rises,\n　Languished I in longing.\n　As the night becomes darker all the more,\n　Perhaps now I may catch the sight of you at last!
+				CASE 5
+					;https://art-tags.net/manyo/ten/m2301.html
+					;http://www.manyou.jp/koko-katudo/in_love/in_love_78.html
+					;translation http://www.wakapoetry.net/mys-x-2301/
+					PRINTFORM \"Right, then!\n　I'll long for you no more!\" I said, yet\n　The autumn wind\n　Blows cold tonight\n　And my thoughts are all of you.
+					;my variant
+					;PRINTFORM Though at times I may think:\n　\"Enough, may I lose sight of my love for all I care",\n　Yet still, in the night when the autumn wind blows cold,\n　I long for you, all the same.
+				CASE 6
+					;https://art-tags.net/manyo/twelve/m2922.html
+					PRINTFORM Perhaps because I think just this:\n　\"Shall the evening come\n　And we shall meet at last\",—\n　That even then I wait for it with joy\n　An hour when day comes to a sunset!
+				CASE 7
+					;https://manyoshu-japan.com/11039/   11:2539
+					PRINTFORM Has it been a thousand years,\n　Since we first saw each other,\n　Or perhaps, it may have not?\n　I ask myself, if only I think this way,\n　The one who can wait for you no longer?
+				CASE 8
+					;http://manyou.plabot.michikusa.jp/manyousyu4_661.html
+					;http://www.sakurano.co.jp/entertainment/kadan/LoveLeaf080.html
+					;translation https://archive.org/stream/Manyoshu/Anonymous%201000%20Poems%20from%20the%20Manyoshu%20The%20Complete%20Nippon%20Gakujutsu%20Shinkokai%20Translation%20%20%20%201965_djvu.txt
+					PRINTFORM So you desire our love to endure?\n　Then, if only while I see you\n　After days of longing and yearning.\n　Pray, speak to me\n　Sweet words — all you can!
+					;my variant
+					;PRINTFORM When I, worn out in melancholy,\n　Get to meet you at last,—\n　Just in that moment, prithee\n　Whisper me sweet nothings till the end,\n　If you wish for this love to last forever!
+				CASE 9
+					;https://art-tags.net/manyo/ten/m1903.html
+					;http://www5e.biglobe.ne.jp/~narara/newpage%2010-1903.html
+					PRINTFORM Love that my heart nurtures in secret, darling,\n　Is like flowers of ashibi,\n　Growing in the gorges of faraway mountains,\n　In the midst of their full bloom!
+			ENDSELECT
+			LOCAL = 1
+		;百人一首恋
+		CASE 1
+			SIF !陥落状態()
+				GOTO MUJOU
+			;all can be found here http://jti.lib.virginia.edu/japanese/hyakunin/frames/hyakuframes.html
+			SELECTCASE RAND:10
+				CASE 0
+					;43rd frame
+					PRINTFORM I have met my love.\n　When I compare this present\n　With feelings of the past,\n　\n　My passion is now as if\n　I have never loved before.
+				CASE 1
+					;57th
+					PRINTFORM Meeting on the path:\n　But I cannot clearly know\n　If it was he,\n　\n　Because the midnight moon\n　In a cloud had disappeared.
+				CASE 2
+					;86
+					PRINTFORM Should I blame the moon\n　For bringing forth this sadness,\n　As if it pictured grief?\n　\n　Lifting up my troubled face,\n　I regard it through my tears.
+				CASE 3
+					;40
+					PRINTFORM Though I would hide it,\n　In my face it still appears—\n　My fond, secret love.\n　\n　And now he questions me:\n　\"Is something bothering you?\"
+				CASE 4
+					;62
+					PRINTFORM The rooster's crowing\n　In the middle of the night\n　Deceived the hearers;\n　\n　But at Osaka's gateway\n　The guards are never fooled.
+				CASE 5
+					;52
+					PRINTFORM Though I know indeed\n　That the night will come again\n　After day has dawned,\n　\n　Still, in truth, I hate the sight\n　Of the morning's coming light.
+				CASE 6
+					;51
+					PRINTFORM How can I tell her\n　How fierce my love for her is?\n　Will she understand\n　\n　That the love I feel for her\n　Burns like Ibuki's fire plant?
+				CASE 7
+					;97
+					PRINTFORM Like the salt sea-weed,\n　Burning in the evening calm.\n　On Matsuo's shore,\n　\n　All my being is aflame,\n　Awaiting her who does not come.
+				CASE 8
+					;89
+					PRINTFORM Like a string of gems\n　Grown weak, my life will break now;\n　For if I live on,\n　\n　All I do to hide my love\n　May at last grow weak and fail.
+				CASE 9
+					;44
+					PRINTFORM If it should happen\n　That we never met again,\n　I would not complain;\n　\n　And I doubt that she or I\n　Would feel that we were left alone.
+			ENDSELECT
+			LOCAL = 1
+		;狂歌恋
+		CASE 2
+			;translation https://archive.org/stream/bub_gb_AJBZKvd5IPYC/bub_gb_AJBZKvd5IPYC_djvu.txt
+			;http://www.paraverse.org/maddescription.htm
+			;it is said that kyouka (aka mad ramblings, full of word play and double meanings) is untranslatable, so ye, unlike haiku it is hardly known
+			
+			;tried to translate the missing ones myself
+			SIF !陥落状態()
+				GOTO MUJOU
+			SELECTCASE RAND:11
+				CASE 0
+					;kimi ga kao chiyo ni hito-tabi 129 
+					;I liked both so I'll include both
+					IF RAND:2
+						PRINTFORM Majesty's face\n　washed once in a 1000 reigns\n　is no disgrace\n　\n　Dirt upon dirt is age's gain,\n　Behold the verdant moss in place!
+					ELSE
+						PRINTFORM You Rock, Girl!\n　Roll Not, Stone!\n　\n　Your face it's plain\n　\n　has only been washed once\n　in a 1000 reigns\n　\n　Dirt upon dirt, without loss\n　Until we celebrate its moss! 
+					ENDIF
+				CASE 1
+					;hito no koi ki wa itsu nari 99
+					IF RAND:2
+						PRINTFORM Ah, the shame!\n　How can one reply when\n　the cat has reason\n　\n　to ask if the loves of men,\n　like felines', have a season? 
+					ELSE
+						PRINTFORM Asked by pussy:\n　\"What season, then, do men\n　come into heat?"\n　\n　The cat's got my tongue:\n　We must admit defeat!
+					ENDIF
+				CASE 2
+					;translation https://books.google.ru/books?id=kOs7DwAAQBAJ&printsec=frontcover     p568 at the bottom
+					PRINTFORM I tried to quit\n　but the rain of tears kept pouring down;\n　so, once again,\n　I was up to my crotch in love's morass.
+				CASE 3
+					;amanogawa hagoromo 1 77
+					IF RAND:2
+						PRINTFORM The Milky Way\n　is easily crossed, I bet\n　in a feather robe\n　\n　Magpie bridges in the sky?\n　How silly can you get!
+					ELSE
+						PRINTFORM Heaven's River\n　Don't they all have wings\n　to get across it?\n　\n　Feather bridges? My, my,\n　That is magpie in the sky!
+					ENDIF
+				CASE 4
+					;PRINTFORM 【羨まし声も惜しまぬのら猫の心のままに恋をするかな】
+					;mailed the dude, he provided these (dude trust me)
+					IF RAND:2
+						PRINTFORM How envious not to have to hold it in – I mean my voice!\n　I'd make love as freely as a feral cat had I the choice!
+					ELSE
+						PRINTFORM How I envy those feral cats who do not worry much about\n　making noise but can make love freely just letting it out!
+					ENDIF
+				CASE 5
+					;PRINTFORM 【下紐も初めて人に解き櫛のはもじに思ふけさのきぬぎぬ】
+					;substitute with this for now
+					PRINTFORM Must we part!\n　Open not, not for a while, O Heaven's Door!\n　Let this dawn stay dark\n　and us in bed for evermore!
+				CASE 6
+					;PRINTFORM 【つつめどもいつ顔色に出でぬるはあだし茶摘みの極そそりかな】
+					;substitute with this for now
+					PRINTFORM As I linger half-asleep in bed to dream of holding him again,\n　even on the sparrow-forty-side of love do I blush like a maiden?
+				CASE 7
+					;translation from the book above, p221
+					PRINTFORM Water is naught to drink\n　neither have I claims to call mine own,\n　but ottering new lies nightly,\n　this playboy floats in moonshine.
+				CASE 8
+					;translation from the book above, p527
+					IF RAND:2
+						PRINTFORM How I wish you might ask me over\n　in the evening for just a sip\n　which I'd accept and for your sake and mine\n　have more sake!
+					ELSE
+						PRINTFORM 'Ere the eveningtide is run\n　have a sip with me,\n　then let's be done.'\n　\n　Thanking you, here's my toast:\n　to drink our fill would be more fun!
+					ENDIF
+				CASE 9
+					;page 671 has it, but it's said to be untranslatable
+					;いふ = 言う, which at the same time a word play with 結う; とく = 解く = 説く 
+					;PRINTFORM 【わが恋は柳の糸の乱れ髪とくもとかれずいふもいはれず】
+					PRINTFORM My love is messy, not unlike a bed-head\n　Can't explain, nor can I solve it\n　Can't describe, nor can I do it.
+				CASE 10
+					;added, I just like this one, plays on pc's promiscuous nature
+					PRINTFORM Had I known your heart could change like the eye of a cat,\n　I'd have poked you nightly and not slept a wink at that!
+			ENDSELECT
+			LOCAL = 1
+		;無常観
+		;this one is from various sources :pedysmile:
+		CASEELSE
+			$MUJOU
+			SELECTCASE RAND:10
+				CASE 0
+					;https://shibasaijyo.hatenablog.com/entry/20150125/1422132467
+					;https://plaza.rakuten.co.jp/sengokulily/diary/201410070000/
+					PRINTFORM If suffering awaits us at every turn,\n　shouldn't we then find solace in anguish?
+				CASE 1
+					;https://piicats.net/kuukai1.htm
+					PRINTFORM The madman of the human realm\n　clueless as much about his own madness,\n　as the ignorant creature\n　just as oblivious of its own blindness.
+				CASE 2
+					;https://ja.wikibooks.org/wiki/平家物語_祇園精舎
+					;explanation from one of facebook posts: この叙述は「白いヒメシャラの花が落ちると徐々に褐色に変わっていく様子を、盛者もいつかは衰えていく」ことに例えたものと言われています。
+					PRINTFORM The bells of Jetavana fell silent eventually, reduced to echo;\n　Just like the flowers of stewartia that fall down and whither away,\n　even most prosperous are sure to decay one day.
+				CASE 3
+					;translation https://www.minakatella.net/letters/hojoki17.html
+					;one of the sources hints that "the hill" stands for "abundance"
+					PRINTFORM Alas! The moonlight\n　Behind the hill is hidden\n　In gloom and darkness.\n　Oh, would her radiance ever\n　My longing eyes rejoiced!
+				CASE 4
+					;http://annyouzi.click/wp/bukkyou-muzyoukan/
+					;https://kotobank.jp/word/朝には紅顔ありて夕べには白骨となる-424518
+					;translation https://www.facebook.com/Cyberbowz/posts/1144530895574349/
+					;the meaning is that you may be full of ambition at the start but you may lose your way at the end for reasons
+					PRINTFORM We may have radiant faces in the morning,\n　but by evening we may turn into white ashes.
+					;my variant
+					;PRINTFORM Full of life\n　just in the morning we may be,\n　but shriveled to bone we become\n　towards the evening.
+				CASE 5
+					;https://meigennavi.net/word/032/032109.htm
+					PRINTFORM Alone at birth, alone at death\n　if that is so, then\n　even surrounded by people\n　loneliness prevails.
+				CASE 6
+					;http://zatta1.com/text-template-perfect-edition-2/
+					;https://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q1451470644
+					PRINTFORM Each day, without fail\n　on journey is spent,\n　the drifter life chose me\n　there lies my descent.
+				CASE 7
+					;https://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q1245778632
+					;https://www.mikumano.net/setsuwa/hogen1.html
+					;https://ameblo.jp/arukanakika/entry-12321335307.html
+					PRINTFORM Wonder I, if the moonlight\n　reflected in the water scooped up in my palms\n　was ever bright enough to be seen there\n　just like me in this world.
+				CASE 8
+					;https://manapedia.jp/text/2095
+					;https://frkoten.jp/2016/01/11/post-778/
+					;note 「飛鳥川」の「あす」は「明日」をかけて「昨日」「今日」の縁語となっている。末尾の「なる」は係助詞「ぞ」の結びで、動詞「なる」の連体形。
+					PRINTFORM Nothing is certain it seems in the world we live in,\n　Where once the mighty waters of tomorrow raged just yesterday\n　Changed to mere puddle by today.
+				CASE 9
+					;https://kokugonomado.meijishoin.co.jp/posts/1204
+					;https://www.kanjipedia.jp/kotoba/0005043200
+					PRINTFORM This world, an inn for all things living\n　Guests they are, dropped inside in search of an exit\n　As the travelers who must continue\n　Their never ending journey.
+			ENDSELECT
+			LOCAL = 2
+	ENDSELECT
+	PRINTFORML "...」
+	IF !GETBIT (CFLAG:1610,4)
+		PRINTFORML 「...Oh no, I don't really have time to come up with something so fancy, so I'm just reciting the sayings I've remembered distinctly.」
+		PRINTFORML 「It's not like I have any kind of poetic imagination for making these anyways. Still...」
+		PRINTFORML
+		SETBIT CFLAG:1610,4
+	ENDIF
+ENDIF
+
+IF 陥落状態() >= 4
+	IF LOCAL == 1
+		PRINTFORML 「I can hardly believe it myself that a poem can be so relatable to what I'm actually experiencing. I've been ostracized for so long after all...」
+		PRINTFORML 「Sure I had my fair share of friends and enemies, but I never thought I'd be able to open up to someone like this.」
+		PRINTFORML 「But now, I feel truly delighted that this poem so accurately describes my feelings.」
+	ELSEIF LOCAL ==2
+		PRINTFORML 「......Perhaps, just like in this moment, too...」
+		PRINTFORML 「Ah, nah, sorry, don't mind me. Seriously, never mind.」
+		PRINTFORML 「I just... want you to hold me for a little bit. Thank you, %MASTERNAME:61%.」
+	ELSE
+		PRINTFORML 「Haha, well, did it pique your interest?」
+		PRINTFORML 「I'm glad if that's the case. Oftentimes people say my ramblings aren't all that fun to listen to.」
+		PRINTFORML 「It's kinda depressing hearing that they're either too old-fashioned or preachy after all.」
+	ENDIF
+ELSEIF 陥落状態() == 3
+	IF LOCAL == 1
+		PRINTFORML 「What, you'd like to know the true meaning behind this poem? Fufu, how about you give it some thought on your own?」
+		PRINTFORML 「Well, for one thing it's going to be about love, without a doubt.」
+	ELSEIF LOCAL ==2
+		PRINTFORML 「...Even this feeling... may come to an end one day... perhaps.」
+		PRINTFORML 「That's so unlike me? Haha, looks like I've gotten quite soft ever since I met you, %CALLNAME:MASTER%.」
+	ELSE
+		PRINTFORML 「...I sure am glad having such a good listener.」
+		PRINTFORML 「Fufu, after all, I don't think I have anyone when it comes to that besides you, Keine and Usami.」
+	ENDIF
+ELSEIF 陥落状態() == 2
+	IF LOCAL == 1
+		PRINTFORML 「Fufu, to think this day would come when a poem I'm reciting could ring so true to my own feelings...」
+	ELSEIF LOCAL ==2
+		PRINTFORML 「...Well, it's not really meaningful or anything. Yeah, it's just meaningless talk.」
+	ELSE
+		PRINTFORML 「Fufu, speaking with you is nice and all, but I'd prefer if we did something even more enjoyable to boot...」
+	ENDIF
+ELSEIF 陥落状態() == 1
+	IF LOCAL == 1
+		PRINTFORML 「I never thought the day I'd be reciting this poem would come...」
+	ELSEIF LOCAL ==2
+		PRINTFORML 「Nah, I'm not trying to imply anything bad by it, it's just... Yeah...」
+	ELSE
+		PRINTFORML 「...Fufu, I must admit speaking with you really is fun.」
+	ENDIF
+ELSE
+	IF LOCAL ==2
+		PRINTFORML 「...Well, somehow it just came out of my mouth. I'm not trying to offend you, really.」
+	ELSE
+		PRINTFORML 「You think it's interesting? Well, I don't remember much of the things that remain in the history books though.」
+	ENDIF
+ENDIF
+PRINTFORMW
+RETURN 1
+
+;==================================================
+;いい匂い
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_4
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_4_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_4_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSEIF 陥落状態() == 2
+ELSEIF 陥落状態() == 1
+ELSE
+ENDIF
+PRINTFORML 「...%SPLIT_G("What's the matter:What is it:What:Huh:Hm:Is something wrong")%?」
+RETURN 1
+
+;-------------------------------------------------
+;ベリーソフト
+;-------------------------------------------------
+;==================================================
+;近寄ってくる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_11
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_11_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_11_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSEIF 陥落状態() == 2
+ELSEIF 陥落状態() == 1
+ELSE
+ENDIF
+PRINTFORML 「Sigh, just what the heck am I doing... Huh, what?」
+RETURN 1
+
+;==================================================
+;笑顔を浮かべる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_12
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_12_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_12_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSEIF 陥落状態() == 2
+ELSEIF 陥落状態() == 1
+ELSE
+ENDIF
+PRINTFORML 「...This might be... not so bad after all...」
+PRINTFORML 「...?! W-Why are you looking at me?」
+RETURN 1
+
+;==================================================
+;構って欲しがる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_13
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_13_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_13_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSEIF 陥落状態() == 2
+ELSEIF 陥落状態() == 1
+ELSE
+ENDIF
+PRINTFORML 「This feels awkward? Well, it's not like it's my problem anyways.」
+RETURN 1
+
+;==================================================
+;身をすり寄せる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_14
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_14_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_14_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSEIF 陥落状態() == 2
+ELSEIF 陥落状態() == 1
+ELSE
+ENDIF
+PRINTFORML 「...Somehow it seemed so easy to catch hold of you, so I went with it for no reason at all.」
+RETURN 1
+
+;==================================================
+;見つめてくる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_15
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_15_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_15_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSEIF 陥落状態() == 2
+ELSEIF 陥落状態() == 1
+ELSE
+ENDIF
+PRINTFORML 「Haah... Why am I feeling like this... No, it's nothing, never mind.」
+RETURN 1
+
+;==================================================
+;肩にあご乗せ
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_16
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_16_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_16_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSEIF 陥落状態() == 2
+ELSEIF 陥落状態() == 1
+ELSE
+ENDIF
+PRINTFORML 「Hold still. No reason, really, I just wanted to do it is all.」
+RETURN 1
+
+;-------------------------------------------------
+;ソフト
+;-------------------------------------------------
+;==================================================
+;色っぽい仕草
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_20
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_20_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_20_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;見つめる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_21
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_21_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_21_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;体を摺り寄せる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_22
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_22_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_22_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;スカートめくり
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_23
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_23_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_23_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;息を吹きかける
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_24
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_24_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_24_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;尻を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_25
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_25_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_25_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;腕抱き付き
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_26
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_26_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_26_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;谷間を見せる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_27
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_27_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_27_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;セクハラ
+;-------------------------------------------------
+;==================================================
+;キス
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_30
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_30_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_30_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;後ろから抱きつく
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_31
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_31_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_31_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;前ろから抱きつく
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_32
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_32_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_32_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;胸を揉ませる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_33
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_33_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_33_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;股間をまさぐる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_34
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_34_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_34_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;スカートの中を見せる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_35
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_35_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_35_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;後ろから胸もみもみ
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_36
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_36_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_36_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+
+;-------------------------------------------------
+;愛撫
+;-------------------------------------------------
+;==================================================
+;手淫
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_50
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_50_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_50_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;口淫
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_51
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_51_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_51_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;素股
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_52
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_52_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_52_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;パイズリ
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_53
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_53_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_53_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;足コキ
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_54
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_54_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_54_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_55
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_55_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_55_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;アナル舐め
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_56
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_56_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_56_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;指挿入
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_57
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_57_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_57_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_58
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_58_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_58_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_59
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_59_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_59_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;ディープキス
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_60
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_60_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_60_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+
+;-------------------------------------------------
+;奉仕
+;-------------------------------------------------
+;==================================================
+;クンニ強制
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_70
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_70_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_70_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;フェラチオ強制
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_71
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_71_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_71_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;アナル奉仕
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_72
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_72_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_72_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;ぱふぱふ
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_73
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_73_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_73_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;乳合わせ
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_74
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_74_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_74_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;タワシ洗い
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_75
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_75_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_75_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+;==================================================
+;強制アソコ愛撫
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_76
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_76_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_76_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;乳を吸わせる
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_77
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_77_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_77_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+;-------------------------------------------------
+;性交
+;-------------------------------------------------
+;==================================================
+;挿入される（MASTER受け）
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_80
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_80_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_80_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;Ｖ挿入する（TARGET受け）
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_85
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_85_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_85_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;だいしゅきホールド
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_86
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_86_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_86_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;Ａ挿入する（TARGET受け）
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_87
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_87_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_87_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;Ｖ腰振り（MASTER受け）
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_88
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_88_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_88_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;Ａ腰振り（MASTER受け）
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_89
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_89_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_89_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;Ａ挿入される（MASTER受け）
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_90
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_90_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_90_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;イラマチオされる（MASTER受け）
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_91
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_91_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_91_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1
+
+;==================================================
+;アナル開発許可を求める
+;==================================================
+@M_KOJO_MESSAGE_COUNTER_K61_92
+CALL EVENT_COUNTER_MESSAGE
+CALL M_KOJO_MESSAGE_COUNTER_K61_92_1
+RETURN RESULT
+@M_KOJO_MESSAGE_COUNTER_K61_92_1
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSE
+ENDIF
+RETURN 1

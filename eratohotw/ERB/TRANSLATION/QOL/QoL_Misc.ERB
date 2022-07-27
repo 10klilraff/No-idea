@@ -1,0 +1,449 @@
+﻿;qol
+@LIST_SEARCHABLE(ARG)
+;Lists all the characters, prints them
+;ARG to skip master character
+#DIM CREDRAW
+#DIM FIRST_LINE
+#DIMS INPUT_STR
+#DIMS SEARCH_STRING
+FIRST_LINE = LINECOUNT
+$REPRINT
+CLEARLINE LINECOUNT - FIRST_LINE
+CREDRAW = CURRENTREDRAW()
+REDRAW 0
+FOR LOCAL, 0, CHARANUM
+	IF !IS_NAMED(LOCAL)
+		CONTINUE
+	ENDIF
+	SIF ARG && LOCAL == MASTER
+		CONTINUE
+	SIF STRCOUNT(TOLOWER(CALLNAME:LOCAL), TOLOWER(SEARCH_STRING)) && SEARCH_STRING != ""
+		SETCOLOR 103,228,126
+	PRINTFORMLC [{LOCAL, 3}] %CALLNAME:LOCAL%
+	RESETCOLOR
+NEXT
+INPUTS
+INPUT_STR '= RESULTS
+IF ISNUMERIC(INPUT_STR)
+	SIF ARG && RESULT == MASTER
+		GOTO REPRINT
+	RESULT = TOINT(INPUT_STR)
+	RETURN RESULT
+ENDIF
+SEARCH_STRING '= RESULTS
+GOTO REPRINT
+
+@BATHED(ARG)
+#FUNCTIONS
+LOCAL = TIME:1 - EX:MASTER:前回の入浴時刻
+;DAY * 1440 + TIME - EX:MASTER:前回の入浴時刻 < 360
+SELECTCASE LOCAL
+	CASE IS < 90
+	SETCOLOR C_AQUA
+		RETURNF "Fresh"
+	CASE IS < 180
+	SETCOLOR C_P_BLUE
+		RETURNF "Clean"
+	CASE IS < 270
+	SETCOLOR C_P_YELLOW
+		RETURNF "Neat"
+	CASE IS < 360
+		RETURNF "Tidy"
+	CASEELSE
+		RETURNF "Can bathe"
+ENDSELECT
+
+;disabled, as daily "luck" score was moved to CFLAG:MASTER:今日の運勢, and Suwako can't help you with that
+[SKIPSTART]
+@EVENTTRAIN
+#LATER
+;needs earth blessing from suwako
+SIF !FLAG:天滴坤神
+	RETURN
+	
+PRINTFORML
+PRINTFORML You can feel how bountiful the earth is from Suwako's earth blessing...
+PRINTFORM Today's score: 
+SELECTCASE FLAG:日替わりイベント
+	CASE IS <= 100
+		PRINTFORML Poor...
+	CASE IS <= 300
+		PRINTFORML Sparse...
+	CASE IS <= 500
+		PRINTFORML Average
+	CASE IS <= 650
+		PRINTFORML Lavish
+	CASE IS <= 850
+		PRINTFORML Bountiful!
+	CASEELSE
+		PRINTFORML Rich harvest!!!
+ENDSELECT
+WAIT
+[SKIPEND]
+
+@EVENTTRAIN
+#LATER
+;check today's fortune from tewi's fortune crest
+SIF !ITEM:兎符「開運大紋」
+	RETURN
+	
+PRINTFORML
+PRINTFORM Huh? The Great Fortune Crest appears to be 
+SELECTCASE CFLAG:MASTER:今日の運勢
+	CASE IS <= 100
+		PRINTFORML dull and colorless...
+	CASE IS <= 300
+		PRINTFORML dimmer than usual...
+	CASE IS <= 500
+		PRINTFORML in an average shape.
+	CASE IS <= 650
+		SETCOLOR C_P_YELLOW
+		PRINTFORML glowing somewhat.
+	CASE IS <= 850
+		SETCOLOR C_YELLOW
+		PRINTFORML shining!
+	CASEELSE
+		SETCOLOR C_ORANGE
+		PRINTFORML sparking brilliantly!!!
+ENDSELECT
+RESETCOLOR
+WAIT
+
+
+@QoL_FavPosShow(ARG)
+;note: can't be player
+SELECTCASE CFLAG:ARG:好きな体位
+CASE 1
+	LOCALS = Missionary
+CASE 2 
+	LOCALS = Doggy Style
+CASE 3 
+	LOCALS = Cowgirl
+CASE 4 
+	LOCALS = Lotus Position 
+CASE 5 
+	LOCALS = Reverse Lotus
+CASE 6
+	LOCALS = Anal Missionary
+CASE 7 
+	LOCALS = Anal Doggy Style
+CASE 8 
+	LOCALS = Anal Cowgirl
+CASE 9 
+	LOCALS = Anal Lotus Position
+CASE 10 
+	LOCALS = Anal Reverse Lotus
+ENDSELECT
+CALL COLORMESSAGE(@"%LOCALS% became %CALLNAME:ARG%'s new favorite position!",C_YELLOW,2,1)
+
+;paging for list of characters in APPEND_SYS.ERB
+@NEWMEMBER_PAGING
+#DIM DYNAMIC nPage
+#DIM DYNAMIC nPageLength
+#DIM nPageSize = 20
+#DIM DYNAMIC nPrintCount
+#DIMS strPrintRange
+#DIM nLineCnt_Head
+
+nLineCnt_Head = LINECOUNT
+$LOOP
+SIF LINECOUNT - nLineCnt_Head > 0
+	CLEARLINE LINECOUNT - nLineCnt_Head
+
+LOCAL:6 = 0
+RESULT:1 = 0
+strPrintRange = 
+FOR LOCAL,1,CHARANUM
+	SIF CFLAG:LOCAL:神社在住 > 0
+		CONTINUE
+	SIF TALENT:LOCAL:行きずり
+		CONTINUE
+	IF TALENT:LOCAL:恋慕 && EXP:LOCAL:愛情経験 >= 200
+		strPrintRange += TOSTR(LOCAL) + ":"
+		RESULT:1 = LOCAL
+		LOCAL:6 ++
+	ENDIF
+NEXT
+
+nPageLength = LOCAL:6 / nPageSize
+SIF nPage > nPageLength
+	nPage = 0
+
+nPrintCount = 0
+LOCAL:7 = LINECOUNT
+FOR LOCAL,1,CHARANUM
+	SIF !SPLIT_CHECK(strPrintRange, LOCAL:0) ;show only those who are in the list
+		CONTINUE
+	SIF (nPrintCount >= (nPage) * nPageSize) && (nPrintCount < (nPage+1) * nPageSize)
+		PRINTFORML [{LOCAL,3}] - Allow %CALLNAME:LOCAL% to move in
+
+	nPrintCount ++
+NEXT
+;CALL EQUATE_LINE, LOCAL:7 + nPageSize*2
+
+;controls
+IF nPageLength != 0
+	PRINTFORML
+	PRINTBUTTON @"%"Prev page",15,LEFT%", 998
+	PRINTFORM (Page {nPage+1}/{nPageLength+1})%" "*6%
+	PRINTBUTTON @"%"Next page",15,LEFT%", 997
+	PRINTFORML
+ENDIF
+
+DRAWLINE
+
+PRINTFORML [999] - Accept no applicants
+PRINTL
+INPUT
+;custom code
+SELECTCASE RESULT
+	CASE 998, 997
+		SIF nPageLength == 0
+			GOTO LOOP
+		nPage = PAGE_HANDLE(RESULT, 998, nPage, 0, nPageLength)
+		GOTO LOOP
+ENDSELECT
+RETURN RESULT
+
+@PANTY_SPECIAL_GET(ARG, 種類)
+#DIM 種類
+
+IF 種類 == 18
+	CALL COLORMESSAGE(@"Got %CALLNAME:ARG%'s secret panties!",C_PINK,2,1)
+ELSE
+	LOCALS '= CLOTHES_REQUIREMENT_TR(GET_STR(ARG, "下半身下着_ずらし可能", 種類, "コレクション解禁条件"))
+	SELECTCASE LOCALS
+	CASE "Req: Love"
+		CALL COLORMESSAGE(@"Got %CALLNAME:ARG%'s love panties!",C_PINK,2,1)
+	CASE "Req: Sadism 5"
+		CALL COLORMESSAGE(@"Got %CALLNAME:ARG%'s sadism panties!",C_PINK,2,1)
+	CASE "Req: Exposure 4", "Req: Exposure 5"
+		CALL COLORMESSAGE(@"Got %CALLNAME:ARG%'s exhibitionist panties!",C_PINK,2,1)
+	CASE "Req: Sexfriend"
+		CALL COLORMESSAGE(@"Got %CALLNAME:ARG%'s sexfriend panties!",C_PINK,2,1)
+	ENDSELECT
+ENDIF
+
+@QoL_DateEndConfirm()
+PRINTFORML Do you really want to go home?
+SIF FLAG:デート相手
+	PRINTFORML Your current date will be over.
+CALL ASK_YN
+SIF RESULT
+	RETURN -1
+	
+@QoL_Stall(ARGS, CHARA, 商人パワー, ARG)
+#DIM REF CHARA
+#DIM 商人パワーM
+#DIM 商人パワーT
+#DIM REF 商人パワー
+SELECTCASE ARGS
+	CASE "SetUp"
+		IF FLAG:デート相手
+			CHARA = FLAG:デート相手
+		ELSEIF TARGET && ABL:TARGET:親密 >= 10 && SHIRAHU(TARGET) && CFLAG:TARGET:行動 != 5
+			CHARA = TARGET
+		ELSE
+			CHARA = 0
+		ENDIF
+		;商人パワー設定
+		商人パワーM = ABL:MASTER:話術技能 * 25 + ABL:MASTER:教養 * 10 + TFLAG:幸運補正 * 10
+
+		SIF CHARA
+			商人パワーT = ABL:CHARA:話術技能 * 25 + ABL:CHARA:教養 * 10
+		;参加者で最もパワーが高いものを基準に、1/2したもう１人のパワーを足す
+		IF 商人パワーM >= 商人パワーT
+			商人パワー = 商人パワーM + (商人パワーT / 2)
+		ELSE
+			商人パワー = 商人パワーT + (商人パワーM / 2)
+		ENDIF
+		IF FLAG:デート相手
+			PRINTFORML While on a date, %CALLNAME:(FLAG:デート相手)% decides to help you out as an assistant!
+		ELSEIF TARGET
+			PRINTFORML \@ CHARA == 0 ? %CALLNAME:TARGET% doesn't seem to be interested in helping you set up the stall... # %CALLNAME:TARGET% decides to help you out as an assistant!\@
+		ENDIF
+		SELECTCASE 商人パワー
+			CASE 0 TO 99
+				PRINTFORML You're not really confident in your haggling skills, however...
+			CASE 100 TO 199
+				PRINTFORML Your haggling skills seem to be adequate enough.
+		CASEELSE
+			PRINTFORML You're confident enough that you can sell anything to anyone with your haggling skills!
+		ENDSELECT
+	CASE "Place"
+		IF ABL:MASTER:教養 + (CHARA > 0 ? ABL:CHARA:教養 # 0) >= 3
+			SELECTCASE STALL_SHOPPER(STALL_SPOT(CFLAG:MASTER:現在位置))
+				CASE IS <= 0
+					LOCALS = dreadful
+				CASE 1 TO 5
+					LOCALS = poor
+				CASE 6 TO 10
+					LOCALS = fairly average
+				CASE 11 TO 20
+					LOCALS = rather promising
+				CASE 21 TO 30
+					LOCALS = quite prosperous
+				CASEELSE
+					LOCALS = very favorable
+			ENDSELECT
+			PRINTFORM Business seems 
+			CALL COLORMESSAGE(LOCALS,C_YELLOW)
+			PRINTFORML  on this spot at this time...
+		ENDIF
+	CASE "Estimate"
+		SIF ABL:MASTER:話術技能 + ABL:MASTER:教養 <= 4
+			RETURN 0
+		PRINTFORM Thanks to your personal skills, you can estimate 
+		SIF ABL:MASTER:話術技能 + ABL:MASTER:教養 > 4
+			CALL COLORMESSAGE("profitable  ",C_AQUA)
+		SIF ABL:MASTER:話術技能 + ABL:MASTER:教養 > 6
+			CALL COLORMESSAGE("poor ",C_YELLOW)
+		SIF ABL:MASTER:話術技能 + ABL:MASTER:教養 > 9
+			CALL COLORMESSAGE("very profitable ",C_GREEN)
+		PRINTFORML items!
+	CASE "Guess"
+		RESETCOLOR
+		;SELECTCASE GETPERCENT(STALL_PRICE_SET(商人パワー, ARG, 1, 2), ITEMPRICE:ARG) ;the problem is that a lot of low costing items still don't sell for much even with best modifiers
+		SELECTCASE STALL_PRICE_SET(商人パワー, ARG, 1, 2)
+			CASE IS >= 10000
+				SIF ABL:MASTER:話術技能 + ABL:MASTER:教養 > 9
+					SETCOLOR C_GREEN
+			CASE IS >= 5000
+				SIF ABL:MASTER:話術技能 + ABL:MASTER:教養 > 4
+					SETCOLOR C_AQUA
+			CASE IS < 1000
+				SIF ABL:MASTER:話術技能 + ABL:MASTER:教養 > 6
+					SETCOLOR C_YELLOW
+		ENDSELECT
+ENDSELECT
+
+@Qol_GiftReview(nScore, nCost)
+#FUNCTIONS
+#DIM nScore
+#DIM nCost
+#DIM nRankReq = 3, 4, 5, 6, 7, 8 ;knowledge req for most accurate approximate
+#DIM nRankTier = 10000, 50000, 100000, 500000, 1000000 ;cost for determining the rank
+#DIM DYNAMIC nRank
+#DIM nApproximate
+RESULT = 0
+SIF ABL:MASTER:教養 < 3
+	RETURNF
+SIF ABL:親密 < 5
+	RETURNF
+	
+;find out rank
+SELECTCASE nCost
+	CASE IS <= nRankTier:0 ;0~10k
+		nRank = 0
+	CASE IS <= nRankTier:1 ;10k~50k
+		nRank = 1
+	CASE IS <= nRankTier:2 ;50k~100k
+		nRank = 2
+	CASE IS <= nRankTier:3 ;100k~500k
+		nRank = 3
+	CASE IS <= nRankTier:4 ;500k~1m
+		nRank = 4
+CASEELSE ;1m+
+	nRank = 5
+ENDSELECT
+	
+SELECTCASE ABL:MASTER:教養 - nRankReq:nRank
+	CASE IS >= 0 ;closest approximate when meeting the req or exceeding it
+		nApproximate = nScore + RAND:10 - RAND:10
+	CASE -1
+		nApproximate = nScore + RAND:100 - RAND:100
+	CASE -2
+		nApproximate = nScore + RAND:200 - RAND:200
+CASEELSE
+	;can't see if the difference is too high
+	nApproximate = 0
+	RETURNF
+ENDSELECT
+RESULT = nApproximate
+;RETURNF @"　　～{nApproximate}pts (Real Score {nScore} Rank {nRank} Identify {ABL:MASTER:教養 - nRankReq:nRank})"
+RETURNF @"　　～{nApproximate}pts"
+
+@Qol_GiftShowTaste(ARG, nName, nScore)
+#DIMS nName
+#DIM nScore
+IF ABL:MASTER:教養 >= 3 && ABL:親密 >= 5
+	CALL REVIEW_GIFT(TARGET, ARG)
+	PRINTFORM 【%nName%】
+	CALL SHOW_TASTE(RESULTS, "GIFT")
+	PRINTFORML 
+	IF nScore > 0
+		PRINTFORM Score (Approximate): 
+		SELECTCASE nScore
+			CASE IS >= 700
+				CALL COLORMESSAGE(@"Good",C_GREEN, 1, 1)
+			CASE IS >= 400
+				CALL COLORMESSAGE(@"Okay",C_AQUA, 1, 1)
+		CASEELSE
+			CALL COLORMESSAGE(@"Poor",C_YELLOW, 1, 1)
+		ENDSELECT
+	ENDIF
+	IF ABL:親密 >= 10 ;show a hint right here when intimacy is very high, spoonfeed
+		CALL PRINTLINE, @"%CALLNAME:TARGET%'s Preferences"
+		PRINTL Like:
+		CALL SHOW_TASTE(GET_STR(, "キャラデータ", TARGET, "感性：好き"), "POSITIVE")
+		PRINTFORML 
+		PRINTL Hate:
+		CALL SHOW_TASTE(GET_STR(, "キャラデータ", TARGET, "感性：嫌い"), "NEGATIVE")
+		DRAWLINE 
+	ENDIF
+ENDIF
+PRINTFORML Would you like to purchase this gift?
+CALL ASK_YN
+RETURN RESULT
+
+@Qol_GiftData(TASTE_LIST, TASTE_CNT)
+#DIMS TASTE_LIST
+#DIM  TASTE_CNT
+SIF TASTE_CNT >= 2
+	SETCOLOR C_L_GREEN
+SIF TASTE_CNT >= 3
+	SETCOLOR 0xffff96
+SIF TASTE_CNT >= 5
+	SETCOLOR 0xffc8c8
+PRINTBUTTON @"[%TASTE_TR(TASTE_LIST)%]Lv{TASTE_CNT, 2}", ""
+RESETCOLOR
+
+;highlight characters with active requests
+@QoL_HighlightRequestChara(ARG)
+#DIM PREV_TARGET
+;set current target for correct check and return back
+PREV_TARGET = TARGET
+TARGET = ARG
+CALL CAN_IRAI_START 
+SIF RESULT && IRAI_CHARA_TO_PROGRESS(ARG) == "依頼未受託" 
+	SETCOLOR C_GREEN
+TARGET = PREV_TARGET
+
+@QoL_BypassCheck(ARG) ; 0 for allowed, during pregnancy
+#FUNCTION
+SIF FLAG:STABLEBYPASS
+	RETURNF 0
+	
+RETURNF TALENT:ARG:妊娠 && (CFLAG:ARG:903 <= 30 || CFLAG:ARG:903 >= 71)
+		
+;after choosing the command, remember TSP
+@EVENTCOM
+nRemberTsp = BASE:MASTER:TSP
+
+;-------------------------------
+;Custom config section
+;-------------------------------
+@CUSTOM_OPTION_0
+PRINTFORML [  0] - Bypass Stable Period：\@ FLAG:STABLEBYPASS ? Yes # No \@
+
+@CUSTOM_OPTION_RESULT_0
+FLAG:STABLEBYPASS = !FLAG:STABLEBYPASS
+
+;1 harem
+@CUSTOM_OPTION_2
+PRINTFORML [  2] - Always show Favor/Reliability gain：\@ nShowFavorTrustGain ? Yes # No \@
+
+@CUSTOM_OPTION_RESULT_2
+nShowFavorTrustGain = !nShowFavorTrustGain
+
+;3 - reserved by qol 4 5 reserved by addition

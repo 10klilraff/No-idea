@@ -1,0 +1,732 @@
+﻿;added, original content, based on Kosuzu's diary file
+
+;日記口上
+;使うなら@M_KOJO_K97(ARG)のCALL DIARY_BEFORE_CHECK_K97のコメントアウトを外すこと。
+;例によってK97をKキャラ番号、XXをキャラ番号に置換してね。
+;旧テンプレにはないのでその場合は該当箇所に追記しましょう。
+
+;一日の終了時の流れ
+;@DIARY_TEXT_K97（日記本文）→@DIARY_AFTER_CHECK_K97（フラグの処理）
+
+
+;◆日記の仕様◆
+;※１@DIARY_BEFORE_CHECK_K97で日記のフラグが立つ。
+;→未読フラグ(2)が立っていると一日の終わりにデイリーイベントとして日記が読まれる（既読になる）。
+;→※２未読フラグ(3)が立っていると[日記を読む]で読む事ができる。読むと既読(1)になる。
+;※１各所イベント口上やコマンド口上でフラグを立たせても良いです。
+;※２基本的には未読(2)推奨です。既読(1)、未読(3)はワンステップ必要。
+
+;[日記を読む]には、持ち主が[恋慕]なら自由に読むことができ、
+;そうでない場合は恋慕でない人物がその場に居ない時、もしくは時間停止することで盗み読みできる。
+;拠点住民でないキャラは恋慕であれば自宅（お招き部屋）で読むことができる。
+
+;MAX_DIARY_PAGE:XX　キャラ番号XXの日記の最大ページ数　限度は101（1～100）
+;DIARY:XX:YY　　　　キャラ番号XXの日記番号YYの情報
+;　　 3=未読　　　　デイリーイベントで読まれない。[日記を読む]で読むと既読になる。
+;　　 2=未読　　　　デイリーイベントで読まれる。読まれるまでは[日記を読む]では読めない。読まれると既読になる。
+;　　 1=既読　　　　デイリーイベントで読まれない。[日記を読む]で読める。
+;　　 0=読めない　　未解禁。
+;PAGESET:XX:YY　　　キャラ番号XXの実際に書かれたYYページ目の日記番号。
+;=============================
+@DIARY_K97_EXIST
+;存在判定
+;0だと日記は書かれません。
+;=============================
+RETURN 1
+
+;=============================
+@DIARY_AFTER_CHECK_K97
+;デイリーイベントで日記が読まれた際の後処理。
+;フラグの管理等自由に扱って良い。
+
+;条件フラグのリセットや判定追加もここに 
+;たとえば：今日構ったフラグ
+;今日構った日記が表示した後、構ったフラグをリセット。
+; CFLAG:XX:今日構ったフラグ = 0
+;あるいは何かの状態が続くことがフラグの場合
+;例：好感度がほぼ変わらない日が続くと
+;「あなた」の態度が冷たいな～みたいな日記を書く
+; SIF CFLAG:XX:好感度 <= LAST_LP+3
+;   NOTOUCH_DAY ++
+;=============================
+
+
+;=============================
+@DIARY_BEFORE_CHECK_K97
+;常時チェックされる日記の状態情報。
+;ここでDIARY:XX:YYの更新を行う。
+;※DIARY:XX:0番は使えません。
+
+;ここで汎用発生条件を記入する
+;コマンド別の発生条件はM_KOJOの各ファイル中で追加してください。
+
+;基本的に発生条件には"DIARY:XX:YY == 0"を入れること。
+;そうしないと同じ日記が書かれたりしてしまう。
+
+;DIARY:XX:YY　　　　キャラ番号XXの日記番号YYの情報
+;　　 3=未読　　　　デイリーイベントで読まれない。[日記を読む]で読むと既読になる。
+;　　 2=未読　　　　デイリーイベントで読まれる。読まれるまでは[日記を読む]では読めない。読まれると既読になる。
+;　　 1=既読　　　　デイリーイベントで読まれない。[日記を読む]で読める。
+;　　 0=読めない　　未解禁。
+
+;○未読(2)にする場合（基本）
+;未読(2)にするとデイリーイベントとして発生し、一日の終わりに１つだけ読まれる。
+;複数のページが未読(2)になっている場合は番号が小さいものが読まれ、それ以外はリセット(0)される。
+;その為、複数同時に発生すると、発生したのに読まれずリセットされる場合もある。
+;未読(2)にするには単純にフラグに2を入れるだけで良い。
+
+;例１)初対面
+;SIF DIARY:XX:YY == 0 && CFLAG:XX:面識
+;	DIARY:XX:YY = 2
+
+;○未読(3)にする場合（応用）
+;未読(3)にするとデイリーイベントとして読まれず、書かれた時点で[日記を読む]によって読めるようになる。
+;プレイヤーが自主的に読まない限り読まれず、一日に複数ページ加筆される場合もある。
+;未読(3)にするにはフラグに3を入れた上で、CALL CHARA_DIARY_PAGESETTING(XX, YY)をする必要がある。
+
+;例２）好感度100以上
+;IF DIARY:XX:YY == 0 && CFLAG:XX:好感度 >= 100
+;	DIARY:XX:YY = 3
+;	CALL CHARA_DIARY_PAGESETTING(XX, YY)
+;ENDIF
+
+;例３）例２の日記が読まれた上で好感度1000以上
+;これをするとYYを読んだ直後にZZが書き込まれることも起こる。
+;IF DIARY:XX:ZZ == 0 && DIARY:XX:YY == 1 && CFLAG:XX:好感度 >= 1000
+;	DIARY:XX:ZZ = 3
+;	CALL CHARA_DIARY_PAGESETTING(XX, ZZ)
+;ENDIF
+
+;▽おせっかいな注釈
+;ファーストキスは基本的に全員[キス未経験]を所持しているので、"!TALENT:XX:キス未経験"で判定できます。
+;デート帰りのキスで分岐したいならデート帰りのキス口上でフラグを立てます。
+;その場合、通常のファーストキス喪失と重複しないように気をつけましょう。
+;処女喪失は初期設定で処女喪失している場合もあるので、処女喪失口上の方でフラグを立てた方が良いです。
+;その他告白・陥落等のイベントは各種イベント口上でフラグを立てます。初対面はそっちでも大丈夫です。
+;日付を正確に測るには別途フラグが必要です。例えば初めて会った日とか。
+;=============================
+SIF CHARANUM <= [[正邪]] + 1
+	RETURN
+;MAXPAGEはここで記入する
+MAX_DIARY_PAGE:[[正邪]]:0 = 100
+
+;some lore before the start of the game
+CALL M_KOJO_DIARYSETTING_K97(1)
+CALL M_KOJO_DIARYSETTING_K97(2)
+CALL M_KOJO_DIARYSETTING_K97(3)
+CALL M_KOJO_DIARYSETTING_K97(4)
+CALL M_KOJO_DIARYSETTING_K97(5)
+;汎用
+;6:@First meeting
+SIF CFLAG:[[正邪]]:1302 ;caught you on panty stealing
+	CALL M_KOJO_DIARYSETTING_K97(7)
+;8:@First panty stolen
+;9:@Time stop molested
+SIF Mark:[[正邪]]:5 == 3 && CFLAG:[[正邪]]:1302 == 1 ;time stop rape maxed + panty thief flag (req for partner route)
+	CALL M_KOJO_DIARYSETTING_K97(10)
+;11:@Hate mark
+;12:@Date
+SIF !FIRSTTIME("SeijaFirstKiss", 1, [[正邪]])
+	CALL M_KOJO_DIARYSETTING_K97(13)
+;14:@Onabare
+;15:@Futa
+
+;イベント系
+SIF TALENT:[[正邪]]:セフレ
+	CALL M_KOJO_DIARYSETTING_K97(25)
+SIF TALENT:[[正邪]]:思慕
+	CALL M_KOJO_DIARYSETTING_K97(27)
+IF TALENT:[[正邪]]:恋慕
+	CALL M_KOJO_DIARYSETTING_K97(28)
+	CALL M_KOJO_DIARYSETTING_K97(29)
+ENDIF
+;31:@Cheating
+SIF !FIRSTTIME("SeijaRejected", 1, [[正邪]])
+	CALL M_KOJO_DIARYSETTING_K97(32)
+	
+IF TALENT:[[正邪]]:恋人
+	CALL M_KOJO_DIARYSETTING_K97(40)
+	CALL M_KOJO_DIARYSETTING_K97(41)
+ENDIF
+;45:@Moved in
+;46:@First sex
+;47:@Player's cherry pop
+;48:@Sex enjoyment (non virgin initial)
+;49:@Sex enjoyment (virgin initial)
+
+SIF GET_GIFTDATA(TCVAR:[[正邪]]:今日の贈り物, "本体") == 473
+	CALL M_KOJO_DIARYSETTING_K97(50)
+	
+SIF GET_GIFTDATA(TCVAR:[[正邪]]:今日の贈り物, "形容詞") == 2011 ;逆転する
+	CALL M_KOJO_DIARYSETTING_K97(51)
+;=============================
+@DIARY_TEXT_K97, PAGENUM, MODE, PAGECOUNT
+;日記の内容
+;PAGENUM   = 日記番号（日記のパターン）
+;MODE      = "デイリー":一日終了時のデイリーイベントでの読み上げ
+;          = "コマンド":[日記を読む]コマンドでの読み上げ
+;PAGECOUNT = 何ページ目に書かれているか
+;=============================
+#DIM PAGENUM
+#DIMS MODE
+#DIM PAGECOUNT
+
+;口上色指定あるならコメントアウトを外す
+CALL M_KOJO_COLOR_K97
+
+;グループマッチに日記のIDを入れて、表示させたい顔絵を表示する
+;表情・服装・特殊画像をオプション指定で表示（省略可）
+;書式は\resources\顔.CSVと下の例を参照
+
+;以下はサンプル
+IF MODE == "デイリー"
+;	IF GROUPMATCH(PAGENUM, 1) 
+;		CALL PRINT_FACE, XX, "発情", "裸", "_1"
+;	ELSEIF GROUPMATCH(PAGENUM, 2)
+;		CALL PRINT_FACE, XX, "笑顔", "服1"
+;	ELSEIF GROUPMATCH(PAGENUM, 3)
+;		CALL PRINT_FACE, XX, "怒り"
+;	ELSE
+;		CALL PRINT_FACE, XX
+;	ENDIF
+ENDIF
+
+;filter out retards
+IF FIRSTTIME("SeijaDiaryRead",, [[正邪]])
+	PRINTFORMDW You open Seija's diary and start reading.
+	PRINTFORMDW Interestingly enough, despite belonging to a notorious amanojaku, it's very well-kept and with a hard cover.
+	PRINTFORMDW The writing is very accurate and pretty, however... It all looks like gibberish to you!
+	IF ABL:MASTER:教養 < 3
+		PRINTFORMDW No matter how hard you try, you just can't seem to read it...
+		PRINTFORMDW You decide to give up.
+		RETURN
+	ELSE
+		PRINTFORMDW After some time, you finally manage to guess what kind of code Seija was using, allowing you to read the contents.
+	ENDIF
+	PRINTFORML
+ELSE
+	IF ABL:MASTER:教養 < 3
+		PRINTFORMDW No matter how hard you try, you just can't seem to read it...
+		PRINTFORMDW You decide to give up.
+		RETURN
+	ENDIF
+ENDIF
+
+PRINTFORMDL - Seija's Diary  Pg.%ORDINAL(PAGECOUNT)% --------------------------------------------------------------------------------------
+CALL M_KOJO_K97_適当日付設定(PAGECOUNT)
+PRINTL 
+
+;※PAGENUM:0は使えません
+SELECTCASE PAGENUM
+	CASE 1
+		PRINTFORML Dear diary,
+		PRINTFORMDL
+		PRINTFORML Today is the very first time I'm going to write here. This might be a folly, but it's still a fun and productive way to spend time.
+		PRINTFORML I decided that it'd be a good idea to pour my soul on these pages so that I could calm the turmoil inside me at least a bit.
+		PRINTFORML It's a great idea to review myself from the side many days later with fresh mind and better hindsight. Or at least I hope so.
+		PRINTFORMDL
+		PRINTFORML But first, I gotta make sure none of my enemies can read this. Don't want to make it too easy now, do we?
+		PRINTFORML So if you're not a complete moron, I'm sure you can get past a simple test. If you managed to crack the code, congratulations.
+		PRINTFORML I suppose you deserve to know what's going on in my heart.
+		PRINTFORMDL
+		PRINTFORML This concludes my first entry.
+	CASE 2
+		PRINTFORML Dear diary,
+		PRINTFORMDL 
+		PRINTFORML Every day I try to convert more people to my cause. It's my struggle.
+		PRINTFORML But it all seems in vain. It's as if they're only approaching me to heckle and make fun of me.
+		PRINTFORML Never once did I seem to change someone's mind yet. I've my share of debates, although my words fail to reach them.
+		PRINTFORML Is my method at fault here? Or is it my poor reputation?
+		PRINTFORML People just seem to be content with whatever they have right now, and it doesn't make sense to me.
+		PRINTFORML However I'm not giving up. I know that the strong ones aren't as powerful as they seem.
+		PRINTFORML They can be beaten.
+	CASE 3
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today I got in trouble. Noticing my moderate success at soapbox speeches, I was immediately silenced and beaten into submission.
+		PRINTFORML Though I managed to escape thankfully.
+		PRINTFORML Worst of all, I realized that my cheat items no longer work. Well, most of them.
+		PRINTFORML Without their help, I don't stand a chance in my current sorry state.
+		PRINTFORML This calls to a change of strategy if I want to survive. First, I will no longer show up at public spaces at all during the day.
+		PRINTFORML It may limit the exposure of my ideas to the people, but at the same time I can gradually create my own clique of the most loyal of members.
+		PRINTFORML Next, I'm making a new hideout at an unspecified spot. It's hidden in plain sight basically.
+		PRINTFORML It's such a great place too, even the gap hag will struggle to find me there, I'm sure.
+		PRINTFORML Well, good luck me. As long as I am alive, I will make it.
+	CASE 4
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML My attempts at making a loyal group of fellow youkai with similar ideas don't seem to work out very well.
+		PRINTFORML I have regular visitors and I do get a vocal support sometimes, but it's just that. Words words words, no action at all.
+		PRINTFORML They'll be all for abolishing the current powers and starting an uprising right now,
+		PRINTFORML but the very next day I see them being buddy-buddy with the humans at the village.
+		PRINTFORML It's all so tiresome.
+		PRINTFORML I even got spotted by a gap hag the other day during my canvassing session. She did nothing at all. Heck, she even waved at me!
+		PRINTFORML They don't see me as a threat anymore. I'm just a sad clown making silly shows for wannabe rebels. What a laugh.
+	CASE 5
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML I spoke with Princess the other day. Well, Shinmyoumaru... I got approached.
+		PRINTFORML She's so tiny now. She still has the Miracle Mallet, but she barely uses it, not even for making herself larger.
+		PRINTFORML As it stands, I don't see her as potential help at all. Living with that shrine maiden in a cage like some pet did a number on her.
+		PRINTFORML No, rather, she was always like this. Yes, I'm a bit bitter.
+		PRINTFORML But at the same time, I can't bring myself to rely on her again. It's too embarrassing.
+		PRINTFORML I just have to get it all done by myself now. I gotta.
+		PRINTFORML I gotta...
+		PRINTFORML I have to...
+	CASE 6
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today I met with a human. And boy, what a weird human that was!
+		PRINTFORML Apparently %HE_SHE(MASTER)% calls %HIMSELF_HERSELF(MASTER)% %CALLNAME:MASTER%. No doubt a fake name. Or is it?
+		PRINTFORML For some reason I couldn't shake off the feeling that %HE_SHE(MASTER)%'s up to something.
+		PRINTFORML So I approached %HIM_HER(MASTER,,1)% right away. Really, I'm too blunt about those things sometimes.
+		PRINTFORML Well, it's not every day that you meet a human like this, I just couldn't hold back.
+		IF CFLAG:1300
+			PRINTFORML %HE_SHE(MASTER,1)% was kinda amiable in that regard. Sweet. I think we'll get along just fine.
+		ELSE
+			PRINTFORML Kinda got rejected. Oh well, whatever. %HE_SHE(MASTER,1)% doesn't seem to have a desire to harm me, so I'll let it slide.
+		ENDIF
+		PRINTFORML
+		PRINTFORML On that note, I didn't even sense a hint of fear from %HIM_HER(MASTER,,1)%. Am I that non-threatening?
+		PRINTFORML Nah. %HE_SHE(MASTER, 1)% seems to be hanging out with other youkai no problem. What gives?
+		PRINTFORML And %HE_SHE(MASTER)%'s gotta know they're not human too. There's something fishy about this %PRINT_MALE("guy", MASTER)%.
+		PRINTFORML I have a hunch for that stuff, I can tell. Guess I'll keep watch on %HIM_HER(MASTER,,1)% for the time being.
+		PRINTFORML Maybe it's just my imagination? It better be.
+	CASE 7
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today I learned that the %PRINT_MALE("guy", MASTER)% I met the other day, right? Get this:
+		PRINTFORML %HE_SHE(MASTER, 1)%'s a giant freaking pervert! No, seriously!
+		PRINTFORML I caught %HIM_HER(MASTER,,1)% carrying bunch of underwear that were clearly not %HIS_HERS(MASTER)%!
+		PRINTFORML I can't believe it! So my hunch was correct! This %PRINT_MALE("son of a bitch:bitch", MASTER)% befriends bunch of people and then steals their panties!
+		PRINTFORML
+		PRINTFORML That gotta be it! Gaahhh, for crying out loud, this is such an outrage! And no one seems to do anything about it!
+		PRINTFORML It's not that I really care about the pervert or whatever %HE_SHE(MASTER)%'s doing, but as a girl myself I just can't stand by!
+		PRINTFORML I feel really grossed out, seriously. I kinda want to turn %HIM_HER(MASTER,,1)% in, but at the same time... Hm.
+		PRINTFORML
+		PRINTFORML Maybe I should just wait and see. How is %HE_SHE(MASTER)% doing it? Surely %HE_SHE(MASTER)%'s not some master of seduction, right?!
+		PRINTFORML That's what I gotta figure out. Even if my panties end up getting stolen too... So be it!
+		PRINTFORML It's a necessary sacrifice for the cause!
+	CASE 8
+		PRINTFORML Dear diary,
+		PRINTFORML 
+		PRINTFORML Today I got my panties stolen. I guess it's just my luck!
+		PRINTFORML I was just minding my own business, and then - poof!
+		PRINTFORML I felt a sudden wind in my loins, so I went there to check, and what do you know? They're up and gone!
+		PRINTFORML I was soooo ready to just drop dead on the spot from such a humiliation.
+		PRINTFORML Me, a great amanojaku! Gets her precious underwear pilfered from her just like that! So what do I do?
+		PRINTFORML I just had to carry on! Grr, darn! I mean, what else could I do? Scream my lungs out? Go back home right away? Screw that!
+		PRINTFORML I'm gonna find whoever did this, I'm gonna figure out how they did it and then I'm gonna... Hrm. Yeah, that's gonna be something.
+		IF CFLAG:[[正邪]]:1302
+			PRINTFORML
+			PRINTFORML Speaking of which, is it related to that %CALLNAME:MASTER% %PRINT_MALE("guy", MASTER)%, I wonder?
+			PRINTFORML I mean, %HE_SHE(MASTER)% also steals underwear somehow too, right?
+			PRINTFORML Ohhh, this is getting complicated... If they're one and the same, we got a huuuuge problem on our hands indeed.
+		ENDIF
+	CASE 9
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today I got molested. I'm pretty sure.
+		PRINTFORML Now, I have no idea how that happened, at all. I didn't even see the perp.
+		PRINTFORML One moment everything was fine, and a second later I was already a soppy mess.
+		PRINTFORML I'm not making this up though! I've had his stuff smeared all over me too!
+		PRINTFORML Disgusting. Never before I felt myself being this weak and defenseless. I mean...
+		PRINTFORML There were some other times, but I have no recollection of this one at all!
+		PRINTFORML
+		PRINTFORML There's literally nothing I could do. Couldn't stand a chance. And not just me, anyone can suffer the same fate.
+		PRINTFORML Man, if I'm being at mercy of some huge ass perv... This is getting scary.
+		PRINTFORML At least I can hope that doing petty pervert shit is the upper limit.
+		PRINTFORML Because otherwise... No, I don't even want to think about it.
+	CASE 10
+		PRINTFORMDL The writing here seems very rough and sketchy, as if written in a hurry.
+		PRINTFORML
+		PRINTFORML That's it
+		PRINTFORML I figured it out!!
+		PRINTFORML It's %HIM_HER(MASTER,,1)%
+		PRINTFORML No doubt about it
+		PRINTFORML My body knows...... I know it.... I know the taste, I know the feel...
+		PRINTFORML My heart throbs and my body gets hotter when %HE_SHE(MASTER)%'s around
+		PRINTFORML I want it
+		PRINTFORML Whatever power %HE_SHE(MASTER)%'s using to pull that off, I want it
+		PRINTFORML I need it!
+		PRINTFORML And I'll get it
+		PRINTFORML
+		PRINTFORML I always do.
+	CASE 11
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today I got pissed off really hard.
+		PRINTFORML That %PRINT_MALE("guy", MASTER)% I met the other day? Yeah. %HE_SHE(MASTER,1)% was an asshole after all!
+		PRINTFORML Dammit! Me and my taste in people, huh. This is the last time I let some human humiliate me like this.
+		PRINTFORML Next time I'm just gonna kill %HIM_HER(MASTER,,1)%, no matter what anyone says.
+		PRINTFORML Yes, I'll do it! I'll do it! Watch me!
+		PRINTFORML ...I'm such a pushover.
+	CASE 12
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Me and %CALLNAME:MASTER%... We went on a date today. At least I'm sure that's how it's called.
+		PRINTFORML I go out on my own all the time, but this... felt different.
+		PRINTFORML Somehow it left me very exhausted and drained... I couldn't do anything but to follow %HIS_HER(MASTER)% lead, really.
+		PRINTFORML I hope it didn't feel too boring for %HIM_HER(MASTER,,1)%. Well, we can always do it again.
+		PRINTFORML Or not. It's not too late to go our separate ways at this stage.
+		PRINTFORML But, eh... It'll get better, I'm sure.
+		PRINTFORML Beats sitting alone being bored all day at least.
+	CASE 13
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML I kissed with %CALLNAME:MASTER% for the first time. Well, it was... an interesting experience.
+		PRINTFORML I told %HIM_HER(MASTER,,1)% straight up how it felt. I usually don't do that, but something prompted me to do so.
+		PRINTFORML I don't know, it just... felt special somehow. My heart was beating so fast, too.
+		PRINTFORML It was one of the few things that was still pure about me. And... I don't think it was a wrong move.
+		PRINTFORML Everyone has to do it at some point, even me.
+		PRINTFORML If I had to choose... This is as good as it gets, honestly.
+	CASE 14
+		PRINTFORML Dear diary...
+		PRINTFORML Sorry, I have to put this one out. I feel bad for dirtying you like this, but...
+		PRINTFORML
+		PRINTFORML %CALLNAME:MASTER%... %HE_SHE(MASTER, 1)% saw me masturbating today. That's not something I wanted %HIM_HER(MASTER,,1)% to see though...
+		PRINTFORML Well, it might be my fault for doing it so often lately, but...
+		PRINTFORML %HE_SHE(MASTER,1)% should've at least had the decency to knock first! I can't believe %HE_SHE(MASTER)% just barged in like that!
+		PRINTFORML %HE_SHE(MASTER,1)%'ll totally think that I'm a huge pervert now.
+		PRINTFORML ...Well, maybe I am.
+		PRINTFORML Gaahh...!
+		PRINTFORML I didn't need anyone else to know this side of me! This blows!
+	CASE 15
+		PRINTFORMDL You see weird sticky drips all over this page, as if Seija... was masturbating while writing this.
+		PRINTFORML
+		PRINTFORML Dear diary...
+		PRINTFORML
+		PRINTFORML More and more strange things keep happening to me. Today... I ended up growing a dick.
+		PRINTFORML It just appeared out of nowhere. I feel deeply perturbed, to say the least.
+		PRINTFORML I'm a girl! I'm not supposed to have this thing! It's gross, it gets in the way and it stinks.
+		PRINTFORML Yet... It feels good. I lost myself jerking off until I knocked myself out.
+		PRINTFORML I'm ashamed to say that I can now relate to whatever perverts must feel. How men get crazy all the time.
+		PRINTFORML It's not something you can control. At all. And I feel like it's making me change.
+		PRINTFORML I don't like it, but my body seems to welcome it. I guess... I'm stuck with this thing for a while.
+	CASE 25
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Thinking back, this is embarrassing, but I don't care. I just masturbated all night today.
+		PRINTFORML Somehow one way or another I got involved in a physical relationship with that human I mentioned.
+		PRINTFORML Yeah, it escapes me too. I can't wrap my head around it. We're just using each other for cheap, disposable pleasure.
+		PRINTFORML And I'm, well... Honestly fine with it. I think I should do it more.
+	CASE 27
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML I dunno what happened today. Today I felt sort of... weird. It's like I felt butterflies in my stomach whenever I'm around %HIM_HER(MASTER,,1)%.
+		PRINTFORML I have a bad feeling about this. I should stay away before it gets worse, but I just... can't help but be attracted to %HIM_HER(MASTER,,1)%.
+		PRINTFORML %HE_SHE(MASTER,1)% seems to enjoy my company too. Unbelievable. And weird. We're both weirdos, apparently.
+		PRINTFORML I was already a mess before, but now I'm totally confused.
+		PRINTFORML For some reason I started sleeping better. Probably because it gets me so exhausted.
+		PRINTFORML I don't know, but maybe it's that. That thing every girl talks about. We'll see.
+	CASE 28
+		PRINTFORML Dear diary,
+		PRINTFORML
+		IF CFLAG:1307 ;tsundere route -> pure love
+			PRINTFORML ...
+			PRINTFORML Ah, screw this!
+			PRINTFORML I can't believe it! I'm so angry! At myself, and at %HIM_HER(MASTER,,1)%!
+			PRINTFORML Why can't I just control my emotions and my feelings? I'm not supposed to fall in love!
+			PRINTFORML Or at least that's what I think it is. This %PRINT_MALE("guy", MASTER)%, %CALLNAME:MASTER%... %HE_SHE(MASTER,1)% pisses me off!
+			PRINTFORML Such a dumb, naive, late bloomer and above all, a lowly human!
+			PRINTFORML %HE_SHE(MASTER,1)%'ll just toy with my feelings and then disappear from my life forever...
+			PRINTFORML Unforgivable. If %HE_SHE(MASTER)% really thinks %HE_SHE(MASTER)% can just conquer me, I'll have %HIM_HER(MASTER,,1)% work harder.
+			PRINTFORML I'll have %HIM_HER(MASTER,,1)% regret %HIS_HER(MASTER)% stupid decision to associate with me instead of countless other better and nicer girls!
+		ELSE
+			PRINTFORML I have a feeling that this is it for me. That human, %CALLNAME:MASTER%... I'm already %HIS_HER(MASTER)% woman.
+			PRINTFORML I just know it. I can feel it. My body doesn't resist at all. I try to muster up my will, but in the end I always submit.
+			PRINTFORML I thought it'd be miserable to turn into something like this, but actually... I feel fulfilled. I feel wanted, and I'm rewarded for that.
+			PRINTFORML Weird. Is this what happiness feels like? I don't think I deserve it.
+			PRINTFORML But... I don't want it to stop. I know it won't last, so I'll try my best to enjoy every moment of it.
+			PRINTFORML %CALLNAME:MASTER%...
+			PRINTFORML Love ya%UNICODE(0x2764)%
+		ENDIF
+	CASE 29 ;tsundere route continuation after 5 days
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML I haven't been acting like myself lately because clearly I'm a big idiot.
+		PRINTFORML Is this what love does to people? I can't believe it!
+		PRINTFORML Stupid chemicals in my head, making me act like this and take control from me!
+		PRINTFORML If it wasn't for that, I would...! I would...!
+		PRINTFORML Gaah! I can't even write it! Fuuuuuck!!!
+		PRINTFORML
+		PRINTFORMDL The entry ends with bunch of doodles depicting... you? Being stomped on by Seija for some reason.
+	CASE 31
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today I saw something I wasn't supposed to. %CALLNAME:MASTER%, %HE_SHE(MASTER)%...
+		PRINTFORML Apparently %HE_SHE(MASTER)% got other lovers as well.
+		PRINTFORML It's not like I'm stalking %HIM_HER(MASTER,,1)% though! I just happened to see it once...
+		PRINTFORML In any case, I don't care if I'm not the only one. What matters is how %HE_SHE(MASTER)% feels about me.
+		PRINTFORML As long as I get my share of time and we're having fun, then it's whatever.
+		PRINTFORML Because I'm sure I'm not %HIS_HER(MASTER)% number one, right? It's me we're talking about. No way, right?
+		PRINTFORML
+		PRINTFORML I'm just a fun little distraction from other, far prettier girls who seem to flock near %HIM_HER(MASTER,,1)% all the time.
+		PRINTFORML Yeah.
+		PRINTFORML I wouldn't have it any other way.
+		PRINTFORML Don't wanna be in the spotlight.
+		PRINTFORML I'm not the type of person for that after all.
+		PRINTFORML But for whatever reason... It really hurts. My chest feels all mushy when I think about it. I can't even sleep.
+	CASE 32
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML I couldn't take it anymore. I had to let it out, or else it'd destroy me. So I confessed my feelings.
+		PRINTFORML And it went... just as I expected.
+		PRINTFORML I got rejected. I...
+		PRINTFORML
+		IF CFLAG:1303
+			PRINTFORML Yeah, I get it. It was a bit too pushy. It sounded way too much like a threat, like blackmail. Even though I said it was not.
+			PRINTFORML I just hope I didn't scare %HIM_HER(MASTER,,1)% off. I'll try again next time.
+			PRINTFORML And I won't fail.
+			PRINTFORML %CALLNAME:MASTER%...
+			PRINTFORML I'm not gonna let go of you anymore.
+		ELSEIF CFLAG:1305
+			PRINTFORML I can't expect a miracle after all. I was so cruel and horrible to %HIM_HER(MASTER,,1)%. I get what I deserve, huh?
+			PRINTFORML Yet... I don't want to give up. I can't. I think I have to see it through... Or live the rest of my life with a terrible hole in my chest.
+			PRINTFORML It hurts... Hurts so much. It made me feel even worse than before. I didn't know I was that way. But now I'm sure.
+			PRINTFORML I'll get my way.
+			PRINTFORML You'll see.
+		ELSE
+			PRINTFORML Haah, well, I'm used to that. Or rather, I thought I was. Now I'm sure that I'm just coping.
+			PRINTFORML It hurt, surprisingly. Being dumped hurts, who knew huh? But... I really need %HIM_HER(MASTER,,1)% in my life. Somehow.
+			PRINTFORML I'm just too far gone to give up now. After all that happened between us, knowingly or unknowingly...
+			PRINTFORML I can feel that my body depends on %HIM_HER(MASTER,,1)%. I feel empty and unhappy if %HE_SHE(MASTER)%'s not around. It's scary.
+			PRINTFORML I'll try to convince %HIM_HER(MASTER,,1)% to stay by my side at least. No matter how many tries it takes.
+			PRINTFORML %HE_SHE(MASTER, 1)% might start to hate me for this.
+			PRINTFORML That's fine. I'm used to that as well...
+		ENDIF
+	CASE 40
+		PRINTFORML Dear diary,
+		PRINTFORML
+		IF !FIRSTTIME("SeijaRejected", 1, [[正邪]])
+			PRINTFORML I told you I'll get my way.
+		ELSE
+			PRINTFORML I couldn't take it anymore. I had to let it out, or else it'd destroy me. So I confessed my feelings.
+		ENDIF
+		PRINTFORML
+		IF CFLAG:1304 ;from partners route
+			PRINTFORML Well, I did it. We got together at last. Still...
+			PRINTFORML What powers is %HE_SHE(MASTER)% using? Seems incredibly powerful.
+			PRINTFORML Is it time stop? Doing stuff before anyone can react? Stealing panties, molesting people in a blink of an eye?
+			PRINTFORML Sure is. Bingo. Jackpot. 
+			PRINTFORML I win.
+			PRINTFORML
+			PRINTFORML But more importantly, I want %HIM_HER(MASTER,,1)% to be with me.
+			PRINTFORML I don't want to be alone anymore.
+			PRINTFORML If we can be together, it doesn't matter if I can use %HIM_HER(MASTER,,1)% or not.
+			PRINTFORML We'll figure it out. We made it this far after all.
+			PRINTFORML I need %HIM_HER(MASTER,,1)%.
+			PRINTFORML I want %HIM_HER(MASTER,,1)%.
+			PRINTFORML If it's my body that %HE_SHE(MASTER)% wants to use in return, so be it.
+			PRINTFORML I will contain %HIM_HER(MASTER,,1)%. Entertain %HIM_HER(MASTER,,1)%. Love %HIM_HER(MASTER,,1)%.
+			PRINTFORML
+			PRINTFORML Together, we will be unstoppable...
+		ELSEIF CFLAG:1306 ;from tsundere route for pure love
+			PRINTFORML Just how many emotions are swirling inside me right now?
+			PRINTFORML I didn't want to know how charming love could be.
+			PRINTFORML I thought %HE_SHE(MASTER)%'d betray me, that %HE_SHE(MASTER)%'d hurt me. I was waiting for it, anticipating even.
+			PRINTFORML But I received nothing but love and affection in return. I think it's time to stop doubting %HIM_HER(MASTER,,1)% and my feelings, and accept it.
+			PRINTFORML Accept my loss and welcome %HIM_HER(MASTER,,1)% in my life. %HE_SHE(MASTER,1)%'s a sweet %PRINT_MALE("guy", MASTER)% after all.
+			PRINTFORML %HE_SHE(MASTER,1)% deserves a far better girl than me. So that's why I'll try my best to redeem myself for %HIM_HER(MASTER,,1)%.
+		ELSE ;from molest route
+			PRINTFORML Now it's official. We're a couple.
+			PRINTFORML I'm still not sure what %HE_SHE(MASTER)% found in me. I'm not exactly popular to begin with. And my personality stinks.
+			PRINTFORML Maybe that's exactly it.
+			PRINTFORML I have no other options but to stick by %HIM_HER(MASTER,,1)%. I can't let go of it now.
+		ENDIF
+	CASE 41
+		PRINTFORML Dear diary,
+		PRINTFORML
+		IF CFLAG:1306 ;true love
+			PRINTFORML I feel conflicted. And scared.
+			PRINTFORML I was having these terrible nightmares that %CALLNAME:MASTER% would break up with me.
+			PRINTFORML I wouldn't know what to do. That would destroy me.
+			PRINTFORML I don't wanna be alone anymore.
+			PRINTFORML This is really weird. I never felt this way before. %CALLNAME:MASTER%... It's like I'm dependent on %HIM_HER(MASTER,,1)%.
+			PRINTFORML %HE_SHE(MASTER, 1)% clearly put a spell on me. And there's nothing I can do about it. But %HE_SHE(MASTER)% clearly cares about me...
+			PRINTFORML Or does %HE_SHE(MASTER)%? I can't even think straight.
+			PRINTFORML But so be it! I don't care if I'm being used, I don't care if I'm just a sex object for %HIM_HER(MASTER,,1)%...
+			PRINTFORML I just want %HIM_HER(MASTER,,1)% to look at me... Even if for a bit. That's all I need.
+		ELSE
+			PRINTFORML Despite being one big weirdo, %CALLNAME:MASTER% is surprisingly sweet when it comes to me.
+			PRINTFORML I can appreciate it quite well. I guess other girls would find %HIM_HER(MASTER,,1)% boring, but honestly...
+			PRINTFORML I've had enough of risky adventures in my life. I could use some peace and relaxation, a solid back front that will hold me together.
+			PRINTFORML And, well... Feeling loved and cherished like this... It ain't so bad, it turns out.
+			PRINTFORML I can get used to it.
+		ENDIF
+	CASE 45
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML I moved in with %HIM_HER(MASTER,,1)% together. Wow.
+		PRINTFORML It's almost like we're an actual couple. Almost like a... family.
+		PRINTFORML
+		PRINTFORMDL You see couple of drops on the paper washing up the ink.
+		PRINTFORML
+		PRINTFORML Oh, crap... No, why am I crying? This is no big deal...
+		PRINTFORML It's just convenient that I see %HIM_HER(MASTER,,1)% every day, and that we sleep in one bed, and...
+		PRINTFORML %CALLNAME:MASTER%...
+	CASE 46
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today... Yeah. Today was special, alright.
+		PRINTFORML I had sex with %CALLNAME:MASTER%. Like, the real deal, all the way.
+		PRINTFORML I was thinking of turning him down, but... That's just not acceptable, right? We're far past that already.
+		PRINTFORML I'll admit, I was afraid. It's too scary. At least I thought it'd be. Yet, it was surprisingly... smooth, gentle actually.
+		IF !FIRSTTIME("SeijaShojo", 1, [[正邪]])
+			PRINTFORML
+			PRINTFORML It hurt a bit since it was my first time, duh. But nothing terrible. I've had worse.
+			PRINTFORML I don't feel like it really changed me... Yet, I feel better somehow. Hmm...
+			PRINTFORML Well, time will tell. At least it's better than being molested in one way or another.
+			PRINTFORML I'd take this over anything else any day.
+		ENDIF
+		IF TALENT:恋慕
+			PRINTFORML
+			PRINTFORMDL A new entry was added here, by the looks of it.
+			PRINTFORML As for sex itself... Thinking back, it was alright. Nothing special, really.
+			PRINTFORML I mean, it did feel good, and %CALLNAME:MASTER% did great...
+			PRINTFORML I guess I understand better now why feelings are important.
+			PRINTFORML After few days of pondering and thinking about how we shared an incredibly precious and intimate moment together...
+			PRINTFORML Yeah, it's on another level entirely.
+			PRINTFORML I can't wait to do it again.
+		ENDIF
+	CASE 47
+		PRINTFORMDL You see a little note under the previous entry, and... blush as you read it.
+		PRINTFORML
+		PRINTFORML Now when I think of it... It was %HIS_HER(MASTER)% first time, wasn't it? I mean, I could tell...
+		PRINTFORML Our big %PRINT_MALE("boy", MASTER)% %CALLNAME:MASTER%, and a total virgin at that... Nobody would believe it if I told 'em.
+		PRINTFORML But I didn't mention it during our... lovemaking. I thought that'd be too embarrassing and %HE_SHE(MASTER)%'d get all wimpy on me. Can't have that.
+		PRINTFORML Still, if %HE_SHE(MASTER)% decided to choose me... That means I still got it, huh? %HE_SHE(MASTER, 1)% thinks I'm that special after all.
+		PRINTFORML I got to show %HIM_HER(MASTER,,1)% what %HE_SHE(MASTER)%'s been missing.
+		PRINTFORML We'll have a lot of fun together from now on, I'm sure...
+	CASE 48
+		PRINTFORMDL You find this entry to be full of random musings, written with unsteady hand. You manage to read some of more legible ones.
+		PRINTFORML
+		PRINTFORML For the first time sex felt... good, actually.
+		PRINTFORML My first experience really traumatized me, thinking back.
+		PRINTFORML I always thought it'd be painful, scary, and that I'd have to force myself, like some sort of obligation...
+		PRINTFORML But when it's with %CALLNAME:MASTER%... %HE_SHE(MASTER,1)% taught me that it's something I can enjoy. Something that doesn't involve pain.
+		PRINTFORML Something that... Makes me whole. Whole? Wow, am I really writing this...
+		PRINTFORML
+		PRINTFORMDL The entry ends with bunch of gibberish and heavily scratched sentences. There's one tiny line at the end however.
+		PRINTFORML %CALLNAME:MASTER%... you really are my first one. This is what I will associate sex with from now on...
+		PRINTFORML And we're gonna do it... a whole lot more%UNICODE(0x2764)%
+	CASE 49
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today I had sex with %CALLNAME:MASTER% as always, but it felt... weird somehow.
+		PRINTFORML Not in a bad way though. It's just... Usually in my case, in stories about amanojaku,
+		PRINTFORML they always had to use blackmail or deception in order to bed someone.
+		PRINTFORML
+		PRINTFORML ...After all, what kind of maniac would ever willingly fall in love with a creature so vile and repugnant as me?
+		PRINTFORML Yet, here we are...
+		PRINTFORML I felt so fulfilled, and I came so hard... I think I nearly peed myself.
+		PRINTFORML This is it. I'm completely under %HIS_HER(MASTER)% grasp it seems. But...
+		PRINTFORML It ain't so bad.
+	CASE 50
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today %CALLNAME:MASTER% gifted me a brand new blank Spell Card.
+		PRINTFORML Amazing. So %HE_SHE(MASTER)% really wants me to get stronger, huh?
+		PRINTFORML I'll treasure it. And make something... special out of it. One day.
+	CASE 51
+		PRINTFORML Dear diary,
+		PRINTFORML
+		PRINTFORML Today %CALLNAME:MASTER% bought me a very cool thing. It's called "Reversing" and it does exactly that!
+		PRINTFORML That is, the opposite of what you want, and it's really annoying!
+		PRINTFORML Just like me. Yeah, that'll be something I'll carry on me from now on, for sure!
+		PRINTFORML %CALLNAME:MASTER%... I guess I can give him a hug or a kiss for that.
+ENDSELECT
+
+RESETCOLOR
+
+;=============================
+@M_KOJO_MESSAGE_COM_K97_406
+;=============================
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K97_406_1
+RETURN RESULT
+
+;=============================
+@M_KOJO_MESSAGE_COM_K97_406_1
+;コマンド口上
+;TFLAG:194（誰の日記を読んでいるか）
+;TFLAG:194がXXでない場合は他人の日記なので注意。
+;PAGEは書かれてあるページ数。
+;SHIRAHU(XX)はキャラXXの状態が正常かどうか。
+;=============================
+
+CALL M_KOJO_COLOR_K97
+IF SHIRAHU([[正邪]]) && TFLAG:194 == [[正邪]]
+	IF FIRSTTIME("SeijaDiaryReadReact",, [[正邪]])
+		PRINTFORMW 「Huh? Wanna read my diary?」
+		PRINTFORMW 「Bah, really now? You just gonna go ahead and ask for that? Man, you're such a...」
+		PRINTFORMW 「Agh, whatever! Go on and just read it if you can, I don't care.」
+		PRINTFORMW 「It's not as interesting as you think anyways.」
+		SIF ABL:MASTER:教養 < 3
+			PRINTFORMW 「What, can't read it? Hahaha! Maybe you shouldn't then!」
+	ELSE
+		PRINTFORMW 「...Yeah, go on and read it, %K97_DUDE()%.」
+		PRINTFORMW 「%K97_WHATEV(1)%. You don't need me for a permission.」
+	ENDIF
+ENDIF
+
+;=============================
+@M_KOJO_DIARYSETTING_K97(ARG)
+;日記発生処理の一括管理関数
+;=============================
+SIF DIARY:[[正邪]]:ARG != 0
+	RETURN
+SELECTCASE ARG
+	CASE 28
+		CFLAG:[[正邪]]:1095 = DAY
+	CASE 29
+		SIF CFLAG:1307 && DAY < CFLAG:[[正邪]]:1095 + 5
+			RETURN
+	
+	CASE 40
+		CFLAG:[[正邪]]:1096 = DAY
+	CASE 41
+		SIF DAY < CFLAG:[[正邪]]:1095 + 5
+			RETURN
+	CASEELSE
+ENDSELECT
+DIARY:[[正邪]]:ARG = 3
+CALL CHARA_DIARY_PAGESETTING([[正邪]], ARG)
+
+;=============================
+@M_KOJO_K97_適当日付設定(ARG)
+;日記用に作った適当に日付を付ける関数
+;=============================
+SELECTCASE ARG % 12
+CASE 1, 2, 3
+	PRINT Month ○
+CASE 4, 5, 6
+	PRINT Month □
+CASE 7, 8, 9
+	PRINT Month △
+CASEELSE
+	PRINT Month ☆
+ENDSELECT
+PRINT , 
+SELECTCASE ARG % 10
+CASE 1
+	PRINT Day ×
+CASE 2
+	PRINT Day ■
+CASE 3
+	PRINT Day ●
+CASE 4
+	PRINT Day ▲
+CASE 5
+	PRINT Day ★
+CASE 6
+	PRINT Day ◆
+CASE 7
+	PRINT Day ☆
+CASE 8
+	PRINT Day □
+CASE 9
+	PRINT Day △
+CASE 0
+	PRINT Day ○
+ENDSELECT

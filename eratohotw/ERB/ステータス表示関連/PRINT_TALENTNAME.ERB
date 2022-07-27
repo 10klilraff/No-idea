@@ -1,0 +1,582 @@
+﻿;-------------------------------------------------
+;関数名:GET_TALENTNAME
+;概　要:素質名取得関数
+;引　数:ARG:0…TALENT登録番号
+;　　　:ARG:1…TALENTの中身
+;戻り値:素質名
+;備　考:文中関数
+;素質の名前を返す。
+;-------------------------------------------------
+@GET_TALENTNAME(ARG,ARG:1) ;NOT USED IN THE TRANSLATION, REFER TO @GET_TALENTNAME_TR
+#FUNCTIONS
+SELECTCASE ARG
+	;処女
+	CASE 0
+		IF ARG:1 == -1
+			RETURNF "Not Virgin (Unaware)"
+		ELSEIF ARG:1 
+			RETURNF "Virgin"
+		ENDIF
+	;童貞
+	CASE 1
+		SIF !ARG:1
+			RETURNF "Male Virgin"
+	;性別
+	CASE 2
+		IF ARG:1 == 3
+			RETURNF "Futanari"
+		ELSEIF ARG:1 == 2
+			RETURNF "Male"
+		ENDIF
+	;キス未経験
+	CASE 6
+		IF ARG:1 == -1
+			RETURNF "Kissing Inexperience?"
+		ELSEIF ARG:1 == 1
+			RETURNF "Kissing Inexperience"
+		ENDIF
+	;度胸
+	CASE 10
+		IF ARG:1 == -1
+			RETURNF "Timid"
+		ELSEIF ARG:1 == 1
+			RETURNF "Brave"
+		ENDIF
+	;態度
+	CASE 11
+		IF ARG:1 == -1
+			RETURNF "Docile"
+		ELSEIF ARG:1 == 1
+			RETURNF "Defiant"
+		ENDIF
+	;応答
+	CASE 12
+		IF ARG:1 == -1
+			RETURNF "Calm"
+		ELSEIF ARG:1 == 1
+			RETURNF "Cheeky"
+		ENDIF
+	;プライド
+	CASE 13
+		IF ARG:1 == -1
+			RETURNF "Low Pride"
+		ELSEIF ARG:1 == 1
+			RETURNF "Prideful"
+		ENDIF
+	;機嫌
+	CASE 15
+		IF ARG:1 == -1
+			RETURNF "Bad Mood"
+		ELSEIF ARG:1 == 1
+			RETURNF "Good Mood"
+		ENDIF
+	;容姿
+	CASE 16
+		IF ARG:1 == -1
+			RETURNF "Ugly"
+		ELSEIF ARG:1 == 1
+			RETURNF "Beautiful"
+		ENDIF
+	;年齢
+	CASE 17
+		IF ARG:1 == -1
+			RETURNF "Child"
+		ELSEIF ARG:1 == 1
+			RETURNF "Middle Age"
+		ELSEIF ARG:1 == 2
+			RETURNF "Elder"
+		ENDIF
+	;性的興味
+	CASE 23
+		IF ARG:1 == -1
+			RETURNF "Conservative"
+		ELSEIF ARG:1 == 1
+			RETURNF "Curious"
+		ENDIF
+	;陽気／陰気,
+	CASE 24
+		IF ARG:1 == -1
+			RETURNF "Gloomy"
+		ELSEIF ARG:1 == 1
+			RETURNF "Cheerful"
+		ENDIF
+	;貞操観念
+	CASE 30
+		IF ARG:1 == -1
+			RETURNF "Unchaste"
+		ELSEIF ARG:1 == 1
+			RETURNF "Virtuous"
+		ENDIF
+	;自己愛
+	CASE 31
+		IF ARG:1 == -1
+			RETURNF "Repressed"
+		ELSEIF ARG:1 == 1
+			RETURNF "Liberated"
+		ENDIF
+	;羞恥心
+	CASE 33
+		IF ARG:1 == -1
+			RETURNF "Shameless"
+		ELSEIF ARG:1 == 1
+			RETURNF "Shy"
+		ENDIF
+	;痛覚
+	CASE 40
+		IF ARG:1 == -1
+			RETURNF "High Pain Tolerance"
+		ELSEIF ARG:1 == 1
+			RETURNF "Low Pain Tolerance"
+		ENDIF
+	;濡れやすさ
+	CASE 41
+		IF ARG:1 == -1
+			RETURNF "Hard To Get Wet"
+		ELSEIF ARG:1 == 1
+			RETURNF "Easy To Get Wet"
+		ENDIF
+	;習得速度
+	CASE 50
+		IF ARG:1 == -1
+			RETURNF "Slow Learner"
+		ELSEIF ARG:1 == 1
+			RETURNF "Fast Learner"
+		ENDIF
+	;伐採釣り採集調合Lv
+	CASE 46, 47, 48, 49
+		IF ARG:1 > 0
+			;custom code
+			LOCALS = %TALENT_TR(ARG)%
+			LOCALS += TOSTR(ARG:1)
+			RETURNF LOCALS
+		ENDIF
+	;汚臭耐性
+	CASE 61
+		IF ARG:1 == -2
+			RETURNF "Clean Freak"
+		ELSEIF ARG:1 == -1
+			RETURNF "Smell Sensitive"
+		ELSEIF ARG:1 == 1
+			RETURNF "Smell Resistant"
+		ELSEIF ARG:1 == 2
+			RETURNF "Ignores Filth"
+		ENDIF
+	;快感応答
+	CASE 70
+		IF ARG:1 == -1
+			RETURNF "Denies Pleasure"
+		ELSEIF ARG:1 == 1
+			RETURNF "Enjoys Pleasure"
+		ENDIF
+	;性別嗜好
+	CASE 81
+		IF ARG:1 == -1
+			RETURNF "Bisexual"
+		ELSEIF ARG:1 == 3
+			RETURNF "Misanthrope"
+		ELSEIF ARG:1 == 1
+			RETURNF "Misandrist"
+		ELSEIF ARG:1 == 2
+			RETURNF "Misogynist"
+		ENDIF
+	;体型
+	CASE 100
+		IF ARG:1 == -5
+			RETURNF "Inchling"
+		ELSEIF ARG:1 == -2
+			RETURNF "Child-Sized"
+		ELSEIF ARG:1 == -1
+			RETURNF "Petite"
+		ELSEIF ARG:1 == 1
+			RETURNF "Tall"
+		ELSEIF ARG:1 == 2
+			RETURNF "Huge"
+		ELSEIF ARG:1 == 5
+			RETURNF "Giant"
+		ENDIF
+	;Ｃ感度
+	CASE 101
+		IF ARG:1 == -1
+			RETURNF "C Insensitive"
+		ELSEIF ARG:1 == 1
+			RETURNF "C Sensitive"
+		ENDIF
+	;Ｖ感度
+	CASE 102
+		IF ARG:1 == -1
+			RETURNF "V Insensitive"
+		ELSEIF ARG:1 == 1
+			RETURNF "V Sensitive"
+		ENDIF
+	;Ａ感度
+	CASE 103
+		IF ARG:1 == -1
+			RETURNF "A Insensitive"
+		ELSEIF ARG:1 == 1
+			RETURNF "A Sensitive"
+		ENDIF
+	;Ｂ感度
+	CASE 104
+		IF ARG:1 == -1
+			RETURNF "B Insensitive"
+		ELSEIF ARG:1 == 1
+			RETURNF "B Sensitive"
+		ENDIF
+	;バストサイズ
+	CASE 105
+		IF ARG:1 == -2
+			RETURNF "Flat Chest"
+		ELSEIF ARG:1 == -1
+			RETURNF "Small Breasts"
+		;ELSEIF ARG:1 == 0
+			;RETURNF "普乳"
+		ELSEIF ARG:1 == 1
+			RETURNF "Big Breasts"
+		ELSEIF ARG:1 == 2
+			RETURNF "Huge Breasts"
+		ENDIF
+	;Ｍ感度
+	CASE 106
+		IF ARG:1 == -1
+			RETURNF "M Insensitive"
+		ELSEIF ARG:1 == 1
+			RETURNF "M Sensitive"
+			ELSEIF ARG:1 == 2
+			RETURNF "M Hypersensitive"
+		ENDIF
+	;酒耐性
+	CASE 121
+		IF ARG:1 == -2
+			RETURNF "Nondrinker"
+		ELSEIF ARG:1 == -1
+			RETURNF "Weak Drinker"
+		ELSEIF ARG:1 == 1
+			RETURNF "Strong Drinker"
+		ELSEIF ARG:1 == 2
+			RETURNF "Heavy Drinker"
+		ELSEIF ARG:1 == 3
+			RETURNF "Drunkard"
+		ENDIF
+	;回復速度
+	CASE 130
+		IF ARG:1 == -1
+			RETURNF "Slow Recovery"
+		ELSEIF ARG:1 == 1
+			RETURNF "Fast Recovery"
+		ENDIF
+	CASE 143
+		SELECTCASE ARG:1
+			CASE 1
+				RETURNF "Animal Ears"
+			CASE 2
+				RETURNF "Bunny Ears"
+			CASE 3
+				RETURNF "Dog Ears"
+			CASE 4
+				RETURNF "Cat Ears"
+		ENDSELECT
+	CASE 130
+		IF ARG:1 == 1
+			RETURNF "授乳可能"
+		ELSEIF ARG:1 == 2
+			RETURNF "母乳体質"
+		ENDIF
+	;音楽知識
+	CASE 161
+		SELECTCASE ARG:1
+			CASE 1
+				RETURNF "Musical Knowledge"
+			CASE 2
+				RETURNF "Singing Knowledge"
+			CASE 3
+				RETURNF "Dancing Knowledge"
+		ENDSELECT
+	;音感
+	CASE 162
+		IF ARG:1 == -1
+			RETURNF "Tone Deaf"
+		ELSEIF ARG:1 == 1
+			RETURNF "Sense Of Sound"
+		ELSEIF ARG:1 == 2
+			RETURNF "Perfect Pitch"
+		ENDIF
+	;氷精
+	CASE 164
+		IF ARG:1 == 1
+			RETURNF "Ice Fairy"
+		ELSEIF ARG:1 == 2
+			RETURNF "Snow Fairy"
+		ENDIF
+	;セフレ
+	CASE 185
+		IF ARG:1 == 1
+			RETURNF "Sex Friend"
+		ELSEIF ARG:1 == 2
+			RETURNF "Companion"
+		ENDIF
+	;人間
+	CASE 190
+		IF ARG:1 == 1; 人間
+			RETURNF "Human"
+		ELSEIF ARG:1 == 2; 仙人
+			RETURNF "Hermit"
+		ELSEIF ARG:1 == 3; 天人
+			RETURNF "Celestial"
+		ELSEIF ARG:1 == 4; 月人
+			RETURNF "Lunarian"
+		ELSEIF ARG:1 == 5; 魔界人
+			RETURNF "Makai"
+		ELSEIF ARG:1 == 6; 外界人
+			RETURNF "Outsider"
+		ENDIF
+	;妖怪
+	CASE 191
+		IF ARG:1 == 1; 妖怪
+			RETURNF "Youkai"
+		ELSEIF ARG:1 == 2; 鬼
+			RETURNF "Oni"
+		ELSEIF ARG:1 == 3; 吸血鬼
+			RETURNF "Vampire"
+		ELSEIF ARG:1 == 4; 河童
+			RETURNF "Kappa"
+		ELSEIF ARG:1 == 5; 天狗
+			RETURNF "Tengu"
+		ELSEIF ARG:1 == 6; 妖獣
+			RETURNF "Youjuu"
+		ELSEIF ARG:1 == 7; 妖鳥
+			RETURNF "Youchuu"
+		ELSEIF ARG:1 == 8; 妖蟲
+			RETURNF "Bug"
+		ELSEIF ARG:1 == 9; 悪魔
+			RETURNF "Devil"
+		ELSEIF ARG:1 == 10; 小人
+			RETURNF "Inchling"
+		ELSEIF ARG:1 == 11; 座敷わらし
+			RETURNF "Zashiki-Warashi"
+		ELSEIF ARG:1 == 12; 山童
+			RETURNF "Yamawaro"
+		ENDIF
+	;妖精
+	CASE 192
+		SIF ARG:1 == 1; 妖精
+			RETURNF "Fairy"
+	;神霊
+	CASE 193
+		IF ARG:1 == 1; 神霊
+			RETURNF "Divine Spirit"
+		ELSEIF ARG:1 == 2
+			RETURNF "Shinigami"
+		ELSEIF ARG:1 == 3
+			RETURNF "Enma"
+		ENDIF
+	;幽霊
+	CASE 194
+		IF ARG:1 == 1; 幽霊
+			RETURNF "Phantom"
+		ELSEIF ARG:1 == 2; 騒霊
+			RETURNF "Poltergeist"
+		ELSEIF ARG:1 == 3; 亡霊
+			RETURNF "Ghost"
+		ELSEIF ARG:1 == 4; 悪霊
+			RETURNF "Evil Spirit"
+		ENDIF
+	;付喪神
+	CASE 195
+		SIF ARG:1 == 1; 付喪神
+			RETURNF "Tsukumogami"
+	;人形
+	CASE 196
+		IF ARG:1 == 1; 人形
+			RETURNF "Doll"
+		ELSEIF ARG:1 == 2; ロボット
+			RETURNF "Robot"
+		ELSEIF ARG:1 == 3; ゴーレム
+			RETURNF "Jizo"
+		ELSEIF ARG:1 == 4; 埴輪
+			RETURNF "Haniwa"
+		ELSEIF ARG:1 == 5; キョンシー
+			RETURNF "Jiang-Shi"
+		ELSEIF ARG:1 == 99; 人形の乙女
+			RETURNF "Puppeteer"
+		ENDIF
+	;追加種族
+	CASE 197
+		IF ARG:1 == 1; 巫女
+			RETURNF "Miko"
+		ELSEIF ARG:1 == 2; 魔法使い
+			RETURNF "Magician"
+		ELSEIF ARG:1 == 3; メイド
+			RETURNF "Maid"
+		ELSEIF ARG:1 == 4; 蓬莱人
+			RETURNF "Hourai"
+		ENDIF
+	;人妻
+	CASE 198
+		IF ARG:1 == 1
+			RETURNF "Married Woman"
+		ELSEIF ARG:1 == 2
+			RETURNF "Widow"
+		ENDIF
+	;温泉従業員
+	CASE 199
+		IF ARG:1 == 1; 風俗嬢
+			RETURNF "Sex Worker"
+		ELSEIF ARG:1 == 2; 娼婦
+			RETURNF "Prostitute"
+		ELSEIF ARG:1 == 3; 馴染みの風俗嬢
+			RETURNF "Experienced Sex Worker"
+		ELSEIF ARG:1 == 4; 馴染みの娼婦
+			RETURNF "Experienced Prostitute"
+		ENDIF
+	;積み石
+	CASE 274
+		IF ARG:1 == 1; 石積みビギナー
+			RETURNF "Stacking Beginner"
+		ELSEIF ARG:1 == 2; 石積みルーキー
+			RETURNF "Stacking Rookie"
+		ELSEIF ARG:1 == 3; 石積みエリート
+			RETURNF "Stacking Elite"
+		ELSEIF ARG:1 == 4; 石積みベテラン
+			RETURNF "Stacking Veteran"
+		ELSEIF ARG:1 == 5; 石積みマスター
+			RETURNF "Stacking Master"
+		ENDIF
+	;形状
+	CASE 250
+		IF ARG:1 == 1
+			RETURNF "Immature Penis"
+		ELSEIF ARG:1 == 2
+			RETURNF "Pathetic Penis"
+		ELSEIF ARG:1 == 4
+			RETURNF "Luminescent Penis"
+		ELSEIF ARG:1 == 5
+			RETURNF "Warty Penis"
+		ELSEIF ARG:1 == 6
+			RETURNF "Big Penis"
+		ELSEIF ARG:1 == 10
+			RETURNF "Ultra Big Penis"
+		ENDIF
+	CASEELSE
+		SIF ARG:1
+			RETURNF @"%TALENTNAME:ARG%"
+ENDSELECT
+;-------------------------------------------------
+;CHARAの種族素質ARGの名称を返す
+;-------------------------------------------------
+@GET_TRIBENAME(CHARA, ARG)
+#FUNCTIONS
+#DIM CHARA
+SELECTCASE ARG
+CASE GETNUM(TALENT, "人間")
+	SELECTCASE TALENT:CHARA:ARG
+	CASE 1
+		RETURNF "人間"
+	CASE 2
+		RETURNF "仙人"
+	CASE 3
+		RETURNF "天人"
+	CASE 4
+		RETURNF "月人"
+	CASE 5
+		RETURNF "魔界人"
+	CASE 6
+		RETURNF "外界人"
+	CASEELSE
+		RETURNF "名称不明（人間）"
+	ENDSELECT
+CASE GETNUM(TALENT, "妖怪")
+	SELECTCASE TALENT:CHARA:ARG
+	CASE 1
+		RETURNF "妖怪"
+	CASE 2
+		RETURNF "鬼"
+	CASE 3
+		RETURNF "吸血鬼"
+	CASE 4
+		RETURNF "河童"
+	CASE 5
+		RETURNF "天狗"
+	CASE 6
+		RETURNF "妖獣"
+	CASE 7
+		RETURNF "妖鳥"
+	CASE 8
+		RETURNF "妖蟲"
+	CASE 9
+		RETURNF "悪魔"
+	CASE 10
+		RETURNF "小人"
+	CASE 11
+		RETURNF "座敷わらし"
+	CASEELSE
+		RETURNF "名称不明（妖怪）"
+	ENDSELECT
+CASE GETNUM(TALENT, "妖精")
+	SELECTCASE TALENT:CHARA:ARG
+	CASE 1
+		RETURNF "妖精"
+	CASEELSE
+		RETURNF "名称不明（妖精）"
+	ENDSELECT
+CASE GETNUM(TALENT, "神霊")
+	SELECTCASE TALENT:CHARA:ARG
+	CASE 1
+		RETURNF "神霊"
+	CASE 2
+		RETURNF "死神"
+	CASE 3
+		RETURNF "閻魔"
+	CASEELSE
+		RETURNF "名称不明（神霊）"
+	ENDSELECT
+CASE GETNUM(TALENT, "幽霊")
+	SELECTCASE TALENT:CHARA:ARG
+	CASE 1
+		RETURNF "幽霊"
+	CASE 2
+		RETURNF "騒霊"
+	CASE 3
+		RETURNF "亡霊"
+	CASE 4
+		RETURNF "悪霊"
+	CASEELSE
+		RETURNF "名称不明（幽霊）"
+	ENDSELECT
+CASE GETNUM(TALENT, "付喪神")
+	SELECTCASE TALENT:CHARA:ARG
+	CASE 1
+		RETURNF "付喪神"
+	CASEELSE
+		RETURNF "名称不明（付喪神）"
+	ENDSELECT
+CASE GETNUM(TALENT, "人形")
+	SELECTCASE TALENT:CHARA:ARG
+	CASE 1
+		RETURNF "人形"
+	CASE 2
+		RETURNF "ロボット"
+	CASE 3
+		RETURNF "ゴーレム"
+	CASE 4
+		RETURNF "埴輪"
+	CASE 5
+		RETURNF "キョンシー"
+	CASE 99
+		RETURNF "人形の乙女"
+	CASEELSE
+		RETURNF "名称不明（人形）"
+	ENDSELECT
+CASE GETNUM(TALENT, "追加種族")
+	SELECTCASE TALENT:CHARA:ARG
+	CASE 1
+		RETURNF "巫女"
+	CASE 2
+		RETURNF "魔法使い"
+	CASE 3
+		RETURNF "メイド"
+	CASE 4
+		RETURNF "蓬莱人"
+	CASEELSE
+		RETURNF "名称不明（追加種族）"
+	ENDSELECT
+ENDSELECT

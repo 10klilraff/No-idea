@@ -1,0 +1,180 @@
+﻿;-------------------------------------------------
+;願掛け
+;日常系コマンド、レベル1
+;-------------------------------------------------
+@COM421
+PRINTL Make a wish.
+$INPUT_LOOP
+PRINTL [ 0] - Entwine red strings of fate (\1000)
+SIF TALENT:MASTER:2 & 2
+	PRINTL [ 1] - Endless sexual stamina (\3000)
+PRINTL [ 2] - Peace of Mind (\3000)
+PRINTL [ 3] - Oppai Oppai(\3000)
+PRINTL [10] - Girl panties! Gimme!! (\5000)
+PRINTL [15] - Make everyone horny (\10000)
+SIF TARGET && ABL:サドっ気 >= 1
+	PRINTFORML [16] - \@ TALENT:恋人? Cutest-in-all-Gensokyo-# \@%CALLNAME:TARGET% is too forceful, please do something
+SIF TARGET
+	PRINTFORML [20] - Make \@ TALENT:恋人? Cutest-in-all-Gensokyo-# \@%CALLNAME:TARGET% a bit more perverted
+SIF TALENT:TARGET:恋慕 && !TALENT:妊娠 ;com custom code for below line
+	PRINTFORML [21] - Pray for a child (Current Pregnancy Prayer status with %CALLNAME:TARGET%: {CFLAG:子宝補正}, current object of prayers: \@ FLAG:子宝祈願 > 0 ? %CALLNAME:(FLAG:子宝祈願)% # None\@)
+PRINTFORML [30] - Something must be done about the pissed off girls
+;21/08/27 反発履歴削除追加
+PRINTFORML [35] - Remove this girl's distrust
+SIF CFLAG:MASTER:魔力回収 && CFLAG:MASTER:小槌 < 6
+	PRINTFORML [40] - Remove the effects of the miracle mallet
+SIF FLAG:開運大紋購入回数 > 10
+	PRINTFORML [50] - Divine punishment for unscrupulous merchants!
+SIF CAN_DOWSING()
+	PRINTFORML [60] - I can't find a thing
+PRINTL [999] - Never mind
+INPUT
+SIF RESULT == 999
+	RETURN -1
+
+IF RESULT == 0
+	IF MONEY < 1000
+		PRINTL Not enough money.
+		GOTO INPUT_LOOP
+	ENDIF
+	PRINTL 「Who should think about you and visit you tomorrow?」
+	CALL SHOW_CHALALIST
+	PRINTL 
+	PRINTL [999] - Never mind
+	INPUT
+	IF !INRANGE(RESULT,1,CHARANUM)
+		RETURN -1
+	ELSE
+		CALL GANKAKE_0(RESULT)
+		MONEY -= 1000
+	ENDIF
+;精力絶倫
+ELSEIF RESULT == 1
+	IF MONEY < 3000
+		PRINTL Not enough money.
+		GOTO INPUT_LOOP
+	ENDIF
+	MONEY -= 3000
+	FLAG:願掛け内容 = 200
+	IF EXP:MASTER:11 > (100 + FLAG:561 * 100) && FLAG:561 < 11
+		LOCAL += 100
+		FLAG:561 += 1
+	ENDIF
+	CALL BUFF_BASE(MASTER,BASE_精力,500)
+	FLAG:71 ++
+;心の平安
+ELSEIF RESULT == 2
+	IF MONEY < 3000
+		PRINTL Not enough money.
+		GOTO INPUT_LOOP
+	ENDIF
+	MONEY -= 3000
+	CALL BUFF_BASE(MASTER,BASE_気力,500)
+	FLAG:願掛け内容 = 201
+	FLAG:71 = 0
+ELSEIF RESULT == 3
+	IF MONEY < 3000
+		PRINTL Not enough money.
+		GOTO INPUT_LOOP
+	ENDIF
+	MONEY -= 3000
+	PRINTFORML %PARSE("You clasp your")% hands together as %PARSE("you fill your",1)% mind with nothing but breasts.
+	TFLAG:OPPAI = 1
+ELSEIF RESULT == 10
+	IF MONEY < 5000
+		PRINTL Not enough money.
+		GOTO INPUT_LOOP
+	ELSE
+		MONEY -= 5000
+		FLAG:願掛け内容 = 202
+	ENDIF
+ELSEIF RESULT == 15
+	IF MONEY < 10000
+		PRINTL Not enough money.
+		GOTO INPUT_LOOP
+	ELSE
+		MONEY -= 10000
+		FLAG:願掛け内容 = 203
+	ENDIF
+ELSEIF RESULT == 16 && ABL:サドっ気
+		CALL IKENIE(TARGET,7)
+ELSEIF RESULT == 20 && TARGET != 0
+		CALL IKENIE(TARGET,2)
+ELSEIF RESULT == 21 && TALENT:TARGET:恋慕
+	IF FLAG:子宝祈願 > 0 && FLAG:子宝祈願 != TARGET ;com custom code
+		PRINTFORML You feel like all the prayers you have built up for your current object will be lost if you switch over...
+		PRINTFORML Proceed?
+		CALL ASK_YN
+		SIF RESULT
+			RESTART
+	ENDIF
+	;-----------------------------------
+		CALL IKENIE(TARGET,6)
+ELSEIF RESULT == 30
+	PRINTL Who?
+	DRAWLINE
+	FOR LOCAL,1,CHARANUM
+		SIF MARK:LOCAL:反発刻印 && !CFLAG:LOCAL:出禁
+			PRINTFORMLC [{LOCAL}] %CALLNAME:LOCAL,15,LEFT%
+	NEXT
+	PRINTL 
+	DRAWLINE
+	PRINTL [999] - Never mind
+	INPUT
+	IF RESULT >= 1 && RESULT <= CHARANUM && MARK:RESULT:反発刻印
+		CALL IKENIE(RESULT,1)
+	ELSE
+		RETURN -1
+	ENDIF
+ELSEIF RESULT == 35
+	PRINTL Who?
+	DRAWLINE
+	FOR LOCAL,1,CHARANUM
+		SIF !MARK:LOCAL:反発刻印 && MARK:LOCAL:反発取得履歴 && !CFLAG:LOCAL:出禁
+			PRINTFORMLC [{LOCAL}] %CALLNAME:LOCAL,15,LEFT%
+	NEXT
+	PRINTL 
+	DRAWLINE
+	PRINTL [999] - Never mind
+	INPUT
+	IF RESULT >= 1 && RESULT <= CHARANUM && !MARK:RESULT:反発刻印 && MARK:RESULT:反発取得履歴
+		CALL IKENIE(RESULT,8)
+	ELSE
+		RETURN -1
+	ENDIF
+
+ELSEIF RESULT == 40 && CFLAG:MASTER:魔力回収 && CFLAG:MASTER:小槌 < 6
+	CALL IKENIE(71,3)
+ELSEIF RESULT == 50 && FLAG:開運大紋購入回数 > 10
+	CALL IKENIE(53,5)
+ELSEIF RESULT == 60 && CAN_DOWSING()
+	CALL DOWSING_PANTS
+ENDIF
+DOWNBASE:MASTER:気力 = 100
+TIME += 10
+RETURN 1
+
+
+;願掛け
+@COM_ABLE421
+;停止中は不可
+SIF FLAG:70 == 1
+	RETURN 0
+;掃除実行判定
+SIF !TFLAG:100
+	RETURN 0
+;すでに今日願掛けしてたら弾く
+SIF FLAG:願掛け内容 > 0
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(421)
+	RETURN RESULT
+;賽銭箱
+SIF !天の声可(CFLAG:MASTER:現在位置) && CFLAG:MASTER:現在位置 != 守矢神社本殿
+	RETURN 0
+;気力0
+SIF BASE:MASTER:気力 <= 0
+	RETURN 0
+SIF CFLAG:うふふ == 2
+	RETURN 0
+RETURN 1

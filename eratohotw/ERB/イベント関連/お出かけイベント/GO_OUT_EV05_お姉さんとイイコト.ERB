@@ -1,0 +1,75 @@
+﻿@GO_OUT_CONDITION_EV5
+IF !RAND:10 && !FLAG:デート相手 && 顔絵付きメッセージ
+	CALL GO_OUT_EV5
+ELSE
+	RETURN 0
+ENDIF
+@GO_OUT_EV5
+#DIMS NAM
+NAM = sugar
+PRINTFORMDW On the way %PARSE("you get")% approached by a strange lady...
+PRINTFORML 
+CALL PRINT_FACE, 0, "通常", "服", "24"
+SETCOLOR モブ子店員口上色:24
+PRINTFORML 「Hey, you there, %NAM%! Would you like to... have a little bit of *fun* with me?」
+PRINTFORMW 「Come on... It's over here, hurry. Just follow me, be my guest!」
+PRINTFORMDL The woman pulls on %PARSE("your")% arm and tries to lead %PARSE("you",5)% somewhere.
+RESETCOLOR
+CALL ASK_M("Shake her off and continue on", 1, "Scoot along", 1)
+IF !RESULT
+	PRINTFORML It's just waaaay too dodgy. And too obvious at that.
+	PRINTFORML Without sparing any words, %PARSE("you")% simply %PARSE("swat")% her arm away and hurry on %PARSE("your",1)% way.
+	PRINTFORMW
+	RETURN 1
+ENDIF
+SETCOLOR モブ子店員口上色:24
+CALL PRINT_FACE, 0, "笑顔", "服", "24"
+PRINTFORMW 「Fufufu! Thank you oh so very much!」
+PRINTFORML 「Now that I look at you closer, you got quite the killer body there, don't you %NAM%〜?」
+IF CFLAG:MASTER:今日の運勢 / 100 + TFLAG:幸運補正 > 4
+	PRINTFORML 「Maybe I've just hit the jackpot♪」
+	PRINTFORMDW As the woman keeps flattering %PARSE("you")% and feeling up %PARSE("your",1)% \@ IS_MALE(MASTER) ? muscles # naughty bits\@, %PARSE("you",1)% %PARSE("get")% pulled along to a clearing.
+	PRINTFORMDL 
+	PRINTFORMDW %PARSE("You spot")% a huge pile of trash in front of %PARSE("you",5)%, as far as the eye could see...
+	PRINTFORMDW This looks like the aftermath of a banquet that took place here not too long ago.
+	PRINTFORML 「There's been a lot of youkai drinking and littering all over the place lately.」
+	PRINTFORML 「And, as you can see, this area is a complete disaster, all thanks to them!」
+	PRINTFORMW 「Now then %NAM%, let's do our best to clean up this awful mess, shall we?♪」
+	PRINTFORMDL One way or another, %PARSE("you end")% up getting goaded into helping her with cleaning.
+	PRINTFORMDL Though at the same time, %PARSE("you feel")% like %PARSE("you've",1)% done something really good for the community...
+	PRINTFORML 
+	;custom code
+	CALL AddEXP("清掃経験", MASTER, 5)
+	TCVAR:MASTER:清掃経験 += 5
+	EX:MASTER:今日の掃除回数 += 20000
+	PRINTFORMW 
+	CALL PRINT_FACE, 0, "笑顔", "服", "24"
+	PRINTFORML 「Oh myyy～ It's all sparking clean now! I guess the rumors are true after all, %NAM%♪!」
+	PRINTFORML 「You must be tired though, yes? Well, here you go!」
+	CALL GET_ITEM("スポーツドリンク", 2, 2)
+	PRINTFORMDL %PARSE("You continue")% on %PARSE("your",1)% way with %PARSE("your",1)% chin high, satisfied that %PARSE("you",1)% could get the cleaning done.
+	CALL BUFF_BASE(MASTER, BASE_気力, 200, 1) ;addition custom code, a little buff
+ELSE
+	PRINTFORMW 「Mmmm～ How long have I waited for this♥! Oohh, it can't come soon enough...」
+	PRINTFORMDL As the two of %PARSE("you",4)% retreat into the bushes, the woman turns her back on %PARSE("you")%.
+	PRINTFORMDW %PARSE("you",1)% %PARSE("see")% her taking off her kimono, showing it off as she went...
+	PRINTFORML 
+	PRINTFORML 「Come %NAM%, feel free to use... any part of me that you like♥」
+	PRINTFORMW 「Be it my cunt, my tits, or even my bumhole... Whatever you desire is yours♥」
+	PRINTFORMW 「Oh, but, um... There's something for which I must apologize...」
+	PRINTFORMW 「As my mouth is off-limits, you see...」
+	PRINTFORMW 「Why, do you ask...?」
+	CALL PRINT_FACE, 0, "通常", "裸", "24"
+	CALL COLORMESSAGE("'CAUSE I AIN'T GOT ONE!!!", C_RED, 1, 1)
+	PRINTFORMW 
+	PRINTFORMDW %PARSE("You get")% so startled that %PARSE("you",1)% %PARSE("bolt")% out of there in a flash!
+	PRINTFORMDL Ouch!　%PARSE("You take")% a spectacular fall on the way...
+	CALL RECOVER(MASTER, -250, "体力", "Loser!")
+	WAIT
+	PRINTFORMDL %PARSE("You scuttle")% away back home, too frightened to even look back...
+ENDIF
+TIME += 60
+PRINTFORMDL +60 Minutes
+PRINTFORMW 
+RESETCOLOR
+RETURN 1

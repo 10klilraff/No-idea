@@ -1,0 +1,20 @@
+﻿@DAILY_CONDITION_EV18
+SIF RAND:15 > 0
+	RETURN -1
+CALL DAILY_EV18
+RETURN 1
+
+@DAILY_EV18
+PRINTFORMW Strange light comes pouring down from the moon...
+
+FOR LOCAL,0,CHARANUM
+	SIF CFLAG:LOCAL:出禁 ;addition custom code, prevent disabled characters from receiving the effect
+		CONTINUE
+	SIF ((TALENT:LOCAL:150 || TALENT:LOCAL:151) && !TALENT:LOCAL:初潮) || !GETBIT(TALENT:LOCAL:性別,0)
+		CONTINUE
+	SIF RAND:5 > 0
+		CONTINUE
+	CALL COLORMESSAGE(@"%CALLNAME:LOCAL%'s fertility cycle is perturbed.",C_YELLOW,1)
+	CFLAG:LOCAL:900 = RAND:10 + 1
+NEXT
+PRINTW 

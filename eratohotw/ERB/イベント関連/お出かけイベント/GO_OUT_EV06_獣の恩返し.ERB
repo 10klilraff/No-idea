@@ -1,0 +1,145 @@
+﻿@GO_OUT_CONDITION_EV6
+IF !RAND:10
+	CALL GO_OUT_EV6
+ELSE
+	RETURN 0
+ENDIF
+@GO_OUT_EV6
+#DIM PAIR
+#DIM LUCK
+#DIM SPENT
+#DIMS PREY
+#DIMS PREY_TR ;custom code
+SPENT = 1
+PREY = %\@ RAND:2 ? 狸 # 狐 \@%
+PREY_TR = \@ PREY == "狸" ? tanuki # fox \@
+PAIR = FLAG:デート相手
+LUCK = CFLAG:MASTER:今日の運勢 / 100 + TFLAG:幸運補正
+
+PRINTFORML On the way %PARSE("you spot")% a %PREY_TR% caught in a hunter's trap.
+IF (GROUPMATCH(PAIR, [[藍]], [[典]]) && PREY == "狐") || (PAIR == [[マミゾウ]] && PREY == "狸")
+	PRINTFORMW %CALLNAME:PAIR% is looking at %PARSE("you")% like %HE_SHE(PAIR)% wants to say something.
+	PRINTFORML Feeling like %PARSE("you have",1)% no choice, %PARSE("you free")% the %PREY_TR% from the trap.
+	PRINTFORML It then thanks %CALLNAME:PAIR% before fleeing...
+	PRINTFORMW 
+	RETURN 1
+ELSEIF (GROUPMATCH(PAIR, [[藍]], [[典]]) && PREY == "狸") || (PAIR == [[マミゾウ]] && PREY == "狐")
+	PRINTFORMW %CALLNAME:PAIR% just gives the trap a quick glance before walking away.
+	PRINTFORML %PARSE("You hurry")% after %HIM_HER(PAIR)%...
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+PRINTFORML If %PARSE("you don't")% do something, it'll definitely get caught before long, however...
+CALL ASK_M("Leave it alone", 1, "Help it out", 1, "Butcher it!", 1) ;addition custom code
+IF !RESULT
+	PRINTFORML %PARSE("You feel")% sorry for it, but there's nothing %PARSE("you",1)% can do. It's not %PARSE("your",1)% place to interfere with another hunter's game.
+	IF PAIR
+		;every character feels reluctant? u wot?
+		PRINTFORM %CALLNAME:PAIR% seemed to be very reluctant about it as well, but in the end %PARSE("you")%
+	ELSE
+		PRINTFORM %PARSE("You")%
+	ENDIF
+	PRINTFORML \@ PAIR ? %" "%two # \@ leave the animal alone and hurry back home.
+	PRINTFORMW
+	RETURN 1
+ELSEIF RESULT == 2 ;addition custom code
+	CALL Add_Hunt_Ev(LUCK, PREY_TR, PAIR)
+	RETURN 1
+ENDIF
+PRINTFORML %PARSE("You take")% pity on the poor animal and decide to set it free.
+PRINTFORMW It's injured, but with some quick medical attention, it'll be walking soon.
+PRINTDW .........
+PRINTDW ......
+PRINTDW ...
+IF LUCK > 4
+	PRINTFORMW After the treatment, the %PREY_TR% disappears behind a bush.
+	PRINTFORML ...And then comes back to %PARSE("you")% with something in its mouth.
+	PRINTFORML Must be a reward for saving its hide.
+	;最高級素材をランダム
+	LOCAL:0 = 625, 630, 639, 640, 643, 646
+	CALL GET_ITEM(ITEMNAME:(LOCAL:(RAND:6)), 1, 2)
+	PRINTFORML 
+	IF !(GO_OUT_FLAG_06 || PAIR || GETBIT(TFLAG:一日一回, 9)) && LUCK > 7
+		GO_OUT_FLAG_06 = DAY
+		SETBIT TFLAG:一日一回, 9
+		CALL MAKE_YUKIZURI(RANDOM_CHARANUM, @"化け%PREY%")
+		CFLAG:RANDOM_CHARANUM:よく行く地域 = (MAIN_MAP == 5) ? 7 # 5
+		CFLAG:RANDOM_CHARANUM:好感度 = REQUIRED_FAVOR_思慕
+		CFLAG:RANDOM_CHARANUM:信頼度 = REQUIRED_TRUST_思慕
+		ABL:RANDOM_CHARANUM:親密 = REQUIRED_AFFECTION_思慕
+		ABL:RANDOM_CHARANUM:従順 = REQUIRED_AFFECTION_思慕
+		CSTR:RANDOM_CHARANUM:モブ子プロフィール１ = %CALLNAME:RANDOM_CHARANUM%：At %PRINT_DATE_F(DAY)%, %PARSE("you've")% saved this \@  PREY == "狸" ? bakedanuki # bakegitsune \@ at %GET_MAPNAME(CFLAG:MASTER:デート中)% on %PARSE("your",1)% way home
+		BASE:RANDOM_CHARANUM:体力 -= 50
+		CFLAG:RANDOM_CHARANUM:面識 = 1 ;custom code
+		CALL QoL_Info_Write(RANDOM_CHARANUM, Qol_Dates_Meet) ;qol custom code
+		PRINTFORML ...Oh my, wait a second?! Something is quite odd about this %PREY_TR%...!
+		PRINTFORMW What a surprise! Right before %PARSE("your")% eyes, the %PREY_TR% turns into a cute kemonomimi girl!
+		CALL CHARA_STATE_TR(RANDOM_CHARANUM) ;custom code
+		DRAWLINE
+		CALL COLORMESSAGE(@"Virginity loss history: %CSTR:RANDOM_CHARANUM:処女喪失履歴%",C_PINK,1)
+		PRINTFORMW 
+		PRINTFORML The %PREY_TR% girl introduces herself as %CALLNAME:RANDOM_CHARANUM%, and keeps thanking %PARSE("you")% many times over.
+		SIF !INRANGE(TIME, 540, 1140)
+			GOTO SKIP
+		PRINTFORML She says she'll follow %PARSE("you")% home in return...
+		CALL ASK_M("Let's just part ways for now", 1, "Let her follow", 1)
+		IF RESULT
+			FLAG:デート相手 = RANDOM_CHARANUM
+			CFLAG:RANDOM_CHARANUM:現在位置 = CFLAG:MASTER:現在位置
+			CFLAG:RANDOM_CHARANUM:同行 = 300
+			CFLAG:MASTER:同行 = 300
+			CFLAG:RANDOM_CHARANUM:デート中 = MAIN_MAP ;bug fix, set date flag
+			CFLAG:MASTER:デート中 = MAIN_MAP ;bug fix, set date flag
+			CFLAG:RANDOM_CHARANUM:眠気覚まし = 300
+			CFLAG:RANDOM_CHARANUM:拠点来訪 = 1
+			TARGET = RANDOM_CHARANUM ;custom code
+			PRINTFORML %PARSE("You decide")% to take her up on her offer and bring her home with %PARSE("you",5)%.
+			PRINTFORML She's giving %PARSE("you")% a very passionate glance...
+			GOTO END_PHASE
+		ENDIF
+		PRINTFORML She was still injured, so %PARSE("you decide")% to send her on her way for now.
+		$SKIP
+		PRINTFORMW Before leaving, %CALLNAME:RANDOM_CHARANUM% tells %PARSE("you")% to come visit her at the \@ CFLAG:RANDOM_CHARANUM:よく行く地域 == 5 ? Forest of Magic # Youkai Mountain (Foot) \@ sometime...
+		CALL COLORMESSAGE(@"%PARSE("You")% made friends with %CALLNAME:RANDOM_CHARANUM%!",C_YELLOW,2,1)
+		CFLAG:RANDOM_CHARANUM:現在位置 = SUKIMA()
+		CFLAG:RANDOM_CHARANUM:デート中 = -1 ;bug fix, disable dating flag
+		GOTO END_PHASE
+	ENDIF
+	PRINTFORML While being seen off by the %PREY_TR% %PARSE("you")% saved, %PARSE("you",1)% \@ PAIR ? and %CALLNAME:PAIR% make %PARSE("your",2)% # %PARSE("make")% %PARSE("your",1)%\@ way back home.
+ELSE
+	IF PAIR
+		PRINTFORML As %PARSE("you were")% busy patching it up, the %PREY_TR% flails about and claws at %PARSE("you",5)%.
+		CALL RECOVER(MASTER, -200, "体力")
+		WAIT
+		PRINTFORML And to add insult to injury, when the treatment was over, the %PREY_TR% simply dashed off... how ungrateful!
+		SELECTCASE CFLAG:PAIR:性格傾向
+			CASE 1
+				PRINTFORMW %CALLNAME:PAIR% looks at %PARSE("you")% with concern...
+			CASE 2, 3
+				PRINTFORMW Seeing %PARSE("your")% sorry state, %CALLNAME:PAIR% \@ CFLAG:PAIR:性格傾向 == 2 ? laughs at %PARSE("you",5)% hysterically # %SPLIT_G("giggles:sneers")% at %PARSE("you",5)% derisively \@...
+			CASE 4
+				PRINTFORMW %CALLNAME:PAIR% has an indescribably terse expression plastered on her face...
+			CASE 5
+				PRINTFORMW %CALLNAME:PAIR% looks at %PARSE("you")% with pity implanted in her eyes...
+		ENDSELECT
+		PRINTFORML Afterwards, %PARSE("you",3)% two return home with nothing to show for it.
+	ELSE
+		PRINTFORMW As soon as %PARSE("you finish")% patching it up, the %PREY_TR% simply dashed off... how ungrateful!
+		PRINTFORML Having no choice but to leave, %PARSE("you realize")% there was someone standing behind %PARSE("you",5)%.
+		PRINTFORMW When %PARSE("you",1)% %PARSE("turn")% around, %PARSE("you spot")% a hunter, seething with anger and really furious over the escaped prey...!
+		PRINTFORML 
+		PRINTFORML %PARSE("You get")% whacked on the head for %PARSE("your",1)% transgressions!
+		CALL RECOVER(MASTER, -100, "体力")
+		WAIT
+		PRINTFORML Moreover, %PARSE("you")% also get lectured at length...
+		CALL RECOVER(MASTER, -300, "気力")
+		WAIT
+		PRINTFORML Having had a hell of a time, %PARSE("you slog your")% way home.
+		SPENT = 4
+	ENDIF
+ENDIF
+$END_PHASE
+PRINTFORML +{15 * SPENT} Minutes
+PRINTFORMW 
+TIME += (15 * SPENT)
+RETURN 1

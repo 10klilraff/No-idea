@@ -1,0 +1,32 @@
+﻿@ADD_FudeOroshiRaw(ARG)
+CALL SHOW_LOVEPOWER(CHK_HININ_LOVE(ARG))
+
+TCVAR:ARG:懇願 = 1
+CALL KOJO_MESSAGE_SEND("EVENT",18,TARGET,9,0)
+LOCAL = (4 - (TALENT:ARG:処女 == 1 ? 2 # -2) - TALENT:ARG:プライド + TALENT:ARG:機嫌 - TALENT:ARG:自制心 + TALENT:ARG:性的興味 + TALENT:ARG:目立ちたがり + TALENT:ARG:自己愛 - TALENT:ARG:羞恥心 + TALENT:ARG:快感応答 + TALENT:ARG:倒錯的*2 + TALENT:ARG:小悪魔*3 + TALENT:ARG:ヤリマン*10 + (EXP:ARG:Ｖ性交経験 >=50)*2) * (ABL:MASTER:話術技能 + 3 * CFLAG:ARG:ダメ出し)
+LOCAL:2 = CHK_HININ_REASON(ARG) * (100 - LOCAL) / 100
+CALL SHOW_REASONWALL(LOCAL:2)
+IF CHK_HININ_LOVE(ARG) > LOCAL:2
+	CALL KOJO_MESSAGE_SEND("EVENT",18,TARGET,10,0)
+	PRINTFORMW You manage to convince %CALLNAME:ARG% to pop your cherry without protection.
+	CFLAG:ARG:生解禁 = 2
+	PRINTFORMW Received temporary permission to have raw sex with %CALLNAME:ARG%!
+	cTempRawPerm:ARG:0 = 1
+ELSE
+	CALL KOJO_MESSAGE_SEND("EVENT",18,TARGET,11,0)
+	PRINTFORMW Despite your best efforts, %CALLNAME:ARG% turns you down and tells you to use protection even if it's your first time.
+	CFLAG:ARG:ダメ出し += 1
+	TCVAR:ARG:挿入拒絶 = 1
+	RETURN -1
+ENDIF
+RETURN 1
+
+@EVENTEND
+#LATER
+FOR LOCAL, 1, CHARANUM-1
+	IF cTempRawPerm:LOCAL:0 > 0
+		CFLAG:LOCAL:生解禁 = 0
+		cTempRawPerm:LOCAL:0 = 0
+		PRINTFORMW Raw sex permission with %CALLNAME:LOCAL% has expired.
+	ENDIF
+NEXT

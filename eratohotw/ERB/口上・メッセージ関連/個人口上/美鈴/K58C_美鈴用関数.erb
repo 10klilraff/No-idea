@@ -1,0 +1,105 @@
+﻿;-------------------------------------------------
+;美鈴用関数群
+;-------------------------------------------------
+;****イベントファイル**********************************************************
+
+;==================================================
+;何度も書くのは地味ながらめんどいので挨拶を関数化。特筆無し
+;==================================================
+@K58_時間別挨拶(ARG)
+#FUNCTIONS
+#DIMS 挨拶
+	ARG = TIME:2
+	SELECTCASE TIME:2
+	;朝
+	CASE 1,2
+		挨拶 = good morning
+	;昼
+	CASE 3,4
+		挨拶 = hello
+	;夜
+	CASE 5,6,7
+		挨拶 = good evening
+	ENDSELECT
+RETURNF 挨拶
+
+;==================================================
+;主に起床時に呼び出し。とりあえず通常のフェラから経験のみ移植。
+;==================================================
+@K58_簡易フェラ
+EXP:Ｍ経験 += 1
+EXP:口淫経験 += 3
+EXP:精飲経験 ++
+	IF HETEROSEX(TARGET,PLAYER)
+		EXP:(50 + HETEROSEX(TARGET,PLAYER)) += 7
+		EXP:PLAYER:(50 + HETEROSEX(TARGET,PLAYER)) += 7
+	ENDIF
+	;愛情経験
+	SIF TALENT:恋慕 && ASSIPLAY == 0
+		EXP:愛情経験 += 1
+RETURN 1
+
+;==================================================
+;寝言共通口上。
+;==================================================
+@K58_寝言
+IF TALENT:恋慕 || TALENT:恋人
+	SELECTCASE RAND:6
+		CASE 0
+			PRINTFORML 「ZZZzz... Sakuya-san's upper half is macho... ZZZzz...」
+			PRINTFORMDW ... Just what is happening to Sakuya in her dreams...?
+		CASE 1
+			PRINTFORMDL Meiling is sleeping with a happy look on %HIS_HER(58)% face...
+			PRINTFORMW 「Nnyaa... Together with %CALLNAME:MASTER%...」
+		CASE 2
+			PRINTFORMDL Meiling mutters something while sleeping...
+			PRINTFORMW 「... Ehehe... Zank you very much... Ehehe...」
+		CASE 3
+			PRINTFORML 「... Supah～... Stop doing that... Ann...%UNICODE(0x2665)%」
+			PRINTFORMDW Meiling seems to be enjoying her dream...
+		CASE 4
+			PRINTFORMW 「Munya... It's useless Sakuya-san～... That is... Oh, that is actually a road roller...」
+		CASEELSE
+			PRINTFORML 「ZZZzz...」
+			PRINTFORML 「Andou dreams of going to the Rocky Mountains to get the electric gyokuro...」
+			PRINTFORML 「ZZZzz...」
+			PRINTFORMDW %PARSE("You")% truly %PARSE("want")% to know just what is transpiring in Meiling's dreams...
+	ENDSELECT
+ELSEIF TALENT:思慕
+	SELECTCASE RAND:5
+		CASE 0 to 1
+			PRINTFORMDL Meiling is sleeping with a happy look on %HIS_HER(58)% face...
+			PRINTFORMW 「Munya... %CALLNAME:MASTER%... Ehehe...」
+		CASE 2
+			PRINTFORMW 「Munya... It's useless Sakuya-san～... That is a bucket-wheel excavator...」
+		CASE 3
+			PRINTFORML 「... Aa... Aann... Aa...」
+			PRINTFORML 「... Annin tofu...」
+			PRINTFORMDW It seems she's dreaming of food, but it doesn't look like it... How strange...
+		CASEELSE
+			PRINTFORML 「ZZZzz...」
+			PRINTFORML 「Teruyofu is... Eating... Cirnoff...」
+			PRINTFORML 「ZZZzz...」
+			PRINTFORMDW What the hell kind of dream is that...?
+		ENDSELECT
+ELSE
+	SELECTCASE RAND:5
+		CASE 0
+			PRINTFORMW 「Nguy～... Unyaunya... Fuu...」
+		CASE 1
+			PRINTFORMW 「Munya... It's useless～ Sakuya-san... That is a wheel dozer...」
+		CASE 2
+			PRINTFORML 「U～nn, if you drink this you'll become Super Meiling GOD... Gufuu...」
+			PRINTFORMDW ... She seems to be talking in her sleep.
+		CASE 3
+			PRINTFORML 「Munya... Sakuya-san, just training your pectoralis major is... Uguuu...」
+			PRINTFORMDW ... What kind of dream is that?
+		CASEELSE
+			PRINTFORML 「ZZZzz...」
+			PRINTFORML 「Are you making fun of Taishang Laojun's dance!?」
+			PRINTFORML 「ZZZzz...」
+			PRINTFORMDW What the hell kind of dream is that...?
+		ENDSELECT
+ENDIF
+RETURN 1
+

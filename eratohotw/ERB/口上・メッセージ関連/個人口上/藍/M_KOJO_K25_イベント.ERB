@@ -1,0 +1,3235 @@
+﻿;-------------------------------------------------
+; eraTheWorld proto4.13用 八雲藍口上
+;-------------------------------------------------
+;
+;
+;試しに書いてみる藍様口上
+;人間に優しめで寛容なお人柄。でも実際は外面がいいだけで、結局は紫様＆橙が第一な感じを出したい
+;という訳で素質に”一線越えない”を追加。難易度急上昇
+;素質に”妖狐”が無かったので追加。問題あったら消します
+;式になる前から九尾の狐で、昔は色々やんちゃしてた系藍様
+;多分あんまり原作には沿ってません
+;もふるもふればもふるとき
+;
+;
+;※文体などについて
+;地の文は末尾に”。”を付けない方向
+;”――”はゲーム中だと線が途切れて見えるので使わない。一つだけだと物足りないし
+;”……”は二つ一組。個人的な見た目の好み
+;PRINTFORML を多用してクリック数削減。PRINTFORMWは段落の最後やイベントの長文などにのみ使用。スムーズに台詞が流れるように
+;うちのあなたはショタっ子だ。動物耳生えてる人外だ。いやいや種付けおじさんだ。などプレイヤーごとに色々あると思うので、性格や容姿を特定する表現はなるべく控えます
+;けど女性あなただけは想定してません。申し訳ない
+;それと藍様処女プレイも対応しておりません
+;改変加筆修正いずれも歓迎
+;
+;
+;※その他について
+;霊夢口上、影狼口上、針妙丸口上、美鈴口上など皆様の構文を参考にさせて頂きました。お礼を申し上げます
+;当口上に加筆を考えて下さる方、被りなどはお気になさらずご自由にどうぞ。更新の際に文章をそのまま組み込ませて頂きます
+;
+;
+;------ ｷﾘﾄﾘ ｶｲｼ -----------
+;eraTheWorld proto4.07パッチ取り込み用 Ver1.13
+;テンプレートの使い方
+;初めに置換コマンド等により K25 を K(キャラNo) に変更して下さい  
+;キャラNoはCSVフォルダのCharaファイルを参照　例(霧雨 魔理沙の場合)：K25 =置換=> K11
+;
+;------ ｷﾘﾄﾘ ｵﾜﾘ -----------
+
+;**** Copyright ****************************************************************
+;本口上の修正について（許可する行為のみ残してください）
+;【誤字・脱字修正】【分岐条件・erb構文に関する修正】【本体Ver・Rev変更対応】【フラグの管理・修正】
+
+;本口上の加筆・改変について（許可する行為のみ残してください）
+;【未記入部位加筆】【ランダム分岐加筆】【記入済部位加筆】【記入済部位削除】【記入済部位コメントアウト】
+
+;本口上に対するメンテナンス禁止時限について
+;【なし】
+;******************************************************************************
+;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;
+;CFLAG:25:1001	:パンツ盗まれた回数
+;CFLAG:25:1002	:時間停止中に絶頂した合計回数
+;CFLAG:25:1003	:時間停止姦で陥落したかどうか
+;CFLAG:25:1004	:時間停止中に膣内射精された回数
+;CFLAG:25:1005	:デート後告白されたかどうか
+;CFLAG:25:1006	:お風呂場スキンシップで剃毛したかどうか
+;CFLAG:25:1007	:妊娠回数
+;TCVAR:25:350	:”部屋で遭遇”時に挨拶したか
+;TCVAR:25:351	:パンツを盗んだか
+;TCVAR:25:352	:選択肢付き会話をしたか
+;TCVAR:25:353   :願掛け制限
+;TCVAR:25:360   :Stores Ran's virginity status on first meeting; immature fucknuggets clap your hands
+;
+;******************************************************************************
+
+;PS 寅の人
+;オリジナル作者と連絡が取れない場合、上記Copyrightに従い加筆改変を行って下さい
+;また本体処理・他口上処理等に干渉する異常処理がある場合でオリジナル作者による修正が
+;行われない・もしくは困難な場合、Copyrightに関わらず有志による修正を許可します
+;その際は元処理を削除せずコメントアウトし修正処理を挿入して下さい
+
+;### 口上存在判定 ###################################
+@M_KOJO_K25(ARG)
+;別人版を作成する際はこのテンプレではなく別人版用口上テンプレをご利用ください
+
+;口上存在判定です、けしてコメントアウトしないでください
+;他の処理は一切行わないように
+RETURN 1
+
+;### 口上基本フラグ設定 #############################
+@M_KOJO_FLAGSETTING_K25
+;基本フラグ設定はここで行ってください
+;共通の口上フラグは必要な箇所のコメントアウトを外してご利用ください
+;口上専用フラグはご自由に
+;Xにはキャラ番号を入れてください
+
+;眠姦口上有、時間停止口上有、なりきりに1を入れると、それぞれ時間停止時、眠姦時、なりきり時にコマンド口上が読み込まれるように
+;入れないと時間停止時、眠姦時、なりきり時は一切喋りません
+;CFLAG:X:眠姦口上有 = 0
+CFLAG:25:時間停止口上有 = 1
+;CFLAG:X:なりきり口上有 = 0
+
+;破瓜キャンセル口上有に1を入れると、@M_KOJO_EVENT_KX_LOST_VIRGIN_STOPでキャンセルの成否を操作できます
+;CFLAG:X:破瓜キャンセル口上有 = 0
+
+;口上内抱き寄せ判定_初回と口上内抱き寄せ判定_通常に1を入れると、M_KOJO_EVENT_KX_PERMISSIONで押し倒しの成否を操作できます
+;CFLAG:X:口上内抱き寄せ判定_初回 = 0
+;CFLAG:X:口上内抱き寄せ判定_通常 = 0
+
+;押し倒し禁止に1を入れると、自分から押し倒してこなくなります
+;以下は恋慕かセフレがつくまで押し倒してこなくなる使用例
+;IF !TALENT:X:恋慕 && !TALENT:X:セフレ
+;	CFLAG:X:押し倒し禁止 = 1
+;ELSE
+;	CFLAG:X:押し倒し禁止 = 0
+;ENDIF
+
+;来訪不能に1を入れると、来訪してこなくなります
+;以下は面識があるまで来訪してこなくなる使用例
+;IF !CFLAG:X:面識
+;	CFLAG:X:来訪不能 = 1
+;ELSE
+;	CFLAG:X:来訪不能 = 0
+;ENDIF
+
+;### 口上色判定 ###################################
+@M_KOJO_COLOR_K25
+;ここでSETCOLORすることで口上に色を付けられます
+
+;藍色にしてみたら大変読み辛かった。なので藤紫色
+;old purple/indigo color
+;SETCOLOR 0x9883C9
+
+;golden color from Ran's Reverse dialogue
+SETCOLOR 0xdaa520
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"UPDATE判定"
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_UPDATE_K25
+;口上独自のUPDATE用
+;ENCOUNTER専用に独自分岐フラグを仕込んだ場合等にどうぞ
+;UPDATE判定でCFLAGを使う場合、キャラ番号の指定が必要になります
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"ENCOUNTER"系イベント（エクストラ構文）
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_ENCOUNTER_K25
+;初対面、挨拶のタイミング
+;TALENTの変更はここでどうぞ。
+;Store Ran's virginity status to protecc /jp/'s fragile masculinity
+IF TALENT:25:処女
+	TCVAR:25:360 = 1
+ENDIF
+PRINTL 
+PRINTFORMW 「I see. You're that newcomer.」
+PRINTL 
+PRINTFORMDW You are surprised as a woman you hadn't notice before suddenly looks at you with great interest.
+PRINTL 
+PRINTFORMW 「Ah, I didn't mean to startle you. Just a little harmless fun.」
+PRINTL 
+PRINTFORMDW The woman with golden hair waves at you, her slitted, golden eyes and sweet laughter firmly saying『No Malice』.
+PRINTFORMDW Behind her tall stature you see nine lordly glossy-blonde tails poking out, framing her.
+PRINTL 
+PRINTFORMW 「I'm Yakumo Ran. I am a certain someone's humble Shiki.」
+PRINTFORMW 「I frequently visit the shrine and the human village when out on errands, so I'm sure we'll run into each other.」
+PRINTFORMW 「So, with that out of the way, Yoroshiku onegaishimasu.」
+PRINTL 
+PRINTFORMDW Saying that, the nine-tailed Kitsune gives you a polite bow.
+PRINTFORMDW What a nice surprise. Despite her powerful presence and great looks, she seems very kind for a Youkai...
+PRINTFORMDW But as you return the bow, her vertically-slitted eyes stare straight at you.
+PRINTL 
+;妖狐
+TALENT:25:25 = 1
+TALENT:25:91 = 1
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"SP_EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;デート帰りにファーストKISS（合意も付く）
+;==================================================
+@M_KOJO_SPEVENT_K25_1(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	PRINTFORML  
+	;キスをキャンセルしたい場合は以下を開放
+	;TCVAR:キスキャンセル = 1
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰りに告白（恋人が付く）
+;==================================================
+@M_KOJO_SPEVENT_K25_2(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+;CALL SPEVENT_MESSAGE_2(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL && !FLAG:70 && TALENT:恋慕
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;告白内容
+	;この告白内容表示後に受けるかどうかの選択分が表示されます
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		;初回
+		IF FIRSTTIME(1025)
+			PRINTL
+			PRINTFORMW 「In every era, handsome men can always flaunt their beauty.」
+			PRINTL
+			PRINTFORMDW On the way home, Ran suddenly opens her mouth while walking beside you.
+			PRINTL
+			PRINTFORMW 「A man with a strong body, and a good head too, that's what women like. Ah, I didn't mean to speak ill of you.」
+			PRINTL
+			PRINTFORMDW She starts laughing impishly, and you can't help but smile wryly.
+			PRINTFORMDW Her figure, her strength, her mind, in each one Ran has you beaten.
+			PRINTFORMDW Compared to her, no matter how elegant the man, he would lose.
+			PRINTFORMDW The woman called Yakumo Ran is the very picture of perfection.
+			PRINTL
+			PRINTFORMW 「Kindness, sincerity, bravery, or favors, ambitions... People have different charms.」
+			PRINTFORMW 「But, it's all the same to me. In the blink of an eye it's reduced to zero.」
+			PRINTFORMW 「All worldly things are transient. Even if it goes against what the Buddha has said, I know it all too well...」
+			PRINTL
+			PRINTFORMDW There's a hollow echo to her tone as she reminisces, and you decide to take a look at her face.
+			PRINTFORMDW But whatever her expression was, it too has already disappeared in the blink of an eye.
+			PRINTL
+			PRINTFORMDW Your eyes meet, and without any warning your whole body is suddenly embraced by her arms and nine tails.
+			PRINTL
+			PRINTFORMW 「Well, %CALLNAME:MASTER%. Will you be mine?」
+			PRINTL
+			PRINTFORMDW The Kitsune whispers close to your ear, her words sweet and heavy.
+			PRINTFORMDW It feels like being held in the bosom of some enormous beast.
+			PRINTFORMDW It's very pleasant, but you can hardly move, you can't even twitch a muscle.
+			PRINTL
+			PRINTFORMW 「I won't keep you. You could fall in love, travel the world... Just return to me sometime.」
+			PRINTFORMW 「Just that is fine. I can't go with you.」
+			PRINTFORMW 「Who knows how long you'll live, so share the evolution of your being with me.」
+			PRINTL
+			PRINTFORMDW ...Her petition comes off almost like pleading, full of warmth like that of a mother for her child.
+			PRINTFORMDW You were about to nod without a second thought, but you stop yourself.
+			PRINTFORMDW Your hesitation feels a bit like cowardice, and you take a sharp breath to clear your mind.
+		ELSE
+			PRINTL
+			PRINTFORMDW You and Ran are walking home again.
+			PRINTFORMDW Lost in thought, recalling the earlier confession you turned down, fluffy tails once again wrap you up.
+			PRINTFORMDW Your toes can't touch the ground anymore. It's different from last time, as you're held closely face-to-face.
+			PRINTL
+			PRINTFORMW 「So, Have you changed your mind yet?」
+			PRINTFORMW 「I'm not saying I'm annoyed by your fickleness. I don't think anyone understands me better than you do.」
+			PRINTFORMW 「I won't just spoil you. I will train you and make you a perfect man.」
+			PRINTL
+			PRINTFORMDW It seems her plan is to win you over with a light tone, her expression kind and welcoming.
+			PRINTFORMDW 『Oh, please do』hangs unsaid between you...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白オッケー（恋人が付く）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTL
+		PRINTFORMDW Clearly, and with firm resolve, you answer her.
+		PRINTFORMDW You consent with a『I won't become yours』.
+		PRINTL
+		PRINTFORMDW The hairs on her tails stand up slightly, tickling you a bit.
+		PRINTFORMDW The Kitsune puts more strength into her hug.
+		PRINTL
+		PRINTFORMW 「How conceited...」
+		PRINTL
+		PRINTFORMDW She pats your head for emphasis, but doesn't say anything.
+		PRINTL
+		PRINTFORMW 「...Not saying a word. Embarrassed?」
+		PRINTL
+		PRINTFORMDW A pulse passes between you, strong and fast. It's heartrending and makes you tremble.
+		PRINTFORMDW Being held so tight, there's no way you'd miss it.
+		PRINTFORMDL Yakumo Ran is a woman after all. Even at times like these, her not saying anything is to be expected.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTL
+		PRINTFORMW 「Fumu. I see.」
+		PRINTL
+		PRINTFORMDW Saying it can't be helped, Ran releases you from her grip.
+		PRINTFORMDW Even though she was prepared for this outcome, it's still an unimaginable letdown.
+		PRINTL
+		PRINTFORMW 「Hahaha, I don't intend to quiver and cry.」
+		PRINTFORMW 「And I'm not the type of woman who'd give up so easily.」
+		PRINTFORMW 「I'll make you agree one day. Bewitching others is my forte.」
+		PRINTL
+		PRINTFORMDW The Kitsune gives you a defiant smile, her pupils turning into slits with tips as sharp as a blade.
+		PRINTFORMDW Apparently, in this situation...
+		PRINTFORMDW You've only made her get serious...
+		RETURN 1
+	ENDIF
+	PRINTL 
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰り
+;==================================================
+@M_KOJO_SPEVENT_K25_3(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_3(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTL
+		IF TALENT:恋人
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Today was once again enjoyable. Thank you, my \@ TALENT:恋人 ? fantastic husband # wonderful dearest\@.」
+				PRINTFORMDW Ran says in a joking manner, but the blush she's trying to hide is adorable.
+			CASE 1
+				PRINTFORML 「Thanks for today. Others must've started thinking of us as a married couple by now.」
+				PRINTFORMDL Of course, that's bound to happen more with each date.
+				PRINTFORMDW Ran seems to have become a bit serious, but her bashfulness shining through is absolutely adorable and worth treasuring.
+			CASE 2
+				PRINTFORMDL Going home after a fun date, you come across a hill and are met with a breathtaking view of Gensokyo.
+				PRINTFORML 「...I see, Yukari-sama is...」
+				PRINTFORMDW Having missed what Ran said, you tilt your head quizzically but she just laughs it off saying it was nothing.
+			ENDSELECT
+		ELSEIF TALENT:恋慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「That was a long walk. Are you tired, %CALLNAME:MASTER%?」
+				PRINTFORMDW You return a nod, and exchange a smile with Ran like a married couple.
+			CASE 1
+				PRINTFORML 「Where to this time? Gensokyo is vast...」
+				PRINTFORMDW It's becoming commonplace for you two, walking nestled up to each other, and passing the time with idle chatter.
+			CASE 2
+				PRINTFORML 「Let's spend a day in Mayohiga next time. It would be fine if you stayed the night.」
+				PRINTFORMDW A good suggestion, but, something tells you she's just trying to find a breach in your wall.
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「......Slow day, don't you think, %CALLNAME:MASTER%?」
+				PRINTFORMDW It seems Ran was satisfied with the date.
+			CASE 1
+				PRINTFORML 「I think you understand my position. I can't just slack off.」
+				PRINTFORMDW Before long, Ran uses her glib tongue to make you promise to help her work.
+			CASE 2
+				PRINTFORML 「Aah, That was fun. It really was.」
+				PRINTFORMDW Even if she's literally a Kitsune, you don't doubt Ran's smile in the least.
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「That wasn't so bad. Might be worth doing again.」
+				PRINTFORMDW You have a hard time telling what she thought of the date.
+			CASE 1
+				PRINTFORML 「I can't promise there'll be a next time. I have things to do.」
+				PRINTFORMDW It feels like Ran is keeping you at a distance.
+			CASE 2
+				PRINTFORML 「I hope that you had a good time.」
+				PRINTFORMDW You wonder if that's true for Ran as well.
+			ENDSELECT
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印消去イベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印2>1レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印3>2レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;部屋で遭遇
+;==================================================
+@M_KOJO_EVENT_K25_1(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;四季ごとに朝昼晩
+	IF LOCAL:1 && GROUPMATCH(ARG, 1, 6) ;edit
+		;一日一回
+		SIF TCVAR:25:350 == 1
+			RETURN 1
+		IF TALENT:恋慕
+			;DAY:2で季節を選択
+			SELECTCASE DAY:2
+			;春
+			CASE 1
+				;TIME:2で朝昼晩を選択
+				SELECTCASE TIME:2
+				;朝
+				CASE 1,2
+					PRINTFORML 「%CALLNAME:MASTER%-sama. Ohayogozaimasu.」
+					PRINTFORML 「Or do you dislike formal greetings?」
+					PRINTFORMDW Ran laughs as you stand there awkwardly.
+				;昼
+				CASE 3,4
+					PRINTFORML 「Yaa, %CALLNAME:MASTER%.」
+					PRINTFORMW 「This time of year is great. Perfect weather for going outside.」
+				;夜
+				CASE 5,6,7
+					PRINTFORML 「Konbanwa, %CALLNAME:MASTER%.」
+					PRINTFORMW 「The spring equinox may be over, but the nights are still cold. Please take care.」
+				ENDSELECT
+			;夏
+			CASE 2
+				SELECTCASE TIME:2
+				;朝
+				CASE 1,2
+					PRINTFORML 「Ohayou, %CALLNAME:MASTER%.」
+					PRINTFORML 「It's hot day and night now. Are you having trouble sleeping at night?」
+					PRINTFORMDW Ran is cool as always.
+				;昼
+				CASE 3,4
+					PRINTFORML 「Konnichiwa. Hot today too isn't it, %CALLNAME:MASTER%?」
+					PRINTFORML 「Oya, You're so sweaty. Let me wipe it off.」
+					PRINTFORMDW Ran wipes your brow clean of sweat.
+				;夜
+				CASE 5,6,7
+					PRINTFORML 「Ah, %CALLNAME:MASTER%. I see you didn't shrivel up in the heat.」
+					PRINTFORML 「It's finally getting cool now the day has ended. Now's the time for having fun～」
+					PRINTFORMDW As there are such few opportunities to do so during summer, Ran sidles up next to you.
+				ENDSELECT
+			;秋
+			CASE 3
+				SELECTCASE TIME:2
+				;朝
+				CASE 1,2
+					PRINTFORML 「Nice to see you, %CALLNAME:MASTER%.」
+					PRINTFORMW 「Don't slack off when it comes to your health. Going for a checkup to the doctor in the Bamboo Forest once in a while is a good idea.」
+				;昼
+				CASE 3,4
+					PRINTFORML 「Hmm... Do you smell that Ginkgo on the wind?」
+					PRINTFORML 「I'm getting sick of it. Save me～」
+					PRINTFORMDW Ran buries her face in your neck, sniffing and shuddering adorably.
+				;夜
+				CASE 5,6,7
+					PRINTFORML 「Ya, %CALLNAME:MASTER%.」
+					PRINTFORML 「Hora, The crickets are chatting.」
+					PRINTFORMDW The two of you listen elegantly to the pleasant sound.
+				ENDSELECT
+			;冬
+			CASE 4
+				SELECTCASE TIME:2
+				;朝
+				CASE 1,2
+					PRINTFORML 「Ohayou, %CALLNAME:MASTER%... Eh?」
+					PRINTFORML 「That's a bit sudden. I don't mind it though.」
+					PRINTFORMDW You bury your cold hands in Ran's fluffy tails.
+				;昼
+				CASE 3,4
+					PRINTFORML 「Cold today, isn't it, %CALLNAME:MASTER%?」
+					PRINTFORML 「Well, come a bit closer then. It'll warm your heart.」
+					PRINTFORMDW One of Ran's fluffy tails wraps itself around your neck.
+				;夜
+				CASE 5,6,7
+					PRINTFORML 「Uuー It's gotten cold...」
+					PRINTFORML 「It's biting in even through my fur.」
+					PRINTFORMW 「At times like these, human skin is the best. Don't you think so?」
+				ENDSELECT
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			PRINTFORML 「%CALLNAME:MASTER%? It's good seeing you.」
+			PRINTFORMDW Ran greets you with a friendly smile.
+		ELSE
+			PRINTFORML 「Yaa.」
+			PRINTFORMDW Ran notices you and gives a little wave.  
+		ENDIF
+		TCVAR:25:350 = 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTL
+		IF TALENT:恋慕
+			PRINTFORML 「Oh, It's you, %CALLNAME:MASTER%.」
+			PRINTFORML 「Umu. I came to see you.」
+			PRINTFORMDW Ran approaches you with a cheery look
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Oh? %CALLNAME:MASTER%.」
+			PRINTFORMDW As soon as she sees you, Ran's face lights up.
+		ELSE
+			PRINTFORML 「Oya, Been a while.」
+			PRINTFORMDW Ran gives you a casual greeting.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて一緒に入る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTL
+		IF TALENT:恋慕
+			PRINTFORML 「Oya, It's %CALLNAME:MASTER%.」
+			PRINTFORMDL The door opens, and a naked Ran enters holding a washcloth.
+			PRINTFORMDL She smiles to herself, making no attempt to hide her swaying breasts.
+			PRINTFORML 「Let's enter together, this doesn't happen too often. Unless you object?」
+			PRINTFORMDW You nod without any hesitation.
+		ELSE
+			PRINTFORML 「Ah, Someone's already here.」
+			PRINTFORMDL Ran opens the bathroom door.
+			PRINTFORMDL Her towel doesn't cover her plump body in the slightest, her ripe breasts swaying freely as she goes towards you.
+			PRINTFORML 「There seems to be some space, I take it you won't mind if I sit beside you?」
+			PRINTFORMDW Of course, you answer her.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて出て行った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+			PRINTFORMDL The door opens, and someone comes into the bathroom.
+			PRINTFORMDL It's Ran, her chest barely covered by a small towel.
+			PRINTFORMDL The towel is far too small for her stout body with all its curves, so her nipples and nether region are completely exposed.
+			PRINTFORML 「So someone's already bathing. Excuse me.」
+			PRINTFORMDW Without as much as a twitch, the Shikigami backs out the door and closes it.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;外出先で遭遇した
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;他キャラとデート中に遭遇した
+	;ARG:1にデート相手
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;朝起きたとき（おはよう口上）
+;==================================================
+@M_KOJO_EVENT_K25_2(ARG,ARG:1)
+CALL MESSAGE_GOODMONING(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;非同棲かつ相手が先に起きてる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;TARGET私室にMASTERが入っている（恋慕時添い寝中就寝時のみ？
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTER私室にTARGETが入ってきてる(恋慕無しでも入ってくる可能性有り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;共通
+		IF TALENT:恋慕 
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Oho, You're awake.」
+				PRINTFORMDL You open your eyes to see Ran's face, her smile going from ear to ear.
+				PRINTFORML 「Fufufu... I was just having a bit of fun, you know?」
+				PRINTFORMDW What in the world happened while you were asleep?
+			;朝フェラをやってみたかった
+			CASE 1
+				SIF TALENT:MASTER:性別 != 2
+					RETURN 1
+				PRINTFORMDL You wake up as a strange sensation travels up your spine.
+				PRINTFORMDL There's a yellow head buried in your crotch, licking your glans fervently.  
+				PRINTFORML 「Ohayou, %CALLNAME:MASTER%. Did you have a pleasant dream?」
+				PRINTFORMDL Says Ran while servicing you with her excellent mouth, looking up at you as she drags her tongue along your length.
+				PRINTFORMDW You have no clue how long she's been at it, as before long you fire your morning shot into her mouth.
+				BASE:MASTER:精力 -= 100
+			;玉舐めもあるぞ
+			CASE 2
+				SIF TALENT:MASTER:性別 != 2
+					RETURN 1
+				PRINTFORMDL A tickling sensation stirs you from your deep sleep.
+				PRINTFORMDL Finally awake, you suddenly notice someone's playing with your crotch.
+				PRINTFORML 「Mn... Haayo-」
+				PRINTFORMDL Ran talks with a lisp, the vibration of her speech transmitting through the testicles in her mouth.
+				PRINTFORMDL A little spurt of precum oozes down erect shaft, drawing wet strings as it lands on Ran's nose.
+				PRINTFORMDL Apparently Ran has decided to be your alarm clock for today, using a little testicle play instead.
+				PRINTFORMDW Finally, the Kitsune engulfs your cock, the built-up load pumping into her throat.
+				BASE:MASTER:精力 -= 100
+			ENDSELECT
+		ELSE
+			PRINTFORML 「Ohayou. I hope you slept well, %CALLNAME:MASTER%.」
+			PRINTFORMDW You wake up, and see Ran sitting in seiza beside you.
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が起きている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:恋慕 
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Oho, You're awake.」
+				PRINTFORMDL You open your eyes to see Ran's face, her smile going from ear to ear.
+				PRINTFORML 「Fufufu... I was just having a bit of fun, you know?」
+				PRINTFORMDW What in the world happened while you were asleep?
+			;朝フェラをやってみたかった
+			CASE 1
+				SIF TALENT:MASTER:性別 != 2
+					RETURN 1
+				PRINTFORMDL You wake up as a strange sensation travels up your spine.
+				PRINTFORMDL There's a yellow head buried in your crotch, licking your glans fervently.  
+				PRINTFORML 「Ohayou, %CALLNAME:MASTER%. Did you have a pleasant dream?」
+				PRINTFORMDL Says Ran while servicing you with her excellent mouth, looking up at you as she drags her tongue along your length.
+				PRINTFORMDW You have no clue how long she's been at it, as before long you fire your morning shot into her mouth.
+				BASE:MASTER:精力 -= 100
+			;玉舐めもあるぞ
+			CASE 2
+				SIF TALENT:MASTER:性別 != 2
+					RETURN 1
+				PRINTFORMDL A tickling sensation stirs you from your deep sleep.
+				PRINTFORMDL Finally awake, you suddenly notice someone's playing with your crotch.
+				PRINTFORML 「Mn... Haayo-」
+				PRINTFORMDL Ran talks with a lisp, the vibration of her speech transmitting through the testicles in her mouth.
+				PRINTFORMDL A little spurt of precum oozes down erect shaft, drawing wet strings as it lands on Ran's nose.
+				PRINTFORMDL Apparently Ran has decided to be your alarm clock for today, using a little testicle play instead.
+				PRINTFORMDW Finally, the Kitsune engulfs your cock, the built-up load pumping into her throat.
+				BASE:MASTER:精力 -= 100
+			ENDSELECT
+		ELSE
+			PRINTFORML 「Ohayou. I hope you slept well, %CALLNAME:MASTER%.」
+			PRINTFORMDW You wake up, and see Ran sitting in seiza beside you.
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が寝ている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERが起きていて、相手が起きてきた
+	;添い寝時TARGET起床はこちら（TARGET衰弱or添い寝中TARGET睡魔負け後そのままMASTERが起き続けた上で相手が起床した場合限定
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;-------------------------------------------------
+		;非同棲
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;同棲中
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;共通
+		IF TALENT:恋慕
+			PRINTFORML 「Ohayo～」
+			PRINTFORMDL It seems Ran is an early riser as well, but dealing with things this early makes her drowsy.
+			PRINTFORMDW You caress the swaying fox ears and hair lovingly.
+		ELSE
+			PRINTFORML 「...Ohayou. It's so early.」
+			PRINTFORML 「My sleeping face might... Ah, It doesn't matter.」
+			PRINTFORMDW Ran looks away and stretches enormously as she prepares to face the day. 
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+
+;==================================================
+;夜寝るとき（おやすみ口上）
+;==================================================
+@M_KOJO_EVENT_K25_3(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;自室に帰る（定時になって寝る）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;神社住み込み時専用と想定して記述
+		SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML 「It's about time I go to bed. %CALLNAME:MASTER%, be sure not to stay up too late.」
+			PRINTFORMDW You see Ran off as she leaves.
+		CASE 1
+			PRINTFORML 「Well then, \@ TALENT:恋人 ? husband # dear\@. Please excuse me for leaving first.」
+			PRINTFORMDW Standing somewhat on ceremony, Ran returns to her room.
+		CASE 2
+			PRINTFORML 「Well then. See you tomorrow.」
+			PRINTFORMDW Ran gives you a quick goodnight kiss as you see her off. 
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;眠そうにしている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:恋慕 || TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「...............」
+				PRINTFORMW 「Sorry. I just nodded off for a moment.」
+			CASE 1
+				PRINTFORMDL Although she looks her usual self, Ran seems awfully sluggish.
+				PRINTFORMDW Seems even she can't defeat sleep.
+			CASE 2
+				PRINTFORMDW You see Ran's tail slowly droop down. It's a clear sign of tiredness.
+			ENDSELECT
+		ELSE
+			PRINTFORML 「Uーmu, Umu...」
+			PRINTFORMDW Ran's responses are getting sluggish, it seems it's about time to go to bed.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;睡眠中（起きていないので会話というよりは寝言？）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF TALENT:恋慕 || TALENT:思慕
+		ELSE
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;イタズラ中
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 4
+		;PRINTFORMW 
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;衰弱中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		IF TALENT:恋慕 || TALENT:思慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL Ran leans against your shoulder.
+				PRINTFORMDW It seems even she has a limit to her strength.
+			CASE 1
+				PRINTFORMDL The tips of Ran's ears seem to droop a bit, and her tails are almost touching the ground.
+				PRINTFORMDW Her exhaustion is obvious at a glance, and you begin leading her home.
+			CASE 2
+				PRINTFORML 「Yeah, I'm beat. I'll have a short nap.」
+				PRINTFORMDW Normally Ran doesn't let weakness show, but she's made an exception for you.
+			ENDSELECT
+		ELSE
+			PRINTFORMW 「......Fuaa. Guess we'll round things up.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERがダウン（部屋まで運ばれる）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		IF TALENT:恋人
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Goodnight, %CALLNAME:MASTER%.」
+				PRINTFORMDW Unable to dispute your sleepiness, you entrust your body to Ran's arm.
+			CASE 1
+				PRINTFORML 「I'm fine. Leave the rest to me.」
+				PRINTFORMDW Finding relief in those words, you shut your eyes.
+			CASE 2
+				PRINTFORML 「Otsukaresama.」
+				PRINTFORMDW Ran slips an arm behind your back, and plants a light kiss on your forehead.
+			ENDSELECT
+		ELSEIF TALENT:恋慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「There, there. I'll carry you back to bed.」
+				PRINTFORMDW Ran frivolously picks you up and carries you on her back.
+			CASE 1
+				PRINTFORML 「Maybe that was a bit unreasonably. Sorry.」
+				PRINTFORMDW You feel like you're about to pass out, when you suddenly feel tails softly lifting you up.
+			CASE 2
+				PRINTFORML 「You pushed yourself hard today.」
+				PRINTFORMDW Right before passing out, you're met with Ran's gentle smile.
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;移動時すれちがい
+;==================================================
+@M_KOJO_EVENT_K25_4(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;立ち止まった
+	;この後遭遇口上に接続
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;軽く会釈して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無視して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;他者介入でムード変化
+;==================================================
+@M_KOJO_EVENT_K25_5(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;紫様が入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 26
+		IF TALENT:恋慕
+			;紫様が恋慕持ち
+			IF TALENT:26:恋慕
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Yukari-sama. Do you need me?」
+					PRINTFORML 「Or, perhaps %CALLNAME:MASTER%?」
+					PRINTFORMDW They nod to each other about something, before turning to you with warm smiles.
+				CASE 1
+					PRINTFORML 「I'm sorry to have made you wait, Yukari-sama.」
+					PRINTFORMDL Ran practically drags you out in front of Yukari.
+					PRINTFORMDW The two women grin suspiciously as they begin their pincer attack.
+				CASE 2
+					PRINTFORMDL In front of you - the Gap Youkai. Behind you - the Nine-Tailed Shikigami.
+					PRINTFORML 「Too bad, %CALLNAME:MASTER%. Yukari-sama's commands always take priority.」
+					PRINTFORMDW The master and servant seem awfully cheerful.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Yukari-sama.」
+					PRINTFORML 「......Ha. Certainly. Doing that...」
+					PRINTFORMDW The two women talk about something you can't make out, as they stare at you.
+				CASE 1
+					PRINTFORML 「No, no, that just can not be done. I am Yukari-sama's Shikigami.」
+					PRINTFORMDW Ran softens Yukari's words.
+				CASE 2
+					PRINTFORML 「That never happened. You couldn't have seen that. But, you say you did see it?」
+					PRINTFORMDW Yukari says she caught you and Ran flirting, starts mercilessly teasing you as you turn beet red.
+				ENDSELECT
+			ENDIF
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Ah, Yukari-sama. Do you need me?」
+			PRINTFORMDW Ran seems to be unusually uncomfortable.
+		ELSE
+			PRINTFORML 「Yukari-sama, would you like to partake?」
+			PRINTFORMDW Ran's attitude changes completely. Her loyalty and respect towards her master is plain to see.
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;橙が入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 24
+		IF TALENT:恋慕
+			;橙が恋慕持ち
+			IF TALENT:24:恋慕
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Ah, There's Chen!」
+					PRINTFORMDW Ran pins your arms around your back as Chen runs around you, trying to get at her.
+				CASE 1
+					PRINTFORML 「Oh, Chen! What perfect timing.」
+					PRINTFORMDW You and Ran welcome Chen as she runs up between you.
+				CASE 2
+					PRINTFORML 「Chen, over here!」
+					PRINTFORMDW Chen half-runs up to you, the corner of her lips turned up in a beaming smile.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「W-What is it, Chen? I'm not doing anything unusual.」
+					PRINTFORMDW It's rare seeing Ran get flustered by her own Shikigami.
+				CASE 1
+					PRINTFORML 「Wah! How long have you been there?」
+					PRINTFORMDW Ran suddenly notices Chen staring out from under some cover.
+				CASE 2
+					PRINTFORML 「%CALLNAME:MASTER%. Please be sure to behave. I'm watching.」
+					PRINTFORMDW Ran will make you suffer if you make Chen imitate something stupid.
+				ENDSELECT
+			ENDIF
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Ah, What's the matter, Chen?」
+			PRINTFORMDW Chen clings to Ran's arm and is giving you a piercing gaze.
+		ELSE
+			PRINTFORML 「Oh, Chen.」
+			PRINTFORMDW Ran turns her attention from you to her Shikigami.
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を目撃した
+;==================================================
+@M_KOJO_EVENT_K25_6(ARG,ARG:1)
+;口上主はTARGET
+;ARGに情事相手
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を目撃した（馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		;お相手が紫様
+		IF ARG == 26
+			PRINTFORML 「- I apologize for my indiscretion with all my being.」
+			PRINTFORMDL The moment Ran realizes your partner is her master, she prostrates and apologizes for interrupting.
+		;お相手が橙
+		ELSEIF ARG == 24
+			PRINTFORML 「Serya!」
+			PRINTFORMDL Ran closes the distance in a heartbeat. With a turn, she uses the momentum to crash her tails into you, sending you flying as she covers Chen.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「Oya Oya～」
+			PRINTFORML 「I'm sorry for interrupting. Please continue.」
+			PRINTFORMDL There's no way you can continue while being watched, so you and %CALLNAME:ARG% rush to put your clothes back on.
+		ELSE
+			PRINTFORML 「...Sorry. That I of all people wouldn't notice...」
+			PRINTFORMDL Ran gives a short and polite nod, and you respond on kind.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;負けじと参加（馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		;お相手が紫様
+		IF ARG == 26
+			PRINTFORML 「Yukari-sama... Are you sure this is fine?」
+			PRINTFORMDL Yukari smiles as she beckons Ran, who approaches timidly.
+			PRINTFORMDL She shrinks as her hands are grabbed and she's pulled in.
+		;お相手が橙
+		ELSEIF ARG == 24
+			PRINTFORMDL Ran sneaks up on you, her footsteps silent as she embraces Chen from behind.
+			PRINTFORML 「Indulging yourself without your master's permission. What a bad child!」
+			PRINTFORMDL It seems she's settled on making love to you while punishing the now shivering Chen.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「Mumu. Seems like you're having fun.」
+			PRINTFORML 「If it's alright, I would like to join you.」
+			PRINTFORMDL %CALLNAME:ARG% having given their approval, you are thrown down by the two women. 
+		ELSE
+			PRINTFORML 「Don't be like that. We're just having fun together.」
+			PRINTFORMDL Ran joins you with a passionate smile flushing her face.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;気まずそうに立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		;お相手が紫様
+		IF ARG == 26
+			PRINTFORMDL Yukari suddenly turns from embracing you, looking at something.
+			PRINTFORMDL You turn, but only catch a glimpse of some golden hair before it disappears.
+		;お相手が橙
+		ELSEIF ARG == 24
+			PRINTFORMDL With your hand to the back of Chen's head, you go to snatch a kiss. 
+			PRINTFORMDL Over her head you catch a flash of Ran's face before she leaves, but can't make out her expression.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「Please take your time.」
+			PRINTFORMDL Ran says something before leaving instantly.
+		ELSE
+			PRINTFORMDL Your eye meets Ran's as she stares at you in flagranti, before she turns away silently and leaves.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERに誘われて参加　現在は表示されない？
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 4
+		;お相手が紫様
+		IF ARG == 26
+			PRINTFORML 
+			PRINTFORML 
+		;お相手が橙
+		ELSEIF ARG == 24
+			PRINTFORML 
+			PRINTFORML 
+		ELSEIF TALENT:恋慕
+			PRINTFORML 
+			PRINTFORML 
+		ELSE
+			PRINTFORML 
+			PRINTFORML 
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTW
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を見られた
+;==================================================
+@M_KOJO_EVENT_K25_7(ARG,ARG:1)
+;口上主はTARGET
+;ARGに目撃者
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を見られた（目撃者の馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		;お相手が紫様
+		IF ARG == 26
+			PRINTFORML 「Yukari-sama. Have you any orders for me?」
+			PRINTFORMDL Ran quickly fixes her hair and clothes, then straightens up.
+			PRINTFORMDL However, one of her ears juts out from under her hat, and Yukari can't help but laugh.
+		;お相手が橙
+		ELSEIF ARG == 24
+			PRINTFORML 「-! ...Do you need anything, Chen?」
+			PRINTFORMDL Ran straightens out her clothing with surprising speed.
+			PRINTFORMDL Unfortunately, Chen's flushed cheeks reveals she knows everything.
+		ELSEIF TALENT:恋慕
+			PRINTFORMDL Ran says something about taking a short rest as she instantly straightens out her disheveled clothes.
+			PRINTFORMDL She pouts a bit at the sudden interloper.
+		ELSE
+			PRINTFORMDL %CALLNAME:ARG%'s face pales in surprise as Ran coolly straightens out her disordered clothes.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が負けじと参加（目撃者の馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		;お相手が紫様
+		IF ARG == 26
+			PRINTFORML 「You can embrace both Yukari-sama and me at once. Or are you saying you don't like it?」
+			PRINTFORMDL The voluptuous master and servant coil their arms around you in a warm embrace.
+		;お相手が橙
+		ELSEIF ARG == 24
+			PRINTFORML 「Come here, Chen. Don't be afraid.」
+			PRINTFORMDL Squirming with embarrassment, Chen leaps into Ran with a hop.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「Want to join? By all means, don't hold back.」
+			PRINTFORMDL Ran grins, her dignity like that of a defied queen.
+			PRINTFORMDL Resolving %HIM_HER(ARG)%self, %CALLNAME:ARG% joins in.
+		ELSE
+			PRINTFORML 「The question『which one』isn't a trivial one.」
+			PRINTFORML 「If you are a man, then it's certain you can satisfy the both of us.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		;お相手が紫様
+		IF ARG == 26
+			PRINTFORMDL With a smile like a devil, and at a crawling pace, Yukari slowly vanishes into a gap.
+			PRINTFORMDL Ran covers her face in shame as she collapses.
+		;お相手が橙
+		ELSEIF ARG == 24
+			PRINTFORML 「Ah- Wh- This is... Wait, Chen!」
+			PRINTFORMDL The choked-up Chen doesn't seem to hear Ran, but just runs away in a flash.
+			PRINTFORML 「Uwaaaaaa... This is the last way I wanted Chen to see meー!」
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「Muu, How unfortunate.」
+			PRINTFORMDL Ran seems rather embarrassed, despite it seeming like she was taking advantage of you.
+		ELSE
+			PRINTFORML 「Nnー... Now then, do we continue?」
+			PRINTFORMDL The air between you and Ran has cooled a bit, and you exchange glances.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERに誘われて目撃者も参加
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG:1 == 4
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;その他
+	PRINTW
+ENDIF
+RETURN 1
+
+;==================================================
+;目撃した情事を問い詰める
+;==================================================
+@M_KOJO_EVENT_K25_8(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERだけ問い詰め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;二人とも説教
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;パンツ没収された
+;==================================================
+@M_KOJO_EVENT_K25_9(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;同じ場所に居てパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		IF TALENT:恋慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「The scent of a woman... You can't fool me.」
+				PRINTFORML 「Come on, give up.」
+				PRINTFORMDW The jig is up. You hand over the stolen underwear obediently.
+			CASE 1
+				PRINTFORML 「Why do men seek these things so much despite knowing the risk?」
+				PRINTFORML 「Don't try to fool me, it'll be a very unpleasant experience.」
+				PRINTFORMDW You hang your head, thankful that it at least was Ran that caught you.
+			CASE 2
+				PRINTFORML 「Really, you know I'm not the only one with a sharp nose, right?」
+				PRINTFORML 「At least try harder, I'll have to punish you for this.」
+				PRINTFORMDW Not telling you to never do it again, Ran seems a bit open to the idea.
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Wait, %CALLNAME:MASTER%. What's that smell?」
+			PRINTFORML 「......I'll go return these panties. I'll leave it at that.」
+			PRINTFORMDW You bow your head, knowing any protest would be futile.
+		ELSE
+			PRINTFORML 「Hmm? Oi, wait a minute. Something smells off.」
+			PRINTFORML 「......This is... I'll return them.」
+			PRINTFORMDW Ran looks astonished, but that might just be at the amount.
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;遠距離移動中にパンツを回収された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		IF TALENT:恋慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「The scent of a woman... You can't fool me.」
+				PRINTFORML 「Come on, give up.」
+				PRINTFORMDW The jig is up. You hand over the stolen underwear obediently.
+			CASE 1
+				PRINTFORML 「Why do men seek these things so much despite knowing the risk?」
+				PRINTFORML 「Don't try to fool me, it'll be a very unpleasant experience.」
+				PRINTFORMDW You hang your head, thankful that it at least was Ran that caught you.
+			CASE 2
+				PRINTFORML 「Really, you know I'm not the only one with a sharp nose, right?」
+				PRINTFORML 「At least try harder, I'll have to punish you for this.」
+				PRINTFORMDW Not telling you to never do it again, Ran seems a bit open to the idea.
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Wait, %CALLNAME:MASTER%. What's that smell?」
+			PRINTFORML 「......I'll go return these panties. I'll leave it at that.」
+			PRINTFORMDW You bow your head, knowing any protest would be futile.
+		ELSE
+			PRINTFORML 「Hmm? Oi, wait a minute. Something smells off.」
+			PRINTFORML 「......This is... I'll return them.」
+			PRINTFORMDW Ran looks astonished, but that might just be at the amount.
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;押し倒した
+;==================================================
+@M_KOJO_EVENT_K25_10(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERを押し倒した（開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:恋慕
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 「How's this?」
+				PRINTFORMDL With a flash of arms and tails, you find yourself on your back with Ran standing over you.
+				PRINTFORMDW Ran promptly mounts you, and with a satisfied smile, begins taking off her clothes.
+			CASE 1
+				PRINTFORML 「Fufufu... Would you mind?」
+				PRINTFORMDL Ran leans heavily against your shoulder.
+				PRINTFORMDW There's no way for you to decline such an amorous invitation, and the two of you collapse on the spot.
+			CASE 2
+				PRINTFORML 「Today I shall be on top, and you shall be on the bottom.」
+				PRINTFORMDW Ran pins you against the bed, and her smile is exactly like that of a Kitsune.
+			CASE 3
+				PRINTFORMDL You suddenly find yourself staring up at the ceiling.
+				PRINTFORMDW Ran's face appears as she straddles your abdomen, gently stroking your cheek with her fingertips.
+			CASE 4
+				PRINTFORML 「Time to eat you upー」
+				PRINTFORMDW Ran sticks her tongue out and laughs.
+			ENDSELECT
+		ELSEIF CFLAG:弱み握り
+			PRINTFORML 「Don't you remember from before?」
+			PRINTFORML 「Give yourself to me. Think of it as a prize.」
+			PRINTFORMDW You look at Ran's downcast eyes, the pupils narrow in sadistic glee.
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;なだめられた（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTL 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;浴場で遭遇
+;==================================================
+@M_KOJO_EVENT_K25_11(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:思慕
+			PRINTFORML 「Ah, %CALLNAME:MASTER%. Want to enter together?」
+			PRINTFORML 「It was a joke. Don't be so serious.」
+			PRINTFORMDW As Ran drives you out of the bath, you catch a glimpse of her naked body.
+		ELSEIF ABL:9 >= 4
+			PRINTFORML 「You can't, I'm already in here.」
+			PRINTFORMDW You just manage to get a glimpse of Ran's body before she drives you out.
+		ELSE
+			PRINTFORML 「Leave at once, before you make me force you.」
+			PRINTFORMDL Ran's sharp words hit you before you have the chance to catch a glimpse of her body.
+			PRINTFORMDW You turn on the spot, immediately deciding it's the correct course of action.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目が合った（追い出されない）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:恋慕
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Irasshai, %CALLNAME:MASTER%. What a coincidence.」
+				PRINTFORMDL When Ran sees it's you, she smiles and waves, before abruptly rising out of the water.
+				PRINTFORMW 「Come here, won't you wash my back?」
+			CASE 1
+				PRINTFORML 「Hmm? Is that %CALLNAME:MASTER%?」
+				PRINTFORML 「I'm sorry, but I can't open my eyes right now.」
+				PRINTFORMDL It seems Ran was bathing, and was washing her head right as you entered.
+				PRINTFORMDW You unhesitatingly take your place beside her.
+			CASE 2
+				PRINTFORMDL Opening the door, you see Ran bathing, who invites you in.
+				PRINTFORML 「Perfect timing. I'll use you in place of a washcloth.」
+				PRINTFORMDW The Kitsune's great breasts swing with intentional force as she approaches you.
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Oh, %CALLNAME:MASTER%?」
+			PRINTFORML 「Won't you come sit here next to me?」
+			PRINTFORMDW Ran is in the middle of bathing, and doesn't bother hiding any of herself as she ushers you inside.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;寝床に忍び込み
+;==================================================
+@M_KOJO_EVENT_K25_12(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出される（怒り）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕・衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される（衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;お仕事中
+;==================================================
+@M_KOJO_EVENT_K25_13(ARG,ARG:1)
+;口上主はTARGET
+;ARG:1に残っている仕事量
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;仕事開始（職場へ移動する）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;業務中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;仕事終了
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;食事系
+;==================================================
+@M_KOJO_EVENT_K25_14(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;持っていた食物を食べられた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == -1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;MASTERが押し倒した
+;==================================================
+@M_KOJO_EVENT_K25_15(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;未実装（押し倒しコマンドに統合？
+	;MASTERが押し倒した（ウフフ開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;逢瀬終了（ウフフ終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;添い寝する
+;==================================================
+@M_KOJO_EVENT_K25_16(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;添い寝を始めた（開始時）(存在せず
+	;記入チェック
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;添い寝を終了した（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;時止め終了時
+;==================================================
+@M_KOJO_EVENT_K25_17(ARG,ARG:1)
+;口上主はTARGET
+;排他と明記されていないモノは状況によっては連続で表示されるので注意
+;ARGに射精状況
+;ARG:1に射精状態
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+;以下、美鈴口上を参考にさせて頂いております。というかフラグなどほぼそのまんま
+
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ARG=1～3は排他
+	;謎の快感	%CALLNAME:LOCAL%は、謎の快感にびくりと身を強張らせた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;絶頂回数カウント
+		LOCAL:4 = 0
+		LOCAL:4 += EX:25:50
+		LOCAL:4 += EX:25:51
+		LOCAL:4 += EX:25:52
+		LOCAL:4 += EX:25:53
+		;絶頂箇所判定
+		LOCAL:5 = 0
+		SIF EX:25:50 > 0
+			LOCAL:5 += 1
+		SIF EX:25:51 > 0
+			LOCAL:5 += 1
+		SIF EX:25:52 > 0
+			LOCAL:5 += 1
+		SIF EX:25:53 > 0
+			LOCAL:5 += 1
+		;時間停止して悪戯したのが初めて
+		IF CFLAG:25:1002 == 0
+			PRINTFORML 「Uu!? ............!」
+			PRINTFORMDL The moment you resume time, the built up pleasure crashes into the Youkai.
+			PRINTFORMDL Ran's face stiffens as she scans her surroundings. She is completely in attack mode......
+			;パンツを盗んでノーパンだった場合
+			IF CFLAG:25:291 == 1
+				;一日一回
+				IF TCVAR:25:351 == 0
+					IF CFLAG:25:1001 == 0
+						PRINTFORML 「I knew it, someone must be...!」
+						PRINTFORMDL Despite now knowing how it works, the fact that her underwear is missing tells her someone did this.
+					ELSEIF CFLAG:25:1001 > 1
+						PRINTFORML 「So, you finally have put your hands on this body...!」
+						PRINTFORMDL Despite now knowing how it works, the direct attack now culminating in theft sends her blood boiling.
+					ENDIF
+					TCVAR:25:351 = 1
+					CFLAG:25:1001 += 1
+					CFLAG:25:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORMDL Usually, a person in Ran's situation would be wondering what had happened to their body.
+			PRINTFORMDW Watching the Shikigami put all her power into locating the culprit sends chills down your spine. 
+		ELSEIF CFLAG:25:1002 < 350
+			PRINTFORML 「...Again...!」
+			PRINTFORML 「I will find you this time.」
+			PRINTFORMDL Ran instantly suppresses the pleasure running through her body and begins throwing around seals.
+			IF CFLAG:25:291 == 1
+				;一日一回
+				IF TCVAR:25:351 == 0
+					IF CFLAG:25:1001 == 0
+						PRINTFORML 「Have a taste of your own medicine... I've put a mark on you.」
+						PRINTFORMDL Having her underwear stolen seems to have poured some fire into her anger.
+					ELSEIF CFLAG:25:1001 < 30
+						PRINTFORML 「Hmph. Are they not satisfied just taking panties now?」
+						PRINTFORMDL The sharpness in her gaze fills you with hesitation.
+					ELSE
+						PRINTFORML 「They might get cocky if I leave them alone...」
+						PRINTFORMDL Underwear theft aside, Ran has no intention of being subjected to molestation.
+					ENDIF
+					TCVAR:25:351 = 1
+					CFLAG:25:1001 += 1
+					CFLAG:25:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORMDL Calming herself down, the Shikigami forces the climax to subside.
+			PRINTFORMDL You feign ignorance as Ran weathers the storm.
+		ELSEIF CFLAG:25:1002 < 500
+			PRINTFORML 「Afuu...!」
+			PRINTFORML 「Damn it, today's the day...」
+			PRINTFORMDL The Kitsune throws around seals of detection as usual, but her hands seem to be trembling just a bit.
+			PRINTFORMDL It seems even she can lose to pleasure.
+			IF CFLAG:25:291 == 1
+				;一日一回
+				IF TCVAR:25:351 == 0
+					IF CFLAG:25:1001 == 0
+						PRINTFORML 「Spoils of war is it...!?」
+						PRINTFORMDL Ran blushes at having her underwear stolen.
+					ELSEIF CFLAG:25:1001 < 30
+						PRINTFORML 「I refuse to give you the satisfaction!」
+						PRINTFORMDL Ran mutters something while pinning down the areas her panties used to cover.
+					ELSE
+						PRINTFORML 「If I don't do something fast...」
+						PRINTFORMDL Ran looks to have set aside the matter of the underwear for now.
+					ENDIF
+					TCVAR:25:351 = 1
+					CFLAG:25:1001 += 1
+					CFLAG:25:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORMDL Slowly but surely, the Shikigami's body is getting used to the unusual climaxes.
+			PRINTFORMDW You plan out what your next step is, as you nonchalantly call out to Ran.
+		;藍様陥落
+		ELSEIF CFLAG:25:1003 == 0
+			PRINTFORML 「Akuu, Uuu, Kuu...」
+			PRINTFORMDL Ran hugs her body as she collapses - the strongest reaction yet.
+			PRINTFORMDL She covers herself in an unsuspecting manner, before muttering something you can't make out.
+			PRINTFORML 「...I see. Is this the only thing this body is good for?」
+			PRINTFORMW 「In that case, I might as well enjoy it...」
+				IF CFLAG:25:291 == 1
+					PRINTFORML 「Stealing my panties as well...」
+					TCVAR:25:351 = 1
+					CFLAG:25:1001 += 1
+				ENDIF
+			PRINTFORML 「Using me as a toilet for semen...」
+			PRINTFORML 「......If it's just some normal pervert, I could just enjoy myself shamefully as well......」
+			PRINTFORMDL Ran smiles, her face dyed a lewd pink, as she stands up on unsteady legs.
+			PRINTFORMDW The Shikigami's look convinces you that Ran has fallen for the pleasures of time-stop sex.
+			CFLAG:25:1003 = 1
+		;陥落済み
+		ELSE
+			PRINTFORML 「Kufu... I guess I came...」
+			PRINTFORMDL Time begins to move. Ran's body shakes.
+			PRINTFORMDL The smile on her face is obscene, she doesn't even try looking for the perpetrator anymore.
+				IF CFLAG:25:291 == 1
+					PRINTFORMDL Her clothes are getting drenched from her uncovered crotch, clinging to her as a large stain forms.
+					TCVAR:25:351 = 1
+					CFLAG:25:1001 += 1
+				ENDIF
+			PRINTFORML 「...Ah, %CALLNAME:MASTER%. It's nothing, I'm fine.」
+			PRINTFORMDW The Kitsune exudes eroticism as she smiles at you.
+		ENDIF
+		PRINTL 
+		CFLAG:25:1002 += LOCAL:4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;絶頂（絶頂合計３０回以上）	突然激しい絶頂に襲われた%CALLNAME:LOCAL%は、甘い嬌声をあげてその場にへたり込んでしまった
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;絶頂回数カウント
+		LOCAL:4 = 0
+		LOCAL:4 += EX:25:50
+		LOCAL:4 += EX:25:51
+		LOCAL:4 += EX:25:52
+		LOCAL:4 += EX:25:53
+		IF CFLAG:25:1002 == 0
+			PRINTFORML 「Kwhaaー」
+			PRINTFORMDL A disgraceful moan slips past Ran's lips as she holds her body, shivering.
+			PRINTFORMDL It seems even she can be caught off-guard by suddenly being hit by pleasure that immense.
+			IF CFLAG:25:291 == 1
+				;一日一回
+				IF TCVAR:25:351 == 0
+					IF CFLAG:25:1001 == 0
+						PRINTFORML 「W...What in... Who did that...?」
+						PRINTFORMDL Noticing that her underwear is gone, she begins to trembling even harder.
+					ELSEIF CFLAG:25:1001 > 1
+						PRINTFORML 「No way... Then, it's the same as...?」
+						PRINTFORMDL As the MO is different, she begins to doubt it's the panty thief.
+					ENDIF
+					TCVAR:25:351 = 1
+					CFLAG:25:1001 += 1
+					CFLAG:25:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「Kuh... I'm coming for you...!」
+			PRINTFORMDW Ran throws out seals of detection, but her knees begin giving in before long.
+		ELSEIF CFLAG:25:1002 < 350
+			PRINTFORML 「Aaah! Gaah, Aaaahhhhー」
+			PRINTFORMDL Ran tries to disguise her moans of pleasure by turning them into screams of rage.
+			PRINTFORMDL Her trembling shoulders and flush face makes her arousal clear as day however.
+			IF CFLAG:291 == 1
+				;一日一回
+				IF TCVAR:25:351 == 0
+					PRINTFORMDL The climax striking her entire body is so powerful she just glosses over the fact her underwear is now missing.
+					TCVAR:25:351 = 1
+					CFLAG:25:1001 += 1
+					CFLAG:25:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「D...Damn ittt... Doing this to me...」
+			PRINTFORMDW The Kitsune tries to grab for something to identify the culprit, but she can't even close her hands around the seals.
+		ELSEIF CFLAG:25:1002 < 500
+			PRINTFORML 「Oguu, Oooh, Uuooooo...!」
+			PRINTFORMDL One arm across her chest, the other holding her stomach, Ran just falls on her behind.
+			PRINTFORMDL You can't see her face, but the intense shivering tells you she's fighting hard to hold back the climax.
+			IF CFLAG:25:291 == 1
+				;一日一回
+				IF TCVAR:25:351 == 0
+					PRINTFORMDL She's so aroused it wouldn't have mattered if she had panties or not, her thighs are absolutely drenched either way.
+					TCVAR:25:351 = 1
+					CFLAG:25:1001 += 1
+					CFLAG:25:1002 += LOCAL:4
+					RETURN 1
+				ENDIF
+			ENDIF
+			PRINTFORML 「Don't look... Don't look....」
+			PRINTFORMDW Despite being a Shikigami, she can't beat the climax, and she's left panting helplessly.
+		;藍様陥落
+		ELSEIF CFLAG:25:1003 == 0
+			PRINTFORML 「Oo... Oh  Oh  Oh, Hooooo......!!」
+			PRINTFORMDL The moment time resumes, Ran is down on her knees.
+			PRINTFORMDL Her whole body trembles, and her lovely moans rise in pitch as a pool of liquid slowly spreads out beneath her.
+			PRINTFORMDL %BREAKENG(@"The strongest of Bakemono has been conquered by multiple climaxes in an instant, the waves crashing into her removing her control of her bladder.")%
+			PRINTFORML 「...I see. Is this the only thing this body is good for?」
+			PRINTFORMW 「In that case, I might as well enjoy it...」
+				IF CFLAG:25:291 == 1
+					PRINTFORML 「Stealing my panties as well...」
+					TCVAR:25:351 = 1
+					CFLAG:25:1001 += 1
+				ENDIF
+			PRINTFORML 「Using me as a toilet for semen...」
+			PRINTFORML 「......If it's just some normal pervert, I could just enjoy myself shamefully as well......」
+			PRINTFORMDL Ran smiles, her face dyed a lewd pink, as she stands up on unsteady legs.
+			PRINTFORMDW The Shikigami's look convinces you that Ran has fallen for the pleasures of time-stop sex.
+			CFLAG:25:1003 = 1
+		;陥落済み強絶頂
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Ah, I came...」
+				PRINTFORML 「Ugiii Gyaaaaaaa～」
+				PRINTFORMDL Ran arches her back, the force of the waves of pleasure blurring her golden eyes.
+				PRINTFORMDL Her face is twisted in the most supreme of ecstasies, juices splashing almost audibly from her crotch. 
+					IF CFLAG:25:291 == 1
+						PRINTFORMDL The clothes are so drenched they cling to her crotch, and you can even make out her pink color...
+						TCVAR:25:351 = 1
+						CFLAG:25:1001 += 1
+					ENDIF
+				PRINTFORML 「Kufufu... Doing whatever they want as always...」
+				PRINTFORMDW Completely enthralled by the pleasure, the Kitsune doesn't even try looking for the perpetrator anymore.
+			CASE 1
+				PRINTFORML 「W-Wait, not now...!」
+				PRINTFORML 「St- I-I'm leaking, Oh  Ooo  Uuuuu...」
+				PRINTFORMDL Ran collapses on her knees, pinning both her hands against her crotch, forced to climax with a tear-filled moans.
+				PRINTFORMDL From under her clothes, the sound of liquid dribbles and splashes in whispers.
+					IF CFLAG:25:291 == 1
+						PRINTFORMDL Without any obstructing panties, her clothes are visibly stained in an instant...
+						TCVAR:25:351 = 1
+						CFLAG:25:1001 += 1
+					ENDIF
+				PRINTFORMDW The Kitsune seems to have lost herself completely to the pleasure of incontinence, completely ignoring everyone staring at her.
+			CASE 2
+				PRINTFORMDL Time resumes, and Ran is hit with all the built up pleasure at once, crashing into her back.
+				PRINTFORML 「Ahh  Nn  Nn  Nn  Nn  Nnnh......!!」
+				PRINTFORMDL She's completely lost all control, and she can only prepare herself and submit.
+				PRINTFORMDL Her nipples and clit stand erect, and her pussy clenches down and wriggling around something no longer there.
+				PRINTFORMDW The perfectly synchronized climaxes are like opium, washing away Ran's sanity.
+					IF CFLAG:25:291 == 1
+						PRINTFORMDW Her bare lower lips spasms as female juices gushes out of her over and over......
+						TCVAR:25:351 = 1
+						CFLAG:25:1001 += 1
+					ENDIF
+			ENDSELECT
+		ENDIF
+		PRINTL 
+		CFLAG:25:1002 += LOCAL:4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;パンツ紛失	知らぬ間にパンツを脱がされた%CALLNAME:LOCAL%は落ち着かなさそうだ
+	;主に盗られた回数で分岐。疑われてもバレない方向で
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		;一日一回
+		SIF TCVAR:25:351 == 1
+			RETURN 1
+		;陥落済みなら犯人を探さない
+		IF CFLAG:25:1003 == 1
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORMDL Even when her underwear suddenly vanishes, Ran doesn't even twitch.
+				PRINTFORML 「What was... Maybe some Danmaku?」
+				PRINTFORMDW The Shikigami mutters something to herself.
+			CASE 1
+				PRINTFORML 「Oh. No, don't worry. It is nothing.」
+				PRINTFORMDL Ran's eyebrows barely twitch in surprise as she maintains her composure.
+				PRINTFORMDW Suddenly missing her panties doesn't seem to bother her in the least.
+			CASE 2
+				PRINTFORML 「...By the way %CALLNAME:MASTER%, what kind of panties are your favorite?」
+				PRINTFORMDL Ran suddenly changes the topic.
+				PRINTFORMDW You briefly wonder if it's a trick, but it seems she just wanted to see you blush.
+			CASE 3
+				PRINTFORML 「I've heard that the demand for panties has risen in the Human Village recently.」
+				PRINTFORML 「Some thief is stealing from both humans and Youkai, or so they say.」
+				PRINTFORMW 「Some are so poor they just have to live without them. It's deplorable.」
+			CASE 4
+				PRINTFORML 「Apropos of nothing, %CALLNAME:MASTER%, you could say I'm "not all here" today.」
+				PRINTFORML 「Fufufu... Do you want to flip my skirt and find out what I mean?」
+				PRINTFORMDW Ran lifts up the hem of her skirt with an alluring smile.
+			ENDSELECT
+			CFLAG:25:1001 += 1
+		ELSEIF CFLAG:25:1001 == 0
+			PRINTFORML 「......Huh?」
+			PRINTFORMDL The moment time resumes, Ran's brow furrows as she readies for combat.
+			PRINTFORMDL Her eyes scan the surrounding, landing briefly on you before suddenly moving on.
+			PRINTFORMDL 『%HE_SHE(MASTER,1)% couldn't steal from me without my noticing』is probably what she was thinking.
+			PRINTFORMDW You laugh on the inside.
+			CFLAG:25:1001 += 1
+		ELSEIF CFLAG:25:1001 < 3
+			PRINTFORML 「...Again. Maybe it's a ring of pranksters.」
+			PRINTFORMDL You tell ran you didn't catch that, but she just smiles and says it was nothing before changing the subject.
+			PRINTFORMDL "Just" some panty-theft. She doesn't seem that provoked as it's not a direct attack.
+			PRINTFORMDW You do notice the Kitsune throwing around some seals in secret though, looking for suspicious people.
+			CFLAG:25:1001 += 1
+		ELSEIF CFLAG:25:1001 < 6
+			PRINTFORML 「That fucking...」
+			PRINTFORMDL You only catch a part of Ran's vitriolic words.
+			PRINTFORMDL %BREAKENG(@"She's almost lost count of how many times it has happened, and she's getting more and more annoyed at not finding the perpetrator.")%
+			PRINTFORMDW An ability to steal panties and instantly getting rid of them would be nice, seems you have to be more careful from now on...
+			CFLAG:25:1001 += 1
+		ELSEIF CFLAG:25:1001 < 10
+			PRINTFORML 「...Haah. It's just my panties...」
+			PRINTFORMDL Ran looks up to the sky and heaves an enormous sigh.
+			PRINTFORMDL She notices your presence, and stares at you with half-opened eyes.
+			PRINTFORMDW She's started to suspect every man as being the one after her body and panties.
+			PRINTFORMDL Pretty confident she can't know it's you, you tilt your head quizzically.
+			CFLAG:25:1001 += 1
+		ELSEIF CFLAG:25:1001 < 20
+			PRINTFORML 「Tch, Is that it?」
+			PRINTFORMDL Ran puts the incident behind her, but is still full of resentment.
+			PRINTFORMDL It seems she's been keeping constant watch of a list of suspects recently.
+			PRINTFORMDW But despite the vigilance, you keep stealing her underwear, the thrill is irresistible.
+			CFLAG:25:1001 += 1
+		ELSEIF CFLAG:25:1001 == 30
+			PRINTFORML 「It's like I'm wearing panties just so they can be stolen...」
+			PRINTFORMDL You've now stolen 30 of Ran's panties, and she seems just fed up.
+			PRINTFORMDL She can't help but be amazed at the thief so skillful they manage to avoid her tracking and still steal from her.
+			PRINTFORML 「Just take them. This is ridiculous.」
+			PRINTFORMDW In the end, Ran gave up on finding the culprit.
+			CFLAG:25:1001 += 1
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「.........」
+				PRINTFORMDL Ran notices the instant her underwear is gone.
+				PRINTFORMDW The Kitsune continues to act normally but she keeps rubbing her thighs together in discomfort.
+			CASE 1
+				PRINTFORMDL Ran has gotten used to someone stealing her underwear at this point.
+				PRINTFORMDW Not so much as a twitch, as expected of Nopan Ran who continues like normal.
+			CASE 2
+				PRINTFORML 「Haa. Again...?」
+				PRINTFORMDL Ran puts her hand into her pocket to take out a spare pair.
+				PRINTFORMDW But, she simply sighs, and doesn't even bother changing.
+			ENDSELECT
+			CFLAG:25:1001 += 1
+		ENDIF
+		PRINTL 
+		TCVAR:25:351 = 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚口内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;精液中毒低精飲
+		IF ARG:1 == 1
+			;陥落してるかどうかで分岐
+			IF CFLAG:25:1003 == 1
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Nmu.」
+					PRINTFORMDL The sticky taste of a male gums up her mouth, and Ran instantly recognizes it as semen.
+					PRINTFORMDW Thinking it just a poor prank, she swallows it in one gulp.
+				CASE 1
+					PRINTFORML 「Nnh, Guk.」
+					PRINTFORMDL Ran swallows the semen suddenly in her mouth.
+					PRINTFORMW 「...Some prankster magician. Childish.」
+				CASE 2
+					PRINTFORML 「..................」
+					PRINTFORMDL Ran's cheeks puff out a bit, and she wonders what suddenly got in her mouth.
+					PRINTFORMDL She hesitates to spit it out, not seeing anyway to do it clandestinely.
+					PRINTFORMDW With a frown, Ran swallows the souvenir left by her mysterious sex friend she doesn't even know the face of.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Guhー」
+					PRINTFORMDL Ran groans for a split second before freezing.
+					PRINTFORMDW Her face remains expressionless as her throat swallows.
+				CASE 1
+					PRINTFORMDL Despite pouring your semen into Ran's throat, she's hardly reacting.
+					PRINTFORMDL But, she suddenly gulps something down, her well-trimmed and beautiful eyebrows furrowing angrily.
+					PRINTFORMW 「...Think you can treat me like a toy?」
+				CASE 2
+					PRINTFORMDL Time resumes, and you see how Ran swallows your semen instantly.
+					PRINTFORMDL You make sure not to let your excitement show on your face.
+					PRINTFORMW 「Insect... I will pay back this humiliation.」
+				ENDSELECT
+			ENDIF
+		;精液中毒低吐き出し
+		ELSEIF ARG:1 == 2
+			IF CFLAG:25:1003 == 1
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「......Pue, Peh.」
+					PRINTFORML 「Really, do you think I'll forgive this?」
+					PRINTFORMDW %BREAKENG(@"It seems she's getting used to the mysterious visitor, her words sounding more like a permission to use her mouth as a toilet.")%
+				CASE 1
+					PRINTFORMDL Time resumes, and Ran knits her brows.
+					PRINTFORMDL She casually walks over to some cover, and spits out the semen.
+					PRINTFORMW 「......As if I'd eat that hair. Fool.」
+				CASE 2
+					PRINTFORML 「Ubuuー」
+					PRINTFORMDL Ran quickly runs away, and you can hear her loud gags from a bit off.
+					PRINTFORMDW Perhaps some semen got into her airways.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Uu! Eho, Geho...!」
+					PRINTFORMDL Ran begins coughing violently, it seems the semen ended up in an unexpected spot.
+					PRINTFORMDW Tears trickle down her cheeks as they turn red and tremble with anger.
+				CASE 1
+					PRINTFORML 「Ueeee......!」
+					PRINTFORMDL The extremely weird-tasting mucus-like substance is too much for Ran, and she throws it up on reflex.
+					PRINTFORMW 「I don't know who you are, but I will pay this back...!」
+				CASE 2
+					PRINTFORML 「......Pueh.」
+					PRINTFORMDL %BREAKENG(@"For a short moment, she rolls her tongue around in the semen trying to figure out what it is, before abruptly turning around to spit it out.")%
+					PRINTFORMDW That's the only sign of her extreme anger.
+				ENDSELECT
+			ENDIF
+		;精液中毒低手で覆う
+		ELSEIF ARG:1 == 3
+			IF CFLAG:25:1003 == 1
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Nmph?」
+					PRINTFORMDL Ran's cheeks bulge out a bit, and presses a finger against her lips.
+					PRINTFORMDW You listen carefully and hear the sound of her washing around the semen in her mouth.
+				CASE 1
+					PRINTFORMDL Ran pins her hand to her mouth, suddenly filled with the intoxicating aroma and taste of a male.
+					PRINTFORMDL Semen slips between her teeth, soaking into her lips and tongue that tingle from the penis that rubbed against them.
+					PRINTFORMDL Imagining letting a complete stranger rape her mouth as they please spurs on her excitement.
+				CASE 2
+					PRINTFORMDL Ran spits out semen into her palm, and notices the quantity and viscosity.
+					PRINTFORMDL After appreciating it for a while, she sucks it into her mouth without any hesitation.
+					PRINTFORMDW Realizing what she's done, she frowns at the bitterness and her own immaturity.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「.........Fum.」
+					PRINTFORMDL Ran covers her mouth for just a moment, then slips it back into her sleeve as if nothing happened.
+					PRINTFORMDW It was a good idea, but now she has cum on her hand as well.
+				CASE 1
+					PRINTFORMDL Ran covers her mouth and surveys the area with a piercing gaze.
+					PRINTFORMDW But before long she's forced to remove her hand.
+				CASE 2
+					PRINTFORMDL Ran covers her mouth as some semen begins dribbling out, and notices you in the vicinity.
+					PRINTFORMDL But you're sure she's just wondering how the hell the trick is done.
+					PRINTFORMDW You see her throat move just a tiny bit.
+				ENDSELECT
+			ENDIF
+		;精液中毒高精飲
+		ELSEIF ARG:1 == 4
+			IF CFLAG:25:1003 == 1
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMDL Ran slams her lips shut and starts breathing heavily through her nose.
+					PRINTFORMDL Her throat jumps once, her face expressionless but flushed red with arousal.
+					PRINTFORMW 「......Gochisousama...」
+				CASE 1
+					PRINTFORML 「Nnhh, Fuu......」
+					PRINTFORMDL Ran snivels as she swallows the semen.
+					PRINTFORMDW She blushes as she recalls the aftertaste of the cock, the feeling of swallowing the tangy cum burning into her mind.
+				CASE 2
+					PRINTFORML 「Mmu?」
+					PRINTFORMDL The sudden appearance of massive amounts of semen on her tongue doesn't bother Ran in the least.
+					PRINTFORMDW She closes her eyes in ecstasy, chewing the semen and rolling it around in her mouth, mixing it with saliva and swallowing a bit at a time.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「......」
+					PRINTFORMDL Without any explanation, Ran's mouth is suddenly filled with a male's flavor and aroma.
+					PRINTFORMDW While angry at just being used like that, the Shikigami swallows without hesitation.
+				CASE 1
+					PRINTFORMDL Semen fills Ran's mouth, and she's confused by the sudden foreign substance.
+					PRINTFORMDL It's someone's thick, rich semen. Then a pubic hair coils itself around her tongue.
+					PRINTFORMDW Goose bumps rise up as expected from the sudden discomforting sensation, but then she just casually swallows it all smoothly.
+				CASE 2
+					PRINTFORMDL Saliva starts filling Ran's mouth as she mixes it around with the semen.
+					PRINTFORMDL Now mixed into a far more easily drunk liquid, she gulps it down smoothly.
+					PRINTFORMW 「...Well, semen can't carry sin.」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚顔面射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;精液経験ありぬぐい取り
+		IF ARG:1 == 1
+			;陥落済み
+			IF CFLAG:25:1003 == 1
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「......I suppose you want me to excuse this too...?」
+					PRINTFORMDL Ran's bangs are plastered to her forehead, long strands of cum draping down her eyebrows, and her eyes shut.
+					PRINTFORMDW The Kitsune's beautiful face is ruined with semen, and she begins wiping it off.
+				CASE 1
+					PRINTFORML 「Nbufu. W-What the-!?」
+					PRINTFORMDL A bit of semen seems to have been shot up into Ran's nose.
+					PRINTFORMDW The Kitsune blows her nose over and over, but can't get rid of the stinky squid-smell.
+				CASE 2
+					PRINTFORMDL Hiding yourself, you wait and see as your semen hits Ran's face.
+					PRINTFORMDL Her face only has some light makeup, but it gets completely ruined as she just stands there staring into space.
+					PRINTFORML 「..................」
+					PRINTFORMDW You feel a bit nervous for some reason.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「W-What is...? Tch!」
+					PRINTFORMDL Ran uses her fingers to wipe it off her face, instantly recognizing what it is.
+					PRINTFORMDW Disgust fills her face as she begins wiping it more thoroughly.
+				CASE 1
+					PRINTFORML 「Uwaa, I got some in my eye!」
+					PRINTFORMDL Semen drips down from one of Ran's eyelids and she closes it instantly, before starting to wipe it away with her sleeve.
+					PRINTFORMDW Seeing your cum stuck on the Kitsune's face, you can't help but smile on the inside.
+				CASE 2
+					PRINTFORMDL Long, sticky strands hang down unto Ran's beautiful face.
+					PRINTFORMDW You watch with deep appreciation as an expression of revulsion appears on the Shikigami's face as she realizes what it is.
+				ENDSELECT
+			ENDIF
+		;精液経験なしぬぐい取り
+		ELSEIF ARG:1 == 2
+		;顔射精液舐めとり
+		ELSEIF ARG:1 == 3
+			;陥落済み
+			IF CFLAG:25:1003 == 1
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Ah... What a waste.」
+					PRINTFORMDL Ran wipes some semen off her face and deposits it in her mouth without any hesitation.
+					PRINTFORMDL Her face is dyed an obscene shade as she licks her fingers clean, relishing the taste ecstatically.
+					PRINTFORMW 「I'm glad I was given some, but licking it up is a bit awkward...」
+				CASE 1
+					PRINTFORML 「Ngufu. M-My nose...」
+					PRINTFORMDL Right before cumming your urethra was pressed right against Ran's nose, and you came with all your might.
+					PRINTFORMDL The Kitsune coughs violently, tears welling up as the blows her nose.
+					PRINTFORMW 「You... You fucker... Harassing me like this...」
+				CASE 2
+					PRINTFORMDL You came all over Ran's beautiful face, completely covering it in an even layer of cum.
+					PRINTFORMDL Once time resumes, the she mutters something to herself.
+					PRINTFORML 「...So that's it then, not so bad...」
+					PRINTFORMDW The Kitsune rubs the semen into her cheeks.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「...Some lust for conquest perhaps?」
+					PRINTFORMDL Ran sniffs at the cum as she wipes it from her cheeks.
+					PRINTFORMDL Dragging her fingers across her face, she scoops up the overly thick semen and guides it to her lips.
+					PRINTFORMW 「Worthless. Just use my tongue instead.」
+				CASE 1
+					PRINTFORMDL You look inconspicuously as Ran wipes a long strand from her nose.
+					PRINTFORMDL She sighs once she sees the amount, her face that of anger as she scoops it into her mouth.
+					PRINTFORMDW The Shikigami's semen addiction is rather severe.
+				CASE 2
+					PRINTFORML 「......Such contempt, who's looking to die?」
+					PRINTFORMDL Perhaps that was a bit too much, as Ran's face is completely covered in a layer of cum.
+					PRINTFORMDL Her lips are especially covered, before her red tongue pokes out and licks it all off.
+					PRINTFORMW 「When it rains, it pours. Didn't even get to savor it.」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚手淫射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;ぬぐい取り
+		IF ARG:1 == 1
+			;陥落済み
+			IF CFLAG:25:1003 == 1
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMDL Noticing something, Ran pulls out her hand from her sleeve.
+					PRINTFORMDL Her white palm is covered semen, clinging and sticking to it.
+					PRINTFORML 「On my hand in particular? Well, I guess that's fine but...」
+					PRINTFORMDW She just raises an eyebrow as she wipes it off.
+				CASE 1
+					PRINTFORML 「Hm? Oya Oya...」
+					PRINTFORMDL Ran notices her palm is suddenly covered in cloudy, smelly cum.
+					PRINTFORMDW The Kitsune has gotten used to these things at this point, and doesn't seem disturbed at all as she wipes it off.
+				CASE 2
+					PRINTFORMDL Ran notices there's something slimy and sticky between her fingers.
+					PRINTFORMDL She holds it up before her and rolls it between between her fingers, smearing it around.
+					PRINTFORML 「So you rubbed against my palm as you came? How adorable.」
+					PRINTFORMDW The Kitsune stares at it for a while before going searching for somewhere to wash it off.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Tch! This is disgusting......!」
+					PRINTFORMDL As soon as Ran sees the semen clinging to her hand, she starts shaking it off vigorously.
+					PRINTFORMDW It splatters noisily on the ground in thick clumps.
+				CASE 1
+					PRINTFORMDL Ran suddenly winces. She yanks up her hand sees it covered in cum, her brow furrowing.
+					PRINTFORMDW Off-yellow sperm of some unknown man - the Shikigami wipes it off in a hurry.
+				CASE 2
+					PRINTFORMDL Ran yanks her hands out of her sleeves.
+					PRINTFORMDL As she parts her fingers, she feels sticky strands of fresh male seed dribble down.
+					PRINTFORML 「......! That damn pervert. I'll beat your perversion out of you.」
+					PRINTFORMDW The Kitsune stomps off in search of somewhere to wash off, her anger evident.
+				ENDSELECT
+			ENDIF
+		;舐めとり
+		ELSEIF ARG:1 == 2
+			IF CFLAG:25:1003 == 1
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Oh～? Came on my hand, huh?」
+					PRINTFORMDL Ran mutters to herself while staring at the semen dripping from her hands, not seeming to mind it at all.
+					PRINTFORMDL She licks her hand carefully, making sure not a single drop falls, before scooping it up to her lips and slurping it in.
+					PRINTFORMW 「Nmu... How wasteful. Do it inside next time...」
+				CASE 1
+					PRINTFORMDL Ran pulls out her hand from her sleeve - it's dripping with yellowish seed.
+					PRINTFORML 「It's getting on my sleeve... Really now...」
+					PRINTFORMDL The Kitsune complains as she takes a whiff of the squid-smelling jelly.
+					PRINTFORMDW She rolls it around on her tongue, spreading it throughout her mouth, enjoying the terrible taste and smell.
+				CASE 2
+					PRINTFORMDL Ran spreads her fingers before her, sticky strands of cloudy, viscous cum forming between them.
+					PRINTFORMDL The Shikigami plays with it for a while before bringing it to her lips.
+					PRINTFORML 「Fumu Fumu...... Isn't this bitterness an important part of tea?」
+					PRINTFORMDW Her tongue licks it up enchantingly, as she begins her analysis.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「......Hmm. It's fine to just waste it here. You perverted rapist.」
+					PRINTFORMDL Ran watches cooly the thick, cloudy liquid forming a pool in the palm of her hand.
+					PRINTFORMDL Then she suddenly brings it up to her face, sticking the tip of her tongue into it to get a taste.
+					PRINTFORMW 「Nn, Chyu...... The quality of the semen though, it's praiseworthy I suppose.」
+				CASE 1
+					PRINTFORMDL Ran brings her lips to her wrist, and drags her tongue all the way up to her fingertips.
+					PRINTFORMDL The fact that she has no clue where the semen comes from doesn't bother her in the least.
+					PRINTFORMDL It reeks of squid, is extremely thick and viscous, and she can't help but savor it.
+					PRINTFORMW 「Mmmm... Yes. It's unusually deep, and not that bitter...」
+				CASE 2
+					PRINTFORMDL Ran pulls out her hand from her sleeve, shiny semen tricking down her fingers.
+					PRINTFORML 「What poor taste. Is this all they do?」
+					PRINTFORMDL The Shikigami mutters words of contempt, but begins wiping the semen off by licking it up like a dog.
+					PRINTFORMDW The stench is so great, but she just enjoys it expressionlessly, lapping it up expertly.
+				ENDSELECT
+			ENDIF
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚アナル射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		IF ARG:1 == 1
+			IF CFLAG:25:1003 == 1
+				PRINTFORML 「Uwaah, What is...?」
+				PRINTFORMDL Ran feels her anus suddenly flood with a warm sensation, before an urge to defecate takes over, catching her off-guard.
+				PRINTFORMDL However, having been in this situation before she comes up with and answer immediately.
+				PRINTFORMW 「Haha, So it's that hole this time. I'll have to enjoy myself as well......」
+			ELSE
+				PRINTFORML 「Uuoo? W-What the...?」
+				PRINTFORMDL A sudden discomfort hits Ran's anus, causing her to yelp out in surprise.
+				PRINTFORMDW Mistaking it for a sudden call of nature, she pins her ass down for a while in confusion.
+			ENDIF
+		ELSEIF ARG:1 == 2
+			IF CFLAG:25:1003 == 1
+				SELECTCASE RAND:3
+				CASE 0
+					IF EX:アナル内精液 > 500
+						PRINTFORMDL Time begins to move again, and the pool of semen fired into Ran resumes its movement up into her.
+						PRINTFORML 「......There today then... As always... Uuu... In my intestines...」
+						PRINTFORMDL The Shikigami doubles over and clutches at her stomach as it trembles, it feels as if she's suddenly gotten an enema.
+						PRINTFORMDL While asking her what's wrong, you move inconspicuously into some cover.
+						PRINTFORMDW Using your power from cover for just a moment, you watch in deep appreciation as cloudy cum spurts from Ran's anus.
+					ELSE
+						PRINTFORML 「Hiiii, My ass is warm...!」
+						PRINTFORMDL Ran lets out a scream, pinning her ass down as the sensation of your cumming in and pistoning into her hits the Kitsune.
+						PRINTFORMDL Her anus is still spread open from your cock. Little squelching noises are heard as semen streams out uncontrollably.
+						PRINTFORMDL Some air escapes from her ass, making an embarrassing sound, it seems your dick spread her sphincter so much it won't close properly.
+						PRINTFORMW 「Aaahh... I think I'm becoming looser...」
+					ENDIF
+				CASE 1
+					IF EX:アナル内精液 > 500
+						PRINTFORMDL Ran face grows dark as she suddenly feels her intestines packed to maximum capacity.
+						PRINTFORML 「Why would you cum so much there......?!」
+						PRINTFORMDL The Kitsune's gut bulges a bit from how much you filled it. No matter how much she fights, her ass trembles unbearably with the call of nature.
+						PRINTFORML 「N-Need a toilet... One with a working lock...」
+						PRINTFORML 「Toilet, a toilet... Please tell me there's an empty one......」
+						PRINTFORMDW You stop time and lock all the nearby toilets from the inside.
+					ELSE
+						PRINTFORML 「Hahaha, How far do you plan on developing me...?」
+						PRINTFORMDL Ran smiles bitterly as she suddenly feels pressure and heat shooting up her anus.
+						PRINTFORML 「It's throbbing...... Well, I think I can hold out. I'm in public.」
+						PRINTFORMDW The Shikigami clenches with all her might, before straightening her back.
+					ENDIF
+				CASE 2
+					PRINTFORML 「This feeling, it's almost unbearable...」
+					PRINTFORMDL The walls of Ran's anus twinge with a sudden call of nature, and the sensation of someone having thrust into them repeatedly.
+					PRINTFORMDL She clenches her ass, enjoying the sensation of impatience, not knowing if she can hold it in or not.
+					PRINTFORMW 「You certainly enjoyed yourself. Just how much was that?」
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					IF EX:アナル内精液 > 500
+						PRINTFORMDL Gyurururururu...
+						PRINTFORML 「O- Oooooh... My stomach...!」
+						PRINTFORMDL Ran's ass trembles with the sudden and urgent need to excrete.
+						PRINTFORMDL The huge load bears down hard on her anus, and it's about to leak out any second.
+						PRINTFORML 「Guuu, Shit... This is... I can't make it...!」
+						PRINTFORMDL Ran zooms away, and you stop time to follow.
+						PRINTFORMDW Behind cover, Ran bares her pale ass, her face beet red as semen begins dripping from her anus.
+					ELSE
+						PRINTFORML 「Iiii!」
+						PRINTFORMDL Ran lets out a scream as she feels semen being forced into her ass.
+						PRINTFORMDL There's a deep, aching sensation as if someone just thrust into her over and over.
+						PRINTFORMW 「Kuuu... This means the one who violated me before is still growing stronger......!」
+					ENDIF
+				CASE 1
+					IF EX:アナル内精液 > 500
+						PRINTFORMDL Ran suddenly begins to shake, her face growing pale.
+						PRINTFORML 「This is... No way. Uuaaa, It's coming out......!」
+						PRINTFORMDL With how much you poured into her colon, it's only natural if she's overwhelmed by the call of nature.
+						PRINTFORMDL Any second now...
+						PRINTFORMDL Just as expected, you see Ran hurry into some cover.
+						PRINTFORMDL You stop time for a moment, and get to the best position to watch from, before waiting a bit.
+						PRINTFORML 「This humiliation...... This is unbecoming of me......」
+						PRINTFORMDW The Kitsune sits in complete silence, excreting shamefully, only doing a tiny bit at a time to make sure it's quiet.
+					ELSE
+						PRINTFORML 「It's warm!」
+						PRINTFORMDL The shock of pounding against Ran's ass with all your strength, pistoning into her, and cumming all you can inside her all hit the Kitsune at once.
+						PRINTFORMDW Tears well up in her eyes as she shivers and quakes, gritting her teeth.
+					ENDIF
+				CASE 2
+					PRINTFORML 「Hyauh!」
+					PRINTFORMDL Yelping disorderly in a very un-Ran-like way, the Kitsune pins down her ass from above her clothes.
+					PRINTFORMDL Despite being experienced, it seems even she is weak there, you chuckle from the shadows.
+					PRINTFORMW 「Gugugu...... I don't know who you are, but I will get my revenge...!」
+				ENDSELECT
+			ENDIF
+		ENDIF
+		PRINTL 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚処女喪失】
+	;藍様なら再生処女前提か？ 今のところ思いつかず
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚膣内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		;非処女膣内射精ピルなし これをするとピルを飲む仕様にしたので、ピルありと合併
+		IF ARG:1 == 1 || ARG:1 == 2
+			;時間停止姦では避妊をする、という設定だけのフラグ
+			TCVAR:25:ピル = 1
+			;陥落済み
+			IF CFLAG:25:1003 == 1
+				IF CFLAG:25:1004 == 0
+					PRINTFORML 「Oh, At last, Huh...」
+					PRINTFORMDL Ran smiles, her face a licentious red as she strokes her belly.
+					PRINTFORMDL Warm, slippery mucus drip down her inner walls.
+					PRINTFORMDW She seems to have immediately noticed that someone came inside her.
+				ELSE
+					SELECTCASE RAND:4
+					CASE 0
+						IF EX:膣内精液 > 500
+							PRINTFORML 「Hahaha, What the hell is this amount. Did one person truly do all this...?」
+							PRINTFORMDL Ran marvels at the sheer amount of weight in her suddenly-full womb.
+							PRINTFORMDL It's an absurd amount, it has to be a group of men, taking turns gangraping women to their hearts' content.
+							PRINTFORMDW The thought of being gangraped fills Ran's mind, unable to resist as she cums over and over...
+						ELSE
+							PRINTFORML 「Nnh, Oh, Oh...」
+							PRINTFORMDL The moment time resumes, a huge lump of semen begins moving around in Ran's womb.
+							PRINTFORMDL The sensation is peculiar, but she revels in its strangeness.
+							PRINTFORMDL The sensation is unique, like someone bursting a water balloon inside her, but she doesn't seem to dislike it.
+							PRINTFORMW 「Fufu... How can this feel good...?」
+						ENDIF
+					CASE 1
+						IF EX:膣内精液 > 500
+							PRINTFORML 「Oouu, Hhoooo....!」
+							PRINTFORMDL Ran's womb swells up in an instant, every nook and cranny of her walls soaked with a viscous liquid.
+							PRINTFORMDL The semen of someone she's never met, just seeing her as a "female" and raping how as they like.
+							PRINTFORMDW %BREAKENG(@"Then the sexual sensations kick in, a torrent of pleasure that even Ran can't withstand, and she just falls down on her knees.")%
+							;危険日の場合
+							SIF CFLAG:25:900 == 7
+								PRINTFORML 「T-That bastard... Did they know it's a dangerous day today...?」
+								PRINTFORMDW %BREAKENG(@"While knowing that this insemination rape is anything but harmless mischief, the corner of the Kitsune's mouth turn up a bit.")%
+						ELSE
+							PRINTFORML 「Aahn. Inside me again...?」
+							PRINTFORMDL Ran can't contain her joy and simply smiles.
+							PRINTFORMDL Having sex in this completely new way, she doesn't even try to resist it anymore.
+							PRINTFORMDW She scoops up a bit of the cum that's slipped out and brings it to her mouth, licking it off inconspicuously.
+						ENDIF
+					CASE 2
+						IF EX:膣内精液 > 500
+							PRINTFORML 「Ahh... This is... Damn...」
+							PRINTFORMDL Ran notices it a bit too late, and an incredible amount of semen begins overflowing.
+							PRINTFORMDL She feels semen dripping down her thighs under her clothes, splattering on the ground.
+							PRINTFORMDL Soon everything has escaped, and the Kitsune just stares as the pool of cum begins spreading past her feet.
+							PRINTFORMW 「......It's hopeless... My womb is now just semen tank...」
+						ELSE
+							PRINTFORMDL A dull, feverish heat suddenly spreads throughout Ran's insides.
+							PRINTFORML 「Aaa...... This again, I'm full of seed...」
+							PRINTFORMDL It's about three men's worth, the Kitsune can tell just from the sensation.
+							PRINTFORMW 「How much will it be if they get serious? I hope it'll be more next time...」
+						ENDIF
+					CASE 3
+						IF EX:膣内精液 > 500
+							PRINTFORML 「-!! ..........」
+							PRINTFORMDL Heat suddenly shoots up Ran's thighs, and she's dumbfounded by the sheer pressure in her womb.
+							PRINTFORMDL Her walls begin to convulse on their own, making it impossible to keep them shut as the reaches climax over and over.
+							PRINTFORML 「I-I can't stop cumminggg... It's leaking out......!」
+							PRINTFORMDW %BREAKENG(@"Even pinning down her pussy with her hands isn't enough as semen begins overflowing, splattering indecently on the ground.")%
+						ELSE
+							PRINTFORML 「Uwaa... So sudden...」
+							PRINTFORMDL Ran walks pigeon-toed as she suddenly feels warm liquid pushing inside her.
+							PRINTFORMDL She clenches hard, trying not to let any semen escape.
+							PRINTFORMDW She can't stop a little smile from forming on her lips when she feels the semen pool warmly inside her.
+							PRINTFORMDW %BREAKENG(@"More and more begins pooling at her entrance, and when she can't stand it anymore she just smiles as she relaxes, letting it all overflow.")%
+						ENDIF
+					ENDSELECT
+				ENDIF
+			ELSE
+				IF CFLAG:25:1004 == 0
+					PRINTFORML 「Wh...at...?」
+					PRINTFORMDL Ran is dumbfounded as she strokes her abdomen.
+					PRINTFORMDL Heavy and thick, a sensation she's felt many times before.
+					PRINTFORMDL Considering the pleasure still lingering in her body, it's obvious what happened.
+					PRINTFORMDW You can hear the sound of the Shikigami grinding her teeth.
+				ELSEIF CFLAG:25:1004 < 10
+					PRINTFORML 「Doing this again...!」
+					PRINTFORMDL From deep inside her, Ran feels a viscous liquid seeping out.
+					PRINTFORMDL The heat inside her is one that can only be put there by a man.
+					PRINTFORML 「I swear will repay this...」
+					PRINTFORMDW The Shikigami mutters curses as she tightens down, conscious of public eyes.
+				ELSEIF CFLAG:25:1004 < 25
+					PRINTFORML 「This feeling... It's that guy again.」
+					PRINTFORMDL A mix of indignation and anger fills Ran's sigh as she takes out a seal.
+					PRINTFORMDL If it drips out and stains her clothes, it'll be difficult to find an excuse if someone notices.
+					PRINTFORMDW Enduring the humiliation, Ran pretends not to notice as she seals off the semen inside her.
+				ELSE
+					IF EX:膣内精液 > 500
+						PRINTFORMDL Ran's belly suddenly bulges, the sensation being burned into her abdomen.
+						PRINTFORML 「Wh...What the... This amount...」
+						PRINTFORMDL An absurd amount of cum fills her womb, putting pressure on her pussy.
+						PRINTFORMDL This can't have been just one shot, Ran concludes she must've been raped multiple times without noticing.
+						PRINTFORMDL Although she doesn't intend on being pregnant, she goes pale with anger at this flagrant violation.
+						PRINTFORMDL Although she's protected against pregnancy, her face goes pale from just how much someone wanted to mate with her.
+						PRINTFORMW 「...It's possible you can fertilize me. But, there's no way I'd ever allow implantation...!」
+					ELSE
+						PRINTFORML 「......Fuuu.」
+						PRINTFORMDL Ran has gotten used to suddenly having semen appear inside her.
+						PRINTFORMDL The rapist who she hasn't even seen seems to be cumming deep inside her, thrusting all the way into her womb.
+						PRINTFORMDL Ran reaches the conclusion that it doesn't matter if she scrapes it out, just putting a seal on to make sure nothing leaks.
+						PRINTFORMW 「They'll just cum inside again later......」
+					ENDIF
+				ENDIF
+			ENDIF
+		;非処女膣内射精ピルあり 現在コメントアウトしてピルなしと統合
+;		ELSEIF ARG:1 == 2
+		;処女膣内射精
+		ELSEIF ARG:1 == 3
+		ENDIF
+		CFLAG:25:1004 += 1
+		PRINTL 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;ナマでやらせろ時
+;==================================================
+@M_KOJO_EVENT_K25_18(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;避妊要求台詞
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Wait, we need a contraceptive.」
+		PRINTFORMW 「Please prepare a pill or some condoms in advance.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Not happening. I'm not planning on having your child yet.」
+		PRINTFORMW 「The probability of conception is low but... Don't think of me as a kill-joy, okay?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断ったのに粘られて切れた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「I said no.」
+		PRINTFORMW 「I guess it can't be helped. That's it for today.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日以外許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 「I suppose it'll be fine. But only on safe days.」
+		PRINTFORMDL You can't help but pump your fist a little at the triumph of doing Ran raw.
+		PRINTFORMW 「But if something were to happen then...... It goes without saying, right?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORMW 「...I see. Fine, I have no reason to object.」
+		PRINTL 
+		PRINTFORMDW Ran smiles with an indescribable expression.
+		PRINTFORMDW With her knees parted before you, she suddenly uses her hands to spread her lips open.
+		PRINTL 
+		PRINTFORMW 「I'll stop pretending and putting on airs, I want your child.」
+		PRINTFORMW 「Let's stop holding back for each other, and try to have sex on dangerous days.」
+		PRINTFORMW 「Of course, we won't need to stop even if we get pregnant on this first try, right?」
+		PRINTFORMW 「Naturally, I wouldn't mind if you got me pregnant on the first try.」
+		PRINTL 
+		PRINTFORMDW Your mind is almost consumed by her cherry-red vagina, and you slowly climb onto the unconquerable Ran's body.
+		PRINTFORMDW You lose yourself, tempted by Ran's bare, cherry-pink pussy right before your eyes.
+		PRINTL 
+		CALL AddEXP("愛情経験", TARGET, 30)
+		PRINTL 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;神社暮らしを承認して貰う
+;==================================================
+@M_KOJO_EVENT_K25_19(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;認められる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Arigatou. I am in your debt from today.」
+		PRINTFORMDL As soon as it's decided, Ran pulls out her luggage from seemingly nowhere before taking it to her new home.
+		PRINTFORML 「It's a home close to both work and you. There's nothing more to add to it.」
+		PRINTFORML 「Ah, Right. Even if it doesn't look like it, this is a bit like Mayohiga, aside from that...」
+		PRINTFORMDW The Kitsune seems to be glad, more than anything.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;認められない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	PRINTL
+ENDIF
+RETURN 1
+;==================================================
+;帰宅時
+;==================================================
+@M_KOJO_EVENT_K25_20(ARG,ARG:1)
+;口上主はLOCALS or RESULT
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;デート中帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;陥落素質取得時
+;==================================================
+@M_KOJO_EVENT_K25_21(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTL
+		PRINTFORMDW Heavy sighs are overflowing.
+		PRINTFORMDW Her brows furrowed, Ran seems filled with guilt.
+		PRINTL
+		PRINTFORMW 「I am a Shikigami. Following Yukari-sama's orders is why I exist...」
+		PRINTL
+		PRINTFORMDW Having a relationship with a certain \@ TALENT:恋人 ? man # woman \@ will just burden her with feelings and sentiment.
+		PRINTFORMDW She's stopped taking care of herself, neglecting her duties, the Shikigami side of Ran is wounded.
+		PRINTFORMDW Having personal feelings is utterly inexcusable, it's a weakness.
+		PRINTFORMDW Helplessly falling in love, she thinks hard about removing the source of the problem.
+		PRINTL
+		PRINTFORMW 「『It's fine』, how can Yukari-sama say it so lightly? What if I begin skipping out on working?」
+		PRINTL
+		PRINTFORMDL Perhaps it's that her master gave her permission so easily, but Ran is completely drained of strength.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTL
+		PRINTFORMDW Ran is a Shikigami, thus it's easy for her to tell when her emotions and mind change.
+		PRINTFORMDW Favorability, hatred, revulsion, trust. Whether good or bad, excessive emotions towards anyone should be avoided.
+		PRINTFORMDW She's deep in thought, she's managed every one of her relationships properly exceptー
+		PRINTL
+		PRINTFORMW 「......%CALLNAME:MASTER%, what the hell do I do with %HIM_HER(MASTER,,1)%...」
+		PRINTL
+		PRINTFORMDW The strongest of Shikigami, and one of her few annoyances is a \@ TALENT:恋人 ? man # woman \@ unworthy of having her.
+		PRINTL
+		CALL PRINT_DIALOGUE, @"Should I just do away with these shackling emotions? No, if I do I'd have to deal with the source. Even %HE_SHE(MASTER)% deserves some consideration...", "w"
+		PRINTL
+		PRINTFORMDL Despite how much she thinks about it, the solution refuses to appear.
+		PRINTFORMDW The moment she realizes what the actual problem is, her body curls up in shame.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛欲取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTL
+		PRINTFORML 「Kukuku... %CALLNAME:MASTER%, I'm already wet...」
+		PRINTFORML 「How many \@ TALENT:恋人 ? men # people \@ have fallen for this body at this point...? What's one more?」
+		PRINTFORML 「How refreshing - something interesting. I wonder how many years I can waste on %HIM_HER(MASTER,,1)%.」
+		PRINTL
+		PRINTFORMDL Ran's eyes smolder with lust.
+		PRINTFORMDL The frequent trysts, the intense mating, it has awakened the bestial instinct in the body of the Kitsune.
+		PRINTFORMDL Ran immediately begins planning how to ensnare you.
+		PRINTFORMDW The thought that she might be the one ensnared hasn't even occurred to her.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛人取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTL
+		PRINTFORML 「Fufu, Aren't you adorable. How readily I let you distract me.」
+		PRINTL
+		PRINTFORMDL Ran recalls her many frivolous moments with you with a broad smile.
+		PRINTFORMDL A simple, physical relationship just involving your bodies. It's a very agreeable and convenient arrangement for Ran.
+		PRINTL
+		PRINTFORML 「What shall we do next time?」
+		PRINTL
+		PRINTFORMDW The Kitsune grins as she whispers to herself.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;セフレ取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTL
+		PRINTFORMDL In Mayohiga, Ran sits at her desk, her brush frozen as she rests her chin in her hand, sighing.
+		PRINTFORMDL Her expression is serious, but her thoughts are scattered, just thinking of a certain someone.
+		PRINTFORMDL Her left hand slowly moves down, tracing her abdomen through her dress.
+		PRINTL
+		PRINTFORML 「......I shouldn't, I shouldn't. I've been playing around too much.」
+		PRINTL
+		PRINTFORMDW Shaking her head, Ran goes back to work.
+		RETURN 1
+	ENDIF
+	PRINTL
+ENDIF
+RETURN 1
+;==================================================
+;調教終了時に自慰
+;==================================================
+@M_KOJO_EVENT_K25_22(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+;恋慕だと激しいのが解禁、まだいくつかの重複有り。古めかしいアダルトグッズを登場させてみる
+;そこそこ長くなったけれど、何度も見るのでクリック数削減
+IF LOCAL
+	PRINTL
+	SELECTCASE RAND:5
+		CASE 0
+			IF TALENT:恋慕
+				PRINTFORMDL Ran has managed to sneak a dildo into the bath with her.
+				PRINTFORMDL It's thick and screw-shaped, the head flaring and covered in bumps.
+				PRINTFORMDL Subjecting her privates to some SM play, Ran inhales sharply, before violently thrusting it inside.
+				PRINTFORML 「A bit...further...in...」
+				PRINTFORMDL Forcing it in and pinning her thighs together, the Shikigami keeps it inside as she finishes up and exits the bath.
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 2)
+			ELSE
+				PRINTFORMDL A bulge forms as Ran slips her fingers into her white undershirt, touching herself vigorously.
+				PRINTFORMDL Soon her other hand slips down to caress the labia.
+				PRINTFORMDL Two fingers dig into and churn up her pussy while her thumb presses against her clitoris.
+				PRINTFORMDL Ran clamps her mouth shut, sitting still and quietly as she reaches climax.
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 1)
+			ENDIF
+		CASE 1
+			IF TALENT:恋慕
+				PRINTFORMDL Ran thrusts what seems to be a polished stick inside her, it's from an evergreen oak with lovely grains.
+				PRINTFORMDL The uneven head with its coarse ring gouges out her walls as it pulls out.
+				PRINTFORMDL Love juice splatters as the Kitsune pistons it in and out of her lower mouth with force.
+				PRINTFORMDL Muffling her cries by screaming into her clothes, Ran comforts herself quietly but violently...
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 2)
+			ELSE
+				PRINTFORMDL A bulge forms as Ran slips her fingers into her white undershirt, touching herself vigorously.
+				PRINTFORMDL Soon her other hand slips down to caress the labia.
+				PRINTFORMDL Two fingers dig into and churn up her pussy while her thumb presses against her clitoris.
+				PRINTFORMDL Ran clamps her mouth shut, sitting still and quietly as she reaches climax.
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 1)
+			ENDIF
+		CASE 2
+			IF TALENT:恋慕
+				PRINTFORMDL Ran lies in the futon with her back arced as she surreptitiously caresses herself.
+				PRINTFORMDL Using her impressive skills on herself, she just focuses on making it feel good.
+				PRINTFORMDL It just takes a few minutes for her to finish, before she collapses in the bed.
+				PRINTFORML 「......It's not the same... Playing with myself...」
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 2)
+			ELSE
+				PRINTFORMDL Ran lies in the futon with her back arched as she surreptitiously caresses herself.
+				PRINTFORMDL Using her impressive skills on herself, she just focuses on making it feel good.
+				PRINTFORMDL It just takes a few minutes for her to finish, before she collapses in the bed.
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 1)
+			ENDIF
+		CASE 3
+			IF TALENT:恋慕
+				PRINTFORML 「If Chen saw me there'd be no way to explain it......」
+				PRINTFORMDL Ran stares at the tray with warm water with something in it, her shoulders drooping as she thinks of how masturbation is eating up her work hours.
+				PRINTFORMDL She rolls up her sleeves and braids some dried vegetable stalks to form a pole.
+				PRINTFORMDL The warm water soaks into the fibers, warming it up and giving it some elasticity. It's not as good as the real deal, but it's not that far off.
+				PRINTFORML 「......Well, since I've already made the preparations... Yeah...」
+				PRINTFORMDL What the Kitsune mutters is just an excuse, as she sinks the bulbous stem deep into her...
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 2)
+			ELSE
+				PRINTFORMDL Lying stark naked, Ran uses her long tails to caress her supple skin.
+				PRINTFORMDL The stimulus is low, but her arousal builds up slowly but surely, as she plays with her firm nipples with her fingers.
+				PRINTFORMDL Her back arches as it gets wracked by multiple simultaneous climaxes...
+				PRINTFORML 「What am I even doing...」
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 1)
+			ENDIF
+		CASE 4
+			IF TALENT:恋慕
+				PRINTFORML 「Nh, Nhh, Nh, Nhh......」
+				PRINTFORMDL Humming through her shut lips, Ran swings her waist expertly with a determined look.
+				PRINTFORMDL She's riding a dildo placed in the center of the seat, loud sounds echoing throughout as her pussy eagerly swallows it.
+				PRINTFORMDL The glans is a bit off, but girl juices spurt out each time it's plunged into her.
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 2)
+			ELSE
+				PRINTFORMDL Having finished writing in her room, Ran turns around and presses her crotch against a corner of the table.
+				PRINTFORMDL It's the kind of masturbation a young girl would find through trial and error, but it's done gracefully.
+				PRINTFORMDL Her breasts sway heavily in her clothes before she grabs them, as she gets drunk on the humiliation of enjoying something so base.
+				PRINTL 
+				CALL AddEXP("自慰経験", TARGET, 1)
+			ENDIF
+	ENDSELECT
+	PRINTW
+ENDIF
+RETURN 1
+;==================================================
+;浴場連れだし
+;==================================================
+@M_KOJO_EVENT_K25_23(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;断られた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:思慕
+			PRINTFORML 「No chance. Take your bath on your own.」
+			PRINTFORMDL Ran flicks your forehead and turns to leave.
+			PRINTFORMDW Perhaps it was a bit early to invite her.
+		ELSE
+			PRINTFORML 「Rather than me, you'll have more fun inviting a sweetheart you know.」
+			PRINTFORMDL Ran interprets your invitation as a joke, and gracefully dodges the question.
+			PRINTFORMDW It seems completely hopeless.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;一緒に入ってくれた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:恋慕
+			PRINTFORML 「Ah, perfect. Soon there's nothing we don't know about each other.」
+			PRINTFORMDL Ran takes off her hat with a soft smile.
+			PRINTFORMDL Without minding your watching in the slightest, the Kitsune slips out of her Taoist robes skillfully.
+			PRINTFORMDL Her skin pure white, her body voluptuous, and her pale pink nipples that jiggle as she turns towards you.
+			PRINTFORMW 「Now then, let's go in.」
+		ELSE
+			PRINTFORML 「Together, huh? I suppose that's fine.」
+			PRINTFORMDL Ran nods with a wry smile, before removing her Taoist robes.
+			PRINTFORMDL You observe her undressing with great interest, curious how the hell she manages her huge tails.
+			PRINTFORML 「Hey! Stop staring and get in already.」
+			PRINTFORMDW Shoved towards the bath, you reluctantly give up...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTL
+ENDIF
+RETURN 1
+;==================================================
+;懐妊
+;==================================================
+@M_KOJO_EVENT_K25_24(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTL 
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF CFLAG:25:1007 == 0
+			PRINTFORML 「......Aah, Finally. It's harder than I thought......」
+			PRINTFORMDL Ran caress her abdomen calmly.
+			PRINTFORMDL A new life, a natural outcome from how many times Ran has been intimate with you.
+			PRINTFORMDL Despite having lived for so long, this is the first time she's been pregnant.
+			PRINTFORMW 「What am I even going to say... But first, I've got to tell Yukari-sama.」
+		ELSEIF CFLAG:25:1007 == 1
+			PRINTFORMDL Ran casually informs you that she's pregnant again.
+			PRINTFORML 「It's a bit surprising. Getting pregnant again this soon.」
+			PRINTFORML 「Once the next one's grown up, then... Well, I can't see why not.」
+			PRINTFORMDL Of course, she doesn't blame you at all.
+			PRINTFORMDW You give Ran a rejoicing hug, as you begin talking about what the name should be.
+		ELSEIF CFLAG:25:1007 >= 2
+			PRINTFORMDL Another child is coming, Ran tells you with a bright expression.
+			PRINTFORML 「Hahaha, how many children will this make?」
+			PRINTFORML 「Don't worry. I'll raise however many children you want.」
+			PRINTFORMDL Given how much she loves child rearing, there seems to be no need to care about her endurance.
+			PRINTFORMDL But if she's this great a mother, isn't there a chance your children will forget their father...?
+			PRINTFORMDW An unfounded anxiety fills you.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMDL One day, Ran notices a small change in her body.
+		PRINTFORMDL It is not only that of a Shikigami, but also a Youkemono. Illnesses and disease basically don't happen, so she just tilts her head.
+		PRINTFORMDL After a thorough examination, her face goes pale as she realizes the truth.
+		PRINTFORML 「Wait a... Isn't this too fast? I can't go getting pregnant on my own, I need to inform Yukari-sama......」
+		PRINTFORMDW She caresses her abdomen where a new life is forming, her hand trembling slightly.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMDL One day, Ran notices a small change in her body.
+		PRINTFORMDL It is not only that of a Shikigami, but also a Youkemono. Illnesses and disease basically don't happen, so she just tilts her head.
+		PRINTFORMDL After a thorough examination, her face goes pale as she realizes the truth.
+		PRINTFORML 「......How ridiculous. I'll have to settle this properly...!」
+		PRINTFORMDW She caresses her abdomen where a new life is forming, her hand trembling slightly.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTL 
+	;妊娠した回数をカウント
+	CFLAG:25:1007 += 1
+ENDIF
+RETURN 1
+;==================================================
+;出産
+;==================================================
+@M_KOJO_EVENT_K25_25(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF CFLAG:25:1007 == 0
+			PRINTFORMDL You help Ran give birth, wiping sweat from her brow.
+			PRINTFORML 「Thank you... Yeah, it was hard...」
+			PRINTFORML 「There's just one thing though... The umbilical cord, could you pull it out?」
+			PRINTFORMDL Following her instructions, you pull on the cord, pulling out the placenta and a bunch of blood.
+			PRINTFORMDW You try to alleviate as much of Ran's burdens as possible, ending up doing a bunch of things for her...
+		ELSEIF CFLAG:25:1007 == 1
+			PRINTFORML 「I'm fine. I've done it once before, and it's a lot easier after that.」
+			PRINTFORMDL Even if it's her second child, she's just as radiant and happy when she embraces the child.
+			PRINTFORMDL You yank on the umbilical cord, pulling out the placenta, this time not accompanied by a bunch of blood.
+			PRINTFORML 「......But, it does hurt tremendously until the uterus contracts fully. So, help me please.」
+			PRINTFORMDW With that she leaves the rest to you, as you gently pat her abdomen.
+		ELSEIF CFLAG:25:1007 >= 2
+			PRINTFORMDL Having had so many children already, Ran doesn't seem remotely bothered by the labor pains at this point.
+			PRINTFORMDL The bleeding is almost nonexistent, and she uses a bit of magic to clean up.
+			PRINTFORML 「Nhh, Looks like a bit like me...」
+			PRINTFORML 「Don't the other ones look like me as well? With all these girls, aren't you getting lonely as a father?」
+			PRINTFORMDW It seems she's already hinting at wanting another child.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Fuuuー...... That hurt like hell, as expected...」
+		PRINTFORMDL Still trying to get the stomach cramps under control, Ran wipes her child dry.
+		PRINTFORMW 「Ahaha, Looks just like me!」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMDL Ran gives birth on her own, without even a midwife, heaving a sigh of relief.
+		PRINTFORML 「......Haa. Good, a safe, normal birth.」
+		PRINTFORMW 「I'll rear this child properly, to make sure it doesn't take after its father.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1

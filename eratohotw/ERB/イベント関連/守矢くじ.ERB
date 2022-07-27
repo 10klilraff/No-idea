@@ -1,0 +1,419 @@
+﻿;守矢神社謹製一番くじ、ついに販売開始です！
+;
+;ルール
+;1.くじは全部で300枚、引ききるか特賞を引くと箱が入れ替わる
+;2.最初に引くとき、もしくは箱の入れ替え時にどの順番で何が出るかは確定している（シャッフル配列を専用のくじ配列にコピー）
+;3.くじの結果を確認したら引いたくじを廃棄して前詰めする
+;4.特賞は1本、引いたらSETBIT FLAG:999, 3 で箱交換フラグを立てる
+;特賞の薬がどちらなのかはFLAG:999の第４ビットで判定（判定後INVERTBITでフラグを入れ替える）
+;ユーザー変数がセーブ出来ないのでSAVESTRを一つ拝借してそこに結果を文字列で残しておく
+;(16/07/02)仕様変更によりユーザー変数のセーブが可能になったのでSAVESTRの利用を停止
+@FOTUNE_MORIYA
+#DIM RANK_FORTUNE
+#DIM お相手
+#DIM SKIP_FLAG
+#DIMS くじ枚数,300
+
+IF MATCH(MORIYA_BOX, 0) >= 2 && STRLENS(SAVESTR:9)
+	SPLIT SAVESTR:9, ",", くじ枚数
+	FOR LOCAL:0, 0, 300
+		MORIYA_BOX:(LOCAL:0) = TOINT(くじ枚数:(LOCAL:0))
+	NEXT
+	SAVESTR:9 = ""
+ENDIF
+
+;兎符「開運大紋」
+WHILE TFLAG:194 && MORIYA_BOX:0 >= 60
+	SETCOLOR COLOR ("YELLOW")
+	PRINTFORMW Rabbit Sign『Great Fortune Crest』activates!
+	RESETCOLOR
+	ARRAYSHIFT MORIYA_BOX, -1, -1
+	TFLAG:194 --
+WEND
+
+;博麗おみくじによる幸運補正、結果が悪ければそれを消滅して引き直す
+DO
+	SKIP_FLAG = 0
+	SELECTCASE TFLAG:幸運補正
+		CASE IS <= 0
+		;たわし回避
+		CASE 1 TO 2
+			SIF MORIYA_BOX:0 >= 130
+					SKIP_FLAG = 1
+		;７等までを回避
+		CASE 3 TO 4
+			SIF MORIYA_BOX:0 >= 60
+					SKIP_FLAG = 1
+		;５等までを回避
+		CASE 5
+			SIF MORIYA_BOX:0 >= 25
+					SKIP_FLAG = 1
+		CASEELSE
+	ENDSELECT
+	IF SKIP_FLAG
+		ARRAYSHIFT MORIYA_BOX, -1, -1
+		PRINTFORML %PARSE("You")% drew good fortune at Hakurei Shrine previously, so perhaps luck will strike twice.
+		TFLAG:幸運補正 --
+	ENDIF
+
+LOOP SKIP_FLAG
+
+;くじの結果は0～299。これを各賞に振り分けておく
+;内訳 特賞:1本, １等:3本, ２等:5本, ３等:6本, ４等:10本, ５等:15本, ６等:20本, ７等:30本, ８等:40本, ９等(たわし):70本, 10等(スカ):100本
+;RANK_FORTUNEをMORIYA_BOX:0へ依存させないように(やろうと思えば既存のものを弄らず下に追加できるよ。RANK_FORTUNEが混乱するからやらないと思うけど)
+SELECTCASE MORIYA_BOX:0
+;特賞：奇数回目であれば体力、偶数回であれば気力が上がる丸薬（最大値＋50）
+CASE 0
+	SETBIT FLAG:999, 3
+	RANK_FORTUNE = 0
+;１等：守矢神社の２柱＋風祝とのデートチケット。各１枚
+CASE 1 TO 3
+	お相手 = MORIYA_BOX:0 + 30
+	RANK_FORTUNE = 1
+;２等：東風谷早苗様による幸せの奇跡（全員上機嫌＋自分のステータス回復）
+CASE 4 TO 8
+	RANK_FORTUNE = 2
+;３等：MORIYAブートキャンプ招待券、わずか1時間で見違えるような効果が！
+CASE 9 TO 14
+	RANK_FORTUNE = 3
+;４等：楽しく呑もう、幻想郷呑み比べセット
+CASE 15 TO 24
+	RANK_FORTUNE = 4
+;５等：健康に興味ないあなたに、元気ハツラツぅ～？セット
+CASE 25 TO 39
+	RANK_FORTUNE = 5
+;６等：これであの子とイイ仲に！？恋のハプニングセット
+CASE 40 TO 59
+	RANK_FORTUNE = 6
+;７等：実りの喜びをあなたに、野菜の苗セット（野菜ができるとは言っていない）
+CASE 60 TO 89
+	RANK_FORTUNE = 7
+;８等：一度食べると止まらない、義理チョコの王様のエントリーだ！
+CASE 90 TO 129
+	RANK_FORTUNE = 8
+;残念…９等：たわし、10個集めると金のたわしと交換です！
+CASE 130 TO 199
+	RANK_FORTUNE = 9
+;スカ：ハズレくじ、5枚集めるともう一度引けます
+CASE 200 TO 299
+	RANK_FORTUNE = 10
+CASEELSE
+	RANK_FORTUNE = 99
+ENDSELECT
+;引いたくじは廃棄処分して前詰め、空いたところは-1で詰める
+ARRAYSHIFT MORIYA_BOX, -1, -1
+;SAVESTR:9 = {MORIYA_BOX:0}
+;FOR LOCAL:0, 1, 300
+;	SAVESTR:9 = %SAVESTR:9%,{MORIYA_BOX:(LOCAL:0)}
+;NEXT
+PRINTDATAW
+	DATAFORM 「Let's see, the result is...」
+	DATAFORM 「Mumu, this is...」
+	DATAFORM 「Ahー... Ahー? Ahー, Ahー!」
+	DATAFORM 「Um, this is...」
+	DATAFORM 「And the result is...」
+	DATAFORM 「What could it be? What could it be?」
+	DATAFORM 「Arara, so you pulled out...」
+	DATAFORM 「Hmmm, this is...」
+	DATAFORM 「Those are some strange letters... Ah, it's upside down.」
+	DATAFORM 「Hoho, this is quite something...」
+	DATAFORM 「What could it be～」
+	DATAFORM 「......? ......! .........!?」
+ENDDATA
+PRINTW 
+;custom code
+SELECTCASE RANK_FORTUNE
+	CASE 0 TO 3
+		SIF MESSKIP()
+			FORCEWAIT
+ENDSELECT
+;結果処理。地の文まで書き込んでいます
+SELECTCASE RANK_FORTUNE
+;特賞：奇数回目であれば体力、偶数回であれば気力が上がる丸薬（最大値＋50）
+CASE 0
+	PRINTW She looks serious for a moment before breaking out in a smile.
+	PRINTL 「Congratulations! You get a special prize! Jackpot!」
+	PRINTFORML 「As the special prize, I present to you \@GETBIT(FLAG:999, 4) ? an Energy Pill # a Secret Powder of Life \@!」
+	PRINTL 「Please drink it. Oh here's some water.」
+	PRINTFORMW %PARSE("You mix")% the medicine with water and %PARSE("drink")% it, and %PARSE("you",1)% instantly feel power rising up from deep inside...
+	IF GETBIT(FLAG:999, 4)
+		MAXBASE:MASTER:気力 += 50
+	ELSE
+		MAXBASE:MASTER:体力 += 50
+	ENDIF
+	PRINTFORML As the sensation ends, %PARSE("you feel")% the limit of %PARSE("your",1)% \@GETBIT(FLAG:999, 4) ? ENE # STA \@ has been increased.
+	INVERTBIT FLAG:999, 4
+	
+	PRINTFORMW 「Ah, I forgot to mention.」
+	PRINTFORML 「Since you have gotten the special prize, we can prepare a new box for you.」
+	PRINTFORML 「If you want to change to a new box please tell me when you're about to pull next time.」
+	PRINTFORMW 「However, changing to a new box will discard the current one, so please be careful.」
+;１等：守矢神社の２柱＋風祝とのデートチケット。各１枚
+CASE 1
+	PRINTW 「This is...」
+	IF CFLAG:お相手:出禁
+		PRINTFORML 「We apologize profusely, this is a right to a date with %NAME:お相手%-sama, but %NAME:お相手%-sama isn't able to do that right now. A thousand pardons.」
+		PRINTFORML 「Please choose another prize instead.」
+		CALL ASK_M("Refund",1,@"Date with %NAME:31%",!CFLAG:31:出禁,@"Date with %NAME:32%",!CFLAG:32:出禁,@"Date with %NAME:33%",!CFLAG:33:出禁,"It's fine",1)
+		SELECTCASE RESULT
+			CASE 0
+				PRINTFORML 「We will issue a refund.」
+				PRINTFORML 「We apologize for the inconvenience.」
+				MONEY += 3000
+				RETURN 0
+			CASE 1 TO 3
+				お相手 = RESULT + 30
+			CASE 4
+				PRINTFORML 「I... I can't accept that!」
+				PRINTFORML 「Please take this at least.」
+				PRINTFORML She gives %PARSE("you")% a bundle of blanks...
+				ITEM:守矢の守札 += 50
+				RETURN 0
+		ENDSELECT
+	ELSEIF FLAG:デート相手
+		PRINTFORMW 「Congratulations, this is a ticket to date %NAME:お相手%-sama, a real w-!?」
+		PRINTFORML 「What do you mean!? Huh? You're on a date right now so I shouldn't be so loud?」
+		PRINTFORML 「Hey you, you shouldn't draw tickets like that when leading a girl around!」
+		PRINTFORML %PARSE("You say")% it does feel rather fishy.
+		PRINTFORMW 「In any case, you win a ticket to date %NAME:お相手%-sama.」
+	ELSE
+		PRINTFORML 「Congratulations, this is a ticket to date %NAME:お相手%-sama, a real winner!」
+	ENDIF
+	FLAG:守矢デート権 = お相手
+	PRINTFORML 「Well then, please let us know when you are ready.」
+	CALL COLORMESSAGE(@"Winning a dating pass two times in a row without using it removes the first one.",C_YELLOW,2)
+;２等：幸せの奇跡が幻想郷を包みます（全員上機嫌＋自分のステータス回復）
+CASE 2
+	PRINTL 「Congratulations, second prize is a happiness miracle from Kochiya Sanae-sama.」
+	PRINTW 「Maybe this day love will strike those who expect it the least?」
+	FOR LOCAL:0, 1, CHARANUM
+		TALENT:(LOCAL:0):機嫌 = 1
+		BASE:(LOCAL:0):怒り = 0
+	NEXT
+	PRINTFORML Suddenly %PARSE("your")% mind feels calm.
+	PRINTL 「Ah, while they may be lovestruck, do not go too far and make them angry, please be careful.」
+	PRINTL It seems this miracle isn't all that omnipotent.
+	PRINTFORMW At the same time, it feels like %PARSE("your")% body has also gotten lighter.
+	BASE:MASTER:体力 = MAXBASE:MASTER:体力
+	BASE:MASTER:気力 = MAXBASE:MASTER:気力
+	BASE:MASTER:精力 = MAXBASE:MASTER:精力
+	BASE:MASTER:TSP  = MAXBASE:MASTER:TSP
+	BASE:MASTER:酒気 = 0
+
+;３等：MORIYAブートキャンプ招待券、わずか1時間で見違えるような効果が！
+CASE 3
+	PRINTL 「Congratulations on getting third place?」
+	PRINTL 「Third prize is a complimentary ticket to MORIYA Boot Camp.」
+	PRINTW 「Since it expires today you have to use it right now-」
+	PRINTL Actually, after this...
+	PRINTW 「You do not have the right to refuse. Now then, come here please......」
+	PRINTL .........
+	PRINTL ......
+	PRINTL ...
+	;会話経験、戦闘経験、学習経験のうち最も低いものを底上げする
+	;なお講師は会話／戦闘／学習で早苗／神奈子／諏訪子が担当
+	;……ケロちゃんのほうが戦闘高くて神奈子と教養が同じのは秘密だよ
+	;あ、ついでに講師にも経験を追加。教えるのもいい経験だし
+	IF EXP:MASTER:会話経験 < EXP:MASTER:戦闘経験 &&  EXP:MASTER:会話経験 < EXP:MASTER:学習経験
+		PRINTFORMW %PARSE("You learn")% the secret of Sanae's way of speech from %HIS_HER(31)% lecture!
+		EXP:MASTER:会話経験 += 10
+		EXP:31:会話経験 += 5
+	ELSEIF EXP:MASTER:戦闘経験 < EXP:MASTER:学習経験
+		PRINTFORML Kanako beats combat skill into %PARSE("you")%!
+		PRINTW In addition, the fatigue is also removed.
+		EXP:MASTER:戦闘経験 += 10
+		EXP:32:戦闘経験 += 5
+	ELSE
+		PRINTFORMW A cramming session in civility from Suwako will surely be helpful in the future.
+		EXP:MASTER:学習経験 += 10
+		EXP:33:学習経験 += 5
+	ENDIF
+	;あれだけ過酷な訓練でもわずか一時間、MORIYAブートキャンプ、恐るべし……
+	TIME += 60
+
+;４等：楽しく呑もう、幻想郷呑み比べセット
+CASE 4
+	PRINTL 「You got the fourth prize.」
+	PRINTL 「Fourth prize is a Genokyou drinking set.」
+	PRINTL 「Here is Kanako-sama's treasured collection of sweet sake, unrefined sake, sake, and strong sake.」
+	PRINTW 「Please enjoy and compare them!」
+	;custom code, switched direct item manipulation for calls to ITEM_GRANT
+	CALL ITEM_GRANT(GETNUM(ITEM, "甘酒"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "どぶろく"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "清酒"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "鬼殺し"), 1)
+	PRINTW 「Oh, and if you can't hold that much please don't give it to Kanako-sama. Just donate it to the shrine instead please.」
+
+;５等：健康に興味ないあなたに、元気ハツラツぅ～？セット
+CASE 5
+	PRINTL 「Congratulations, 5th prize.」
+	PRINTL 「Are you suffering from exhaustion? If so you're in luck as it's a "Genki Hatsuratsu" set.」
+	PRINTW 「If you ever feel exhausted, use this to recover.」
+	PRINTL The set includes one Vigora, Gin Gin Z, Potion, and 5 Turmeric drinks.
+	PRINTL There are also 10 portions of Green Juice (along with a sweet Moriya 2L bottle) and 10 sport drinks.
+	PRINTW Just carrying it around is enough to make one exhausted...
+	;custom code
+	CALL ITEM_GRANT(GETNUM(ITEM, "精力剤"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "ギンギンＺ"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "ポーション"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "ウコンドリンク"), 5)
+	CALL ITEM_GRANT(GETNUM(ITEM, "青汁"), 10)
+	CALL ITEM_GRANT(GETNUM(ITEM, "スポーツドリンク"), 10)
+	PRINTW 「Oh, and please donate anything you cannot carry to Moriya Shrine.」
+
+;６等：これであの子とイイ仲に！？恋のハプニングセット
+CASE 6
+	PRINTL 「You won the sixth prize.」
+	PRINTL 「The prize is... A "Lovers" giveaway set.」
+	PRINTW She blushes as she hands over the award.
+	;custom code
+	CALL ITEM_GRANT(GETNUM(ITEM, "ローション"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "媚薬"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "惚れ薬"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "コンドーム"), 1)
+	CALL ITEM_GRANT(GETNUM(ITEM, "ピル"), 1)
+
+;７等：実りの喜びをあなたに、野菜の苗セット（野菜ができるとは言っていない）
+CASE 7
+	PRINTL 「You won the seventh prize.」
+	PRINTL 「The prize is a set of vegetable seeds.」
+	PRINTL 「Please work hard towards a good harvest.」
+	PRINTW 「By the way, Moriya Shrine also accepts donations for better harvest.」
+	FOR LOCAL, 0, 1000
+		SIF STRCOUNT(ITEMNAME:LOCAL, "の苗")
+			ITEM:LOCAL = MIN(ITEM:LOCAL + 1, 99)
+	NEXT
+	
+	PRINTW 「Oh, and please donate anything you cannot carry to Moriya Shrine.」
+
+;８等：一度食べると止まらない、義理チョコの王様のエントリーだ！
+CASE 8
+	PRINTL 「Eight prize.」
+	PRINTL 「Don't eat it at once, it's the obligatory chocolate prize entry!」
+	PRINTL 「Please accept it.」
+	PRINTFORMW She hands %PARSE("you")% a box of chocolate confectionery.
+	;custom code
+	CALL ITEM_GRANT(GETNUM(ITEM, "ブラックサンダー"), 20)
+
+;残念…９等：たわし、10個集めると金のたわしと交換です！
+CASE 9
+	PRINTL 「This is a special reward.」
+	PRINTL 「The prize is a scrubbing brush.」
+	PRINTL 「This is not just a simple scrubbing brush though.」
+	PRINTW 「Collect ten and trade them for a golden scrubbing brush.」
+	FLAG:999 += 1 << 5
+	
+	IF (FLAG:999 >> 5 & 15) == 10
+		PRINTL 「Congratulations! You have collected ten brushes so I'll exchange them for a golden one.」
+		PRINTL Got a golden scrubbing Brush!
+		PRINTFORMW %PARSE("Your")% \@GETBIT(FLAG:999, 9)? cleaning # cooking \@ skill increased a bit.
+		IF GETBIT(FLAG:999, 9)
+			EXP:MASTER:清掃経験 += 1
+		ELSE
+			EXP:MASTER:料理経験 += 1
+		ENDIF
+		;金のたわしの効果を変換、たわし収集個数をリセット
+		;15(0b1111)を5ビットシフトし、ビット反転したもの(0b000011111)をFLAG:999とビットごとの論理和させています、多分
+		INVERTBIT FLAG:999, 9
+		FLAG:999 &= ~(15 << 5)
+	ELSE
+		PRINTFORMW 「You currently have {(FLAG:999 >> 5) & 15} scrubbing brushes, please continue collecting them to get a golden one.」
+	ENDIF
+;スカ：守矢の守札（はずれくじ）、5枚でもう一回引けるドン
+CASE 10
+	PRINTFORMW She smiles as she hands %PARSE("you")% the ticket.
+	PRINTW ......
+	PRINTW ...
+	PRINTL ┌─────────────┐
+	PRINTL ｜　　　　　　　　　　　　　｜
+	PRINTL ｜　　 Moriya Talisman 　 　｜
+	PRINTL ｜　　　　　Lottery 　　　　｜
+	PRINTL ｜　　　　　　　　　　　　　｜
+	PRINTL ｜　　Gather 5 Talismans  　｜
+	PRINTL ｜　　　Get a lottery roll　｜
+	PRINTL ｜　　　　　　　　　　　　　｜
+	PRINTL ｜　Miracle not guaranteed　｜
+	PRINTL ｜　　　　　　　　　　　　　｜
+	PRINTL ｜　　　　　　Moriya Shrine ｜
+	PRINTL └─────────────┘
+	PRINTW Isn't this a kind of roundabout way of saying it's a blank?
+	PRINTFORMW 「It'll surely go better next time, keep going%UNICODE(0x2665)% keep going%UNICODE(0x2665)%」
+	ITEM:守矢の守札 ++
+
+CASEELSE
+	PRINTFORML 「Huh, that's strange.」
+	PRINTFORML She tilts her head as she looks on the ticket.
+	PRINTFORMW 「Such a ticket shouldn't even exist...」
+	PRINTFORML 「It can't be helped, we will issue a full refund.」
+	PRINTFORMW It seems some unrelated ticket managed to sneak its way in.
+	MONEY += 3000
+ENDSELECT
+RETURN 0
+
+@守矢くじデート相手のリセット()
+;守矢くじのデートのときに該当キャラの起床時間etcを元に戻す
+IF FLAG:守矢くじデート相手
+	CFLAG:(FLAG:守矢くじデート相手):来訪時間 = CSVCFLAG(FLAG:守矢くじデート相手,352)
+	CFLAG:(FLAG:守矢くじデート相手):帰宅時間 = CSVCFLAG(FLAG:守矢くじデート相手,353)
+	CFLAG:(FLAG:守矢くじデート相手):就寝時間 = CSVCFLAG(FLAG:守矢くじデート相手,354)
+	CFLAG:(FLAG:守矢くじデート相手):起床時間 = CSVCFLAG(FLAG:守矢くじデート相手,355)
+	FLAG:守矢くじデート相手 = 0
+ENDIF
+
+
+@DATE_RIGHT
+#DIM お相手
+お相手 = FLAG:守矢デート権
+FLAG:守矢デート権 = 0
+PRINTL 「Please wait a moment」she says before calling someone from the back.
+IF CFLAG:お相手:睡眠 || CFLAG:お相手:衰弱
+	PRINTFORML 「Eh? Sleeping? Tired?」
+	PRINTFORML 「Please wait a moment, I'll be right back.」
+	PRINTFORMW She dashes inside.
+	PRINTFORMW ......
+	PRINTFORML It's a bit unintelligible, but %PARSE("you hear")% something about even gods having to make a living even if they don't like it,
+	PRINTFORMW this is how you earn money through faith, it's the same for everyone else......
+	PRINTFORMW ......
+	PRINTFORMW She comes back.
+	PRINTFORMW 「Ah, thank you for waiting.」
+	CFLAG:お相手:睡眠 = 0
+	CFLAG:お相手:衰弱 = 0
+	BASE:お相手:体力 = MAXBASE:お相手:体力 / 2
+	TALENT:お相手:機嫌 = -1
+ENDIF
+IF GET_MAPID(CFLAG:MASTER:現在位置) == MAIN_MAP
+	FOR LOCAL,1,CHARANUM
+		SIF !CFLAG:LOCAL:同行
+			CONTINUE
+		CFLAG:LOCAL:同行 = 0
+		SIF MATCH(LOCAL,31,32,33)
+			CALL 守矢くじデート相手のリセット()
+	NEXT
+ENDIF
+CFLAG:お相手:現在位置 = CFLAG:MASTER:現在位置
+;お相手のキャラの同行(MASTERも)，現在位置，デート中のCFLAGをセット
+IF GET_MAPID(CFLAG:MASTER:現在位置) != MAIN_MAP
+	CFLAG:MASTER:同行 = 360 ;com custom code
+	CFLAG:お相手:同行 = 360 ;com custom code
+	CFLAG:お相手:デート中 = CFLAG:MASTER:現在位置 / 100
+	FLAG:デート相手 = お相手
+	;守矢くじデート相手にデートの相手を格納
+	FLAG:守矢くじデート相手 = FLAG:デート相手
+	;com stuff "fix" <- this causes crashes
+	; CFLAG:(FLAG:デート相手):来訪時間 = 0
+	; CFLAG:(FLAG:デート相手):帰宅時間 = 0
+	; CFLAG:(FLAG:デート相手):就寝時間 = 0
+	; CFLAG:(FLAG:デート相手):起床時間 = 0
+;メインマップ時は最大三時間まで
+ELSE
+	CFLAG:MASTER:同行 = 360 ;com custom code
+	CFLAG:お相手:同行 = 360 ;com custom code
+	FLAG:守矢くじデート相手 = お相手
+ENDIF
+;SIF !CFLAG:(お相手):面識
+;	CALL KOJO_MESSAGE_SEND("ENCOUNTER",MASTER,FLAG:守矢くじデート相手,1,0)
+CALL Com_Date_Meet(お相手) ;com custom code, handle first time meeting/greeting
+TARGET = お相手
+;add nosleep
+CFLAG:お相手:眠気覚まし = 360 ;com custom code
+CFLAG:お相手:ディレイ = 30 ;com custom code

@@ -1,0 +1,181 @@
+﻿@CHARAMOVE_DATA_14(ARG, ARG:2)
+LOCAL = 14
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;三妖精宅内に行きやすい
+			CASE P27三妖精の家・広間 TO P34スター私室
+				RETURN 5
+			;よく居る
+			CASE P343湖畔, P345チルノのかまくら, P346大妖精の棲家, P347霧の湖
+				RETURN 5
+			;あとはどこでも入ってくる
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE 桜並木の鳥居, 神社境内, 妖精の大樹
+				RETURN 1
+			CASE 霧の湖, 氷のかまくら, 正門
+				RETURN 1
+			CASE 森の入り口, 香霖堂, 古木の大樹, 霧雨魔法店, 人形の洋館, 再思の道, 無縁塚
+				RETURN 1
+			CASE 麓の樹海, 玄武の沢, 大蝦蟇の池
+				RETURN 1
+		ENDSELECT
+ENDSELECT
+
+@EXIST_キャラデータ14
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ14(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "チルノ")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（ズボン）セット")
+
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "リボン"))
+CASE "普段着：ワンピース"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("ワンピース", "ワンピース"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "ひんやり冷たい")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "氷精のパンツ")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "氷精のキャミソール")
+CASE "固有下着着用条件"
+	SIF !RAND:(1 + (2 * 勝負下着判定([[チルノ]])))
+		CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 2)
+
+CASE "固有コマンド"
+	CALLF MAKE_STR(V_NAME, "アイスを買う")
+CASE "固有コマンド実行可能"
+	CALLF MAKE_INT(V_NAME, 1)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "カエル/魚料理/汁物/アイス/濃厚/野趣/豪快/ぷるぷる/きらめき/" + "甘い/冷たい/夏物/謎料理/" * 3)
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "鍋物/辛い/辛い/" + "野菜/スパイス/温かい/" * 3)
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "氷結/得意料理＊夏物＊/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "青/かっこいい/ポップ/パワフル/ロリータ/壮大/" + "氷/夏の/" * 3 + "ヒマワリの/氷精の/氷の/氷結の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "赤/繊細/知的/" + "書物/キセル/" * 3 + "火/" * 5)
+
+;農民関連
+;最強とか天才とかそういう言葉が好きそう
+;寒冷地の作物って感じがするしこの子に任せるっきゃない
+;収穫したテンサイは紅魔館に出荷され砂糖に加工されるのであった
+CASE "農民：説明"
+	CALLF MAKE_STR(V_NAME, "甜菜農家")
+CASE "農民：作物"
+	CALLF MAKE_STR(V_NAME, "テンサイ")
+CASE "農民：畑の種類"
+	CALLF MAKE_STR(V_NAME, "甜菜畑")
+CASE "農民：畑のマップ"
+	CALLF MAKE_STR(V_NAME, "霧の湖")
+
+CASE "農民：マップID"
+	CALLF MAKE_INT(V_NAME, 3)
+CASE "農民：場所ID"
+	CALLF MAKE_INT(V_NAME, 343)
+CASE "農民：報酬"
+	CALLF MAKE_INT(V_NAME, 250)
+CASE "農民：金利"
+	CALLF MAKE_INT(V_NAME, 9)
+
+;ここは依頼IDが関連しない情報
+;依頼発生率スカ2/一般3/固有5
+CASE "依頼なし発生率"
+	CALLF MAKE_INT(V_NAME, 2)
+CASE "一般依頼発生率"
+	CALLF MAKE_INT(V_NAME, 3)
+CASE "固有依頼発生率"
+	CALLF MAKE_INT(V_NAME, 5)
+CASE "固有依頼最終要素"
+	CALLF MAKE_INT(V_NAME, 101)
+CASEELSE
+	;固有依頼関連のデータにバトンタッチ
+	SIF STRCOUNT(O_DATA, "依頼")
+		CALLF 固有依頼14(ARG, O_DATA, V_NAME)
+ENDSELECT
+
+;-------------------------------------------------
+;固有料理設定
+;DISH_NAME          料理名
+;RESULTS            料理の種類（軽食/主食/デザート）
+;CALL 材料設定("")  材料の指定。"汎用"を入れると自動で汎用食材になる
+;DISH_TASTE         味の設定
+;DISH_COMMENT       （任意）一行コメント
+;DISH_TIME          （任意）調理にかかる時間
+;DISH_MAXLIMIT      （任意）料理の持続時間
+;-------------------------------------------------
+@SPECIAL_MENU_14
+DISH_NAME = かき氷
+RESULTS = デザート
+CALL 材料設定("アイス")
+DISH_TASTE = アイス/甘い/あっさり/冷たい/冷たい/冷たい/夏物/質素/家庭的/サクサク/
+DISH_COMMENT = 夏の風物詩。すぐ料理できる。食べすぎると頭がキーンとなる。
+DISH_TIME = 10
+RETURN 1
+
+;image Tweak custom code
+;IMAGE_I14_体形(CHARA)-----------------------------------------------------------------------
+;キャラクター特有の体形表示条件
+;エフェクトを共有する体形差分はこちら
+;服装を指定しても自動で表示されるので注意
+;使用時注意点:
+;	RESULTSに体形を格納すること
+;	書式は %体形%%服装% 適宜"_"等入れること
+;	"巨乳"は本編で実装済み %体形%巨乳%服装% で追記可能
+;-------------------------------------------------------------------------------------------
+@IMAGE_I14_体形(CHARA)
+#DIM CHARA
+VARSET RESULTS
+
+IF CFLAG:CHARA:差し替え適用
+	;差し替え画像
+	IF FLAG:立ち絵種類
+		;顔絵
+	ELSE
+		;立ち絵
+	ENDIF
+ELSE
+	;通常画像
+	IF FLAG:立ち絵種類
+		;顔絵
+		SIF FLAG:巨乳差分表示 && TALENT:CHARA:バストサイズ == 0
+			RESULTS = 巨乳
+		;image tweak custom code, for huge size
+		SIF FLAG:立ち絵種類 && FLAG:巨乳差分表示 && TALENT:CHARA:バストサイズ > 1
+			RESULTS = 爆
+	ELSE
+		;立ち絵
+	ENDIF
+ENDIF

@@ -1,0 +1,584 @@
+﻿@Add_Mob_DouteiExp(ARG, ARGS, LESBIAN, 店員)
+#DIM LESBIAN
+#DIM 店員
+IF !IS_DOUTEI(ARG) && HAS_PENIS(ARG)
+	EXP:ARG:Ｃ経験 += 20 + RAND:5 + 店員 * 30
+	ABL:ARG:欲望 += RAND:3 + 店員 * 4
+	ABL:ARG:Ｃ感覚 += 1 + 店員 * 3
+	IF !RAND:5 && (TALENT:ARG:貞操 < 1 || 店員)
+		TALENT:ARG:ヤリマン = 1
+		ABL:ARG:Ｃ感覚 += RAND:2 + 2 + 店員 * 3
+		EXP:ARG:Ｃ経験 += 50 + RAND:20 + 店員 * 30
+	ENDIF
+	EXP:ARG:挿入経験 = EXP:ARG:Ｃ経験
+	EXP:ARG:射精経験 = (EXP:ARG:挿入経験 * 3 / 4 ) + RAND:((10  + 店員 * 60) * POWER(1 + TALENT:ARG:ヤリマン, 2))
+	IF !RAND:15
+		IF TALENT:ARG:人間
+			CSTR:ARG:童貞喪失履歴 = %TEXTR("Threw it away/Lost it to a fairy's mischief/Was raped by a Human from the village/Was raped by a Youkai/Lost it to a local virgin eater/Lost it to a prostitute")%
+		ELSEIF ARGS == "鬼"
+			CSTR:ARG:童貞喪失履歴 = %TEXTR("Lost it while passed out drunk from too much rotgut/Lost it after being defeated in battle/Lost it to a New Plan prostitute")%
+		ELSE
+			CSTR:ARG:童貞喪失履歴 = %TEXTR("Was coerced by her boss/Lost it to a local virgin eater/Was raped by a youkai exterminator/Lost it to a prostitute")%
+		ENDIF
+	ELSEIF TALENT:ARG:倒錯的 && !RAND:10
+		CSTR:ARG:童貞喪失履歴 = Gave it to her %TEXTR("younger/older")% sister
+	ELSEIF !RAND:7 && !TALENT:ARG:人間
+		CSTR:ARG:童貞喪失履歴 = Threw it away with a %TEXTR("girl/woman/lady")% she kidnapped from the human village
+	ELSEIF TALENT:ARG:人妻 && !RAND:2
+		CSTR:ARG:童貞喪失履歴 = Gave it to her \@ !LESBIAN ? curious husband # wife\@ in a moment %TEXTR("of love/without love")%
+	ELSE
+		CSTR:ARG:童貞喪失履歴 = Gave it to %TEXTR(@"her boyfriend/her ex-boyfriend/her co-worker/someone she wasn't related to in the least")%
+	ENDIF
+	SIF TALENT:ARG:人妻
+		CSTR:ARG:童貞喪失履歴 = %REPLACE(@"%CSTR:ARG:童貞喪失履歴%","her boyfriend","her ex-boyfriend")%
+	SIF 店員 && STRCOUNT(CSTR:ARG:童貞喪失履歴, "(Lost|raped|related|co-worker)") && RAND:2
+		CSTR:ARG:童貞喪失履歴 = %TEXTR("Was taken by/Sold it for premium to/Lost it to")% her very first customer
+		
+	IF ARGS == "町娘"
+		CSTR:ARG:童貞喪失履歴 = %REPLACE(@"%CSTR:ARG:童貞喪失履歴%","co-worker","classmate")%
+	ENDIF
+	IF LESBIAN == 1
+		CSTR:ARG:童貞喪失履歴 = %REPLACE(@"%CSTR:ARG:童貞喪失履歴%","boyfriend","girlfriend")%
+	ENDIF
+ENDIF
+
+;extra descriptions
+@Add_Mob_Description(ARG, ARGS, LESBIAN, 店員)
+#DIM LESBIAN
+#DIM 店員
+#DIMS OUTPUT
+#DIM DYNAMIC nCheck
+IF HAS_PENIS(ARG)
+	OUTPUT '= ""
+	IF RAND:4
+		OUTPUT += @"She has a %FSYN("penis")% because she was born that way/"
+	ELSE
+		SIF TALENT:ARG:人間
+			OUTPUT += @"She is a natural-born hermaphrodite and her parents didn't know what to do with her/"
+		OUTPUT += @"She received a %FSYN("penis")% as a \"gift\" from %SPLIT_G("her late grandmother:her mother:a passing witch:a passing magician")% who had magical powers/"
+		SIF TALENT:ARG:人妻
+			OUTPUT += @"She received a %FSYN("penis")% as a result of her spouse's prayer/"
+		SIF !GROUPMATCH(TALENT:ARG:人間, 1, 6) || CFLAG:ARG:妖怪変化
+			OUTPUT += @"She grew a %FSYN("penis")% after %SPLIT_G("a failed experiment:as a result of a failed spell:someone's prank:inheriting a treasured rod of her species:as a part of her natural ability")%/"
+		SIF !IS_VIRGIN(ARG)
+			OUTPUT += @"Her body changed after getting raped by a youkai/"
+	ENDIF
+	SIF !RAND:10
+		OUTPUT += @"She got a %FSYN("penis")% after she was %SPLIT_G("blessed:cursed")% by a %SPLIT_G("god:youkai:magician:witch")%/She grew a %FSYN("penis")% after an accident/Her %FSYN("penis")% materialized out of thin air/She drank a Futa Drug/Her %FSYN("penis")% was surgically added to her by a doctor/She acquired a %FSYN("penis")% as a result of %SPLIT_G("a bored god's mischief:a sincere prayer:Gensokyo's strange season:one of the past incidents")%/One day she woke up with a %FSYN("penis")% between her legs for no apparent reason/One day she thought it'd be nice to have a %FSYN("penis")% of her own, and her wish came true"
+		
+	Str_Mob_Description:ARG:Mob_Desc_Dick '= TEXTR(OUTPUT) + "."
+	
+	;extra descriptions
+	Str_Mob_Description:ARG:Mob_Desc_Dick += "<br>"
+	;amount of descriptions, 1-3
+	;LOCAL = RAND:3+1
+	;actually fuck it, I've got enough of descriptions
+	LOCAL = 3
+	;PRINTFORMW LOCAL - {LOCAL}
+	LOCAL:2 = 0
+	DO
+		;failsafe to break the loop if all cases were denied
+		SIF nCheck >= 255
+			BREAK
+		OUTPUT =
+		LOCAL:1 = RAND:7
+		SELECTCASE LOCAL:1
+			CASE 0 ;shape oddities
+				SIF GETBIT(nCheck,0)
+					CONTINUE
+					
+				SETBIT nCheck,0
+			
+				OUTPUT += @"It looks %SPLIT_G("a little :somewhat :a lot ::")%darker than her natural complexion./"
+				OUTPUT += "It has an odd coloration—a dark brown ring around the base that looks like it was painted in./"
+				OUTPUT += "Has a little sign imprinted on it-likely a tribe or a family mark./"
+				OUTPUT += "The glans, the part that looks like a mushroom cap, is always purple or blue./"
+				OUTPUT += "It looks exactly like all the other penises in your experience./"
+				OUTPUT += "Looks like it has been used as a dart board by an angry squirrel./"
+				OUTPUT += "Looks like a shriveled up worm that was left in the sun for too long./"
+				OUTPUT += "A bit red./"
+				OUTPUT += "Has a dark spot in the middle that could be a mole./"
+				OUTPUT += "It has been bitten by something that has left a mark on the skin./"
+				OUTPUT += "There are many scars on the skin surrounding her penis./"
+			CASE 1 ;extra shape quirks
+				SIF GETBIT(nCheck,1)
+					CONTINUE
+					
+				SETBIT nCheck,1
+				OUTPUT += "Has pearly penile papules under the glans/"
+				OUTPUT += "Occasionally has one or more white pimples under the tip./"
+				OUTPUT += "Has tiny white pimples on the glans./"
+				OUTPUT += @"A little bent to the %SPLIT_G("right:left")%/"
+				OUTPUT += "Swollen in the middle, looking like it has a small head and large shaft./"
+				OUTPUT += "Veiny and somewhat swollen./"
+				OUTPUT += "It does not have many veins./"
+				OUTPUT += "There are no folds or creases in the shaft./"
+				OUTPUT += "The shaft has an even thickness from the base to the tip./"
+				OUTPUT += "The shaft is straight and parallel to the ground when erect./"
+				OUTPUT += "The shaft does not have any bends or curves./"
+			CASE 2 ;smell
+				SIF GETBIT(nCheck,2)
+					CONTINUE
+					
+				SETBIT nCheck,2
+				OUTPUT += "It always smells./"
+				OUTPUT += "Smells like a dirty sock./"
+				OUTPUT += "Smells a little like fish./"
+				OUTPUT += "Has an unpleasant odor when not washed for at least two days./"
+				OUTPUT += "She doesn't wash it much./"
+				OUTPUT += "Has to be washed often or it will smell worse./"
+				OUTPUT += "Accumulates a lot of dirt, and it needs to be washed every now and then./"
+				OUTPUT += "Despite belonging to a girl, it produces strong male aroma/"
+				OUTPUT += "The pheromones are so strong, it's enough to make anyone dizzy./"
+				OUTPUT += "Has no smell or taste at all./"
+				OUTPUT += "The tip smells like a fresh peach./"
+				SIF !IS_DOUTEI(ARG)
+					OUTPUT += "She doesn't always wash it before having sex./"
+			CASE 3 ;taste
+				SIF GETBIT(nCheck,3)
+					CONTINUE
+					
+				SETBIT nCheck,3
+				OUTPUT += "Tastes a little fishy, but not too bad./"
+				OUTPUT += "The taste can be described as sweet, and sometimes bitter./"
+				OUTPUT += "Tastes a little salty, but not fishy./"
+				OUTPUT += @"The taste is neutral%SPLIT_G(", as long as it's washed::")%./"
+				OUTPUT += "The taste is always different, depending on the food she eats./"
+				OUTPUT += "The taste is not good, but it could be worse./"
+				OUTPUT += @"The taste is not bad, but %SPLIT_G("not great either:but could be better:it has a slight fishy odor")%./"
+				OUTPUT += "The taste is not that bad, but she still doesn't know if it tastes good or not because she's never tried to suck her own cock./"
+			CASE 4 ;hair
+				SIF GETBIT(nCheck,4)
+					CONTINUE
+					
+				SETBIT nCheck,4
+				IF !IS_CHILD(ARG)
+					OUTPUT += "It has to be shaved down every once in a while because the hair grows back too fast./"
+					OUTPUT += "Very hairy around the base./"
+					OUTPUT += "The hair on her testicles is thick./"
+					OUTPUT += "Finds it unbearable if she has to shave her testicles./"
+					OUTPUT += "Has some hair on the shaft./"
+				ELSE
+					OUTPUT += "The penis is completely smooth without any hair at all./"
+					OUTPUT += "There are tiny white hairs near the tip./"
+					OUTPUT += "The skin on the shaft is smooth and hairless./"
+					OUTPUT += "Has completely smooth testicles./"
+				ENDIF
+			CASE 5 ;foreskin
+				SIF GETBIT(nCheck,5)
+					CONTINUE
+					
+				SETBIT nCheck,5
+				;cut
+				IF !RAND:4
+					OUTPUT += "The foreskin is gone and the glans is visible./"
+					OUTPUT += "Circumcised because she thinks it makes her more hygienic./"
+					OUTPUT += "Circumcised because that was the custom in her family/"
+					OUTPUT += "The foreskin was lost a while back and never grew back./"
+					OUTPUT += "Circumcised recently by an adult who did it without anesthesia./"
+					OUTPUT += "Circumcised because someone forced her to have it done against her will./"
+					OUTPUT += "Circumcised by parents because they thought it would be better for her./"
+					OUTPUT += "Circumcised but with some scarring from the operation it looks like this./"
+					OUTPUT += "Circumcised to dull the pleasure in order to last longer./"
+					OUTPUT += "Circumcised because the sensitivity was too much for her to handle./"
+					OUTPUT += "Circumcised because she didn't want to have sex too much but still wanted to get off and not use toys./"
+					OUTPUT += "Circumcised because she had a rare medical condition that prevented her from being able to retract her foreskin./"
+					OUTPUT += "Cut because it was that way to begin with./"
+					OUTPUT += "Cut, regrets it and wants her foreskin back./"
+				ELSE ;uncut
+					OUTPUT += @"The foreskin is still there but %SPLIT_G("not retractable:pulled back over the glans")%./"
+					OUTPUT += "The foreskin is retracted over the glans when erect but has some wrinkles that are more pronounced than usual./"
+					OUTPUT += "The foreskin is retracted over the glans but it is loose enough to slip out of place during intercourse./"
+					OUTPUT += "The foreskin is still there over the glans, but it doesn't cover all of it./"
+					OUTPUT += "Her glans hadn't come out of her foreskin./"
+					OUTPUT += "Uncircumcised because it was that way and she's not going to change it./"
+					OUTPUT += "Uncut with foreskin still intact and thick enough to conceal the head from view./"
+					OUTPUT += "Uncut with skin pulled back over the glans to reveal the glans./"
+					OUTPUT += "Uncut with skin pulled back over the glans to reveal the entire head of the penis./"
+					OUTPUT += "Uncut but with skin pulled back only slightly over the glans./"
+					OUTPUT += "Uncircumcised because she thought it would make her seem more intact or whatever./"
+					OUTPUT += "The foreskin is so tightly pulled back, it looks like an actual snake head./"
+					OUTPUT += "The foreskin is so long, it hangs over the top./"
+					OUTPUT += "The foreskin is too short, and you can see the glans./"
+					OUTPUT += "The foreskin is so long and wrinkly, it looks like a caterpillar./"
+				ENDIF
+			CASE 6 ;size
+				SIF GETBIT(nCheck,6)
+					CONTINUE
+					
+				SETBIT nCheck,6
+				SIF TALENT:ARG:形状 == 2 && RAND:10
+					CONTINUE
+				;small
+				IF TALENT:ARG:形状 < 3 && RAND:6
+					OUTPUT += "The first time you see it, you're surprised at how small it is./"
+					OUTPUT += "It looks like an overgrown clitoris./"
+				;big
+				ELSEIF TALENT:ARG:形状 == 6 && RAND:6 ;big
+					OUTPUT += "It's too big for her to wear trousers properly./"
+					OUTPUT += "Can get caught on things easily./"
+					OUTPUT += "It might be hard to get it in your mouth sometimes./"
+					OUTPUT += "Sometimes you can see it through clothes if they're thin enough./"
+					OUTPUT += "It's big enough that will hurt when you put it in a vagina for most./"
+					OUTPUT += "Has trouble maintaining her massive erection sometimes./"
+				;general
+				ELSE
+					OUTPUT += "Thinks she's more hung than most people./"
+					OUTPUT += "You don't even notice the size until you get into bed with her./"
+				ENDIF
+			CASEELSE ;other
+				SIF GETBIT(nCheck,7)
+					CONTINUE
+					
+				SETBIT nCheck,7
+				OUTPUT += "Sometimes wears a chastity belt for religious reasons./"
+				OUTPUT += "Has to be lubed up with oil or something before she can put it in./"
+				OUTPUT += "The glans is clearly visible when erect, even to someone who doesn't know what it looks like./"
+				OUTPUT += "Itchy at times./"
+				OUTPUT += "Gets hard in the morning sometimes./"
+				OUTPUT += "Goes limp when excited./"
+				OUTPUT += "Is very sensitive to touch./"
+				OUTPUT += "Sometimes it feels like it has a mind of its own./"
+				OUTPUT += "It can be hard or soft at any given time./"
+				OUTPUT += @"It can get \@ TALENT:ARG:形状 == 6 ? even%" "% #\@bigger./"
+				OUTPUT += "It can shrink./"
+				OUTPUT += "Produces a lot of smegma under the tip./"
+				OUTPUT += "Produces enough lube to keep the skin from drying out./"
+				OUTPUT += "Her testicles hang down below her penis./"
+				OUTPUT += "When she gets an erection, the head turns purple./"
+				OUTPUT += "Can't pee standing up./"
+				OUTPUT += "The head is very sensitive to touch; it feels almost like a hard nub on the end of her penis./"
+				OUTPUT += "If cut, it looks more or less like a normal penis, but if uncut, it looks more or less like a long, skinny carrot with a hole in it./"
+				OUTPUT += @"Ashamed of her penis and thinks it's %SPLIT_G("weird:gross:wrong for a girl to have one")%./"
+				OUTPUT += "Wishes she didn't have a dick at all./"
+				OUTPUT += @"Proud of her penis and thinks %SPLIT_G("it's giving her more options:it makes her more confident")%./"
+				OUTPUT += "Likes her penis but doesn't think she has the best one in the room./"
+				OUTPUT += "Dislikes her penis, but doesn't think there are better ones elsewhere./"
+				OUTPUT += "Doesn't really like or dislike her penis./"
+				OUTPUT += "Doesn't feel too concerned about having a penis./"
+				OUTPUT += @"Thinks her penis is %SPLIT_G("perfect just the way it is:great and loves showing it off")%./"
+				OUTPUT += "Is uncomfortable being nude around either men or women./"
+				OUTPUT += "Wants to be able to perform feats with her penis that would make even the most experienced porn star jealous./"
+				OUTPUT += "Is proud of her penis but also feels bad for all the women who have never seen it before./"
+				OUTPUT += "Thinks her penis is great but has some flaws that need to be worked on./"
+				OUTPUT += "Wants to be able to control her penis when she wants to use it./"
+				OUTPUT += "Thinks having a penis is natural and normal and not something to be ashamed of, even as a girl./"
+				OUTPUT += @"As a girl, she thinks having a penis of her own is %SPLIT_G("amazing and she wouldn't change anything about it:pretty cool")%./"
+				OUTPUT += "Produces extra precum./"
+				OUTPUT += "Semen is somewhat watery./"
+				OUTPUT += "Sweet-tasting semen./"
+				OUTPUT += "Semen is extra bitter./"
+				OUTPUT += "Very rich semen that smells like bleach./"
+				OUTPUT += "Couldn't shoot out semen for a while at first./"
+				OUTPUT += "The tip oozes with some transparent viscous liquid all the time, but it's not diseased. Right...?/"
+				IF TALENT:ARG:形状 == 6 && RAND:6 ;big
+					OUTPUT += "Wants to have a penis that can fit inside another person properly./"
+					OUTPUT += "Wishes she had a smaller penis so that it didn't get in the way during certain sexual acts./"
+					OUTPUT += "Wants to be able to use her penis as a weapon against enemies and rivals./"
+					OUTPUT += "Has a huge ego about how big her penis is./"
+				ELSEIF TALENT:ARG:形状 < 3 && RAND:6 ;small
+					OUTPUT += "Wants a penis that is big enough to fill up a human vagina./"
+					OUTPUT += "Wants to be able to make her penis grow without taking any kind of drug./"
+					OUTPUT += "Wishes she had a larger one./"
+				ELSE
+					OUTPUT += "Has the ability to grow and shrink at will./"
+				ENDIF
+				 
+				IF !IS_DOUTEI(ARG)
+					OUTPUT += @"Loves having sex with others because %SPLIT_G("they get to see:she gets to see")% her penis all the time./"
+					OUTPUT += "Loves having sex with others because they can't resist her penis./"
+					IF !LESBIAN
+						OUTPUT += @"She wishes her penis were more like her \@ TALENT:ARG:人妻 ? husband # boyfriend\@'s./"
+					ELSEIF LESBIAN
+						OUTPUT += "As a girl she thinks it's great because it lets her experience what it's like to have sex with another woman./"
+					ENDIF
+				ENDIF
+		ENDSELECT
+		SIF STRLENS(OUTPUT)
+			Str_Mob_Description:ARG:Mob_Desc_Dick += TEXTR(OUTPUT) + "<br>"
+	LOOP LOCAL > (++LOCAL:2) && nCheck < 255
+ENDIF
+
+FOR LOCAL, 0, 2
+	LOCALS:1 '= LOCAL == 1 ? "vag" # "pen"
+	SIF LOCALS:1 == "pen" && (!HAS_PENIS(ARG) || IS_DOUTEI(ARG))
+		CONTINUE
+	SIF LOCALS:1 == "vag" && IS_VIRGIN(ARG)
+		CONTINUE
+		
+	LOCALS '= LOCALS:1 == "vag" ? CSTR:ARG:処女喪失履歴 # CSTR:ARG:童貞喪失履歴
+	
+	;LOCAL - 0 good, 1 - bad, 2 - very bad, 3 - nonrape, 4 - dominate, 5 - sex worker, 6 - any
+	IF STRCOUNT(LOCALS, "(mischief|raped|passed|defeated|coerced|related)") ;very bad/bad or any
+		LOCAL:1 = TOINT(SPLIT_G("2:2:2:1:1:6"))
+	ELSEIF STRCOUNT(LOCALS, "(kidnapped)") ;in charge, good, bad, any or dominate
+		LOCAL:1 = TOINT(SPLIT_G("4:4:0:6:6:1"))
+	ELSEIF STRCOUNT(LOCALS, "(of love)") ; no bad
+		LOCAL:1 = TOINT(SPLIT_G("0:0:0:3:6"))
+	ELSEIF STRCOUNT(LOCALS, "(without love)") ; bad/any/nonrape
+		LOCAL:1 = TOINT(SPLIT_G("1:1:3:3:6:6"))
+	ELSEIF STRCOUNT(LOCALS, "(customer)") ;sex worker, special, good, bad, very bad, any
+		LOCAL:1 = TOINT(SPLIT_G("5:5:5:0:1:2:6:6"))
+	ELSE ;any/bad/good/nonrape
+		LOCAL:1 = TOINT(SPLIT_G("6:6:6:0:1:3:3:3"))
+	ENDIF
+	
+	OUTPUT =
+	SELECTCASE LOCAL:1
+		CASE 0 ;good
+			OUTPUT += "Her first partner moaned in ecstasy./"
+			OUTPUT += "Her first was with someone who guided her in the process, and she enjoyed herself greatly./"
+			OUTPUT += "She lost her virginity to an older person, someone who could teach her about sex./"
+			OUTPUT += "She was so excited that she could not help moaning, and her partner thought it was cute./"
+			OUTPUT += "She was so excited that she was shaking, and her partner thought it was sexy./"
+			OUTPUT += @"After the act, her first partner treated her like a %SPLIT_G("child:baby")%, %SPLIT_G("and washed her off:and she could not understand why:and told her what a wonderful job she did")%./"
+			OUTPUT += "She was so excited that she could not wait for the opportunity to repeat the act./"
+			OUTPUT += "She was so excited that she started crying./"
+			OUTPUT += "She was so turned on that she was trembling./"
+			OUTPUT += "Her first partner was very experienced and knew exactly what to do./"
+			OUTPUT += @"It was a very %SPLIT_G("very exciting experience:emotional experience for her:special moment in her life")%./"
+			OUTPUT += "During the act she was so excited that she was shaking./"
+			OUTPUT += @"Her first partner was so beautiful and sexy that she had no choice but to fall in love with them\@ STRCOUNT(LOCALS, "(of love|boyfriend|girlfriend)") ? %" "%all over again #\@./"
+			OUTPUT += "The first time she had sex was a very exciting experience./"
+			OUTPUT += "She was so good at it that she forgot all about her worries./"
+			OUTPUT += "She felt like natural and it went without a hitch./"
+			OUTPUT += "They both enjoyed it tremendously./"
+			OUTPUT += "Everything was perfect./"
+			OUTPUT += "Her first partner was very gentle and patient./"
+			OUTPUT += "Her first time was the best time she ever had./"
+			OUTPUT += "Her first partner was so sweet that she almost forgot about her fears./"
+			OUTPUT += "Her first partner's touch was so soft and warm./"
+			OUTPUT += "Her first partner's body was so beautiful that she wanted to make love to it forever./"
+			OUTPUT += "Her first partner's kisses were so tender and loving that she wanted to stay there forever./"
+			OUTPUT += "Her first time was the happiest day of her life./"
+			OUTPUT += "The way her first partner moved their hips was hypnotic./"
+			OUTPUT += "The loss of her virginity seemingly made her stronger and more confident./"
+			OUTPUT += "She thought her first partner was made for her./"
+			OUTPUT += "She had a lot of fun, and she enjoyed the experience very much./"
+			OUTPUT += "She loved the person who gave her her first orgasm./"
+			IF LOCALS:1 == "pen"
+				OUTPUT += "Getting to use her penis was the greatest feeling ever./"
+				OUTPUT += "For her first time, her partner let her do it raw, and it was the best thing ever./"
+			ENDIF
+			IF LOCALS:1 == "vag" && STRCOUNT(LOCALS, "(girlfriend|boyfriend|of love)")
+				OUTPUT += "The first time they slept together, she was afraid of breaking her hymen. When her partner didn't do it, she started crying, because she thought they weren't interested in her anymore. They reassured her that nothing could tear their love for her apart./"
+				OUTPUT += "She was afraid to lose her virginity, so she waited the entire time until she found the right partner./"
+			ENDIF
+			SIF LOCALS:1 == "vag"
+				OUTPUT += "She thought that it was going to hurt, but it turned out to be more enjoyable than expected./"
+
+		CASE 1 ;bad
+			OUTPUT += "She came so fast that her first partner laughed at her./"
+			OUTPUT += "Her partner came before she could, and then they left./"
+			OUTPUT += @"The condom %SPLIT_G("got stuck:broke")%./"
+			OUTPUT += "The sex was boring and routine./"
+			OUTPUT += "She did not enjoy it at all./"
+			OUTPUT += "She regrets it, and she thinks it was a mistake./"
+			OUTPUT += "She regretted it and wanted her chastity back./"
+			OUTPUT += "She was not satisfied with her first sexual encounter./"
+			OUTPUT += "Her first time was a disaster./"
+			OUTPUT += "Her first time was the most embarrassing moment of her life./"
+			OUTPUT += "She thought it would be better than it actually was./"
+
+			IF LOCALS:1 == "vag"
+				OUTPUT += "Her partner was too small for her, and she complained about it./"
+				OUTPUT += "Her partner didn't last long enough for her to enjoy herself./"
+				OUTPUT += "Her first partner used dirty words during sex, which made her very uncomfortable./"
+				OUTPUT += "She was very sensitive down there, and could not bear any kind of sexual intercourse./"
+				OUTPUT += "Her first partner didn't satisfy her with their penis size, and she felt like they weren't good enough./"
+			ENDIF
+			SIF LOCALS:1 == "pen"
+				OUTPUT += @"Her %SPLIT_G("frenulum:foreskin")% tore, and blood spilled out everywhere./"
+			IF !STRCOUNT(LOCALS, "(girlfriend|boyfriend|husband|wife)")
+				OUTPUT += "Her first partner was not good looking, and she hated herself for enjoying the experience./"
+				OUTPUT += @"She would like to %SPLIT_G("pretend it never:forget it ever")% happened./"
+			ENDIF
+			IF STRCOUNT(LOCALS, "(girlfriend|boyfriend|husband|wife)")
+				OUTPUT += "She only did it out of obligation for her partner./"
+				OUTPUT += "She had to submit to her partner after being threatened./"
+			ENDIF
+		CASE 2 ;very bad (rape etc)
+			OUTPUT += "Her partner was very rough with her; she didn't enjoy it at all./"
+			OUTPUT += @"Her partner was %SPLIT_G("ugly:fat:smelly:unwashed:smelled like alcohol and cigarettes")%./"
+			OUTPUT += "Her partner was too rough, and she got bruises./"
+			OUTPUT += @"It hurt like hell and the partner %SPLIT_G("didn't really care:had no idea what they were doing")%./"
+			OUTPUT += "She did not enjoy it at all./"
+			OUTPUT += "She had been sexually abused as a child, and still can't completely get over her trauma./"
+			OUTPUT += "She hated it, and she cried throughout the whole process./"
+			OUTPUT += "She was disgusted, and could not believe that she let herself go like that./"
+			OUTPUT += "Her first time was a disaster./"
+			OUTPUT += "Her first time was the most embarrassing moment of her life./"
+			OUTPUT += @"She would like to %SPLIT_G("pretend it never:forget it ever")% happened./"
+
+			IF LOCALS:1 == "vag"
+				OUTPUT += "Her first partner came inside her without asking permission./"
+				OUTPUT += "She was not ready for such intense sensations, and she could not stop crying./"
+				OUTPUT += "It was so painful, that she had to go to the doctor, and she never wanted to have sex again./"
+				OUTPUT += "Her first partner was too rough in bed, and she had to endure all kinds of pain during sex./"
+				OUTPUT += @"Her first partner did not %SPLIT_G("care about pleasing a girl:know how to please a girl")%, and they hurt her badly./"
+				OUTPUT += "She could not stand up for a long time, and bled heavily from her vagina./"
+				OUTPUT += @"Such rough experience might've %SPLIT_G("dulled her sensitivity:traumatized her for life")%./"
+				OUTPUT += "She got pregnant, and in a panic, she got an abortion./"
+			ENDIF
+			SIF LESBIAN
+				OUTPUT += "She was raped, and now she hates men./"
+		CASE 3 ;nonrape
+			OUTPUT += "Her first partner was a virgin too, and they had no idea what to do with each other./"
+			OUTPUT += "She enjoyed it but couldn't finish because her partner let out a scream or moaned too loudly./"
+			OUTPUT += "Her first partner did not make any sound at all during the act./"
+			IF !STRCOUNT(LOCALS, "(of love)") && !STRCOUNT(LOCALS, "(customer)")
+				OUTPUT += "She ended up ejaculating inside without warning and got an earful./"
+				OUTPUT += "After the act, her first partner treated her like a stranger./"
+				OUTPUT += "Her first partner did not seem interested in having sex./"
+				OUTPUT += "Her first partner seemed uninterested in her./"
+				OUTPUT += "After the act, her first partner treated her like a stranger and left./"
+				OUTPUT += "Unsatisfied with her, her first partner up and left after the whole ordeal./"
+			ENDIF
+			IF TALENT:ARG:人間 && !CFLAG:ARG:妖怪変化 && STRCOUNT(LOCALS, "(classmate|girlfriend|boyfriend|Threw|sister|brother|related)") && !STRCOUNT(LOCALS, "(kidnapped)")
+				OUTPUT += @"Her %SPLIT_G("friends:parents")% caught them having sex./"
+				OUTPUT += "Her parents found out about their relationship./"
+				OUTPUT += "She was too scared to tell her parents about it./"
+				OUTPUT += "Her parents forced her to do it, because they were worried about their child's future./"
+			ENDIF
+			IF STRCOUNT(LOCALS, "(classmate|girlfriend|boyfriend|husband|wife|sister|brother)")
+				OUTPUT += "The sex was terrible, but she kept going because she didn't want to let her partner down./"
+				OUTPUT += "She was her first partner's first and only sexual partner./"
+				OUTPUT += "Her first partner was her first and only sexual partner./"
+				OUTPUT += "She liked her first partner very much, but she was not ready yet./"
+			ELSEIF !STRCOUNT(LOCALS, "(customer)")
+				OUTPUT += "She got drunk back then and slept with someone else just for the experience./"
+				SIF !STRCOUNT(LOCALS, "(kidnapped)")
+					OUTPUT += "The partner was beautiful, but they were a sex worker and it didn't feel like a meaningful experience./"
+				OUTPUT += "She could not stand the fact, and had sex with her superior./"
+				OUTPUT += "Her first partner felt like a total stranger, and she could not connect emotionally./"
+				OUTPUT += "She had a strong desire for sex, but could not find the right partner. So she did it on a whim at a first opportunity./"
+				OUTPUT += "She was not attracted to her first partner, but she let herself be seduced by them anyway./"
+				OUTPUT += "She could not wait, and she let herself be seduced by a stranger./"
+				OUTPUT += @"She lied about not being a virgin to her first partner. %SPLIT_G("They believed her:They saw her through")%./"
+				OUTPUT += "She could not find a suitable partner, and she let herself be seduced by a complete stranger./"
+				OUTPUT += "She was afraid of being alone, and allowed herself to be seduced by a stranger./"
+				OUTPUT += "She was desperate, and let herself be seduced by a stranger./"
+				OUTPUT += "She still regrets her choice of a first partner./"
+				OUTPUT += "She wishes she didn't do it back then./"
+				OUTPUT += "She wishes she saved herself for her true lover./"
+			ENDIF
+			IF LOCALS:1 == "pen"
+				OUTPUT += "She came too soon, and could not finish the job./"
+				OUTPUT += "She did not come at all, which is even more humiliating than coming quickly./"
+				OUTPUT += "She was so excited that she could not hold herself back, and ejaculated on her own hand./"
+				OUTPUT += "She was so excited that she could not maintain the erection./"
+				OUTPUT += "She was so excited that she could not contain herself, and came prematurely./"
+				OUTPUT += "She was so nervous, that she was unable to relax enough, and came too quickly./"
+				OUTPUT += "The first time she touched someone else's vagina was during the intercourse./"
+				IF TALENT:ARG:形状 == 6 && RAND:6 ;big
+					OUTPUT += "She thought it would make her penis smaller. It didn't./"
+				ELSEIF TALENT:ARG:形状 < 3 && RAND:6
+					OUTPUT += "She thought it would make her penis bigger. It didn't./"
+				ELSE
+					OUTPUT += "She thought it would make her penis disappear. It didn't./"
+				ENDIF
+			ENDIF
+			OUTPUT += "She was so excited that she almost fainted./"
+			OUTPUT += "She was too shy to ask her partner to let her know how it feels./"
+			OUTPUT += "Her first partner kept giggling at her moans, and could not focus on the act itself./"
+			OUTPUT += "She was so embarrassed that she wanted to hide under the covers./"
+			OUTPUT += "She was too shy to say no to her first partner, and kept moaning loudly./"
+			OUTPUT += "She was afraid that her first partner would laugh at her./"
+			OUTPUT += "She was so excited that she came before her partner even started./"
+			OUTPUT += "She was so excited that she climaxed within seconds./"
+			OUTPUT += "She did not have high expectations of herself./"
+			OUTPUT += "She thinks she could've performed a little better./"
+			OUTPUT += "She had no experience, and made many mistakes./"
+			OUTPUT += "She was in a relationship with two people at the same time, and decided to sleep with both of them./"
+			OUTPUT += "She threw it away without a second thought./"
+			OUTPUT += "She was disappointed, because nothing special happened./"
+			OUTPUT += "She was nervous, and she could barely keep her legs together./"
+		CASE 4 ;dominate
+			OUTPUT += "She fucked like mad past the point her partner could go on./"
+			OUTPUT += "She most likely traumatized her first partner for life./"
+			OUTPUT += "Her first partner was a virgin too, and they had no idea what to do with each other./"
+			OUTPUT += "Her first partner let out an ear-piercing scream during the act./"
+			OUTPUT += "Her first partner kept giggling at her moans, and could not focus on the act itself./"
+			OUTPUT += "She enjoyed the screams and the look of fear imprinted on her first partner's face./"
+			OUTPUT += "No one ever heard of her first partner ever again./"
+			OUTPUT += "She threw it away without a second thought./"
+			OUTPUT += "Her victim acted all cocky upon realizing that she was a virgin, so she raped the crap out of them./"
+			OUTPUT += @"She wanted to do it gently at first, but her victim %SPLIT_G("kept struggling:was very rude")% so she made sure they never recover./"
+		CASE 5 ;sex worker
+			OUTPUT += "It was strange for her as a sex worker to lose her innocence at the job./"
+			OUTPUT += "It was simply a job for her, so she had no feelings of excitement or anxiety about it./"
+			OUTPUT += "She wasn't particularly nervous and didn't feel any pressure to perform well in bed./"
+			OUTPUT += "She couldn't say no as it was expected of her, willingly or not./"
+			OUTPUT += "She felt like a piece of meat, but at least it paid off./"
+			OUTPUT += "The first felt special, even at the job, and no other time could ever compare to the experience she had back then./"
+			OUTPUT += "She thought the customer would be more excited about it than they actually were./"
+			OUTPUT += "She wishes she lost it earlier to perform better./"
+			OUTPUT += "She felt happy that the customer paid extra to receive it./"
+			OUTPUT += "Her first customer became her regular and often drops by./"
+			OUTPUT += "Her first customer left a bad review and she was whipped for that./"
+			OUTPUT += "Her first customer requested a refund and she had to work for free for months./"
+		CASEELSE ;any
+			OUTPUT += @"They had sex %SPLIT_G("outdoors:in public")%. She %SPLIT_G("hated it:loved it")%./"
+			OUTPUT += "She was too embarrassed to look at her partner./"
+			OUTPUT += "She was so nervous that she could not think straight, let alone perform./"
+			OUTPUT += "She could not stop staring at her first partner, and they could not take their eyes off of her./"
+			OUTPUT += "Her first partner was very beautiful, and she stared at them the entire time./"
+			OUTPUT += "She could not control her emotions, and cried while having sex for the first time./"
+			OUTPUT += "She was nervous and anxious during the entire thing./"
+			OUTPUT += "She was too young to have sex at the time./"
+			OUTPUT += "She was too drunk to remember much./"
+			OUTPUT += "She was too embarrassed to tell anyone./"
+			OUTPUT += "It's not something she could remember clearly./"
+			OUTPUT += "She was too young to understand what was going on./"
+			OUTPUT += "She was too nervous and too inexperienced to have a good time./"
+			OUTPUT += "It's not something she could talk about with her parents or friends./"
+			OUTPUT += "She was so embarrassed that she would never tell anyone./"
+			OUTPUT += "She was so nervous that she was shaking./"
+			OUTPUT += "She was so embarrassed that she wanted to hide under a rock./"
+			OUTPUT += "It's something she could never forget./"
+			OUTPUT += "It was a memorable experience./"
+			OUTPUT += "When she realized she was virgin no more, she burst into tears./"
+			OUTPUT += "There was no pain involved at all./"
+			OUTPUT += @"The pleasure was so intense that %SPLIT_G("she peed herself silly:she thought she would faint")%./"
+			OUTPUT += @"Her partner was %SPLIT_G("much:a little bit")% %SPLIT_G("younger:older")% than she was./"
+			OUTPUT += "First sex turned her on so much that she wanted to have sex every day./"
+			OUTPUT += "First sex turned her into a sex-crazed maniac./"
+			OUTPUT += "First sex turned her into a sex machine./"
+			OUTPUT += "First sex revealed her debauched side she never knew she had./"
+			OUTPUT += "Regretted not losing it earlier./"
+			OUTPUT += "Thinks she's missed out on a lot by holding onto her chastity for so long./"
+			OUTPUT += "Happened when she was sleeping./"
+			OUTPUT += "Afterwards, she had a very high libido, and wanted to have sex every day. She can't stop thinking about it./"
+			OUTPUT += "She was afraid of losing her virginity, because she knew that once she would do it, she will never want to stop having sex again./"
+			OUTPUT += @"She lost her virginity without knowing what %SPLIT_G("was going on:was happening:she was doing")%./"
+			OUTPUT += "She was very young, and wasn't ready yet./"
+			OUTPUT += "She was excited, and moaned loudly./"
+			OUTPUT += "She was surprised, and gasped loudly./"
+			OUTPUT += "She was drugged out of her mind and felt like crap for weeks afterwards./"
+			SIF !STRCOUNT(LOCALS, "(passed)")
+				OUTPUT += "It happened while they were drunk./"
+			SIF STRCOUNT(LOCALS, "(passed)")
+				OUTPUT += "Didn't even realize she lost her virginity for a while./"
+			SIF !LESBIAN && !STRCOUNT(LOCALS, "(classmate|girlfriend|boyfriend|husband|wife|customer|sister|brother)")
+				OUTPUT += @"She was afraid of losing her virginity, because she thought %SPLIT_G("she could never get married:find a spouse:respected by men again:it would make her lose her reputation")%./"
+			IF LOCALS:1 == "vag"
+				OUTPUT += "She was embarrassed, and covered her face with her hands./"
+				OUTPUT += "She still pretends to be a virgin every time she hooks up with someone new./"
+			ENDIF
+	ENDSELECT
+	
+	IF LOCALS:1 == "pen"
+		Str_Mob_Description:ARG:Mob_Desc_DTLoss '= TEXTR(OUTPUT)
+	ELSEIF LOCALS:1 == "vag"
+		Str_Mob_Description:ARG:Mob_Desc_VLoss '= TEXTR(OUTPUT)
+	ENDIF
+NEXT
+
+;-------------------------------
+;Custom config section
+;-------------------------------
+@CUSTOM_OPTION_4
+PRINTFORML [  4] - Allow Futa generation for Random Girls：\@ Add_Mob_Futa_Enable ? Yes # No \@
+
+@CUSTOM_OPTION_RESULT_4
+Add_Mob_Futa_Enable = !Add_Mob_Futa_Enable

@@ -1,0 +1,3051 @@
+﻿;-------------------------------------------------
+; eraTheWorld proto4.520用 幽香口上（キャラクターの名前を入れる、下にコンセプトなど一言あれば入れる）
+;-------------------------------------------------
+;他者による修正、加筆、改変については、同梱のライセンス条項に従ってください。
+
+
+;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;(CFLAG:68:1001～1999	口上用)
+;(TCVAR:68:350～399 口上枠)
+;
+;CFLAG:68:1001	告白を断られた
+;CFLAG:68:1002	恋慕になってから初めて会った
+;CFLAG:68:1003	思慕になってから初めて会った
+;CFLAG:68:1004	弱味を握られてから初めて会った
+;CFLAG:68:1005	パンツ没収した
+;CFLAG:68:1006	好感度100以上になって初めて話しかけた
+;CFLAG:68:1007	初めて（幽香が）押し倒した
+;CFLAG:68:1008	初めて（MASTERが）押し倒した
+;
+;CFLAG:68:1800	弾幕勝負（固有コマンド）用の勝利済みフラグ
+;CFLAG:68:1801	弾幕勝負（固有コマンド）用の勝負済みフラグ
+;CFLAG:68:1802	弾幕勝負（固有コマンド）でのショタMASTER犯されイベント済みフラグ
+;CFLAG:68:1803	弾幕勝負（固有コマンド）での非恋慕の幽香をレイプ済みフラグ
+;CFLAG:68:1804	弾幕勝負（固有コマンド）での童貞を賭けて敗北フラグ
+;modded CFLAG:68:1844 - refused from drinking the vial for virginity challenge
+;CFLAG:68:1899	弾幕勝負（固有コマンド）、遭遇時用の苗受け取りフラグ	->	CFLAGでなくFLAGで実装すべき？要検討
+;
+;CFLAG:68:1999	初導入時限定の状態リセット
+;
+;TCVAR:68:350	その日初めて会った（MASTERが入ってきた）	一度だけ表示させる用
+;TCVAR:68:351	その日初めて会った（幽香が入ってきた）		一度だけ表示させる用
+;TCVAR:68:352	1 = 時止め中に強い絶頂 2 = パンツ盗まれる 3 = ぶっかけられる 4 = 肛内射精される 5 = 膣内射精される
+;TCVAR:68:353	怒った										一度だけ表示させる用
+;TCVAR:68:354	好感度が100未満のとき、その日話しかけた回数
+;TCVAR:68:355	押し倒した									一度だけ表示させる用
+;TCVAR:68:356	押し倒され状態
+;TCVAR:68:357	時止め中にイかされた回数
+;TCVAR:68:358	時止め中に膣内に射精したか
+;TCVAR:68:359	時姦後に愚痴を聞いているか
+
+;TCVAR:68:398	弾幕勝負において、賭けたものの内容(==1 お金, ==2 かりすま)
+;TCVAR:68:399	苗を受け取ったか
+;******************************************************************************
+
+;### 口上存在判定 ###################################
+@M_KOJO_K68(ARG)
+;別人版を作成する際はこのテンプレではなく別人版用口上テンプレをご利用ください
+
+;口上存在判定です、けしてコメントアウトしないでください
+;他の処理は一切行わないように
+RETURN 1
+
+;### 口上基本フラグ設定 #############################
+@M_KOJO_FLAGSETTING_K68
+;基本フラグ設定はここで行ってください
+;共通の口上フラグは必要な箇所のコメントアウトを外してご利用ください
+;口上専用フラグはご自由に
+;Xにはキャラ番号を入れてください
+
+;眠姦口上有、時間停止口上有、なりきりに1を入れると、それぞれ時間停止時、眠姦時、なりきり時にコマンド口上が読み込まれるように
+;入れないと時間停止時、眠姦時、なりきり時は一切喋りません
+CFLAG:68:眠姦口上有 = 1
+CFLAG:68:時間停止口上有 = 1
+;CFLAG:X:なりきり口上有 = 0
+
+;破瓜キャンセル口上有に1を入れると、@M_KOJO_EVENT_KX_LOST_VIRGIN_STOPでキャンセルの成否を操作できます
+;CFLAG:X:破瓜キャンセル口上有 = 0
+
+;口上内抱き寄せ判定_初回と口上内抱き寄せ判定_通常に1を入れると、M_KOJO_EVENT_KX_PERMISSIONで押し倒しの成否を操作できます
+;CFLAG:X:口上内抱き寄せ判定_初回 = 0
+;CFLAG:X:口上内抱き寄せ判定_通常 = 0
+
+;押し倒し禁止に1を入れると、自分から押し倒してこなくなります
+;以下は恋慕かセフレがつくまで押し倒してこなくなる使用例
+;IF !TALENT:X:恋慕 && !TALENT:X:セフレ
+;	CFLAG:X:押し倒し禁止 = 1
+;ELSE
+;	CFLAG:X:押し倒し禁止 = 0
+;ENDIF
+
+;来訪不能に1を入れると、来訪してこなくなります
+;以下は面識があるまで来訪してこなくなる使用例
+;IF !CFLAG:X:面識
+;	CFLAG:X:来訪不能 = 1
+;ELSE
+;	CFLAG:X:来訪不能 = 0
+;ENDIF
+
+;### 口上色判定 ###################################
+@M_KOJO_COLOR_K68
+
+;ここでSETCOLORすることで口上に色を付けられます
+SETCOLOR 0x33ff00
+
+;added
+@CHARA_INFO_KOJO_K68()
+CALL M_KOJO_COLOR_K68
+PRINTFORML %CSVCSTR(68, 10)%
+RESETCOLOR
+PRINTL 
+PRINTFORML A long-lived youkai called the "Flower Master of the Four Seasons".
+PRINTFORML She is the owner of the mansion called Mugenkan, located in her own Garden of the Sun.
+PRINTFORML Some say that she is a manifestation of nature itself, but her true nature remains a mystery.
+PRINTFORML 
+PRINTFORML She can be very troublesome at times. One may find himself being bullied by her with no way to escape it very easily.
+PRINTFORML She holds strength in high regard and likes to look down on and toy with those weaker than her.
+PRINTFORML For that reason, many denizens of Gensokyo are extremely terrified of her and try to stay away.
+PRINTFORML Which poses a problem when she tries to start a conversation with somebody, as rare as it is.
+PRINTFORML 
+PRINTFORML As a caretaker of flowers, she's often found working in her garden.
+PRINTFORML One must be incredibly foolish or reckless to try and damage her precious flowers in any way.
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"UPDATE判定"
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_UPDATE_K68
+;口上独自のUPDATE用
+;ENCOUNTER専用に独自分岐フラグを仕込んだ場合等にどうぞ
+;UPDATE判定でCFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります
+
+;自分用としてテスト的にリセット機能導入
+;バグが怖いし普通の人はわざわざ使わない？気もするので使いたい人は以下を1にしてください
+LOCAL = 0
+
+IF LOCAL && CFLAG:68:1999 == 0
+	$UPDATE_INPUT_LOOP1
+	PRINTFORMDL Upon first meeting Yuuka, current Relationship, Favorability, Reliability, Falling conditions, traits and experiences can all be reset.
+	PRINTFORMDL Reset them?
+	SETCOLOR C_RED
+	PRINTFORML This function is unreliable, bugs may or not occur. Creating a backup save is recommended.
+	RESETCOLOR
+	PRINTFORMDL [0]Reset
+	PRINTFORMDL [1]Don't reset
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMDL Confirm to reset.
+			PRINTL
+			PRINTFORMDL [0]Yes
+			PRINTFORMDL [1]No
+			$UPDATE_INPUT_LOOP2
+			INPUT
+			SELECTCASE RESULT
+				CASE 0
+					CALL UPDATE_RESET_K68()
+					PRINTFORMDL Yuuka has been reset!
+				CASE 1
+					GOTO UPDATE_INPUT_LOOP1
+				CASEELSE
+					GOTO UPDATE_INPUT_LOOP2
+			ENDSELECT
+		CASE 1
+			PRINTFORMDL No changes have been made.
+		CASEELSE
+			GOTO UPDATE_INPUT_LOOP1
+	ENDSELECT
+	
+	PRINTFORMDL This option will not be displayed again after this.
+	CFLAG:68:1999 = 1
+ENDIF
+
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"ENCOUNTER"系イベント（エクストラ構文）
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_ENCOUNTER_K68
+;初対面、挨拶のタイミング
+;TALENTの変更はここでどうぞ。
+;経験の変更は齟齬が出る場合がありますので、CSVを修正し同梱する事を推奨します
+
+IF !FLAG:時間停止 && !FLAG:なりきり
+	;長い
+	PRINTL 
+	PRINTFORMDL While taking a walk, you see a woman \@ TIME:5 != 2 && TIME:5 != 3 && OUTROOF(CFLAG:68:現在位置)? opening # holding \@ a purple parasol.
+	PRINTFORMDW Feeling curious, you glance at her and see a beautiful face with an expression that looks as dignified as it looks proud.
+	PRINTFORMDL The woman wears a red-checkered vest over a white blouse, at the same time, she wears a skirt with colors matching those of her vest.
+	PRINTFORMDL Together with the light-green colored hair, she gives off a particularly healthy aura, the only odd thing is her inhumanly soft white skin.
+	PRINTFORMDW You find yourself unable to take your eyes off her, as the wind softly caresses her hair.
+	PRINTFORMDL Initially, she does not notice you glancing at her, turns to leave.
+	PRINTFORMDW But sensing your presence, she instinctively looks back and calls you out.
+	PRINTFORML 「... What is it?」
+	PRINTFORMDL She turns her head with an unpleasant expression, a cold and sharp gaze that pierces through your heart.
+	PRINTFORMDW Overwhelmed by indescribable fear, you come back to your senses, and remorsefully greet her back.
+	PRINTFORML 「... So...」
+	PRINTFORML 「Why would a mere \@ TALENT:MASTER:狐 || TALENT:MASTER:妖狐 || TALENT:MASTER:吸血鬼 ||TALENT:MASTER:動物耳 ? weakling # human \@ such as yourself, try to waste my time?」
+	PRINTFORMDL \@ TIME:5 != 2 && TIME:5 != 3 && OUTROOF(CFLAG:68:現在位置)? She closes her umbrella and #She \@ turns to face you, and jerks you closer to her, to the point both of your lips can almost touch.
+	PRINTFORMDW Not every day you feel so helpless, the only thing you can now feel is remorse.
+	PRINTFORMDL Running away might be the best option...but at the same time, you couldn't bear to leave the presence of that beautiful woman in front of you.
+	PRINTFORMDL If you ran away now, you might never have a chance to speak with her again... And so, you tell her that you were only interested in her.
+	PRINTFORMW 「... Interested...in me?」
+	PRINTFORMDL Surprised by your reply, she unhands you and giggles as she covers her lips with one hand.
+	PRINTFORMDL You take a sigh of relief upon seeing her calm down.
+	PRINTFORMW 「Trying to address me, you have some nerve.」
+	PRINTFORMDL She moves the hand which held the umbrella upon her beautiful chest, while she places her other hand on her cheek.
+	PRINTFORMDL She stares at you as she licks her lips.
+	PRINTFORMW 「...Hmmph...」
+	PRINTFORML 「... Very well then.」
+	PRINTFORML 「My name is Kazami Yuuka. Is that good enough for you?」
+	PRINTFORMDL After she finishing introducing herself, you try to introduce yourself too, but she quickly interrupts you.
+	PRINTFORMW 「Ahh, but I don't have any interest in you, don't bother introducing yourself.」
+	PRINTFORMDL ... You're left wanting, you've met an outrageous woman.
+	PRINTFORMDL Yet, you can't help but feel a strange sense of excitement whenever you're near her.
+	PRINTL 
+ENDIF
+
+RETURN 1
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"SP_EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;デート帰りにファーストKISS（合意も付く）
+;==================================================
+@M_KOJO_SPEVENT_K68_1(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+;CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTFORML 「Today was fun.」
+	PRINTFORMDL While feeling surprised by her unusual words, Yuuka walks faster and stands in front of you, stopping you in your tracks.
+	PRINTFORML 「... This, is your reward.」
+	PRINTFORMDL Yuuka\@ TALENT:MASTER:キス未経験 ? deprives you of your first kiss # kisses you \@, and subsequently walks away, leaving you behind in astonishment.
+	PRINTFORMDL \@ TALENT:MASTER:キス未経験 ? Was the stimulation too strong? # Are you not happy? \@ Your face becomes completely red as Yuuka whispers in your ear...
+	;キスをキャンセルしたい場合は以下を開放
+	;TCVAR:キスキャンセル = 1
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰りに告白（恋人が付く）
+;==================================================
+@M_KOJO_SPEVENT_K68_2(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+;CALL SPEVENT_MESSAGE_2(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+;恋人がいるときって告白されないんじゃないの
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;告白内容
+	;この告白内容表示後に受けるかどうかの選択分が表示されます
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORML 「... Hey.」
+		PRINTFORMDL Yuuka suddenly pulls you by the sleeve, you look back in surprise
+		;告白を断られている
+		IF CFLAG:68:1001 == 1
+			PRINTFORML 「It seems that after all, I...I just can't give up on you...」
+			PRINTFORML 「... Even I, am nothing more than a stupid woman. And my feeling can still be hurt.」
+			PRINTFORMDL As she says this, she has an unusually dark and uneasy expression on her face.
+			PRINTFORML 「... Darling, the days I don't see you, I can never feel at peace, no matter what I do.」
+			PRINTFORMW 「... To be honest with you. Seeing you with other women, it just feels mortifying...」
+			PRINTFORMDL While saying these words in a sad tone, Yuuka slowly looks up.
+			PRINTFORML 「... Just let me say this. One more time.」
+			PRINTFORML 「... I love you. I want you to be my lover, I will make you happy unconditionally.」
+			PRINTFORML 「That's why...I ask you, would you take my hand...?」
+		ELSE
+			PRINTFORML 「What I'm about to tell you might seem like a joke, but I need you to listen.」
+			PRINTFORMDW While saying these words, she speaks with a slightly broken tone.
+			PRINTFORML 「... When I first met you, I thought you were a weird \@ TALENT:MASTER:性別 == 2 ? guy # girl.\@」
+			PRINTFORML 「At the time I also saw you as an inferior being.」
+			PRINTFORMW 「... However, every time we met, the distance between us quickly disappeared...」
+			PRINTFORMDL Looking somewhat shaken, she shakes her head.
+			PRINTFORMW 「Haa... And just like you, I am becoming a weird person too.」
+			PRINTFORMDL Feeling determined, she boldly takes your hand and places it in her chest.
+			PRINTFORML 「When I first met you, I told you...『I don't have any interest in you』.」
+			PRINTFORMW 「But this time, I want to be honest.」
+			PRINTFORML 「... I love you. I want you to be my lover, I will make you happy unconditionally.」
+			PRINTFORML 「So... Please, hold me...」
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;告白オッケー（恋人が付く）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;告白を断られている
+		IF CFLAG:68:1001 == 1
+			PRINTFORMDL When you take her hand, she looks at you with a surprised expression.
+			PRINTFORML 「Eh... A...A-Are you serious...?」
+			PRINTFORMDL Yuuka jumps in your arms after you reply『Of course』.
+			PRINTFORML 「... I'm so glad... I love you...!」
+		ELSE
+			PRINTFORML 「... Thank you... I love you...!」
+			PRINTFORMDL As you hold her, Yuuka stays still while burying her face in your chest.
+		ENDIF
+		PRINTFORMDL ... Realizing you may not see Yuuka this emotional again any time soon, you softly pat her head...
+	ENDIF
+	;-------------------------------------------------
+	;告白失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;いらないよね
+		IF TALENT:MASTER:恋人
+			PRINTFORML 「...Ehh, That might be.」
+			PRINTFORML 「I already know, you already have a lover.」
+			PRINTFORMW （... If only I could turn back time... Or maybe in your next life...）
+		;告白を断られている
+		ELSEIF CFLAG:68:1001 == 1
+			PRINTFORML 「... O-Oh, I see...」
+			PRINTFORML 「The two of us, we can't be in a deeper relation than this, we just can't...」
+			PRINTFORML 「... Forget about everything that happened just now. We had a good date, it was lovely.」
+			PRINTFORMDW After saying this, Yuuka leaves as if running away from you.
+		ELSE
+			PRINTFORML 「...Ah.」
+			PRINTFORMDW Yuuka separates her hand from yours and turns back to avert your gaze.
+			PRINTFORML （Is there somebody else who %CALLNAME:MASTER% loves...? Or maybe...）
+			PRINTFORMDL You feel really awkward, but after a while Yuuka turns back and gives you a smile.
+			PRINTFORML 「...Ehh, About this... I don't mind.」
+			PRINTFORML 「Really... I just felt like turning around.」
+			PRINTFORMDW You hear her voice cracking as she jokingly tries to dismiss the subject...
+			CFLAG:68:1001 = 1
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰り
+;==================================================
+@M_KOJO_SPEVENT_K68_3(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_3(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		IF TALENT:68:恋人 || TALENT:68:恋慕
+			PRINTFORML 「...Haaa, I wish I could stay with you forever.」
+			PRINTFORMDW While sighing, Yuuka smiles and waves her hand at you.
+		ELSEIF TALENT:68:思慕 || TALENT:68:愛欲
+			PRINTFORML 「We had a pretty good date... Today was very fun.」
+			PRINTFORMDW Yuuka blushes, you want to tease her but leave not wanting to ruin it.
+		ELSE
+			PRINTFORML 「Hmmph, that was a terrible date...」
+			PRINTFORMDW Despite seeming annoyed, she is subtlety encouraging you to try harder next time.
+		ENDIF
+		
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印消去イベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:思慕 || TALENT:68:愛欲
+			PRINTFORML 「... I'll forgive you for what you've done.」
+		ELSE
+			PRINTFORML 「Was that fun for you? It sure wasn't for me... Idiot.」
+			PRINTFORML 「... Still, even if I don't know what your intentions are. I'll give you the benefit of the doubt. 」
+		ENDIF
+		
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印2>1レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Don't get so excited, I still haven't fully forgiven you.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印3>2レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「... Should I forgive such an unpleasant person...? Probably not, however...」
+		PRINTFORMDL Her expression doesn't match the scary tone she's speaking with...
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;部屋で遭遇
+;==================================================
+@M_KOJO_EVENT_K68_1(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;時止め絶頂回数リセット
+		TCVAR:68:357 = 0
+		;その日時姦済みのとき、不機嫌になる
+		SIF TCVAR:68:352 > 0
+			TALENT:68:機嫌 = -1
+		;苗受け取りフラグがオンのとき、ランダムな植物の苗をもらえる
+		IF CFLAG:68:1899 == 1 && TCVAR:68:399 == 0
+			LOCAL:2 = PLANTSELECT_K68()
+			PRINTFORMD You obtain %TOLOWER(ITEMNAME_TR(LOCAL:2))% from Yuuka
+			IF ITEM:(LOCAL:2) > 99
+				PRINTFORMD , however you are unable to keep them
+			ELSE
+				ITEM:(LOCAL:2) ++
+			ENDIF
+			PRINTDW .
+			TCVAR:68:399 = 1
+		ENDIF
+		;その日初遭遇(MASTERが入ってきた)
+		IF TCVAR:68:350 == 0
+			;恋慕になってから初めての遭遇
+			IF TALENT:68:恋慕 && CFLAG:68:1002 == 0
+				PRINTFORML 「Ahhh... Darling.」
+				PRINTFORMDL Yuuka gets unusually close to you, acting in a very tender manner...
+				PRINTFORML 「... I've been so cold to you all this time, please, forgive me... It's not that I dislike you...」
+				PRINTFORMDL ... Despite her attitude, you feel chills running down your spine.
+				PRINTFORMW 「I depend so much on you... So... Can you start depending more on me?」
+				CFLAG:68:1002 = 1
+			;弱味を握られてから初めての遭遇
+			ELSEIF CFLAG:68:弱み握られ && CFLAG:68:1004 == 0
+				PRINTFORMDL You apologize for what happened the other day, but Yuuka doesn't seem to mind.
+				PRINTFORML 「... Forget about it...or what? Did you dislike it?」
+				PRINTFORMDW While you want to tell her that you didn't dislike it, you decide it might be better to keep silence. 
+				CFLAG:68:1004 = 1
+			ELSEIF TALENT:68:恋人
+				PRINTFORML 「Ahhh... Darling! I wanted to see you.」
+				PRINTFORMDW Upon seeing you, Yuuka rushes towards you and clings to you.
+			ELSEIF TALENT:68:恋慕
+				PRINTFORML 「Ahhh... Darling. You came.」
+				PRINTFORMDW Yuuka approaches you with a smile.
+			ELSEIF TALENT:68:思慕 || TALENT:68:愛欲
+				PRINTFORMW 「Oh, it's you, \@ TCVAR:68:350 == 1 ? it's good to see you again. # how are you? \@」
+				;思慕になってから初めての遭遇
+				IF CFLAG:68:1003 == 0
+					PRINTFORMDW For the first time Yuuka greets you warmly...
+					CFLAG:68:1003 = 1
+				ENDIF
+			ELSE
+				PRINTFORML 「...Ah, It's you.」
+				IF TALENT:68:15 == 1
+					PRINTFORML 「Haah, good day to you.」
+					PRINTFORMDW Something good must have happened to her...
+				ELSEIF TALENT:68:15 == -1
+					PRINTFORMDW As soon as you are about to say something, you receive a very cold stare from Yuuka...
+				ELSE
+					PRINTFORMDW Yuuka looks at you with an uninterested expression and averts her sight.
+				ENDIF
+			ENDIF
+			
+			TCVAR:68:350 = 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;時止め絶頂回数リセット
+		TCVAR:68:357 = 0
+		;その日時姦済みのとき、不機嫌になる
+		SIF TCVAR:68:352 > 0
+			TALENT:68:機嫌 = -1
+		;苗受け取りフラグがオンのとき、ランダムな植物の苗をもらえる
+		IF CFLAG:68:1899 == 1 && TCVAR:68:399 == 0
+			LOCAL:2 = PLANTSELECT_K68()
+			PRINTFORMD You obtain %TOLOWER(ITEMNAME_TR(LOCAL:2))% from Yuuka
+			IF ITEM:(LOCAL:2) > 99
+				PRINTFORMD , however you are unable to keep them
+			ELSE
+				ITEM:(LOCAL:2) ++
+			ENDIF
+			PRINTDW .
+			TCVAR:68:399 = 1
+		ENDIF
+		;その日初遭遇(幽香が入ってきた)
+		IF TCVAR:68:351 == 0
+			;恋慕になってから初めての遭遇
+			IF TALENT:68:恋慕 && CFLAG:68:1002 == 0
+				PRINTFORML 「Ahhh... Darling.」
+				PRINTFORMDL Yuuka gets unusually close to you, acting in a very tender manner...
+				PRINTFORML 「... I've been so cold to you all this time, please, forgive me... It's not that I dislike you...」
+				PRINTFORMDL ... Despite her attitude, you feel chills running down your spine.
+				PRINTFORMW 「I depend so much on you... So... Can you start depending more on me?」
+				CFLAG:68:1002 = 1
+			;弱味を握られてから初めての遭遇
+			ELSEIF CFLAG:68:弱み握られ && CFLAG:68:1004 == 0
+				PRINTFORMDL You apologize for what happened the other day, but Yuuka doesn't seem to mind.
+				PRINTFORML 「... Forget about it...or what? Did you dislike it?」
+				PRINTFORMDW While you want to tell her that you didn't dislike it, you decide it might be better to keep silence.  
+				CFLAG:68:1004 = 1
+			ELSEIF TALENT:68:恋人
+				PRINTFORML 「Guess who? Ahaa♪」
+				PRINTFORMDW Yuuka hugs you from behind. 
+			ELSEIF TALENT:68:恋慕
+				PRINTFORML 「Darling, here you are.」
+				PRINTFORMDW Yuuka waves at you while smiling.
+			ELSEIF TALENT:68:思慕 || TALENT:68:愛欲
+				PRINTFORMW 「Oh, it's you. \@ TCVAR:68:350 == 1 ? It's nice to see you again. # How have you been? \@」
+				;思慕になってから初めての遭遇
+				IF CFLAG:68:1003 == 0
+					PRINTFORMDW Yuuka greets you warmly for the first time...
+					CFLAG:68:1003 = 1
+				ENDIF
+			ELSE
+				PRINTFORMDL You notice that Yuuka is nearby, but she averts her gaze from you.
+				PRINTFORMDW It's obvious she's pretending she didn't see you...
+				SIF TALENT:68:機嫌 == 1
+					PRINTFORMDW You notice that Yuuka is smirking as she watches you.
+			ENDIF
+			
+			TCVAR:68:351 = 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて一緒に入る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「Oh, it's you.」
+		PRINTFORMDL Yuuka steps into the bathroom without minding your presence.
+		PRINTFORMDW Before long, Yuuka's soft white skin slowly reddens as she steps into the water, she relaxes with a sighs.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて出て行った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORMDW Yuuka leaves, glaring at you...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML 「Oh, it's you.」
+		PRINTFORML 「I'm about to take a bath, so get out.」
+		PRINTFORMDW Feeling the pressure of Yuuka's words, you leave the bath.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;外出先で遭遇した
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;時止め絶頂回数リセット
+		TCVAR:68:357 = 0
+		;その日時姦済みのとき、不機嫌になる
+		SIF TCVAR:68:352 > 0
+			TALENT:68:機嫌 = -1
+		;苗受け取りフラグがオンのとき、ランダムな植物の苗をもらえる
+		IF CFLAG:68:1899 == 1 && TCVAR:68:399 == 0
+			LOCAL:2 = PLANTSELECT_K68()
+			PRINTFORMD You obtain %TOLOWER(ITEMNAME_TR(LOCAL:2))% from Yuuka
+			IF ITEM:(LOCAL:2) > 99
+				PRINTFORMD , however you are unable to keep them
+			ELSE
+				ITEM:(LOCAL:2) ++
+			ENDIF
+			PRINTDW .
+			TCVAR:68:399 = 1
+		ENDIF
+		IF TCVAR:68:350 == 0
+			;恋慕になってから初めての遭遇
+			IF TALENT:68:恋慕 && CFLAG:68:1002 == 0
+				PRINTFORML 「Ahhh... Darling.」
+				PRINTFORMDL Yuuka gets unusually close to you, acting in a very tender manner...
+				PRINTFORML 「... I've been so cold to you all this time, please, forgive me... It's not that I dislike you...」
+				PRINTFORMDL ... Despite her attitude, you feel chills down your spine.
+				PRINTFORMW 「I depend so much on you... So... Can you start depending more on me?」
+				CFLAG:68:1002 = 1
+			;弱味を握られてから初めての遭遇
+			ELSEIF CFLAG:68:弱み握られ && CFLAG:68:1004 == 0
+				PRINTFORMDL You apologize for what happened the other day, but Yuuka doesn't seem to mind.
+				PRINTFORML 「... Forget about it...or what? Did you dislike it?」
+				PRINTFORMDW While you want to tell her that you didn't dislike it, you decide it might be better to keep silence. 
+				CFLAG:68:1004 = 1
+			ELSEIF TALENT:68:恋人
+				PRINTFORML 「Guess who? Ahaa♪」
+				PRINTFORMDW Yuuka hugs you from behind. 
+			ELSEIF TALENT:68:恋慕
+				PRINTFORML 「Darling, here you were.」
+				PRINTFORMDW Yuuka waves at you while smiling.
+			ELSEIF TALENT:68:思慕 || TALENT:68:愛欲
+				PRINTFORMW 「Oh, it's you. \@ TCVAR:68:351 == 1 ? It's nice to see you again. # How have you been? \@」
+				;思慕になってから初めての遭遇
+				IF CFLAG:68:1003 == 0
+					PRINTFORMDW For the first time Yuuka greets you warmly...
+					CFLAG:68:1003 = 1
+				ENDIF
+			ELSE
+				PRINTFORML 「...Ah, it's you.」
+				IF TALENT:68:機嫌 == 1
+					PRINTFORML 「Haah, good day to you.」
+					PRINTFORMDW Something good must have happened to her...
+				ELSEIF TALENT:68:機嫌 == -1
+					PRINTFORMDW As soon as you were about to say something, you received a very cold stare from Yuuka...
+				ELSE
+					PRINTFORMDW Yuuka looks at you with an uninterested expression and quickly looks away.
+				ENDIF
+			ENDIF
+			
+			TCVAR:68:350 = 1
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;他キャラとデート中に遭遇した
+	;ARG:1にデート相手
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;その日時姦済みのとき、不機嫌になる
+		SIF TCVAR:68:352 > 0
+			TALENT:68:機嫌 = -1
+		IF TALENT:68:恋人 || TALENT:68:恋慕
+			PRINTFORML 「Oh my, the two of you two together? How unexpected.」
+			PRINTFORMDW During your date, Yuuka arrives and puts her arm around you, as if trying to take you away.
+		ELSEIF TALENT:68:思慕 || TALENT:68:愛欲
+			PRINTFORML 「Oh my, are you two having a date?」
+			PRINTFORMDW Although she doesn't seem to show any concern, you can't help but feel Yuuka's glances.
+		ELSE
+			PRINTFORML 「...Hmmm.」
+			PRINTFORMDW Yuuka grins as she observes you. As if she was looking at something uncommon.
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;朝起きたとき（おはよう口上）
+;==================================================
+@M_KOJO_EVENT_K68_2(ARG,ARG:1)
+CALL MESSAGE_GOODMONING(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;非同棲かつ相手が先に起きてる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;TARGET私室にMASTERが入っている（恋慕時添い寝中就寝時のみ？
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORML 「Oh, good morning.」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTER私室にTARGETが入ってきてる(恋慕無しでも入ってくる可能性有り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が起きている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Oh, good morning.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が寝ている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「...Nhhu...」
+		PRINTFORMDL Yuuka sleeps peacefully as you happily hold her in your arms.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERが起きていて、相手が起きてきた
+	;添い寝時TARGET起床はこちら（TARGET衰弱or添い寝中TARGET睡魔負け後そのままMASTERが起き続けた上で相手が起床した場合限定
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;-------------------------------------------------
+		;非同棲
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			IF TALENT:68:恋人
+				PRINTFORML 「Oh, good morning.」
+			ELSE
+				PRINTFORML 「Nn... Who...?」
+				PRINTFORML 「...Ah, It's you... Why are you here?」
+			ENDIF
+		ENDIF
+		;-------------------------------------------------
+		;同棲中
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「...Fwaa～ah...」
+			PRINTFORMDL Yuuka yawns and slowly slips out of bed.
+		ENDIF
+		PRINTFORMDL Yuuka wakes up, her beautiful hair completely disheveled.
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;夜寝るとき（おやすみ口上）
+;==================================================
+@M_KOJO_EVENT_K68_3(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;自室に帰る（定時になって寝る）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1 && (CFLAG:68:初期位置 != CFLAG:MASTER:初期位置)
+		PRINTFORML 「Fwaah...」
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:思慕 || TALENT:68:愛欲
+			PRINTFORMW 「Well then, I have to leave... Good night.」
+		ELSE
+			PRINTFORMDW After a long yawn, Yuuka goes back to her residence.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;眠そうにしている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;睡眠中（起きていないので会話というよりは寝言？）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「...Suuh...」
+		PRINTFORMDL It is unusual to see Yuuka look so defenseless.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;イタズラ中
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 4
+		;PRINTFORMW 
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;衰弱中（恋慕付き拠点内キャラがMAIN_MAPで衰弱状態になった場合か、お招き部屋で相手が衰弱した場合に発生
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML 「Ahh, Thank you...」
+		PRINTFORMDW You carry Yuuka to her bed. She falls asleep as soon as you turn the lights off.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERがダウン（部屋まで運ばれる）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		IF TALENT:68:恋人 || TALENT:68:恋慕
+			PRINTFORMW 「... Are you alright?」
+		ELSE
+			PRINTFORML 「Hmmph, such a troublesome \@ TALENT:MASTER:性別 == 2 ? guy # girl\@...」
+			PRINTFORMDW After carrying you to your room, she throws you into your futon...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが自室まで戻ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;-------------------------------------------------
+		;そのまま着替えて寝た
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 0
+			PRINTFORML 「... You too should sleep early.」
+			PRINTFORMDW Yuuka begins changing into her pajamas and then leaps into her bed.
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部屋から追い出された
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「I'm going to bed now... You should leave.」
+			PRINTFORMDW By the time you leave her room Yuuka has already changed into her pajamas...
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;他キャラとのＨを止めさせて寝た
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;非在住TARGETがMAIN_MAPで休憩
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		PRINTFORML 「Haah, I'm tired...」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;前のターンから一緒の部屋にいる状態で相手が寝る（お招き部屋含む（
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;移動時すれちがい
+;==================================================
+@M_KOJO_EVENT_K68_4(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL && !FLAG:70
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;立ち止まった
+	;この後遭遇口上に接続
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;軽く会釈して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:思慕 || TALENT:68:愛欲
+			PRINTFORML 「Ah, thank you.」
+			PRINTFORMDL Yuuka returns the smile.
+		ELSE
+			PRINTFORML 「... You're free to ignore me...」
+			PRINTFORMDL Yuuka rejects your greeting.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無視して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「...」
+		PRINTFORMDL Yuuka is distracted and doesn't notice you.
+		RETURN 1
+	ENDIF
+	;その他
+	
+ENDIF
+RETURN 1
+
+;==================================================
+;他者介入でムード変化
+;==================================================
+@M_KOJO_EVENT_K68_5(ARG,ARG:1)
+;口上主はTARGET
+;ARGに入ってきたキャラ（人数が膨大なので、自己把握自己責任で
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;霊夢が入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;る～ことが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他（キャラ指定なし
+	
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を目撃した
+;==================================================
+@M_KOJO_EVENT_K68_6(ARG,ARG:1)
+;口上主はTARGET
+;ARGに情事相手
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を目撃した（馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML 「... What are you\@ TALENT:MASTER:性別 == 2 ? two # ladies \@ doing?」
+		SIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:思慕 || TALENT:68:愛欲
+			PRINTFORML （Hmmm, I like that type of woman...）
+		PRINTFORMDW Yuuka stares at you with cold eyes...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;負けじと参加（馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML 「... What are you\@ TALENT:MASTER:性別 == 2 ? two # ladies \@ doing?」
+		IF TALENT:68:恋人 || TALENT:68:恋慕
+			PRINTFORML 「You thought it'd be just the two of you?」
+		ELSE
+			PRINTFORML 「... Make room for me.」
+		ENDIF
+		PRINTFORMDW Yuuka \@ TALENT:68:恋人 || TALENT:68:恋慕 ? confidently # nervously \@ approaches...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;気まずそうに立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORMW 「...Ahh, I saw nothing.」
+		IF TALENT:68:恋慕 || TALENT:68:恋人
+			PRINTFORMW （I better prepare a sandbag for tonight...）
+		ELSEIF TALENT:68:思慕 || TALENT:68:愛欲
+			PRINTFORMW （I wonder what kinds of things they are doing...）
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を見られた
+;==================================================
+@M_KOJO_EVENT_K68_7(ARG,ARG:1)
+;口上主はTARGET
+;ARGに目撃者
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を見られた（目撃者の馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML 「Wha!? W-Wait a moment! This is...!」
+		PRINTFORMDL Yuuka looks really confused.
+		PRINTFORMDW Wanting to take responsibility too, she joins in...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が負けじと参加（目撃者の馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML 「Wha!? W-Wait a moment...!」
+		PRINTFORMW 「... A-Are...you \@ TALENT:MASTER:性別 == 2 ? two # ladies \@ okay with this...?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML 「Wha!? W-Wait a moment! It's not what you're thinking!!」
+		PRINTFORMDL %CALLNAME:ARG% awkwardly leaves the place.
+		PRINTFORMDW You try to comfort the ashamed Yuuka but she slaps you in the face...
+		RETURN 1
+	ENDIF
+	;その他
+ENDIF
+RETURN 1
+
+;==================================================
+;目撃した情事を問い詰める（現在無し
+;==================================================
+@M_KOJO_EVENT_K68_8(ARG,ARG:1)
+RETURN 1
+
+;==================================================
+;パンツ没収された
+;==================================================
+@M_KOJO_EVENT_K68_9(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;初没収
+	;バレる度に口上が変わってもいいかもしれない（誰も見ない）
+	IF CFLAG:68:1005 == 0
+		PRINTFORML 「... Are you hiding something?」
+		PRINTFORMDL After hearing Yuuka's voice, she quickly begins examining your body...
+		PRINTFORMW 「... Are these...panties...?」
+		IF TALENT:68:恋慕 || TALENT:68:恋人
+			PRINTFORMW 「... I'll pretend I saw nothing just this once.」
+			PRINTFORMDL After calming down, Yuuka confiscates the panties.
+			PRINTFORMW 「Doing this sort of stuff, there's no helping you...」
+			PRINTFORMDW Whatever could she mean...?
+		ELSE
+			PRINTFORMDL Despite coming up with an excuse, Yuuka stares at you with a disgusted expression.
+			PRINTFORMW 「\@ CFLAG:68:18 == 0 ? I always had my suspicions # I had my doubts about you \@ but...you really are a pervert...」
+			PRINTFORMDL Even if you apologize over and over, it's unlikely Yuuka will forgive you.
+			IF TALENT:MASTER:性別 == 2
+				;PRINTFORML 「First of all, isn't this theft? Do you think it's fine to steal, just because these are panties?」
+				;PRINTFORMDL You tell her you don't think so and Ask for her forgiveness.
+				PRINTFORML 「You truly are a degenerate...」
+				PRINTFORMDL A wicked grin forms in Yuuka's lips while your apologize to her.
+				PRINTFORMW 「... Tell me, what were you planning to do with these?」
+				PRINTFORML 「Let everyone hear you. It's best to make sure scum like you doesn't try something like this again. Wouldn't you agree?」
+				PRINTFORMDW Yuuka forces you to speak about your sexual urges out loud...
+			ELSE
+				PRINTFORML 「Stealing other people's underwear...? Pathetic. Are you really that desperate for sex?」
+				PRINTFORMDL She enjoys seeing you in panic. She then hits you in the head with your umbrella.
+				PRINTFORML 「I dont want to listen to your sorry excuses. Make do with your own underwear.」
+				PRINTFORMDW She lets you go with a warning, but she might not forgive you next time...
+			ENDIF
+		ENDIF
+		CFLAG:68:1005 = 1
+	ELSE
+		PRINTFORML 「Hold it right there, panty police... Are you hiding something? I might punch you.」
+		PRINTFORMDW Yuuka lets out a long sigh as you quickly try to hide the panties.
+		IF TALENT:MASTER:性別 == 2
+			PRINTFORML 「I already know that you were a first-rate pervert and a thief. What's your excuse this time?」
+			PRINTFORMDL After telling her you're not hiding anything you try to excuse yourself.
+			PRINTFORML 「No, you are clearly hiding stolen panties, what are trying to do?」
+			PRINTFORMDW You tell her that you really need to go home... But she hits your head with her umbrella.
+			PRINTFORML 「So, it seems you became a god-tier pervert...」
+			PRINTFORML 「The way you move whenever you carry stolen panties. It's so easy to recognize.」
+			PRINTFORMDW She seems to enjoy playing panty police a lot. Let's avoid getting caught next time...
+		ELSE
+			PRINTFORML 「I said I wouldn't forgive you if I caught you again, didn't I? Why are you still with this?」
+			PRINTFORMDL Yuuka deeply sighs as you beg for mercy.
+			PRINTFORML 「... If I crushed you right now it'd all be over. Seriously, where does all that lust come from?」
+			PRINTFORMDW Just speaking about panties turns you on. It's concerning...
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;押し倒した
+;==================================================
+@M_KOJO_EVENT_K68_10(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;うふふ==2（開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:68:恋人
+			PRINTFORM 「Well then, shall we get started...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML ?」
+			PRINTFORMDL Yuuka gently kisses you as she pushes you down.
+			PRINTFORM 「I love you darling... Fufu, Allow me to cherish you
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+		ELSEIF TALENT:68:恋慕
+			IF TALENT:MASTER:性別 == 2
+				PRINTFORM 「I'll keep you company for a bit... You have no say in this
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML 」
+				PRINTFORMDL Yuuka looks down on you with a triumphant expression as she straddles you...
+				PRINTFORMW 「Lie down until I'm satisfied... Fufu.」
+			ELSE
+				PRINTFORM 「Fufufu, this is so arousing...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML 」
+				PRINTFORMDL A body as delicate as yours is no match for Yuuka's.
+				PRINTFORM 「I'm going to tease your lovely nipples so much
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+			ENDIF
+		ELSE
+			;初めて
+			IF CFLAG:68:1007 == 0
+				PRINTFORM 「... Forgive me for this, darling...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML 」
+				PRINTFORMDL Completely taken over by desire, Yuuka pins you down with all of her strength.
+				PRINTFORM 「With this, you won't be going anywhere...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM  Be completely obedient until I'm satisfied...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML 」
+				PRINTFORMDL Yuuka stares into your eyes as her tongue crawls along the scruff of your neck.
+				PRINTFORMDW Being held down by inhuman strength, you are completely immobilized...
+				CFLAG:68:1007 = 1
+			ELSE
+				IF TALENT:MASTER:性別 == 2
+					PRINTFORM 「Well then, let's get started...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+					PRINTFORMDL You are frozen in fear upon sensing Yuuka's true Youkai nature.
+					PRINTFORML 「It's finally time, I know what I'll be eating today...\@ TALENT:MASTER:狐 || TALENT:MASTER:妖狐 || TALENT:MASTER:吸血鬼 ||TALENT:MASTER:動物耳 ?  # %" "%A human... \@ Just kidding.」
+					PRINTFORMDW Considering the amount of strength she uses to pin you down, it doesn't seem like a joke...
+				ELSE
+					PRINTFORM 「Well then, let's get started...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+					PRINTFORMDL Yuuka whispers into your ear as she gently strokes your hair...
+					PRINTFORMW 「Submit... After all, you have nowhere to run.」
+				ENDIF
+			ENDIF
+		ENDIF
+		;押し倒され状態のフラグをオン
+		TCVAR:68:356 = 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;なだめられた（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;-------------------------------------------------
+		;抜け出した
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			IF TALENT:68:恋人 || TALENT:68:恋慕
+				PRINTFORML 「Nnh, What... Aww, Fine.」
+			ELSE
+				PRINTFORML 「Oh well... I'll allow this much.」
+			ENDIF
+			
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;抱き着きモード満足終了
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;抱き着きモード強制終了
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;押し倒され状態のフラグをオフ
+		TCVAR:68:356 = 0
+	ENDIF
+	;-------------------------------------------------
+	;抜け出す失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		;-------------------------------------------------
+		;好きにして状態から抜け出せなかった
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「What, tired already? \@ TALENT:MASTER:性別 == 2 ? So much for a man. #  \@Pathetic...」
+			PRINTFORM 「Sorry to inform you but...we are not done yet...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML 」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;欲求不満が高くて抜け出せなかった
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「No, you're not going anywhere until I am satisfied.」
+			RETURN 1
+		ENDIF
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;浴場で遭遇
+;==================================================
+@M_KOJO_EVENT_K68_11(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「... I'm coming in.」
+		PRINTFORMDW Although she doesn't show much of a reaction, she still kicks you out...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目が合った（追い出されない）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Oh, it's you.」
+		PRINTFORMDL Yuuka steps into the bathroom without minding your presence.
+		PRINTFORMDW Her soft white skin slowly reddens as she steps into the water, she relaxes with a sighs.
+		RETURN 1
+	ENDIF
+	;その他
+ENDIF
+RETURN 1
+
+;==================================================
+;寝床に忍び込み
+;==================================================
+@M_KOJO_EVENT_K68_12(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出される（怒り）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMW 『I am watching you.』
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML 「...Suuh... Darling...」
+		PRINTFORMDW Yuuka's sleeping face gives a completely different impression from her usual self, she looks so innocent.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML 「Nnh... Who...?」
+		IF TALENT:68:恋人
+			PRINTFORMW 「Ahh, Darling... Want to sleep with me...?」
+		ELSE
+			PRINTFORMW 「...Ahh, Darling... You arrived at the right time.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕・衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML 「Nnh... Who...?」
+		PRINTFORMW 「... Whatever is fine... I don't mind...」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && (ARG:1 == 4  || ARG:1 == 5)
+		PRINTFORM 「What are you... 
+		PRINTDATA
+			DATAFORM The newspaper is in the mailbox, 
+			DATAFORM The milk is in the fridge, 
+			DATAFORM The fertilizer is outside, 
+			DATAFORM The ink is on the desk, 
+			DATAFORM The rope is in the warehouse, 
+		ENDDATA
+		PRINTFORMW I think...」
+		RETURN 1
+	ENDIF
+	;その他
+	
+ENDIF
+RETURN 1
+
+;==================================================
+;お仕事中
+;==================================================
+@M_KOJO_EVENT_K68_13(ARG,ARG:1)
+;口上主はTARGET
+;ARG:1に残っている仕事量
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;仕事開始（職場へ移動する）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Well, it's about time I see how the children are doing.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;業務中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMDL Yuuka listens to a single sunflower...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;仕事終了
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「That should be all for today... See you again soon.」
+		RETURN 1
+	ENDIF
+	;その他
+
+ENDIF
+RETURN 1
+
+;==================================================
+;食事系
+;==================================================
+@M_KOJO_EVENT_K68_14(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;持っていた食物を食べられた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == -1
+		PRINTFORML 「Oh, that looks delicious.」
+		PRINTFORMDL Yuuka quickly snatches the %DISHNAME_TR(DISHNAME)% from your hands and starts eating it in front of you.
+		;激辛orわさび
+		IF TASTE_REACTION("辛い") || TASTE_REACTION("わさび")
+			PRINTFORML 「...K-Khueeh!? I-It's too spicy...AHHH!!!」
+			PRINTFORMDW That's what she gets for stealing other people's food...
+		;激甘
+		ELSEIF TASTE_REACTION("甘い")
+			PRINTFORML 「... W-What was that, I think I am getting sick.」
+			PRINTFORMDW She complains because of the extremely sweet taste.
+		;すっぱ
+		ELSEIF TASTE_REACTION("すっぱい")
+			PRINTFORML 「... What's this? It tastes like human meat.」
+			PRINTFORMDW ... Huh?
+		ELSE
+			PRINTFORML 「\@ ABL:MASTER:料理技能 >= 3 ? Ahh, that was delicious, I wish I could eat this every day. # That was something I guess... Next time bring something more delicious. \@」
+			PRINTFORMDL As you stare at Yuuka's stuffed cheeks you're glad at least someone enjoyed the food.
+			PRINTFORMW 「... What are you looking at?」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	
+ENDIF
+RETURN 1
+
+;==================================================
+;MASTERが押し倒した
+;==================================================
+@M_KOJO_EVENT_K68_15(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;未実装（押し倒しコマンドに統合？
+	;MASTERが押し倒した（ウフフ開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;逢瀬終了（ウフフ終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+	
+		RETURN 1
+	ENDIF
+	;その他
+
+ENDIF
+RETURN 1
+
+;==================================================
+;添い寝する
+;==================================================
+@M_KOJO_EVENT_K68_16(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;添い寝を始めた（開始時）(存在せず
+	;記入チェック
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;添い寝を終了した（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;時止め終了時
+;==================================================
+@M_KOJO_EVENT_K68_17(ARG,ARG:1)
+;口上主はTARGET
+;排他と明記されていないモノは状況によっては連続で表示されるので注意
+;ARGに射精状況
+;ARG:1に射精状態
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+;時止め絶頂回数リセット
+TCVAR:68:357 = 0
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ARG=1～3は排他
+	;謎の快感
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORM 「Nhuu
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML ...!? Haa...?」
+				PRINTFORMDW Yuuka desperately looks at her surroundings, she's barely capable of hiding her true colors in this state.
+			CASE 1
+				PRINTFORM 「...Hyyaah
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML !?」
+				PRINTFORMW （I-I am... My body feels so hot...but...why...?）
+			CASEELSE
+				PRINTFORM 「Ihhn-
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML !? W-What...!?」
+				PRINTFORMDW Unable to contain her moans. Yuuka quickly covers her mouth with her hands.
+		ENDSELECT
+		
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;20回絶頂するとここに来るらしい
+	IF LOCAL:1 && ARG == 2
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORM 「...Hiaaaaaa
+				CALL HEARTCB_K68(0xD02830,2)
+				PRINTFORML !? W-Who is doing this...!!」
+				PRINTFORMDW While breathing heavily, she looks at her surrounding for the cause of her pleasure.
+			CASE 1
+				PRINTFORM 「...Kyaaaaaaaa
+				CALL HEARTCB_K68(0xD02830,2)
+				PRINTFORM !? Ah-haaah, Fuuh...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML !?」
+				PRINTFORMDW Unable to conceal her voice, Yuuka reaches climax.
+			CASEELSE
+				PRINTFORM 「Yaaaaaaaahh
+				CALL HEARTCB_K68(0xD02830,2)
+				PRINTFORML !?」
+				PRINTFORM （So-Someone is doing...this to me...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW !）
+		ENDSELECT
+		TALENT:68:機嫌 = -1
+		TCVAR:68:352 = 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;パンツ紛失
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「...Haa...!?」
+		PRINTFORMW （I don't know who... But whoever is doing this to me really has courage...!）
+		IF TCVAR:68:359 != 1
+			TALENT:68:機嫌 = -1
+			TCVAR:68:352 = 2
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚口内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;精液中毒低精飲
+		IF ARG:1 == 1
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「...Nguuh-eeh... Uhh...!」
+					PRINTFORMDW With teary eyes, Yuuka swallows the remaining %SAMEN_DESCRIPTION(MASTER)% in her throat.
+				CASE 1
+					PRINTFORML 「...Goohg-nghu... Ueeeh...!?」
+					PRINTFORMDW Cum gets stuck in her throat as she desperately tries to spit it all out...
+				CASEELSE
+					PRINTFORML 「...Guh-googh... Geehe!?」
+					PRINTFORMDW With a painful expression, Yuuka smears the insides of her mouth with the %SAMEN_DESCRIPTION(MASTER)%, feeling strangely aroused.
+			ENDSELECT
+			TALENT:68:機嫌 = -1
+			TCVAR:68:352 = 3
+		;精液中毒低吐き出し
+		ELSEIF ARG:1 == 2
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「...Nkeeh!? Haah...Ueeh...」
+					PRINTFORMDW Yuuka has a murderous expression as she swallows the little %SAMEN_DESCRIPTION(MASTER)% inside her mouth.
+				CASE 1
+					PRINTFORML 「...!? Uughu... Eehh...」
+					PRINTFORMDW Yuuka frowns upon sensing the taste of the %SAMEN_DESCRIPTION(MASTER)% inside her mouth...
+				CASEELSE
+					PRINTFORML 「...Uhh... What is this? It feels so sticky...and stinks...」
+					PRINTFORMW （This... Is this real semen...? I'll just get this over with...!）
+			ENDSELECT
+			TALENT:68:機嫌 = -1
+			TCVAR:68:352 = 3
+		;精液中毒低手で覆う
+		ELSEIF ARG:1 == 3
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「...Nkeeh!? Haah...Ueeh...」
+					PRINTFORMDW Yuuka has a murderous expression as she swallows the little %SAMEN_DESCRIPTION(MASTER)% inside her mouth.
+				CASE 1
+					PRINTFORML 「Keehoh!? Uhh...gh!」
+					PRINTFORMDW Yuuka frowns upon sensing the taste of the %SAMEN_DESCRIPTION(MASTER)% inside her mouth...
+				CASEELSE
+					PRINTFORML （...Uhh... What is this? It's entangling around my tongue...and stinks...!）
+					PRINTFORMW （This... Is this real semen...? I'll just get this over with...!）
+			ENDSELECT
+			TALENT:68:機嫌 = -1
+			TCVAR:68:352 = 3
+		;精液中毒高精飲
+		ELSEIF ARG:1 == 4
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「...Nn!? Nnguh...Ngh...Haaaa!」
+					PRINTFORMDW Despite swallowing the %SAMEN_DESCRIPTION(MASTER)%, Yuuka's expression shows mixed feelings...
+				CASE 1
+					PRINTFORM 「...!?...Gokku, Haaah...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+					PRINTFORMDW Yuuka feels dominated as she instinctively swallows the %SAMEN_DESCRIPTION(MASTER)%...
+				CASEELSE
+					PRINTFORML 「...Nngu...Gh...Fwaaah」
+					PRINTFORM （It's disgusting, it stinks, and yet... Why do I allow this to happen...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW ?）
+			ENDSELECT
+		;濃厚精液＆精液中毒低吐き出し
+		ELSEIF ARG:1 == 5
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「...Nkeehoh, Ehhah!? Pweh, pweehhh!」
+					PRINTFORMDW The %SAMEN_DESCRIPTION(MASTER)% inside Yuuka's mouth is so sticky it just won't separate from her tongue...
+				CASE 1
+					PRINTFORML 「...Ghh!? Uuuh...ahh...!?」
+					PRINTFORMDW Yuuka has an extremely angry expression as she spits out the gooey semen from her mouth.
+				CASEELSE
+					PRINTFORML 「...Ngug, Kwewwh...! I must get somewhere else...!」
+					PRINTFORMW （T-This... Is this semen...!? I can't get it out of my mouth...!）
+			ENDSELECT
+			TALENT:68:機嫌 = -1
+			TCVAR:68:352 = 3
+		;濃厚精液＆精液中毒高精飲
+		ELSEIF ARG:1 == 6
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORM 「...Nnh!? Guuh, Nnh...Haah
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+					PRINTFORMDW Yuuka reaches climax as she swallows a surprising amount of thick semen.
+				CASE 1
+					PRINTFORM 「...!? ...Googhhg...uhaaah...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+					PRINTFORMDW Yuuka becomes dizzy with arousal as she swallows the viscous semen...
+				CASEELSE
+					PRINTFORM 「...Nnguh, Ghh...Pwaaa 
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+					PRINTFORM （It's so thick... If I keep drinking this I may not be able to go back...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW ）
+			ENDSELECT
+		ENDIF
+		
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚顔面射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;幼稚持ち＆精液経験100未満
+		IF ARG:1 == 1
+		;通常ぬぐい取り
+		ELSEIF ARG:1 == 2
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「What the!? W-What the heck is this...!?」
+					PRINTFORMDW Upon sensing her face soaked in %SAMEN_DESCRIPTION(MASTER)%, Yuuka wipes her face in a panic.
+				CASE 1
+					PRINTFORML 「Hiih!? Uwaaa, this is so nasty...!」
+					PRINTFORMDW The nasty smell of %SAMEN_DESCRIPTION(MASTER)% sends shivers down Yuuka's spine.
+				CASEELSE
+					PRINTFORML 「...!? Yaah, what the-! This is so disgusing!」
+					PRINTFORMW （Ejaculating on my face... I don't know who did this, but they clearly have a death wish!）
+			ENDSELECT
+			TALENT:68:機嫌 = -1
+			TCVAR:68:352 = 3
+		;顔射精液舐めとり
+		ELSEIF ARG:1 == 3
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「...Nh!? Yaah...! Seriously, who could have done such a thing...?」
+					PRINTFORMDW She's unable to hide her smile as she calmly cleans her face of semen...
+				CASE 1
+					PRINTFORM 「...Nnnh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML !? ...Haaa, Fuuh...!」
+					PRINTFORMDW Yuuka seems to have gotten aroused due to all the semen covering her face.
+				CASEELSE
+					PRINTFORML （Is this actually semen? Only one way to find out...）
+					PRINTFORMDW Yuuka brings the semen into her mouth without thinking it twice.
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚手淫射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;ぬぐい取り
+		IF ARG:1 == 1
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「What the...! This has to be a prank...!」
+					PRINTFORMDW Yuuka looks for the perpetrator as she wipes her hands.
+				CASE 1
+					PRINTFORML 「... How could someone do something so disgusting!」
+					PRINTFORMDW She could kill someone with just her stare...
+				CASEELSE
+					PRINTFORML 「Uuuuh... Gross...! Where is that pervert hiding!?」
+					PRINTFORMDW After wiping her hands with a piece of cloth, she angrily throws it away.
+			ENDSELECT
+			TALENT:68:機嫌 = -1
+			TCVAR:68:352 = 3
+		;舐めとり
+		ELSEIF ARG:1 == 2
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Uwaah! What is this...? It feels fairly sticky...」
+					PRINTFORMDW Yuuka plays a bit with the %SAMEN_DESCRIPTION(MASTER)% in her hand and then decides to swallow it.
+				CASE 1
+					PRINTFORML 「...Uhh, is this...semen...? Ah, Well...!」
+					PRINTFORMDW Yuuka has some difficulty swallowing the %SAMEN_DESCRIPTION(MASTER)%.
+				CASEELSE
+					PRINTFORML 「I wonder, who's the mischievous individual doing this...?」
+					PRINTFORM （... Oh well, it's fresh semen, I'll forgive them this time...nhh, Not a bad taste...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW ）
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚アナル射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;Ａ感覚2以下
+		IF ARG:1 == 1
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「...H-iiih!? Di-Did someone just assault me...!?」
+					PRINTFORMDW Yuuka looks at her surroundings with hostility as pain spreads through her anus.
+				CASE 1
+					PRINTFORML 「Iigh!? Nkhh...Haah...!」
+					PRINTFORMDW She doesn't notice the semen, as she is distracted by the immense pain penetrating her ass.
+				CASEELSE
+					PRINTFORML 「Khuuh...!? What the-!? Where is that brat...!?」
+					PRINTFORMDW She's convinced that some child must have pulled a prank on her.
+			ENDSELECT
+		;ソレ以外
+		ELSEIF ARG:1 == 2
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Haaah!!! Who the heck could such a thing-!」
+					PRINTFORMDW She runs out of breath as she looks for the criminal who ejaculated inside her asshole.
+				CASE 1
+					PRINTFORML 「...Hiiiihgg! Ahhh! Its so hot...!」
+					PRINTFORMDW The sensation of warm semen inside her rectum makes Yuuka tremble in fear.
+				CASEELSE
+					PRINTFORML 「Khuu...haaah, Haaa...」
+					PRINTFORMDW Yuuka tries to keep composure, but she's unable to stop her body's reactions.
+			ENDSELECT
+		ENDIF
+		TALENT:68:機嫌 = -1
+		TCVAR:68:352 = 4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚処女喪失】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		;Custom code, original content
+		PRINTFORML 「Ah, it hurts when I walk... But why? Is it that time of the month already? It must be...」
+		PRINTFORMDW Yuuka mumbles something to %HIMSELF_HERSELF(TARGET)% before quickly wiping %HIMSELF_HERSELF(TARGET)% clean, pretending that nothing happened.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚膣内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		;非処女膣内射精ピルなし、あり
+		IF ARG:1 == 1 || ARG:1 == 2
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Hiii... Ahh-haaaah...!?」
+					;危険日、ピルなし
+					SIF ESTRUS_CYCLE(TARGET) >= 100 && ARG:1 == 1
+						PRINTFORML （This-is a terrible day for this!!）
+					PRINTFORMDL Yuuka quickly gets under cover upon sensing the warm liquid flowing under her skirt.
+					PRINTFORMDW Before long, she weakly sits down and \@ TALENT:MASTER:濃厚精液 ? observes the %SAMEN_DESCRIPTION(MASTER)% as it flows out from her vagina # touches the %SAMEN_DESCRIPTION(MASTER)% with her fingers\@...
+				CASEELSE
+					PRINTFORML 「...Ahh, What's this warmth...!?」
+					PRINTFORML （\@ TALENT:MASTER:濃厚精液 ? It feels so thick. # \@. When did-. Where is the one who put this filthy semen in me...!?）
+					;危険日、ピルなし
+					IF ESTRUS_CYCLE(TARGET) >= 100 && ARG:1 == 1
+						PRINTFORML （Today is a dangerous day...and still...）
+						PRINTFORMW （There's no way... That perverted brat has no idea how far they've gone this time...! Absolutely despicable...!!）
+					ELSE
+						PRINTFORMW （Today is a safe day...isn't it? Still, I hate this, that perverted brat has no idea how far they've gone...!）
+					ENDIF
+			ENDSELECT
+			TALENT:68:機嫌 = -1
+			TCVAR:68:352 = 5
+		;処女膣内射精
+		ELSEIF ARG:1 == 3
+			;Custom code, original content
+			PRINTFORMDW However, no matter how much she tries to wipe it off, your %SAMEN_DESCRIPTION(MASTER,1)% continues to ooze out.
+			PRINTFORMW （What... What is this...? Ugh, It smells... N-No way... Is this... What I think it is?）
+			PRINTFORMW （But how in the world... I can't believe it... I refuse to...!）
+			PRINTFORMW （Someone must've done it... And that someone will pay dearly, I swear... If I can only find you, I'll...!）
+			PRINTFORMDL Filled with determination, Yuuka glances around, as if trying to find the perpetrator. 
+			PRINTFORMDW Luckily she doesn't seem to consider you a possible offender, not even acknowledging your existence at this moment.
+			PRINTFORMW （This is frustrating... I need to check this with Eirin. If this is what I think it is, I will never be able to get married...）
+			CALLF FIRSTTIME("UnawareVirginCreampie")
+			TALENT:68:機嫌 = -1
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;ナマでやらせろ時
+;==================================================
+@M_KOJO_EVENT_K68_18(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;避妊要求台詞
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:68:恋人 || TALENT:68:恋慕
+			PRINTFORML 「... I still don't feel ready to start a family with you.」
+			PRINTFORMW 「I guess that means we'll have to use birth control, right?」
+		ELSE
+			PRINTFORML 「... Well, if you want to put in inside then...」
+			PRINTFORMW 「We must use contraceptives. Don't take it the wrong way. I just don't feel prepared for that sort of relationship yet.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:68:恋人 || TALENT:68:恋慕
+			PRINTFORML 「... It's hopeless then. It's still to early for us...」
+		ELSE
+			PRINTFORML 「I must also refuse then.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断ったのに粘られて切れた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMW 「... Pull your indecent, vulgar penis out.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日以外許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 「...Haah... I wonder, are you not comfortable with our relation?」
+		PRINTFORMDL She sighs deeply.
+		PRINTFORML 「... You really are a stupid \@ TALENT:MASTER:性別 == 2 ? man # woman \@...」
+		PRINTFORMW 「... Well, it's fine... After all, you are special...」
+		SIF TALENT:68:恋人 || TALENT:68:恋慕
+			PRINTFORMW （I too, want us to do it without protection...）
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML 「W-What...!? Are you stupid!?」
+		PRINTFORMDL Yuuka initially opposes, but upon seeing your serious expression, she finally gives in.
+		PRINTFORMW 「I...I understand, if you're willing to go that far for me...」
+		SIF TALENT:68:恋人 || TALENT:68:恋慕
+			PRINTFORMW 「...We...We've finally reached this stage...」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;神社暮らしを承認して貰う
+;==================================================
+@M_KOJO_EVENT_K68_19(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;認められる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;認められない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;帰宅時
+;==================================================
+@M_KOJO_EVENT_K68_20(ARG,ARG:1)
+;口上主はLOCALS or RESULT
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Fwaa～h...」
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:思慕 || TALENT:68:愛欲
+			PRINTFORMW 「Well then, I'm going home... Have a good night.」
+		ELSE
+			PRINTFORMDW After yawning loudly, Yuuka decides to go home.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;デート中帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;玄関先でお見送り
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;陥落素質取得時
+;==================================================
+@M_KOJO_EVENT_K68_21(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「... I...wonder if that \@ TALENT:MASTER:性別 == 2 ? man # girl \@ loves me.」
+		PRINTFORML （Whenever I see %HIM_HER(MASTER,,1)% I can finally remember, the feeling of being a woman.）
+		PRINTFORML （... I have my pride... But still, I yearn to make %HIM_HER(MASTER,,1)%『mine』... I must do it...）
+		PRINTFORMW （... In the end, \@ TALENT:MASTER:性別 == 2 ? he # she \@ won't be able to refuse me. It'd be foolish...）
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML （... Recently, I can't help but feel concerned about that \@ TALENT:MASTER:狐 || TALENT:MASTER:妖狐 || TALENT:MASTER:吸血鬼 ||TALENT:MASTER:動物耳 ? person # human \@）
+		PRINTFORML 「Do I have romantic emotions for %HIM_HER(MASTER,,1)%...? ... No, that's not it.」
+		PRINTFORML （I'm just glad that person came from the outside world to live here, that is all.）
+		PRINTFORMW （Anyway, I should treat %HIM_HER(MASTER,,1)% as a friend at the very least...）
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛欲取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛人取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;セフレ取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;調教終了時に自慰
+;==================================================
+@M_KOJO_EVENT_K68_22(ARG,ARG:1)
+;口上主はARG
+;ARG:0に自慰状況
+;ARG:1に自慰種類
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;通常自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORM 「Hahhhh, fuuh...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  Ahhh, I'm...comiiinng...～
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML !」
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			PRINTFORML 「...Haah... I wonder if I'll see %HIM_HER(MASTER,,1)% tomorrow...」
+		ELSEIF TALENT:68:思慕
+			PRINTFORML 「... When I'm away from %HIM_HER(MASTER,,1)%, I can't help but feel a sense of guilt, it's terrible...」
+		ELSE
+			PRINTFORML 「...Haa... I should sleep soon...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同室時自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORM 「Haah...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  Darling, I love you, so much...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML 」
+		IF TALENT:68:恋人
+			PRINTFORML （I'm so sorry, darling... I can't bear it...）
+		ELSE
+			PRINTFORML （Such a thing, I could never do this face to face with you...）
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;中だし精液自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORM 「Hahhhh, fuuh...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  Ahhh, I'm...comiiinng...～
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML !」
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			PRINTFORML 「...Haah... I wonder if I'll see %HIM_HER(MASTER,,1)% tomorrow...」
+		ELSEIF TALENT:68:思慕
+			PRINTFORML 「... When I'm away from %HIM_HER(MASTER,,1)%, I can't help but feel a sense of guilt, it's terrible...」
+		ELSE
+			PRINTFORML 「...Haa... I should sleep soon...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無知持ち（自慰経験(調教自慰経験は差し引き)による分岐あり
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		LOCAL:2 = EXP:自慰経験 - EXP:調教自慰経験
+		;無知消去イベントあり（表示は一度だけ
+		IF LOCAL:1 >= 25
+		;地の文分岐。書きたい場合は[SKIPSTART][SKIPEND]を削除してください
+		[SKIPSTART]
+		ELSEIF LOCAL:1 >= 20
+		ELSEIF LOCAL:1 >= 15
+		ELSEIF LOCAL:1 >= 10
+		ELSEIF LOCAL:1 >= 5
+		[SKIPEND]
+		ELSE
+		ENDIF
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質あり自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;-------------------------------------------------
+		;Ｃ敏感orＣ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｖ敏感orＶ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ａ敏感orＡ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 3
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｂ敏感orＢ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 4
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部位指定無し
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 5
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで陥落素質あり自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORM 「Hahhhh, fuuh...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  Ahhh, I'm...comiiinng...～
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML !」
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			PRINTFORML 「...Haah... I wonder if I'll see %HIM_HER(MASTER,,1)% tomorrow...」
+		ELSEIF TALENT:68:思慕
+			PRINTFORML 「... When I'm away from %HIM_HER(MASTER,,1)%, I can't help but feel a sense of guilt, it's terrible...」
+		ELSE
+			PRINTFORML 「...Haa... I should sleep soon...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;-------------------------------------------------
+		;尻穴膣腔同時
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;膣腔のみ
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORM 「Hahhhh, fuuh...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  Ahhh, I'm...comiiinng...～
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML !」
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			PRINTFORML 「...Haah... I wonder if I'll see %HIM_HER(MASTER,,1)% tomorrow...」
+		ELSEIF TALENT:68:思慕
+			PRINTFORML 「... When I'm away from %HIM_HER(MASTER,,1)%, I can't help but feel a sense of guilt, it's terrible...」
+		ELSE
+			PRINTFORML 「...Haa... I should sleep soon...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;我慢
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		PRINTFORML （Uuuuh... I want to to do it but, I'm feeling so sleepy...）
+		PRINTFORML （... Tomorrow, I should probably pay %HIM_HER(MASTER,,1)% a visit...）
+		RETURN 1
+	ENDIF
+	;その他
+	;上の分岐を一切書かずに、ここに書くことで自慰の共通口上を表示することが出来ます
+
+	RETURN 1
+ENDIF
+RETURN 1
+;==================================================
+;浴場連れだし
+;==================================================
+@M_KOJO_EVENT_K68_23(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;断られた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「...Huh?」
+		PRINTFORMDW She seems unsure about it...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;一緒に入ってくれた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:68:恋人
+			PRINTFORMW 「Do you want to enter together? Well... How can I refuse? If you really want to...」
+		ELSE
+			PRINTFORML 「Haah... Entering with you is...」
+			PRINTFORMW 「... Fine I guess.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+
+ENDIF
+RETURN 1
+;==================================================
+;懐妊
+;==================================================
+@M_KOJO_EVENT_K68_24(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF EXP:68:出産経験 > 0
+			PRINTFORML 「... Once again, we'll have...another child.」
+			IF TALENT:68:恋人
+				PRINTFORML 「I wonder if this is a proof of our happiness... Does that sound embarrassing?」
+				PRINTFORMW 「I love you, darling.」
+			;物悲しさを出してみる
+			ELSE
+				PRINTFORML 「To be blessed with your child, I truly feel loved.」
+				PRINTFORMW 「I don't think I need to say this but... I love you, darling....」
+			ENDIF
+		ELSE
+			PRINTFORML 「... To be able to have your child,」
+			IF TALENT:68:恋人
+				PRINTFORML 「Somehow, I feel more and more like-... I guess I'm still not used to this.」
+				PRINTFORML 「Do you feel...happy? Or are you perhaps feeling the same complex feelings as I am...?」
+				PRINTFORMW 「... Oh, of course I don't regret it, after all, I love you.」
+			ELSE
+				PRINTFORML 「Although I don't know what you're thinking...」
+				PRINTFORMW 「I'll strive to become a better and more important person for you.」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「H...Hey, I-I think the two of us...will have...a child.」
+		;弾幕勝負でショタMASTERから搾り取ったことがある
+		IF CFLAG:68:1802
+			PRINTFORMW 「I never would have thought I could get pregnant from a child like you... Well, you aren't entirely to blame...」
+		;弾幕勝負で幽香を犯したことがある
+		ELSEIF CFLAG:68:1803
+			PRINTFORMW 「As I said at that time, you'll have to take responsibility... When it's born, let's raise our child together, alright?」
+		ELSE
+			PRINTFORMW 「... Having said so, we could use this chance to bond together, what do you think...?」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;まず表示されないだろう
+	IF LOCAL:1 && ARG == 3
+		;弾幕勝負でショタMASTERから搾り取ったことがある
+		IF CFLAG:68:1802
+			PRINTFORML 「H...Hey, I-I think the two of us...will have...a child.」
+			PRINTFORMW 「I never would have thought I could get pregnant from a child like you... Well, you aren't entirely to blame...」
+		;弾幕勝負で幽香を犯したことがある
+		ELSEIF CFLAG:68:1803
+			PRINTFORML 「... I'm afraid I'll be conceiving your child.」
+			PRINTFORMW 「And that's why..as we agreed that time, you'll have to take responsibility. You haven't forgotten, have you?」
+		ELSE
+			PRINTFORML 「... I'm afraid I'll be conceiving your child.」
+			PRINTFORMW 「... It was completely my fault. I'll raise our child responsibly... You shouldn't worry about anything.」
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML （Recently I feel as if I'm getting out of shape...）
+		PRINTFORMW （... Perhaps I'm just, getting fat...?）
+		SIF EXP:68:出産経験
+			PRINTFORMW （No way, I couldn't have gotten pregnant again...could I!?）
+		RETURN 1
+	ENDIF
+	;その他
+
+ENDIF
+RETURN 1
+;==================================================
+;出産
+;==================================================
+@M_KOJO_EVENT_K68_25(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Look darling, this is our child.」
+		PRINTFORML 「Up until now, I had raised flowers as if they were my children...」
+		PRINTFORMW 「... But the child from the one you love, it's truly special.」
+		SIF EXP:68:出産経験 > 0
+			PRINTFORMW 「... Once again, this is what I believe.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;まず表示されないだろう
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Look darling, this is our child.」
+		PRINTFORMW 「As a matter of fact, I think the two of us should engage, as a married\@ TALENT:MASTER:狐 || TALENT:MASTER:妖狐 || TALENT:MASTER:吸血鬼 ||TALENT:MASTER:動物耳 ?  # %" "%human \@ couple... Hey, are you listening to me?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;まず表示されないだろう
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「... It was born healthy.」
+		PRINTFORMW 「I wonder...if I'll be able to make this child happy...」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 「... It was born with a healthy body.」
+		PRINTFORMW 「Whenever I look at this child's face... Haa, I have to make you happy...」
+		RETURN 1
+	ENDIF
+	;その他
+ENDIF
+RETURN 1
+;==================================================
+;オナバレ
+;==================================================
+@M_KOJO_EVENT_K68_26(ARG,ARG:1)
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;見られた瞬間
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:68:恋人 || TALENT:68:恋慕
+				PRINTFORM 「Haah
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML  Daaarliing, do it harder～...!」
+			ELSE
+				PRINTFORM 「Haa, ahhhh, I'm going to come～...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML 」
+				PRINTFORML 「Mooore! Deeper...!」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;何もしない
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF TALENT:68:恋人 || TALENT:68:恋慕
+				PRINTFORML 「...Humm...」
+				PRINTFORMW 「... Hey, it's fine... Do it faster.」
+			ELSE
+				PRINTFORMW 「My exposed body... It's embarrassing...!」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;そのまま続行
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「...Haa...」
+			PRINTFORML （Such a foolish thing, I wonder if I should forgive you...）
+			PRINTFORML （... Well, at least...this feels good...）
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;追い出し
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「I never called you, get out you degenerate!!!」
+			PRINTFORMDW You run as fast as you can as Yuuka throws sharp items at you...
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 4
+		;やっちゃう
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「Ahh... Darling, how have you been? Nice weather we have today...\@ TIME:5 == 0 || TIME:5 == 1 ? isn't it? # it really isn't... \@」
+			PRINTFORMW 「...Umm, Why are you getting so close to me...?」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 5
+		;事後
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORM 「Haa, haah...～
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORML 」
+			IF ABL:MASTER:指 >= 5 || ABL:MASTER:舌 >= 5 || ABL:MASTER:腰 >= 5
+				PRINTFORM （\@ TALENT:68:恋人 || TALENT:68:恋慕 ? Darling's # %HIS_HER(MASTER,1)% \@ 
+				LOCALS:10 = 
+				SIF ABL:MASTER:指 >= 5
+					LOCALS:10 += "fingers、"
+				SIF ABL:MASTER:舌 >= 5
+					LOCALS:10 += "tongue、"
+				SIF ABL:MASTER:腰 >= 5
+					LOCALS:10 += "hips、"
+				PRINTFORM %LIST_IN_STRING(LOCALS)% moved so obscenely, making me cum over and over
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW ）
+			ELSE
+				PRINTFORM （\@ TALENT:68:恋人 || TALENT:68:恋慕 ? Ahhh～ And # How frustrating, and \@ I was feeling so good...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW ）
+			ENDIF
+			
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 6
+		;事後お泊り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORM 「Well then, let's enjoy ourselves...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML 」
+			
+			RETURN 1
+		ENDIF
+
+	ENDSELECT
+ENDIF
+
+;==================================================
+;相手からデートのお誘い
+;==================================================
+@M_KOJO_EVENT_K68_27(ARG,ARG:1)
+;口上主はLOCAL
+;ARG:1は目的地
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;誘い文句
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「Would you mind going out with me?」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;受けた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「Shall I accompany you?」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;断った
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「... What? Are you serious...?」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;部屋に誘われた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 4
+		;部屋に誘われたのを断った
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;脱衣口上
+;==================================================
+@M_KOJO_EVENT_K68_28(ARG,ARG:1)
+;口上主はTARGET
+;ARGに脱がし方選択
+;ARG:1（ARG=3の場合のみあり）地の文の反応
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;全裸にする
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;下着姿にする
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;半脱ぎ
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;パンツちょうだい
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE ARG:1
+				;-------------------------------------------------
+				CASE 0
+				;交換です
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 1
+				;OK（嬉々
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 2
+				;OK（渋々
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 3
+				;嫌です
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				RETURN 1
+			ENDSELECT
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;怒り口上
+;==================================================
+@M_KOJO_EVENT_K68_29(ARG,ARG:1)
+;口上主はTARGET
+;ARGはTARGETの度胸で分岐
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;怒らせてしまった
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1 && TCVAR:68:353 == 0
+		PRINTFORML 「...Tch.」
+		PRINTFORMDL She clicks her tongue with a threatening manner, as if telling you to go away.
+		PRINTFORMDL She seems to be seriously angry...
+		TCVAR:68:353 = 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;泣かせてしまった　[臆病]持ち
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;相手が押し倒しを解除
+;==================================================
+@M_KOJO_EVENT_K68_30(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+	;疲れた
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+	;満足して解放
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+	;満足したところを押し倒された
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+	;壊れるまでしてあげる
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレ遭遇時の地の文。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART～SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K68_ONABARE_1(ARG)
+;-------------------------------------------------
+IF ARG
+	PRINTFORML A弄ってる場合
+ELSE
+	PRINTFORML V弄ってる場合
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレでそのまま続けてもらう場合の地の文。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART～SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K68_ONABARE_2(ARG)
+;-------------------------------------------------
+IF ARG
+	PRINTFORML A弄ってる場合
+ELSE
+	PRINTFORML V弄ってる場合
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレなし崩しックスの地の文。
+;デフォルトのものと置き換えたい場合は上下のSKIPSTART～SKIPENDを外してください。
+;置き換える気がないならスルー。
+;-------------------------------------------------
+@M_KOJO_EVENT_K68_ONABARE_3(前戯１,本番はどっちか,回数,注入量)
+;-------------------------------------------------
+#DIM 前戯１
+;1=C 2=B 3=M
+#DIM 本番はどっちか
+;0でＶ、1でＡ
+#DIM 注入量
+#DIM 回数
+
+SELECTCASE 前戯１
+	CASE 1
+		PRINTFORML Ｃ責め
+	CASE 2
+		PRINTFORML Ｂ責め
+	CASE 3
+		PRINTFORML Ｍ責め
+ENDSELECT
+
+IF 本番はどっちか
+	PRINTFORML Aで本番
+ELSE
+	PRINTFORML Vで本番
+ENDIF
+;-------------------------------------------------
+[SKIPEND]

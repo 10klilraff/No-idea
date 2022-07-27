@@ -1,0 +1,128 @@
+﻿@PEARL_CHK_MASTER
+#DIM INSERTER
+#DIM CONST INTERVAL = 30
+#DIM KAKUNIN
+#DIM LAPSE
+
+SIF !TFLAG:パール期限
+	RETURN
+
+INSERTER = TFLAG:パール入れた人
+
+;流石に他人がいるとチェックしない
+KAKUNIN = 1
+SIF CFLAG:INSERTER:現在位置 != CFLAG:MASTER:現在位置
+	KAKUNIN = 0
+SIF GET_TARGETNUM() > 1
+	KAKUNIN = 0
+SIF !SHIRAHU(INSERTER)
+	KAKUNIN = 0
+
+IF TFLAG:パール挿入個数
+	SOURCE:MASTER:快Ａ += TIME_PROGRESS(TIME:1) * TFLAG:パール挿入個数
+	SOURCE:MASTER:苦痛 += TIME_PROGRESS(TIME:1) * TFLAG:パール挿入個数 * 2
+	DOWNBASE:MASTER:体力 += TIME_PROGRESS(TIME:1)
+ENDIF
+
+IF TFLAG:パール期限 < TIME && TFLAG:パール期限 > 0 && TFLAG:パール挿入個数
+	PRINTFORML %PARSE("You have")% survived the promised time.
+	PRINTFORML %CALLNAME:INSERTER% will remove them for %PARSE("you",5)%.
+	TFLAG:パール期限 = -1
+ENDIF
+IF KAKUNIN
+	IF TFLAG:パール期限 == -1
+		PRINTFORMW %CALLNAME:INSERTER% strokes %PARSE("your")% head comfortingly as %HE_SHE(INSERTER)% slowly pulls the anal beads out one at a time, glad %PARSE("you",1)% endured it.
+		CALL PEARL_EJECT("引っこ抜き")
+		RETURN
+	ELSEIF TFLAG:パール期限 == -2
+		PRINTFORML %CALLNAME:INSERTER% notices the anal beads have come out, and once again, pushes them into %PARSE("you")% one by one!
+		CALL PEARL_INSERT(INSERTER,5)
+	ENDIF
+ENDIF
+
+LAPSE = (TIME - TFLAG:パール排出チェック) / INTERVAL
+
+IF LAPSE && TFLAG:パール期限 > 0
+	TFLAG:パール排出チェック = TIME
+	IF KAKUNIN
+		PRINTFORML %CALLNAME:INSERTER% puts %HIS_HER(INSERTER)% hand on %PARSE("your")% ass and confirms the beads are still inside...
+		PRINTFORML Seeing they're still hanging out from %PARSE("your",1)% anus, %CALLNAME:INSERTER% smiles softly as %HE_SHE(INSERTER)% tugs on the ring, telling %PARSE("you",5)% to endure a bit more.
+		SOURCE:MASTER:快Ａ += 50
+	ENDIF
+	FOR LOCAL, 0, LAPSE
+		CALL PEARL_PATIENCE
+		SIF TFLAG:パール挿入個数 <= 0 ;bug fix custom code
+			BREAK
+	NEXT
+ENDIF
+
+@PEARL_EJECT(ARGS)
+#DIM INSERTER
+#DIM OTOSIDAMA
+INSERTER = TFLAG:パール入れた人
+
+IF ARGS == "自然排出"
+	SOURCE:MASTER:快Ａ += 100
+	EXP:MASTER:Ａ経験 += 1
+	TFLAG:パール挿入個数 -= 1
+	PRINTFORMW An anal bead pops out ({TFLAG:パール挿入個数} remaining).
+	IF TFLAG:パール挿入個数 <= 0 ;bug fix custom code
+		PRINTFORMW All the beads have fallen out now...
+		TFLAG:パール期限 = -2
+	ENDIF
+ELSEIF ARGS == "引っこ抜き"
+	SOURCE:MASTER:快Ａ += TFLAG:パール挿入個数 * 200
+	EXP:MASTER:Ａ経験 += TFLAG:パール挿入個数
+	EXP:MASTER:苦痛快楽経験 += TFLAG:パール挿入個数 * 3
+	EXP:INSERTER:嗜虐快楽経験 += TFLAG:パール挿入個数 * 3
+	SOURCE:INSERTER:加虐 += TFLAG:パール挿入個数 * 100
+	TFLAG:パール挿入個数 = 0
+	TFLAG:パール期限 = 0
+	TFLAG:パール入れた人 = 0
+	TFLAG:パール排出チェック = 0
+	IF FESTIVAL() == "元日"
+		SELECTCASE RAND:3
+			CASE 0
+				OTOSIDAMA = 10000
+			CASE 1
+				OTOSIDAMA = 30000
+			CASE 2
+				OTOSIDAMA = 50000
+		ENDSELECT
+		PRINTFORMW ...?
+		PRINTFORMW At the end of the, there's a golden bead %PARSE("you have")% no memory of.
+		CALL COLORMESSAGE(@"New year's gift bonus! %PARSE("You get")% ￥{OTOSIDAMA}!",C_YELLOW,2)
+		MONEY += OTOSIDAMA
+	ENDIF
+ENDIF
+
+@PEARL_INSERT(ARG,ARG:1)
+TFLAG:パール挿入個数 = ARG:1
+TFLAG:パール期限 = TIME + TFLAG:パール挿入個数 * 30 + RAND:30 + RAND:30
+TFLAG:パール入れた人 = ARG
+SOURCE:MASTER:快Ａ += TFLAG:パール挿入個数 * 10
+TFLAG:パール排出チェック = TIME
+
+@PEARL_PATIENCE
+;qol custom code, add exp every time you struggle
+SOURCE:MASTER:快Ａ += 100
+EXP:MASTER:Ａ経験 ++
+EXP:MASTER:苦痛快楽経験 ++
+
+PRINTFORML An anal bead is about to spill out of %PARSE("your")% anus...
+CALL ASK_M("Endure（50 STA）",BASE:MASTER:気力 >= 50, "Endure（200 STA）",BASE:MASTER:気力 >= 100, "Relax",1)
+SELECTCASE RESULT
+	CASE 0
+		DOWNBASE:MASTER:気力 += 50
+		IF !RAND:2
+			PRINTFORMW %PARSE("You endure")% the feeling of excretion.
+		ELSE
+			PRINTFORMW %PARSE("You fail")% to endure the feeling of excretion.
+			CALL PEARL_EJECT("自然排出")
+		ENDIF
+	CASE 1
+		PRINTFORMW %PARSE("You")% frantically %PARSE("endure")% the feeling of excretion.
+		DOWNBASE:MASTER:気力 += 200
+	CASE 2
+		CALL PEARL_EJECT("自然排出")
+ENDSELECT

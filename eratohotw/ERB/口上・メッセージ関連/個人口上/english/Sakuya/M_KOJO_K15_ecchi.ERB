@@ -1,0 +1,76 @@
+﻿;==================================================
+;kissing in ecchi or making out
+;ARG 0 = dom player, 1 = dom target
+;==================================================
+@K15_KISS_ECCHI_COMMENT(ARG)
+
+LOCAL = 1
+
+IF LOCAL
+	;timestop
+	SIF FLAG:70
+		RETURN 1
+	;sleeping
+	SIF CFLAG:睡眠
+		RETURN 1
+
+	;first kiss
+	IF EXP:キス経験 == 1
+		CALL K15_FIRSTKISS_COMMENT(ARG)
+	;other kisses
+	ELSE
+		IF TALENT:恋慕
+			PRINTDATAW
+				DATAFORM 「Nmu～... I love you, %CALLNAME:MASTER%～」
+				DATAFORM 「Nmu～... %CALLNAME:MASTER%～」
+				DATAFORM 「...Chuu%UNICODE(0x2665)%～...」
+				DATAFORM 「...Chuu%UNICODE(0x2665)%♪～...」
+				DATAFORM 「%CALLNAME:MASTER%%UNICODE(0x2665)%～」
+				DATAFORM 「%CALLNAME:MASTER%♪～」
+				DATAFORM 「%CALLNAME:MASTER%%UNICODE(0x2665)%～ I love you～」
+				DATAFORM 「I love you%UNICODE(0x2665)%～ %CALLNAME:MASTER%～」
+				DATAFORM 「%CALLNAME:MASTER%%UNICODE(0x2665)%～」
+				DATAFORM 「So good～ %CALLNAME:MASTER%～」
+				DATAFORM 「More%UNICODE(0x2665)%～」
+				DATAFORM 「Please kiss me more%UNICODE(0x2665)%」
+				DATAFORM 「I don't mind kissing a bit longer%UNICODE(0x2665)%」
+				DATAFORM 「...Mnu... More～」
+				DATAFORM 「%CALLNAME:MASTER%～」
+				DATAFORM 「%CALLNAME:MASTER%♪～」
+			ENDDATA
+		ELSEIF K15_LIKES_PLAYER() && !K15_HATE()
+			PRINTDATAW
+				DATAFORM 「...Mnu... I...」
+				DATAFORM 「.Mnnn...I mustn't...」
+				DATAFORM 「Mnnu...mou...」
+				DATAFORM 「...Chuu～...」
+				DATAFORM 「%CALLNAME:MASTER%～」
+				DATAFORM 「...Mmnn... mou... ...mmnn...」
+				DATAFORM 「...mmnu...to kiss ...mnu... so suddenly...」
+				DATAFORM 「...Mnu... I...do not... mou...」
+				DATAFORM 「.Mnnn... I mustn't. mou...」
+				DATAFORM 「...Mnu... stop... mou...」
+				DATAFORM 「...Mmnn... mou... ...mmnn...」
+				DATAFORM 「...Mmnn... that's... ...mmnn... enough...mnu...」
+				DATAFORM 「...Mnu... More～」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「...Mnu... I...」
+				DATAFORM 「.Mnnn...I mustn't...」
+				DATAFORM 「Mnnu...mou...」
+				DATAFORM 「...Mnnn...」
+				DATAFORM 「...Mmnn... mou... ...mmnn...」
+				DATAFORM 「...mmnu...to kiss ...mnu... so suddenly.」
+				DATAFORM 「...Mnu... I...do not... mou...」
+				DATAFORM 「.Mnnn... I mustn't... mou...」
+				DATAFORM 「...Mnu... stop... mou...」
+				DATAFORM 「...Mmnn... mou... ...mmnn...」
+				DATAFORM 「...Mmnn... that's... ...mmnn... enough...mnu...」
+				DATAFORM 「...mmnn...」
+				DATAFORM 「...」
+			ENDDATA
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1

@@ -1,0 +1,310 @@
+﻿;神社と言ったら、やっぱりおみくじですよね
+;というわけでおみくじの時間です
+
+;LOCAL 0:全体運, 1:金運, 2:健康運, 3:恋愛運, 4:旅行運, 99:おまけに一言
+;の各項目の選択番号。
+;何を引いたのか参照して後ほど処理できる構造にしていますので、追加したい場合は各項目の最後に追記しましょう
+@FORTUNE
+;まずはくじの結果を見せてあげましょう
+;全体運、ネタはそのうち増やします
+#DIM PADDING
+PADDING = 9
+PRINTFORM 　%"Overall: ",PADDING%
+PRINTDATA LOCAL:0
+	DATAFORM Great blessing
+	DATAFORM Middle blessing
+	DATAFORM Small blessing
+	DATAFORM Blessing
+	DATAFORM Half-blessing
+	DATAFORM Half-blessing
+	DATAFORM Small future blessing
+	DATAFORM Curse
+	DATAFORM Small curse
+	DATAFORM Half-curse
+	DATAFORM Future curse
+	DATAFORM Great curse
+	DATAFORM 
+	DATAFORM Rabbit's fortune
+	DATAFORM Dog's fortune
+	DATAFORM Cat's fortune
+	DATAFORM Fishing fortune
+	DATAFORM Winner
+	DATAFORM Loser
+	DATAFORM Today is a lucky day
+	DATAFORM Lunatic
+	DATAFORM Village
+	DATAFORM Mofu fortune
+ENDDATA
+;custom code
+SELECTCASE LOCAL:0
+	CASE 0,19
+		SETCOLOR C_GREEN
+	CASE 13 TO 15
+		SETCOLOR C_L_GREEN
+	CASE 1 TO 3, 16, 17
+		SETCOLOR C_M_GREEN
+	CASE 4 TO 6
+		SETCOLOR C_P_GREEN
+	CASE 7 TO 10
+		SETCOLOR C_YELLOW
+	CASE 11,18
+		SETCOLOR C_RED
+	CASEELSE
+ENDSELECT
+CALL PRINT_BREAK,,"wait"
+RESETCOLOR
+
+PRINTFORM 　%"Economy: ",PADDING%
+PRINTDATAW LOCAL:1
+	DATAFORM Don't shake your sleeves.
+	DATAFORM You should be careful not to waste it.
+	DATAFORM You may get an unexpected income.
+	DATAFORM Slow and steady.
+	DATAFORM If you invest, you should do it yourself.
+	DATAFORM Close your wallet properly.
+	DATAFORM It makes the world go round, spend some.
+	DATAFORM Spending money will bring a fortune, as long as you don't lose your way.
+	DATAFORM Spending money will bring misfortune, be patient for now.
+	DATAFORM You shall find a lost item.
+	DATAFORM Suspect a good prospect.
+	DATAFORM You will succeed.
+	DATAFORM You will not succeed.
+	DATAFORM Seek to accomplish.
+	DATAFORM Do not ask for a reward.
+	DATAFORM Give up.
+	DATAFORM Do whatever you want.
+	DATAFORM Contrarian investing is also fun.
+	DATAFORM Invest it on knowledge.
+	DATAFORM Bargain shall bring a misfortune.
+	DATAFORM Bargain shall bring a fortune.
+	DATAFORM Lost item shall bring a misfortune.
+	DATAFORM Lost item shall bring a fortune.
+	DATAFORM Take one day off.
+	DATAFORM Pay attention.
+	DATAFORM Suspicion is the only way to talk.
+	DATAFORM Suspicious story shall bring a misfortune.
+	DATAFORM Well... Good luck I guess.
+	DATAFORM Don't be arrogant.
+	DATAFORM Take care of the family jewels.
+ENDDATA
+
+PRINTFORM 　%"Health: ",PADDING%
+PRINTDATAW LOCAL:2
+	DATAFORM Go to bed early.
+	DATAFORM Staying up late can work as encouragement at times.
+	DATAFORM The early bird gets the worm.
+	DATAFORM If you wake up early, you might get some bad news.
+	DATAFORM Pay attention to your pinky toe.
+	DATAFORM Watch out for desk corners.
+	DATAFORM Watch your head.
+	DATAFORM Watch your step.
+	DATAFORM Pay attention to your front.
+	DATAFORM Pay attention to your back.
+	DATAFORM Pay attention to your left and right.
+	DATAFORM Pay attention to the east.
+	DATAFORM Pay attention to the west.
+	DATAFORM Pay attention to the north.
+	DATAFORM Pay attention to the south.
+	DATAFORM Pay attention to what's right in front of you.
+	DATAFORM Pay attention to something that may jump out suddenly.
+	DATAFORM Eating will cause trouble.
+	DATAFORM Food is the source of all health.
+	DATAFORM Good wine makes good blood.
+	DATAFORM Alcohol is a poison.
+	DATAFORM You should keep drinking, and drinking, and drinking.
+	DATAFORM Drinking and binging are different.
+	DATAFORM What will be will be.
+	DATAFORM What will be will not.
+	DATAFORM What may be will not.
+	DATAFORM What will not be may not.
+	DATAFORM No problem.
+	DATAFORM Problems may arise if neglected.
+	DATAFORM Watch out in bloodshed.
+	DATAFORM Something unexpected may destroy the body.
+	DATAFORM Something unexpected may help the body.
+	DATAFORM Never throw away hope.
+	DATAFORM Absurdity opens new doors.
+	DATAFORM Rest without overexerting yourself.
+	DATAFORM Don't scavenge for food.
+	DATAFORM Don't concern yourself with food.
+	DATAFORM Eat what's presented to you.
+	DATAFORM Don't eat what's presented to you.
+	DATAFORM Everyday training is indispensable.
+	DATAFORM Excessive training ruins the body.
+	DATAFORM Not enough Kung Fu.
+	DATAFORM Kung Fu is sufficient.
+ENDDATA
+
+PRINTFORM 　%"Love: ",PADDING%
+PRINTDATAW LOCAL:3
+	DATAFORM Push through the path you believe in.
+	DATAFORM Pushing through the path you believe in might sever love forever, cutting off all hope.
+	DATAFORM Now is not the time.
+	DATAFORM Now is the time.
+	DATAFORM Some day soon.
+	DATAFORM Will be popular with those of the same sex.
+	DATAFORM Will be popular with those of the opposite sex.
+	DATAFORM Just press on.
+	DATAFORM Haste makes waste.
+	DATAFORM Your heart will shatter.
+	DATAFORM Your heart will be crushed.
+	DATAFORM Pull in.
+	DATAFORM Push it.
+	DATAFORM Won't happen, look for a new love instead.
+	DATAFORM A farewell is just the beginning of a new encounter.
+	DATAFORM An encounter is just the beginning of a new farewell.
+	DATAFORM Love may ripen before you notice.
+	DATAFORM Give up.
+	DATAFORM Make a fresh start.
+	DATAFORM Well... Do your best I suppose.
+	DATAFORM Come spring.
+	DATAFORM Come summer.
+	DATAFORM Come autumn.
+	DATAFORM Come winter.
+	DATAFORM A new spring comes.
+	DATAFORM Make good use of goodwill.
+	DATAFORM Do not exploit goodwill.
+	DATAFORM Drop all the pretense and speak frankly.
+	DATAFORM Don't search for true intentions.
+	DATAFORM If you drop all the pretense you'll be dropped yourself.
+	DATAFORM If it doesn't rain, the ground hardens.
+	DATAFORM Rain falls and the ground softens.
+	DATAFORM This love is only an illusion, face reality.
+	DATAFORM This love is only two-dimensional, come back to the third dimension.
+	DATAFORM It's just an egg.
+	DATAFORM It's just a chick.
+	DATAFORM You must be cautions the most when leaving the nest.
+	DATAFORM Bird that leaves the nest shall break it.
+	DATAFORM Bird that leaves the nest returns eventually.
+	DATAFORM Convey your feelings.
+	DATAFORM Hide your feelings.
+	DATAFORM Do not share your feelings.
+	DATAFORM Distort your feelings.
+	DATAFORM Love exceeds the race differences.
+	DATAFORM Race difference is a big wall.
+	DATAFORM Desire exceeds reason.
+	DATAFORM Reason exceeds desire.
+	DATAFORM Love dissolves reason.
+	DATAFORM Reason suppresses love.
+	DATAFORM Greed alters love.
+	DATAFORM Love clears greed.
+	DATAFORM Love and greed join hands, let your desire go wild.
+	DATAFORM It's good to satisfy your partner.
+	DATAFORM It's good to suppress your partner.
+	DATAFORM It's good to suppress yourself.
+	DATAFORM Satisfy yourself as it shall bring the good fortune.
+	DATAFORM Leave it to your partner.
+	DATAFORM Mind shall influence the body.
+	DATAFORM Body shall influence the mind.
+	DATAFORM Lust as you go.
+	DATAFORM Lust is a source of disaster.
+ENDDATA
+
+PRINTFORM 　%"Travel: ",PADDING%
+PRINTDATAW LOCAL:4
+	DATAFORM Go for a trip to extend your knowledge.
+	DATAFORM Staying at home shall bring a good fortune.
+	DATAFORM Village shall bring a misfortune.
+	DATAFORM Village shall bring a good fortune.
+	DATAFORM Old ruins will bring a good fortune.
+	DATAFORM Don't approach the old ruins.
+	DATAFORM Temple is filled with good atmosphere.
+	DATAFORM Air is stagnant in a temple.
+	DATAFORM Fog clouds hard.
+	DATAFORM Fog clears up.
+	DATAFORM Staying at Scarlet Mansion shall bring a good dream.
+	DATAFORM Staying at Scarlet Mansion shall bring a nightmare.
+	DATAFORM Light is ahead of the bamboo forest.
+	DATAFORM You will lose your way in bamboo forest.
+	DATAFORM Going to the forest shall bring nourishment.
+	DATAFORM Going to the forest shall bring a disaster.
+	DATAFORM Netherworld shall bring a good fortune.
+	DATAFORM You're not invited to the Netherworld.
+	DATAFORM Facing the Mountain shall bring a good fortune.
+	DATAFORM Avoiding the Mountain shall bring a good fortune.
+	DATAFORM Mountain summit shall have a good weather.
+	DATAFORM Mountain summit shall have a bad weather.
+	DATAFORM Underworld shall be peaceful.
+	DATAFORM Underworld shall be disturbed.
+	DATAFORM If you have a plan, do not worry.
+	DATAFORM Going to the skies shall bring a good fortune.
+	DATAFORM If you think beforehand, it's good to go.
+	DATAFORM You will be in a disaster, but you will survive.
+	DATAFORM It's okay even if you don't have a plan.
+ENDDATA
+
+PRINTFORM 　%"Comment: ",PADDING%
+PRINTDATAW LOCAL:99
+	DATAFORM Hit it, just once more.
+	DATAFORM Yes, again.
+	DATAFORM Come back in a week, then I'll show you real Omikuji
+	DATAFORM If you find out it was right, come again tomorrow for more.
+	DATAFORM Believe it or don't believe it, it's up to you.
+	DATAFORM Those who believe will be saved.
+	DATAFORM If you're dissatisfied with the results, please come back again tomorrow.
+	DATAFORM Behind y... (The sentence breaks off here)
+	DATAFORM Please donate right now to get rid of misfortune!
+	DATAFORM It's necessary to lighten your heart sometimes.
+	DATAFORM Just bury your thoughts until the right time comes.
+	DATAFORM Gensokyo, ooh Gensokyo Gensokyo...
+	DATAFORM When you read this Omikuji, am I still in this world?
+	DATAFORM Gimme more.
+	DATAFORM By the way, the offertory box at the shrine is too empty.
+	DATAFORM ｂのｆぱいえんｖｈちおｒ，ｃ２ｍ０んｆｈぁ４；ｌ (Something was written that refuses to be understood)
+	DATAFORM Winning is caused by fortune, losing is caused by fortune.
+	DATAFORM ↑↑↓↓←→←→ Bomb Shot (Pichun～)
+	DATAFORM Are you making progress?
+	DATAFORM You're not making progress.
+ENDDATA
+
+;確認用。それぞれ何番目のが取られたかコンソールに記録
+;DEBUGPRINTFORML FORTUNE:{LOCAL:0, 2}, {LOCAL:1, 2}, {LOCAL:2, 2}, {LOCAL:3, 2}, {LOCAL:4, 2}, {LOCAL:99, 2}
+
+;現状は表示のみ
+;くじの結果に応じて何らかのアクションを起こすならこちらを埋めてください
+;各項目のn-1行目が各変数に格納されています
+
+SELECTCASE LOCAL:0
+	CASE 0,19
+		TFLAG:幸運補正 = 5
+	CASE 13 TO 15
+		TFLAG:幸運補正 = 2
+		TFLAG:耳補正 = LOCAL:0 - 11
+	CASE 1 TO 3, 16, 17
+		TFLAG:幸運補正 = 3
+	CASE 4 TO 6
+		TFLAG:幸運補正 = 1
+	CASE 7 TO 10
+		TFLAG:幸運補正 = -3
+	CASE 11,18
+		TFLAG:幸運補正 = -5
+	CASEELSE
+ENDSELECT
+
+SELECTCASE LOCAL:1
+CASEELSE
+ENDSELECT
+
+SELECTCASE LOCAL:2
+CASEELSE
+ENDSELECT
+
+SELECTCASE LOCAL:3
+CASEELSE
+ENDSELECT
+
+SELECTCASE LOCAL:4
+CASEELSE
+ENDSELECT
+
+SELECTCASE LOCAL:99
+	;当たったのでもう一枚（次のおみくじを引いたときにキャッシュバック）
+	;ただし、定期契約中であればキャッシュバックはなし（処理が面倒なので）
+	CASE 0 TO 2
+		SIF !FLAG:おみくじ契約
+			SETBIT FLAG:999, 10
+CASEELSE
+ENDSELECT
+
+RETURN 0
+

@@ -1,0 +1,117 @@
+﻿Com_Stuff branch: When you need to significantly alter an action or add a new one
+BASED ON QOL BRANCH, NOT TRANSLATION!
+
+Edits:
+@Item.csv
+	Makes アナルビーズ buyable
+@Train.csv
+	Makes オナホール, アナルビーズ actions available
+	Add tflag for hug timeout (Hug_Timeout @@Tcvar.csv)
+	
+@COMF65 騎乗位.ERB, @COMF66 騎乗位アナル.ERB, @COMF310 尻を撫でる.ERB, @COMF330 スカートをめくる.ERB
+	Hostility reductions (@EVENT_MESSAGE_COM_セクハラ.ERB extra descriptions)
+	Removed hostile reactions if you've ever kissed/banged previously at that point
+	
+@COMF99 オナホコキ.ERB, @TR_REPLACEMENT.ERB (description part), @COMABLE2.ERB
+	New action: 99, Onaholejob (オナホコキ @Train.csv)
+	OPTION_COM_FILTER.ERB - Added onaholejob to Service filter
+	
+@COMF613 お金稼ぎする.ERB, @EVENT_MESSAGE_COM500.ERB
+	Added お金稼ぎする back (@Train.csv)
+
+;@COMF626 土産屋.ERB
+	--Edited to have twice as much items in the list (further increases will crash the game, watch out)
+		++Removed since original now applies a flag that does it during sales? 市場の神 flag
+		++Edited back to have 10 items by default, 20 when the flag activates (+made the event guaranteed when rainbow appears in Addition)
+	
+@COMF305 膝枕してもらう.ERB, @COMF311 抱き付く.ERB
+	Buffs to make more potent w/ time out
+	
+@COMF364 豆まき.ERB
+	Add Seija to the list of beanables
+	
+@COMF445 採集する.ERB
+	Shorten the time needed for foraging based on skill
+	Add Target's foraging skill to calculation, influencing the likelihood of them joining in with you like with fishing
+	
+@ITEMDATA.ERB, @COMF43 オナホール.ERB, @COMF46 アナルビーズ.ERB, @USERCOM_コマンド表示処理.ERB, @SOURCE_射精確定後処理.ERB
+	Add Anal Beads to buyables, make onahole&anal beads attachable with clothes, change Give Handjob command name when onahole equipped, make cum go inside onahole when it's equipped
+
+@COMF124 手淫する.ERB, @COMF125 愛撫させる.ERB
+	Fix pleasure calculation, make player's abilities count
+
+@COMABLE2.ERB
+	Allow [Sexual Harassment] (making out) commands in the bath area during time stop without initiating sex
+	Further let you kiss anywhere, public bath spots included (so dumb)
+
+Lesbian/Futa command adjustments
+	@COMF121 貝あわせ.ERB - tribadism, allow futa, cause both actors to ejaculate
+	@COMF126 乳の揉み合い.ERB - breast press, allow futa, remove lesbianism check
+	@COMF130 正常位される.ERB, COMF131 後背位される.ERB, COMF132 対面座位される.ERB, COMF133 背面座位される.ERB, COMF64 逆レイプ.ERB - receiving v sex, remove unneeded and wrong target's penis size checks, replace with body size check; allow strapon usage, add sadism gain when player is in pain (pain processing for player isn't supported, so), disallow if target wears onahole, allow while wearing apron
+	@COMF92 Ａ正常位される.ERB, @COMF93 Ａ後背位される.ERB, @COMF94 Ａ騎乗位する.ERB - add sadism gain when player is in pain like the above
+	@SOURCE_POSE.ERB - get cunnilingus, tribadism and breast press interrupt sex
+	
+@Com_Stuff.ERB 
+	Com_MobRaceSelect, @COMF444 女の子を物色.ERB - Allow selection of a desired race for random girls when available
+	Com_Mast - Expand masturbation a little, allow jerking off on sleeping girls
+	Com_DateRando - When hunting girls outside of home, ask whether to bring them on a date to your home location, or date on the spot (behavior from usercom.erb invite on a date and invite to)
+	Com_Eat - Eating in private, eating during Time Stop - @COMF413 料理を作る.ERB, @COMF414 食事を取る.ERB, USERCOM_コマンド表示処理.ERB - name tweaks
+	Com_Food_Check - Girls will check if they like the food first before gobbling it up (option) - @ボッシュート.ERB, @COMF414 食事を取る.ERB, @COMF415 食事をふるまう.ERB
+	Com_Put_On_Condom - Allow putting condoms on target - @COMF50 ゴム装着.ERB, Specify when you're taking off condoms - USERCOM_コマンド表示処理.ERB, Show current status and current cum in condoms - INFO.ERB
+	Com_Target_Condom - Condom cumming messages for the target - EVENT_MESSAGE_ORGASM.ERB, tweak a line to allow automatic condom equip on target - SOURCE_射精確定後処理.ERB
+	Com_Semen_Drink - Expand [Drink Semen] command, based on SQN/Akuma Maid, allow it anytime there's semen in the condom, but checks are a bit strict, allow drinking semen yourself - COMF89 ゴム精飲.ERB, rename action - STR.ERB
+	Com_DrinkSemenDescr - New descriptions for drinking semen - TR_REPLACEMENT.ERB
+	
+@COMF444 女の子を物色.ERB
+	Fix crash when trying to hunt outside of home, ask where to date them - at your home location or there and then when outside, fixes to remove trailing date flag
+
+@COMF192 排卵誘発剤.ERB
+	Allow using ovulation drug on anybody regardless of consent or consciousness, but the check is harsh, also still can't use it during TS; It's also disabled if target is already on a pill
+
+@COMF3 指挿れ
+	Fixed to apply pain on virgins properly
+	
+@SCOMF15 アナルＧスポット刺激
+	Fix "tease vagina from the back" to apply V pleasure, female only command now
+
+@COMF350 押し倒す.ERB
+	Set appropriate flag for ufufu rejection for dialogue (so 2hus won't complain about it being on public first, and will say a line about not being in the mood, then apply the rest of the checks)
+
+@COMF444 女の子を物色.ERB
+	Kick the player out if you spent too much time hunting girls past the available time
+	
+@SOURCE_CALLCOM.ERB, @USERCOM_コマンド表示処理.ERB
+	Further tweak [Continue Kissing] for making out so it doesn't activate if previous kiss failed
+	
+@COMF447 露店を開く.ERB
+	Buffed selling price for certain low price items
+	
+COMF626 土産屋.ERB, COMF631 紅魔カジノ.ERB, COMF444 女の子を物色.ERB, COMF620 鈴奈庵.ERB
+	Comable tweak so that you can't use the action if you're currently fucking/sleeping, etc
+	
+@Com_PregPrayer, DAIRY_EV11 子宝祈願.ERB, DAIRY_EV21 Mercy_of _God.ERB, COMF421 願掛け.ERB, EVENT_MESSAGE_COM400.ERB
+	Add pregnancy prayer description, notify about current status and progression
+	
+COMF96 パイズリする.ERB
+	Fix Give Paizuri to allow it for all female players and not just futa
+	
+COMF50 ゴム装着.ERB
+	Remove favor processing to prevent favor farm exploit (as it doesn't give any source, therefore no exhaustion and only takes 5 minutes)
+	
+@守矢くじ.ERB
+	Fix Moriya date crash on outside maps, add nosleep and delay timer to it
+	
+@SCOMF63 もっとキスする.ERB
+	Tweak Kiss More behavior for TSP
+	
+@TRACHECK_好感度上昇処理
+	Disabled code that prevented you from getting favor penalty from bad reactions
+	
+TRACHECK_刻印取得
+	Made it harder to get hate mark lv3, increased the values needed for previous levels too (similar to classic trainer games or tohoJ)
+	
+COMF450 酒虫の様子を見る
+	Added explanation to grayed out options for making sake, instead of just hiding options
+	
+CCOMF41_正常位Ｖおねだり, CCOMF43_後背位Vおねだり, CCOMF44_後背位Ａおねだり, CCOMF85_騎乗位, CCOMF87_騎乗位Ａ
+	Applied Forbidden Knowledge/Exp check from regular actions to counter intercourse so that they could still initiate it if you're too big

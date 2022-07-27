@@ -1,0 +1,1364 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;愛撫系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;0,愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_0
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_0_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_0_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;original code, mostly from J
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF !FLAG:70 && LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;合意
+		IF TALENT:恋慕
+			PRINTFORMDW You caress Reisen's entire body with care and affection.
+			PRINTFORMDW %HIS_HER(TARGET, 1)% smooth snow-white skin is extremely sensitive, and %HE_SHE(TARGET)% keeps letting out gasps with some sensual moans mixed in-between.
+			IF !TALENT:妊娠 && CFLAG:K52EN_ABS
+				PRINTFORML
+				PRINTFORMDW But you must say, Reisen has a surprisingly rugged body for someone so meek.
+				SIF IS_FEMALE(TARGET)
+					PRINTFORMDW Creating a sharp contrast with her feminine soft chest and smooth skin, these muscles look a little out of place.
+				PRINTFORMDW %HIS_HER(TARGET, 1)% firm belly, visible and toned abs, solid arms... %HE_SHE(TARGET,1)% was definitely physically active in the past.
+				SIF IS_FEMALE(TARGET)
+					PRINTFORMW 「Ah... That's probably not something a girl should have... ehehe...」
+				PRINTFORML
+			ENDIF
+			PRINTFORMDW As your fingers happen to come in contact with %HIS_HER(TARGET)% nipples or genitals, %HIS_HER(TARGET)% breathing becomes even heavier.
+			PRINTFORMDW Feeling how %HIS_HER(TARGET)% reactions stir the sadist in you, you make sure to keep attacking %HIS_HER(TARGET)% tender spots without mercy.
+			PRINTFORMW 「Noooooo... Haaauhhhnnn, hhiiiiiuuuuuuu...!!!」
+		ELSE
+			PRINTFORMDW As your fingers keep crawling on %HIS_HER(TARGET)% skin, Reisen trembles, grimacing with clear disgust.
+			PRINTFORMW 「Nooo...! This doesn't feel good at aaaall...!」
+			IF !TALENT:妊娠 && K52EN_ABS
+				PRINTFORML
+				PRINTFORMDW But you must say, Reisen has a surprisingly rugged body for someone so meek.
+				SIF IS_FEMALE(TARGET)
+					PRINTFORMDW Creating a sharp contrast with her feminine soft chest and smooth skin, these muscles look a little out of place.
+				PRINTFORMDW %HIS_HER(TARGET, 1)% firm belly, visible and toned abs, solid arms... %HE_SHE(TARGET,1)% was definitely physically active in the past.
+				PRINTFORMW 「Nhoooo...! Don't squeeze my belly like that... Stop it, don't...!」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入中
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;V挿入
+	IF LOCAL:1 && TEQUIP:50 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			IF FLAG:70
+				PRINTFORMDW Treating Reisen's body as a toy, you %FSYN("shoot")% your seed deep inside her as the time stop keeps her still.
+			ELSEIF TALENT:恋人
+				PRINTFORML 
+				PRINTFORMW 「Ah, aaaaaghhhhnnn! Let it out!!! %CAPITALIZE(FSYN("pour"))% it inside, fill me, fill me to the brim, quiiiick!」
+				PRINTFORMDW Reisen begs and pesters you while clenching around the bulge pushing all the way deep in her %FSYN("belly")%.
+				PRINTFORMDW Her body twists violently whenever you flick her nipples or squeeze her clit.
+				PRINTFORMDW %BREAKENG(@"As you go beyond your limit, you embrace her tightly and %FSYN("spurt")% your load in her eagerly awaiting womb, filling it up with the %SEMEN()% it so deeply craves in no time.")%
+				PRINTFORMW 「%MOAN()%! It's coming... It's coming iiiiiiiinnn!」
+				PRINTFORMDW Feeling utterly overjoyed as a woman, Reisen's face goes slack as she %FSYN("smile:s")% at you.
+			ELSEIF TALENT:恋慕
+				PRINTFORML 
+				PRINTFORMDW You flick Reisen's clit and nipples while %FSYN("thrust:ing")% your %TINKO()% all the way to her womb over and over again.
+				PRINTFORMW 「～～～～%UNICODE(0x2665)%!!!」
+				PRINTFORMDW She covers her mouth, trying suppress her squeals.
+				PRINTFORMDW However Reisen can't resist letting out moans like "%MOAN(,,2,"heart")%!" every time you move your fingers.
+				PRINTFORMDW Her reactions seem all fun and games, but it's about time to finish her for good.
+				PRINTFORMDW %BREAKENG(@"Pinching her nipples, you ram your raging erection deep inside %FSYN("base")% as far as you can, before releasing all of your pent up desires, %FSYN("fill:ing")% her with your %SEMEN()%.")%
+				PRINTFORMW 「%MOAN("h")%! I looove it! Let it out, let it ouuuuuuut!!!」
+			ELSE
+				PRINTFORML 
+				PRINTFORMW 「This is good! This feels sooooo goooood!」
+				PRINTFORMDW Reisen keeps %FSYN("grind:ing")% her hips, all the while receiving quite proactive caresses from you.
+				PRINTFORMDW Ceasing your caresses for a moment, you hug Reisen closer.
+				PRINTFORMDW And then, you firmly stick your %TINKO()% against her cervix.
+				PRINTFORMW 「%MOAN()%!♪　%CAP_PROCESS("Aaaaaaaaaaaaaaaaaaaaaaaaahhhhnnnnnnnn")%～～～%UNICODE(0x2665)%!!!」
+				PRINTFORMDW Staying like this, you %FSYN("pour")% lots of your %SEMEN()% deep inside Reisen's innermost place, giving her the taste of heaven.
+			ENDIF
+		ELSE
+			IF FLAG:70
+				PRINTFORMDW Treating Reisen's body as a toy, you keep %FSYN("thrust:ing")% your %TINKO()% back and forth, as the time stop keeps her still.
+			ELSEIF TALENT:恋人
+				PRINTFORML 
+				PRINTFORMW 「%MOAN()%, %MOAN("m")%... It's no good, when you caress me as you keep %FSYN("thrust:ing")% it in, I...」
+				PRINTFORMDW Letting out her sweet squeals and moans, Reisen submits her entire body to you.
+				PRINTFORMDW She continues gasping as relentless caresses assail her body.
+				PRINTFORMDW This causes her to %FSYN("clamp")% down on your %TINKO()% every time she convulses from the sensation.
+			ELSEIF TALENT:恋慕
+				PRINTFORML 
+				PRINTFORMW 「Well? How's my bo--... %MOAN()%?! ...b-body... Is it to your liking?」
+				PRINTFORMDW Tears slowly gather in the corners of her eyes as Reisen tries to read your expression.
+				PRINTFORMDW %BREAKENG(@"Her gaze was fixed solely on you, despite getting %FVERB("ed")% by your %TINKO()%, and having her body treated as a plaything for your own enjoyment.")%
+			ELSE
+				PRINTFORML 
+				PRINTFORMW 「Aaahhnnn, %MOAN(,1)%... %MOAN("m")%! Right theeeere! That's the spoooot!」
+				PRINTFORMDW The combined effort from both caresses and mating causes Reisen to %FSYN("twitch")% uncontrollably.
+				PRINTFORMDW %BREAKENG(@"Brushing her hair aside and taking a look at her face, Reisen stares back at you, her expression clearly suggesting that it feels out of this world for her.")%
+			ENDIF
+		ENDIF
+		IF !TALENT:妊娠 && CFLAG:K52EN_ABS
+			PRINTFORML
+			PRINTFORMDW %BREAKENG(@"You enjoy seeing the shape of your bulge on %HIS_HER(TARGET)% toned belly, filling you with deep sense of accomplishment after dominating someone so strong-looking.")%
+		ENDIF
+		RETURN 1
+	;A挿入
+	ELSEIF LOCAL:1 && TEQUIP:51 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;ふたなり
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && (TALENT:2 & 3) == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMDW As Reisen's body stays frozen in time, you're able to play with it as much as you please.
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋人
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORMW 「%MOAN()%! You're touching me in such %ARTICLE(FSYN("lewd"))% way... %MOAN()%!」
+				PRINTFORMDW Reisen obediently accepts your advances, letting your hands run all over %HIS_HER(TARGET)% body.
+				PRINTFORMDW Touching and feeling %HIS_HER(TARGET)% snow-white skin is something you just can't get enough of.
+			CASE 1
+				PRINTFORML 
+				PRINTFORMW 「%MOAN()%! More, keep going! %CAPITALIZE(FSYN("rub"))% me some moreeee!」
+				PRINTFORMDW Reisen finds %HIMSELF_HERSELF(TARGET)% desperately clinging to your arm that keeps giving %HIS_HER(TARGET)% body so much pleasure.
+				PRINTFORMDW %HE_SHE(TARGET, 1)% squeezes it tightly, but you don't relent.
+		ENDSELECT
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORMW 「It makes me feel so tranquil... when you touch me like this.」
+				PRINTFORMDW Blushing, Reisen shows you a graceful smile.
+			CASE 1
+				PRINTFORML 
+				PRINTFORMW 「...Uh! ...Mmm!!!」
+				PRINTFORMDW Reisen desperately tries to prevent %HIS_HER(TARGET)% voice from escaping.
+				PRINTFORMDW %HE_SHE(TARGET, 1)% stares at you, tears welling in %HIS_HER(TARGET)% eyes.
+		ENDSELECT
+	ELSEIF TALENT:思慕
+		PRINTFORML 
+		PRINTFORMW 「How do you like my body? Is it pleasing you well...? %MOAN()%!」
+		PRINTFORMDW Reisen seemed to be concerned about you even more than %HIMSELF_HERSELF(TARGET)%.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「Your hands... sure are warm...」
+		PRINTFORMDW Flushing, Reisen holds your hand, rubbing the back of it against %HIS_HER(TARGET)% cheek.
+	ENDIF
+	IF !TALENT:妊娠 && CFLAG:K52EN_ABS
+		PRINTFORML
+		PRINTFORMDW %BREAKENG(@"As you caress Reisen's erogenous zones, you also make sure to caress %HIS_HER(TARGET)% muscular %FSYN("belly")%, tracing %HIS_HER(TARGET)% firm abs, enjoying their feel on your skin.")%
+		PRINTFORMW 「%MOAN(,,4, TALENT:恋慕 ? "heart:name" # "" )%...」
+		PRINTFORMW 「You sure like my belly, huh... I hope it's not too... off-putting... %MOAN()%!」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;1,クンニ
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_1
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_1_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_1_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;original code, mostly from J
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF !FLAG:70 && LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;合意
+		IF TALENT:恋慕
+			PRINTFORMW 「Are you going to lick me? A-All right then, treat yourself.」
+			PRINTFORMDW Reisen timidly spreads her legs, welcoming you in.
+			PRINTFORMDW %BREAKENG(@"Without wasting any time, you push your face in her revealed entrance, licking off her nectar of sweat and pussy juice glistening on her petals like pearls.")%
+			PRINTFORMW 「Hauuuhnn...! It felt so electric... Hey, try licking it a bit more...」
+			PRINTFORMDW This time you use your entire tongue without holding back.
+			PRINTFORMDW Her inner thighs immediately become stiff as she raises her voice, letting out sexy squeals.
+		ELSE
+			PRINTFORMW 「No, wait, don't touch me there... It stinks, so please don't lick it... Anything but that, I'm telling you, stoooop...!」
+			PRINTFORMDW Despite Reisen's firm refusal, a sweet moan ends up escaping her lips every time you lick her pussy.
+			PRINTFORMDW Your tongue causes an unbearable wave of shuddering pleasure wash over her from all the stimulation running through her body.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;膣内射精直後
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		IF TCVAR:102
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;絶頂した
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && NOWEX:0
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;from J
+	;恋慕+C感覚Lv5以上
+	IF !FLAG:70 && RAND:2 && TALENT:恋慕 && ABL:Ｃ感覚 >= 5
+		IF RAND:2 == 0
+			PRINTFORMW 「Aaaaaaghhhh... Eeeeekkk...! Your tongue is moving about so very indecently... It's amaziiiiiiing...!」
+			PRINTFORMDW Trying to make it feel even better, Reisen presses your head against her crotch.
+			PRINTFORMDW Savoring her with your entire mouth, you start moving your tongue harder as well.
+			PRINTFORMW 「%MOAN("m")%, getting licked feels so goood...」
+		ELSE
+			PRINTFORMDW %BREAKENG(@"Holding and spreading Reisen's thighs apart while pushing your head in, you let your tongue crawl all over her pearl crowning her puffy lips as the excitement takes over her.")%
+			PRINTFORMW 「It's so embarrassing, yet it's so good... Don't tease me so much though, just do it harder please...」
+			PRINTFORMDW Reisen bites her fist and her ears jump up from excitement, as she implores you to touch her further.
+			PRINTFORMDW Taking up on her offer, you circle around her pearl with your tongue and bite it playfully.
+			PRINTFORMDW As much as she tries to stay quiet, Reisen ends up losing her mind from such a fierce attack and lets out a loud shriek.
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「%MOAN()%! No, not there, please don't! %MOAN()%...! %MOAN("m")%!!!」
+		PRINTFORMDW Reisen covers her mouth, trying to suppress her moans, while trembling and shivering from the licking sensation assailing her %FSYN("vagina")%.
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「Ah, %SPLIT_G("w-what... do you think... about my:h-how... How is it... My")% %FSYN("vagina")%...? %MOAN()%!」
+		PRINTFORMDW Reisen tries her best to stifle her moans, as you slurp and lick her %FSYN("wet")% %FSYN("vagina")%, overflowing with her %FSYN("juice")%.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「%MOAN(,,2)%...! Aaahhnnn! Not the tongue, not insiii--...」
+		PRINTFORMDW Your tongue finds its way inside Reisen's %FSYN("slit")%, stimulating her favorite upper part of her precious %FSYN("vagina")%.
+	RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;あとは適当な分岐を追加してください
+;==================================================
+;2,フェラする (added, from ym)
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_2
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_2_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_2_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF !FLAG:70 && LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;恋慕
+		IF (TALENT:恋人 || TALENT:恋慕)
+			PRINTFORMW 「Eh?! Are you really l-licking it--... Hyaahn!」
+			PRINTFORMDW Stimulated by the pleasure %HE_SHE(TARGET)% had not experienced yet, Reisen keeps moaning, unable to bear it.
+			PRINTFORMDW You swallow %HIS_HER(TARGET)% dick very deeply, plastering pleasure all over %HIM_HER(TARGET)%.
+		;それ以外
+		ELSE
+			PRINTFORMW 「You say you're going to lick it, what do you mea--...」
+			PRINTFORMDW %BREAKENG(@"Reisen is still being oblivious to the situation unfolding before %HIM_HER(TARGET)% as you approach closer and swallow %HIS_HER(TARGET)% throbbing cock.")%
+			PRINTFORMW 「Wha-- What do you think you're doing?! Stop iiittt!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「%MOAN()%...! %MOAN("m")%♪ %MOAN()%, please let me return the favor later, okay?」
+		RETURN 1
+	;屈服3
+	ELSEIF ABL:Ｃ感覚 >= 3  || MARK:不埒刻印 == 3
+		PRINTFORMW 「%MOAN()%, hauuu! %MOAN("l:m")%!」
+		PRINTFORMW （This is baaad, even though I mustn't be affected by it, it's... urk!）
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 「No, nooo... Anything but this, noooo...」
+		PRINTFORMDW As you put Reisen's %TINKO(TARGET)% in your mouth, %HIS_HER(TARGET)% body stiffens with pleasure and fear.
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;3,指挿入れ
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_3
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_3_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_3_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	CALL K52_FIRSTFINGERING
+	SIF RESULT
+		RETURN RESULT
+		
+	;from J
+	IF !FLAG:70 && RAND:2 && TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+		PRINTFORMW 「Haaaauuuuughh... %MOAN("m")%, hiiiuuuuuuuuughhhh...!」
+		PRINTFORMDW With squishy-squelchy sounds, you easily stir and move about in Reisen's now supple and stretchable developed %FSYN("vagina")%.
+		PRINTFORMDW %BREAKENG(@"Loud and indecent splashing arouses the feeling of shame in her, as the pleasure ransacking her experienced pussy causes her to raise her voice and let out squeals almost nonstop.")%
+		PRINTFORMDW %BREAKENG(@"Her body occasionally shudders uncontrollably, with spit and drool escaping her mouth, her perky chest jiggling like a jelly, beads of sweat slowly trickling down her skin.")%
+		PRINTFORMDW At this point she seems completely infatuated by the pleasure assailing her vagina, unable to spare a thought for anything else.
+		PRINTFORMW 「%MOAN("h",4,2)%...!!!」
+		RETURN 1
+	ENDIF
+	
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋人
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORMW 「Once you're inside, %SPLIT_G("feel free to:don't hold back and")% %FSYN("stir")% it as you please, okay?」
+				PRINTFORMDW There's no need for her to even mention it, as already you %FSYN("insert")% your middle finger inside her %FSYN("slit")% and start moving.
+			CASE 1
+				PRINTFORML 
+				PRINTFORMW 「%MOAN()%, aaahnn! Oh yes! Right there! That spot feels great!」
+				PRINTFORMDW Using your fingernail to stimulate her favorite upper spot aplenty, she loses herself in satisfaction while squirting lots of her %FSYN("juice")%.
+				PRINTFORMDW Reisen's warm walls give a tight squeeze to your middle finger every time you happen to hit her sweet spot.
+		ENDSELECT
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「%MOAN()%! %MOAN()%...!」
+		PRINTFORMDW Suppressing her moans, Reisen clings to your arm in a loving embrace.
+		PRINTFORMDW Her warm breath gently tickles your neck, as you feel her heart beating faster and faster through her chest almost directly.
+	ELSEIF TALENT:思慕
+		PRINTFORML 
+		PRINTFORMW 「%MOAN()%, uuuuhhnnn! T-That spot... Try *scratching* it...」
+		PRINTFORMDW As you scratch the insides just as told, Reisen's ears immediately stand up as she closes her eyes, hard.
+		PRINTFORMDW Her %FSYN("vagina")% produces an awful lot of her %FSYN("juice")%, %FSYN("drench:ing")% your hand wet to the bone.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「%MOAN()%, nghhhaaaaa! This is... way different... when I do it by myself...!」
+		PRINTFORMDW Reisen shows you quite a pleasant reaction as you %FSYN("insert")% your fingers as deep as possible inside her sensitive %FSYN("vagina")%.
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;4,アナル舐め
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_4
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_4_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_4_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;5,アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_5
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_5_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_5_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;original code, mostly from J
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF !FLAG:70 && LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;合意
+		IF TALENT:恋慕
+			PRINTFORMW 「Eeepp! No, that's the wrong hole, it's my butthole... Eh, you're not making a mistake?」
+			PRINTFORMW 「No, you're wrong, about a whole lot of things at that! You can't just play with my butthole of all things, it's filthy!」
+			PRINTFORMDW %BREAKENG(@"Poking %HIS_HER(TARGET)% lovely pink-colored puckered entrance, you merely press your finger in the center of %HIS_HER(TARGET)% wrinkles and it makes Reisen shudder already.")%
+			PRINTFORMDW Letting out a silly yelp, %HE_SHE(TARGET)% stands up and makes a run for it.
+			PRINTFORMDW %BREAKENG(@"But being confined in a narrow space, you easily recapture your lovely prey and press your fingers against %HIS_HER(TARGET)% anus once again, the one that stayed dormant between %HIS_HER(TARGET)% peachy buttocks for a bit too long, as you try fingering it.")%
+			PRINTFORMDW The unknown sensation assailing %HIS_HER(TARGET)% tainted place from all the teasing causes %HIM_HER(TARGET)% to let out a bewildered shriek.
+			PRINTFORMW 「Pleaseeee, not my ass, do you have any idea just how many germs there are...」
+			PRINTFORMW 「Eeeeekkkk...! No, don't thrust your fingers... Hauuuu...! Don't stick them in there, nooooo!」
+		ELSE
+			PRINTFORMW 「Ouch, that's my butt actually... That makes you even worse if you knew what you were doing!」
+			PRINTFORMDW As you tease Reisen's butthole with your fingertips, %HE_SHE(TARGET)% groans in pain, calls you names and retreats back.
+			PRINTFORMW 「No, quit it! Please, don't come any closer. I don't wish to participate in your sick perverted fetishes!」
+		ENDIF 
+		RETURN 1
+	ENDIF
+	;from J
+	;恋慕+A感覚Lv5以上
+	IF !FLAG:70 && RAND:2 && TALENT:恋慕 && ABL:Ａ感覚 >= 5
+		PRINTFORMW 「Looks like I can't hope to stop you when it comes to this...」
+		PRINTFORMW 「Ehehe, please go ahead then. Be nice to it.」
+		PRINTFORMDW %BREAKENG(@"Sticking out %HIS_HER(TARGET)% butt just as told, Reisen's face contorts in a perverted grin from the anticipation and excitement of the stimulation that %HIS_HER(TARGET)% excretory organ is about to receive.")%
+		PRINTFORMDW %BREAKENG(@"Without wasting any time, you line up your finger against %HIS_HER(TARGET)% tender pink pucker and start loosening it slightly, stretching the wrinkles.")%
+		PRINTFORMDW Feeling ticklish, Reisen cracks up, seemingly enjoying the sensation.
+		PRINTFORMDW %BREAKENG(@"Finishing the prologue of what's to come, you push your finger in the center, invading %HIS_HER(TARGET)% anus as %HIS_HER(TARGET)% laughing immediately changes into moaning.")%
+		PRINTFORMW 「Aaaahhh, %MOAN("m",1)%! I can feel it, your finger is stirring me inside... Please, rub me some more... %MOAN("m")%!」
+		RETURN 1
+	ENDIF
+	
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;とりま手抜キング
+	;copied over from sexual harassment text
+	ELSEIF ABL:Ａ感覚 > 4
+		PRINTFORML 
+		PRINTFORMW 「%MOAN("m")% Stop it! Doing this... with such a place... Nooo, I don't want it!」
+		PRINTFORMDW Reisen lets out a lovely squeal, as you continue toying with %HIS_HER(TARGET)% developed %SPLIT_G("rear end:back door:back passage")%.
+		PRINTFORMDW %HE_SHE(TARGET,1)% might be denying it, but %HIS_HER(TARGET)% %FSYN("anus")% simply keeps %FSYN("contract:ing")%, as if to show how much it craves for it.
+		PRINTFORMW 「%MOAN("m")%... Nhoooo, shtooop, you caaahnnn't!」
+	ELSEIF ABL:Ａ感覚 > 2
+		PRINTFORML 
+		PRINTFORMW 「Eeeeeppp?! T-That's my buu--! My buuuhhhtt...!」
+		PRINTFORMDW Reisen's %SPLIT_G("rear end:back door:back passage")% gets totally %FSYN("stir:ed")% by your fingers.
+		PRINTFORMDW It seems like %HE_SHE(TARGET)%'s finally starting to take pleasure in it.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「%SPLIT_G(MOAN() + ":" + GROAN())%... Nooo, %SPLIT_G("that's not the right:that's the wrong")%...!」
+		PRINTFORMDW %BREAKENG(@"Although it seems like %HIS_HER(TARGET)% %SPLIT_G("rear end:back door:back passage")% has never been used for the purpose of having pleasure, %HIS_HER(TARGET)% body keeps trembling from every touch.")%
+		PRINTFORMDW Apparently it also might be quite promising, you think to yourself as you keep playing with Reisen's %FSYN("anus")%.
+	ENDIF
+	SIF CFLAG:K52EN_TAIL
+		PRINTFORMDW Meanwhile, %HIS_HER(TARGET)% cute tail flutters with every touch, pleasing the eye.
+ENDIF
+RETURN 1
+
+;==================================================
+;6,胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_6
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_6_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_6_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	CALL K52_FIRSTCHESTCARESS
+	SIF RESULT
+		RETURN RESULT
+		
+	;from J
+	;恋慕+B感覚Lv5以上
+	IF !FLAG:70 && RAND:2 && TALENT:恋慕 && ABL:Ｂ感覚 >= 5
+		PRINTFORMW 「Your tongue, your fingers, all of it feels so gooood...! I love it when you tease my %FSYN("chest")% sooo much...」
+		PRINTFORMDW %BREAKENG(@"Drool escapes from the corners of Reisen's mouth, glittering lewdly, as you tease %HIS_HER(TARGET)% right nipple with your mouth while fingering the other.")%
+		PRINTFORMDW %BREAKENG(@"Seemingly enduring the pleasures of your relentless caresses, %HE_SHE(TARGET)% holds your head tight, firmly pressing it against %HIS_HER(TARGET)% chest.")%
+		RETURN 1
+	ENDIF
+	
+	;基本セット
+	;時姦中
+	IF LOCAL && !FLAG:70
+	;セクハラコマンドの流用、今はとにかく手抜き
+	;almost identical to sexual harassment text
+		IF ABL:Ｂ感覚 > 4
+			PRINTFORML 
+			PRINTFORMW 「%MOAN()%... Aaaah! My %FSYN("chest:non")% feel so good...!」
+			PRINTFORMDW Grabbing Reisen's %FSYN("chest")% with a tight hold, you rub and squeeze forcefully.
+			PRINTFORMW 「%MOAN("h")%!　Oh yeeees! Just like that, I loooove it!」
+			PRINTFORMDW Reisen shows quite an amusing reaction as you flick and twist %HIS_HER(TARGET)% nipples.
+		ELSEIF ABL:Ｂ感覚 > 2
+			PRINTFORML 
+			PRINTFORMW 「...%MOAN(,,2)%!」
+			PRINTFORMDW Reisen jumps a little as you %FSYN("grope")% %HIS_HER(TARGET)% %FSYN("chest")%.
+			PRINTFORMW 「To think you're just touching my chest... yet, it's so... %MOAN()%!」
+			PRINTFORMDW Reisen lets out an excited sigh as %HE_SHE(TARGET)% fixes %HIS_HER(TARGET)% gaze on your face in anticipation of something.
+		ELSE
+			PRINTFORML 
+			PRINTFORMW 「Eek, n... n-no...」
+			PRINTFORMDW %BREAKENG(@"Reisen's expression stiffens as you start %FSYN("grope:ing")% %HIS_HER(TARGET)% soft and squishy %FSYN("chest")%, making %HIS_HER(TARGET)% body %FSYN("tremble")%.")%
+			PRINTFORMW 「Umm, could you please stop...」
+			PRINTFORMDW %HE_SHE(TARGET,1)% stops your arm as %HIS_HER(TARGET)% face turns red.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;7,乳首責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_7
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_7_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_7_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;8,秘貝開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_8
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_8_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_8_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;original code
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF !FLAG:70 && LOCAL:1 && FIRSTTIME(SELECTCOM) 
+		PRINTFORMDW Telling Reisen your intentions, she bites her lip, blushing and shuddering, tears slowly gathering in her eyes.
+		PRINTFORMW 「Ah... Auuuu... I-Is it really necessary...? It's not pretty to look at and it's gross...」
+		PRINTFORMDW You convince her to continue, and Reisen sits with her legs open wide, turning her head away.
+		PRINTFORMDW Bringing your face closer, you take a good look at her vagina.
+		PRINTFORMDW It's what many would consider perfection.
+		PRINTFORMDW A cute pinkish slit with soft, tender-looking skin without a single blemish.
+		PRINTFORMDW Her plump, smooth vulva looks incredibly erotic, with a tiny sensitive bean sticking out on top, which is her clit.
+		PRINTFORMDW Tiny delicate petals, mostly hidden inside, are already glistening with a bit of her nectar just a bit from anticipation.
+		PRINTFORMW 「T-That's just sweat... Uuuuuu...」
+		PRINTFORML
+		PRINTFORMDW You ask her to continue and she obliges, opening it just a little, invitingly parting its lips.
+		PRINTFORMW 「Uuuhh... Do you really have to smell it so much?」
+		PRINTFORMDW She writhes a little, your breath must be feeling ticklish.
+		PRINTFORMW 「Kyaahn! It tickles...」
+		PRINTFORML
+		PRINTFORMDW The faint smell of pee, sweat, and something else, like her intense womanly fragrance wafts from the gaps between her fat, puffy mons.
+		PRINTFORMW 「Ah, please, not out loud! Don't say anything! Geez...」
+		PRINTFORMDW Finally spreading her lips fully, you gaze into her gaping hole.
+		PRINTFORMW 「Aawawa... this way, you can see everything... auuuuuu...」
+		SIF TCVAR:102
+			PRINTFORMDW Your semen escapes outside, staining her lips and butthole as it sloppily oozes down.
+		IF TALENT:処女
+			PRINTFORMDW A fleshy membrane blocks the way - her hymen, a proof of her maidenhood. But having such a big hole in it, you can still view what's beyond.
+			PRINTFORMW 「Aaah, that's... Well, maybe it got a little damaged in the past... S-Sorry...」
+		ENDIF
+		PRINTFORMDW Inside, there are sticky threads of her viscous juice connecting her soft-looking walls.
+		PRINTFORMDW You can see that they're covered with intricate patterns and various bumps, all designed to squeeze a man of his semen...
+		PRINTFORMDW Down just a little further you notice her fabled herring roe nubs surrounding the length where a man's glans would be.
+		PRINTFORMDW It's scary to imagine just how much thought went into this...
+		PRINTFORMDW Finally, you can see the entrance to her most treasured place - her red meaty cervix, squeezing and contracting just from your gaze.
+		PRINTFORMW 「Uuuu... why does this feel like some kind of perverted parody of a gynecologist session...」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「Sure... Please have a look... at my most precious place, okay?」
+		PRINTFORMDW Opening her legs, Reisen stretches open the symbol of a woman, her slit, displaying her vagina.
+		IF TCVAR:102 ;recent creampie
+			PRINTFORMDW Her womanly %FSYN("hole")% that was fed with plenty of %SEMEN()% just recently kept throbbing, demanding even more.
+		ELSE
+			PRINTFORMDW Her womanly %FSYN("hole")% was already %FSYN("leak:ing")% with %FSYN("juice")%, eagerly coveting you.
+		ENDIF
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「Yeah, look at it, look... At my %FSYN("vagina")%...」
+		PRINTFORMDW Reisen's pupils turn into hearts as she spread opens her crotch.
+		IF TCVAR:102
+			PRINTFORMDW Thoroughly inseminated by your seed, Reisen's womanly %FSYN("hole")% seems to be eager to conceive your babies.
+		ELSE
+			PRINTFORMDW %CAPITALIZE(FSYN("leak:ing"))% with a copious amount of her %FSYN("juice")%, her womanly %FSYN("hole")% seems to be burning with desire to get plugged with something soon.
+		ENDIF
+	ELSEIF TALENT:思慕
+		PRINTFORML 
+		PRINTFORMW 「O-Okay... There, take a look... at my...」
+		PRINTFORMDW Showing %ARTICLE(FSYN("lewd"))% %FSYN("smile")%, Reisen reveals the insides of her %FSYN("vagina")%.
+		IF TCVAR:102
+			PRINTFORMDW No longer trapped inside, %SEMEN()% that was %FSYN("ejac:ed")% inside just a while ago gushes out.
+		ELSE
+			PRINTFORMDW Her %FSYN("juice")% seems to be %SPLIT_G("trickling down:escaping outside")% from her glistening %FSYN("labia")%.
+		ENDIF
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「All right... Please go ahead.」
+		PRINTFORMDW Reisen goes red in the face, reluctantly spreading her slit apart.
+		IF TCVAR:102
+			PRINTFORMDW Semen slowly oozes from her pussy lips. For one reason or another, Reisen seems to be a little happy about it.
+		ELSE
+			PRINTFORMDW Her inner walls squelch and contract, looking incredibly hungry.
+		ENDIF
+	ENDIF
+	;added
+	SIF TALENT:処女
+		PRINTFORMDW you can't help but notice her unblemished hymen, twitching from your gaze.
+ENDIF
+RETURN 1
+
+;==================================================
+;9,自慰
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_9
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_9_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_9_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;original code, mostly from J
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF !FLAG:70 && LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「Uuuh... Do you really want to see it so badly?」
+		PRINTFORMW 「A-All right, I get it, so please stop prostrating yourself like that!」
+		PRINTFORML
+		;合意
+		IF TALENT:恋慕
+			PRINTFORMW 「...But still, masturbation is not something you can show to others, you know?」
+			PRINTFORMW 「Yeah-yeah, I know, I'll... show you just a bit, if you insist.」
+			PRINTFORMDW This must be the way Reisen usually does it when %HE_SHE(TARGET)% masturbates.
+			PRINTFORMDW %BREAKENG(@"Lying on %HIS_HER(TARGET)% back, relaxed, %HE_SHE(TARGET)% fondles and teases %HIS_HER(TARGET)% nipples and %PRINT_MALE("penis:labia")% while panting.")%
+			PRINTFORMDW %BREAKENG(@"%HE_SHE(TARGET,1)% glances at you occasionally to check on you, but the excitement gets the best of %HIM_HER(TARGET)%, as %HIS_HER(TARGET)% breathing becomes increasingly labored, %HIS_HER(TARGET)% gasps sounding more and more vulgar.")%
+			PRINTFORMW 「Aagh, geez! How come masturbating in front of someone so lecherous is affecting me so much...?」
+		ELSE
+			PRINTFORMW 「...Still, showing off my masturbation, j-just... w-wh-wh-wh--... what are you thinking, you, you... degenerate!」
+			PRINTFORMDW Reisen refuses to continue any further, with %HIS_HER(TARGET)% face flushing red.
+			PRINTFORMDW %BREAKENG(@"But as you persuade %HIM_HER(TARGET)% once again in a very convincing way, being as timid as %HE_SHE(TARGET)% is, %HE_SHE(TARGET)% jerks and trembles, and then reluctantly...")%
+			PRINTFORMW 「V-Very well, have it your way then... I'll do it... How did it come to this...」
+			PRINTFORMDW %BREAKENG(@"Spreading %HIS_HER(TARGET)% legs wide on the spot, %PRINT_MALE("he grips his exposed penis and begins stroking it:she places her hand on her exposed pubic mound and begins squeezing it")%.")%
+			PRINTFORMDW %HIS_HER(TARGET,1)% face turns even redder from the mixture of disgrace, anger and pleasure.
+			PRINTFORMW 「Letting someone else see how I masturbate... I'm not fit to become a bride anymore...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;from J
+	;恋慕+自慰中毒Lv5以上
+	IF !FLAG:70 && RAND:2 && TALENT:恋慕 && ABL:自慰中毒 >= 5
+		IF RAND:2 == 0
+			PRINTFORMW 「Masturbating feels so good... It's so good, yet... Urk...!」
+			PRINTFORMW 「It'd feel many times better if you decided to join in, you know...? Hiiiiuuuugh...!」
+			PRINTFORMDW %BREAKENG(@"Teasing all the right places with well practiced skill, Reisen grumbles to you, with %HIS_HER(TARGET)% moans interrupting %HIM_HER(TARGET)% every now and then.")%
+			PRINTFORMDW You simply keep shaking your head, pretending to be clueless.
+			PRINTFORMW 「%MOAN("m")%... I want iiit...! Auuuuuhhhnn... I want youuuu...! Aaaaahhhhnnnn! %MOAN("m")%!」
+		ELSE
+			PRINTFORMW 「Look, I've become so drenched just from masturbating while thinking about you... %MOAN()%...! Heeey, let's have sex already...」
+			PRINTFORMDW %BREAKENG(@"Reisen thrashes about, %PRINT_MALE("showing off his fingers coated with his precum:spreading her pussy and showing off her fingers coated with her lewd juices")%, as if trying to seduce you.")%
+			PRINTFORMDW %HIS_HER(TARGET,1)% eyes, clouded with incredible lust, see nothing but you right now.
+			PRINTFORMW 「I love you... I want you so much, I can't stand it any longer...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+	;恋慕
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「Okay, then, make sure to give it a good look, yes?」
+		IF TCVAR:102
+			PRINTFORMDW Fixing her gaze on your face, Reisen %FSYN("insert:s:f")% her finger into her %SPLIT_G(@"properly inseminated:%SEMEN()%-filled")% %FSYN("hole")%.
+		ELSE
+			PRINTFORMDW Fixing her gaze on your face, Reisen %FSYN("start:s")% masturbating furiously.
+		ENDIF
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「Oh, all right... So, then... please watch me, okay?」
+		PRINTFORMDW %BREAKENG(@"Reisen says, placing %HIS_HER(TARGET)% hand on %HIS_HER(TARGET)% %FSYN("chest")% and %PRINT_MALE(@"gripping his %FSYN("penis")%:sliding her finger in her %FSYN("vagina")%")% before proceeding to masturbate furiously.")%
+	ELSEIF TALENT:思慕
+		PRINTFORML 
+		PRINTFORMW 「Very well, if you say so, then...」
+		IF IS_MALE(TARGET) ;malehus
+			PRINTFORMDW Reaching for his %FSYN("penis")%, he caresses his glans and then grips his shaft while moving his hand up and down, gaining more and more speed.
+		ELSE
+			PRINTFORMDW %CAPITALIZE(FSYN("insert:ing:f"))% her middle finger in her %FSYN("vagina")%, she scrapes at her favorite spot in the upper part.
+		ENDIF
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「Ah, sure... Then, without further ado...」
+		PRINTFORMDW Blushing profusely, Reisen %FSYN("start:s")% masturbating, albeit reluctantly.
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+[SKIPSTART]
+;別コマンド化
+;==================================================
+;10,乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_10
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_10_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_10_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;11,乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_11
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_11_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_11_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;12,胸もみ
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_12
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_12_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_12_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	CALL K52_FIRSTCHESTCARESS
+	SIF RESULT
+		RETURN RESULT
+		
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「Feel free to %FSYN("grope")% my %FSYN("chest")% as much as you like... %MOAN()%! %MOAN()%!」
+		PRINTFORMW 
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「I'm kind of confident in my chest if I say so myself, you know?」
+	ELSEIF TALENT:思慕
+		PRINTFORML 
+		PRINTFORMW 「It's bigger than it looks, isn't it? Ufufu.」
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「W-What do you think? They're not as ample as Master's or Junko-san's, but...」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;13,アナル開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_13
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_13_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_13_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;ソフト系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;19,キス（継続）
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_19
+CALL TRAIN_MESSAGE
+;redirect to "keep kissing" from daily interaction
+CALL M_KOJO_MESSAGE_SCOM_K52_63_1
+RETURN RESULT
+
+;==================================================
+;20,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_20
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_20_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_20_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;original code, mostly from J
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF !FLAG:70 && LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;合意
+		IF TALENT:恋慕
+			PRINTFORMDW %BREAKENG(@"Joining Reisen's sleek and glittery lips with yours and savoring their touch well, you eventually start ushering your tongue inside, invading %HIS_HER(TARGET)% mouth.")%
+			PRINTFORMDW Welcoming your tongue richly covered with saliva, %HE_SHE(TARGET)% passionately intertwines your tongues without letting go.
+			PRINTFORMW 「It's the first time I ever had such a vulgar kiss in order to get into a naughty mood, I should say.」
+			PRINTFORMW 「It feels so incredibly lewd, it turns me on even more than just having my chest or my butt felt up.」
+		ELSE
+			PRINTFORMDW Stealing a kiss from a reluctant Reisen against %HIS_HER(TARGET)% will, you force your tongue inside %HIS_HER(TARGET)% mouth and violate it.
+			PRINTFORMW 「Ueeehhh... Nooo, not like this... Stop it, stop it pleaseeeeee...!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋人
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORMW 「%RANDLIPS(,"kiss")%...!」
+				PRINTFORMDW Reisen clings to you as you eagerly lust for %HIS_HER(TARGET)% lips in an aggressive kiss.
+				PRINTFORMW 「%SLUR(CALLNAME:MASTER, -2)%! %CALLNAME:MASTER%...!」
+				PRINTFORMDW Pulling away for a moment, Reisen watches a sticky thread forming between you.
+			CASE 1
+				PRINTFORML 
+				PRINTFORMW 「%RANDLIPS(,"kiss")%...」
+				PRINTFORMDW Reisen gazes at you with the eyes full of desire, as if begging to tease %HIM_HER(TARGET)% even more.
+				PRINTFORMW 「%CALLNAME:MASTER%%UNICODE(0x2665)%」
+				PRINTFORMDW You continue %FSYN("stir:ing")% the insides of %HIS_HER(TARGET)% mouth with your tongue relentlessly while patting %HIS_HER(TARGET)% head.
+		ENDSELECT
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「%FSYN("lips_muffle")%...」
+		PRINTFORMW 「%RANDLIPS(,"kiss")%...」
+		PRINTFORMDW %BREAKENG(@"Reisen presses %HIS_HER(TARGET)% \@ GET_BUSTSIZE(TARGET) >= 0 ? %FSYN("voluptuous") + " "% #\@%FSYN("chest:non",,TARGET)% against your chest and locks %HIS_HER(TARGET)% lips with yours.")%
+		PRINTFORMW 「%FSYN("lips_muffle")%, %TOLOWER(FSYN("lips_muffle"))%, %TOLOWER(FSYN("lips_muffle"))%...! %FSYN("lips_over")%, haah, haah...」
+		PRINTFORMDW Breaking the kiss to catch a breath, Reisen fixes %HIS_HER(TARGET)% gaze on your face with an enthralled expression.
+	ELSEIF TALENT:思慕
+		PRINTFORML 
+		PRINTFORMW 「%RANDLIPS(,"kiss")%...」
+		PRINTFORMDW Holding you closer in an embrace, Reisen desperately seeks out your lips.
+		PRINTFORMDW You intertwine your tongues, vulgarly exchanging the saliva inside your mouths.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「%FSYN("lips_muffle")%?! ...%FSYN("lips_muffle")%...%UNICODE(0x2665)%」
+		PRINTFORMDW After getting pushed down, Reisen obediently lets you enjoy %HIS_HER(TARGET)% lips.
+	RETURN 1
+	ENDIF
+ENDIF
+
+;==================================================
+;21,何もしない
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_21
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_21_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_21_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;original code, mostly from J
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF !FLAG:70 && LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;合意
+		IF TALENT:恋慕
+			PRINTFORMW 「Why would you take a break now of all times, we're just getting started, aren't we?」
+			PRINTFORMDW As you finish resting up a bit, Reisen comes rubbing against you assertively, trying to seduce and arouse you.
+		ELSE
+			PRINTFORMW 「? If you're not willing to continue, then I'd like you to wrap this up already.」
+			PRINTFORMDW Reisen says, bored, as you continue idling.
+		ENDIF 
+		RETURN 1
+	ENDIF
+	
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMDW You simply decide to stare at Reisen's body as %HE_SHE(TARGET)% stays put in frozen time.
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「Are you... not going to do anything?」
+		PRINTFORMDW Reisen stares back at you with a tearful expression.
+		RETURN 1
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Hey now, are you taking a break?」
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 「Is this a... time out?」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;22,誘い受ける
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_22
+;CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_22_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_22_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMDW Beckoning to Reisen to come over, %HIS_HER(TARGET)% pupils immediately turn into hearts as %HE_SHE(TARGET)% sits next to you.
+		PRINTFORMDW Clinging to your arm, %HE_SHE(TARGET)% rubs %HIS_HER(TARGET)% cheeks against it like some sort of small animal.
+	ELSE
+		PRINTFORML 
+		PRINTFORMDW Beckoning to Reisen to come over, %HE_SHE(TARGET)% sits next to you without saying a word.
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;23,ピロートーク
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_23
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K52_23_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K52_23_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;失敗
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「Heeey, how about we try doing it in this position next?」
+		PRINTFORMDW Reisen lies down next to you and points at the list.
+		PRINTFORMDW It's good thing that %HE_SHE(TARGET)%'s so eager, but it'd be great if %HE_SHE(TARGET)% also let you catch a break for now...
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「Say... %CALLNAME:MASTER%.」
+		PRINTFORMDW Drawing your attention, you turn your face to Reisen, but %HE_SHE(TARGET)% remains silent.
+		PRINTFORMW 「Er, no, it's nothing. Never mind.」
+		PRINTFORMDW Reisen says with a smile as %HE_SHE(TARGET)% cuddles up to you.
+	ELSEIF TALENT:思慕
+		PRINTFORML 
+		PRINTFORMW 「Somehow this really feels like we're a couple right now...」
+		PRINTFORMDW Reisen blushes and rubs against your arm, as you continue lying still.
+		PRINTFORMDW Not long after that, %HE_SHE(TARGET)% starts rubbing %HIS_HER(TARGET)% cheeks against yours as well.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「I-I don't think... I have anything to say... in particular.」
+		PRINTFORMDW Showing an awkward smile, Reisen blushes while trying to avoid looking at your face.
+		PRINTFORMW 
+	ENDIF
+
+ENDIF
+RETURN 1
+
+;original code, inserted it here for now (from J)
+;==================================================
+;1,シックスナイン
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K52_1
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K52_1_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K52_1_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(TFLAG:50 + 500)
+		PRINTFORMW 「D-Doing it like this... %MOAN()%, auuuuhhh...」
+		PRINTFORMW 「I don't know why, but... it seems so embarrassing to me...」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「%MOAN(,,3)%... Fuuuhh... %MOAN()%... Haaah...!」
+		PRINTFORMW 「%MOAN(,,2)%...! %MOAN(,,3)%...」
+		PRINTFORMDW Reisen shudders and shakes, but continues with zeal.
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 「%MOAN(,,2)%, haaaah... Ahhhn, %FSYN("lips_muffle")%, %TOLOWER(FSYN("lips_muffle"))%?!」
+		PRINTFORMDW Reisen desperately tries to do %HIS_HER(TARGET)% part, but %HE_SHE(TARGET)% ends up getting interrupted time and time again.
+		RETURN 1
+	ENDIF
+ENDIF
+;未記入
+;CALLFORM M_KOJO_MESSAGE_COM_K52_{SELECTCOM}_1
+;RETURN RESULT
+RETURN 1
+
+;==================================================
+;3,Gスポット刺激
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K52_3
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K52_3_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K52_3_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SIF FLAG:70
+		RETURN 0
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(TFLAG:50 + 500)
+		;合意
+		IF TALENT:恋慕
+			PRINTFORMW 「Ah, no, not theeeeereeee...!!!」
+			PRINTFORMDW %BREAKENG(@"As you stroke and rub Reisen's vaunted bumps of herring roe on her vaginal walls, she lets out a crazed shriek with her upper body going limp, curving like a shrimp.")%
+			PRINTFORMDW Then she lets out a hoarse "aaaaaaaaaagghhhh" as if broken.
+			PRINTFORMDW %BREAKENG(@"With her face and the swellings crowning her chest stuck looking upwards with her body arched, she continues shivering ever so slightly every time you graze her granular lumps.")%
+			PRINTFORMDW The amount of sensation it produces is enough to make even you somewhat anxious...
+		ELSE
+			PRINTFORMW 「Aaaaaghhh... Uuuuaaaaaaaaghhh, hyaaaaaaaaaaaaghhhhhhhhnnnnn!!!」
+			PRINTFORMDW As soon as you rub the bumps of her herring roe inside her pussy, Reisen screams out loud, her body going crazy and thrashing about.
+			PRINTFORMDW It must be giving her too strong of a sensation.
+			PRINTFORMDW %BREAKENG(@"Any kind of semblance of reason promptly vanishes from her lovely face, instead turning into an expression of a horny beast obsessed with pleasure.")%
+		ENDIF
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕 && ABL:Ｖ感覚 >= 5
+		PRINTFORMW 「Aaaaaaaaaaaghhhhnnnnn...! %MOAN("h")%...! %MOAN("h")%...!」
+		PRINTFORMDW %BREAKENG(@"As you firmly rub the bumps of her herring roe located deep on her walls, Reisen immediately loses her cool and, opening her eyes wide, screams her head off.")%
+		PRINTFORMDW %BREAKENG(@"Displaying the sheer power of this stimulation, her %FSYN("vagina")% overflows with a waterfall of her juices with no sign of stopping, dripping down her legs and soaking everything wet.")%
+		PRINTFORMDW Her walls contract and squeeze over and over again, as if stuck in an endless climax.
+		PRINTFORMW 「T-That was terrifiiiiiiiiiiiicccc...!!! I'm gonna breaaaaaaaaaaaaaaakkkkk...!!!」
+		PRINTFORMDW %BREAKENG(@"Reaching the point where Reisen is rolling her eyes, almost as if fainting, with her tongue dangling out of her mouth sloppily and drooling incessantly, you finally decide to stop your teasing.")%
+		PRINTFORMDW Needless to say, it took quite some time for Reisen to come to her senses...
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 「%GROAN()%... %SLUR(GROAN(), -2)%...!」
+		PRINTFORMDW %BREAKENG(@"While holding Reisen down as she keeps writhing and groaning like crazy, you continue rubbing the bumps of her herring roe deep inside her %FSYN("vagina")% relentlessly.")%
+		PRINTFORMDW With every orifice on her face expelling liquid, she had no choice but to wait for the end of what may as well be called cruel torture.
+		RETURN 1
+	ENDIF
+ENDIF
+;未記入
+;CALLFORM M_KOJO_MESSAGE_COM_K52_{SELECTCOM}_1
+;RETURN RESULT
+RETURN 1

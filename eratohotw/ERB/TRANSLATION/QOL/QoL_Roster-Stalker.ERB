@@ -1,0 +1,285 @@
+﻿;custom code, put an array of characters to show their pictures one by one in a line, args dictates name highlight mode, zoom for pic zoom level, br for how many pictures to show per line
+@PRINT_ROSTER(iID, sHighlightMode, nZoomLevel = 60, nBR = 10)
+#DIM REF iID
+#DIMS sHighlightMode
+#DIM nZoomLevel
+#DIM nBR
+
+#DIM iSpaceSize
+#DIM nSpacing
+#DIMS sPrint_Text
+
+SIF !iID
+	RETURN RESULT
+
+sPrint_Text =  <p align='left'><nobr>
+
+LOCAL = 0
+LOCAL:1 = 0
+DO
+	;左右幅合わせ　[名前]
+	STRLENFORMU %CALLNAME:(iID:LOCAL)%
+	;todo make an alignment function, this one is optimized for 15/15 font size
+	SELECTCASE RESULT
+		CASE IS >= 12
+			nSpacing = 55
+		CASE IS >= 9
+			nSpacing = 57
+		CASE IS >= 6
+			nSpacing = 59
+	CASEELSE
+		nSpacing = 60
+	ENDSELECT
+	;[]分を足す
+	RESULT += 1
+	iSpaceSize = (デフォルトキャラ画像横幅 * nZoomLevel/GETCONFIG("フォントサイズ") - (RESULT*nSpacing)) / 2
+	iSpaceSize = MAX(iSpaceSize, 0)
+
+	sPrint_Text += @"<shape type = 'space' param = '{iSpaceSize}'>"
+	
+	IF sHighlightMode == "roster"
+		LOCALS = <button value='{iID:LOCAL}' title='Target: {iID:LOCAL}'>[%CALLNAME:(iID:LOCAL)%]</button>
+	ELSE
+		LOCALS = [%CALLNAME:(iID:LOCAL)%]
+	ENDIF
+	;highlight
+	SIF sHighlightMode == "broad" && CFLAG:(iID:LOCAL):行動
+		LOCALS = <font color='#0xFA6400'>%LOCALS%</font>
+		
+	sPrint_Text += LOCALS
+	
+	sPrint_Text += @"<shape type = 'space' param = '{iSpaceSize}'>"
+	
+	IF TALENT:(iID:LOCAL):行きずり && !GCREATED(CFLAG:(iID:LOCAL):モブ子素材CFLAG開始位置)
+		CALL モブ子生成(iID:LOCAL,0)
+		CALL モブ子生成(iID:LOCAL,1)
+	ENDIF
+	
+	IF sHighlightMode == "roster"
+		LOCALS = \@CFLAG:(iID:LOCAL):差し替え適用 && CFLAG:(iID:LOCAL):別顔有 ? 別顔 # 顔絵\@_服_通常_{(iID:LOCAL)}
+		CALL 画像セット(LOCALS, 0, 0, nZoomLevel, 0, 1, @"{iID:LOCAL}", @"Target: {iID:LOCAL}")
+	ELSE
+		CALL GET_BASE_RESOURCE(iID:LOCAL, "顔絵")
+		IF !RESULT
+			RESULTS:0 = %GET_BASESTYLE(iID:LOCAL, "顔絵")%_服_通常_{iID:LOCAL}
+			RESULTS:1 =
+		ENDIF
+		CALL 画像セット(RESULTS, 0, 0, nZoomLevel, 0, 0)
+	ENDIF
+	;spacing between pics (manual sucks I know)
+	TEMP_HTML_MAX_HEIGHT = MULTIPLY(nZoomLevel, 190)
+	
+	LOCAL++
+	;break line
+	IF ++(LOCAL:1) % nBR == 0
+		HTML_PRINT sPrint_Text
+		CALL 画像一斉表示(0, 0, 1, -1)
+		sPrint_Text =  <p align='left'><nobr>
+	ENDIF
+LOOP iID:LOCAL
+HTML_PRINT sPrint_Text
+CALL 画像一斉表示(0, 0, 1, -1)
+
+;custom code
+
+@STALKER_CHANGE
+PRINTFORML Please select a target.
+gLineCount = LINECOUNT
+REDRAW 0
+DO
+	SIF LINECOUNT - gLineCount > 0
+		CLEARLINE LINECOUNT - gLineCount
+	FOR LOCAL,1,CHARANUM
+		SIF TALENT:LOCAL:行きずり
+			CONTINUE
+		SIF CFLAG:LOCAL:出禁
+			CONTINUE
+		SIF STALKED == LOCAL
+			SETCOLOR C_YELLOW
+		PRINTFORMLC [{LOCAL}] %CALLNAME:LOCAL%
+		RESETCOLOR
+	NEXT
+	PRINTFORML
+	PRINTFORML
+	PRINTFORML [888] Cancel
+	DRAWLINE
+	PRINTFORML [999] Confirm
+	INPUT
+	SELECTCASE RESULT
+		CASE 999
+			BREAK
+		CASE 888
+			STALKED = 0
+	CASEELSE
+		SIF INRANGE(RESULT,1,CHARANUM) && !TALENT:RESULT:行きずり && !CFLAG:RESULT:出禁
+			STALKED = RESULT
+	ENDSELECT
+LOOP 1
+
+;print full roster page by page
+@QOL_FULL_ROSTER
+#DIM DYNAMIC nPage = 1
+#DIM DYNAMIC nPageLength
+#DIM nPageSize
+#DIM DYNAMIC nPrintCount
+#DIM nRoster, 100
+
+#DIMS DYNAMIC strPrintRange
+#DIMS DYNAMIC strSearch
+
+SIF !FLAG:画像表示
+	RETURN 0
+
+nPageSize = MAX(CLIENTHEIGHT() / GETCONFIG("フォントサイズ")-4, 1)
+;round down to nearest 10th
+nPageSize = MAX(nPageSize/10)*10
+SIF CLIENTHEIGHT() < 600
+	nPageSize = 10
+
+gLineCount = LINECOUNT
+REDRAW 0
+DO
+	SIF LINECOUNT - gLineCount > 0
+		CLEARLINE LINECOUNT - gLineCount
+	DRAWLINE
+	PRINTFORML Character Roster
+	DRAWLINE
+	
+	;search mode
+	IF STRLENS(strSearch)
+		PRINTFORM Searching: %strSearch%, 
+		LOCAL:1 = 0
+		strPrintRange =
+		FOR LOCAL:0, 1, CHARANUM
+			SIF CFLAG:LOCAL:出禁
+				CONTINUE
+			IF (STRCOUNT(TOLOWER(CALLNAME:LOCAL), TOLOWER(strSearch))) ;inspired by @LIST_SEARCHABLE
+				strPrintRange += TOSTR(LOCAL) + ":"
+				LOCAL:1 ++
+			ENDIF
+		NEXT
+		;total amount of items
+		nPageLength = LOCAL:1 / nPageSize + ((LOCAL:1 % nPageSize) == 0 ? 0 # 1)
+		
+		;reset current page in case it gets overflowed
+		SIF nPage > nPageLength
+			nPage = 1
+
+		PRINTFORML {LOCAL:1} results found!
+		DRAWLINE
+		
+		VARSET nRoster
+		nPrintCount = 0
+		LOCAL:1 = 0
+		FOR LOCAL:0, 1, CHARANUM-1
+			SIF !SPLIT_CHECK(strPrintRange, LOCAL:0) ;show only those who are in the list
+				CONTINUE
+			
+			SIF (nPrintCount >= (nPage-1) * nPageSize) && (nPrintCount < (nPage) * nPageSize)
+				nRoster:(LOCAL:1++) = LOCAL
+				
+			nPrintCount ++
+		NEXT
+	ELSE
+		LOCAL:1 = 0
+		strPrintRange =
+		
+		;build a list of items
+		FOR LOCAL:0, 1, CHARANUM
+			SIF !FLAG:並び替え && CFLAG:LOCAL:出禁 ;hide banned character slots with default sorting
+				CONTINUE
+				
+			strPrintRange += TOSTR(LOCAL) + ":"
+			LOCAL:1 ++
+		NEXT
+	
+		;total amount of items
+		nPageLength = LOCAL:1 / nPageSize + ((LOCAL:1 % nPageSize) == 0 ? 0 # 1)
+		
+		;reset current page in case it gets overflowed
+		SIF nPage > nPageLength
+			nPage = 1
+
+		VARSET nRoster
+		nPrintCount = 0
+		LOCAL:1 = 0
+		SIF FLAG:並び替え
+			CALLF CHARASORT_EX_TR
+		FOR LOCAL:0, 1, CHARANUM-1
+			SIF !SPLIT_CHECK(strPrintRange, LOCAL:0) ;show only those who are in the list
+				CONTINUE
+			SIF FLAG:並び替え && CFLAG:(RESULT:LOCAL):出禁 ;hide banned characters at display stage when zun sorting is enabled
+				CONTINUE
+			SIF (nPrintCount >= (nPage-1) * nPageSize) && (nPrintCount < (nPage) * nPageSize)
+				nRoster:(LOCAL:1++) = (FLAG:並び替え ? RESULT:LOCAL # LOCAL)
+				
+			nPrintCount ++
+		NEXT
+	ENDIF
+	PRINTFORML
+	
+	IF nRoster:0 == 0
+		DRAWLINE
+		PRINTFORML
+		PRINTFORML No Items Found!!!
+		PRINTFORML
+		DRAWLINE
+	ELSE
+		CALL PRINT_ROSTER(nRoster, "roster")
+	ENDIF
+		
+	;controls
+	PRINTFORML
+	IF nPageLength == 1
+		SETCOLOR 0x606060
+		PRINTFORM %"Prev page",15,LEFT%
+		RESETCOLOR 
+	ELSE
+		PRINTBUTTON @"%"Prev page",15,LEFT%", 888
+	ENDIF
+	PRINTFORM ({nPage}/{nPageLength})%BL(6)%
+	PRINTFORM 
+	IF nPageLength == 1
+		SETCOLOR 0x606060
+		PRINTFORM %"Next page",15,LEFT%
+		RESETCOLOR 
+	ELSE
+		PRINTBUTTON @"%"Next page",15,LEFT%", 777
+	ENDIF
+	IF nRoster:0 != 0 || STRLENS(strSearch)
+		PRINTFORM %" "*15%
+		IF STRLENS(strSearch)
+			PRINTBUTTON @"%"Reset Search",15,LEFT%", 666
+		ELSE
+			PRINTBUTTON @"%"Search By Name",15,LEFT%", 666
+		ENDIF
+	ENDIF
+
+	PRINTFORML 
+	PRINTFORML 
+	PRINTBUTTON "[999] Return　", 999
+	PRINTFORM  
+		
+	INPUT
+	SELECTCASE RESULT
+	CASE 666
+		IF STRLENS(strSearch)
+			strSearch '= ""
+		ELSE
+			PRINTL Input the name:
+			INPUTS
+			strSearch '= RESULTS
+			nPage = 1
+		ENDIF
+	CASE 777, 888
+		SIF nPageLength == 1
+			CONTINUE
+		nPage = PAGE_HANDLE(RESULT, 888, nPage, 1, nPageLength)
+	CASE 1 TO CHARANUM-1
+		CALL SINGLE_CHARA_STATE_TR(RESULT)
+		SIF !RESULT
+			CONTINUE
+	CASE 999
+		RETURN 1
+	ENDSELECT
+LOOP 1

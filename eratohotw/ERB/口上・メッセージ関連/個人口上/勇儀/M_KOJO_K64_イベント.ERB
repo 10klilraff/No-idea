@@ -1,0 +1,4798 @@
+﻿;-------------------------------------------------
+; eraTheWorld 4.793用 勇儀口上（キャラクターの名前を入れる、下にコンセプトなど一言あれば入れる）
+;-------------------------------------------------
+;
+;『〇〇かい？』って言わせ過ぎな気がする
+;でも便利だからしょうがない
+;
+;------ ｷﾘﾄﾘ ｶｲｼ -----------
+;eraTheWorld proto4.07パッチ取り込み用 Ver1.13
+;テンプレートの使い方
+;初めに置換コマンド等により K64 を K(キャラNo) に変更して下さい  
+;キャラNoはCSVフォルダのCharaファイルを参照　例(霧雨 魔理沙の場合)：K64 =置換=> K11
+;
+;------ ｷﾘﾄﾘ ｵﾜﾘ -----------
+
+;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;
+;TCVAR:64:350 移動時すれちがい会釈の口上は一日一回だけ表示
+;TCVAR:64:351 妊娠時膝枕してもらう妊娠分岐の口上は一日一回だけ表示
+;TCVAR:64:352 妊娠時お腹を撫でる妊娠分岐の口上は一日一回だけ表示
+;TCVAR:64:353 本気の戦闘訓練は一日一回だけ
+;TCVAR:64:354 その日の初回豆まきで使用
+;TCVAR:64:355~356 その日二回目以降の部屋に入る・外に出るで使用
+;TCVAR:64:357 時間停止でパンツを剥ぎ取ったか
+;
+;CFLAG:64:1000 UPDATE時の呼び名変更に使用
+;CFLAG:64:1001 黄昏画像表示
+;CFLAG:64:1002 弾幕勝負口上
+;CFLAG:64:1003 デート中地底で遭遇した時に一度だけ案内
+;CFLAG:64:1100 戦闘訓練でズルをした場合次回から反撃される
+;
+;CFLAG:64:1090 Translation flag, used to determine version
+;TCVAR:390 - for a small event continuation during handholding
+;
+;edits include replacing all BASE changes with a RECOVER function for visual display
+;note that this version doesn't use dialogue's method of switching Yuugi's kimono portrait
+;we're also not using callname:target
+;yuugi was made a lot more relaxed about seeing you as her lover cheating on her, but we kept some of it in
+;******************************************************************************
+
+;### 口上存在判定 ###################################
+@M_KOJO_K64(ARG)
+;ここでRESULTSを設定すると他の同キャラ口上を突っ込まれても正常動作する。
+
+;RESULTS = _TEST_
+
+;と設定すると、"EVENT"系イベントだと
+;M_KOJO_TEST_EVENT_K64_1() とかで呼ばれる…はず。（未テスト機能）
+
+;ここでCFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります
+
+;コメントアウトを外して眠姦口上有、時間停止口上有に1を入れると、それぞれ時間停止時、眠姦時、なりきり時にコマンド口上が読み込まれるように
+;入れないと時間停止時、眠姦時、なりきり時は一切喋りません
+
+;破瓜キャンセル口上有に1を入れると、@M_KOJO_EVENT_K64_LOST_VIRGIN_STOPでキャンセルの成否を操作できます
+;口上内抱き寄せ判定_初回と口上内抱き寄せ判定_通常に1を入れるとM_KOJO_EVENT_K64_PERMISSIONで押し倒しの成否を操作できます
+
+;Xにはキャラ番号を入れてください
+
+;CFLAG:X:眠姦口上有 = 0
+;CFLAG:X:時間停止口上有 = 0
+;CFLAG:X:なりきり口上有 = 0
+;CFLAG:X:破瓜キャンセル口上有 = 0
+;CFLAG:X:口上内抱き寄せ判定_初回 = 0
+;CFLAG:X:口上内抱き寄せ判定_通常 = 0
+
+;CFLAG:押し倒し禁止に1を入れると自分から押し倒してこなくなります
+;以下は恋慕かセフレがつくまで押し倒してこなくなる使用例
+IF BASE:64:酒気 > 0 || TCVAR:64:発情 ;added in heat condition
+	CFLAG:64:押し倒し禁止 = 0
+ELSE
+	CFLAG:64:押し倒し禁止 = 1
+ENDIF
+;added, Yuugi is taller than that!!!
+TALENT:64:体型 = 2
+
+
+;口上存在判定です、けしてコメントアウトしないでください
+RETURN 1
+;### 口上色判定 ###################################
+@M_KOJO_COLOR_K64
+
+;ここでSETCOLORすることで口上に色を付けられます
+SETCOLOR 0xFFDEB8
+
+;added
+@CHARA_INFO_KOJO_K64()
+CALL M_KOJO_COLOR_K64
+PRINTFORML %CSVCSTR(64, 10)%
+RESETCOLOR
+PRINTL 
+PRINTFORML A proud, powerful oni of the Underworld, currently living in the Ancient City.
+PRINTFORML Besides her natural strength, her ability... is quite hard to explain, to the point that no one tries to bother.
+PRINTFORML Unlike Suika, she seems at peace with the fact that oni are sealed away and spends most of her time with her brethren.
+PRINTFORML Unless, of course, she visits her old friends on the surface to have a drink with and raise a ruckus.
+PRINTFORML 
+PRINTFORML It goes without saying that she's very fond of drinking, competition and feats of strength.
+PRINTFORML She values bravery and honesty, and resents liars. She can be surprisingly gentle if you manage to get on her good side.
+PRINTFORML At one point, she became a manager of Former Hell's Hot Spring Town, and can often be seen there.
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"UPDATE判定"
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_UPDATE_K64
+;口上独自のUPDATE用
+;ENCOUNTER専用に独自分岐フラグを仕込んだ場合等にどうぞ
+;UPDATE判定でCFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります
+
+;added
+CALL UPDATE_DIALOGUERESET(K64EN_FLAG_VER, K64EN_VER, 64)
+;in case reset was initiated, added some options
+IF RESULT
+	PRINTFORML
+	PRINTFORML What kind of girl is Yuugi?
+	CALL ASK_YN("She might be brave when it comes to sex, but she's still pure!", "She's no stranger when it comes to sex! (Default)")
+	IF !RESULT
+		TALENT:64:処女 = 1
+		ABL:64:膣 = 0
+		ABL:64:腰 = 0
+		EXP:64:Ｖ経験 = 0
+		EXP:64:精液経験 = 0
+		EXP:64:Ｖ性交経験 = 0
+		EXP:64:絶頂経験 += 10
+		EXP:64:自慰経験 += 10
+	ENDIF
+ENDIF
+
+;ignoring kimono choice, it's integrated in the gameplay
+IF !CFLAG:64:1000
+	PRINTL 
+	PRINTFORML Would you like to change how Yuugi addresses you?
+	PRINTFORML You will be able to set it once she meets you for the first time as well.
+	PRINTL 
+	CALL ASK_M("Yes",1 , "No",1 , "Don't bother",1)
+	SELECTCASE RESULT
+		CASE 0
+			CALL NAME_SET_K64
+			RETURN 1
+		CASE 1
+			PRINTFORMW You will be able to change it again next time you use [UPDATE] function.
+			RETURN 1
+		CASE 2
+			PRINTFORMW Very well.
+			CFLAG:64:1000 = 1
+			RETURN 1
+	ENDSELECT
+ENDIF
+
+;added
+PRINTFORMDL Would you like to change Yuugi's chest size? Provides sprite difference.
+CALL ASK_M("Set to normal", 1, "Keep 'em big! (Default)", 1, "Keep as is", 1)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORMDL Tastefully big.
+		TALENT:64:バストサイズ = 0
+	CASE 1
+		PRINTFORMDL Ridiculously huge!
+		TALENT:64:バストサイズ = 2
+	CASE 2
+ENDSELECT
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"ENCOUNTER"系イベント（エクストラ構文）
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_ENCOUNTER_K64
+;初対面、挨拶のタイミング
+;TALENTの変更はここでどうぞ。
+;経験の変更は齟齬が出る場合がありますので、CSVを修正し同梱する事を推奨します
+
+	PRINTFORMW 「You must be that human Suika mentioned, eh?」
+	PRINTFORMDW You turn around to the source of the upbeat voice, finding a woman standing there.
+	;added - height difference
+	IF TALENT:MASTER:体型 < TALENT:体型
+		PRINTFORMDW Much to your surprise, she towers over you, being much taller than any you've encountered so far.
+	ELSE
+		PRINTFORMDW She's just as tall as you, maybe a bit more so.
+	ENDIF
+	PRINTFORMDW Her hair is like a lion's mane, with many of the long, golden locks reaching her waist.
+	;added, kimono
+	IF OBJNAME_TO_ID(TARGET, "GET", "衣装セット", "鬼セット")
+		PRINTFORMDW %BREAKENG(@"She has a striking visage of a refined lady, dressed in a blue kimono that hangs lazily around her shoulders and a flimsy red sash tied around her waist.")%
+		PRINTFORMDW Her prominent and stout breasts underneath seize your attention, prompting you to cast your eyes elsewhere to not stare.
+		PRINTFORMDW Judging by the impressive amount of cleavage on show, the oni isn’t wearing anything like a bra whatsoever.
+		PRINTFORMDW In any case, it's a fashion sense straight from Underground, if you recall it correctly.
+		PRINTFORMDW She seems confident in her body like many of her kind, that’s for sure.
+	ELSE
+		PRINTFORMDW %BREAKENG(@"Two, plump mounds protrude from underneath her short-sleeved shirt, stretching the white fabric taut, their presence prominent in your vision.")%
+	ENDIF
+	PRINTFORMDW And a pointed horn of vivid red erupts forth from her forehead as if in furious rage.
+	;added
+	PRINTFORMDW She also wears two incredibly thick, massive shackles on her wrists, with big chains hanging from them.
+	PRINTFORMDW %BREAKENG(@"You're not entirely sure why they're there however. It doesn't seem like she can't just rip them out, maybe she wears them to contain her power somewhat? Or is it some kind of weird fashion again?")%
+	;-------
+	PRINTFORMDW There's no mistaking it, she's an oni... You brace yourself.
+	PRINTFORMW 「Name's Yuugi Hoshiguma, one of the Big Four of the Mountain!」
+	PRINTFORMW 「Though in name only. I'm kinda living Underground as of now...」
+	PRINTFORMW 「Well, no matter. Anyhow...」
+	IF !CFLAG:[[萃香]]:面識 ;if never met suika, unlikely but still
+		PRINTFORMW 「Eh...? Wait, say that again?」
+		PRINTFORMW 「You've never even met Suika?! WHAAAAAAAAAAA--!!!」
+		PRINTFORMDW %BREAKENG(@"Suddenly, Yuugi seems like she's livid with anger, with veins popping all over her arms and face alike, prompting you to step back for safety.")%
+		PRINTFORMDW She slams the nearest wall, leaving a huge fist-sized crater on the wall, making it look like it was hit a by a car at full speed.
+		PRINTFORMDW %BREAKENG(@"But before you know it, this woman named Yuugi calms down just as fast as she got angry. Something tells you that you need to watch out for that in the future...")%
+		PRINTFORMW 「Err, sorry about that. I can't believe I got bamboozled by that sly old crank, making me prank a completely random human like this...」
+		PRINTFORMW 「There's no way she could've known about you without even meeting you right? I'm not going crazy, right? Dammit...!」
+		PRINTFORMDW Before Yuugi got angry again, she takes a deep breath and breathes out. Then again. And again...
+		PRINTFORMW 「I'm gonna have to pay Suika a visit and pay her back or something later...」
+		PRINTFORMW 「Well, anyways. Since you're still here, and I have nothing else to do... Wanna have a little match with me?」
+		PRINTFORMW 「Don't worry, I'll make it easy for you. Just give me your best shot. How about it?」
+		PRINTFORMW 「Oh, and just to be fair, I'm an oni. Haha, no need to soil your pants yet, I ain't here to pick you and gobble you up--」
+		PRINTFORMW 「Eh, you knew that already?! Bummer.」
+	ELSE
+		PRINTFORMW 「If she's paying attention to you, then you gotta be at least as strong as she is, right?」
+		PRINTFORMW 「I've come here hoping that we can have a little bout going on, so here I am!」
+	ENDIF
+	PRINTFORMDW Oni are famed for their love of competition, and it appears this Yuugi Hoshiguma is no different in that regard.
+	PRINTFORMW 「What say you? Of course you'll take me up on it, won'tcha?」
+	PRINTFORMDW Your choice is to...
+	CALL ASK_YN("Accept!", "Decline!")
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW 「Ohh! So you accept, then!!!」
+			PRINTFORMDW Reaching back and grasping a bottle, Yuugi pours a generous amount of sake into the dish in her other hand.
+			PRINTFORMW 「If you can get me to spill even a drop outta this, I will call you a winner!」
+			PRINTFORMW 「If you don't, we'll just keep at it 'till we drop!」
+			PRINTFORMDW The utter confidence in her voice and the handicap she's putting up is making you feel uncertain.
+			PRINTFORMDW In retrospect, you wonder if you made a mistake in taking her challenge...
+			PRINTFORMW 「No need for any sort of warm-up, I take it?」
+			PRINTFORMW 「Alright, let's get this started!!!」
+			PRINTFORMDL .........
+			PRINTFORMDL ......
+			PRINTFORMDW ...
+			;あなたの戦闘力２以下
+			IF ABL:MASTER:戦闘能力 <= 2
+				PRINTFORMDW The fight was over before it even started.
+				PRINTFORMDW The pressure from Yuugi's fist alone is enough to send you to the ground.
+				PRINTFORMDW You try to stand, but the intense fear gripping you means your knees buckle in the attempt.
+				PRINTFORMDW But despite all that, Yuugi reaches out, offering her hand without a hint of mockery in her tone.
+				PRINTFORMW 「C'mon, don't just sit there. Get up!」
+				PRINTFORMW 「Haha, I didn't expect it to be over before I got a single punch in.」
+				PRINTFORMW 「Gotta admit, this was disappointing... But I sorta get it now.」
+				CALL PRINT_DIALOGUE, @"\@ CFLAG:[[萃香]]:面識 ? It's no wonder that Suika takes a shine to ya. # I think you just gave me some hope.\@ Most humans would freak out and never accept the challenge in the first place!", "w"
+				PRINTFORMW 「But you didn't back down. That says something.」
+				PRINTFORMDW Yuugi roars with laughter as if the oppressive feeling from earlier wasn't even a thing.
+				PRINTFORMW 「You got a name, %PRINT_MALE("boy", MASTER)%?」
+				CALL NAME_SET_K64
+				PRINTFORMW 「%MASTERNAME:64%, eh? I'll keep it in mind.」
+				PRINTFORMW 「Next time we meet, let's have a drinking contest instead of fighting it out.」
+				PRINTFORMW 「That said, I ain't so sure I can go easy on you on that one, either!」
+				PRINTFORMDW Yuugi smacks you on the back, causing you to stumble unsteadily.
+				PRINTFORMDW But at least the shaking in your legs had stopped...
+				;favor bonus
+				CALL CHANGE_CFLAG(2, 64, 100)
+			;あなたの戦闘力５以下
+			ELSEIF ABL:MASTER:戦闘能力 <= 5
+				PRINTFORMW 「Splendid! You made me spill my drink, I'm impressed.」
+				PRINTFORMDW %BREAKENG(@"You've run out of energy, your muscles tired and aching, mind exhausted while Yuugi calmly sips the rest of her drink with not drop of sweat on her brow.")%
+				PRINTFORMW 「As agreed, I've lost. \@ CFLAG:[[萃香]]:面識 ? Suika really did have a point there, taking notice of you # I never expected it to happen, but what do you know, huh\@.」
+				PRINTFORMW 「And here I was, thinking humans had turned into a bunch of sniveling cowards...」
+				PRINTFORMW 「Evidently, some of them still have a lot to offer!」
+				PRINTFORMDW Yuugi has a peculiar smile on her face... As if she finally found something she had been missing.
+				PRINTFORMW 「So what's your name, %PRINT_MALE("boy", MASTER)%?」
+				CALL NAME_SET_K64
+				PRINTFORMW 「You caught my eye there. I'll be sure to remember your name!」
+				PRINTFORMW 「'Sides, you seem trustworthy to me.」
+				PRINTFORMW 「You know what they say, "there's no such thing as a bad guy with a strong arm"!」
+				PRINTFORMDW Yuugi lets a peal of boisterous laughter after you admit you've never heard of that expression before.
+				PRINTFORMW 「Hahaha!!! You'll find out soon enough!」
+				PRINTFORMW 「With that, I look forward to our next time together, %MASTERNAME:64%!」
+				PRINTFORMDW You timidly shake Yuugi's hand...
+				CALL CHANGE_CFLAG(2, 64, 300)
+			;あなたの戦闘力６
+			ELSE
+				PRINTFORMW 「Aww maaan... Look at my drink getting all ruined, and it was a good sake too!」
+				PRINTFORMDW Yuugi's whole body is drenched from head to toe with alcohol, clothes sticking to her body, slightly see-through.
+				PRINTFORMDW Yet, there's joy in her expression, a grin curling the corners of her mouth.
+				PRINTFORMW 「I'll admit, you got me all beat.」
+				PRINTFORMW 「I didn't realize you were this strong! I gotta say, I underestimated you.」
+				PRINTFORMW 「...You thought I was holding back? Oh, not at all, nope.」
+				PRINTFORMW 「I was getting serious about halfway through.」
+				PRINTFORMW 「But I still lost... and that's a fact.」
+				PRINTFORMW 「Feel free to brag about it or whatever.」
+				PRINTFORMW 「You defeated one of the Big Four of the Mountain fair and square, Yuugi the Mighty. You should be proud, really!」
+				PRINTFORMDW You were expecting her to be stubborn and refuse to admit defeat, but instead you feel a bit out of sorts.
+				PRINTFORMW 「Tell me your name, %PRINT_MALE("boy", MASTER)%.」
+				CALL NAME_SET_K64
+				PRINTFORMW 「You caught my eye there. I'll be sure to remember your name!」
+				PRINTFORMW 「Oh, I know! Can I share it with the oni in the Underground too?」
+				PRINTFORMW 「They might challenge you to a match later though... Well, you can handle it anyway, can'tcha?」
+				PRINTFORMDW %BREAKENG(@"It's no laughing matter however... When you ask her not to, Yuugi smacks you on the back, insisting that there's no need to be so humble about it.")%
+				PRINTFORMDW The shock and pain was so great that you thought your spine was going to break.
+				PRINTFORMDW You had to wonder if she had really given it her all...
+				CALL CHANGE_CFLAG(2, 64, 500)
+			ENDIF
+		CASE 1
+			PRINTFORMW 「Huuuh... I see. Oh well, I'm bummed alright.」
+			PRINTFORMW 「I'd completely forgotten that humans were like that.」
+			PRINTFORMDW Looks like you've let her down...
+			SIF CFLAG:[[萃香]]:面識
+				PRINTFORMW 「Gotta wonder why is she being so concerned about you... I really can't tell what's on Suika's mind sometimes.」
+			PRINTFORMW 「...Well, whatever.」
+			PRINTFORMW 「You got a name, %PRINT_MALE("boy", MASTER)%?」
+			CALL NAME_SET_K64
+			PRINTFORMW 「%MASTERNAME:64%... huh. I'll be keeping an eye on you for a while.」
+			PRINTFORMW 「Who knows, maybe you're just hiding your true power from me, eh?」
+			PRINTFORMDW Yuugi says before smacking you on the back, giving you the "nice to meet you" treatment.
+			PRINTFORMDW ...That hurt quite a bit.
+	ENDSELECT
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"SP_EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;デート帰りにファーストKISS（合意も付く）
+;==================================================
+@M_KOJO_SPEVENT_K64_1(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+;地の文
+;CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+IF LOCAL
+	PRINTFORMW 「Puhaa...」
+	PRINTFORMW 「Fufufu, surprised?」
+	PRINTFORMW 「Am I drunk? Naah, 'course not!」
+	PRINTFORMW 「Or what? Did my kiss... reek of alcohol that badly?」
+	PRINTFORMDW Yuugi gazes at you, her cheeks becoming rosy from something other than alcohol.
+	PRINTFORMW 「That's just a little something for today... Nah, paying lip service is not my style.」
+	PRINTFORMW 「I just wanted to do it. That's all.」
+	PRINTFORMDW No sooner than when the words left her mouth, Yuugi turns around and promptly walks on ahead.
+	PRINTFORMW 
+	PRINTFORMW 「Oi, what are you standing there for? I'll just leave you behind then, y'hear?」
+	PRINTFORMDW Coming back to your senses, you follow after her in a rush...
+	;キスをキャンセルしたい場合は以下を開放
+	;TCVAR:キスキャンセル = 1
+	CALLF FIRSTTIME("YuugiFirstKiss")
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰りに告白（恋人が付く）
+;==================================================
+@M_KOJO_SPEVENT_K64_2(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_2(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;告白内容
+	;この告白内容表示後に受けるかどうかの選択分が表示されます
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORMW 「H-Hey, listen...」
+		PRINTFORMW 「...Uhh, y'know...」
+		PRINTFORMW 「I think we've been hanging out for quite a while now, and...」
+		PRINTFORMW 「What I'm getting at is... Aagh, damn! It's not like me to yap like this!」
+		PRINTFORMDW Yuugi scratches her head like crazy, her eyes pinching closed as a conflict raged deep in her.
+		PRINTFORMDW She snaps to you a moment later, a look of determination set in her expression.
+		PRINTFORMW 「Thing is, at some point, I got a thing for you.」
+		PRINTFORMW 「And not just as your pal, but as a woman.」
+		PRINTFORMW 「I don't care if you call me your bride, your girlfriend, your fuck buddy, whatever...」
+		PRINTFORMW 「As long as I get to be your woman, as long as I'm the only one for you... That's all I want.」
+		PRINTFORMW 「...I don't have to tell you any more than that, do I?」
+		PRINTFORMW 「...And even...」
+		PRINTFORMW 「Even if you don't share the same feeling towards me, then... I won't hold it against you.」
+		PRINTFORMW 「I swear it on my oni pride, I promise you that much!」
+		PRINTFORMW 「So here, I said it, %MASTERNAME:64%. Don't just stand there, let's hear your answer!」
+		PRINTFORMDW With that, Yuugi falls silent.
+		PRINTFORMDW Looks like she is expecting your response...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白オッケー（恋人が付く）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORMDW %BREAKENG(@"When you accept her confession Yuugi suddenly steps forward, enveloping you in a tight embrace with your feet dangling off the ground.")%
+		PRINTFORMDW Blood rushes to your face when you feel warmth of her body.
+		PRINTFORMW 「Aahh...」
+		PRINTFORMW 「When was the last time I felt like this...?」
+		PRINTFORMDW %BREAKENG(@"With every squeeze of Yuugi's strong arms, you can feel your bones slightly bend more and more, your nerves screaming in agony.")%
+		PRINTFORMW 「Honestly, I didn't think it was ever gonna happen.」
+		CALL PRINT_DIALOGUE, @"I'm not sure if I'm even remotely attractive as a woman, as I'm only confident in my strength and my ability to drink...", "w"
+		PRINTFORMW 「But above all, it's the matter of me being an oni, and you being a human.」
+		PRINTFORMW 「I thought you'd be creeped out and leave me the day I confess to you...」
+		PRINTFORMW 「...Yet, you accepted me still. I heard your response loud and clear.」
+		PRINTFORMW 「And I'm so damn happy about that!」
+		PRINTFORMDW A worrying crack sounds out and pain flashes up your arm, causing you to take an abrupt breath through gritted teeth.
+		PRINTFORMW 「%MASTERNAME:64%... We'll be together, always... till the end... Huh, %MASTERNAME:64%?」
+		PRINTFORMW 「Oi, what's wrong, %MASTERNAME:64%?」
+		PRINTFORMW 「Whoa, crap!!! Hey! Your arm's kinda twisted in a weird way, man!」
+		PRINTFORMW 「What the hell happened to you?! %MASTERNAME:64%?!」
+		PRINTFORMW 「C'mon, don't die on me!!! We're finally gonna be lovers, I ain't gonna let it end like this!」
+		PRINTFORMW 「There, I'll at least put your arm back together real quick... Orrah!」
+		PRINTFORMDW Crunch, snap, crackkkk!!!
+		PRINTFORMDL .........
+		PRINTFORMDL ......
+		PRINTFORMDW ...
+		PRINTFORMDW %BREAKENG(@"You come back to after a while and start walking back home together, shushing Yuugi as she keeps apologizing all the while...")%
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMW 「Kh...! I... see...」
+		PRINTFORMDW Your reply reaches Yuugi's ears and she casts her gaze to the ground, a pensive look coming over her.
+		PRINTFORMDW She ruminates, the tense silence stretching on more and more while absent-mindedly clenching and opening her fists.
+		PRINTFORMDW Then, as if getting over it in some way, she lifts her head, standing straight to her full, imposing height.
+		PRINTFORMDW She stares straight into your eyes, making you take a hesitant step back.
+		PRINTFORMW 「...I think I know exactly how you must feel.」
+		PRINTFORMW 「But... I ain't giving up yet!」
+		PRINTFORMW 「I told you, didn't I? Our relationship will remain the same.」
+		PRINTFORMW 「I mean, it doesn't change the fact that I still love you.」
+		PRINTFORMW 「And I don't care how long it takes, I swear I'm gonna change your mind!」
+		PRINTFORMW 「So there you have it, %MASTERNAME:64%. Just wait until I come for you!」
+		PRINTFORMDW It sounds like a line from a fighting scene. When you point this out, Yuugi laughs out loud in her usual tone.
+		PRINTFORMW 「A-HA-HA-HA-HA! Bingo, you guessed it!」
+		PRINTFORMW 「This, my friend, is my struggle to win you over this time!」
+		PRINTFORMW 「You know me well enough to know that if someone's spolin' for a fight, I always bring it to 'em!」
+		PRINTFORMDW You got yourself into a fight with Yuugi before you realize it.
+		PRINTFORMW 「That said, you gotta keep asking me out on dates!」
+		PRINTFORMW 「I'll keep on telling you how much I love you until you accept my feelings one day!」
+		PRINTFORMDW If you make an enemy of an oni in anything, you are bound to get into trouble.
+		PRINTFORMDW This day made that clear to you.
+		RETURN 1
+	ENDIF
+
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰り
+;==================================================
+@M_KOJO_SPEVENT_K64_3(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_3(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		IF TALENT:恋慕
+			PRINTFORML 「...Huh, so we're back already.」
+			PRINTFORML 「There's something lacking I feel though. Wanna go for a drink while we're at it?」
+			PRINTFORMDW Telling her to give you a break, Yuugi chuckles, saying she's just messing with you.
+		ELSEIF TALENT:思慕
+			PRINTFORML 「%SPLIT_G("Today was fun:I had a great time today")%!」
+			PRINTFORMW 「Will you take me out again?」
+		ELSE
+			PRINTFORML 「I had a good time, I guess.」
+			PRINTFORMW 「It's nice to experience something like this once in a while.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印消去イベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Fine. Let's just call it even, okay? Letting bygones be bygones, and all that.」
+		PRINTFORMDL You wonder what would have happened, but it seems she's forgiven you.
+		PRINTFORML 「What's the matter? Ya seem awfully happy about it, don'tcha?」
+		PRINTFORML 「Well, that's that then... But if you ever do something like that again...」
+		PRINTFORML 「I don't have to tell you what'll happen then, do I?」
+		PRINTFORMDW A sigh of relief leaves your mouth, it's finally over. You'll try to keep Yuugi's firm warning in mind...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印2>1レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「...You really do have some serious guts.」
+		PRINTFORML 「I mean, first you piss off an oni of all people, and then you invite her on a date.」
+		PRINTFORML 「I think it's time for you to tell me what you're up to. Speak!」
+		PRINTFORMDL Yuugi breaks the ice on the way home with a incredulous expression, glancing sideways at you with narrow eyes.
+		PRINTFORMDL Yuugi stops in her tracks, fully turning to you with a wooden stare when you explain you want to make peace.
+		PRINTFORMDL Than, a broad smile cracks her lips.
+		PRINTFORML 「Pfft...! A-HA-HA!」
+		PRINTFORML 「Honestly... You really are one amusing %PRINT_MALE("guy", MASTER)%, %MASTERNAME:64%!」
+		PRINTFORMDW Yuugi says before walking on ahead, in a slightly better mood...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印3>2レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「...Siiigh, seriously.」
+		PRINTFORML 「Here I was thinking of punching you in the face as we part, but...」
+		PRINTFORMDL Yuugi walks behind you, muttering something disturbing...
+		PRINTFORMW 「Oh well, whatever I guess...」
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;部屋で遭遇
+;==================================================
+@M_KOJO_EVENT_K64_1(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF !TCVAR:64:今日会ったか
+			IF TALENT:恋慕
+				PRINTFORML 「%MASTERNAME:64%! C'mon, over here!」
+				PRINTFORMDL Yuugi beckons you with a hand and a bright smile after you greet her.
+				PRINTFORMW 「What are you planning on doing today? I'll go along with whatever you wanna do!」
+			ELSEIF TALENT:思慕
+				PRINTFORML 「Oh, %MASTERNAME:64%. I didn't expect you to come and see me.」
+				PRINTFORMW 「I was gonna drop by before long, but you saved me the trouble.」
+			ELSE
+				PRINTFORML 「Oh my, if it isn't %MASTERNAME:64% I see!」
+				PRINTFORMW 「Something I can do for you?」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF !TCVAR:64:今日会ったか
+			IF ABL:親密 >= 3 && !TALENT:妊娠 && !TALENT:育児中 && !RAND:5
+				PRINTFORML 「Oh, there you are.」
+				PRINTFORMDL Yuugi approaches you, a bottle of sake in hand.
+				PRINTFORMDL Before reaching you, she holds up the alcohol in a curious moment of inspection before looking back to you.
+				PRINTFORML 「Actually, I got some good booze, but... drinking it alone kinda makes me feel lonely.」
+				PRINTFORMW 「Would you like to join me for a drink?」
+				CALL GET_ITEM("鬼殺し", 1, 1)
+			ELSEIF TALENT:恋慕
+				PRINTFORML 「Oohh! %MASTERNAME:64%! There you are!」
+				PRINTFORMW 「%SPLIT_G("I was wondering when you'd show up:I was worried when I couldn't find ya")%!」
+			ELSEIF TALENT:思慕
+				PRINTFORML 「Yo! %MASTERNAME:64%!」
+				PRINTFORMW 「I had some time on my hands, so I came %SPLIT_G("to visit:to hang out:here to play")%.」
+			ELSE
+				PRINTFORMW 「Sup, %MASTERNAME:64%. I'm gonna let myself in if you don't mind.」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて一緒に入る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「Sup, %MASTERNAME:64%. How's the water?」
+		PRINTFORMDL %BREAKENG(@"Yuugi moves towards you and steps into the bath without an ounce of care coloring her features, her privates completely bare to you.")%
+		PRINTFORMDL You quickly avert your gaze, feeling your face get warmer.
+		PRINTFORML 「What's with that look on your face?」
+		PRINTFORMW 「We're already pretty close with each other to not be shy about it, are we?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて出て行った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 「Whoops, my bad. I didn't think you were in.」
+		PRINTFORML 「――Aahn? Would I like to join you, you ask?」
+		IF MARK:反発刻印 || CFLAG:ブチギレ
+			PRINTFORML 「Yeah, in your dreams. Get a grip!」
+			PRINTFORMDW Yuugi slams the door shut, causing some areas of the wood frame to audible and visibly crack.
+		ELSE
+			PRINTFORML 「Sounds tempting... But maybe I'll pass for today.」
+			PRINTFORMDW Yuugi tells you to enjoy the bath and slides the door shut.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML 「Huh, you're still in there?」
+		PRINTFORMW 「I'll catch up to you later if you want, but for now step outside. Go on!」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;外出先で遭遇した
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		IF !TCVAR:64:今日会ったか
+			IF ABL:親密 >= 3 && !RAND:5 && !TALENT:妊娠 && !TALENT:育児中
+				PRINTFORML 「Hmm～? Ooohhh! That you there, %MASTERNAME:64%?!」
+				PRINTFORML 「My bad, I was busy drinking just a moment ago. I couldn't recognize you at first.」
+				PRINTFORML 「Oh yeah, I know ya didn't show up here just to get drunk, but would you like to join me for a drink now?」
+				PRINTFORMW 「Aww, don't be so shy! I've literally got more than enough booze to last me a lifetime!」
+				CALL RECOVER(TARGET, 2000, "酒気", " ")
+				TALENT:64:機嫌 = 1
+			ELSEIF TALENT:恋慕
+				PRINTFORML 「Oooh! If it isn't %MASTERNAME:64%!」
+				PRINTFORMW 「What brings you out here?」
+			ELSEIF TALENT:思慕
+				PRINTFORML 「Well met, %MASTERNAME:64%.」
+				PRINTFORMW 「I can't serve you tea, but you can have all the booze you want.」
+			ELSE
+				PRINTFORML 「Ooh, it's you.」
+				PRINTFORMW 「What a coincidence to meet you here.」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;他キャラとデート中に遭遇した
+	;ARG:1にデート相手
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		IF !TCVAR:64:今日会ったか
+			IF TALENT:恋人
+				IF FIRSTTIME("YuugiPunchJealous") ;left as is, expanded with a follow up by Linguine
+					PRINTFORML 「You seem to be enjoying yourself quite a bit despite leaving your girlfriend behind.」
+					PRINTFORMDL %BREAKENG(@"Turning around, you spot Yuugi standing there with her brow knitted in anger, bared teeth clenching with a newfound fury.")%
+					PRINTFORMDL %BREAKENG(@"Closed, white knuckled fists shake at her sides. It's not everyday that she looks like a real oni from legends, but the stark similarity is clear now.")%
+					PRINTFORML 「Alas, that's the end of your date for today!」
+					PRINTFORMDL Blood drains from your face and you start to wonder about the situation, but it was already too late.
+					PRINTFORMDL Her fist collides with you like a plane into a tower, sending you airborne at breakneck velocities.
+					CALL RECOVER(MASTER, -10000, "体力", " ")
+					PRINTFORML 「Phew... I'll spare you from the rest for the time being.」
+					;word play
+					PRINTFORML 「I'm not that much of a demon after all... Wait, I guess I am. Oh well...」
+					PRINTFORMW 「Now then... Time to go home and \@TALENT:妊娠 ? unwind in what little ways I still can # get drunk\@, I s'pose.」
+				ELSEIF ONCE("YuugiCheatingPunish")
+					PRINTFORMDL %BREAKENG(@"Yuugi turns when she hears your and your date's footfalls, the smile on her face vanishing the moment she sees you with %CALLNAME:(ARG:1)%.")%
+					PRINTFORMDL Her eyes widen before hardening as her brow furrows and a sneer curves her lips downwards.
+					PRINTFORML 「Really? You're doing it again? I thought my fist would've been enough to warn you.」
+					IF TALENT:妊娠
+						PRINTFORMDL %BREAKENG(@"Yuugi sighs, placing her hands on her hips to emphasize her swollen belly, the proof of your passionate copulation some time ago.")%
+						PRINTFORMDL Noticing your gaze, she smirks and winks at %CALLNAME:(ARG:1)%, adding insult to injury.
+						PRINTFORML 「Be sure to enjoy your little date, my dear.」
+						PRINTFORMDL A smug smile cracks onto her face.
+						PRINTFORML 「I'm certain you will, hahaha!」
+						PRINTFORMDL Almost relishing the look on %CALLNAME:(ARG:1)%'s face, Yuugi walks away with her chin held high and a self-satisfied expression.
+						PRINTFORMDW At the end of the day, you and Yuugi know exactly where your place is...
+					ELSE
+						PRINTFORMDL Yuugi sighs and undoes the rope tied around the sake bottle hanging around her waist.
+						PRINTFORMDL She begins pouring its contents into the red dish in her other hand, her movements more forceful and sudden than usual.
+						PRINTFORMDL Some of the sake spills over the edges as a result, but she continues until it's filled to the brim.
+						PRINTFORML 「Whatever, enjoy your date or something.」
+						PRINTFORMDL %BREAKENG(@"Yuugi lifts the sake dish into the air, tilting it as she begins to gulp it down. Not all the sake goes into her mouth, though, spilling from the sides and onto her shirt, turning the white fabric hugging her chest transparent.")%
+						PRINTFORMDW %BREAKENG(@"She turns and walks away as she finishes the last of the alcohol, sparing both of you a brief glance before disappearing into the distance.")%
+					ENDIF
+				ENDIF
+			ELSEIF TALENT:恋慕
+				PRINTFORML 「Uh, umm, well...」
+				PRINTFORML 「Have a good time, I guess.」
+				PRINTFORMDW Yuugi looks somewhat upset.
+			ELSE
+				IF CFLAG:MASTER:現在位置 / 100 == 9 && !CFLAG:64:1003
+					PRINTFORML 「Whoa there, you two! D'you have a specific destination in mind for the day?」
+					PRINTFORML 「――I mean, %PRINT_MALE(@"a man and a woman:%SPLIT_G("you two:both of you")%", MASTER)% are walking cheek to cheek. I guess it's obvious enough where you're going, eh?」
+					CALL PRINT_DIALOGUE, @"The hot springs are this way. Accommodation for couples is that way. If you're looking for souvenirs, watch out for over-the-counter stores, 'cause many of 'em are rip-offs.", "w"
+					PRINTFORMW 「Well then, I'll get out of your hair now. Enjoy your stay in the most dangerous hot spring resort where vengeful spirits gather!」
+					CFLAG:64:1003 = 1
+				ELSE
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORML 「Ooh, if it isn't %MASTERNAME:64%! Having a little tryst there, I see?」
+							PRINTFORML 「Ha-ha-ha! C'mon, you don't have to give me that look!」
+							PRINTFORML 「I'm not so crude as to interfere with the two of you guys.」
+						CASE 1
+							PRINTFORML 「Great to see you guys getting along so well.」
+							PRINTFORML 「Be sure to enjoy each other's company. Thoroughly, y'hear?」
+							PRINTFORMDL Yuugi winks before returning to her business.
+							RETURN 1
+						CASE 2
+							PRINTFORML 「Gee, if it isn't %MASTERNAME:64%, together with... Heeeeh.」
+							PRINTFORML 「Sorry to interrupt. Hit me up again sometime, yeah?」
+					ENDSELECT
+					PRINTFORMDW Yuugi says, waving a dismissive hand before walking away.
+				ENDIF
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MAIN_MAP上で一日最初の挨拶
+	;注、このあと通常の遭遇口上、ARG==1 OR ARG==2に接続します
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;外出先で一日最初の挨拶
+	;ARG:1にデート相手、ARG:1が0の場合は非デート
+	;注、このあと通常の外出先で遭遇した口上、ARG==6 OR ARG==7に接続します
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		;ARG:1とデート中
+		IF ARG:1
+		;一人で外出
+		ELSE
+		ENDIF
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;朝起きたとき（おはよう口上）
+;==================================================
+@M_KOJO_EVENT_K64_2(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;非同棲かつ相手が先に起きてる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;TARGET私室にMASTERが入っている（恋慕時添い寝中就寝時のみ？
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			GOTO YUGI_OHAYO
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTER私室にTARGETが入ってきてる(恋慕無しでも入ってくる可能性有り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			IF !TALENT:妊娠 && !TALENT:育児中 && !RAND:5
+				PRINTFORML 「Mornin', how'd you sleep?」
+				PRINTFORML 「I came here to see you, but I didn't have the heart to wake you up.」
+				PRINTFORML 「So I've been sitting here chilling and drinking all the while.」
+				PRINTFORMDL You spot large quantities of sake bottles strewn around Yuugi.
+				PRINTFORMDW You sigh... Looks like a lot of cleanup work is ahead.
+				CALL RECOVER(TARGET, 500, "酒気", " ")
+				;added - actually make a mess
+				LOCAL = CFLAG:MASTER:現在位置
+				YOGORE:LOCAL = MIN(YOGORE:LOCAL + 1000 + RAND:4000, 6000)
+			ELSE
+				PRINTFORML 「Good morning! You awake at last, I see?」
+				PRINTFORMW 「...Huh, you're still half-asleep, aren'tcha? Here's some water.」
+				PRINTFORMDW You thank Yuugi and gulp down the water she offered you...
+				PRINTFORMDW PBBBBBBBFFFFFFFTTTTTTTT!!!
+				PRINTFORMDW %BREAKENG(@"Your throat and tongue burn, surprising you and dashing the fog of sleep from your eyes. That wasn't water!")%
+				PRINTFORML 「A-ha-ha-ha! There ya go! Now you're wide awake alright!」
+				PRINTFORMW 「My stuff's a little strong for humans. Good pick-me-up though, eh?」
+				CALL RECOVER(MASTER, 100, "酒気", " ")
+			ENDIF
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が起きている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		$YUGI_OHAYO
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Ooh, you're %SPLIT_G("awake:up")%!」
+				PRINTFORMW 「I've got a change of clothes for ya. Now go wash your face!」
+			CASE 1
+				PRINTFORML 「Hey, good mornin' there.」
+				PRINTFORML 「I thought you'd be up by now. %SPLIT_G("I got your grub ready:Meal's ready")%.」
+				PRINTFORMDL Yuugi's cheeks flush with embarrassment when you note that she sounded almost like your wife.
+				PRINTFORMW 「Heh... It kinda makes me blush to hear you say that... But I'm also flattered.」
+			CASE 2
+				PRINTFORML 「Fufu, rise and shine, princess! Took you a while, eh?」
+				PRINTFORMDL Yuugi's lively, crimson eyes meets yours as you stir, a bright smile plastered on her face.
+				PRINTFORML 「More importantly, can you let go of me already?」
+				CALL PRINT_DIALOGUE, @"When it comes to me, well... I'm not the type of person who makes a fuss about it. Still, things might get messy if someone sees us like this, right?"
+				PRINTFORMDL Feeling a pleasant heat around your arms, you realize you'd fallen asleep hugging her.
+				PRINTFORMW 「Good grief... You gotta be the only person in the world who's ever slept with an oni as a body pillow!」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が寝ている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「Khhh... Snooore... Zzz...」
+		PRINTFORMDL Looks like Yuugi is still asleep.
+		PRINTFORMDW %BREAKENG(@"You slip out from under the covers with slow movements, trying not to wake her as you test the floor with a foot before fully committing and slinking away.")%
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERが起きていて、相手が起きてきた
+	;添い寝時TARGET起床はこちら（TARGET衰弱or添い寝中TARGET睡魔負け後そのままMASTERが起き続けた上で相手が起床した場合限定
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;-------------------------------------------------
+		;非同棲
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;同棲中
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;共通
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「Yaaaawn～... Now that was some good sleep.」
+				PRINTFORML 「Yup!」
+				PRINTFORMDL Yuugi stretches her limbs with satisfying pops and claps her face.
+				PRINTFORMW 「A'ight, time to get up!」
+			CASE 1
+				PRINTFORML 「Ooh... You up already, %MASTERNAME:64%...?」
+				PRINTFORML 「...I think I'll be getting some more sleep, sooo...」
+				PRINTFORMDL Yuugi starts to doze off, eyelids slowly creeping closed.
+				PRINTFORMDL In a sudden motion, you take her horn into a firm grasp, giving her head a good old shake!
+				PRINTFORMW 「Whoaaah, h-hey?! Alright, I'm up! I'm gonna get up, so cut it out!!!」
+			CASE 2
+				PRINTFORML 「Snoooooore... Mmnnmm, ahh... Mornin' already...?」
+				PRINTFORMDL %BREAKENG(@"Yuugi stirs, ending her loud, rumbling snores. Finally. She raises and sits, unhurried as she rubs the sleep from her eyes.")%
+				PRINTFORMDL %BREAKENG(@"Her disheveled clothes reveals some skin, from her trim midriff to a toned thigh, giving you a very hard time to find a place to stare.")%
+				PRINTFORML 「Yaaaawnnn～～... Mmm～ Phew...」
+				PRINTFORMW 「Awright, guess I better get up!」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;夜寝るとき（おやすみ口上）
+;==================================================
+@M_KOJO_EVENT_K64_3(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;自室に帰って寝る（～は【現在地】から【キャラの自室】に戻りました）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF ARG:1
+			;デート中に眠くて帰って寝る（拠点キャラのみ）
+			PRINTFORMW 
+		ELSEIF CFLAG:うふふ
+			;うふふ中に眠くて自室に帰って寝る（拠点キャラのみ）
+			PRINTFORMW 
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;眠そうにしている（～は眠そうにしている）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「...Yeah～ I'm totally awake～...」
+				PRINTFORMDW Yuugi looks very tired, her face slack with drowsiness.
+			CASE 1
+				PRINTFORML 「...Kuh, darn... My eyelids are real heavy...」
+				PRINTFORMDW Even Yuugi, who was proud of her strength, didn't seem to have trained her eyelids.
+			CASE 2
+				PRINTFORML 「...Mnn, haah... What was that again?」
+				PRINTFORMW 「Sorry, I'm just... A little sleepy, is all...」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;睡眠中（～は眠っている）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 「Snore... Snoooore...」
+				PRINTFORMDW Yuugi snores like an old man.
+			CASE 1
+				PRINTFORML 「Zzz... Zzz...」
+				PRINTFORMDW Yuugi is sound asleep.
+			CASE 2
+				PRINTFORML 「...%MASTERNAME:64%... Zzz...」
+				PRINTFORMDW Hearing Yuugi call your name in her sleep makes your heart beat a bit faster.
+			CASE 3
+				PRINTFORML 「I want more... Bring me some booze...!」
+				PRINTFORML 「.........Guhh...」
+				PRINTFORMDW Is she attending a banquet of some sorts in her sleep...?
+			CASE 4
+				PRINTFORML 「Bughaahh...!」
+				PRINTFORMDL Suddenly, Yuugi's snoring stopped.
+				PRINTFORMDW ...After a while, she starts snoring again.
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;イタズラ中
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 4
+		;PRINTFORMW 
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;衰弱して寝る（体力500以下,うふふ時はうふふ強制終了）
+	;（キャラの自室以外：～を【現在地】から【キャラの自室】に運びました）
+	;（キャラの自室　　：～は疲れたと言って、横になりました）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		IF CFLAG:うふふ
+			;うふふ中にダウン
+			PRINTFORMW 
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERがダウン（恋慕のみ,そのまま一日が終了）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;お酒でダウン
+		IF BASE:MASTER:酒気 >= MAXBASE:MASTER:酒気
+			IF ARG:1
+				;自室でダウン,（～が【MASTER】をベッド（布団）へと運んでくれた…）
+				PRINTFORMDL Sliding her arm under both your knees and back, Yuugi lifts you with a small grunt with your legs dangling in the air.
+				PRINTFORML 「Hup! Upsie-daisy... Phew!」
+				PRINTFORML 「%CAPITALIZE(FSYN("geez"))%, what a pain in the arse you are!」
+				PRINTFORMW 「I thought you were supposed to be the one to do this!」
+			ELSE
+				;部屋まで運ばれる,（～が【MASTER】を私室へと運んでくれた…）
+				PRINTFORML 「Oi oi, you okay?」
+				PRINTFORMDL Yuugi gazes down at your face with a frown, before shaking her head.
+				PRINTFORML 「――Dang, that doesn't look good. %HE_SHE(MASTER,1)%'s totally done!」
+				PRINTFORMW 「Aw shucks, guess I'll just lug %HIM_HER(MASTER,,1)% in...」
+			ENDIF
+		;体力切れでダウン
+		ELSE
+			IF ARG:1
+				;自室でダウン,（～が【MASTER】をベッド（布団）へと運んでくれた…）
+				PRINTFORML 「Whoops... You %SPLIT_G("good:alright:okay")%?」
+				PRINTFORML 「Don't push yourself too hard, y'hear?」
+				PRINTFORML 「Here, hold on to me.」
+			ELSE
+				;部屋まで運ばれる,（～が【MASTER】を私室へと運んでくれた…）
+				PRINTFORML 「Whoa there... %SPLIT_G("Are you not feeling well:Is something wrong with you")%?」
+				PRINTFORMDL Yuugi stares at your face with worry in her eyes.
+				PRINTFORML 「Here, hold on to me. I'll walk you to your room.」
+			ENDIF
+			;PRINTFORMDW Yuugi lends you a shoulder, and you manage to make it back to your room...
+			CALL TRIPLEDOT("reverse:timed")
+			;added from J
+			PRINTFORMDW ...Before you knew it, you were lying down on your bed. With Yuugi staring in your face, that is.
+			IF TALENT:恋慕
+				PRINTFORMW 「Ooh... good... you woke up.」
+				PRINTFORMW 「What do you think you're doing trying to be so reckless all by yourself?」
+				PRINTFORMW 「...I'm here for you. You can lean on me whenever you need to, you hear?」
+			ELSE
+				PRINTFORMW 「Oh, you're awake?」
+				PRINTFORMW 「Good grief... Who do you think you are, some kind of immortal? It's a fool's errand to act so recklessly like that.」
+				PRINTFORMW 「Anyways, you gotta rest up and regain your strength. I ain't letting you wander around until you sleep it off, alright?」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが寝るために自室まで戻ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;-------------------------------------------------
+		;そのまま着替えて寝た（【TARGET】が部屋に戻ってきた→寝間着へと着替え、寝床に潜った）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 0
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部屋から追い出して寝た（眠そうな【TARGET】に追い出された…）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			IF CFLAG:前ターン位置 == CFLAG:現在位置
+				;前のターンまで一緒に部屋にいた
+				PRINTFORMW 
+			ELSE
+				;寝るために部屋に帰ってきたところ
+				PRINTFORMW 
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;他キャラとのＨを止めさせて寝た（【TARGET】が部屋に戻ってきた→唇をとがらせる【TARGET】に、【MASTER】は渋々【Ｈの相手】から離れた）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;来訪キャラが拠点で休憩（～は疲れ切っている→ちょっと休んでいきなよ）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝室に居る状態でその場で寝る（～は眠気に負け、眠りについた…）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		IF CFLAG:うふふ
+			;うふふ中に寝る
+			PRINTFORMW 
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;拠点外で自宅前に居るキャラが自室に帰って寝る（眠くなった～は自室に帰って行きました）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 10
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;移動時すれちがい
+;==================================================
+@M_KOJO_EVENT_K64_4(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;立ち止まった
+	;この後遭遇口上に接続
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;軽く会釈して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;何回も表示されたら邪魔なので１日１回
+		IF !TCVAR:64:350
+			IF TALENT:恋慕
+				PRINTFORML 「%MASTERNAME:64%, looks like you've been veeery busy.」
+				PRINTFORML 「Is there any chance I can help?」
+				PRINTFORMW 「...You good? Well, I sure hope so.」
+			ELSEIF TALENT:思慕
+				PRINTFORML 「Heeey, %MASTERNAME:64%! You goin' some places?」
+				PRINTFORML 「If you're free, maybe I should join... Ahn? You busy right now?」
+				PRINTFORMW 「Guess that's that then. We'll have to get together again sometime, y'hear?」
+			ELSE
+				PRINTFORML 「%SPLIT_G("Yo:Sup:Hey")%!」
+				PRINTFORMDW Yuugi raises a hand and briefly waves you off.
+			ENDIF
+			TCVAR:64:350 = 1
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無視して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMDL Yuugi doesn't seem to have noticed you yet.
+		PRINTFORMDW You don't bother to say hello, so you ignore her and pass on by...
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;他者介入でムード変化
+;==================================================
+@M_KOJO_EVENT_K64_5(ARG,ARG:1)
+;口上主はTARGET
+;ARGに入ってきたキャラ（人数が膨大なので、自己把握自己責任で
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;念のため
+	IF !CFLAG:うふふ
+		;-------------------------------------------------
+		;小分岐
+		;-------------------------------------------------
+		;霊夢が入ってきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG == 1
+			PRINTFORML 「Ooh, is that Reimu-dono I see?」
+			PRINTFORMW 「Is there something we can do for you?」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;萃香が入ってきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG == 10
+			PRINTFORML 「If it isn't Suika!」
+			PRINTFORMW 「You sure look as giddy as ever.」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;魔理沙が入ってきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG == 11
+			PRINTFORML 「Oh my, Marisa-dono, here?」
+			PRINTFORMW 「I'm a little busy right now, y'see. Afraid I can't hang out with ya today!」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;天狗勢が入ってきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && (ARG == 29 || ARG == 42 || ARG == 64)
+			PRINTFORML 「Well well well, look who's here...」
+			PRINTFORML 「I didn't expect the Tengu to approach me so brazenly.」
+			PRINTFORMW 「And here I thought your kind was trying to avoid meeting us humble oni!」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;華扇が入ってきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG == 43
+			;added, if suika is around as well
+			IF CFLAG:10:現在位置 == CFLAG:43:現在位置 && CFLAG:10:面識 && CFLAG:43:面識 && ONCE("KasenTrio")
+				RESETCOLOR
+				CALL SET_KOJO_COLOR(10)
+				LOCAL:8 = GETCOLOR()
+				RESETCOLOR
+				CALL SET_KOJO_COLOR(43)
+				LOCAL:9 = GETCOLOR()
+				RESETCOLOR
+				CALL SET_KOJO_COLOR(64)
+				PRINTFORML 「Oh, how nice! Our gang is here! Kasen, Suika, and me!」
+				PRINTFORML 「It's been a while, you guys! Still missing the fourth one, but oh well!」
+				CALL COLORMESSAGE("『Yup! Puhaa～!』",LOCAL:8,1,0)
+				PRINTFORMDW Suika takes a swig.
+				PRINTFORMDW Eh?!
+				PRINTFORMDW Wait, what an honored hermit such as Kasen is doing, hanging out with those oni?
+				CALL COLORMESSAGE("『N-No... Listen, this is not what it seems...!』",LOCAL:9,1,0)
+				PRINTFORMDW Kasen seems incredibly flustered.
+				PRINTFORMDW Seeing that, Yuugi puts her hand on Kasen's head and points at her with a grin.
+				PRINTFORML 「Huuuuh～? Are you tellin' me you still don't knooooow? Well, I'll tell ya! Her true form is actually--」
+				CALL COLORMESSAGE("『DOOOOOOOOON'T!!!』",LOCAL:9,2,0)
+			ELSE
+				PRINTFORML 「Heey, Kasen. Didn't think I'd meet you all the way here!」
+				PRINTFORML 「Kinda makes me wanna get together with my old friends and have a drink or two...」
+				PRINTFORMW 「Well, probably not gonna happen though.」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;さとりが入ってきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG == 49
+			PRINTFORML 「Wha--? It's rare to see *you* out here!」
+			PRINTFORML 「Hey now, what's with the look on that face of yours?」
+			PRINTFORMW 「You don't think I should be with this %PRINT_MALE("guy", MASTER)%?」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;にとりが入ってきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG == 51
+			PRINTFORML 「Hmm? Oh, right, you're that kappa.」
+			PRINTFORMW 「No need to be so scared, it's not like I'm trying to get the mountain back or anything!」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;パルスィ・キスメ・ヤマメが入ってきた
+		;パルスィが嫉妬オーラをぶつけてきても全く気にしなさそう
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && (ARG == 60 || ARG == 83 || ARG == 84)
+			PRINTFORML 「Ooh, it's you \@ (CFLAG:現在位置 == CFLAG:60:現在位置 + CFLAG:現在位置 == CFLAG:83:現在位置 + CFLAG:現在位置 == CFLAG:84:現在位置) > 1 ? guys # %CALLNAME:ARG%\@.」
+			PRINTFORML 「Sorry, but I'm kinda busy right now.」
+			PRINTFORMW 「I'll make it up to you another time!」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;added, seija
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG == 97
+			PRINTFORML 「Huh, an amanojaku? I think I just hurled a little in my mouth...」
+			PRINTFORML 「You're either really brave or really stupid to show yourself in front of me.」
+			PRINTFORMW 「Your face or your gut, which one do you choose? I'll send you flying shortly if you don't scurry off on your own!」
+			RETURN 1
+		ENDIF
+		;その他（キャラ指定なし
+		PRINTFORML 「Looks like someone's here.」
+		PRINTFORMW 「Well, it's nothing to be concerned about.」
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を目撃した
+;==================================================
+@M_KOJO_EVENT_K64_6(ARG,ARG:1)
+;口上主はTARGET
+;ARGに情事相手
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を目撃した（馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		;霊夢
+		IF ARG == 1
+			PRINTFORML 「Well well well, I see you're being very busy fooling around, huh?」
+			PRINTFORML 「Reimu-dono, could it be that your job was that of an aruki miko? [travelling miko, often associated with prostitution]」
+			PRINTFORMDW Yuugi smirks, teasing Reimu...
+		;萃香
+		ELSEIF ARG == 10
+			PRINTFORML 「Ooh, I knew it was you, Suika!」
+			PRINTFORML 「I could hear you moaning all the way back from there, y'know?」
+			PRINTFORMW 「As for what you guys are doing, weeeell, I don't really mind, I guess? Just thought I'd give you the heads up.」
+		;魔理沙
+		ELSEIF ARG == 11
+			PRINTFORML 「%SPLIT_G("Look who's here, it's:I was wondering who that was, but it's none other than")% Marisa-dono!」
+			PRINTFORML 「I figured it was someone else 'cause those gasps were a tad too sweet coming from you.」
+			PRINTFORMDW Yuugi grins teasingly...
+		;天狗勢
+		ELSEIF (ARG == 29 || ARG == 42 || ARG == 64)
+			PRINTFORML 「That you, tengu? Dallying with humans again, as per usual.」
+			PRINTFORML 「Now now, it's fine. I got to see some good stuff to remember!」
+			PRINTFORMDW Yuugi makes a camera frame gesture before leaving.
+		;華扇
+		ELSEIF ARG == 43
+			PRINTFORML 「Now that's a rare sight to behold, if I say so myself.」
+			PRINTFORML 「Whaddya think? D'you find %HIS_HER(MASTER)% dick to your liking?」
+			PRINTFORMW 「Ha-ha-ha! You're still a delight to poke fun at as always, my friend!」
+		;さとり
+		ELSEIF ARG == 49
+			PRINTFORML 「Oi-oi, I told you to quit it with your mind-reading trickery already.」
+			PRINTFORML 「Just think of the people who have to listen to your moans!」
+			PRINTFORMW 「Frankly, it's making everyone hella horny. Bet you can tell if you call yourself a mind reader, can't you?」
+		;にとり
+		ELSEIF ARG == 51
+			PRINTFORML 「Huuuh, ain't that a kappa I see? What a surprise...」
+			PRINTFORML 「I heard you were keeping busy, is this what you meant?」
+			PRINTFORMW 「Well, you certainly *are* busy. Am I interrupting something?」
+		;パルスィ・キスメ・ヤマメ
+		ELSEIF (ARG == 60 || ARG == 83 || ARG == 84)
+			PRINTFORML 「Oooohhh man, they're screwing, they're screwing alright!」
+			PRINTFORML 「I would love to join in on the fun with you guys, buuut...」
+			PRINTFORMDW Yuugi glances down at you, having witnessed something intriguing.
+		;それ以外
+		ELSE
+			IF TALENT:恋人 ;left as is, I'm not sure this will ever trigger? maybe that's why it was removed
+				PRINTFORMW 「I see you guys having an awfully pleasant time together, eh?」
+				PRINTFORMDW You turn around with a start, finding Yuugi standing there, arms crossed under her chest.
+				PRINTFORML 「I'm kinda ticked off here.」
+				PRINTFORMW 「Man, I wonder why...」
+				PRINTFORMDL Yuugi's sharp glare pierces through you.
+				IF HAS_PENIS(MASTER) ;added check
+					PRINTFORMDW Your erection loses all its vigor, shriveling up underneath her disapproving gaze.
+					BASE:MASTER:勃起 = 0
+				ELSE
+					PRINTFORMDW You feel all your built-up passion drain from you, completely subsiding a moment later.
+				ENDIF
+				PRINTFORMW 「...Sigh.」
+				PRINTFORML 「Oh well, go ahead and enjoy yourselves alright.」
+				PRINTFORMDW With those words, Yuugi turns away and leaves.
+			ELSE
+				PRINTFORML 「I heard a whole lot of moans coming from over here, so I thought no way this could be happening...」
+				PRINTFORML 「Good for you being so popular, but choose better time and place for this, 'kay?」
+				PRINTFORML 「'Cause you never know when someone like me might walk in on ya!」
+				PRINTFORMDW Having said only what she had to say, Yuugi apologizes for interrupting you and promptly leaves.
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;負けじと参加（馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		IF TALENT:恋慕
+			PRINTFORML 「I wondered where you'd gone off to, but here you are...」
+			PRINTFORML 「%MASTERNAME:64% belongs to me, y'see. I'll be taking %HIM_HER(MASTER,,1)% back!」
+			PRINTFORMDW Yuugi comes barging in, fully intending to reclaim you!
+		ELSE
+			PRINTFORML 「Huh, now that's something real interesting you're doing there alright.」
+			PRINTFORMW 「Lemme in on some of the fun, you guys!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;気まずそうに立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML 「%SPLIT_G("Uh, well, sorry about that:Oh! I, uh, my bad")%.」
+		PRINTFORML 「I didn't mean to %SPLIT_G("barge in:peek")%, y'know.」
+		PRINTFORMDW Yuugi scratches her head and walks away, looking very uncomfortable.
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を見られた
+;==================================================
+@M_KOJO_EVENT_K64_7(ARG,ARG:1)
+;口上主はTARGET
+;ARGに目撃者
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を見られた（目撃者の馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		;霊夢
+		IF ARG == 1
+			PRINTFORML 「%SPLIT_G(@"What's %HE_SHE(MASTER)% doing here:Why are we doing this here")%...? I mean, it's no biggie, right?」
+			PRINTFORML 「C'mon, tell her, %MASTERNAME:64%!」
+			PRINTFORMDW Asking for your approval like that is putting you in quite a bind...
+		;萃香
+		ELSEIF ARG == 1
+			PRINTFORML 「Aahn?! Who the-- Ooh, it's you, Suika!」
+			PRINTFORML 「Wanna give it a whirl too?」
+			PRINTFORMDW Yuugi says, beckoning to Suika.
+		;魔理沙
+		ELSEIF ARG == 10
+			PRINTFORML 「Ha-ha-ha! You okay there, black and white? You're blushing so hard there!」
+			PRINTFORML 「Guess it's a little too radical for a child to see, eh?」
+			PRINTFORMDW Yuugi enjoys watching Marisa's panicked reaction...
+		;天狗勢
+		ELSEIF (ARG == 29 || ARG == 42 || ARG == 64)
+			PRINTFORML 「Whazzat, sneaking peeks?」
+			PRINTFORML 「That kind of thing with tengu is a huge pet peeve of mine.」
+			;added
+			PRINTFORML 「Shoo! This is my prey!」
+			PRINTFORMDW Yuugi says, glaring at %CALLNAME:ARG%...
+		;華扇
+		ELSEIF ARG == 43
+			PRINTFORML 「What the hell are we doing? I mean, can't you just tell? I'm shagging!」
+			PRINTFORML 「Oh yeah, wanna join us? It feels great!」
+			PRINTFORMDW Yuugi invites Kasen to partake with the same casualness as if she were inviting her to join her %SPLIT_G("for a drink:in a bath")%...
+		;さとり
+		ELSEIF ARG == 49
+			PRINTFORML 「I always knew you were one moody little thing, but I didn't expect you'd be this much of a wreck.」
+			PRINTFORML 「I think we're gonna get along just fine for a little bit. Wanna fuck %HIM_HER(MASTER,,1)% with me?」
+			PRINTFORMDW Yuugi insists, but Satori's eyes were cold as ice in response.
+		;にとり
+		ELSEIF ARG == 51
+			PRINTFORML 「Huh? Is someone there?」
+			PRINTFORML 「Kappa? Yeah, no wonder I didn't even notice such a pipsqueak!」
+			PRINTFORMDW Yuugi doesn't seem to mind Nitori's presence at all...
+		;パルスィ・キスメ・ヤマメ
+		ELSEIF (ARG == 60 || ARG == 83 || ARG == 84)
+			PRINTFORML 「What, you want this %PRINT_MALE("guy", MASTER)%?」
+			PRINTFORML 「Hate to break it to you, but I'm using %HIM_HER(MASTER,,1)% now!」
+			PRINTFORMDW Yuugi refuses to step away from you even though %CALLNAME:ARG% just caught her having an affair.
+		;それ以外
+		ELSE
+			IF TALENT:恋人 ;left as is
+				PRINTFORML 「Hey, what's up? You seem so flustered there.」
+				PRINTFORML 「We don't really care if you keep watching us, y'know. Am I right?」
+				PRINTFORMDW Yuugi glances at you, seeking your approval, but you're at a loss for words.
+			ELSE
+				PRINTFORML 「Hey Peeping Tom, you got some nasty habits!」
+				PRINTFORML 「Oh, lemme guess. You are here to join in, eh?」
+				;left as is
+				PRINTFORMDL Yuugi beckons %CALLNAME:ARG% in a lighthearted fashion, but %HE_SHE(ARG)% quickly scurries away.
+				PRINTFORMW 「Huh. Maaan, that's so lame.」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が負けじと参加（目撃者の馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		IF TALENT:恋慕
+			PRINTFORML 「...Whazzat? You ain't gonna give up on %CALLNAME:MASTER%? Hah! You sure talk big for someone of your size!」
+			PRINTFORML 「I'll have you know, I ain't about to let you have %HIM_HER(MASTER,,1)% all to yourself either!」
+			PRINTFORMDL Yuugi asserts her ownership of you with her fighting spirit bared, cracking her knuckles in each hand.
+			PRINTFORMDW ...This may just get quite hectic.
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Fufu, %SPLIT_G("this sounds promising:this ought to be interesting")%.」
+			PRINTFORMW 「%MASTERNAME:64%, ya better get on board for this one too!」
+		ELSE
+			PRINTFORML 「Oho, how brave of ya.」
+			PRINTFORMW 「I'm all for it!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML 「Oh, whoops... We might've messed up here a little.」
+		PRINTFORMW 「Well, what's done is done. Now, let's continue!」
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;目撃した情事を問い詰める（現在無し
+;==================================================
+@M_KOJO_EVENT_K64_8(ARG,ARG:1)
+RETURN 1
+
+;==================================================
+;パンツ没収された
+;==================================================
+@M_KOJO_EVENT_K64_9(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORMW 「Hey, that your stuff here?」
+		PRINTFORMDL Before you know it, the underwear in your possession got confiscated.
+		PRINTFORMDW You try to get out of this by explaining that it was a misunderstanding, but Yuugi glances at you suspiciously.
+		;a little pun lost in the translation, kill me
+		PRINTFORMW 「Misunderstanding, misnomer, whatever! That's not what I asked.」
+		PRINTFORMW 「Tell me, that your stuff here?」
+		PRINTFORMDW .........
+		PRINTFORMW 「...Well, that's that then.」
+		PRINTFORMW 「Relax, I ain't gonna lecture you like some kind of Yama.」
+		PRINTFORMW 「I'll just go ahead and return these to their rightful owners. You ain't about to start arguing with me, are you?」
+		PRINTFORMDW All you could do is nod your head after facing such compelling energy...
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;押し倒した
+;==================================================
+@M_KOJO_EVENT_K64_10(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;うふふ==2（開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;MASTERを押し倒した（開始時）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			IF FIRSTTIME("YuugiSnuSnu") || RAND:3 == 0
+				PRINTFORML 「Huh, you ain't fighting back.」
+				PRINTFORMW 「Good, that makes it easier for me. %SPLIT_G("I'll take what I can get:You'll let me get on with it, then")%!」
+				PRINTFORMDL Yuugi says as she begins to undress you.
+				PRINTFORMDW %BREAKENG(@"Her hands tear the clothes off you in rough, eager motions, looking like she can barely contain her hunger for the prize underneath.")%
+				PRINTFORML 「Fufufu, %SPLIT_G("looks like someone is seriously erect right now:look at you getting so big and hard already:look at you poppin' such a fine boner")%...」
+				PRINTFORMW 「Are you looking forward to something, with it being like that? Hmm?」
+				PRINTFORMDL %BREAKENG(@"Yuugi strokes your manhood with a delicate hand this time, caressing its length in slow, gentle movements, as if trying not to break it.")%
+				PRINTFORMDW %BREAKENG(@"A generous amount of precum spills from the tip of your pulsating member and onto her hand, serving as a reply to her question.")%
+			ELSEIF TALENT:恋慕 ;added this and below
+				PRINTFORMW 「Hey, %MASTERNAME:64%... C'mere.」
+				PRINTFORMDL Yuugi suddenly pushes you down on your knees, urging you to pleasure her.
+				PRINTFORMW 「%MOAN()%... My bad. I get real horny just by you being with me, you see.」
+				IF BASE:MASTER:勃起 >= 1000
+					PRINTFORMDW Yuugi checks you out and spots a boner in your pants with a glint in her eyes.
+					PRINTFORML 「Hehe～ You can't show me something like that then expect me not to get horny, either...」
+					PRINTFORML 「Well, it's thanks to you that I'm able to let loose like this, isn't it?」
+					PRINTFORMW 「I gotta repay you for your trouble keeping me happy too sometime, you know.」
+				ENDIF
+			ELSE
+				PRINTFORML 「Sorry, but I'm about to commit a crime!」
+				PRINTFORMDW %BREAKENG(@"Yuugi forces you down with all her strength and starts undressing you roughly, almost tearing off your clothes apart.")%
+				CALL PRINT_DIALOGUE, @"Phew... What a sight～ I'm glad you're the first person I found. I don't think anyone else can keep up with me, after all."
+				PRINTFORML 「I've been a bit restless and needed to find a way to calm down. You don't mind it, right?」
+				PRINTFORMW 「Hey, shh... It'll be over soon, okay? I'll pour you a nice drink once we're done, so no hard feelings!」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTERに抱きついた（開始時）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「What's with the urgency you ask? C'mon, it's fiiine, relax.」
+			PRINTFORMW 「I'm just in the mood for doing this right now!」
+			PRINTFORMDL Yuugi gives you a pat on the head, ruffling your hair.
+			PRINTFORMDW A small gasp escapes your mouth at the prospect of becoming a bottom for drunken Yuugi's advances...
+			RETURN 1
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;なだめられた（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;-------------------------------------------------
+		;抜け出した
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			PRINTFORML 「%SPLIT_G("It bothers you that much to go along with it, huh:Were you that unhappy about it")%?」
+			PRINTFORML 「Well, suit yourself.」
+			PRINTFORMDW And just like that, Yuugi lets go of you.
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;抱き着きモード満足終了
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「Welp, guess I'll let you off with that.」
+			PRINTFORML 「Not sure if I can hold back any longer after all.」
+			PRINTFORMDW You sigh as you fix your hair and readjust your clothes after Yuugi's fondling...
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;抱き着きモード強制終了
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「Hmm, I'm still not really feeling satisfied with this much though...」
+			PRINTFORMW 「Oh well, I guess I'll have to, for now.」
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;抜け出す失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		;-------------------------------------------------
+		;好きにして状態から抜け出せなかった
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「Oi, c'mon now. I thought you told me to have my way with you.」
+			IF IS_MALE(MASTER) ;elaborated
+				PRINTFORML 「Those were your words, not mine. If you call yourself a man, you gotta keep 'em. Pull yourself together!」
+				PRINTFORMDL %BREAKENG(@"Eyeing you with wanton desire, Yuugi's resolute in squeezing every last drop of seed out of you, whether you like it or not.")%
+			ELSE
+				PRINTFORML 「If you're gonna challenge me like that, I ain't gonna go easy on you, y'know. Even as a fellow woman!」
+				PRINTFORMDL By her tone, Yuugi's committed in ravishing you till the bitter end.
+			ENDIF
+			PRINTFORMDW ...You wonder if you'll make it out of here alive.
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;欲求不満が高くて抜け出せなかった
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「Whoa there, I still haven't had my fill!」
+			PRINTFORML 「Orrah! Just %SPLIT_G("do me a solid:be a good fella")% and get fucked!」
+			PRINTFORMDW Yuugi pins you down in earnest with an excited gleam in her eye. Noticing this, you give up struggling after a moment.
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;誘ってきた（人目につかない場所に行きたがるやつ）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;ARG:1=TARGETの欲求不満度（最高1000）
+		;必要ならばこれで分岐を作ってください
+		;added
+		PRINTFORML 「Hey, %MASTERNAME:64%... I can barely hold myself back from pinning you down on the ground and having my way with you.」
+		PRINTFORMW 「Let's get a room or something right now... Okay?」
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;==================================================
+;浴場で遭遇
+;==================================================
+@M_KOJO_EVENT_K64_11(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Hhaaa!」
+		PRINTFORMDL Bonk! The bathing bucket hits you squarely on the head!
+		PRINTFORML 「...Hmm? Oh, %MASTERNAME:64%? So it was you, huh.」
+		PRINTFORML 「I don't mind you peeking on me, but keep it in moderation, y'hear?」
+		PRINTFORMDL Yuugi snorts as she rises from the bath, displaying her soaked front with a pleased look on her face.
+		PRINTFORMDL %BREAKENG(@"Drips rolled down her glistening athletic physique, tracing a path from the top of her full breasts to her toned stomach before dripping from between her thighs into the pool of water below.")%
+		PRINTFORMDW You make sure to get a good look of it, burning this image into your memory before quickly retreating...
+		;CALL RECOVER(MASTER, -100, "体力", " ")
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目が合った（追い出されない）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Oh, hey there %MASTERNAME:64%! Coming to take a bath I see.」
+		IF TALENT:恋人
+			PRINTFORML 「You shoulda told me, I'd have gone in with you! Treating me like a stranger, are you?」
+			PRINTFORMW 「We're lovers, y'know. A little back rub is a drop in the bucket at this point.」
+		ELSEIF TALENT:恋慕
+			PRINTFORMDL Yuugi says before moving to the side, making room for you.
+			PRINTFORML 「Right, want me to wash your back or something?」
+			PRINTFORMW 「You good? C'mooon, don't be so modest!」
+		ELSE
+			PRINTFORMDL Even though she's not alone anymore, Yuugi seems completely unashamed of it.
+			PRINTFORMDL The top of her ample breasts float in the hot water, swaying to and fro with the motions of the bath...
+			PRINTFORMW 「...?」
+			PRINTFORMDL She cracks an eye open and looks at you, a frown forming on her lips.
+			PRINTFORMW 「C'mon, don't just stand there. Get in already!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;寝床に忍び込み
+;==================================================
+@M_KOJO_EVENT_K64_12(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出される（怒り）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕・衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される（衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;お仕事中
+;==================================================
+@M_KOJO_EVENT_K64_13(ARG,ARG:1)
+;口上主はTARGET
+;ARG:1に残っている仕事量
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;仕事開始（職場へ移動する）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:恋慕
+			PRINTFORML 「Well theeeen, guess it's time to get going, huh.」
+			PRINTFORML 「Right, wanna tag along, %MASTERNAME:64%? I'm going out for a drink, you can join too!」
+			PRINTFORML 「Whenever you feel like it, that is. It's taking place at the Veranda at Hakurei Shrine.」
+			PRINTFORML 「The more people the merrier when it comes to having a drinking fest after all!」
+		ELSE
+			PRINTFORML 「Oops, I better get going now.」
+			PRINTFORML 「I'm going out to get drunk. You can come too, if you wanna.」
+			PRINTFORML 「Head to the Veranda at Hakurei Shrine if you're interested!」
+		ENDIF
+		PRINTFORMDW %BREAKENG(@"Yuugi hoists a prepared sake barrel over her shoulder by the handle, starting towards the shrine with a bounce in her step and a hum on her lips.")%
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;業務中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		SELECTCASE RAND:10
+			CASE 0
+				PRINTFORML 「I feel like I'm the only one drinking here...」
+				PRINTFORML 「Since we're at it, here, have yourself a drink all ya want!」
+				PRINTFORMDW Coerced by Yuugi's prodding with a bottle, you take the offered item and drink.
+				CALL RECOVER(MASTER, 200, "酒気", " ")
+			CASE 1
+				PRINTFORML 「Hmph, think %SPLIT_G("I'm still good:I might have more:I can do better than this")%.」
+				PRINTFORML 「Hey, can you grab that bottle for me?」
+				PRINTFORMDL Yuugi's drinking spree knows no bounds.
+				PRINTFORMDL Any normal person would be on the ground, mumbling and drunk from drinking so much.
+				PRINTFORMDW But she remains completely unfazed with eyes focused and a smile on her lips.
+			CASE 2
+				PRINTFORMDL Yuugi downs the rotgut in one gulp. She smacks her lap repeatedly as she tries to endure the burning in her throat and chest.
+				PRINTFORMW 「Kuuhhh～... When it's this strong, it's gonna be real hard-hitting stuff indeed...」
+			CASE 3
+				PRINTFORML 「Gulp, guuulp...」
+				PRINTFORML 「Puhaaaaaaaahhh～!!!」
+				PRINTFORMDL Yuugi is swigging down her sake as if it were water...
+				PRINTFORMDW Bottles pile up around her and after seeing her drink so much, you feel a little bit drunk, too.
+				CALL RECOVER(MASTER, 50, "酒気", " ")
+			CASE 4
+				PRINTFORML 「Let's see, this one... Empty, huh?」
+				PRINTFORML 「A'ight, how 'bout this... Dammit, it's also out!」
+				;this line was simplified, left as is
+				PRINTFORMDW The bottles are in such a mess that Yuugi is having a hard time finding the one still filled with alcohol.
+			CASE 5
+				PRINTFORML 「C'mon, don't just dawdle, have a drink too!」
+				PRINTFORMDL Yuugi offers you her sake dish, the alcohol filling it to the brim and threatening to spill over its red edges.
+				PRINTFORMDL Having no way out, you take it and put it to your lips.
+				PRINTFORMDL Sake trickles down your cheek and your lungs cry for air as you drink it all without stopping.
+				PRINTFORMDL You hand it back to her with a sudden intake of breath, desperate for a reprieve.
+				PRINTFORMW 「Ha-ha-ha! Nice drinking! That's the spirit!」
+				CALL RECOVER(MASTER, 200, "酒気", " ")
+			CASE 6
+				PRINTFORML 「Huh, that's a purdy good one.」
+				PRINTFORML 「Uuhh, let's see here... How'd you read this again...?」
+				PRINTFORMDW Yuugi stares hard at the Western-style liquor bottle, her brow knit together in concentration.
+			CASE 7
+				PRINTFORML 「Taking your time to savor it has its merits too... But!」
+				PRINTFORMDW Yuugi pours the entire contents of the bottle into her sake dish and guzzles it down all at once.
+			CASE 8
+				PRINTFORML 「To accompany a good drink, can't forget about these!」
+				PRINTFORMDW Yuugi enjoys her snacks with a grunt.
+			CASE 9
+				PRINTFORML 「Hmm? Hell's this, methyl alcohol?」
+				PRINTFORML 「Gulp... Hnnghhhh?!」
+				PRINTFORMW 「Khaaaaaaaaaaa～～～hhh!!! Holy shit, this stuff kicks ass!」
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;仕事終了
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF TALENT:恋慕
+			PRINTFORML 「Pheeewey～... Man, maybe I had one too many drinks...」
+			PRINTFORMDL With her cheeks rosy and face flushed red, Yuugi snuggles into you.
+			PRINTFORML 「I reek of alcohol? Haha, weeell... That's 'cause I was boozin' for a while now!」
+			PRINTFORMW 「Don'tcha worry though, I'll sober up before long...」
+		ELSE
+			PRINTFORML 「Puhaaa～! I got myself all drunk alright!」
+			PRINTFORMDL The veranda is cluttered all over the place with mountains of bottles and barrels of sake.
+			PRINTFORMDL You bring them all together and put them away for now.
+			PRINTFORML 「Oh, hey, that's very thoughtful of you to clean up.」
+			PRINTFORMW 「It's great to have someone like you around for us to enjoy our drinks!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;食事系
+;==================================================
+@M_KOJO_EVENT_K64_14(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;持っていた食物を食べられた
+	;TCVAR:盗み食い抑制で持っていた食物を食われるのを回避できる
+	;仕様例（薬が入ってたら食わない）
+	;IF DISH_DRG
+	;	TCVAR:盗み食い抑制 = 1
+	;ENDIF
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == -1
+		PRINTFORML 「Whoa! If it ain't something tasty you got there!」
+		PRINTFORMDL Looking away for the source of the voice, you realize a moment later Yuugi snatched the meal away from your hands.
+		PRINTFORML 「I ain't supposed to eat it, you say? C'mon, you got this much of it here. Don't be such a stick in the mud!」
+		PRINTFORML 「Nom-nom, mmm! Yum! I'll just have one more bite...」
+		PRINTFORMDL The meal steadily disappears in front of your eyes down Yuugi gullet as she wolfs it down without much worry.
+		PRINTFORMW
+		PRINTFORML 「Haaah～ Oh man, I'm so full...」
+		PRINTFORMDL After taking the last bite, Yuugi rubs her belly in satisfaction.
+		PRINTFORMDW The dish that you had taken the trouble to prepare all went straight into the oni's stomach...
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;MASTERが押し倒した
+;==================================================
+@M_KOJO_EVENT_K64_15(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;未実装（押し倒しコマンドに統合？
+	;MASTERが押し倒した（ウフフ開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;逢瀬終了（ウフフ終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF CFLAG:睡眠
+			;PRINTFORML
+			RETURN 1
+		;危険日＆危険日生Ｈ解禁済＆非妊娠＆ピル未使用＆膣内精液１以上
+		ELSEIF CFLAG:900 == 7 && CFLAG:生解禁 >= 2 && !TALENT:妊娠 && !TCVAR:ピル && 充填率(TARGET,1) > 0
+			PRINTFORML 「%SPLIT_G("I got myself filled up with your sperm today alright:I made sure to have your sperm today alright")%, %MASTERNAME:64%!」
+			PRINTFORML 「Now all we have to do is wait and see... Though it's hard to tell if I'll get pregnant or not.」
+			PRINTFORMDL Well, it's going to be difficult to come up with a result in such a short time.
+			PRINTFORML 「Right, we just gotta be patient about it. If this doesn't knock me up, we'll just repeat the process and bang again.」
+			IF TALENT:恋慕
+				PRINTFORML 「...Ain't that right, lover?」
+				PRINTFORMDW %BREAKENG(@"Yuugi places a hand on your groin, stroking you through your clothes with a lascivious expression painted across her face.")%
+			ELSE
+				PRINTFORML 「Haha, it almost sounds like I'm hoping to get pregnant at this point!」
+				PRINTFORMDW As the heat of the affair cools down, Yuugi goes back to her normal self.
+			ENDIF
+		;妊娠中
+		ELSEIF TALENT:妊娠 && TALENT:恋慕 && ONCE("YuugiPregFuckAfter") ;pregnancy case, was removed, left as is
+			PRINTFORMDL Afterwards, you embrace Yuugi from behind and stroke the belly with your future child.
+			PRINTFORML 「Fufu, I see you were extra nice to me today by the way.」
+			PRINTFORML 「It's our baby we're talking about. No need to sweat it this much!」
+			PRINTFORMDW Yuugi says before placing her own hand on your hand stroking her stomach...
+		;通常
+		ELSE
+			IF CFLAG:溜まってる度 >= 400 && !RAND:6 ;added
+				PRINTFORML 「Soooo... This ain't all for today, is it?」
+				PRINTFORMDL %BREAKENG(@"You rest your head on Yuugi's abs as she looks at you, looking fresh as if she already recovered from the previous action.")%
+				PRINTFORML 「I mean, we oni are passionate lovers, and I have some expectations when it comes to you.」
+				PRINTFORMW 「Well, don't stress over it. I'll catch ya later when I'm in a pinch, hehe～」
+			ELSEIF TALENT:恋慕
+				;欲情のパラメーターが１０未満
+				IF PALAM:欲情 < PALAMLV:10
+					PRINTFORMW 「Did you enjoy yourself with me?」
+					PRINTFORMW 「――Fufun. Good stuff, then. Glad to hear it!」
+					PRINTFORMDW Yuugi's grin turns into a broad smile after hearing your response.
+				;欲情のパラメーターが１５未満
+				ELSEIF PALAM:欲情 < PALAMLV:15
+					PRINTFORML 「Phew... I'll borrow your shoulder if you don't mind.」
+					PRINTFORMDL Yuugi leans over and rests her head on your shoulder with a small sigh of satisfaction.
+					PRINTFORMDW You both remain silent for a while, soaking up the afterglow of the affair...
+				;欲情のパラメーターが最大
+				ELSE
+					IF FIRSTTIME("YuugiFuck") ;case was removed, left as a variant
+						PRINTFORML 「I wonder why...」
+						PRINTFORML 「Every time I get laid with you, I just sort of lose control over myself...」
+						PRINTFORMDW %BREAKENG(@"Recalling the incident that ended moments ago with a sober mind, Yuugi scratches her cheek as her face turns a bright shade of red.")%
+						PRINTFORML 「Eh, that was cute you say...? Bah, you little punk...!」
+						PRINTFORML 「...Honestly, you humans are a bunch of pussies!」
+						PRINTFORMDW Though she turns away with a pout, a smirk slowly grows on her lips, hinting at her enjoyment.
+					ELSE
+						PRINTFORML 「Haah... I don't think I can compete with you when it comes to this stuff.」
+						PRINTFORML 「Though I might be the only one who sees it as a good thing...」
+						;this line was removed, left as is
+						PRINTFORMDL Yuugi enjoys the warm, tingling sensations of post-coitus across her body as she adjusts her disheveled hair.
+						PRINTFORMDL You reach over and stroke her hair, feeling each smooth, yellow strand of her mane in-between your fingers.
+						PRINTFORMDW %BREAKENG(@"Yuugi closes her eyes and moans, focusing on the soft touch of your fingertips as they move across her scalp in just the way she likes.")%
+					ENDIF
+				ENDIF
+			ELSE
+				;cases were removed, left as variants
+				;欲情のパラメーターが１０未満
+				IF PALAM:欲情 < PALAMLV:10
+					IF FIRSTTIME("YuugiFuck2")
+						PRINTFORML 「Err, well, y'know.」
+						PRINTFORML 「Now that's out of the way, how about a drink?」
+						PRINTFORMDL Looks like the unusual atmosphere after the affair is making Yuugi feel quite awkward.
+						PRINTFORML 「Oi, what are you laughing at?!」
+						PRINTFORML 「I ain't used to this kind of thing, alright!」
+						PRINTFORMDW It's rather unusual for Yuugi to lose her temper, so you apologize while trying to stifle your laughter.
+					ELSE
+						PRINTFORMDL A brief yawn falls from Yuugi's mouth before she looks at you with a grin.
+						PRINTFORML 「I enjoyed myself alright. It was a good way to pass the time for sure!」
+						PRINTFORML 「I'm hoping for something a little more intense next time 'round, though.」
+						PRINTFORMDW Yuugi puts on her clothes as if nothing happened.
+					ENDIF
+				;欲情のパラメーターが１５未満
+				ELSEIF PALAM:欲情 < PALAMLV:15
+					IF BASE:酒気 <= 0 && FIRSTTIME("YuugiFuck3")
+						PRINTFORML 「...It's kinda awkward now that I think about it.」
+						PRINTFORML 「It's not uncommon to lose your temper when you're drunk, but...」
+						PRINTFORMW 「You're the only person I'd ever fuck sober like this...」
+						PRINTFORMW 「.........」
+						PRINTFORMW 「Uhh, pretend you didn't just hear that.」
+						PRINTFORMDW Yuugi scratches her head in embarrassment and turns away from you.
+					ELSE
+						PRINTFORMDL Yuugi lets out a breathy chuckle as she rubs the sweat from forehead with the back of her hand.
+						PRINTFORML 「You fuck like nobody's business, gotta give it to ya.」
+						PRINTFORML 「Been a long time since I got riled up like that!」
+						PRINTFORMDW Yuugi seems pleased with your performance...
+					ENDIF
+				;欲情のパラメーターが最大
+				ELSE
+					PRINTFORML 「Man, never thought I'd get that rowdy...」
+					PRINTFORMDW Yuugi sits down next to you with a thump and exhales deeply to cool her burning body.
+					PRINTFORML 「Phew... Well, I guess it's nice to do something like this once in a while.」
+					PRINTFORML 「If you're feeling up to it, I'd be happy to hook up with you again!」
+					PRINTFORMDW The tone of her voice holds a hint of anticipation as she says this...
+				ENDIF
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+	;-------------------------------------------------
+	;事後描写
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		;-------------------------------------------------
+		;精液が垂れてきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;愛液が垂れてきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;事後のムード
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 3
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;服を着る
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 4
+			PRINTFORML
+			RETURN 1
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;添い寝する
+;==================================================
+@M_KOJO_EVENT_K64_16(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;添い寝を始めた（開始時）(存在せず
+	;記入チェック
+	;LOCAL:1 = 0
+	;-------------------------------------------------
+	;IF LOCAL:1 && ARG == 1
+		;PRINTFORML
+		;RETURN 1
+	;ENDIF
+	;-------------------------------------------------
+	;添い寝を終了した（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;時止め終了時
+;==================================================
+@M_KOJO_EVENT_K64_17(ARG,ARG:1)
+;口上主はTARGET
+;排他と明記されていないモノは状況によっては連続で表示されるので注意
+;ARGに射精状況
+;ARG:1に射精状態
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ARG=1～3は排他
+	;謎の快感
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Hmmm...?」
+		PRINTFORMDL A sudden and mysterious shiver of pleasure runs Yuugi's body, prompting her to raise a quizzical eyebrow.
+		PRINTFORML 「What the heck did just... Whoa?!」
+		PRINTFORMDL Before long, the oni realizes how hot her groin feels. Looking down, she sees its all soaked too.
+		PRINTFORML 「When did this happen...?」
+		PRINTFORML 「Did I just pee myself? Nah, that ain't it...」
+		PRINTFORMW 「...Sigh, guess I'll have to go take a bath now.」
+		;added
+		SOURCE:液体 += 3000
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		CALL HPH_PRINT,@"「Kuhh, %MOAN("l:m")%?!HPH」","L"
+		PRINTFORMDL An intense feeling of pleasure assails Yuugi's body from multiple points without warning, causing her to slump down on her knees.
+		CALL HPH_PRINT,@"「%MOAN(,,2)%...!HPH %MOAN()%, ffuuuhhh...!HPH」","L"
+		PRINTFORMDL She throws back her head, breathing hard and feverishly, shaking like a helpless woman.
+		PRINTFORMDL The oni's now sweat-stained clothes reveal erect nipples surrounded by pink areolas.
+		PRINTFORMDL Her juices pool around her knees as they drip or glide down her thighs.
+		CALL HPH_PRINT,@"「%MOAN()%... %MOAN("m")%...!HPH」","L"
+		CALL HPH_PRINT,@"「Dammit... The hell's going on here...!HPH」","W"
+		PRINTFORMDL Yuugi grits her teeth, trying to regain control as her fists clenches with every fading pulse of pleasure.
+		;added
+		SOURCE:液体 += 3000
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;パンツ紛失
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「Aahn...?」
+		PRINTFORMDL Yuugi realizes she wasn't wearing any underwear anymore.
+		PRINTFORML 「That's weird... I'm pretty sure I put them on...」
+		PRINTFORMW 「...Oh well, whatever.」
+		TCVAR:64:357 = 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚口内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;精液中毒低精飲
+		IF ARG:1 == 1
+			PRINTFORML 「Uuulp?!」
+			PRINTFORML （The hell is this, some kind of phlegm? I can't remember even having a cold before!）
+			PRINTFORMDL Yuugi pokes around her mouth with her tongue, feeling some of the viscous white substance on the roof of it.
+			PRINTFORMDW After thinking what to do about it, she simply gulps it down...
+		;精液中毒低吐き出し＆濃厚精液＆精液中毒低吐き出し
+		ELSEIF ARG:1 == 2 || ARG:1 == 5
+			PRINTFORML 「Urk, cough, cough! Phoey, man, maybe I caught a cold or something.」
+			PRINTFORMDL Yuugi spits out the cum that appeared in her mouth, heedless of the mess.
+			PRINTFORML 「It's filthy? Whatever, it's fine.」
+			;メジャーリーガーが噛みタバコを吐き捨てるみたいな
+			CALL PRINT_DIALOGUE, @"I hear there's a %PRINT_MALE("guy", MASTER)% who likes to clean these days, so I'm giving %HIM_HER(MASTER,,1)% some work to do later!", "w"
+		;精液中毒低手で覆う
+		ELSEIF ARG:1 == 3
+			PRINTFORML 「Cough! Hack, khaa!」
+			PRINTFORMDL Something foul smelling appears out of the blue in her mouth, as Yuugi ends up choking on it without thinking.
+			PRINTFORMDL After some coughing, the semen that escapes her mouth comes pouring out of her fingers...
+			PRINTFORML 「Ugh... Aagh geez, I've got my hands all dirty!」
+			PRINTFORML 「Did I catch a cold or something? ...Nah, oni ain't supposed to get sick whatsoever!」
+			PRINTFORML 「Still, this smell seems oddly familiar somehow...」
+			PRINTFORMDW Yuugi says, gazing at the cum staining her palm...
+		;精液中毒高精飲＆濃厚精液精液中毒高精飲
+		ELSEIF ARG:1 == 4 || ARG:1 == 6
+			PRINTFORML （This stinky, raw, gooey feeling...）
+			PRINTFORML （Even I can tell what this stuff is...）
+			PRINTFORML 「...Gulp!」
+			PRINTFORMDL Yuugi swallows the cum that was poured into her mouth without hesitation.
+			PRINTFORML 「Mmm, fuhh...」
+			PRINTFORMDL As she exhales, a thick scent of semen passes through her nostrils.
+			PRINTFORMDW The musk stimulates her senses, making her body quiver in arousal. Her sex begins to moisten with her juices...
+			;added
+			SOURCE:液体 += 3000
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚顔面射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;無知持ち＆精液経験100未満
+		IF ARG:1 == 1
+		;通常ぬぐい取り
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「Huh...?」
+			PRINTFORMDL Noticing "something" sticking to her face, Yuugi quickly wipes it off.
+			PRINTFORMDL Her hand she used to wipe it with is covered in a thick layer of semen.
+			PRINTFORML 「Hot damn, when did this happen...」
+			PRINTFORMW 「You gotta be kidding me with pranks like these!」
+		;顔射精液舐めとり
+		ELSEIF ARG:1 == 3
+			PRINTFORML 「Whoa, when did that happen?!」
+			PRINTFORMDL Yuugi is surprised to realize she had a faceful of semen before she even knew it.
+			PRINTFORML 「Dunno who's pulling this off, but I can't believe he'd be this rude to me!」
+			PRINTFORML 「Quite the ballsy guy, I gotta say. I'd like to see his face once!」
+			PRINTFORMDW Yuugi scoops the white substance from her face with a finger and sticks it into her mouth without a second thought...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚手淫射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;ぬぐい取り
+		IF ARG:1 == 1
+			;書いてから思ったけど温泉街の元締めなら金に不自由とかしてなさそう
+			PRINTFORML 「Dang, if you gonna make me hold something, at least make it something that's worth money.」
+			PRINTFORML 「I could've used that cash for some extra booze that way!」
+			PRINTFORMDL Yuugi shakes off her hand, causing the semen clinging to it dart to the ground with a small splat.
+			PRINTFORMDW The way she moves it as if ripping someone's head off makes you feel a little chill run down your spine...
+		;舐めとり
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「Agh... Sheesh, that was quite the flashy trick someone just pulled on me.」
+			PRINTFORML 「...Oh well, I'll just gratefully accept it then.」
+			PRINTFORMDL Yuugi takes her time and brings the palm of her hand to her face, a somewhat rapt look on her face.
+			PRINTFORML 「%RANDLIPS(, "suck")%...!」
+			PRINTFORMDW %BREAKENG(@"The oni gathers the cum with her tongue, coating the slick appendage and immersing her taste buds in the salty treat for a couple long moments before finally swallowing...")%
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚アナル射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;Ａ感覚2以下
+		IF ARG:1 == 1
+			PRINTFORML 「%GROAN()%?!」
+			PRINTFORMDL With the time stop released, a generous amount of cum starts leaking out of Yuugi's anus.
+			PRINTFORMDL %BREAKENG(@"She tries to tighten it, but it was too late. Some of it is already leaking down her thigh, slowly down the rest of her leg.")%
+			PRINTFORML 「Ooh, khh... I think I got a stomachache all of a sudden...!」
+			PRINTFORML 「Guhh! Shit, where's the toilet?!」
+			PRINTFORMDL Yuugi seems in great pain like an oni who just swallowed Issun-boshi whole.
+			PRINTFORMDW Though in this case it's not the needle that's stabbing her in the stomach, but your sperm...
+		;ソレ以外
+		ELSEIF ARG:1 == 2
+			PRINTFORML 「Guhh... My gut's...!」
+			PRINTFORMDL A large amount of highly virile sperm must be swimming and splashing in Yuugi's intestines right now.
+			PRINTFORMDL %BREAKENG(@"You can hear her stomach churning as if asking for permission to relieve itself, driving her more and more to the edge...")%
+			PRINTFORML 「...Haha, boy, what a disaster this is.」
+			PRINTFORML 「As powerful as I am, it's a shame that I can't even control my own bowel movements...」
+			PRINTFORMDL Still, Yuugi struggles to maintain her composure, refusing to let her disgraceful behavior show.
+			PRINTFORMDW You smile knowingly as you watch the scene unfold before your eyes...
+		ENDIF
+		;added
+		CALL RECOVER(TARGET, -500, "体力", " ")
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚処女喪失】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8 ;added
+		PRINTFORMDL Feeling something hot dripping down her thighs with an unusual soreness at her crotch, Yuugi lets out a gasp.
+		PRINTFORML 「W-Whoa?! What the hell... Is this blood?」
+		PRINTFORML 「Huh, am I having periods right now? Man, it sure hurts more than usual!」
+		PRINTFORML 「That's weird... Isn't it a little early for that?」
+		PRINTFORMDW Looks like she failed to realize that something precious got stolen from her just now...
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚膣内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		;非処女膣内射精
+		IF ARG:1 == 1 || ARG:1 == 2 || ARG:1 == 3 ;added 3
+			PRINTFORML 「Urk! The heck's going on with me...?」
+			PRINTFORMDL Freshly deposited semen dribbles from Yuugi's slit.
+			PRINTFORMDL %BREAKENG(@"Her well-used sex clenches and squeezes around nothing out of reflex, seeming to have a phantom sensation of a phallus stroking her inner walls.")%
+			PRINTFORML 「Looks like someone sure enjoyed having his way with my body just now...」
+			PRINTFORML 「Whoever did this to me, I think I owe 'em a little payback!」
+			PRINTFORMDW Yuugi's fist slams into her palm with a bang, making her look exactly like a furious oni she is.
+			;added
+			TALENT:機嫌 = -1
+		;処女膣内射精
+		ELSEIF ARG:1 == 3
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;時間停止解除共通
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;ナマでやらせろ時
+;==================================================
+@M_KOJO_EVENT_K64_18(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;避妊要求台詞
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:恋慕
+			PRINTFORML 「Uhh, there's always that one chance.」
+			PRINTFORML 「...You know what I'm talking about, right?」
+			PRINTFORMDW Yuugi demands you use contraception...
+		ELSE
+			PRINTFORML 「Whoa, hold on a sec!」
+			PRINTFORML 「Sure, you can fuck me, but at least have some basic sense of decency, will ya?」
+			PRINTFORMDW Yuugi implicitly demands contraception.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF TALENT:恋慕
+			PRINTFORML 「C'mon, listen to me... Getting me pregnant would be a big no-no, right?」
+			PRINTFORML 「It's not that I'm against doing it with you, but... I'm just still unsure about it.」
+			PRINTFORMW 「If you insist, let's try doing it on a safe day at least...」
+		ELSE
+			PRINTFORML 「Then I won't let ya. Give it up.」
+			PRINTFORMW 「I ain't interested in gettin' knocked up by someone who can't even behave!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断ったのに粘られて切れた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF TALENT:恋慕
+			PRINTFORML 「...You're such a dork, %MASTERNAME:64%.」
+			PRINTFORML 「I'm not just saying that to save my own skin.」
+			PRINTFORML 「Why don't you think about the future of your child a little bit?」
+			PRINTFORMDW The serious expression on Yuugi's face intimidates you, and you reluctantly bow out.
+		ELSE
+			PRINTFORML 「If you're that desperate, then...」
+			PRINTFORML 「Why don't you make me do your bidding by force?!」
+			PRINTFORMDW %BREAKENG(@"Furious, Yuugi slaps you with an open palm, causing both head and body to whirl around before you finally fall to the ground!")%
+			CALL RECOVER(MASTER, -2000, "体力", " ")
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日以外許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		IF TALENT:恋慕
+			PRINTFORML 「Ah... Ghh...」
+			PRINTFORML 「A-Alright, fine, you win. Stop looking at me like that!」
+			PRINTFORMW 「...Whatever, I guess it should be fine today anyway.」
+		ELSE
+			PRINTFORML 「You really wanna do it raw that badly, huh?」
+			PRINTFORML （...Oh well, it's not like %HE_SHE(MASTER)%'s gonna have an easy time impregnating an oni like me as a human anyway...）
+			PRINTFORMW 「If you're so eager about it, then... Fine, bring it!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		IF TALENT:恋慕
+			PRINTFORML 「Y-You really wanna make a baby with me that badly?」
+			PRINTFORML 「...So you are serious about this, huh.」
+			PRINTFORMW 「Well then... I guess I'll just have to suck it up...」
+		ELSE
+			PRINTFORML 「Sigh... I didn't expect you to be this persistent.」
+			PRINTFORML 「...Fine, I'm done. Do what you gotta do, %MASTERNAME:64%!」
+			PRINTFORMW 「However, promise me you'll take responsibility for the child if it comes to that, y'hear?」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;神社暮らしを承認して貰う
+;==================================================
+@M_KOJO_EVENT_K64_19(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;認められる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「Never thought I'd get to live on the surface again like this...」
+		PRINTFORMW 「I'm a little embarrassed to admit that I once gave up and snuck into the depths of the earth.」
+		PRINTFORMDL As Yuugi put it, the oni have abandoned the surface at some point.
+		PRINTFORMDL Still, you have to wonder... What kind of change of heart it was that brought her back to this place?
+		PRINTFORMDW But the answer is obvious. There's  no doubt that you played a significant role in that.
+		PRINTFORML 「This is how we're gonna live together then.」
+		PRINTFORMW 「To commemorate the occasion, let's get together and drink ourselves to sleep tonight!」
+		PRINTFORMDL Yuugi says cheerfully before pulling you into a tight hug.
+		PRINTFORMDW Her expression is full of mirth, her eyes wide and gleaming with joy.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;認められない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Man, I thought if we lived together, we could have drinking parties every night...」
+		PRINTFORML 「Oh well, it's your decision after all. I can't blame ya for that, %MASTERNAME:64%.」
+		;original text states underground, but it's implied here
+		PRINTFORML 「This heinous oni will simply go back whence she came then.」
+		PRINTFORMDW Yuugi pretends not to care, but she still looks a little upset.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;あなたの私室変更により同居
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMDL Yuugi motions around the room with an open hand.
+		PRINTFORML 「Well, just make yourself at home.」
+		PRINTFORML 「Starting today, this is where we live!」
+		PRINTFORML 「Here's your key. Don't you ever lose it, y'hear?」
+		PRINTFORMDL She slams her hands together with a booming clap and looks at you with an ecstatic expression.
+		PRINTFORMDW You now live together with Yuugi!
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;帰宅時
+;==================================================
+@M_KOJO_EVENT_K64_20(ARG,ARG:1)
+;口上主はLOCALS or RESULT
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:恋慕
+			PRINTFORML 「Whoa, I guess I'd better get home before it gets ugly.」
+			PRINTFORML 「I'll bring you a nice bottle next time. Unless I forget, haha!」
+			PRINTFORMDW \@ TALENT:恋人 ? Yuugi departs, glancing back at you numerous times until she's out of sight. # You send Yuugi off with a wave, and she returns the gesture with a jovial smile and a nod.\@
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Aww man, it's already so late.」
+			PRINTFORML 「I'll come visit you again sometime, %MASTERNAME:64%!」
+			PRINTFORMDW With that, Yuugi leaves, looking a little regretful.
+		ELSE
+			PRINTFORML 「Well then, guess it's time to head back home.」
+			PRINTFORMW 「See ya around, %MASTERNAME:64%.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;デート中帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF CFLAG:うふふ
+			IF CFLAG:衰弱
+				;うふふ中に疲れて帰る
+				PRINTFORMW 
+			ELSE
+				;うふふ中に眠くて帰る
+				PRINTFORMW 
+			ENDIF
+		ELSE
+			;疲れて帰る
+			IF CFLAG:衰弱
+				IF TALENT:恋慕
+					PRINTFORML 「Haaah... I guess I enjoyed myself a little too much...」
+					PRINTFORMDL Yuugi slumps onto her rear, propping against her arms as she leans back.
+					PRINTFORMDL She looks exhausted, her breathing heavy and her face flushed red, glistening with sweat.
+					PRINTFORMDL But despite that, there's a tired smile plastered on her lips.
+					PRINTFORMDL Seeing how she's spent at the moment, you offer to take her home on your back as you extend a hand.
+					PRINTFORML 「Haha, yeah, I'll take you up on that.」
+					PRINTFORMDL You pull Yuugi up, turning around for her.
+					PRINTFORMDL You almost fall forward when she puts her weight on you, but manage to keep yourself steady.
+					PRINTFORMDL Her arms lazily loop around your shoulders and you hoist her up with a grunt.
+					PRINTFORML 「This makes it way easier...」
+					PRINTFORMDL The bleary oni yawns, letting her chin rest on on your shoulder.
+					PRINTFORML 「...Sorry to bother you.」
+					PRINTFORMDW You tell her not to sweat it, as she responds with just a little nod...
+				ELSE
+					PRINTFORML 「Ooh boy...」
+					PRINTFORMDL Yuugi wobbles around as you help prop her up.
+					PRINTFORML 「I think I'm gettin' old or something... I can't believe my body is giving out on me like this.」
+					PRINTFORMDL When you raise your concerns, a weary grin plays across her face.
+					PRINTFORML 「Fufu, I never thought a human would be worried about a supposedly heinous oni.」
+					PRINTFORML 「...I owe ya one, %MASTERNAME:64%.」
+					PRINTFORMDW Though the date ended abruptly, it seemed to leave a lasting impression on Yuugi...
+				ENDIF
+			ELSE
+				IF TALENT:恋慕
+					PRINTFORML 「Yaaaawn～... Man, I'm getting kinda reaaal drowsy.」
+					PRINTFORML 「Oh, and no, it's not that dating is boring by any means...」
+					PRINTFORML 「I always go to bed at about this time, so I can't help but feel sleepy... y'know.」
+					PRINTFORMDW You decide to call it a night, and Yuugi, after a brief flicker of hesitation, agrees.
+				ELSE
+					PRINTFORML 「I think it's time to call it a night.」
+					PRINTFORMW 「Sorry about this. You'll have to invite me back sometime.」
+				ENDIF
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;玄関先でお見送り（キャラの自宅位置、またはキャラの部屋でデート終了）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;デート終了時に部屋に来ないかと誘う（～から部屋に来ないかと誘われた）
+	;（来訪キャラのみ,自宅が無いキャラでも発生します）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;部屋に来ないか→「行く」を選択（～に誘われるまま、【MASTER】は【TARGET】の部屋へと向かった……）
+	;（これが発生すると十中八九押し倒されます）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;部屋に来ないか→「やめとく」を選択（～は心なしか寂しそうだ……）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;今夜は帰りたくないと言い出す（～は今夜は帰りたくないと言い出した…）
+	;（来訪キャラの帰宅時に欲求不満と欲望が高いと発生）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;今夜は帰りたくない→「泊める」を選択（～は【MASTERの自室】に泊まっていくことになりました）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;今夜は帰りたくない→「泊めない」を選択、または家主が居る（【MASTER】は丁重に断った）
+	;（家主が居る＝MASTERの私室に他のキャラの私室を設定している）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;疲れて帰宅（疲れきった～は帰って行きました）
+	;（～は疲れ切っている→（入り口）まで送るよ でも発生）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 10
+		IF CFLAG:うふふ
+			;うふふ中に疲れて帰る
+			PRINTFORMW 
+		ELSE
+			PRINTFORMW 
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;陥落素質取得時
+;==================================================
+@M_KOJO_EVENT_K64_21(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORMDW During one particular night...
+		PRINTFORMDW Yuugi is deep in her thoughts, staring off into space as she sips away at her sake.
+		PRINTFORMW 「...%MASTERNAME:64%...」
+		PRINTFORMDW She whispers the human's name, her voice almost inaudible as it flows from her lips.
+		PRINTFORMDW Like a strong drink, it's growing on her, working its way into her, both in heart and body.
+		PRINTFORMW 「...」
+		PRINTFORMW 「...Guess I'll just drag %HIM_HER(MASTER,,1)% away and make %HIM_HER(MASTER,,1)% mine.」
+		PRINTFORMW 「...Yeah, right. It'd be a lot easier if I could just do that...」
+		PRINTFORMW 「I've mellowed considerably since then, huh.」
+		PRINTFORMW 「.........」
+		PRINTFORMW 「―――Love, eh?」
+		PRINTFORMW 「That might be a little too strong for me.」
+		PRINTFORMDW Yuugi scoffs at herself, downing the remaining sake dish.
+		PRINTFORML 
+		CALL COLORMESSAGE(@"The relationship with Yuugi has deepened and she fell in [Love] with you!",C_YELLOW,1,1)
+		PRINTFORMDW Would you like to change the way she calls you?
+		CALL ASK_YN
+		SELECTCASE RESULT
+			CASE 0
+				CALL NAME_SET_K64
+				RETURN 1
+			CASE 1
+				PRINTFORMDW No change.
+				RETURN 1
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMDW One day, Yuugi and her friends were drinking as usual.
+		PRINTFORMW 「So y'know―――」
+		PRINTFORMDW 『Ma'am.』
+		PRINTFORMW 「Aahn?」
+		PRINTFORMDW 『You've been talking about that human for the past hour already.』
+		PRINTFORMDW 『You keep doing it so often, you've talked our ears off by now!』
+		PRINTFORMDW WAHAHAHAHA!!!
+		PRINTFORMW 「I mean, %HE_SHE(MASTER)%'s quite the amusing fella, ain't %HE_SHE(MASTER)%?」
+		PRINTFORMW 「Humans like that are hard to come by in any age, am I right?」
+		PRINTFORMDW 『Sure, but that's not the point.』
+		PRINTFORMDW 『It's just that when you talk about that %PRINT_MALE("guy", MASTER)%, you kinda... how should I put it...』
+		PRINTFORMW 「C'mon, don't beat around the bush with me. And you call yourself an oni? You just make yourself look like a joke.」
+		PRINTFORMW 「If ya got something to say, make it clear!」
+		PRINTFORMDW 『Ma'am, you got the look of a woman...』
+		PRINTFORMDW 『Like a chick having a crush?』
+		PRINTFORMDW 『Yup! Exactly!』
+		PRINTFORMDW WAHAHAHAHA!!!
+		PRINTFORMW 「...Having a crush? Who? Me?」
+		PRINTFORMW 「You gotta be kidding.」
+		PRINTFORMDW That gotta be like... the last thing I'd ever associate with.
+		PRINTFORMDW ...But now I wonder if that's really true.
+		PRINTFORMDW I can't tell with my head full of booze though.
+		PRINTFORMDW Well, times like these call for―――
+		PRINTFORMW 「Hey! Bring me more booze! Hardest shit you got!」
+		PRINTFORMDW Nothing short of this.
+		PRINTFORML 
+		CALL COLORMESSAGE(@"The relationship with Yuugi has deepened and she started to [Yearn] for you!",C_YELLOW,1,1)
+		PRINTFORMDW Would you like to change the way she calls you?
+		CALL ASK_YN
+		SELECTCASE RESULT
+			CASE 0
+				CALL NAME_SET_K64
+				RETURN 1
+			CASE 1
+				PRINTFORMDW No change.
+				RETURN 1
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛欲取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		CALL HPH_PRINT,@"「...Hngh... Fuhhh...!HPH」","W"
+		PRINTFORMDL When the oni lot who had been drinking for a while had gone to sleep...
+		PRINTFORMDW Yuugi couldn't stand the burning sensation in her body, so she comforted herself.
+		CALL HPH_PRINT,@"「...Kkuhh... It's times like this that I really wish I had %MASTERNAME:64% around...!HPH」","W"
+		PRINTFORMDL %BREAKENG(@"Thoughts drifting to someone somewhere else, her fingers plunge into her honeypot, stirring it with an ever-growing need as the warm smoldering in her groin builds.")%
+		PRINTFORMDL Wet noises echo around the room.
+		PRINTFORMDL %BREAKENG(@"Even after doing it with two or three fingers, they were never be able to match the pleasure your %PRINT_HASPENIS("manhood:techniques", MASTER)% could bring.")%
+		PRINTFORMDW %BREAKENG(@"The oni's skin feels like its burning as she nears closer and closer to completion. A potent orgasm erupts from her core, searing her strong body with pleasure.")%
+		CALL HPH_PRINT,@"「Uuh, aahh... Haaahhh...!HPH」","W"
+		PRINTFORMDL Her inner walls tightened and convulsed around her fingers, trying to pull them in further.
+		CALL HPH_PRINT,@"「Tomorrow, I'll ask %MASTERNAME:64%...!HPH Hnn, fuuhh...!HPH」","W"
+		PRINTFORMDL As if to shove back the juices that pour from her, she plunges her fingers deep into her canal again.
+		PRINTFORMDW %BREAKENG(@"Trying to keep her abundant desire in check for the time being, Yuugi indulges in masturbation once more, hoping to be plowed tomorrow...")%
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛人取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;セフレ・愛人取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && (ARG == 4 || ARG == 5) ;still keeping it merged for now
+		PRINTFORMW 「Shoot, never thought I'd have a hickey in here...」
+		PRINTFORMW 「Boy, did I embarrass myself today.」
+		PRINTFORMDL Yuugi mumbles to herself over a drink.
+		PRINTFORMDW She didn't realize she had a mark on her neck, getting ridiculed for it at the bar.
+		PRINTFORMW 「It all started when I met that %PRINT_MALE("guy", MASTER)%...」
+		PRINTFORMDL Recalling the time she slept with you, the blemish tingles as her neck warms and becomes a little sensitive.
+		PRINTFORMDW As a result of your incessant affairs, at some point your relationship had become distorted.
+		PRINTFORMW 「...Pfft...」
+		PRINTFORMW 「Khaha! It's not like me to be bothered by this stuff at all!」
+		PRINTFORMDL Why should I care if I'm being mocked about it?
+		PRINTFORMDW I mean, I've lived long enough, I'm bound to have a fuck or two. So what?
+		PRINTFORMW 「Siiigh... Well, I don't feel too bad about hooking up with %MASTERNAME:64% either, so...」
+		PRINTFORMW 「It might be cool to keep the relationship like this for a while, I guess...」
+		PRINTFORMDW %BREAKENG(@"Yuugi pours sake into her dish again, looking as though she has gotten over it... thinking about when she's going to fuck that %PRINT_MALE("guy", MASTER)% next time.")%
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;キス魔取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;自慰狂い取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;ポルチオ性感取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;おもらし癖取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;調教終了時に自慰
+;==================================================
+@M_KOJO_EVENT_K64_22(ARG,ARG:1)
+;口上主はARG
+;ARG:0に自慰状況
+;ARG:1に自慰種類
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;通常自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF TALENT:恋慕
+			SELECTCASE RAND:3
+				CASE 0
+					CALL HPH_PRINT,@"「%MOAN(,,2)%...!HPH」","L"
+					PRINTFORMDL Yuugi's honeypot overflowed with her thick nectar as she reaches her climax again and again.
+					PRINTFORMDL %BREAKENG(@"She thought she was going to get it over with the first time, but her fingers just keep moving again whenever she thinks of you.")%
+					CALL HPH_PRINT,@"「Haah... Haah...!HPH Man, I wish I had %MASTERNAME:64% around for this...HPH」","L"
+					CALL HPH_PRINT,@"「...%MOAN("m")%!HPH」","L"
+					PRINTFORMDW Ultimately, Yuugi indulges in masturbation the rest of that day until she's too tired and fell asleep.
+				CASE 1
+					CALL HPH_PRINT,@"「%MASTERNAME:64%...!HPH Aahh, my %MASTERNAME:64%...!HPH」","L"
+					PRINTFORMDL %BREAKENG(@"Loud shlicking noises fill the room, as Yuugi kept %FSYN("stir:ing")% deep inside her entrance while calling a certain person's name.")%
+					PRINTFORMDL Engrossed in her action, she fantasizes about you pinning her down and ravishing like an unhinged animal.
+					CALL HPH_PRINT,@"「%MOAN("l:m",,2)%!HPH %MASTERNAME:64%... More, harder...! Use me, take me...!HPH」","L"
+					PRINTFORMDL Her fingertips grazes against her g-spot, sending ripples of delightful shivers through her frame.
+					PRINTFORMDW %BREAKENG(@"The bubble of bliss that expands in her core grows larger and larger by the second, until it finally bursts, sending a tidal wave of pleasure coursing through her entire body.")%
+				CASE 2
+					CALL HPH_PRINT,@"「Haaah...!HPH Man, I wonder if I should've just asked %HIM_HER(MASTER,,1)% to fuck me straight upHPH」","L"
+					CALL HPH_PRINT,@"「My fingers alone ain't doing it justice at all...HPH」","L"
+					PRINTFORMDL Yuugi tries to relieve the empty ache in her loins, over an hour having passed since she first started.
+					PRINTFORMDL No matter how much she tries to imitate your movements, she can never seemed to get enough.
+					CALL HPH_PRINT,@"「%MOAN(,,3)%...!HPH I'm... cum... iiing! UuhhhHPH」","L"
+					PRINTFORMDL %BREAKENG(@"A dull rush shoots up her spine and she arches her back with a guttural moan, coating her hand and some bedding in the moisture that floods from her loins.")%
+					PRINTFORMDW %BREAKENG(@"After a moment of recovery, she indulges in masturbation again, attempting to suppress the unceasing arousal in her body, getting stuck in a loop...")%
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					CALL HPH_PRINT,@"「...%SPLIT_G("Unh:Khh:Ugh")%... %SPLIT_G("Ulp:Urk:Ngh")%!HPH」","L"
+					PRINTFORMDL Keeping her voice down, Yuugi reaches her climax while masturbating.
+					PRINTFORMDL After neglecting her needs for quite some time, she's comforting herself on this day.
+					PRINTFORML 「Phew... Whoops, man, it's getting late!」
+					PRINTFORML 「Guess it's time to get in the bath... well, that can wait until after I wake up.」
+					PRINTFORMDW Realizing that more time has passed than she expected, Yuugi chooses to go to bed right away.
+				CASE 1
+					CALL HPH_PRINT,@"「%MOAN(,,2)%...!HPH」","L"
+					PRINTFORMDL In a dimly lit room with a paper lantern, Yuugi is relieving her stress.
+					PRINTFORMDL She continues to relentlessly tease her %PRINT_CLIT(TARGET)% as her sticky juices drenched her fingers.
+					CALL HPH_PRINT,@"「C'mon, just a little bit more...!HPH Khaaah...!HPH」","L"
+					PRINTFORMDL At the moment of climax, Yuugi lets out an enticing moan.
+					PRINTFORMDW %BREAKENG(@"It's hard to believe that it came from the lips of one of the Big Four, but luckily it was drowned out by the noise of the oni outside.")%
+				CASE 2
+					PRINTFORML 「Phew... Guess that does it then.」
+					PRINTFORMDL After finishing her masturbation, Yuugi exhaled languidly.
+					PRINTFORMDL As she adjusted her messy clothes, she felt a warm dampness cling around her groin.
+					PRINTFORML 「Aww, shucks! I wetted my covers...」
+					PRINTFORMW 「Siiigh, dang... What a pain in the ass...」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同室時自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		CALL HPH_PRINT,@"「Haahh...!HPH %MOAN(,,2)%...!HPH」","W"
+		PRINTFORMDW When you wake up to strange wet shlicking noises, you realize that Yuugi was masturbating to your own surprise.
+		CALL HPH_PRINT,@"「Fuckin' hell man, ain't you one awful fella...HPH」","W"
+		CALL HPH_PRINT,@"「Leavin' me hanging all day like this... And then hitting the sack right away... I can't believe you...HPH」","W"
+		PRINTFORMDL %BREAKENG(@"A hand moving in between her sculpted legs with wet noises filling the air, a debauched expression colors her profile, entirely unaware of your alertness.")%
+		PRINTFORMDL %BREAKENG(@"Holding back your urge to swallow, the intervals in-between the moist sounds gradually become shorter and shorter, increasing in tempo...")%
+		PRINTFORMDW %BREAKENG(@"Until she sinks her fingers in, knuckle deep. Her form tenses in front of your eyes, and a low groan escapes her throat.")%
+		CALL HPH_PRINT,@"「%MOAN()%, c, ummii--!HPH %MASTERNAME:64%!HPH %MOAN("m")%!HPH」","W"
+		CALL HPH_PRINT,@"「Haaahh... Khaaaah!HPH」","W"
+		PRINTFORMDL ...Looks like she just reached an orgasm.
+		PRINTFORMDW Her huge chest is swaying as she tries to catch her ragged breath.
+		IF IS_MALE(MASTER) ;added
+			PRINTFORMDL Your %TINKO()% is erect to the limit, and your male instincts are telling you to pounce on her, however...
+		ELSE
+			PRINTFORMDL Your body feels hot, and your instincts are telling you to pounce on her, however...
+		ENDIF
+		PRINTFORMDW You firmly hold it in and decide to continue sleeping no matter what. All for the sake of protecting Yuugi's pride.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;中だし精液自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無知持ち（自慰経験(調教自慰経験は差し引き)による分岐あり
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		LOCAL:2 = EXP:自慰経験 - EXP:調教自慰経験
+		;無知消去イベントあり（表示は一度だけ
+		IF LOCAL:1 >= 25
+		;地の文分岐。書きたい場合は[SKIPSTART][SKIPEND]を削除してください
+		[SKIPSTART]
+		ELSEIF LOCAL:1 >= 20
+		ELSEIF LOCAL:1 >= 15
+		ELSEIF LOCAL:1 >= 10
+		ELSEIF LOCAL:1 >= 5
+		[SKIPEND]
+		ELSE
+		ENDIF
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質あり自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;-------------------------------------------------
+		;Ｃ敏感orＣ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｖ敏感orＶ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ａ敏感orＡ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 3
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｂ敏感orＢ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 4
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部位指定無し
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 5
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで陥落素質あり自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;-------------------------------------------------
+		;尻穴膣腔同時
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;膣腔のみ
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;我慢
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		PRINTFORML 「Speaking of which, it's been a while since I seen %HIM_HER(MASTER,,1)% around.」
+		PRINTFORMW 「Maybe I'll %SPLIT_G(@"drop around %MASTERNAME:64%'s place:go pay %MASTERNAME:64% a visit")% tomorrow, have a little chat...」
+		RETURN 1
+	ENDIF
+	;その他
+	;上の分岐を一切書かずに、ここに書くことで自慰の共通口上を表示することが出来ます
+	PRINTFORML  
+	RETURN 1
+ENDIF
+RETURN 1
+;==================================================
+;浴場連れだし
+;==================================================
+@M_KOJO_EVENT_K64_23(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;断られた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「So you wanna get in the bath with me?」
+		PRINTFORML 「Hahaha! Guess I'll have you wash my back or something then.」
+		PRINTFORMDL As you eagerly agree and step inside, she flicks you on your forehead.
+		PRINTFORML 「I'm just messing with you, dummy.」
+		PRINTFORML 「Well, it's not to say I don't like that honesty of yours though.」
+		PRINTFORMDW Unfortunately, it looks like being allowed to hang out naked with her is yet to come.
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;一緒に入ってくれた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「I love this moment of washing away the day's sweat, y'know.」
+				PRINTFORML 「%MASTERNAME:64%, you too, huh? Hhaha! We're very much on the same page it seems!」
+				PRINTFORMDW You follow Yuugi into the bath.
+			CASE 1
+				PRINTFORML 「Awright! Let's just go in and have a nice sip!」
+				PRINTFORMDL As Yuugi takes off her clothes, her voluptuous breasts popped out with a bounce!
+				PRINTFORML 「Aahn? What's the matter with ya? Staring at me like that...」
+				PRINTFORML 「Hurry up and just take yours off too, %MASTERNAME:64%!」
+				PRINTFORMDL Yuugi walks boldly into the bath with a towel in her hand.
+				PRINTFORMDW You couldn't help but watch her chest as they swayed with every step.
+			CASE 2
+				PRINTFORML 「If you're gonna take a bath, there's one thing you can't forget.」
+				PRINTFORML 「What's that you might ask? Booze, of course! What else?」
+				PRINTFORMDL Yuugi hurriedly prepares a drink before entering the bath.
+				PRINTFORMDW Naturally, you will be the one serving the drinks to keep her nice and tipsy.
+		ENDSELECT
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;懐妊
+;==================================================
+@M_KOJO_EVENT_K64_24(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF CFLAG:子供人数
+			PRINTFORMW 「Fufu, all that hard work into making a baby definitely paid off, huh?」
+			PRINTFORMW 「I'm sure our firstborn will be happy when he finds out that he's getting a little brother or sister.」
+			PRINTFORMDW Yuugi is gently caressing her belly, where once again dwells a new life.
+			PRINTFORMW 「I'm gonna have to stay sober for this again, you say? Ahahaha! Yeah, you're right.」
+			PRINTFORMW 「Once this child is well set up on his own, I'll be sure to open a bottle of my favorite brew.」
+			PRINTFORMW 「...After that, I'm gonna have you join me, and... Well, let's drink together then!」
+			PRINTFORMDW As you cuddle together, you think about your future child...
+		ELSE
+			PRINTFORMW 「C'mon, give it a rub!」
+			PRINTFORMDL You gently rub Yuugi's belly, even though it's not even swollen yet.
+			PRINTFORMDW You can't hear anything when you put your ear to it either, but you're sure that there's your child in there.
+			PRINTFORMW 「Is it gonna be male, or female... Well, it doesn't matter which.」
+			PRINTFORMW 「As long as it grows up to be a strong kid, I'll be fine with that!」
+			PRINTFORMDW You nod as Yuugi grins in satisfaction.
+			PRINTFORMW 「Still, I gotta say...」
+			PRINTFORMW 「Aaawww man～! I don't think I can stand the thought of not being able to drink!」
+			CALL PRINT_DIALOGUE, @"Booze is the only thing that keeps me alive! If you take that away, what will I have to support myself with from now on...?!", "w"
+			PRINTFORMDW When you remind Yuugi that she has a baby on the way, she suddenly looks at her own belly, stunned.
+			PRINTFORMW 「Y-Yeah, you're right...」
+			PRINTFORMW 「.........」
+			PRINTFORMW 「...Kuhh...!」
+			PRINTFORMDL She resolves to give up drinking for the sake of your baby...
+			PRINTFORMDW But it already wavered too soon.
+			PRINTFORMW 「Say, what if I do it once a week... No, even once a month! Just one sip is all I need!」
+			PRINTFORMW 「...Please? No?」
+			PRINTFORMDL Seeing you shake your head, Yuugi drops to her knees in dismay.
+			PRINTFORMDW And that was just an ordinary day of many to come.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		$YUGI_PREGNANCY
+		IF CFLAG:子供人数
+			PRINTFORMW 「Hahaha, get this, I got knocked up again!」
+			PRINTFORMW 「Boy, we just never learn, do we? You and me both.」
+			PRINTFORMDL A new life born again.
+			PRINTFORMDW Yuugi seems like she's already used to it, eagerly patting her stomach.
+			PRINTFORMW 「I wonder what kind of child will be born this time...」
+			PRINTFORMW 「As far as I'm concerned, anything is fine as long as it grows strong...」
+			PRINTFORMW 「But either way, I can't wait to find out!」
+			PRINTFORMW 「You must be feeling the same, right %MASTERNAME:64%?」
+			PRINTFORMDL %BREAKENG(@"Even though she won't be able to drink again for a while, Yuugi doesn't seem to mind it all, only thinking about her baby.")%
+			PRINTFORMDW You couldn't help but agree with her that you were looking forward to it as well.
+		ELSE
+			PRINTFORMDL One day, you were visiting Yuugi's place with a bottle of her favorite sake.
+			PRINTFORMDL She comes out a little late after hearing you knock on the door.
+			PRINTFORMDW As you show her the bottle in your hand, she looks away awkwardly for some reason.
+			PRINTFORMW 「Uh, that... Y'know, I'm gonna try to quit drinking for some time.」
+			PRINTFORMW 「Let's not talk about it here. C'mon, come inside!」
+			PRINTFORMDL .........
+			PRINTFORMDL ......
+			PRINTFORMDW ...
+			PRINTFORMW 「Let's see, where do I start...?」
+			PRINTFORMW 「...Right.」
+			PRINTFORMW 「To put it bluntly...」
+			PRINTFORMW 「I'm pregnant.」
+			PRINTFORMW 「And you're the father.」
+			PRINTFORMDW That statement makes you stop completely in your tracks.
+			PRINTFORMW 「You look like you can hardly believe it, eh? But oni don't lie, don't you know.」
+			PRINTFORMW 「Haha, I get it though. I would never have thought I'd conceive from a human either!」
+			PRINTFORMW 「Looks like your sperm is just that powerful, it turns out!」
+			PRINTFORMDL Yuugi jokes in an attempt to lighten the mood.
+			PRINTFORMDW But you didn't find it very funny.
+			PRINTFORMW 「Well, to be honest, I still am very much confused about it myself, but...」
+			PRINTFORMW 「What's done is done, I have a baby now. Why don't we celebrate instead?」
+			PRINTFORMW 「...And don't you pussy out on me. Get your act in gear, y'hear?」
+			PRINTFORMDW Yuugi slaps you on the back, bringing you back to reality.
+			PRINTFORMW 「So you'll take responsibility? That's very encouraging!」
+			PRINTFORMW 「Well, then I guess I'll be relying on you.」
+			PRINTFORMW 「...As a father to this child, that is.」
+			PRINTFORMDL Yuugi gently caresses her belly where dwells a new life.
+			PRINTFORMDW There was none of the might of the Big Four of the Mountain, only the tenderness of a mother.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		GOTO YUGI_PREGNANCY
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;出産
+;==================================================
+@M_KOJO_EVENT_K64_25(ARG,ARG:1)
+;口上主はLOCAL
+;ARG:1	何人目の子供か
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;get child's sex
+	LOCALS '= CHILD_SEX:64:(ARG:1) == 1 ? "girl" # "boy"
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;２人目以降
+		IF ARG:1 > 1
+			PRINTFORMW 「There-there, have a nice big drink! Guzzle it down! Drink your fill! Atta%LOCALS%!」
+			PRINTFORMDL Yuugi is breastfeeding her newborn child.
+			PRINTFORMDW Your face beams as you watch your baby vigorously gulp down Yuugi's milk.
+			IF ARG:1 == 2 ;just show it once, keep as is
+				PRINTFORMW 「I wonder if that's what you call motherhood...」
+				PRINTFORMW 「Kidnapping and eating children is just plain unthinkable for me nowadays!」
+				PRINTFORMW 「Hmm? I shouldn't say such scary things? Now now, in case you've forgotten, I'm an oni too.」
+				PRINTFORMW 「That used to happen a few times in the past, and... Alright, let's not dwell on that.」
+				PRINTFORMW 「This ain't the sort of thing you wanna talk about in front of a newborn after all.」
+				PRINTFORMDL You get rebuked.
+				PRINTFORMW 「Anyhow...」
+				PRINTFORMW 「Being able to bring you safely into the world like this, for that I am really grateful!」
+				PRINTFORMDW The expression on Yuugi's face was full of motherly love as she pats her child with these words.
+			ENDIF
+		;１人目
+		ELSE
+			PRINTFORMW 「Fufu, we got ourselves a squirming, crying, healthy baby %LOCALS%!」
+			PRINTFORMDL Yuugi holds her newborn child in her arms with all the gentleness of a mother, careful not to hurt it.
+			PRINTFORMDW As expected, she is pretty exhausted from the hard labor of childbirth. Her eyes are half-lidded and tired.
+			PRINTFORMW 「Haha, take a look at that! The baby is basically screaming to hurry up and give it some milk!」
+			PRINTFORMW 「This kind of insatiable hunger is just like you.」
+			PRINTFORMW 「...Just kidding!」
+			PRINTFORMW 「I guess we don't have to worry about that part much.」
+			PRINTFORMW 「Look, I'm a little tired now, so I'm gonna rest for a while...」
+			PRINTFORMDL Yuugi says before falling asleep on the spot while feeding the baby.
+			PRINTFORMDW You sit down next to her and continue to watch them closely until she wakes up...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		$YUGI_CHILDBIRTH
+		;２人目以降
+		IF ARG:1 > 1
+			PRINTFORMW 「Ooh, look who's here. You sure took your sweet time, eh?」
+			PRINTFORMW 「I already delivered the baby a while ago, y'know.」
+			PRINTFORMDW %BREAKENG(@"You rushed to Yuugi's place when you heard your baby %LOCALS% was being born, but looks like you didn't make it in time.")%
+			IF ARG:1 == 2 ;just show it once, keep as is
+				PRINTFORMW 「Not that it's any fun to watch anyway.」
+				PRINTFORMW 「Were you that anxious to be there for the moment?」
+				PRINTFORMDW Any father would want to be there when his child is born, you know.
+				PRINTFORMW 「Well, if you wanna see it so badly, there's always next time...」
+				PRINTFORMW 「...Hmm? What's with the long face?」
+				PRINTFORMDL Hearing Yuugi speaking about the "next" time like that...
+				PRINTFORMDW Does that mean she is okay with being impregnated again?
+				PRINTFORMW 「...Uhh, weeeell...」
+				PRINTFORMW 「...I figured once we've come this far, it wouldn't really make a difference in how many more children we had.」
+				PRINTFORMW 「If that's what you want, I'm all for it!」
+				PRINTFORMW 「I mean, this baby was just born, and you're already talking about planning another one. Look at you go!」
+				PRINTFORMDW Yuugi's words take you aback.
+			ENDIF
+		;１人目
+		ELSE
+			PRINTFORMDW When you heard the news of the birth of your child, you rushed to visit Yuugi's place.
+			PRINTFORMW 「...Huh, so you came? Good to see you.」
+			PRINTFORMW 「Here, say hi to your child!」
+			PRINTFORMDL Yuugi presents you with a newborn baby %LOCALS%.
+			PRINTFORMDW %BREAKENG(@"As you take %HIM_HER_CHILD(TARGET,,ARG:1)% in a fluster, %HE_SHE_CHILD(TARGET,,ARG:1)% suddenly starts to cry loudly despite staying quiet until a moment ago.")%
+			PRINTFORMW 「Haha, actually there were a few people who came to pay me a visit before you showed up.」
+			PRINTFORMW 「That's how %HE_SHE_CHILD(TARGET,,ARG:1)% bawls when anyone but me holds %HIM_HER_CHILD(TARGET,,ARG:1)%!」
+			PRINTFORMDW As soon as you return your child to Yuugi, sure enough, %HE_SHE_CHILD(TARGET,,ARG:1)% immediately stops crying.
+			PRINTFORMW 「Well, now that you're here, why don't you just relax and check on your child?」
+			PRINTFORMW 「I'm gonna take a little break, so lemme know if something comes up, alright? I'll be counting on you...」
+			PRINTFORMDL Yuugi quickly falls asleep as though she passed out, perhaps feeling relieved by your arrival.
+			PRINTFORMDW You feel some regret that you couldn't be there to support her during the painstaking task of giving birth...
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		GOTO YUGI_CHILDBIRTH
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;オナバレ
+;==================================================
+@M_KOJO_EVENT_K64_26(ARG,ARG:1)
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;見られた瞬間
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;何もしない
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;そのまま続行
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;追い出し
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 4
+		;やっちゃう
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 5
+		;事後
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 6
+		;事後お泊り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+	ENDSELECT
+ENDIF
+
+;オナバレックス判定用関数
+;RETURN -1で強制失敗、RETURN 1で強制成功
+@M_KOJO_EVENT_K64_26_1(ARGS)
+#DIM 補正値
+IF ARGS == "どうぞそのまま"
+
+ELSEIF ARGS == "二人で"
+
+ENDIF
+
+;使用例
+;IF !TALENT:XX:恋慕
+;	PRINTFORMW %CALLNAME:XX%はガードが堅いぞ！
+;	RETURN -1
+;ENDIF
+;IF TALENT:MASTER:濃厚精液
+;	PRINTFORMW %CALLNAME:XX%はちんぽに弱いぞ！
+;	RETURN 1
+;ENDIF
+;==================================================
+;相手からデートのお誘い
+;==================================================
+@M_KOJO_EVENT_K64_27(ARG,ARG:1)
+;口上主はLOCAL
+;ARG:1は目的地
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;誘い文句
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF RAND:2 && TALENT:恋慕 ;added
+				PRINTFORML 「Hey, %MASTERNAME:64%! How about a date... and a little bit of fun?」
+				PRINTFORMDL %BREAKENG(@"Yuugi stands in front of you, leaning her stout frame forward as she extends a open hand, with the other closed and resting on her hip.")%
+				PRINTFORMDW %BREAKENG(@"She looks as gentlemanly as ever... Or should it be gentlewomanly...? In any case, you feel awfully compelled to go along with her whims.")%
+			ELSE
+				PRINTFORML 「I got an idea! How about you hang out with me for a while if you got the time?」
+				PRINTFORMW 「What for? Weeell, to go on a date, of course!」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;受けた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「Awwright! Then without further ado, let's get going!」
+			PRINTFORMDW Yuugi takes your hand and whisks you away.
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;断った
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF RAND:2 && TALENT:恋慕 ;added
+				PRINTFORMDL Turned down, Yuugi presses you against the wall and slams her hand next to your head.
+				PRINTFORML 「Hmm... So you're saying you're not gonna partake in drinking my "special" sake, huh?」
+				PRINTFORMDW %BREAKENG(@"Yuugi narrows her eyes with a smirk on her face. She doesn't seem all that upset, more like... challenged, really.")%
+			ELSE
+				PRINTFORML 「Aw man, what a bummer.」
+				PRINTFORMW 「Oh well, maybe you'll go out with me some other time.」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;部屋に誘われた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「Hey, you wanna pop over to my place?」
+			PRINTFORML 「It's fun and games playing around with everyone, but sometimes it ain't not so bad to have a drink together in private, right?」
+			PRINTFORML 「...No one's gonna interrupt us, too.」
+			PRINTFORMDW Yuugi says with a slight blush on her cheeks.
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 4
+		;部屋に誘われたのを受けた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「Are we really just gonna drink there?」
+			PRINTFORML 「Fufu, weeell, that'll depend solely on you, %MASTERNAME:64%!」
+			PRINTFORMDW Yuugi invites you into her home, her words carrying a certain... undertone.
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 5
+		;部屋に誘われたのを断った
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「That so? Guess I'm gonna invite someone else for some drinking then.」
+			PRINTFORMDW Yuugi doesn't seem bothered all that much.
+			RETURN 1
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;脱衣口上
+;==================================================
+@M_KOJO_EVENT_K64_28(ARG,ARG:1)
+;口上主はTARGET
+;ARGに脱がし方選択
+;ARG:1（ARG=3の場合のみあり）地の文の反応
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;全裸にする
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			;added
+			;時間停止時
+			IF FLAG:70
+				IF FIRSTTIME("YuugiUndressTS")
+					PRINTFORMDW Gulping down, you prepare to undress Yuugi as the time is frozen.
+					PRINTFORMDW Knowing her, she'd probably get naked for you herself if you just asked, but something about this makes it even more exciting.
+					PRINTFORMDW %BREAKENG(@"After all, it's not every day that you're able to toy with a body belonging to such a powerful woman who has trained herself to reach the peak of physical performance, and even beyond.")%
+					PRINTFORMDW %BREAKENG(@"...You expected her to pack a lot of muscle, but she mostly has an athletic build, not too crazy to the point it'd diminish her feminine charm.")%
+					PRINTFORMDW You admire her body for a little while before making a first move...
+				ENDIF
+			;通常
+			ELSE
+				IF FIRSTTIME("YuugiUndress")
+					PRINTFORMW 「Y-Yeah, okay, I see... Just gimme a sec...」
+					PRINTFORMDW Yuugi's cheeks flush with embarrassment, but she obediently strips herself naked.
+					CALL PRINT_DIALOGUE, @"Dunno why, but this kinda makes me feel ashamed... Maybe 'cause you're so serious about it? I always treated it a bit too casually myself though.", "w"
+					PRINTFORMDW Leaving herself completely naked before you, Yuugi turns around as you take a closer look at her body.
+					PRINTFORMW 「W-Well, what do you think? Uhh, do I look weird to you?」
+					PRINTFORMW 「I mean, I'm a bit too muscly, aren't I? Of course it's weird for a woman to pack so much muscle, that's just a given, haha...」
+					PRINTFORMDW Instead of answering, you simply hold Yuugi in your arms as she gasps.
+					PRINTFORMW 「Ah... So you don't mind, I take it? That's good...」
+					PRINTFORMDW A pleasant smile appears on her face, relieved with the fact that she's being accepted...
+				ELSE
+					;merged together with the new text + expanded
+					PRINTFORMW 「Heh... If you say so. You just can't help yourself, eh?」
+					;妊娠
+					IF TALENT:妊娠
+						PRINTFORMDL With the last piece of fabric concealing her coming off, Yuugi's nude body is now laid bare before you.
+						PRINTFORMDL %BREAKENG(@"Her toned body is less firm and somewhat out of shape, having gained some weight after pregnancy. Though her breasts are larger and stout than before thanks to it.")%
+						PRINTFORMDL %BREAKENG(@"With every step she takes towards you, her plump, swaying bosom boasted abundance that %SPLIT_G("was a sight for sore eyes:captivated all who saw it")%.")%
+					;それ以外
+					ELSE
+						IF !OBJNAME_TO_ID(TARGET, "GET", "衣装セット", "鬼セット") ;non-kimono
+							PRINTFORMDL She shoots you a wry grin as she grabs the hem of her shirt, revealing her finely honed and feminine body inch by inch.
+							PRINTFORMDL You couldn't help but find your gaze being drawn to her toned midsection, where you're greeted by her abs.
+							PRINTFORMDW She pauses at her chest for a moment, waiting until she has your attention before resuming.
+							PRINTFORMDL %BREAKENG(@"Her plump breasts fall when the fabric fully passes over, revealing her nipples, rigid with arousal. True enough, it %SPLIT_G("was a sight for sore eyes:captivated all who saw it")%.")%
+							PRINTFORMDL Finally reaching her head, Yuugi has some trouble pulling the shirt over her horn, but after some adjusting, manages to get it off.
+							PRINTFORMDL She hooks her thumbs in her skirt and blooms before bending over, tugging them down her heart shaped rear, past her sculpted thighs.
+							PRINTFORMDL Yuugi returns to her full height and steps out of the pile of clothes, her athletic physique now on full display. She smiles at you.
+						ELSE
+							PRINTFORMDL %BREAKENG(@"She shoots you a wry grin and undoes the bow holding her kimono together, allowing the robe slowly slide down her shoulders, revealing her finely honed and feminine body inch by inch.")%
+							PRINTFORMDL You couldn't help but find your gaze being drawn to her midriff, where both halves of her dress part just enough to unveil her abs.
+							PRINTFORMDW Yuugi pauses for a moment and holds the fabric to her chest, hiding it with a teasing expression until she has your full attention again.
+							PRINTFORMDL %BREAKENG(@"Releasing her grip, the robe drops and reveals her ample bust, her nipples hardened with excitement. Suffice it to say, it %SPLIT_G("was a sight for sore eyes:captivated all who saw it")%.")%
+							PRINTFORMDL %BREAKENG(@"Soon enough, you see that she wasn't wearing anything else underneath that kimono, not even a fundoshi, revealing her strapping thighs and lush rear.")%
+							PRINTFORMDL Yuugi steps out of the pile, her powerful figure now on full display. She smiles at you.
+						ENDIF
+						PRINTFORMDL Not a single ounce of excess fat can be seen, making her look like a living statue, or a warrior out of legend.
+						PRINTFORMDW The only exception being, of course, the areas designed to attract a mate.
+					ENDIF
+					PRINTFORMW 「Now then... You happy?」
+					PRINTFORMDL Quickly succumbing to your base desires, you find yourself unable to take your eyes off of her.
+					PRINTFORMW 「I take it as yes... Fufu, ready to have some fun?」
+				ENDIF
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;下着姿にする
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;半脱ぎ
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;パンツちょうだい
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 0
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE ARG:1
+				;-------------------------------------------------
+				CASE 0
+				;交換です
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 1
+				;OK（嬉々
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 2
+				;OK（渋々
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 3
+				;嫌です
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 0
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				RETURN 1
+			ENDSELECT
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;怒り口上
+;==================================================
+@M_KOJO_EVENT_K64_29(ARG,ARG:1)
+;口上主はTARGET
+;ARGはTARGETの度胸で分岐
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;怒らせてしまった
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;泣かせてしまった　[臆病]持ち
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;相手が押し倒しを解除
+;==================================================
+@M_KOJO_EVENT_K64_30(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+	;疲れた
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+	;満足して解放
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+	;満足したところを押し倒された
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+	;壊れるまでしてあげる
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+
+;==================================================
+;一日の終了時(AFTERTRAニーの前)、面識がなければ呼び出されない
+;==================================================
+@M_KOJO_EVENT_K64_31(ARG,ARG:1)
+;口上主はTARGET
+;ARGは会ってない日数
+;何日以上会ってなかったら愚痴を言うとかできます
+;CFLAG:オナバレで分岐入れてもよさそう
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;今日会っていない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;今日会っている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;自由行動中
+;ARG:1      0=行動中,1=完了時
+;技能系の行動は技能レベルが1以上なら発生
+;==================================================
+@M_KOJO_EVENT_K64_32(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+	CASE 0
+		;▼考え事,（～は考えに耽っている。）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 1
+		;▼遊ぶ,（～は走り回っている。）
+		;※[幼稚]持ちのみ
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 2
+		;▼食事,（～は食事を摂っている。）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 3
+		;▼つまみ食い（～はこっそりつまみ食いをしている。）
+		;※[妖精]持ちとルーミア、こいし、幽々子、紫苑のみ
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 4
+		;▼掃除,（～はテキパキと部屋の掃除をしている。）
+		;※[掃除係]持ちまたは汚臭耐性-1以下のみ
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 5
+		;▼運動,（～は張り切って運動している。）
+		;※[音楽知識]持ちは除く（演奏になる）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 6
+		;▼読書,（～は黙々と本を読んでいる。）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 7
+		;▼料理,
+		IF !ARG:1
+			;行動中
+			IF Activity_Duration:TARGET > 30
+				;料理中（～は軽快に料理をしている。）
+				PRINTFORML 
+			ELSE
+				;食事中（～は作った料理を食べている。）
+				PRINTFORML 
+			ENDIF
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 8
+		;▼演奏
+		;※[音楽知識]持ちのみ（TALENT:音楽知識で変化）
+		;1,～は小気味よく演奏している。
+		;2,～は気ままに歌っている。
+		;3,～は華麗に踊っている。
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 9
+		;▼採集,（～使える素材を探している。）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 10
+		;▼釣り,（～はのんびり釣りをしている。）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 11
+		;▼実験,（～は怪しい実験をしている。）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 12
+		;▼のんびり,（～はのんびりしている。）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 13
+		;▼晩酌,（～はまったりとお酒を飲んでいる。）
+		;※酒耐性0以上のみ
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 14
+		;▼買い物,（～は気ままに買い物している。）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 15
+		;▼説教,（～はじっと聞いている…）
+		;※神霊・蓬莱人は除く
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 16
+		;▼落とし穴,（～は落とし穴を増やしている）
+		;※三月精・チルノ・クラウンピースのみ
+		;それ以外は落ちる側
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時,
+			;（仕掛け人（失敗時）,誰も引っかからないので～は飽きてしまったようだ…）
+			;（落ちた側（戦闘能力2～4）,～はすぐに穴から飛び出して周りをキョロキョロ見回している…）
+			PRINTFORML 
+		ENDIF
+	CASE 17
+		;▼雪だるま作り（～は雪を集めている）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	CASE 18
+		;▼炬燵でのんびり（～は炬燵に入って温まっている）
+		IF !ARG:1
+			;行動中
+			PRINTFORML 
+		ELSE
+			;完了時
+			PRINTFORML 
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;ハッピーニューイヤー
+;年越しの瞬間に同じ部屋に居ると発生
+;==================================================
+@M_KOJO_EVENT_K64_33(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	PRINTFORMW 
+ENDIF
+RETURN 1
+
+;==================================================
+;技能レベルアップ
+;各ABL値はレベルアップ後の値になってます
+;==================================================
+@M_KOJO_EVENT_K64_34(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+	CASE 1
+		;戦闘技能
+		PRINTFORMW 
+	CASE 2
+		;話術技能
+		PRINTFORMW 
+	CASE 3
+		;清掃技能
+		PRINTFORMW 
+	CASE 4
+		;教養
+		PRINTFORMW 
+	CASE 5
+		;料理技能
+		PRINTFORMW 
+	CASE 6
+		;採集Lv
+		PRINTFORMW 
+	CASE 7
+		IF ARG:1 == 0
+			;音楽技能
+			PRINTFORMW 
+		ELSEIF ARG:1 == 1
+			;【音楽知識】取得
+			PRINTFORMW 
+		ELSEIF ARG:1 == 2
+			;【相対音感】取得
+			PRINTFORMW 
+		ENDIF
+	CASE 8
+		;釣りLv
+		PRINTFORMW 
+	CASE 9
+		IF ARG:1 == 0
+			;調合Lv
+			PRINTFORMW 
+		ELSEIF ARG:1 == 1
+			;【調合知識】取得
+			PRINTFORMW 
+		ENDIF
+	CASE 10
+		;伐採Lv
+		PRINTFORMW 
+	CASE 11
+		IF ARG:1 == 0
+			;指
+			PRINTFORMW 
+		ELSEIF ARG:1 == 1
+			;【器用な指】取得
+			PRINTFORMW 
+		ENDIF
+	CASE 12
+		IF ARG:1 == 0
+			;舌
+			PRINTFORMW 
+		ELSEIF ARG:1 == 1
+			;【舌使い】取得
+			PRINTFORMW 
+		ENDIF
+	CASE 13
+		IF ARG:1 == 0
+			;胸
+			PRINTFORMW 
+		ELSEIF ARG:1 == 1
+			;【淫乳】取得
+			PRINTFORMW 
+		ENDIF
+	CASE 14
+		;腰
+		PRINTFORMW 
+	CASE 15
+		IF ARG:1 == 0
+			;膣
+			PRINTFORMW 
+		ELSEIF ARG:1 == 1
+			;【淫壺】取得
+			PRINTFORMW 
+		ENDIF
+	CASE 16
+		IF ARG:1 == 0
+			;アナル
+			PRINTFORMW 
+		ELSEIF ARG:1 == 1
+			;【尻穴狂い】取得
+			PRINTFORMW 
+		ENDIF
+	ENDSELECT
+	PRINTL 
+ENDIF
+RETURN 1
+
+;==================================================
+;デイリーイベント2,夢精
+;親密5以上で発生（来訪キャラのみ）
+;▼地の文--------------------------------------------------
+;【MASTER】が夢精で汚した下着を洗っていると【TARGET】が飛んできた！
+;【TARGET】はそんなもの他の洗濯物と一緒に洗わないでと抗議すると、【MASTER】の手に収まった下着をふんだくり戻っていった…
+;【TARGET】　欲情の珠＋1000
+;==================================================
+@M_KOJO_DAILY_EVENT_K64_2(ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARGS:1, ARGS:2)
+;地の文を変えたければコメントアウト
+;※コメントアウトすると欲情の珠＋1000（JUEL:11 += 1000）もカットされるので注意
+CALL DAILY_MESSAGE_2(ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARGS:1, ARGS:2)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	PRINTFORMW 
+ENDIF
+RETURN 1
+
+;==================================================
+;デイリーイベント4,物思い
+;濃厚精液状態で発生
+;▼地の文--------------------------------------------------
+;とりとめもない思考に耽っていた【TARGET】は、いつの間にか【MASTER】のことを考えていたことに気づいた
+;【TARGET】は明日【MASTER】に会いに行くことにしたようだ
+;==================================================
+@M_KOJO_DAILY_EVENT_K64_4(ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARGS:1, ARGS:2)
+;地の文を変えたければコメントアウト
+CALL DAILY_MESSAGE_4(ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARGS:1, ARGS:2)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	PRINTFORMW 
+ENDIF
+RETURN 1
+
+;==================================================
+;デイリーイベント12,特訓
+;信頼100以上で発生（拠点キャラのみ）
+;==================================================
+@M_KOJO_DAILY_EVENT_K64_12(ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARGS:1, ARGS:2)
+;地の文を変えたければコメントアウト
+;コメントアウトできるのはARG:1=1,2のみです
+CALL DAILY_MESSAGE_12(ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARGS:1, ARGS:2)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------
+IF LOCAL
+	SELECTCASE ARG:1
+	CASE 1
+		;特訓を頼まれる
+		;～から新技の訓練に付き合って欲しいと言われた
+		PRINTFORML 
+	CASE 2
+		;断る
+		;～は残念そうだ
+		PRINTFORML 
+	CASE 3
+		;～の攻撃！
+		;※ここはWAITしないでください
+		PRINTFORML 
+	CASE 4
+		IF ARG:2
+			;時間停止して回避
+			PRINTFORML 
+		ELSE
+			;回避成功
+			PRINTFORML 
+		ENDIF
+	CASE 5
+		;回避失敗
+		PRINTFORML 
+	ENDSELECT
+ENDIF
+RETURN 1
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレ遭遇時の地の文をデフォルトのものから変更したい場合用。
+;その場合は上下のSKIPSTART~SKIPENDを外してください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;-------------------------------------------------
+@M_KOJO_EVENT_K64_ONABARE_1(ARG)
+;-------------------------------------------------
+:口上色を付けるならコメントアウトを外しXをキャラ番号に
+;CALL M_KOJO_COLOR_K64
+
+IF ARG
+	PRINTFORML A弄ってる場合
+ELSE
+	PRINTFORML V弄ってる場合
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレでそのまま続けてもらう場合の地の文をデフォルトのものから変更したい場合用。
+;その場合は上下のSKIPSTART~SKIPENDを外してください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;-------------------------------------------------
+@M_KOJO_EVENT_K64_ONABARE_2(ARG)
+;-------------------------------------------------
+:口上色を付けるならコメントアウトを外しXをキャラ番号に
+;CALL M_KOJO_COLOR_K64
+
+IF ARG
+	PRINTFORML A弄ってる場合
+ELSE
+	PRINTFORML V弄ってる場合
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレなし崩しックスの地の文をデフォルトのものから変更したい場合用。
+;その場合は上下のSKIPSTART~SKIPENDを外してください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;-------------------------------------------------
+@M_KOJO_EVENT_K64_ONABARE_3(前戯１,本番はどっちか,回数,注入量)
+;-------------------------------------------------
+#DIM 前戯１
+;1=C 2=B 3=M
+#DIM 本番はどっちか
+;0でＶ、1でＡ
+#DIM 注入量
+#DIM 回数
+
+:口上色を付けるならコメントアウトを外しXをキャラ番号に
+;CALL M_KOJO_COLOR_K64
+
+SELECTCASE 前戯１
+	CASE 1
+		PRINTFORML Ｃ責め
+	CASE 2
+		PRINTFORML Ｂ責め
+	CASE 3
+		PRINTFORML Ｍ責め
+ENDSELECT
+
+IF 本番はどっちか
+	PRINTFORML Aで本番
+ELSE
+	PRINTFORML Vで本番
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+;-------------------------------------------------
+;処女・無自覚非処女に挿入する直前の口上
+;RETURN 1するとコマンドをキャンセルします
+;RETURN 0なら通します
+;CFLAG:破瓜キャンセル口上有がオンになってないと読み込まれないので注意
+;-------------------------------------------------
+@M_KOJO_EVENT_K64_LOST_VIRGIN_STOP
+;-------------------------------------------------
+PRINTFORML 
+RETURN 1
+
+;-------------------------------------------------
+;CFLAG:口上内抱き寄せ判定_初回がオンになっている場合のみ有効。
+;初めて押し倒した時、ここでRETURN -1すると押し倒しを強制的にキャンセルします。
+;RETURN 0なら通常の判定を行い、RETURN 1すると無条件に成功させます。
+;特定のイベント（デート帰りキスなど）を見るまでうふふできないようにしたいときなどにどうぞ。
+;-------------------------------------------------
+@M_KOJO_EVENT_K64_PERMISSION_1
+;-------------------------------------------------
+PRINTFORML 
+;RETURN -1
+RETURN 0
+;RETURN 1
+;-------------------------------------------------
+
+
+;-------------------------------------------------
+;CFLAG:口上内抱き寄せ判定_通常がオンになっている場合のみ有効。
+;合意付きで押し倒した時、ここでRETURN -1すると押し倒しを強制的にキャンセルします。
+;RETURN 0なら通常通り成功させます。
+;合意があっても何らかの理由でうふふできないようにしたいときなどにどうぞ。
+;-------------------------------------------------
+@M_KOJO_EVENT_K64_PERMISSION_2
+;-------------------------------------------------
+PRINTFORML 
+RETURN 0
+;RETURN -1
+;-------------------------------------------------
+
+;-------------------------------------------------
+;部屋描写用関数
+;口上キャラのOMANEKIBEYAか拠点の描写に使います
+;記入する際はコメントアウトを外してください
+;-------------------------------------------------
+;@K64_ROOM_DESCRIPTION
+;PRINTFORML 例）生活感のない殺風景な部屋だ
+;-------------------------------------------------
+
+
+
+;==================================================
+;贈り物イベント
+;==================================================
+@M_KOJO_EVENT_K64_GIFT(ARG, GIFT_ID, 評価点, GIFT_NAME, SENSE)
+#DIM GIFT_ID
+#DIM 評価点
+#DIMS GIFT_NAME
+#DIMS SENSE
+;---------------------------------------------------------------------------------------------------
+;評価点       贈り物の評価点（1～999）,口上主があげた場合でも口上主の評価点
+;GIFT_NAME    贈り物の名称
+;SENSE        贈り物に設定された属性。STRCOUNT(DISH_TASTE, "ほげほげ/")を使うと特定の属性を判定できます。
+;GIFT_ID      これ単体では使いません。以下の式内関数を使うとデータを抽出できます（こだわりたい人用）
+;　GET_GIFTDATA(GIFT_ID, "回数")    貰った（あげた）回数
+;　GET_GIFTDATA(GIFT_ID, "得点")    得点（1～999）,口上テンプレ内では用意されてます。
+;　GET_GIFTDATA(GIFT_ID, "日付")    貰った（あげた）日付（1～9999）
+;　GET_GIFTDATA(GIFT_ID, "場所")    買った場所（デートの行き先）
+;　GET_GIFTDATA(GIFT_ID, "形容詞")  形容詞番号（贈り物_形容詞.erb参照）
+;　GET_GIFTDATA(GIFT_ID, "本体")    本体番号（贈り物_本体.erb参照）
+;--------------------------------------------------------------------------------------------------
+;デート帰りに口上主があなたに贈り物を渡す（陥落や好感度に関わらず親密5以上から発生）
+;評価点は701～999（渡すキャラ本人の評価）
+;--------------------------------------------------------------------------------------------------
+IF ARG == 1
+	;PRINTFORMW 「%GIFT_NAME%をあげるから大事に使って」
+	RETURN 1
+;--------------------------------------------------------------------------------------------------
+;一日の終わりに今日貰った贈り物を大事にする（700点以上）
+;--------------------------------------------------------------------------------------------------
+ELSEIF ARG == 2
+	;IF STRCOUNT(SENSE, "かわいい/")
+	;	PRINTFORMW 「かわいいプレゼントを貰っちゃった」
+	;ELSEIF 評価点 >= 800
+	;	PRINTFORMW 「とっても素敵なプレゼントを貰っちゃった」
+	;ELSE
+	;	PRINTFORMW 「素敵なプレゼントを貰っちゃった」
+	;ENDIF
+	RETURN 1
+;--------------------------------------------------------------------------------------------------
+;一日の終わりに今日貰った贈り物をお気に入りにする（↑の大事にするから続き）（700点以上かつ最高得点）
+;--------------------------------------------------------------------------------------------------
+ELSEIF ARG == 3
+	;IF STRCOUNT(SENSE, "身につける/")
+	;	PRINTFORMW 「明日からこれを付けて行こうっと」
+	;ELSE
+	;	PRINTFORMW 「明日からこれを持って行こうっと」
+	;ENDIF
+	RETURN 1
+;--------------------------------------------------------------------------------------------------
+;一日の終わりに今日貰った贈り物をとりあえず保管する（400～699点）
+;--------------------------------------------------------------------------------------------------
+ELSEIF ARG == 4
+	;PRINTFORMW 「とりあえず飾っておこう」
+	RETURN 1
+;--------------------------------------------------------------------------------------------------
+;一日の終わりに今日貰った贈り物をこっそり質に入れる（400点未満）
+;--------------------------------------------------------------------------------------------------
+ELSEIF ARG == 5
+	;PRINTFORMW 「私これ嫌いなのよね～」
+	RETURN 1
+ENDIF
+RETURN 1
+
+
+;==================================================
+;ムシバトル
+;ムシバトルの口上は少し特殊で、PRINTを使うのではなく、
+;台詞一行のみをRESULTSに入れてください
+;ムシの名前は %MUSHI_NAME% で表示できます
+;ムシの名前の最長はアレキサンドラトリバネアゲハの全角14文字です
+;文字数制限があります。はみ出ないように気をつけてください
+;ARGは残りムシ数か順位です
+;==================================================
+@M_KOJO_MESSAGE_COM_K64_MUSHI_BATTLE(ARGS, ARG)
+#DIM 残りムシ数
+#DIM 順位
+SELECTCASE ARGS
+CASE "試合前"
+	;-------------------------------------------------
+	;キャラセレクト時,ARGは使えません
+	;全角50文字くらいまで
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「ぶっとばしてさしあげますわ！」
+	ENDIF
+CASE "戦場に出した"
+	;-------------------------------------------------
+	;"【（キャラ）】は《（ムシ）》を戦場に出した！」"の直後
+	;全角40文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	残りムシ数 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「%MUSHI_NAME%！キミにきめた！」
+	ENDIF
+CASE "攻撃時"
+	;-------------------------------------------------
+	;"【（キャラ）】《（ムシ）》の『（攻撃名）』！」"の直前
+	;全角40文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	残りムシ数 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「ぶっとばせ！%MUSHI_NAME%！」
+	ENDIF
+CASE "倒れた時"
+	;-------------------------------------------------
+	;"【（キャラ）】《（ムシ）》は倒れた！！"の直後
+	;全角40文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	残りムシ数 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「ああっ！私の%MUSHI_NAME%がっ！」
+	ENDIF
+CASE "敗退時"
+	;-------------------------------------------------
+	;"【（キャラ）】敗退！！"の直後
+	;全角40文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	残りムシ数 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「私のムシが全滅めつめつ……」
+	ENDIF
+CASE "タイマン：勝ち"
+	;-------------------------------------------------
+	;順位は1位
+	;全角20文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	順位 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「%CALLNAME:MASTER%よわーい！」
+	ENDIF
+CASE "タイマン：負け"
+	;-------------------------------------------------
+	;順位は2位
+	;全角20文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	順位 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「%CALLNAME:MASTER%つよーい！」
+	ENDIF
+CASE "バトルロイヤル：優勝"
+	;-------------------------------------------------
+	;順位は1位
+	;全角30文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	順位 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「やったー！」
+	ENDIF
+CASE "バトルロイヤル：２位以下"
+	;-------------------------------------------------
+	;順位は2～4位
+	;全角30文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	順位 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「くやし～！」
+	ENDIF
+CASE "チーム戦：勝ち"
+	;-------------------------------------------------
+	;順位は1位（やられていても）
+	;全角32文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	順位 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「私のおかげね！」
+	ENDIF
+CASE "チーム戦：負け"
+	;-------------------------------------------------
+	;順位は2位
+	;全角32文字まで（カギカッコ含む）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	順位 = ARG
+	;-------------------------------------------------
+	IF LOCAL:1
+;		RESULTS = 「味方が弱い！！」
+	ENDIF
+ENDSELECT
+SIF RESULTS != ""
+	RETURN 1
+
+;==================================================
+;引力操作
+;TCVAR:引力点に場所IDを入れるとその地点に引っ張られていきます
+;場所IDと同じ拠点マップでしか効果はありません（博麗神社の境内なら拠点が博麗神社のときだけ）
+;条件を付けないと永久に引っ張られ続けるので注意
+;RANDは基本的に使えません。CFLAG:今日の運勢にその日のランダム数値（0～999）が入っているのでこれを使うと良いです
+;==================================================
+@M_KOJO_EVENT_K64_GRAVITY(ARG)
+
+SIF 0
+	TCVAR:引力点 = 0
+
+;▼共通設定で使われているサンプル
+[SKIPSTART]
+	;平日の昼間はランダムで遊びに行く
+	IF YOUBI_MATCH(DAY, "月火水木金") && INRANGE(TIME, 600, 960)
+		SELECTCASE CFLAG:今日の運勢 % 5
+		CASE 1
+			TCVAR:引力点 = P2境内
+		CASE 2
+			TCVAR:引力点 = P10縁側
+		CASE 3
+			TCVAR:引力点 = P11庭
+		CASE 4
+			TCVAR:引力点 = P25鎮守の森
+		CASEELSE
+			TCVAR:引力点 = 0
+		ENDSELECT
+	ENDIF
+	;水木曜日に2分の1の確率で遊びに行く
+	SIF YOUBI_MATCH(DAY, "水木") && INRANGE(TIME, 720, 1020) && CFLAG:今日の運勢 % 2 == 0
+		TCVAR:引力点 = P213鈴奈庵
+	;特定の人物が特定の場所にいるとそこへ引っ張られる
+		SIF CFLAG:[[白蓮]]:現在位置 == P103本堂 && !CFLAG:[[白蓮]]:うふふ && SHIRAHU([[白蓮]])
+			TCVAR:引力点 = P103本堂
+	;土日に10分の1の確率で特定の人物にくっついてまわる
+	SIF YOUBI_MATCH(DAY, "土日") && CFLAG:今日の運勢 % 10 == 0 && !CFLAG:[[さとり]]:うふふ && SHIRAHU([[さとり]])
+		TCVAR:引力点 = CFLAG:[[さとり]]:現在位置
+[SKIPEND]
+
+;-------------------------------------------------
+;名前を教えるイベント（関数）
+;ナズーリン口上からお借りしました
+;-------------------------------------------------
+@NAME_SET_K64
+LOCAL = GETCOLOR()
+RESETCOLOR
+PRINTL Input your name.
+IF !GROUPMATCH(NAME:MASTER, "あなた", "Player")
+	LOCALS = %CALLNAME:MASTER%
+ELSE
+	LOCALS = %NAME:MASTER%
+ENDIF
+PRINTBUTTON @"[Set to %LOCALS%]", @"%LOCALS%"
+PRINTL 　
+;名前を入力するループ
+$INPUT_LOOP_ONAMAE
+INPUTS
+; 行頭行尾の空白文字削除
+LOCALS = %RESULTS%
+REPLACE LOCALS, "\(\^\\s\+\|\\s\+\$)", ""
+;10文字以上は受け付けない
+IF STRLENS(LOCALS) > 16
+	CLEARLINE 1
+	REUSELASTLINE Name is too long.
+	GOTO INPUT_LOOP_ONAMAE
+;空白は受け付けない
+ELSEIF RESULTS == ""
+	PRINTL You have to input something.
+	GOTO INPUT_LOOP_ONAMAE
+ELSE
+	PRINTFORML Name will be set to %RESULTS%, confirm?
+	CALL ASK_YN
+	IF RESULT == 0
+		;あなたの名前を%MASTERNAME:64%に格納
+		MASTERNAME:64 = %RESULTS%
+		PRINTFORML 
+	ELSE
+		PRINTL Input your name.
+		GOTO INPUT_LOOP_ONAMAE
+	ENDIF
+ENDIF
+SETCOLOR LOCAL

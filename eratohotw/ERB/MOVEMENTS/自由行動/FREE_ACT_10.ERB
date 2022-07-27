@@ -1,0 +1,91 @@
+﻿@EXIST_FreeAct10
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+;オブジェクト本体
+@FreeAct10(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+#DIM 経過時間
+経過時間 = Activity_Duration:TARGET
+SELECTCASE O_DATA
+;自由行動に付き合うコマンドの名称
+CASE "名称"
+	CALLF MAKE_STR(V_NAME, "一緒に釣りをする")
+CASE "CHAIN"
+;他キャラに連鎖しない場合コメントアウトすること
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "経過時間"
+;自由行動に付き合うコマンドでの経過時間
+;0だと30分か残り時間すべての小さい方
+	CALLF MAKE_INT(V_NAME, 0)
+ENDSELECT
+
+@自由行動内容_10(CHARA, ARGS, 時間係数, CHAIN)
+#DIM CHARA
+#DIM CHAIN
+#DIM 現在地
+#DIM メッセージ表示
+#DIM 時間係数
+#DIM 経過時間
+現在地 = CFLAG:CHARA:現在位置
+メッセージ表示 = 現在地 == CFLAG:MASTER:現在位置 ? 1 # 0
+SELECTCASE ARGS
+	CASE "発生"
+		;釣りLv1以上のキャラが釣りできる場所にいる時
+		SIF TALENT:CHARA:釣りLv < 1
+			RETURN 0
+		SIF !FISHING_SPOT(現在地)
+			RETURN 0
+		SIF BASE:CHARA:気力 <= 500
+			RETURN 0
+		SIF メッセージ表示
+			PRINTFORMW %CALLNAME:CHARA% \@ CHAIN ? joins in on %CALLNAME:CHAIN%'s fishing# takes out a fishing rod\@.
+		RETURN 60 + RAND:120
+	CASE "行動中"
+		IF メッセージ表示
+			SELECTCASE RAND:4
+			CASE 1
+				PRINTFORMW %CALLNAME:CHARA% is reeling in a fish.
+			CASEELSE
+				PRINTFORMW %CALLNAME:CHARA% is fishing and taking it easy.
+			ENDSELECT
+		ENDIF
+	CASE "完了"
+		;完了までいったら経験+2
+		EXP:CHARA:釣り経験 += 2
+		SIF メッセージ表示
+			PRINTFORMW %CALLNAME:CHARA% seems to have finished fishing.
+	CASE "中断"
+		EXP:CHARA:釣り経験 += 1
+	CASE "付き合う"
+		;自由行動に付き合ったとき用メッセージ
+		IF TFLAG:193 < 0
+			PRINTFORML %PARSE("You sit")% down next to %CALLNAME:TARGET% as they fish, just looking on...
+		ELSE
+			PRINTFORML %PARSE("You sit")% down next to %CALLNAME:TARGET% and %PARSE("join")% %HIM_HER(TARGET)% in fishing. 
+			PRINTFORML %TEXTR(@" %TNAME(TARGET,1)% seems to have caught something.../With nothing on the hook, %PARSE("you",2)% spend a moment relaxing together.../Pulling up a small fish, %PARSE("you put",1)% it in %TNAME(TARGET)%'s bucket...")%
+		ENDIF
+	CASE "ソース"
+		;付き合うコマンド選択時の入手ソース、時間係数は付き合った時間の1/10
+		IF !ITEM:釣り竿
+			;釣り竿がないと見てるだけ
+			TFLAG:193 = -1
+			DOWNBASE:MASTER:気力 += 50 * 時間係数
+			DOWNBASE:TARGET:体力 += 10 * 時間係数
+			DOWNBASE:TARGET:気力 += 20 * 時間係数
+			SOURCE:歓楽 = (50 + ((ABL:親密 + TALENT:MASTER:釣りLv) * 25)) * 時間係数
+		ELSE
+			DOWNBASE:MASTER:体力 += 20 * 時間係数
+			DOWNBASE:MASTER:気力 += 40 * 時間係数
+			DOWNBASE:TARGET:体力 += 10 * 時間係数
+			DOWNBASE:TARGET:気力 += 20 * 時間係数
+			SOURCE:歓楽 = (150 + ((ABL:親密 + TALENT:MASTER:釣りLv) * 50)) * 時間係数
+			SOURCE:受動 = (100 + ((ABL:従順 + TALENT:MASTER:釣りLv) * 50)) * 時間係数
+			TFLAG:98 = 1
+			EXP:MASTER:釣り経験 ++
+		ENDIF
+ENDSELECT

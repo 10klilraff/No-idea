@@ -1,0 +1,281 @@
+﻿@CHK_HININ_LOVE(ARG)
+#FUNCTION
+LOCAL = 0
+SIF TALENT:ARG:恋人
+	LOCAL += 300
+;愛情経験
+
+LOCAL += EXP:ARG:愛情経験 / 2
+
+;好感度
+SELECTCASE CFLAG:ARG:好感度
+CASE 0 TO 499
+	LOCAL -= 100
+CASE 500 TO 999
+	LOCAL += 30
+CASE 1000 TO 2999
+	LOCAL += 50
+CASEELSE
+	LOCAL += CFLAG:ARG:好感度 / 30
+ENDSELECT
+
+LOCAL += ABL:ARG:親密 * 20
+LOCAL += ABL:ARG:従順 * 7
+LOCAL += ABL:ARG:奉仕精神 * 7
+
+RETURNF LOCAL
+
+@CHK_HININ_REASON(ARG,ARGS)
+#FUNCTION
+#DIM 理性判定値
+VARSET LOCAL
+
+LOCAL:3 += GETPALAMLV(PALAM:欲情,15) * (10 + TALENT:ARG:快感応答 * 3)
+LOCAL:3 += GETPALAMLV(PALAM:恭順,15) * (10 - TALENT:ARG:態度 * 3)
+LOCAL:3 += GETPALAMLV(PALAM:好意,15) * 10
+
+LOCAL:5 += ABL:ARG:膣射中毒 * 15
+LOCAL:5 += ABL:ARG:欲望 * (10 + TALENT:ARG:快感応答 * 2)
+LOCAL:5 += MARK:ARG:快楽刻印 * 10
+LOCAL:5 += MARK:ARG:不埒刻印 * 10
+LOCAL:5 += MARK:ARG:苦痛刻印 * 10
+LOCAL:5 -= MARK:ARG:反発刻印 * 100
+
+
+理性判定値 = 800 - LOCAL:3 * LOCAL:5 / 300
+
+SIF ESTRUS_CYCLE(ARG) == 150
+	理性判定値 += 1000
+
+IF TCVAR:ARG:発情 && TALENT:ARG:動物耳 && CFLAG:ARG:900 == 7
+	理性判定値 -= 200
+ELSEIF TCVAR:ARG:惚れ薬 || IsHeat(ARG)
+	理性判定値 -= 50
+ENDIF
+SIF IsInsenceValid(ARG)
+	理性判定値 -= 50
+
+IF TALENT:ARG:ツンデレ
+	IF TALENT:ARG:恋慕
+		理性判定値 = 理性判定値 * 2 / 3
+	ELSE
+		理性判定値 = 理性判定値 * 3 / 2
+	ENDIF
+ENDIF
+
+;信頼度
+IF CFLAG:ARG:信頼度 < 100
+	理性判定値 *= 5
+ELSEIF CFLAG:ARG:信頼度 < 300
+	理性判定値 *= 5 / 2
+ELSEIF CFLAG:ARG:信頼度 < 500
+	理性判定値 *= 5 / 3
+ELSEIF CFLAG:ARG:信頼度 < 1000
+	理性判定値 *= 5 / 4
+ENDIF
+
+;カウンターだとここで素質処理しておく
+IF ARGS == "COUNTER"
+	SIF TALENT:ARG:抵抗
+		理性判定値 += 300
+	IF TALENT:ARG:プライド == -1
+		理性判定値  = 理性判定値 * 9 / 10
+	ELSEIF TALENT:ARG:プライド == 1
+		理性判定値 = 理性判定値 * 6 / 5
+	ENDIF
+	SIF OTOKOGIRAI(ARG)
+		理性判定値 = 理性判定値 * 3 / 2
+	SIF TALENT:ARG:貞操 == 1
+		理性判定値 = 理性判定値 * 6 / 5
+	SIF TALENT:MASTER:謎の魅力
+		理性判定値 = 理性判定値 * 9 / 10
+	SIF TALENT:ARG:倒錯的
+		理性判定値 = 理性判定値 * 9 / 10
+	IF TALENT:ARG:一線越えない
+		SELECTCASE EXP:ARG:愛情経験
+			CASE IS >= 500
+				理性判定値 = 理性判定値 / 2
+			CASE IS >= 300
+				理性判定値 = 理性判定値 * 4 / 3
+			CASE IS >= 100
+				理性判定値 = 理性判定値 * 3 / 2
+			CASEELSE
+				理性判定値 *= 2
+		ENDSELECT
+	ENDIF
+	IF TALENT:ARG:ツンデレ
+		IF TALENT:ARG:恋慕
+			理性判定値 = 理性判定値 * 2 / 3
+		ELSE
+			理性判定値 = 理性判定値 * 3 / 2
+		ENDIF
+	ENDIF
+ENDIF
+
+
+理性判定値 = MAX(理性判定値,0)
+RETURNF 理性判定値
+
+@OGAMITAOSHI(ARG)
+#DIM 理性判定値
+#DIM 好意判定値
+#DIM 好意表示
+VARSET LOCAL
+
+
+PRINTFORMW In %CALLNAME:ARG%'s heart...
+
+好意判定値 = CHK_HININ_LOVE(ARG) 
+CALL SHOW_LOVEPOWER(好意判定値)
+
+WAIT
+理性判定値 = CHK_HININ_REASON(ARG)
+
+CALL SHOW_REASONWALL(理性判定値)
+IF TALENT:MASTER:謎の魅力
+	CALL COLORMESSAGE(@"%CALLNAME:ARG% feels %HIS_HER(ARG)% reason waver from %PARSE("your")% mysterious charm...",C_PINK,1,1)
+	理性判定値 = 理性判定値 * 9 / 10
+	CALL SHOW_REASONWALL(理性判定値)
+ENDIF
+IF TALENT:ARG:プライド == -1
+	理性判定値  = 理性判定値 * 9 / 10
+ELSEIF TALENT:ARG:プライド == 1
+	理性判定値 = 理性判定値 * 6 / 5
+	CALL COLORMESSAGE(@"The prideful %CALLNAME:ARG% thinks selling oneself short is unthinkable.",C_PINK,1,1)
+	CALL SHOW_REASONWALL(理性判定値)
+ENDIF
+IF TALENT:ARG:貞操 == 1
+	理性判定値 = 理性判定値 * 6 / 5
+	CALL COLORMESSAGE(@"The virtuous %CALLNAME:ARG% thinks one should think hard before such a decision...",C_PINK,1,1)
+	CALL SHOW_REASONWALL(理性判定値)
+ENDIF
+IF OTOKOGIRAI(ARG)
+	理性判定値 = 理性判定値 * 3 / 2
+	IF TALENT:ARG:性別嗜好 == 3
+		CALL COLORMESSAGE(@"%CALLNAME:ARG% doesn't like people in general...",C_PINK,1,1)
+	ELSEIF TALENT:ARG:性別嗜好 == 1
+		CALL COLORMESSAGE(@"%CALLNAME:ARG% doesn't like men in general...",C_PINK,1,1)
+	ENDIF
+	CALL SHOW_REASONWALL(理性判定値)
+ENDIF
+IF TALENT:ARG:倒錯的
+	CALL COLORMESSAGE(@"%CALLNAME:ARG% is a bit fascinated at the prospect of doing it raw...",C_PINK,1,1)
+	理性判定値 = 理性判定値 * 9 / 10
+	CALL SHOW_REASONWALL(理性判定値)
+ENDIF
+IF TALENT:ARG:一線越えない
+	SELECTCASE EXP:ARG:愛情経験
+		CASE IS >= 500
+			CALL COLORMESSAGE(@"%CALLNAME:ARG% wants %PARSE("you")% to do just about anything to %HIM_HER(ARG)%...!",C_PINK,1,1)
+			理性判定値 = 理性判定値 / 2
+		CASE IS >= 300
+			CALL COLORMESSAGE(@"%CALLNAME:ARG% sees %PARSE("you")% as %HIS_HER(ARG)% partner, but isn't ready to go that far...",C_PINK,1,1)
+			理性判定値 = 理性判定値 * 6 / 5
+		CASE IS >= 100
+			CALL COLORMESSAGE(@"%CALLNAME:ARG% still wants to keep a certain distance even from close partners...",C_PINK,1,1)
+			理性判定値 = 理性判定値 * 3 / 2
+		CASEELSE
+			CALL COLORMESSAGE(@"%CALLNAME:ARG% isn't ready to accept another person like that...",C_PINK,1,1)
+			理性判定値 *= 2
+	ENDSELECT
+	CALL SHOW_REASONWALL(理性判定値)
+ENDIF
+IF TALENT:ARG:ツンデレ
+	IF TALENT:ARG:恋慕
+		理性判定値 = 理性判定値 * 2 / 3
+		CALL COLORMESSAGE(@"%CALLNAME:ARG% is dere!",C_PINK,1,1)
+	ELSE
+		理性判定値 = 理性判定値 * 3 / 2
+		CALL COLORMESSAGE(@"%CALLNAME:ARG% doesn't want it...",C_PINK,1,1)
+	ENDIF
+	CALL SHOW_REASONWALL(理性判定値)
+ENDIF
+WAIT
+IF CHK_HININ_LOVE(ARG) > 理性判定値
+	IF ESTRUS_CYCLE(ARG) != 150
+		PRINTFORMW After being told to not care about what others think, %CALLNAME:ARG% finally gives in.
+		CFLAG:ARG:生解禁 = 1
+		CALL KOJO_MESSAGE_SEND("EVENT",18,TARGET,4,0)
+		PRINTW She now consents to sex without contraception except for on dangerous days!
+	ELSE
+		PRINTFORMW %PARSE("You tell")% %CALLNAME:ARG% %PARSE("you",1)% want to have children, and %CALLNAME:ARG% blushes and nods.
+		CFLAG:ARG:生解禁 = 2
+		CALL KOJO_MESSAGE_SEND("EVENT",18,TARGET,5,0)
+		PRINTFORMW %CALLNAME:ARG% consents to make children with %PARSE("you")%!
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:ARG% declines gently.
+	CALL KOJO_MESSAGE_SEND("EVENT",18,TARGET,2,0)
+	
+	;qol custom code, hint
+	SIF CFLAG:ARG:ダメ出し
+		CALL COLORMESSAGE(@"(The more you try to persuade them, the easier it becomes)",C_YELLOW, 1, 1)
+	CALL ASK_YN("Respect their will",@"Push again\@ CFLAG:ARG:ダメ出し ? %" "%(Persuasion Attempts:{CFLAG:ARG:ダメ出し,2}) #\@")
+	IF RESULT == 0
+		TCVAR:ARG:挿入拒絶 = 1
+		RETURN -1
+	ELSE
+	;口のうまさと相手次第では粘ればどうにかなる
+		LOCAL = (4 - TALENT:ARG:応答 - TALENT:ARG:度胸 - TALENT:ARG:態度) * (ABL:MASTER:話術技能 + 3 * CFLAG:ARG:ダメ出し)
+		LOCAL:2 = 理性判定値 * (100 - LOCAL) / 100
+		CALL SHOW_REASONWALL(LOCAL:2)
+		IF CHK_HININ_LOVE(ARG) > LOCAL:2
+			PRINTFORMW %PARSE("You manage")% to do some fast-talk and win %CALLNAME:ARG% over.
+			IF ESTRUS_CYCLE(ARG) != 150
+				CFLAG:ARG:生解禁 = 1
+				CALL KOJO_MESSAGE_SEND("EVENT",18,TARGET,4,0)
+				PRINTW She now consents to sex without contraception except for on dangerous days!
+			ELSE
+				CFLAG:ARG:生解禁 = 2
+				CALL KOJO_MESSAGE_SEND("EVENT",18,TARGET,5,0)
+				PRINTFORMW %CALLNAME:ARG% consents to make children!
+			ENDIF
+		ELSE
+			CALL KOJO_MESSAGE_SEND("EVENT",18,TARGET,3,0)
+			PRINTFORMW %CALLNAME:ARG% scolds %PARSE("you")% will all of her might...
+			CFLAG:ARG:ダメ出し += 1
+			CALL ENDUFUFU(ARG)
+			CALL GET_ANGRY(ARG, MARK:ARG:反発刻印 + 1)
+			TFLAG:106 = 0
+			TCVAR:ARG:挿入拒絶 = 1
+			RETURN -1
+		ENDIF
+	ENDIF
+ENDIF
+
+@SHOW_REASONWALL(理性判定値, UNIT = 100)
+#DIM 理性判定値
+#DIM UNIT
+;custom code
+PRINTFORM %"Reasoning barrier", 22, LEFT%: 
+SETCOLOR 255,255,0
+LOCAL = MAX(理性判定値 / UNIT,1)
+PRINTFORM %"★" * LOCAL%
+RESETCOLOR
+SIF 理性判定値 % UNIT > (UNIT / 2)
+	PRINTL ★
+PRINTW
+
+@SHOW_LOVEPOWER(好意判定値, UNIT = 100)
+#DIM 好意判定値
+#DIM 好意表示
+#DIM UNIT
+;custom code
+PRINTFORM %@"%PARSE("Your")% favor", 22, LEFT%: 
+好意表示 = MAX(好意判定値 / UNIT,0)
+;LOCALS:1 = %GETFONT()%
+;SETFONT "Times New Roman"
+LOCAL = GETCOLOR()
+PRINTFORM %UNICODE(0x2764) * MAX((好意表示 / 10000 -1),0)%
+RESETCOLOR
+SETCOLOR 255,51,153
+SIF 好意表示 >=10000
+	PRINTFORM %UNICODE(0x2764) * (9999)%%UNICODE(0x2764)%
+
+PRINTFORM %UNICODE(0x2764) * (好意表示 % 10000)%
+SETCOLOR LOCAL
+
+SIF 好意判定値 % UNIT > (UNIT / 2)
+	PRINTFORML %UNICODE(0x2764)%
+SETFONT LOCALS:1
+PRINTW

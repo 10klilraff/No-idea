@@ -1,0 +1,1043 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;愛撫系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;0,愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_0
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_0_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_0_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && (FIRSTTIME(SELECTCOM) || GETBIT (CFLAG:1611,0))
+		IF FLAG:70
+			SETBIT CFLAG:1611,0
+		ELSE
+			IF 陥落状態() >= 4
+				PRINTFORML 「You've finally decided to caress me, %MASTERNAME:61%. I'm so glad.」
+				IF GETBIT (CFLAG:1611,0) && EXP:無自覚Ｃ経験 && EXP:無自覚Ｂ経験
+					PRINTFORML 「...Happy that you could do it without stopping the time for once, that is.」
+				ELSE
+					PRINTFORML 「I couldn't be more happy that the very first person to fondle me is you, %MASTERNAME:61%.」
+				ENDIF
+				PRINTFORMW 「Well then, please go ahead.」
+				PRINTFORML 「%MOAN(,,2)%... Both my boobs and my... puss...y... feel so... good!」
+				PRINTFORML 「%MOAN()%! %MOAN("m")%! Hey--, wa--...! Noo, that feels... too gooood...」
+				PRINTFORMW 「This is simply fantastic... %MOAN("m")%!」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Sorry for making you caress such a scrawny body... %MOAN()%!」
+				PRINTFORML 「...Are you happy? Even though I'm like this... %MOAN(,1,3)%...!」
+				PRINTFORMW 「But... I'm so glad... %MOAN()%... too, %MOAN(,1)%!」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「Fufu, very well, touch me all you want, %MOAN(, 1)%...!」
+				PRINTFORMW 「%MOAN()%! %MOAN(,,2)%! Fufu, I'm liking it more and more... %MOAN()%!」
+			ENDIF
+			CLEARBIT CFLAG:1611,0
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入中
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;V挿入
+	IF LOCAL:1 && TEQUIP:50 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			IF NOWEX:0 || NOWEX:1 || NOWEX:2 || NOWEX:3
+				IF 陥落状態() >= 4
+					PRINTFORML 「%MOAN()%! %MOAN()%! Nooo, not my %FSYN("vagina")%! Not my %FSYN("chest")%! Not my... %SLUR(PRINT_CLIT(), -3)%!!!」
+					PRINTFORML 「Noooo, it's making my insides %FSYN("squeeze")% like crazyyyyy! Nggghhhhhiiiiiiiiii!!!」
+					PRINTFORML 「%MOAN("h")%!!! It's... coming... insideeeeee... %MOAN("m")%!」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「%MOAN()%, it's already coming inside my %FSYN("vagina")%, %MOAN()%!」
+					PRINTFORML 「So why would you do this with my %FSYN("chest")% and %PRINT_CLIT()% tooooo...!」
+					PRINTFORML 「%MOAN("h")%!!! Nghooo, it's comiiiiiing... insideeeeee!!!」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「%MOAN("m")%...! Stooop, don't tease my %FSYN("chest")% and %PRINT_CLIT()% while... doing it insideeee... %MOAN("m")%...!」
+				ENDIF
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「%MOAN()%, it already... feels amazing when you %FSYN("thrust")% so deep...」
+					PRINTFORML 「Do you really need to tease my %FSYN("chest")% and %PRINT_CLIT()% toooo...?!」
+					PRINTFORML 「Nooo, it's making my %FSYN("vagina")% %FSYN("squeeze")% on its own, %MOAN("l:m",,2)%...!」
+					PRINTFORML 「%MOAN("l:m",,2)%... Ah, ah, aaaaaaaaahhhnnnn! It's %STUTTER(FSYN("pour:ing"))%... insideeee...」
+				ELSEIF 陥落状態() == 3
+					;yeah I can write it normally but she's clearly going crazy here
+					PRINTFORML 「%MOAN("l:m",,2)%... Ahh, you're squeezy-squeezing my %FSYN("chest")% and rubby-rubbing my %PRINT_CLIT()% while thrusty-thrusting in my %FSYN("vagina")%...!」
+					PRINTFORML 「%MOAN("m")%! %MOAN()%! Stooop, it feels way too gooooodddd, %MOAN("h", 4)%?! It's... coming... insideee...」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「%MOAN("m")%! Noo, don't %SPLIT_G("play:toy")% with my %FSYN("chest")% and my %PRINT_CLIT()% while %FSYN("thrust:ing")% in my %FSYN("vagina")%, %MOAN()%!」
+					PRINTFORML 「It's coming %SLUR("inside", -2)%...!!!」
+				ENDIF
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			IF NOWEX:0 || NOWEX:1 || NOWEX:2 || NOWEX:3
+				IF 陥落状態() >= 4
+					PRINTFORML 「%MOAN()%! My %FSYN("vagina")%, my %FSYN("chest")% and my %PRINT_CLIT()% feel soooo amaziiiinggg!!!」
+					PRINTFORML 「%MOAN("l:m",,3)%!!!」
+					PRINTFORML 「Nooo, stop it, stop stop stooooop!!! Something... something is comiiiiiiinnnnggg!!!」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「%MOAN("h")%!!! Don't %SPLIT_G("play:toy")% with my %FSYN("chest")% and my %PRINT_CLIT()% while messing up my %FSYN("vagina")%!!!」
+					PRINTFORML 「%MOAN("m")%...! My headdd... %SPLIT_G("is going weirrrdddd:it's going all fuzzyyyy")%!!!」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「%MOAN("m")%! This simultaneous three-way attack... is making me go crazy, I'm going crazhyyyyyyyy...!!!」
+				ENDIF
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「Fuaaahhh... I'm already feeling ecstatic from my %FSYN("vagina")% alone, so gimme a break pleaseeeee...!」
+					PRINTFORML 「%MOAN("m")%, don't %FSYN("grope")% my %FSYN("chest")% and don't rub my %PRINT_CLIT()%...!!!」
+					PRINTFORML 「%MOAN("l:m",,3)%... Hnnnnhhh, this feels sooo goooood...」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「%MOAN(,,2)%, this is greaaaat, my %FSYN("vagina")% feels amaziiiing...!」
+					PRINTFORML 「Fuaaaahh, my %PRINT_CLIT()% and %FSYN("chest")% are also... feeling awesome...!」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「%MOAN("l:m",,2)%! But you're already... %FSYN("thrust:ing")% in my %FSYN("vagina")%... %MOAN(,,2)%...」
+				ENDIF
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	;A挿入
+	ELSEIF LOCAL:1 && TEQUIP:51 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			;絶頂
+			;note: original text still referred to v, copypaste error I presume
+			IF NOWEX:0 || NOWEX:1 || NOWEX:2 || NOWEX:3
+				IF 陥落状態() >= 4
+					PRINTFORML 「%MOAN()%! %MOAN()%! Nooo, not my %FSYN("anus")%! Not my %FSYN("chest")%! Not my... %SLUR(PRINT_CLIT(), -3)%!!!」
+					PRINTFORML 「Nooo, my butthole feels soooo hoooottt! Nggghhhhhiiiiiiiiii!!!」
+					PRINTFORML 「%MOAN("h")%!!! It's... coming... insideeeeee... %MOAN("m")%!」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「%MOAN()%, it's already coming inside my %FSYN("ass")%, %MOAN()%!」
+					PRINTFORML 「So why would you do this with my %FSYN("chest")% and %PRINT_CLIT()% tooooo...!」
+					PRINTFORML 「%MOAN("h")%!!! Nghooo, it's comiiiiiing... insideeeeee!!!」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「%MOAN("m")%...! Stooop, don't tease my %FSYN("chest")% and %PRINT_CLIT()% while... doing this with my %FSYN("ass")%... %MOAN("m")%...!」
+				ENDIF
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「%MOAN()%, it already... feels amazing when you scrape the entrance...」
+					PRINTFORML 「Do you really need to tease my %FSYN("chest")% and %PRINT_CLIT()% toooo...?!」
+					PRINTFORML 「Nooo, it's making my %FSYN("anus")% %FSYN("squeeze")% on its own, %MOAN("l:m",,2)%...!」
+					PRINTFORML 「%MOAN("l:m",,2)%... Ah, ah, aaaaaaaaahhhnnnn! It's %STUTTER(FSYN("pour:ing"))%... insideeee...」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「%MOAN("l:m",,2)%... Ahh, you're squeezy-squeezing my %FSYN("chest")% and rubby-rubbing my %PRINT_CLIT()% while thrusty-thrusting in my %FSYN("ass")%...!」
+					PRINTFORML 「%MOAN("m")%! %MOAN()%! Stooop, it feels way too gooooodddd, %MOAN("h", 4)%?! It's... coming... insideee...」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「%MOAN("m")%! Noo, don't %SPLIT_G("play:toy")% with my %FSYN("chest")% and my %PRINT_CLIT()% while %FSYN("thrust:ing")% in my %FSYN("anus")%, %MOAN()%!」
+					PRINTFORML 「It's coming %SLUR("inside", -2)%...!!!」
+				ENDIF
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			IF NOWEX:0 || NOWEX:1 || NOWEX:2 || NOWEX:3
+				IF 陥落状態() >= 4
+					PRINTFORML 「%MOAN()%! My %FSYN("anus")%, my %FSYN("chest")% and my %PRINT_CLIT()% feel soooo amaziiiinggg!!!」
+					PRINTFORML 「%MOAN("l:m",,3)%!!!」
+					PRINTFORML 「Nooo, stop it, stop stop stooooop!!! Something... something is comiiiiiiinnnnggg!!!」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「%MOAN("h")%!!! Don't %SPLIT_G("play:toy")% with my %FSYN("chest")% and my %PRINT_CLIT()% while messing up my %FSYN("anus")%!!!」
+					PRINTFORML 「%MOAN("m")%...! My headdd... %SPLIT_G("is going weirrrdddd:it's going all fuzzyyyy")%!!!」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「%MOAN("m")%! This simultaneous three-way attack... is making me go crazy, I'm going crazhyyyyyyyy...!!!」
+				ENDIF
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「Fuaaahhh... I'm already feeling ecstatic from my %FSYN("ass")% alone, so gimme a break pleaseeeee...!」
+					PRINTFORML 「%MOAN("m")%, don't %FSYN("grope")% my %FSYN("chest")% and don't rub my %PRINT_CLIT()%...!!!」
+					PRINTFORML 「%MOAN("l:m",,3)%... Hnnnnhhh, this feels sooo goooood...」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「%MOAN(,,2)%, this is greaaaat, my %FSYN("ass")% feels amaziiiing...!」
+					PRINTFORML 「Fuaaaahh, my %PRINT_CLIT()% and %FSYN("chest")% are also... feeling awesome...!」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「%MOAN("l:m",,2)%! But you're already... %FSYN("thrust:ing")% in my %FSYN("anus")%... %MOAN(,,2)%...」
+				ENDIF
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;ふたなり
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && GETBIT (TALENT:2 ,1)
+		IF NOWEX:0 || NOWEX:1 || NOWEX:2 || NOWEX:3
+			IF 陥落状態() >= 4
+				PRINTFORML 「%MOAN(,,3)%... Don't jerk me off while %FSYN("grope:ing")% my %SLUR(FSYN("chest"), -3)%...!」
+				PRINTFORML 「%MOAN("m",,2)%, it's so hot, my entire body is on fireeeee!!!」
+				PRINTFORML 「No, noooo! It's coming! Something hot is comiiiiiiiiinnggg!!!」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「%MOAN()%, nooo, don't play with my %SLUR(FSYN("penis"), -3)%! And don't squeeze my %SLUR(FSYN("chest"), -3)%!!!」
+				PRINTFORML 「I'm gonna break, it's gonna make me go crazyyyyy!!!」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「Haah, haah, my %FSYN("penis")% is so hot, and my chest is sooo hot too...! I'm going to break, this is gonna ruin meeeee--!!!」
+			ENDIF
+		ELSE
+			IF 陥落状態() >= 4
+				PRINTFORML 「%MOAN()%, haah... Hnnn, don't just rub my %FSYN("penis")% while %FSYN("grope:ing")% my %FSYN("chest")%, come ooonnn...」
+				PRINTFORML 「%MOAN()%! %MOAN()%!!! It's not that it doesn't feel... %MOAN("m")%! ...good, %MOAN("m", 1)%!」
+				PRINTFORML 「It's just sooo good that it's making me go crazy... %MOAN(,,3)%...!」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Haah, haah, %MOAN(,1)%, I'm telling you, you can't just do thiiis... Teasing my top and bottom at the same time...」
+				PRINTFORML 「%MOAN(,,2)%, it's because it feels so incredible... from both my %FSYN("penis")% and my %FSYN("chest")%, %MOAN("m", 1)%!」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「%MOAN(,,2)%, %MOAN("m", 1)%! No, stoop, quit teasing my %FSYN("chest")% and %FSYN("penis")% at the same time, %MOAN(,1)%!」
+			ENDIF
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+
+	;基本セット
+	IF FLAG:70
+		PRINTFORML ......
+	;恋人
+	ELSEIF 陥落状態() >= 4
+		IF NOWEX:0 || NOWEX:1 || NOWEX:2 || NOWEX:3
+			PRINTFORML 「Haa, haaahh... No moreee, my %FSYN("chest:non")% feel sooo hot, and my clit is going crazy tooo...」
+			PRINTFORML 「%MOAN("m")%! %MOAN("h")%!!! This is, great... it feels... amaziiiing!!!」
+			PRINTFORML 「%MOAN("m")%!!! Oh no, I think... something's coming, something is heeeeereeeee...!!!」
+		ELSE
+			PRINTFORML 「%MOAN(,,2)%, that's so good... When both my %FSYN("chest")% and my clit get teased like this, it feels incredibleee...」
+			PRINTFORML 「%MOAN("l:m",,3)%, I think, I'm about to lose my mind...」
+			PRINTFORML 「%MOAN("h")%! %MOAN("m")%... %MOAN(,,2)%, keep going, don't you stooop...」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		IF NOWEX:0 || NOWEX:1 || NOWEX:2 || NOWEX:3
+			PRINTFORML 「%MOAN(,,2)%!!! No, quit fondling my %FSYN("chest")% and squeezing my clit, waiii--!」
+			PRINTFORML 「It's making me feel feverish and my mind just goes blank... so I beg youuuuu!!!」
+		ELSE
+			PRINTFORML 「%MOAN(,,3)%... Haah, haah, feels so good having both my %FSYN("chest")% and clit caressed together...」
+			PRINTFORML 「%MOAN("m",,2)%, haah, haaa... More, do some more, just keep goinggg...!」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:0 || NOWEX:1 || NOWEX:2 || NOWEX:3
+			PRINTFORML 「Nnnnn!!! No, don't tease both my %FSYN("chest")%, and my clit together, not now! Stop, no no no, nooooo!!!」
+		ELSE
+			PRINTFORML 「%MOAN(,,2)%! My %FSYN("chest:non")% feel so good and so does my clit... Haah, haa, %MOAN("m",1)%!!!」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;1,クンニ
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_1
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_1_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_1_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;膣内射精直後
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		IF TCVAR:102
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;絶頂した
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && NOWEX:0
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;あとは適当な分岐を追加してください
+;==================================================
+;2,フェラする
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_2
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_2_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_2_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;3,指挿入れ
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_3
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_3_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_3_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;4,アナル舐め
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_4
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_4_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_4_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;5,アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_5
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_5_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_5_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;6,胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_6
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_6_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_6_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;7,乳首責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_7
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_7_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_7_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;8,秘貝開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_8
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_8_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_8_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;9,自慰
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_9
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_9_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_9_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;恋慕
+	IF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+[SKIPSTART]
+;別コマンド化
+;==================================================
+;10,乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_10
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_10_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_10_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;恋慕
+	IF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;11,乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_11
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_11_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_11_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;12,胸もみ
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_12
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_12_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_12_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;13,アナル開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_13
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_13_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_13_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;ソフト系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;20,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_20
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_20_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_20_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+
+;==================================================
+;21,何もしない
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_21
+;CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_21_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_21_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;22,誘い受ける
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_22
+;CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_22_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_22_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;23,ピロートーク
+;==================================================
+@M_KOJO_MESSAGE_COM_K61_23
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K61_23_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K61_23_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;失敗
+	IF TFLAG:193
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF 陥落状態() == 3
+		PRINTFORMW 
+		RETURN 1
+	;思慕
+	ELSEIF 陥落状態() == 1
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

@@ -1,0 +1,280 @@
+List path to file, line number (roughly), and what bug is fixed.
+If a bug is fixed by the japanese then add "- Fixed by japanese", but keep it for legacy's sake.
+
+ERB\イベント関連\BEFORETRAIN.ERB
+	522~
+	Sakuna's body is returned to stored, normal size
+ERB\イベント関連\情事発覚.ERB - fixed by japanese
+	421~
+	Reacquires target if new one shows up
+	No longer a problem, potentially at least. 
+	Our fix was "If the master and previous target is in the same location, reacquire".
+	Now it reacquires anyway without actually checking, not sure if it'll cause problems.
+ERB\コマンド関連\COMF\日常系\COMF428 小槌を使う.ERB
+	26~
+	Stores Sakuna's body before it becomes "normal"
+ERB\SHOP関連\キャラメイク.ERB
+	261-325~
+	Stops certain traits from getting stuck
+	49, 59
+	Fixed the 127 モブ子 character being selectable as a pre-defined character at the start of the game
+	This has to be moved to NEWGAME_FUNCTION
+ERB\MOVEMENTS\MOVEMENT_キャラ移動処理.ERB - Fixed by japanese
+	134~
+	Added a second exit condition for a loop to prevent an error if the last character was found
+	No longer a problem
+ERB\コマンド関連\COMF\外出系\COMF614 食材の買い出し.ERB
+	16~
+	Added check that only allows buying the listed items(before, unlisted items could be bought as long as their number is entered)
+ERB\コマンド関連\COMF\日常系\COMF418 家庭菜園.ERB - fixed by japs
+	55~
+	0 -> ARG, where ARG makes sense
+	Fixed a check that always checked the first field instead of the current one.
+ERB\コマンド関連\COMF\日常系\COMF424 薬を買う.ERB
+	11~
+	-Fixed EX_SHOPPING calls in COMF424 薬を買う.ERB checking on the wrong items for availability
+ERB\ステータス計算関連\COUNTER\COUNTER_SELECT.ERB
+	51~
+	-Fixed potential double/triple reaction messages on seizing initiative(COUNTER_SELECT.ERB)
+ERB\ステータス計算関連\押し倒され.ERB
+	129~
+	-Fixed loop between pushdown and rage-quit that could occur with angry, horny NPCs(押し倒され.ERB)
+ERB\MOVEMENTS\物件関連\02人間の里\SKIP_MOVE_02.ERB - HOPEFULLY fixed by japs
+	57~
+	-There was a case where no value was returned in SKIP_MOVE_02.ERB that is now fixed
+ERB\MOVEMENTS\物件関連\07山麓\SKIP_MOVE_07.ERB
+	33-43~
+	ARG => LOCAL, related to dead-ends
+ERB\MOVEMENTS\物件関連\09地底\SKIP_MOVE_09.ERB
+	17~
+	ARG => LOCAL, related to dead-ends 
+
+ERB\MOVEMENTS\JOB_仕事内容.ERB
+	244, 292, 366, 483
+	Some details on the fixes:
+	お礼 holds the id of an item to reward when the player helps with work. If 給料 is 0, the accomplished work is never subtracted from the work that has to be done. Meaning you never really helped.
+	This makes sense for jobs without a workload, like playing. But if there is a workload, it means you'll never be rewarded(and I suspect you also won't get a cash-reward for helping at the end of the day). So now all characters that had a reward-item set should have a 給料 > 0, meaning the rewards can be obtained.
+	給料 works as a multiplicator to the work you do, so it might need some adjustments for short working times. But it shouldn't be impossible like before now.
+
+
+TODO
+ERB\ステータス計算関連\TRACHECK_LOST_VIRGIN.ERB
+	223~
+	If a person was a slut, or lover who you hadn't kissed yet somehow, and you kissed someone in front of them, they'd lose their first kiss.
+	They also gained 5 love exp which probably wasn't intended.
+
+ERB\ステータス表示関連\Look.ERB
+	21~
+	-Fixed by assigning 818 to the second one(In both the USERCOM.ERB and Look.ERB).
+ERB\コマンド関連\USERCOM.ERB
+	115~
+	-Fixed by assigning 818 to the second one(In both the USERCOM.ERB and Look.ERB).
+	158, 176, 185, 199, 216, 387
+	-Most of these fixes prevent triggering functions that are not displayed by inputting a number not shown.
+	-Body measurement[824] was possible without stopping time, as long as the location allowed it
+	-Denial mode[828] and Unbutton Clothes[830] where both missing some checks
+	-Slipping out[850] was possible at anytime, even when there is no-one around.
+	-The Calendar[993] was view-able anywhere, as long as 993 was entered.
+	-Check Pilfered Panties[994] was possible without having pilfered anything.
+	14/8/19
+	Chanced from 818 to 819 as 818 is now used by the music collection.
+	Enabling bode measurement outside timestop, as it seems intentional.
+
+ERB\口上・メッセージ関連\EVENT_MESSAGE_COM400.ERB
+	368~
+	Overridden anyway, but still
+
+ERB\TRANSLATION\BUGFIX.ERB
+	Contains @WORK_INFO that obtains the correct work inormation, based on CSTR values set. Called in PRINT_STATE2.ERB and CALENDAR.ERB
+	This was the result of CSTR::1 being used for two different things
+	-The character CSTR is used to hold the work info at first, but during interactions it's replaced with strings to track reactions/counters(see @ONCE in COMMON.erb and it's uses). Also, @EVENTTRAIN in the same file resets CSTR::1 to empty on call
+	-The CSV CSTR is immutable so still holds the original state. Since the characters don't change their work, it can be reliably used to determine the correct/original value
+	-Adjusted for the japanese fix attempt, now both CSTR::1 and CSTR::3 can hold the right value, because their fix is incomplete
+	-Further adjusted; The CSV value now has priority, meaning only random-chars still take their CSTR value directly
+ERB\ステータス表示関連\PRINT_STATE2.ERB
+	133~
+	see above
+ERB\TRANSLATION\CALENDAR.ERB
+	78~
+	see above
+
+ERB\コマンド関連\COMF\日常系\COMF414 食事を取る.ERB
+	150, 164
+	Changed from RAND:(100 - ABL:MASTER:料理技能 * 2) to RAND:(100 - MIN(99, ABL:MASTER:料理技能 * 2))
+	Otherwise RAND would get incorrect input at ABL:MASTER:料理技能 >= 50
+	Moved to other files, fixed there too.
+ERB\コマンド関連\COMF\日常系\COMF415 食事をふるまう.ERB
+	10, 31, 87, 103
+	See above
+
+ERB\衣服\CLOTHES.ERB
+	600~
+	Made one-pieces count as skirts for the purpose of skirt-flipping, might have unforeseen consequences. 
+	The COM_ABLE for skirt-flipping checks if they're wearing a skirt, one-piece, or kimono, but it will only end up printing if they're wearing a skirt of kimono.
+
+ERB\MOVEMENTS\物件関連\07山麓\SKIP_MOVE_07.ERB
+	156~
+	The go-to-point to reach 734 used to be 702, but you can't move straight from 702 to 734. 
+	This causes a loop when you're in 702 going "Can't move to 734, moving to 702", after 20 loops it automatically cancels but still.
+
+ERB\口上・メッセージ関連\KOJO_MESSAGE.ERB - fixed by japanese
+	174~
+	Reverted to old system. The change from TRYCCALLFORM to TRYCALLFORM caused MESSAGE_COM not to display unless there was a KOJO for it.
+	Fixed
+	The idea is this - some KOJO overrides/deletes normal com text, Meiling was set to override but didn't have anything replacing it at times.
+	Thus, the fix is for Meiling and other characters.
+
+ERB\TITLE.ERB
+	11~
+	Resets the background color to black. This is for if the player uses timestop then returns to title.
+
+ERB\MOVEMENTS\物件関連\OTHERREGION.ERB - Fixed by japs
+	126~
+	If you use TSP while moving it stops time, but doesn't paint the background correctly.
+	No clue why they added this thing, reverting for now.
+
+ERB\コマンド関連\COMF\日常系\COMF490 アイテム.ERB - fixed by japanese, probably
+	267-270~
+	If you pressed return on the "select someone to dispel" it would first check CFLAG:999:体目当て, which is out of bounds.
+	Now it checks 999 first, and then CFLAG:RESULT.
+
+ERB\コマンド関連\COMF\日常系\COMF413 料理を作る.ERB - fixed by japanese
+	258-267~
+	Flag 50 is used for seeing how many partners can be had, but here the 55th bit is set to true.
+	Flag 50 isn't used anywhere else. 
+	Without this, it might go "You can only have {2^55+1} partners" which is far from correct.
+
+ERB\SHOP関連\SHOP_ITEM.ERB	
+	568~
+	Commented duplicate 'CASE "チョコ"' that set TYPE to 35, preventing the display of chocolate on the character profile page
+
+ERB\コマンド関連\COMF\依頼\一般依頼05_特訓につきあって.ERB - Fixed by japanese
+	138,139~
+	Changed from = to += so the EXP instead of set
+
+ERB\COMMON.ERB
+	1635~
+	When selecting a random character, it can at times select passerby, even if one hasn't been generated.
+	Added a "&& CHARA != RANDOM_CHARANUM" as the function is only used for requests and explicit characters.
+	
+ERB\MOVEMENTS\JOB_仕事内容.ERB - Fixed by japs, no longer relevant
+	725-750~
+	Hina was missing a location to go to for her job, since the code responsible for that was incomplete and commented
+	Re-enabled the commented code and adjusted it; There is now a default location if MAIN_MAP isn't 7 or there are no sufficiently dirty rooms 
+
+ERB\TRANSLATION\BUGFIX.ERB
+	Extended with functions used for cleanup after time-stop end(@TIMESTOP_RESET) and for tracking of missing panty discovery(@PANTY_AWOL)
+	Before this, characters would experience some reactions on the first time-stop end in their presence, even if time has been resumed before since
+	In addition, characters would discover their underwear to be missing every time time is resumed in their presence
+	Function calls and code changes to the following files:
+ERB/イベント関連/AFTERTRA.ERB
+	46~
+ERB/イベント関連/EVENTCOMEND.ERB
+	184~ 228~
+ERB/時間停止解除.ERB
+	102-295~
+ERB/衣服/PANTS.ERB
+	51~
+
+ERB/コマンド関連/COMF/日常系/COMF400 移動.ERB
+	208~
+	Locked CALL SKIP_MOVE(CFLAG:MASTER:現在位置, CFLAG:MASTER:初期位置) behind an SIF check that makes sure you aren't already at your destination
+	Without this, the character would move one room away, then return if position and destination are identical
+	
+ERB/MOVEMENTS/MOVEMENT_キャラ移動処理.ERB
+	129~ 161~
+ERB/MOVEMENTS/SLEEP.ERB
+	142~
+	Code adjustments to checks that previously ignored the MASTER being asleep
+	MASTER will no longer be 'urged' to move while asleep, or notice someone coming to sleep in the same room
+	(Similar checks might be needed in other places as well; Will be added as/if they are discovered)
+	In addition, characters should no longer urge (awake) players to move from their room, if their room is also the players room
+	
+ERB\コマンド関連\COMF\日常系\COMF424 薬を買う.ERB
+	12~
+ERB\コマンド関連\COMF\日常系\COMF443 固有コマンド.ERB
+	172~ 715~
+ERB\TRANSLATION\BUGFIX.ERB
+	Added EX_SHOPPING_MULTIPLE that can be used for buying multiple items of the same kind at once
+	This is mostly for the availability check included in EX_SHOPPING, which is adjusted for the amount here
+	Bulk sales have been changed to call this function now
+
+ERB\VERSION_UP.ERB
+	15~
+	Starting a new game, saving, and loading, gave the player two stones of Mirada due to FLAG:1000 not having bit 3 and 4 set.
+
+ERB\コマンド関連\COMF\日常系\COMF444 女の子を物色.ERB - temporarily undone as it made it impossible to meet random characters met via fighting
+	69~
+	Depending on the value of MAIN_MAP, tracking of random chars for the purpose of remembering or forgetting them did not work
+	With this workaround, CFLAG:RANDOM_CHARANUM:デート中 will always be MAIN_MAP after the character spawns in, which forces the meeting for the first time dialoge
+	which is required for the tracking
+	Update 16/6/2020
+		Whatever original code was replaced has been removed, going with jap now
+
+ERB\ステータス計算関連\TRACHECK_ABLUP.ERB
+	118~
+	It used ABL instead of ARG as index for talent.
+
+ERB\ステータス表示関連\IMAGE.ERB - fixed by japanese
+	221~
+	Removing the "&& SPRITECREATED(ChkSprite)"-bit makes it so people can be undressed visually again.
+
+ERB\コマンド関連\COMF\日常系\COMF444 女の子を物色.ERB
+	22~, 81~
+	Moving the assignment of flag TFLAG:一日一回, 9 to further down, otherwise it would be set if you looked for girls then canceled instantly.
+
+ERB\コマンド関連\COMF\日常系\COMF446 調合する.ERB
+	588~
+	The game removed water about 4 times, and then checked if the player had water. Chose to not remove water at all.
+
+ERB\ステータス計算関連\TRACHECK_ABLUP.ERB - fixed by japanese
+	270~
+	It said TALENT:ARG:教養 instead of ABL:ARG:教養, meaning it was impossible to get the mixing knowledge talent.
+
+ERB\イベント関連\BEFORETRAIN.ERB
+	552~
+	LOCAL was passed instead of ARG.
+
+ERB\ステータス表示関連\SIZE.ERB - fixed by japanese
+	181~
+	BASE:ARG:体重 changed to LOCAL:21
+
+ERB\ステータス表示関連\PRINT_STATE2.ERB
+	524~
+	Checks for master virginity before printing "lost before the game started"
+
+ERB\イベント関連\EVENTCOMEND2.ERB
+	51~
+	Flag is flipped when it shouldn't be.
+
+ERB\NEWGAME\NEWGAME_CUSTOM.ERB
+	403~
+	Special cases for virginity, m sensitivity, and animal ears
+	437~
+	Fixed so the body talent is handled correctly
+	469~
+	It used to go "if current talent value+1 has a name, increase, otherwise multiply by -1"
+	This caused problems if a talent had a name for 2 but not -2
+	Fixed by it checking for name after negating and increasing the value if there's no name
+	481~
+	Removed logging from the menu, as it can't even be used, and when clicked it just increased by 1 forever.
+
+ERB\コマンド関連\COMF\日常系\COMF330 スカートをめくる.ERB
+	66~
+	Skirtflipping with low reliability used to decrease DOWNBASE, in effect making the player less tired.
+
+ERB\コマンド関連\COMF\日常系\COMF431 お風呂でくつろぐ.ERB - fixed in jap(?) block deleted
+	56~
+	Checks so the target isn't sleeping or pissed when trying to bathe with them.
+
+ERB\コマンド関連\COMF\日常系\COMF414 食事を取る.ERB - fixed by japanese
+	84~
+	174~
+	Comment from the git:
+		Bug fix for when the "Have a meal" action is disabled on kojo side
+		Made this edit a long time ago, it didn't show proper line or something I don't remember;
+		Besides with that flag set to -2 it doesn't even check further, but messes up other flag which caused problems iirc;
+
+ERB\NEWGAME\強くてニューゲーム.ERB 
+	280
+	It used to loop through for each character, saving to LOCAL and LOCALs, but it was never reset.

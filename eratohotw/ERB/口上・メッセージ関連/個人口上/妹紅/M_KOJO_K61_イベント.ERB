@@ -1,0 +1,3577 @@
+﻿;-------------------------------------------------
+; eraTheWorld 4.576用 妹紅口上
+;外見クール、内面乙女
+;超手抜き
+;行間を読む程度の能力を必要とします
+;……なんでこのコンセプト部分消してたんだっけ？
+;-------------------------------------------------
+;他者による修正、加筆、改変については、同梱のライセンス条項に従ってください。
+
+;------ ｷﾘﾄﾘ ｶｲｼ -----------
+;eraTheWorld proto4.520用 Ver1.13
+;テンプレートの使い方
+;初めに置換コマンド等により K61 を K(キャラNo) に変更して下さい  
+;キャラNoはCSVフォルダのCharaファイルを参照　例(霧雨 魔理沙の場合)：K61 =置換=> K11
+;
+;------ ｷﾘﾄﾘ ｵﾜﾘ -----------
+
+;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+[SKIPSTART]
+基礎分岐
+IF 陥落状態() >= 4
+ELSEIF 陥落状態() == 3
+ELSEIF 陥落状態() == 2
+ELSEIF 陥落状態() == 1
+ELSE
+ENDIF
+CFLAG:1610 bit0・立ち止まり時の遭遇口上抑制用、bit1・お風呂時の背中流し主導権判定、bit2～3・空、bit4カウンターの歌のFIRST制御、bit5・住み込み時の制御
+CFLAG:1611 時姦経験によるファーストタイム制御
+CFLAG:1612 時姦経験によるファーストタイム制御
+CFLAG:1613 出産後デイリー怪我させ関連
+CFLAG:1614 輝夜弾幕勝負勝利時ご褒美
+%MASTERNAME:61%
+modded: 1090-1099 flags
+[SKIPEND]
+;
+;
+;
+;******************************************************************************
+
+;### 口上存在判定 ###################################
+@M_KOJO_K61(ARG)
+;別人版を作成する際はこのテンプレではなく別人版用口上テンプレをご利用ください
+
+;口上存在判定です、けしてコメントアウトしないでください
+;他の処理は一切行わないように
+RETURN 1
+
+;### 口上基本フラグ設定 #############################
+@M_KOJO_FLAGSETTING_K61
+;基本フラグ設定はここで行ってください
+;共通の口上フラグは必要な箇所のコメントアウトを外してご利用ください
+;口上専用フラグはご自由に
+;Xにはキャラ番号を入れてください
+
+;眠姦口上有、時間停止口上有、なりきりに1を入れると、それぞれ時間停止時、眠姦時、なりきり時にコマンド口上が読み込まれるように
+;入れないと時間停止時、眠姦時、なりきり時は一切喋りません
+;CFLAG:X:眠姦口上有 = 0
+;CFLAG:X:時間停止口上有 = 0
+;CFLAG:X:なりきり口上有 = 0
+
+;破瓜キャンセル口上有に1を入れると、@M_KOJO_EVENT_KX_LOST_VIRGIN_STOPでキャンセルの成否を操作できます
+;CFLAG:X:破瓜キャンセル口上有 = 0
+
+;口上内抱き寄せ判定_初回と口上内抱き寄せ判定_通常に1を入れると、M_KOJO_EVENT_KX_PERMISSIONで押し倒しの成否を操作できます
+;CFLAG:X:口上内抱き寄せ判定_初回 = 0
+;CFLAG:X:口上内抱き寄せ判定_通常 = 0
+
+;押し倒し禁止に1を入れると、自分から押し倒してこなくなります
+;以下は恋慕かセフレがつくまで押し倒してこなくなる使用例
+;IF !TALENT:X:恋慕 && !TALENT:X:セフレ
+;	CFLAG:X:押し倒し禁止 = 1
+;ELSE
+;	CFLAG:X:押し倒し禁止 = 0
+;ENDIF
+
+;来訪不能に1を入れると、来訪してこなくなります
+;以下は面識があるまで来訪してこなくなる使用例
+;IF !CFLAG:X:面識
+;	CFLAG:X:来訪不能 = 1
+;ELSE
+;	CFLAG:X:来訪不能 = 0
+;ENDIF
+
+IF CFLAG:61:睡眠 && !CFLAG:61:衰弱
+	CFLAG:61:1614 = 0
+ELSEIF CHARANUM >= 127 && TCVAR:62:弾幕勝負結果 == 1 && !CFLAG:61:1614 && CFLAG:61:現在位置 != CFLAG:62:現在位置
+	SETBIT CFLAG:61:1614,0
+ENDIF
+
+;### 口上色判定 ###################################
+@M_KOJO_COLOR_K61
+SETCOLOR 0xFF1493
+
+;ここでSETCOLORすることで口上に色を付けられます
+;例：SETCOLOR 0xC07070
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"UPDATE判定"
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_UPDATE_K61
+;口上独自のUPDATE用
+;ENCOUNTER専用に独自分岐フラグを仕込んだ場合等にどうぞ
+;UPDATE判定でCFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります
+IF 陥落状態() >= 4
+	CFLAG:61:345 = 1
+ELSE
+	CFLAG:61:345 = 0
+ENDIF
+
+;trigger the character reset
+CALL UPDATE_DIALOGUERESET(K61EN_FLAG_VER, K61EN_VER, 61)
+
+RETURN 1
+
+;csv lines translation
+@CHARA_INFO_KOJO_K61()
+CALL M_KOJO_COLOR_K61
+PRINTFORML %CSVCSTR(61, 10)%
+RESETCOLOR
+PRINTL 
+PRINTFORML A human who has lived forever since consuming the Hourai Elixir.
+PRINTFORML Able to walk through Bamboo Forest of the Lost without getting lost.
+PRINTFORML
+PRINTFORML Has an interest in a person who decided one day to go out of their way to reach out to %HIM_HER(61)%.
+PRINTFORML Seems baffled by their recklessness and obliviousness of the dangers around them.
+PRINTFORML But despite the obvious discomfort, %HE_SHE(61)% decides to warm up to them and make an acquaintance.
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"ENCOUNTER"系イベント（エクストラ構文）
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+@M_KOJO_ENCOUNTER_K61
+;初対面、挨拶のタイミング
+;TALENTの変更はここでどうぞ。
+;経験の変更は齟齬が出る場合がありますので、CSVを修正し同梱する事を推奨します
+IF GET_MAPID(CFLAG:MASTER:現在位置) == MAIN_MAP && MAIN_MAP == 4
+	PRINTFORML 「...I heard a certain weirdo named %CALLNAME:MASTER% decided to choose this place for %HIS_HER(MASTER)% dwelling, was that you?」
+	PRINTFORMW 「By the way, name's Mokou, Mokou Fujiwara. I too am a weirdo who's been living here from the time immemorial.」
+	PRINTFORML 「Since you went out of your way to settle here of all places, I assume you have some kind of Ability, yes?」
+	PRINTFORML 「Lemme give you a fair warning - don't venture too far into the bamboo forest.」
+	PRINTFORMW 「It's quite a dangerous place after all.」
+	PRINTFORML 「...Hey, calling me "cute" is not a line you should use on a person you've just seen for the first time, you know.」
+	PRINTFORML 「That said, it doesn't look like we'll get too involved in my opinion...」
+	PRINTFORMW 「But I'll be here to keep you company, if you ever feel like it.」
+;竹林以外のメインマップで出会った
+ELSEIF GET_MAPID(CFLAG:MASTER:現在位置) == MAIN_MAP && (MAIN_MAP != 4 && MAIN_MAP != 2)
+	PRINTFORML 「...You hail from %GET_MAPNAME(MAIN_MAP)%, correct?」
+	PRINTFORML 「Oh yes, my name is Mokou Fujiwara, a human who lives in the Bamboo Forest of the Lost.」
+	PRINTFORML 「I came here sensing some kind of odd commotion, but it must've been just you then. %CALLNAME:MASTER%, is it?」
+	PRINTFORMW 「...Hang on, calling me cute out of the blue like that makes this awfully awkward, you know.」
+	PRINTFORML 「It's not like being told that by a complete stranger is going to make me happy or anything.」
+	PRINTFORML 「So you want to get along with me? Haha, please, if you're going to live there, you'll find lots of people much better than me.」
+	PRINTFORML 「Anyways, I visited today just because I felt like it, but normally I don't really bother coming here at all.」
+	PRINTFORMW 「So if you're really set on speaking with me, you'll have better luck finding me in the forest or the village.」
+;メインマップが竹林以外かつ、竹林で出会った
+ELSEIF GET_MAPID(CFLAG:MASTER:現在位置) == 4
+	PRINTFORML 「This forest is not a place for a regular person to wander in.」
+	PRINTFORML 「Come now, I'll escort you to the village... Wait a minute, you seem to have some sort of weird magic placed on you.」
+	IF MAIN_MAP == 0
+		PRINTFORML 「You live in a Hakurei Shrine? Did that Shrine Maiden take you in?」
+	ELSE
+		PRINTFORML 「Is that your way of protecting yourself?」
+	ENDIF
+	PRINTFORMW 「Oh well, in that case you should be fine then, but it doesn't change the fact that it's dangerous around here.」
+	PRINTFORML 「Don't blame me if some nameless uncivilized youkai claims you as their snack, okay?」
+	PRINTFORML 「Hm? Oh, I'm Mokou Fujiwara, I live in this forest.」
+	PRINTFORML 「...Look, when someone I meet for the first time suddenly tells me that I'm "cute", it just honestly makes me feel uneasy.」
+	PRINTFORMW 「Listen, it really is dangerous around here, so you should hurry back home.」
+	PRINTFORML 「...You should know by now that I've got nothing interesting to say, or anything.」
+	PRINTFORMW 「But still, if you REALLY wish to speak with me, I'm not stopping you.」
+;竹林以外で出会った
+ELSEIF GET_MAPID(CFLAG:MASTER:現在位置) != 4
+	PRINTFORML 「...Umm, what's up? Can I help you?」
+	PRINTFORML 「There's lots of people who seem confused after meeting me, but I'm yet to see someone who would stare at me like that.」
+	PRINTFORML 「So I can't help but feel a little curious is all.」
+	PRINTFORML 「You think I'm cute? ...If that's your way of hitting on me, then I'll have to turn you down, sorry.」
+	SELECTCASE GET_MAPID(MAIN_MAP)
+		CASE 0,2,3
+			PRINTFORML 「So you're one of the lodgers from %GET_MAPNAME(MAIN_MAP)%? A freeloader then?」
+			PRINTFORML 「Hmmm, looks like that place has its fair share of weirdos as well.」
+		CASEELSE
+			PRINTFORML 「So you're one of the %GET_MAPNAME(MAIN_MAP)% residents, eh?」
+			PRINTFORML 「That's quite laudable of you to make it here way from over there.」
+	ENDSELECT
+	PRINTFORML 「Oh, I'm yet to introduce myself. My name is Mokou Fujiwara.」
+	PRINTFORML 「I usually stay at the Bamboo Forest, but occasionally I end up coming here to take care of my errands.」
+	PRINTFORML 「...Well, I'd be willing to hear you out once in a while if you so desire.」
+	PRINTFORMW 「To think there's someone who'd be eager to spend their time with me for some reason... Turns out such weirdos do exist after all.」
+ENDIF
+PRINTL 
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"SP_EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;デート帰りにファーストKISS（合意も付く）
+;==================================================
+@M_KOJO_SPEVENT_K61_1(ARG,ARG:1)
+;口上主はTARGET
+IF MARK:反発刻印
+	TCVAR:キスキャンセル = 1
+	RETURN 1
+ENDIF
+;地の文表示
+CALL SPEVENT_MESSAGE_1(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	PRINTFORMW 「...Forgive me for being so selfish about this.」
+	PRINTFORML 「It just doesn't suit me, does it?」
+	PRINTFORML 「...No matter how you look at it, %CALLNAME:MASTER% too, is destined to leave me behind and pass away, and yet...」
+	PRINTFORML 「I feel like it should be fine, even if just for the time being. I ended up falling for you after all.」
+	PRINTFORML 「So you know, you know... ...Yeah.」
+	PRINTFORML 「I thank you... And everything you've done to me, it makes me glad... Sob... H-Huh...?」
+	PRINTFORMW 「I feel happy, so why... Sob... Why am I... crying...?」
+	PRINTFORML 
+	PRINTFORML  
+	;キスをキャンセルしたい場合は以下を開放
+	;TCVAR:キスキャンセル = 1
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰りに告白（恋人が付く）
+;==================================================
+@M_KOJO_SPEVENT_K61_2(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_2(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;告白内容
+	;この告白内容表示後に受けるかどうかの選択分が表示されます
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORMW 「I've been by myself as long as I remember.」
+		PRINTFORML 「I haven't gotten a single letter since the day my Father didn't make it back to Mother, even the day when my Mother passed away.」
+		PRINTFORML 「...It was then that I learned that a certain wench who appeared not much older than me... was behind all of this.」
+		PRINTFORML 「I had really become alone in this world.」
+		PRINTFORML 「I committed lots of atrocities in order to obtain the Hourai Elixir, and after that...」
+		PRINTFORML 「I've spent my time in isolation, away from the hateful eyes of people.」
+		PRINTFORML 「Though after I met Kaguya and the days we've spent killing each other made me feel truly alive once again...」
+		PRINTFORMW 「Still, the dread of growing too intimate with other people was too strong.」
+		PRINTFORML 「...But then, then... I felt happy, now that I managed to become close with you, %CALLNAME:MASTER%.」
+		PRINTFORML 「I feel truly happy when I'm able to have fun together with you. When I can share laughs with you.」
+		PRINTFORML 「I'm well aware of what awaits us... Spending my time with you until your final days... And watching you pass away...」
+		PRINTFORML 「But even despite all that, I still wish to share my true love with you, %CALLNAME:MASTER%. I want to keep you all to myself. I want to make you mine.」
+		PRINTFORMW 「...So, I ask you... Would you be so kind as... to take me... as your lover?」
+		PRINTFORML 
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白オッケー（恋人が付く）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「...Really, are you sure? ...Thank you, I appreciate it.」
+		PRINTFORML 「Huh, there's something you want to share with me too?」
+		CALL K61_CONFESSION_NAMESET
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;告白失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Yeah, I thought so. When it comes to me, you have lots of other nicer people in your reach after all.」
+		PRINTFORML 「It's fine, you don't have to be so considerate of me.」
+		PRINTFORMW 「A person's heart can't be forced by anyone, even by the person himself.」
+		PRINTFORML 「I know it better than anyone else to be honest.」
+		PRINTFORML 「...Fufu, it's just the way it is, really. ...And no, I'm not crying... *Sniff*」
+		PRINTFORML 「Not at all... *Sniff*... *Sniff*... Uwaaa...!」
+		PRINTFORMW 「Please... *Sniff*... Don't pity me... Uwaaa...」
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+
+ENDIF
+RETURN 1
+
+;==================================================
+;デート帰り
+;==================================================
+@M_KOJO_SPEVENT_K61_3(ARG,ARG:1)
+;口上主はTARGET
+;地の文表示
+CALL SPEVENT_MESSAGE_3(ARG,ARG:1)
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		IF 陥落状態() >= 4
+			PRINTFORML 「%SPLIT_G("I never thought:It never occurred to me:I couldn't imagine")% that it would be so fun to spend time with my lover.」
+			PRINTFORML 「Fufu, I love you so much, %MASTERNAME:61%. ...Hey there, what's with that blush? Why would you feel shy now of all times?」
+			PRINTFORML 「The least you can do is to be true to your feelings if you're going to leave me behind after all.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Thanks a bunch for today as well, %CALLNAME:MASTER%. It's been a lot of fun hanging out with you.」
+			PRINTFORML 「But you know, it feels a little sad that it passed by in no time though.」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「That was a lot of fun, fufu... There, let me express my gratitude... *Chuuu!*」
+			CALL MUTUAL_KISS
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Hmm, well I guess it's fine doing this once in a while.」
+		ELSE
+			PRINTFORML 「...To go out of your way to ask me out...」
+			PRINTFORML 「Well, did you have fun?」
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印消去イベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORMW 「Sigh. It seems to me that you're being sorry, so... I guess I can let it pass.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印2>1レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORMW 「Sheesh, don't think I've forgiven you just because of this, okay?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;反発刻印3>2レベルダウンイベント
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORMW 「...Make sure you learn the difference between being a good person and acting like a jerk at least. Like, for real.」
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;"EVENT"系イベント
+;※※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;部屋で遭遇
+;==================================================
+@M_KOJO_EVENT_K61_1(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+IF GETBIT (CFLAG:1610,0)
+	LOCAL = 0
+	CLEARBIT CFLAG:1610,0
+ENDIF
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;MASTERが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF GETBIT(CFLAG:61:1614,0) && !GETBIT(CFLAG:61:1614,1)
+			PRINTFORML 「You say you beat Kaguya? Ah, I so wish I could see it too...」
+			PRINTFORML 「Oh well, at any rate...」
+			SETBIT CFLAG:61:1614,1
+		ENDIF
+		IF 陥落状態() >= 4
+			PRINTFORML 「Come on in, %MASTERNAME:61%!」
+			PRINTFORML 「Am I being too close? But it's only natural staying by the side of the person you're in love with.」
+			PRINTFORML 「*Chuuu*, are you pleased now? If so, %SPLIT_G("I'd like you to headpat me some:getting some headpats would be just on time right now:a headpat or two would be great:headpats would be so nice to have right now")%, mmm.」
+			CALL MUTUAL_KISS
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Heeey, I'm pretty sure you know what I'm about to do, right?」
+			PRINTFORML 「Mmm... It's so tranquil feeling someone's warmth...」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「Hey, welcome. Well then, what are we gonna do today?」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Right on time. If you're free right now, mind if we chat a bit?」
+		ELSE
+			PRINTFORML 「Oh, it's you, %CALLNAME:MASTER%. Hi there.」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF GETBIT(CFLAG:61:1614,0) && !GETBIT(CFLAG:61:1614,1)
+			PRINTFORML 「You say you beat Kaguya? Ah, I so wish I could see it too...」
+			PRINTFORML 「Oh well, at any rate...」
+			SETBIT CFLAG:61:1614,1
+		ENDIF
+		IF 陥落状態() >= 4
+			PRINTFORML 「Come over here, %MASTERNAME:61%.」
+			PRINTFORML 「%RANDLIPS()%...」
+			;I imagine you should've at least kissed once before this, but by all means pretend that it's a cheek peck
+			CALL MUTUAL_KISS
+			PRINTFORML 「Mm, yeah, that was delicious, %SPLIT_G("thank you for the meal:thank you very much")%.」
+			PRINTFORML 「I just couldn't hold back the moment I saw your face is all.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Oh, %CALLNAME:MASTER%. *Squeeeeze!*」
+			PRINTFORML 「Is it about to crush you? Oh come on, it's fiiine, I'm sure you can survive a simple hug.」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「Wanna push me down? Or want me to take charge? %SPLIT_G("Either way is fine to me:I don't mind either way")%.」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Oh, I was just about to visit your place myself.」
+		ELSE
+			PRINTFORML 「Uh, yeah, %SPLIT_G("greetings:hello there")%.」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて一緒に入る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF 陥落状態() >= 4
+			PRINTFORML 「Oh, %MASTERNAME:61%... Ufufu, it makes me very happy being seen like this.」
+			PRINTFORML 「While we're at it, washing each other would be sooo nice right now...」
+			PRINTFORML 「And then again after we're done, yes?」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Say, it's fine if we show off our naked bodies to each other at this point, right? Just wanted to make sure.」
+			PRINTFORML 「No touching though. ...Juuust kidding. I know that would be unbearable for you, right %CALLNAME:MASTER%?」
+		ENDIF
+		IF GETBIT(CFLAG:61:1614,0) && !GETBIT(CFLAG:61:1614,1)
+			PRINTFORML 「Yeah and by the way, I heard you beat Kaguya. Is that true?」
+			PRINTFORML 「Ohooo, so you really did it. Anyways, good job on that one.」
+			SETBIT CFLAG:61:1614,1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて出て行った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		IF 陥落状態() == 2
+			PRINTFORML 「...Oh well, I barely saw anything anyway, guess I'll see you later.」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Oops! Ah, s-sorry, I'll be out in just a moment.」
+		ELSE
+			PRINTFORML 「...」
+		ENDIF
+		IF GETBIT(CFLAG:61:1614,0) && !GETBIT(CFLAG:61:1614,1)
+			PRINTFORML 「Oh, hang on, just one question. Is it true that you beat Kaguya?」
+			PRINTFORML 「That was a victory well deserved, well done.」
+			SETBIT CFLAG:61:1614,1
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが風呂に入ってきて追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		IF 陥落状態() == 2
+			PRINTFORML 「It's not like I dislike you or anything, but can you give me some privacy please?」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「...Yeah, sorry. I'd like to be alone right now.」
+		ELSE
+			PRINTFORML 「...Will you please go outside?」
+		ENDIF
+		IF GETBIT(CFLAG:61:1614,0) && !GETBIT(CFLAG:61:1614,1)
+			PRINTFORML 「...Though I appreciate you beating Kaguya, I really think it was amazing.」
+			SETBIT CFLAG:61:1614,1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;外出先で遭遇した
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;added, this is in Mokou's main map (OG)
+		IF GET_MAPID(CFLAG:MASTER:現在位置) == 4
+		IF 陥落状態() >= 4
+				PRINTFORML 「%MASTERNAME:61%, c'moon, I told you already it's dangerous to come here alone.」
+				PRINTFORML 「...Well, it goes without saying, I couldn't wait to see you again too, but you know...」
+				PRINTFORML 「I%SPLIT_G("'d appreciate if: wish")% you wouldn't %SPLIT_G("put yourself in danger like that:make me so worried about you")%.」
+		ELSEIF 陥落状態() == 3
+				PRINTFORML 「Oh, %CALLNAME:MASTER%. You didn't have to go all the way here just for me, really.」
+				PRINTFORML 「So you came just because you wanted to see me? Well, that makes me happy, but it really is dangerous around here.」
+		ELSEIF 陥落状態() == 2
+				PRINTFORML 「You actually took the trouble to pay me a visit? I wish you wouldn't do something so dangerous, but... I appreciate it.」
+		ELSEIF 陥落状態() == 1
+				PRINTFORML 「It's dangerous to go alone all the way here, you know.」
+		ELSE
+				PRINTFORML 「I already told you it's dangerous to be here.」
+			ENDIF
+		;added, when meeting mokou out on other maps
+		ELSE
+			IF 陥落状態() >= 4
+				PRINTFORML 「Ah, %MASTERNAME:61%! *Chuuu*...!」
+				CALL MUTUAL_KISS
+				PRINTFORML 「...Was it too sudden? Sorry about that. I just... didn't expect you to show up here at all.」
+				PRINTFORML 「But it's a welcome change. I certainly feel a lot better now that we're together again.」
+				PRINTFORML 「What about me? Mostly sightseeing, though I'm here to take care of some things too. Maybe you can tag along?」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Hey, %CALLNAME:MASTER%. Yeah, I'm taking a bit of a stroll today as you can see.」
+				PRINTFORML 「I can't just hunker down in one spot all day, can I? I need some fresh air sometimes. And a good company, fufu.」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「Oh dear. I hope it wasn't my scent that made you track me down all the way here.」
+			ELSEIF 陥落状態() == 1
+				PRINTFORML 「Well well. Fancy meeting you around here.」
+			ELSE
+				PRINTFORML 「...」
+				PRINTFORML 「A familiar face, huh.」
+			ENDIF
+			PRINTFORML
+			;a bit of reprove
+			IF GET_MAPID(CFLAG:MASTER:現在位置) != 2
+				IF 陥落状態() <= 1
+					PRINTFORML 「...It's not the safest place in the world for the likes of you, though.」
+					PRINTFORML 「You should probably head home soon.」
+				ELSE
+					PRINTFORML 「Hmm, this is kind of a dicey spot for you to be in though, but...」
+					PRINTFORML 「Don't worry, I'll protect you, now that I'm here.」
+				ENDIF
+			ENDIF
+		ENDIF
+		IF GETBIT(CFLAG:61:1614,0) && !GETBIT(CFLAG:61:1614,1)
+			PRINTFORML 「...Oh, speaking of which. You beat Kaguya, didn't you?」
+			PRINTFORML 「Well, that alone is worthy of my praise at least.」
+			SETBIT CFLAG:61:1614,1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;他キャラとデート中に遭遇した
+	;ARG:1にデート相手
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		IF ARG:1 == 62 ;dating kaguya after defeating her and moko sees you
+			;modified the flag so that it'd show even if mokou already congratulated you, just so that she could mock kaguya a bit more
+			;edit: now that kaguya has dialogue and her own color, add it here (a bit of a convoluted process)
+			RESETCOLOR
+			CALL SET_KOJO_COLOR(62)
+			LOCAL:9 = GETCOLOR()
+			RESETCOLOR
+			CALL SET_KOJO_COLOR(61)
+			PRINTFORMDW When Mokou and Kaguya meet, the murderous vibe surrounding them both almost makes you flinch.
+			IF GETBIT(CFLAG:61:1614,0) && !GETBIT(CFLAG:61:1614,2)
+				PRINTFORML 「...Hmph, is that a sore loser I see?」
+				;can't decide, should kaguya be overly rude with moko or retain her ladylike appearance
+				CALL COLORMESSAGE("『Oh, will you shut up already?』",LOCAL:9,1,0)
+				PRINTFORML 「Seeing you being dragged around by the same person who beat you in Danmaku, the disgrace is almost palpable, I love it.」
+				CALL COLORMESSAGE("『Well, that's just a coincidence...』",LOCAL:9,1,0)
+				PRINTFORML 「Yeah, riiiight. Enough of your loser grumbling.」
+				SETBIT CFLAG:61:1614,2
+			ELSE
+				PRINTFORML 「To think you'd go out of your way to be such a vixen, are you sure you're alright in the head?」
+				CALL COLORMESSAGE("『I don't think you're in any position to lecture me about that.』",LOCAL:9,1,0)
+				PRINTFORML 「...Hmph, I guess I'll let it slide for today.」
+				CALL COLORMESSAGE("『I was just about to say the same thing.』",LOCAL:9,1,0)
+				PRINTFORMDL 『Fufu, haha, ahahahaha!』
+			ENDIF
+		ELSEIF 陥落状態() >= 4
+			PRINTFORML 「Would you look at that, you're dating someone else. Lucky you, huh?」
+			PRINTFORML 「So you decided to neglect your beloved %PRINT_MALE("boyfriend:girlfriend")% and dally with your concubine instead?」
+			PRINTFORML 「Well, what can I say? Enjoy yourself while it lasts. The fact that I'm still number one won't change a bit after all.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Hmmm, so you like %CALLNAME:MASTER% too, huuuh.」
+			PRINTFORML 「...Oh well, why won't you just do as you like then?」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「I suppose "lecher" describes you quite well, doesn't it %CALLNAME:MASTER%?」
+			PRINTFORML 「You just can't seem to be satisfied with me alone, right?」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Oh, looks like you two are on a date. How nice of you to get along like that, huh.」
+		ELSE
+			PRINTFORML 「Oh, you seem to be dating right now, my bad I guess.」
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;朝起きたとき（おはよう口上）
+;==================================================
+@M_KOJO_EVENT_K61_2(ARG,ARG:1)
+CALL MESSAGE_GOODMONING(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;非同棲かつ相手が先に起きてる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;TARGET私室にMASTERが入っている（恋慕時添い寝中就寝時のみ？
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			IF !RAND:2
+				IF 陥落状態() >= 4
+					PRINTFORML 「Good morning %MASTERNAME:61%.」
+					PRINTFORML 「That's one cute sleeping face. Kinda wish I could see more of it.」
+					PRINTFORML 「Ahaha, I wonder why you're blushing so hard. There's an even cuter face right in front of you after all.」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「Mornin', %CALLNAME:MASTER%.」
+					PRINTFORML 「You looked so peaceful in your sleep.」
+				ENDIF
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「Good morning %MASTERNAME:61%.」
+					PRINTFORML 「Fufu, you looked so adorable in your sleep. I sure wish I could see some more of it...」
+					PRINTFORML 「Is that embarrassing to you? Fufu, you always see my embarrassing side, so I think that makes us even.」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「Mornin', %CALLNAME:MASTER%.」
+					PRINTFORML 「Fufu, I guess this sort of thing is also nice.」
+				ENDIF
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTER私室にTARGETが入ってきてる(恋慕無しでも入ってくる可能性有り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Good morning %MASTERNAME:61%.」
+				PRINTFORML 「Though I must say, the fact that a stranger can enter your premises so easily is kinda making me worried, you know?」
+				PRINTFORML 「And even if you can stop time, it's all for naught if you're asleep, right?」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Mornin', %CALLNAME:MASTER%.」
+				PRINTFORML 「You got quite a nice sleeping face there as always.」
+				PRINTFORML 「...And no, that's not me making fun of you, I'm actually praising you.」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「Good morning, %CALLNAME:MASTER%.」
+				PRINTFORML 「...Fufu, what, you want to *do it* first thing in the morning? It's fine by me.」
+			ELSEIF 陥落状態() == 1
+				PRINTFORML 「Rise and shine, %CALLNAME:MASTER%. By the way, you gotta lock your door properly, you're just asking for trouble.」
+			ELSE
+				PRINTFORML 「Good morning.」
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が起きている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Ufufu, %SPLIT_G("rise and shine:good morning")%, %MASTERNAME:61%.」
+			PRINTFORML 「You're making such an adorable face, I just never get tired of it no matter how much I look at it, really.」
+			PRINTFORML 「...Geez, I don't mean it in a bad way, I actually mean it in a good way, is all.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Mornin', %CALLNAME:MASTER%.」
+			PRINTFORML 「C'mon, time for you to get dressed and show me that \@ GETBIT(TALENT:MASTER:性別,1) ? handsome # lovely \@ side of yours.」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同棲かつ相手が寝ている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF 陥落状態() >= 4
+			;I think she's having sex in her dream or something
+			PRINTFORML 「...%MOAN(,,3,"dot")%... Cuu... mmiiii...」
+			PRINTFORML 「%MOAN()%... Zzzz... Suuu, ehehe... %MASTERNAME:61%, luuuv ya...」
+			PRINTFORML 「Hold... my hands... too... Ehehe...」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Kuuhhh... Zzzz, suuu... Forgive... me... forgi...」
+			PRINTFORML 「...Mmm... Are you... going to... forgive me...?」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERが起きていて、相手が起きてきた
+	;添い寝時TARGET起床はこちら（TARGET衰弱or添い寝中TARGET睡魔負け後そのままMASTERが起き続けた上で相手が起床した場合限定
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;-------------------------------------------------
+		;非同棲
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「...Good morning, %MASTERNAME:61%.」
+				PRINTFORML 「...I know we're lovers and it's not like I'm complaining, but...」
+				PRINTFORML 「Just thinking that you stared at my sleeping face this entire time, it's kinda embarrassing.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「...Mornin', %CALLNAME:MASTER%.」
+				PRINTFORML 「I wonder why you just decided to crash at my place without asking me first, hmmmm?」
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;同棲中
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			IF 陥落状態() >= 4
+				PRINTFORML 「...Good morning, %MASTERNAME:61%.」
+				PRINTFORML 「Yeah, I'm just wondering how splendid it is to have the love of my life right in front of me when I wake up.」
+				PRINTFORML 「...I'm both very happy, and scared a little.」
+			ELSE
+				PRINTFORML 「...%CALLNAME:MASTER%, mornin'.」
+				PRINTFORML 「Seeing a familiar face right beside me after waking up, it's, you know, kinda awkward.」
+			ENDIF
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;夜寝るとき（おやすみ口上）
+;==================================================
+@M_KOJO_EVENT_K61_3(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;自室に帰る（定時になって寝る）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF CFLAG:MASTER:現在位置 != CFLAG:311
+			IF CFLAG:MASTER:311 != CFLAG:311
+				IF 陥落状態() >= 4
+					PRINTFORML 「Alright then, I think it's time for me to head back to my place.」
+					PRINTFORML 「Though I wish we were living together, you know.」
+					PRINTFORML 「But if you change your mind, I'm always ready, just so you know. Good night, %MASTERNAME:61%. *Smooooch*」
+				ELSE
+					PRINTFORML 「Good night, %CALLNAME:MASTER%.」
+					SIF 陥落状態() >= 2 ;edited
+						PRINTFORML 「Oh, %SPLIT_G("almost forgot this:and before I forget this")%. *Smooooch*」
+				ENDIF
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「Alright then, I'll head on home now, though I wish you could come back sooner too.」
+					PRINTFORML 「Fufu, but then when you're around my heart starts pounding so fast I can't even sleep.」
+					PRINTFORML 「Bye bye, %MASTERNAME:61%.」
+				ELSE
+					PRINTFORML 「Well, I'll be on my way back home.」
+					SIF 陥落状態() >= 2 ;edited
+						PRINTFORML 「So don't keep me waiting and come back soon, okay %CALLNAME:MASTER%?」
+				ENDIF
+			ENDIF
+		ELSEIF CFLAG:MASTER:現在位置 == CFLAG:311
+			IF 陥落状態() >= 4
+				PRINTFORML 「Good night to you, sleep well.」
+				PRINTFORML 「It makes me so very happy when you're sleeping next to me, %MASTERNAME:61%.」
+				PRINTFORML 「*Smooooch*... So here, take it as my thanks.」
+			ELSE
+				PRINTFORML 「Sleep tight, %CALLNAME:MASTER%.」
+				SIF 陥落状態() >= 2 ;edited
+					PRINTFORML 「I've never had anyone sleeping next to me like this before, so... *Smooooch*」
+			ENDIF
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;眠そうにしている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Yaaaawn... Yeah, it's fun to stay and chat with you %MASTERNAME:61%, but I kinda want you to let me hit the sack already.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Mmm... Sorry, but could you please let me sleep?」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;睡眠中（起きていないので会話というよりは寝言？）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF CFLAG:添い寝中
+			PRINTDATAL
+				DATAFORM 「...\@ 陥落状態() >= 4 ? %MASTERNAME:61% # %CALLNAME:MASTER% \@... ...I love you...」
+				DATAFORM 「...Don't... leave... me...」
+				DATAFORM 「...Don't... let go... of me...」
+				DATAFORM 「...Please... I beg you... don't...」
+				DATAFORM 「Mmm... Suuu... Zzzz... Kuuhhh...」
+				DATAFORM 「Zzzz... No... more... Kuhh... Give me... mooore...」
+			ENDDATA
+		ELSE
+			PRINTDATAL
+				DATAFORM 「--give... ...Forgive... me... please...」
+				DATAFORM 「...--ther... Mo... ther... I'm sorr...」
+				DATAFORM 「...Don't come... any closer... No... stop... that's...」
+				DATAFORM 「...Don't... look... No... you're wrong... I'm human...」
+				DATAFORM 「I'm so... sorry... I'm... sorry...」
+				DATAFORM 「...--ther... Fa... ther... Why... Why...」
+			ENDDATA
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;衰弱中（恋慕付き拠点内キャラがMAIN_MAPで衰弱状態になった場合か、お招き部屋で相手が衰弱した場合に発生
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		IF 陥落状態() >= 4
+			PRINTFORML 「...I'm... sorry, but... That's the end of the line... for me...」
+			PRINTFORML 「Please, I want you to see me off... %MASTERNAME:61%...」
+			PRINTFORML 「Thank you... Fufu, are you going to carry me...? That makes me... so happy... Kuhh, suu, zzz...」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「...Phew... That's it, I'm done...」
+			PRINTFORML 「You'll... walk me back home... right? ...Thank you...」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;MASTERがダウン（部屋まで運ばれる）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		IF 陥落状態() >= 4
+			PRINTFORML 「Are you done already? ...Yeah... You do look a little tired.」
+			PRINTFORML 「Don't worry, I'll make sure to walk you back to your place...」
+			PRINTFORML 「Fuh, fuhh... I-I'm fine, so... just stay quiet and save your energy.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「At the very least... Let me take you back, okay...?」
+			PRINTFORML 「Haa, haahh... It's tough...」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;TARGETが自室まで戻ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;-------------------------------------------------
+		;そのまま着替えて寝た
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 0
+			IF 陥落状態() >= 4
+				PRINTFORML 「...Hmm, fufu... Are you going to bed with me, %MASTERNAME:61%?」
+				PRINTFORML 「I know you're just showing off, but...」
+				PRINTFORML 「Oh well, good night.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Yaaawn... I'm kinda curious what are you doing in here, but...」
+				PRINTFORML 「Whatever, have a good night...」
+			ENDIF
+			PRINTFORMW
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部屋から追い出された
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			IF 陥落状態() == 2
+				PRINTFORML 「I'm not in the mood today, so will you please go home?」
+			ELSEIF 陥落状態() == 1
+				PRINTFORML 「...I'd appreciate if you didn't invade my property like that, okay?」
+			ELSE
+				PRINTFORML 「......Get out.」
+			ENDIF
+			PRINTFORMW
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;他キャラとのＨを止めさせて寝た
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			IF 陥落状態() >= 4
+				PRINTFORML 「...Look here, %MASTERNAME:61%.」
+				PRINTFORML 「Would you please not invite other people to screw them in my room of all places?」
+				PRINTFORML 「...That said, I'm going to bed. You better listen to my advice before I get sick of it, okay?」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「...You're being a nuisance, out of my way...」
+				PRINTFORML 「C'mon, don't stare at me like I'm ruining your fun, I'm the one who's upset here.」
+				PRINTFORML 「Don't invite other people just to have sex with them in *my* room, will you?」
+			ENDIF
+			PRINTFORMW
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;非在住TARGETがMAIN_MAPで休憩
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		IF 陥落状態() >= 4
+			PRINTFORML 「Thanks for letting me rest up here, %MASTERNAME:61%.」
+			PRINTFORML 「...But you know, I think it's a bad idea for us to have sex so recklessly.」
+			PRINTFORML 「Fufu, I'm just joking. Having sex with you is something I enjoy a lot too, after all.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Hm... Well, I'll take you up on that offer then, %CALLNAME:MASTER%.」
+			PRINTFORML 「Do note that my presence may bother other people around here though.」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;前のターンから一緒の部屋にいる状態で相手が寝る（お招き部屋含む（
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		IF 陥落状態() >= 4
+			PRINTFORML 「That's it, I'm about to crash...」
+			PRINTFORML 「%MASTERNAME:61%... Please stay... by my side...」
+			PRINTFORML 「Good ni... ght... Kuuh, suu... Zzz...」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「...Aufhh... Good... night...」
+			PRINTFORML 「...Suuu... ...Zzz...」
+		ENDIF
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;移動時すれちがい
+;==================================================
+@M_KOJO_EVENT_K61_4(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;立ち止まった
+	;この後遭遇口上に接続（この口上では接続させない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF 陥落状態() >= 4
+			PRINTFORML 「Huh, %MASTERNAME:61%, aren't you supposed to have some job to do?」
+			PRINTFORML 「...Fufu, wouldn't you get scolded if you say that I'm more important?」
+			PRINTFORML 「But still, I'm glad to hear it. Thank you, %MASTERNAME:61%.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Ah, it's you, %CALLNAME:MASTER%. You didn't have to stop by just for my sake.」
+			PRINTFORML 「%SPLIT_G("Eh:Huh")%? You want to speak to me? Thank you, that makes me glad.」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「Look at you taking your time to stop by, I wonder what are you up to?」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Hm, you have business with me? I don't really mind tagging along though.」
+		ELSE
+			PRINTFORML 「...Hm? %SPLIT_G("Running errands:Can I help you")%?」
+		ENDIF
+		PRINTFORML 
+		SETBIT CFLAG:1610,0
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;軽く会釈して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「%MASTERNAME:61%, are you off to somewhere?」
+			PRINTFORML 「Oh really now, is it so important that you have to leave your lover behind?」
+			PRINTFORML 「Fufu, I just kid. I don't want to %SPLIT_G("be a nuisance to you:get in your way")% after all.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Have a nice trip, %CALLNAME:MASTER%.」
+			PRINTFORML 「I'll have you make up for it later though, okay?」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「Eh? Aren't you going to do me some more? Geez, what a waste.」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Yeah... Good job, %SPLIT_G("take care:have a safe journey")%.」
+		ELSE
+			PRINTFORML 「Yup, keep up the good work.」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無視して通り過ぎた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF 陥落状態() >= 4
+			PRINTFORML 「Do you really have to go so far as to ignore your dear sweetheart?」
+			PRINTFORML 「Next time it will be my turn ignoring you then.」
+			PRINTFORML 「...Just kidding.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Wait up, hey, %CALLNAME:MASTER%!」
+			PRINTFORML 「...I wonder if I did something... to upset %HIM_HER(MASTER,,1)%, perhaps...?」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「Uhhh, not only did %HE_SHE(MASTER)% turn me down when I wanted to *do it* earlier, now %HE_SHE(MASTER)%'s ignoring me too...」
+			PRINTFORML 「It's kinda starting to piss me off.」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Ah... Well, I guess I'm of no interest to %HIM_HER(MASTER,,1)%, then...」
+		ELSE
+			PRINTFORML 「...%SPLIT_G("Huuuh:Hmph")%.」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;他者介入でムード変化
+;==================================================
+@M_KOJO_EVENT_K61_5(ARG,ARG:1)
+;口上主はTARGET
+;ARGに入ってきたキャラ（人数が膨大なので、自己把握自己責任で
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;輝夜が入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 62
+		IF 陥落状態() >= 4
+			PRINTFORML 「Fufu, it's so wonderful being together with you, %MASTERNAME:61%...」
+			PRINTFORML 「Shoo, shoo! Get lost! You stay away, I told you already!」
+			PRINTFORML 「...Darn, just you wait Kaguya, I'll get back at you later for this!」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「%CALLNAME:MASTER%, more... Oh shoot, Kaguya!」
+			PRINTFORML 「...Oh, be quiet! Stay out of it and don't come here, you dumbass!」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「Weeell then, what are *we* gonna *do* next then... Bah, it's Kaguya.」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Sigh... Kaguya, you're in my way.」
+		ELSE
+			PRINTFORML 「Kaguya, it's you, huh...」
+		ENDIF
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;慧音が入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 67
+		IF 陥落状態() >= 4
+			PRINTFORML 「Fufu, it's so wonderful being together with you, %MASTERNAME:61%...」
+			PRINTFORML 「Ah, K-Keine. I, um, err...」
+			PRINTFORML 「...Uh, you know, we're both deeply in l-love with each other so, um...」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「It's so great being around you, %CALLNAME:MASTER%... Oh, Keine.」
+			PRINTFORML 「Um, no, that's, err, yeah...」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「Hey, let's keep going and do something even better... K-Keine?!」
+			PRINTFORML 「...Uh, don't give me that judging expression, please.」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Keine, umm, wait, I can explain...」
+		ELSE
+			PRINTFORML 「Oh, hey Keine...」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;他のキャラが入ってきた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1
+		PRINTFORML 「I %SPLIT_G("suppose this is as far as we go:guess we'll wrap this up here")% for now.」
+		RETURN 1
+	ENDIF
+	;その他（キャラ指定なし
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を目撃した
+;==================================================
+@M_KOJO_EVENT_K61_6(ARG,ARG:1)
+;口上主はTARGET
+;ARGに情事相手
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を目撃した（馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		IF 陥落状態() == 2
+			PRINTFORML 「Aww, you jerk, I wanted to do that too, you know...」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Hmph... Quit showing off, will you?」
+		ELSE
+			PRINTFORML 「...Uh... W-What are you even doing in here, may I ask...?」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;負けじと参加（馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Sigh... I'm well aware that I'm not going to satisfy you alone, but...」
+			PRINTFORML 「It sure is making me upset as heck. I take it I can join in, right?」
+			PRINTFORML 「I won't accept any answer other than "yes" from you, %MASTERNAME:61%.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Looks like you guys having a lot of fun there, mind if I join?」
+			IF ARG == 62
+				PRINTFORML 「Kaguya's sloppy drooling expression is certainly a sight to behold.」
+			ELSEIF ARG == 67
+				PRINTFORML 「I'd love to see those wonderful expressions Keine's making.」
+			ELSE
+				PRINTFORML 「I'm kinda je... ous... Err, nah, it's nothing.」
+			ENDIF
+		ELSE
+			PRINTFORML 「...My, that seems fun. Can I join?」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;気まずそうに立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		IF 陥落状態() == 1
+			PRINTFORML 「M-My bad... Haah...」
+		ELSE
+			PRINTFORML 「...I'm not so sure if it's a good idea to do this sort of thing in public.」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;情事を見られた
+;==================================================
+@M_KOJO_EVENT_K61_7(ARG,ARG:1)
+;口上主はTARGET
+;ARGに目撃者
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;情事を見られた（目撃者の馴れ合い度:低）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		IF 陥落状態() >= 4
+			PRINTFORML 「...Fufu, %MASTERNAME:61%, do me more... Wait a minute, who's there--?」
+			PRINTFORML 「...Umm, well obviously I'm not into doing this while being watched, so.」
+			PRINTFORML 「C'mon, hurry and get dressed.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「%MOAN(,,2)%... Good, you're doing great, %MOAN(,1)%... Hang on...」
+			PRINTFORML 「T, T-T-T-Th-Th-That's enough, we're done here!!!」
+		ELSE
+			PRINTFORML 「That feels... great... Wait, we have guests here.」
+			PRINTFORML 「Sadly, this is as far as we go for now.」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が負けじと参加（目撃者の馴れ合い度:高）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		IF 陥落状態() == 3
+			PRINTFORML 「...Hmm, well, that's just how it is I suppose.」
+			PRINTFORML 「I know it as a fact that %CALLNAME:MASTER% is so charming after all.」
+		ELSE
+			PRINTFORM 「Yes please, by all means. 
+			IF ARG == 62
+				PRINTFORML I'm generously offering to share this place with your kind, so start begging.」
+			ELSEIF ARG == 67
+				PRINTFORML Though it's kinda awkward doing this together with Keine, you know...」
+			ELSE
+				PRINTFORML Well, it's not like I own %HIM_HER(MASTER,,1)% or anything after all.」
+			ENDIF
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目撃者が立ち去る
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		IF 陥落状態() >= 4
+			;rephrasing to avoid repeating other cases word by word
+			PRINTFORML 「Fufu, now that the obstacle is gone, I don't see why we should stop here, don't you agree?」
+			;in case of malehus, don't mention the pronoun
+			PRINTFORML 「Or did you want to do it with that person too, %MASTERNAME:61%?」
+			PRINTFORML 「Then you shouldn't worry about it too much as long as I'm not around.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Well now that's over with, let's keep going, okay?」
+			PRINTFORML 「...Or what, are you unhappy with me alone?」
+		ELSE
+			PRINTFORML 「Shall we... continue?」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;目撃した情事を問い詰める（現在無し
+;==================================================
+@M_KOJO_EVENT_K61_8(ARG,ARG:1)
+RETURN 1
+
+;==================================================
+;パンツ没収された
+;==================================================
+@M_KOJO_EVENT_K61_9(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		IF 陥落状態() >= 4
+			PRINTFORML 「Hmm? Stay put for a sec... Well well well, and what do we have here?」
+			PRINTFORML 「Sheesh, are you saying that you prefer panties more than the prize itself?」
+			PRINTFORML 「It's so boring because you can have it any time you want, so this is your new hobby now, is that it? Perv.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Alright, hold it right there... Oh dear, why would you ever have something like this on your person?」
+			PRINTFORML 「Good grief, you're just that much of a pervert after all.」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「How come you have something like that on you? Shouldn't you value what's inside it more?」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Oh, yeah, that's obviously going to be bad news carrying this around...」
+		ELSE
+			PRINTFORML 「Yikes, man... I'll be confiscating this for now.」
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;押し倒した
+;==================================================
+@M_KOJO_EVENT_K61_10(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;うふふ==2（開始時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		;-------------------------------------------------
+		;MASTERを押し倒した（開始時）
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「I love you so much, %MASTERNAME:61%. So it should be fine, right?」
+				PRINTFORML 「Your charms are simply irresistible too after all.」
+				PRINTFORML 「Fufu, you look so tasty already... Let's enjoy this together, shall we?」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「You're way too charming for your own good, %CALLNAME:MASTER%.」
+				PRINTFORML 「Well then, don't mind if I do.」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「Fufu, I'll make you feel... good alright.」
+			ELSEIF CFLAG:弱み握り
+				PRINTFORML 「Don't you dare move, I want to enjoy it after all.」
+			ELSE ;new, just in case
+				PRINTFORML 「Sorry it had to be this way...」
+			ENDIF
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;MASTERに抱きついた（開始時） hug mode is for girls only
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Stay still, okay?」
+				PRINTFORML 「Ufufu, you're so warm, %MASTERNAME:61%.」
+				PRINTFORML 「Well then, stay like this for a bit, it'll be over soon.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Huuug, you know. ...Can we?」
+				PRINTFORML 「We're both girls, so this much should be fine, right?」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「I'd love to have sex with you, but for now I feel like doing it like this.」
+			ELSEIF 陥落状態() == 1
+				PRINTFORML 「...I mean no offense. I just... want to do it this way for once.」
+			ELSE
+				PRINTFORML 「...Yeah, it's sort of meaningless... I'm just feeling like doing it.」
+			ENDIF
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;なだめられた（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		;-------------------------------------------------
+		;抜け出した
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && !ARG:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「What, is it over already?　Hang on, don't just stop here.」
+				PRINTFORML 「Am I not good enough? Are you not satisfied with me, %MASTERNAME:61%?」
+				PRINTFORML 「...Well, if you're still against it, then... I'll put up with it.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Oh come on, let's do some more. It felt so good after all...」
+				PRINTFORML 「...Alright. If you say so, then that's that.」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「Eh, you want to stop? Hmm, my body is just not good enough for you then?」
+			ELSEIF CFLAG:弱み握り
+				PRINTFORML 「%SPLIT_G("I don't remember allowing you:No one said you're allowed")% to stop though... But oh well, so be it.」
+				PRINTFORML 「I'll let you be, for now.」
+			ELSE ;new, just in case
+				PRINTFORML 「I... understand. I apologize for forcing you... Now if you excuse me...」
+			ENDIF
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;抱き着きモード満足終了
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Haah, sometimes it's just necessary for me to let off steam this way.」
+				PRINTFORML 「...What's with that sulking expression of yours, %MASTERNAME:61%?」
+				PRINTFORML 「All you needed to do was to push me down first if you wanted to have sex the usual way that badly.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Mmmm, doing it like this sure is delightful in its own way.」
+				PRINTFORML 「Was that to your satisfaction, %CALLNAME:MASTER%?」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「Aahh... This is quite wonderful if I say so myself, even though we didn't go all the way.」
+			ELSEIF 陥落状態() == 1
+				PRINTFORML 「...Hm? You want to stay like this some more? But I already had my fill.」
+			ELSE
+				PRINTFORML 「Yeah, thanks a lot.」
+			ENDIF
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;抱き着きモード強制終了
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			IF 陥落状態() >= 4
+				PRINTFORML 「...You left me hanging there, I'm still super horny.」
+				PRINTFORML 「I really wanted to feel more of your warmth, %MASTERNAME:61%...」
+				PRINTFORML 「...」
+				PRINTFORML 「...Oh well, suit yourself.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Ah, I can't have you leaving yet...」
+				PRINTFORML 「Sigh... You'll repay me later then, I'll make sure of that.」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「Wait, don't leave just yet... Do me later then, okay?」
+			ELSEIF 陥落状態() == 1
+				PRINTFORML 「...Tsk. Oh well, I'll catch you later.」
+			ELSE
+				PRINTFORML 「...」
+				PRINTFORML 「...Haahh...」
+			ENDIF
+			PRINTFORML
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;抜け出す失敗
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		;-------------------------------------------------
+		;好きにして状態から抜け出せなかった
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML 「...You have to %SPLIT_G("learn to keep your words properly:take full responsibility for the words you say")%.」
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;欲求不満が高くて抜け出せなかった
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML 「...No, that won't do.」
+			PRINTFORML 「I'm not letting you go until I'm fully satisfied.」
+			PRINTFORML
+			RETURN 1
+		ENDIF
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;浴場で遭遇
+;==================================================
+@M_KOJO_EVENT_K61_11(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出された
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF 陥落状態() == 1
+			PRINTFORML 「...Umm, sorry, but I don't want you to come in.」
+			PRINTFORML 「Can you please hurry up and leave?」
+		ELSE
+			PRINTFORML 「...Get out of here, now.」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;目が合った（追い出されない）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Come on in. Fufu, shall we wash each other then?」
+			PRINTFORML 「Feel free to do whatever you want, %MASTERNAME:61%.」
+			PRINTFORML 「Fufu, I guess times like these can be pleasant too.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Oh, hi there, come on in.」
+			PRINTFORML 「What are you looking at so intently?」
+			PRINTFORML 「There's nothing to see anyways, with me being so scrawny and all...」
+			PRINTFORML 「You say it's to your liking? Oh, spare me your flattery.」
+		ELSE
+			PRINTFORML 「Fufu, and why would you come in here?」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;寝床に忍び込み
+;==================================================
+@M_KOJO_EVENT_K61_12(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;追い出される（怒り）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「...No one said you can just barge in here like that, you know.」
+			PRINTFORML 「Even a lover can become angry once in a while.」
+			PRINTFORML 「Now hurry and go elsewhere.」
+		ELSE
+			PRINTFORML 「...Hey now, putting this obvious mischief aside, just what are you trying to accomplish?」
+			PRINTFORML 「If you're actually trying to make a sneaking visit into my room, I'll get VERY angry.」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 1
+		IF 陥落状態() >= 4
+			PRINTFORML 「Kuuh, suuu... Zzz, %MASTERNAME:61%... Luv ya...」
+		ELSE
+			PRINTFORML 「Suuu, zzzz, mmm...」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Yaaawn... Oh, it's you, %MASTERNAME:61%. Is there something you want?」
+			PRINTFORML 「Are you, perhaps, trying to nightcrawl me? Please refrain from molesting me while I'm actually asleep though, thanks.」
+			PRINTFORML 「That said, fufu... I'm glad you're here.」
+		ELSE
+			PRINTFORML 「Mmm... Hey, %CALLNAME:MASTER%, huh. And to what do I owe the pleasure?」
+			PRINTFORML 「I'll get mad if you say it's just a nightcrawl...」
+			PRINTFORML 「Nah, I'm joking.」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;寝床に侵入（相手が恋慕・衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 3
+		IF 陥落状態() >= 4
+			PRINTFORML 「...Mm... %MASTERNAME:61%? ...Good night.」
+			PRINTFORML 「...What? I'm pretty sleepy, you know...」
+			PRINTFORML 「So, good nigh... t... Zzz... Suu...」
+		ELSE
+			PRINTFORML 「...Yawn... Hm, %CALLNAME:MASTER%?」
+			PRINTFORML 「Oh well, whatever... Good night...」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;追い出される（衰弱）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG:1 == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;お仕事中
+;==================================================
+@M_KOJO_EVENT_K61_13(ARG,ARG:1)
+;口上主はTARGET
+;ARG:1に残っている仕事量
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;仕事開始（職場へ移動する）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;業務中
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;仕事終了
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;食事系
+;==================================================
+@M_KOJO_EVENT_K61_14(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;持っていた食物を食べられた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == -1
+		IF 陥落状態() >= 4
+			PRINTFORML 「Apparently you're pretty good at cooking, huh %MASTERNAME:61%?」
+			PRINTFORML 「Fufu, well then, let's have a bite!」
+			PRINTFORML 「Mmm, I knew it, it's delicious.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Mmm, that looks %SPLIT_G("like something to die for:quite delicious")%.」
+			PRINTFORML 「Of course I'll have some, even if you say that I can't I'll still take it!」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「That sure looks delicious. Since we're already pretty close for us to *do it*, naturally it's alright for me to have it, right?」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「...Looks like I'm in for a treat. Can I really have it? Thank you very much.」
+		ELSE
+			PRINTFORML 「That seems so tasty, don't mind if I do.」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+
+;==================================================
+;MASTERが押し倒した
+;==================================================
+@M_KOJO_EVENT_K61_15(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;逢瀬終了（ウフフ終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		SIF FLAG:時間停止 || CFLAG:睡眠 ;fix
+			RETURN 0
+		IF 陥落状態() >= 4
+			PRINTFORML 「Huuuh, are you wrapping this up already?」
+			PRINTFORML 「I wish we could go on some mooore... It's just something so amazing I can't have enough of it...」
+			PRINTFORML 「......Though I'm well aware that it's unwise to get too addicted to it.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Is it over already? Come ooon, let's do some more!」
+			PRINTFORML 「Let's just keep going until we %SPLIT_G("reach the limits of our stamina and energy:drain our bodies to exhaustion")%...」
+		ELSE
+			PRINTFORML 「Are you done? You sure? Even though it felt so good?」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+	;-------------------------------------------------
+	;事後描写
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		;-------------------------------------------------
+		;精液が垂れてきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			IF EXP:出産経験
+				PRINTFORML 「Ah, wait little guys, don't leave, stop... I don't want you to leave the baby's place...」
+				PRINTFORML 「...Hey, can you pour some more for me? I want more babies.」
+				PRINTFORML 「......You're such a meanie.」
+			ELSEIF 陥落状態() >= 4
+				PRINTFORML 「What a waste... %RANDLIPS(,"suck")%...」
+				PRINTFORML 「It's not that important whether it's tasty or not.」
+				PRINTFORML 「What really matters is that this semen belongs to %MASTERNAME:61%, and I want it to stay inside me as much as possible, is all.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Yeah, it's %FSYN("leak:ing")% out...」
+				PRINTFORML 「Is it so fun to keep staring at it like that? Huh, I see.」
+			ELSE
+				PRINTFORML 「...Look at you pumping out this stuff like nobody's business.」
+			ENDIF
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;愛液が垂れてきた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			IF EXP:出産経験
+				PRINTFORML 「I insist on a do-over. I mean, why didn't you cum inside me like you should?」
+				PRINTFORML 「See, it keeps oozing with nothing but its own juices, lacking an essential element - your sperm.」
+				PRINTFORML 「......Yes, it's true that I want more children, but it's also true that I'm still horny and unsatisfied.」
+			ELSEIF 陥落状態() >= 4
+				PRINTFORML 「Haah... %MASTERNAME:61%, this doesn't seem all that satisfying, you know?」
+				PRINTFORML 「I mean, I felt great and all, but what about you? You clearly haven't had your fill yet.」
+				PRINTFORML 「Even though I really wanted to quench the thirst of my pussy with your semen...」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「It feels like a waste without a creampie, you know.」
+				PRINTFORML 「Or maybe it's just that my body didn't feel all that good?」
+				PRINTFORML 「...I'm glad if that wasn't the case.」
+			ELSE
+				PRINTFORML 「......Hey, please look away.」
+			ENDIF
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;事後のムード
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 3
+			IF 陥落状態() >= 4
+				PRINTFORML 「Weell, I wish we could do it just a little bit more.」
+				PRINTFORML 「Like if we kept going until we blacked out from exhaustion.」
+				PRINTFORML 「I really feel like you have what it takes to keep making out with me to that extent, %MASTERNAME:61%.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Fufu, though it could be a bit better, I guess it'll do for now.」
+				PRINTFORML 「Thanks for always letting me feel such pleasures.」
+			ELSE
+				PRINTFORML 「......Yeah, good job.」
+			ENDIF
+			PRINTFORML
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;服を着る
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 4
+			PRINTFORML 「...Sorry for having such an unsexy outfit.」
+			RETURN 1
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;添い寝する
+;==================================================
+@M_KOJO_EVENT_K61_16(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;添い寝を終了した（終了時）
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF CFLAG:睡眠
+			PRINTFORML 「...Noo... Don't... leave... me...」
+		ELSEIF 陥落状態() >= 4
+			PRINTFORML 「I don't mind lazing around like this, but...」
+			PRINTFORML 「I kinda had different things in mind that I wanted to do too...」
+			PRINTFORML 「So come on now, raise and shine %MASTERNAME:61%.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「I sure am glad being able to see my beloved %CALLNAME:MASTER%'s face near me, but...」
+			PRINTFORML 「It'll get boring if that alone is all I'll be having.」
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;時止め終了時
+;==================================================
+@M_KOJO_EVENT_K61_17(ARG,ARG:1)
+;口上主はTARGET
+;排他と明記されていないモノは状況によっては連続で表示されるので注意
+;ARGに射精状況
+;ARG:1に射精状態
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ARG=1～3は排他
+	;謎の快感
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF 陥落状態() >= 4
+			PRINTFORMW 「%MOAN("l",,2)%...! %MOAN("m")%...」
+			PRINTFORMW 「...Hey %MASTERNAME:61%, please let me %SPLIT_G("have my own share of fun:do some on my own")% too.」
+			PRINTFORMW 「Just, like, not in this way, you know...」
+		ELSEIF 陥落状態() == 3
+			PRINTFORMW 「%MOAN("m")%?! Mmnnghhh?!」
+			PRINTFORMW 「I-I-It's n, n-nothing, nothing! Really...」
+		ELSEIF 陥落状態() == 2
+			PRINTFORMW 「%MOAN()%... I'm alright, I just... felt great somehow for some reason.」
+		ELSEIF 陥落状態() == 1
+			PRINTFORMW 「%MOAN()%... I-It's okay, I'm good...」
+		ELSE
+			PRINTFORMW 「Mnghhh?! Haah...! Hnn... Y-Yeah, I'm fine...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF 陥落状態() >= 4
+			PRINTFORMW 「%MOAN("m:h",,2)%!!!」
+			PRINTFORMW 「Hah, haaah... Haaaa... %MASTERNAME:61%...」
+			PRINTFORMW 「I want you... to let me... caress you some too. Not just me alone like this, y'know...」
+		ELSEIF 陥落状態() == 3
+			PRINTFORMW 「%MOAN("m:h")%?! %MOAN("h", 4)%!!!」
+			PRINTFORMW 「I-It's alright, I'm f-fine... %MOAN("l:m",,2)%...!!!」
+		ELSEIF 陥落状態() == 2
+			PRINTFORMW 「%MOAN("h",4, 2)%!!! Hah, haaah, hnn... P-Please, don't... mind me... Fuahhh...!」
+		ELSEIF 陥落状態() == 1
+			PRINTFORMW 「%SLUR(MOAN())%! %MOAN("h",4)%!!! ...Haa, haah, hnguh...」
+		ELSE
+			PRINTFORMW 「%MOAN("h",4)%?! %MOAN("m")%!!! %MOAN("l:m",,,2)%...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;パンツ紛失
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF 陥落状態() >= 4
+			PRINTFORMW 「...%MASTERNAME:61%, %SPLIT_G("I'd appreciate if you'd ask me straight up first if you wanted them, you know.:would it kill you to ask me first if you wanted them so badly?")%」
+			PRINTFORMW 「I won't say it's not embarrassing, but... I can always spare you a present as much as you like.」
+			PRINTFORMW 「What, you actually prefer snatching them like that? Perv.」
+		ELSE
+			PRINTFORMW 「...Huh, what, why... Oh, nah, it's n-nothing...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚口内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		;精液中毒低精飲
+		IF ARG:1 == 1
+			IF 陥落状態() >= 4
+				PRINTFORMW 「Cough, cough... Nghh, cough...!」
+				PRINTFORMW 「...Khaa, cough. Yeah, it's terrible...」
+				PRINTFORMW 「Why would %MASTERNAME:61% do this, I wonder...」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「Ngghhh?! Cough, cough... Khh... Cough...!」
+				PRINTFORMW 「...Oh, this is disgusting, what is this even...?」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「Cough, cough...! Khh, khaa, cough... How, why would this...」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「Glug...! Cough, cough...!!! ...What the heck... is this?」
+			ELSE
+				PRINTFORMW 「Cough, cough... Kahh, kehh, cough...!」
+			ENDIF
+		;精液中毒低吐き出し
+		ELSEIF ARG:1 == 2 || ARG:1 == 5
+			IF 陥落状態() >= 4
+				PRINTFORMW 「Cough, cough, khh... Haah, haah...」
+				PRINTFORMW 「%MASTERNAME:61%, aren't you being a jerk right now?」
+				PRINTFORMW 「Blowing your load inside my mouth of all things, I mean.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「Cough, cough... ...%GROAN("guh")%, cough...!」
+				PRINTFORMW 「How gross...」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「Cough, hack... How could this happen to me...」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「Hack, cough, cough...! ...What the heck... is this?」
+			ELSE
+				PRINTFORMW 「Cough, cough... Kahh, kehh, cough...!」
+			ENDIF
+		;精液中毒低手で覆う
+		ELSEIF ARG:1 == 3
+			IF 陥落状態() >= 4
+				PRINTFORMW 「Cough, cough... Come on %MASTERNAME:61%, could you stop messing around please?」
+				PRINTFORMW 「My hands are all drenched now with your semen.」
+				PRINTFORMW 「There, lick it clean for me, will you? ...What, you can't? Don't make me do it then.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「Cough, cough... %GROAN("guh")%, why would something like this...」
+				PRINTFORMW 「It's so slimy and stinky, I can never get used to it.」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「Cough, cough, huh, why would semen...? It's so sticky...」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「Hack, cough, cough...! ...What the heck... is this?」
+			ELSE
+				PRINTFORMW 「Cough, cough... Kahh, kehh, cough...! What is this weird stuff... on my hands?」
+			ENDIF
+		;精液中毒高精飲
+		ELSEIF ARG:1 == 4 || ARG:1 == 6
+			IF 陥落状態() >= 4
+				PRINTFORMW 「Swallow... How delicious... Hang on, can I have you for sec, %MASTERNAME:61%?」
+				PRINTFORMW 「Would you please stop doing this to me?」
+				PRINTFORMW 「Because I'd much rather please you out of my own volition, you know?」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「Gulp, mm... Haah... Was this... semen? ...Yeah.」
+				PRINTFORMW 「%MOAN(,,2)%... My body's... getting hot... %MOAN()%...」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「Gulp... Why would it... taste so much like %CALLNAME:MASTER%...?」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「Slurp, mmf... ...What's up with this, I wonder...?」
+			ELSE
+				PRINTFORMW 「Gulp... I wonder why... my throat... is so ho...t...」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚顔面射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;無知持ち＆精液経験100未満
+		IF ARG:1 == 1
+		;通常ぬぐい取り
+		ELSEIF ARG:1 == 2
+			IF 陥落状態() >= 4
+				PRINTFORMW 「...Sigh, oh you %MASTERNAME:61%. You really like doing this, don't you?」
+				PRINTFORMW 「I don't really mind it if it's some sort of way of marking me, but...」
+				PRINTFORMW 「After all, I'd rather let you do it myself, you know...」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「%GROAN()%! Why would something like this...」
+				PRINTFORMW 「Why, how, why would this...」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「%GROAN()%?! I'm sure, that's... semen, right...?」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「Hiii! Eugh, this is so gross...」
+			ELSE
+				PRINTFORMW 「Eeeekkk?! W-Wha-Whaaa...」
+			ENDIF
+		;顔射精液舐めとり
+		ELSEIF ARG:1 == 3
+			IF 陥落状態() >= 4
+				PRINTFORMW 「...%FSYN("lips_muffle")%, %MASTERNAME:61%'s semen...」
+				PRINTFORMW 「Yeah, it's so %FSYN("tasty")%... %FSYN("lips_over")%...」
+				PRINTFORMW 「But you know, I'd appreciate if you let me %FSYN("squeeze")% you dry with my mouth when possible...」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「%FSYN("lips_muffle")%... So %FSYN("tasty")%... Wait, no, I can't be doing this...」
+				PRINTFORMW 「Yet, why am I... something like this...」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「%GROAN()%... Well, if only for just a bit...」
+				PRINTFORMW 「%RANDLIPS(,"suck")%... %FSYN("lips_muffle")%...」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「......%FSYN("lips_muffle")%... %KISS("suck")%...」
+			ELSE
+				PRINTFORMW 「...Haah... %FSYN("lips_muffle")%, %KISS("suck")%...」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚手淫射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;ぬぐい取り
+		IF ARG:1 == 1
+			IF 陥落状態() >= 4
+				PRINTFORMW 「Well, %MASTERNAME:61%. Have you enjoyed my hands?」
+				PRINTFORMW 「But does it really feel good, even though I'm completely unconscious?」
+				PRINTFORMW 「Instead of rubbing one out on your own, letting me do it would feel much better in my opinion, you know.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「...Again with this stuff. How come it keeps happening to me?」
+				PRINTFORMW 「Haah, it's so sticky and smells weird, I'm about to throw up.」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「Semen?! ...Sigh, someone must've pranked me or something.」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「Wha-- What the heck is this, why would this stuff...」
+			ELSE
+				PRINTFORMW 「...Yikes, how disgusting...」
+			ENDIF
+		;舐めとり
+		ELSEIF ARG:1 == 2
+			IF 陥落状態() >= 4
+				PRINTFORMW 「...%FSYN("lips_muffle")%, %MASTERNAME:61%'s semen...」
+				PRINTFORMW 「Yeah, it's so %FSYN("tasty")%... %FSYN("lips_over")%...」
+				PRINTFORMW 「But you know, I'd appreciate if you let me %FSYN("squeeze")% you dry with my mouth whenever we get a chance...」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「%FSYN("lips_muffle")%... So %FSYN("tasty")%... Wait, no, I can't be doing this...」
+				PRINTFORMW 「Yet, why am I... something like this...」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「%GROAN()%... Well, if only for just a bit...」
+				PRINTFORMW 「%RANDLIPS(,"suck")%... %FSYN("lips_muffle")%...」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「......%FSYN("lips_muffle")%... %KISS("suck")%...」
+			ELSE
+				PRINTFORMW 「...Haah... %FSYN("lips_muffle")%, %KISS("suck")%...」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚アナル射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		;Ａ感覚2以下
+		IF ARG:1 == 1
+			IF 陥落状態() >= 4
+				PRINTFORMW 「%GROAN()%! Agh, my ass, it hurts...」
+				PRINTFORMW 「Oh you dummy, %MASTERNAME:61%! Say what you like, but that's...」
+				PRINTFORMW 「...Umm... You know, I'd appreciate if you stopped doing this, if at all possible... okay?」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「%GROAN()%... %GROAN()%, my butt, it huuurts...」
+				PRINTFORMW 「Why would this happen... all of a sudden...」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「%GROAN()%, ow ow ow... Why would it hurt... down here...」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「%GROAN()%! Ouch... Why would this happen... all of a sudden... %GROAN(,1)%...」
+			ELSE
+				PRINTFORMW 「Eeek! %GROAN()%, it hurts, why would something like this...」
+			ENDIF
+		;ソレ以外
+		ELSEIF ARG:1 == 2
+			IF 陥落状態() >= 4
+				PRINTFORMW 「%MOAN(,,2)%... %MASTERNAME:61%, you fool...」
+				PRINTFORMW 「I told you already, don't do me here... I mean, it feels so good, that %SPLIT_G("it makes my head spin:I'm starting to lose it")%...」
+				PRINTFORMW 「...At the very least, I want you to do it... when I'm fully conscious, if you please...」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「%MOAN("m")%!!! ......Ahh, that's...」
+				PRINTFORMW 「%MOAN()%, %GROAN(,1)%... Nooo, why, why now...」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「%MOAN()%! ...Haah, ugh, haaah... My butt... it's driving me crazy...」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「%MOAN("m")%?! No, why would this happen, right now, right here... Guh...」
+			ELSE
+				PRINTFORMW 「%MOAN("m")%!!! %MOAN()%! %GROAN()%...」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚処女喪失】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 8
+		IF 陥落状態() >= 4
+			PRINTFORMW 「%MASTERNAME:61%, you dummy! If you're going to do it, then do it in a proper way!」
+			PRINTFORMW 「Though I knew it's kind of inevitable with you having this sort of ability and all, but...」
+			PRINTFORMW 「Still, having my precious first time stolen like this leaves me deeply displeased.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORMW 「...%GROAN()%, oww, it hurts... I don't remember bumping against something or anything recently though...」
+			PRINTFORMW 「But still... Never once had I felt pain like this down here before... So why...」
+		ELSEIF 陥落状態() == 2
+			PRINTFORMW 「It huuurts! ...Huh, but why, why this place though...?」
+		ELSEIF 陥落状態() == 1
+			PRINTFORMW 「%GROAN()%... What can be possibly the reason behind this pain... I've never felt like this before.」
+		ELSE
+			PRINTFORMW 「Ouch... Why would I... feel this sort of pain?」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;【無自覚膣内射精】
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 9
+		;非処女膣内射精ピルなし
+		IF ARG:1 == 1
+			IF EXP:出産経験
+				PRINTFORMW 「...Oh, semen is coming out.」
+				PRINTFORMW 「It would've been so sweet to be blessed with another child...」
+				PRINTFORMW 「Baby, give me just one more, my little baby...」
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORMW 「...Sigh, %MASTERNAME:61%. Well, I bet you enjoy nutting inside even though you're probably not allowed to do so.」
+					PRINTFORMW 「Well, about that. You know, I actually love the feeling of being inseminated with your semen.」
+					PRINTFORMW 「So if we just, like, let our feelings through and settle it properly, I think that'd be the best outcome.」
+				;this is probably a bit out of place if you JUST had sex with her normally, todo expup checks?
+				ELSEIF 陥落状態() == 3
+					PRINTFORMW 「......Haah, how come it ended up being inside me...?」
+					PRINTFORMW 「Even though I'm sure I didn't get inseminated recently...」
+				ELSEIF 陥落状態() == 2
+					PRINTFORMW 「%GROAN("guh")%, why would this stuff... How on earth did this even happen to me...」
+				ELSE
+					PRINTFORMW 「...I don't think I've let anyone do it inside though...」
+				ENDIF
+			ENDIF
+		;非処女膣内射精ピルあり
+		ELSEIF ARG:1 == 2
+		;処女膣内射精
+		ELSEIF ARG:1 == 3
+			IF 陥落状態() >= 4
+				PRINTFORMW 「...Uh, somehow... it feels like something is out of place...」
+				PRINTFORMW 「...%MASTERNAME:61%, that was your doing, wasn't it?」
+				PRINTFORMW 「I have no idea what you just did, but I'll ask you to do it with me in a proper way since we're lovers and all.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORMW 「...Uh, what's going on? It feels... wrong somehow...」
+				PRINTFORMW 「Is it... oozing out or something? That shouldn't be a thing at all though...」
+			ELSEIF 陥落状態() == 2
+				PRINTFORMW 「%MOAN()%... How come... something's inside me...」
+			ELSEIF 陥落状態() == 1
+				PRINTFORMW 「...%GROAN()%... ...What's this? Did something just...?」
+			ELSE
+				PRINTFORMW 「Nnguhh... Somehow it feels sticky and squelchy...」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;時間停止解除共通
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		PRINTFORMW 「...?」
+		RETURN 1
+	ENDIF
+	PRINTFORML
+ENDIF
+RETURN 1
+;==================================================
+;ナマでやらせろ時
+;==================================================
+@M_KOJO_EVENT_K61_18(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;避妊要求台詞
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断った
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;断ったのに粘られて切れた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日以外許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;危険日許可
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;神社暮らしを承認して貰う
+;==================================================
+@M_KOJO_EVENT_K61_19(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;認められる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF !GETBIT(CFLAG:1610,5) ;fixed flag check, seems bugged because it's not enabled anywhere in the original
+			IF 陥落状態() >= 4
+				PRINTFORML 「Is it okay? Really? Are you sure?」
+				PRINTFORML 「Hah, hahaha... What am I even saying, it was my own request...」
+				PRINTFORML 「...Huh, I'm nothing but happy... And yet it's happening... again...」
+				PRINTFORML 「Yeah, uhh... Haha, I've been such a crybaby ever since I got to know you, %MASTERNAME:61%.」
+				PRINTFORMW 「Sob, sniff... Even when I'm so happy, sob... Here I am, crying again...」
+			ELSE
+				PRINTFORML 「Thank you so much, that makes me really glad.」
+				PRINTFORML 「Haha, I never thought I'd reach the point that getting in touch with people would make me this happy.」
+				PRINTFORML 「Hahaha... Huh, I wonder why is that... My tears...」
+				PRINTFORMW 「......Uh, haah... Even though I'm supposed to be an adult... and yet still...」
+			ENDIF
+			SETBIT CFLAG:1610,5
+		ELSE
+			;made it so that this part is available after living with mokou once
+			IF 陥落状態() >= 4
+				PRINTFORML 「You really are selfish, %MASTERNAME:61%.」
+				PRINTFORML 「No sooner than you let me move in with you, you already moved to a different place.」
+				PRINTFORML 「You could've just cut the crap instead and moved in to my place while you were at it, you know.」
+				PRINTFORMW 「...But I'll get to see your face every single day with this, so... I shouldn't be complaining too much.」
+			ELSE
+				PRINTFORML 「Haah, I do wonder why you're so whimsical at times, %CALLNAME:MASTER%.」
+				PRINTFORMW 「After all, you could've just moved in to my place to begin with.」
+			ENDIF
+		ENDIF
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;認められない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「I figured as much. There are far more fitting people who fill the bill more than me for this after all.」
+		PRINTFORML 「But you'll grant me another chance in the future, right? Or let me drop by again?」
+		PRINTFORMW 「...Sorry for being so selfish.」
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;帰宅時
+;==================================================
+@M_KOJO_EVENT_K61_20(ARG,ARG:1)
+;口上主はLOCALS or RESULT
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;通常帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF 陥落状態() >= 4
+			PRINTFORML 「Well then, it's about time I head back.」
+			PRINTFORML 「You're not letting me move in with you, so I guess that's just how it is.」
+			PRINTFORML 「But I'd be glad to do so whenever you're ready.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Yaaawn, I should probably get going soon.」
+			PRINTFORML 「I'd love to spend more time with you if I could though.」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「Darn, time's up already? Bah, even though I wanted to do it some more...」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Well, I guess it's that time already, so I'll see you later.」
+		ELSE
+			PRINTFORML 「It's time for me to go home, so if you'll excuse me.」
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;デート中帰宅
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Right, seems like it's that time again so I'll be taking my leave.」
+			PRINTFORML 「Truth be told, I'd rather stay with you forever if I could...」
+			PRINTFORML 「Well then, please take care on your way back, okay %MASTERNAME:61%?」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「Yeah, I guess it's about time.」
+			PRINTFORML 「You'd better stay vigilant on your way back.」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「I'd love to do some more, but I've got to go. Take care and head back home too.」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「Don't forget to pay attention when you travel back at night.」
+		ELSE
+			PRINTFORML 「It can be dangerous out here, so be careful on your way home.」
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;玄関先でお見送り
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;陥落素質取得時
+;==================================================
+@M_KOJO_EVENT_K61_21(ARG,ARG:1)
+;口上主はARG
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML 「...Haha, looks like I found myself in quite a pickle.」
+		PRINTFORML 「Never once had I thought I'd be nurturing such feelings...」
+		PRINTFORML 「Enough for me to fall in love with someone else, that is...」
+		PRINTFORML 「That's one thing I'm not allowed to do under any circumstances.」
+		PRINTFORML 「But... But I just can't fight it anymore.」
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Fufu, %HE_SHE(MASTER)%'s quite an amusing one, I'll give %HIM_HER(MASTER,,1)% that.」
+		PRINTFORML 「If I have to compare, it might be just as fun as my constant skirmishes with Kaguya.」
+		PRINTFORML 「...Fufu, hahaha...」
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛欲取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;愛人取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;セフレ取得
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;調教終了時に自慰
+;==================================================
+@M_KOJO_EVENT_K61_22(ARG,ARG:1)
+;口上主はARG
+;ARG:0に自慰状況
+;ARG:1に自慰種類
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;通常自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;同室時自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;中だし精液自慰
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無知持ち（自慰経験(調教自慰経験は差し引き)による分岐あり
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		LOCAL:2 = EXP:自慰経験 - EXP:調教自慰経験
+		;無知消去イベントあり（表示は一度だけ
+		IF LOCAL:1 >= 25
+		;地の文分岐。書きたい場合は[SKIPSTART][SKIPEND]を削除してください
+		[SKIPSTART]
+		ELSEIF LOCAL:1 >= 20
+		ELSEIF LOCAL:1 >= 15
+		ELSEIF LOCAL:1 >= 10
+		ELSEIF LOCAL:1 >= 5
+		[SKIPEND]
+		ELSE
+		ENDIF
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質あり自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 5
+		;-------------------------------------------------
+		;Ｃ敏感orＣ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｖ敏感orＶ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ａ敏感orＡ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 3
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;Ｂ敏感orＢ感覚10以上
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 4
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;部位指定無し
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 5
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで陥落素質あり自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;自慰中毒高め
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 6
+		;-------------------------------------------------
+		;尻穴膣腔同時
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 1
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		;膣腔のみ
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1 && ARG:1 == 2
+			PRINTFORML  
+			RETURN 1
+		ENDIF
+		;その他
+		;上の分岐を一切書かずに、ここに書くことで自慰中毒高め自慰の共通口上を表示することが出来ます
+		PRINTFORML  
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;我慢
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 7
+		IF 陥落状態() >= 4
+			PRINTFORML 「%MASTERNAME:61%... I wanna do it with you so badlyyyy...」
+		ELSE
+			PRINTFORML 「My body is so hot... But... I must endure.」
+		ENDIF
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+	;その他
+	;上の分岐を一切書かずに、ここに書くことで自慰の共通口上を表示することが出来ます
+		;暫定
+		IF 陥落状態() >= 4
+			PRINTFORML 「%MOAN("l:m",,3)%! %MASTERNAME:61%, I... want you...!」
+			PRINTFORML 「%MOAN(,,2)%! %MOAN("m")%!!!」
+			PRINTFORML 「%MASTERNAME:61%, more, hardeeerrr, %MOAN("h",4)%!!!」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「%MOAN("l:m",,2)%!!! %MOAN("l:m",,2)%!」
+			PRINTFORML 「Haah, haah, it's so hot... so hoooot, %MOAN(,1)%!」
+		ELSEIF 陥落状態() == 2
+			PRINTFORML 「%MOAN(,,2)%! I want... even more... and yetttt...!」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「%MOAN(,,3)%... No, I can't... %SPLIT_G("K:U")%h, %MOAN(, 1)%!」
+		ENDIF
+	PRINTFORML  
+	RETURN 1
+ENDIF
+RETURN 1
+;==================================================
+;浴場連れだし
+;==================================================
+@M_KOJO_EVENT_K61_23(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;断られた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF 陥落状態() == 2
+			PRINTFORML 「Wait, at the very least I want you to do something that'd convince me to go in there with you...」
+		ELSEIF 陥落状態() == 1
+			PRINTFORML 「W-We can't, no matter how you look at it, that's still...」
+		ELSE
+			PRINTFORML 「...Sigh, shouldn't you do that with someone you're more intimate with?」
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;一緒に入ってくれた
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF 陥落状態() >= 4
+			PRINTFORML 「Fufu, taking a bath together with %MASTERNAME:61%, huh... Sounds good to me.」
+			PRINTFORML 「Oh, and for your information, no touching and nothing naughty, got it?」
+			PRINTFORML 「But if you still insist, then... I guess that's inevitable.」
+		ELSEIF 陥落状態() == 3
+			PRINTFORML 「You like this kind of thing too, huh %CALLNAME:MASTER%? Well, it's not like I'm against it.」
+			PRINTFORML 「Well, %SPLIT_G("does my nakedness look pretty to you:do I look pretty when I'm naked")%?」
+			PRINTFORML 「I'll get mad if you say I'm scrawny or something.」
+		ELSE
+			PRINTFORML 「Yeah, sure. I don't think it's all that exciting to see me naked though.」
+		ENDIF
+		PRINTFORMW
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;懐妊
+;==================================================
+@M_KOJO_EVENT_K61_24(ARG,ARG:1)
+;口上主はLOCAL
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF 陥落状態() >= 4
+			IF EXP:出産経験
+				PRINTFORML 「Hey %MASTERNAME:61%... I'm having a baby again.」
+				PRINTFORML 「Thank you so much, that means a lot to me. If it wasn't for you, it would've never happened.」
+				PRINTFORML 「You think otherwise? No, I beg to differ, %MASTERNAME:61%.」
+				PRINTFORML 「Without you, I wouldn't have been interested in seeking out sex as I am right now in the first place.」
+			ELSE
+				PRINTFORML 「Ah... You know, %MASTERNAME:61%... Fufu, I must express my gratitude.」
+				PRINTFORML 「It's so unexpected, yet it occurred to me... That I've been blessed with a child.」
+				PRINTFORML 「Fufu, ufufufu, I really am glad. This is the happiest day in my life.」
+				PRINTFORML 「A baby, my own beautiful little baby... Fufu, ufufufufufu...」
+			ENDIF
+		ELSE
+			IF EXP:出産経験
+				PRINTFORML 「Fufu, I'm so glad. You've blessed me once again, for that I'm thankful.」
+				PRINTFORML 「Oh, and of course I can't forget about you too, %CALLNAME:MASTER%. Thank you very much.」
+				PRINTFORML 「Sorry, you probably don't want to be treated as an extra, but I'm just so happy... That a child has been bestowed upon me.」
+				PRINTFORML 「...I wonder if it's fine for me to know such happiness...」
+			ELSE
+				PRINTFORML 「Fufu, a baby, I've been blessed with a baby...」
+				PRINTFORML 「Not sure how you think of it, %CALLNAME:MASTER%, but for me it's nothing short of a miracle.」
+				PRINTFORML 「I've been neglecting it ever since I drank the Hourai Elixir, or should I say... I gave up on it altogether.」
+				PRINTFORML 「Ahaha, I'm happy, so happy... Sob... And yet, why... Why the tears, when I'm so elated...」
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		IF EXP:出産経験
+			PRINTFORML 「Fufu, again, I've been blessed once again.」
+			PRINTFORML 「...Hm? Did something good happen? I'm caressing my belly so very gently all of a sudden?」
+			PRINTFORML 「Well, it's not surprising. After all, even someone like me was able to have one, right here...」
+		ELSE
+			PRINTFORML 「Thank you so much, %CALLNAME:MASTER%. Thanks to your efforts, it appears that I'm about to become a mother.」
+			PRINTFORML 「Oh, it's fine, you don't have to worry about me so much, I assure you.」
+			PRINTFORML 「Fufu, after all it's a baby, my own little baby...」
+			PRINTFORML 「Do I look happy to you? Fufu, well, but of course. It was something I never thought would be possible for me after all.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		IF EXP:出産経験
+			PRINTFORML 「...Managing to get me pregnant is an incredible feat for sure.」
+			;お姉ちゃん prolly referring to her other children?
+			PRINTFORML 「I want this child to be happy, even despite not being afflicted by the curse of Hourai just like the other siblings.」
+		ELSE
+			PRINTFORML 「...I still can hardly believe it myself, but looks like I'm going to have a baby.」
+			PRINTFORML 「Fufu, thank you %CALLNAME:MASTER%.」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		IF EXP:出産経験
+			PRINTFORML 「...Ah, fufu, I'm going to have a baby again...」
+			PRINTFORML 「Fufu, ufufufufufu...」
+		ELSE
+			PRINTFORML 「...I wonder what's with this weird sense of discomfort...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;出産
+;==================================================
+@M_KOJO_EVENT_K61_25(ARG,ARG:1)
+;口上主はLOCAL
+;ARG:1	何人目の子供か
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;恋慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		IF 陥落状態() >= 4
+			PRINTFORML 「Fuh, fuuuh, haaa... I'm so tired I might as well just die...」
+			PRINTFORML 「Try giving birth once and I think you'll see it for yourself.」
+			PRINTFORML 「Fufu, but putting that aside. Thank you for coming to us, little hero.」
+			PRINTFORML 「I can't express how truly grateful I am to you for letting my sorry self have you.」
+		ELSE
+			PRINTFORML 「...Haa, haah... ...Thank you for being born into this world.」
+			PRINTFORML 「...Ah, look, it's %CALLNAME:MASTER%. There, say hello to your daddy.」
+			PRINTFORML 「Why would you blush so hard now... That's not really your style.」
+			PRINTFORML 「Fufu, a baby, my own precious, most important baby child...」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;思慕
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		PRINTFORML 「Haah, haah, phew... Even dying is not so painful as this... I think.」
+		PRINTFORML 「But still, it makes me so happy. Thank you for coming into this world, my dear child... Smoooch.」
+		PRINTFORML 「...Fufu, you want to give a smoochie too, %CALLNAME:MASTER%? But nope, can't let you have that.」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;陥落素質無し
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+		PRINTFORML 「...I'm beat, but also very, very happy.」
+		PRINTFORML 「Fufu, hello there, my sweet little child. Ufufu, so what shall be your name?」
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;無自覚
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+		PRINTFORML 「Haa, haa... Nnhh...」
+		PRINTFORML 「Fufu, thank you for making it here, my dear child...」
+		RETURN 1
+	ENDIF
+	;その他
+	PRINTFORML  
+ENDIF
+RETURN 1
+;==================================================
+;オナバレ
+;==================================================
+@M_KOJO_EVENT_K61_26(ARG,ARG:1)
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;見られた瞬間
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「..........Eeehhh?!」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;何もしない
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「W-Wh-Wha-What are you thinking, %MASTERNAME:61%?!?!」
+				PRINTFORML 「Wait, don't you run away you stupid!!!」
+				PRINTFORML 「......Haah... What an idiot...」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Don't you up and make a run for it after just seeing it!!!」
+				PRINTFORML 「...Because that really makes you so... stupid...」
+			ELSEIF 陥落状態() == 2
+				PRINTFORML 「At least come here and fuck me while you're at it, you meanie!!!」
+			ELSEIF 陥落状態() == 1
+				PRINTFORML 「...Wha... Kyaaaaaaaaaahhhh!!!」
+			ELSE
+				PRINTFORML 「Kyaaaaaaaah!!!」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;そのまま続行
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「O-O-Of course I can't do that! You damn pervert!」
+				PRINTFORML 「...Do you really want to see it that much? ...Perv.」
+				PRINTFORML 「%MOAN(,,2)%... N-No, I told you, quit staring sooo hard... %MASTERNAME:61%, you're so stupid...」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「D-Don't ask for such absurd things, you pervert!」
+				PRINTFORML 「...B-But if you... really mean it, then... %MOAN(,,4)%...!」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;追い出し
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			PRINTFORML 「I'll turn you into charcoal if you don't leave this instaaaaantttt!!!」
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 4
+		;やっちゃう
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Uhh... Err, you must be joking, right? Right?」
+				PRINTFORML 「...Well, uhh... I mean, I thought about being taken by you, %MASTERNAME:61%, buuut...」
+				PRINTFORML 「But this is, you know, it's, well... Haah... F-Fine.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「C-C'mon, go away already... H-Hey, what are you up to?」
+				PRINTFORML 「...Well, I mean, one thing leads to another and all that, but still, that's a bit...」
+			ELSE
+				PRINTFORML 「...You pervert, freak, lecher, stupiiiiiddd!!!」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 5
+		;事後
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「My horny little %K61_MASTERNAME("nomy")%... Haa, haahh... You really are... %MOAN()%... one hell of a pervert after all...」
+				PRINTFORML 「It's my fault that I'm so cute, huh... Well, I'm happy that you think I'm cute, but...」
+				PRINTFORML 「%SPLIT_G("I'm not so sure... about that one:I don't think... it justifies what you just did")%... Haah, phew...」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Fuuhh, whew... That's it, I'm tired... You really are... a perv after alllll...」
+				PRINTFORML 「You're even worse than me... Ah, my bad, that was a bit rude...」
+			ELSE
+				PRINTFORML 「Ahh... Hnn... Haaah... Ha... Phew...」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 6
+		;事後お泊り
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「...You lecher, perv, sillyhead... Meanieee...!」
+				PRINTFORML 「You might as well... stay in then, you know.」
+				PRINTFORML 「...It's not like you wouldn't want to *do it* even more, right?」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Haah, haah... Oh, by the way, feel free to stay, if you'd like...」
+				PRINTFORML 「...I'm not quite ready... to let go of you just yet, %CALLNAME:MASTER%...」
+			ENDIF
+		ENDIF
+	ENDSELECT
+ENDIF
+
+;==================================================
+;相手からデートのお誘い
+;==================================================
+@M_KOJO_EVENT_K61_27(ARG,ARG:1)
+;口上主はLOCAL
+;ARG:1は目的地
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;誘い文句
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Oh, %MASTERNAME:61%. Sorry to bother, but wanna go on a date with me?」
+				PRINTFORML 「Fufu, I'm just feeling like going out with %K61_MASTERNAME("my")%.」
+				PRINTFORML 「How about that?」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Oh, %CALLNAME:MASTER%...」
+				PRINTFORML 「Hey, if it's okay with you... Why don't we go out together?」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;受けた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「...Thank goodness, I thought you'd turn me down.」
+				PRINTFORML 「You always act on a whim, so I don't think it's wrong for me to assume you could do that.」
+				PRINTFORML 「Then without further ado, let's move out. Fufu, we're dating, we're finally dating... I'm really looking forward to it.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Fufu, thanks, I appreciate it. Shall we head out then?」
+				PRINTFORML 「...I'm smiling so much just because I'm happy is all.」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;断った
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「...Dang, you really are a jerk sometimes.」
+				PRINTFORML 「Or what, have you gotten tired of me? Or maybe you don't like me anymore?」
+				PRINTFORML 「Though I'm sure it's not the case when it comes to you, %MASTERNAME:61%.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Haah... Well, knowing you, I bet it's simply one of your whims.」
+				PRINTFORML 「Though I must say it sucks to get shut down when I went out of my way to ask you out.」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;部屋に誘われた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Say %MASTERNAME:61%, standing around chatting is good and all, but wanna move our chat over to my place?」
+				PRINTFORML 「I'm not very good when it comes to handling public attention after all.」
+				PRINTFORML 「But I don't mind doing it here if you're against it.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「It's kinda tiresome walking around all the time, so...」
+				PRINTFORML 「Would you like to stop by my home?」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 4
+		;部屋に誘われたのを受けた
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Thank you, %MASTERNAME:61%.」
+				PRINTFORML 「Fufu, now I can finally relax and feel at ease.」
+				PRINTFORML 「You think my smile is kinda eerie? N-Nah, you're just imagining things.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「Okay, let's go then.」
+				PRINTFORML 「Oh and just so you know, the fun starts only after we get to my place.」
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 5
+		;部屋に誘われたのを断った
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			IF 陥落状態() >= 4
+				PRINTFORML 「Oh well, I guess that's fair.」
+				PRINTFORML 「Though I really wanted to get some of that lovey-dovey coddling from you...」
+				PRINTFORML 「Obviously this is not the place for it after all.」
+			ELSEIF 陥落状態() == 3
+				PRINTFORML 「What, you're not tired? Are you okay?」
+				PRINTFORML 「Well if you say so, then it's fine by me.」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;脱衣口上
+;==================================================
+@M_KOJO_EVENT_K61_28(ARG,ARG:1)
+;口上主はTARGET
+;ARGに脱がし方選択
+;ARG:1（ARG=3の場合のみあり）地の文の反応
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	SELECTCASE ARG
+		;-------------------------------------------------
+		CASE 0
+		;全裸にする
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「As always, your body really is \@ TALENT:性別 == 2 ? handsome # beautiful \@ and neat, %MASTERNAME:61%.」
+					PRINTFORML 「...Compared to poor me who's always scrawny and thin.」
+					PRINTFORML 「......But I'm glad if this body of mine is making you happy.」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「Sorry for having such an unappealing body.」
+					PRINTFORML 「But even then you still call it lovely, that's so much like you, %CALLNAME:MASTER%.」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「...Yeah, like I figured, having someone see me like this is kinda awkward. I mean, with me being so thin and all...」
+				ELSEIF 陥落状態() == 1
+					PRINTFORML 「.......Well, are you pleased now, seeing such a poorly developed body?」
+				ELSE
+					PRINTFORML 「.........Haahhh...」
+				ENDIF
+				PRINTFORMW
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 1
+		;下着姿にする
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「Umm, so you want me to keep my bra while baring my bottom, that's... kinda embarrassing.」
+					PRINTFORML 「...So just because my %FSYN("chest:norm:non")% are tiny, you'd rather see my pussy instead, is that how it is?」
+					PRINTFORML 「If I'm wrong, then why would you do something like this...」
+				ELSEIF 陥落状態() == 3
+					;not sure about the second half, you can kinda interpret it in many other ways
+					PRINTFORML 「...Well, I'm not really sure about my chest, so maybe that's indeed the case...」
+					PRINTFORML 「...But you know, leaving my bra on while ditching my underwear makes it seem very much perverted.」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「So you'd rather enjoy yourself with this than my tiny chest? That's so lecherous of you.」
+				ELSE
+					PRINTFORML 「...Pervert.」
+				ENDIF
+				PRINTFORMW
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 2
+		;半脱ぎ
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			;時間停止時
+			IF FLAG:70
+			;通常
+			ELSE
+				IF 陥落状態() >= 4
+					PRINTFORML 「...Do you really want to see my %FSYN("chest:norm:non")% that badly?」
+					PRINTFORML 「I don't really think they're all that great, so I'm not really a fan of this.」
+					PRINTFORML 「And besides, I have a feeling it's making me seem like a total perv.」
+				ELSEIF 陥落状態() == 3
+					PRINTFORML 「Are you fine with me leaving my shirt on?」
+					PRINTFORML 「...You never change, do you? Once a pervert always a pervert.」
+					PRINTFORML 「Though I guess same goes for me too, mostly.」
+				ELSEIF 陥落状態() == 2
+					PRINTFORML 「Fufu, I can't believe you'd be satisfied with this kind of attire, you truly are a weirdo.」
+				ELSE
+					PRINTFORML 「...Are you daft?」
+				ENDIF
+				PRINTFORMW
+			ENDIF
+			RETURN 1
+		ENDIF
+		;-------------------------------------------------
+		CASE 3
+		;パンツちょうだい
+		;記入チェック（=0, 非表示、1, 表示）
+		LOCAL:1 = 1
+		;-------------------------------------------------
+		IF LOCAL:1
+			SELECTCASE ARG:1
+				;-------------------------------------------------
+				CASE 0
+				;交換です
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 1
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 1
+				;OK（嬉々
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 1
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 2
+				;OK（渋々
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 1
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				;-------------------------------------------------
+				CASE 3
+				;嫌です
+				;記入チェック（=0, 非表示、1, 表示）
+				LOCAL:1 = 1
+				;-------------------------------------------------
+				IF LOCAL:1
+					RETURN 1
+				ENDIF
+				RETURN 1
+			ENDSELECT
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;==================================================
+;怒り口上
+;==================================================
+@M_KOJO_EVENT_K61_29(ARG,ARG:1)
+;口上主はTARGET
+;ARGはTARGETの度胸で分岐
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;怒らせてしまった
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;泣かせてしまった　[臆病]持ち
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;相手が押し倒しを解除
+;==================================================
+@M_KOJO_EVENT_K61_30(ARG,ARG:1)
+;口上主はTARGET
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+
+IF LOCAL
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 1
+	;疲れた
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 2
+	;満足して解放
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 3
+	;満足したところを押し倒された
+		PRINTFORML
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 4
+	;壊れるまでしてあげる
+		PRINTFORML
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+
+;==================================================
+;一日の終了時(AFTERTRAニーの前)、面識がなければ呼び出されない
+;==================================================
+@M_KOJO_EVENT_K61_31(ARG,ARG:1)
+;口上主はTARGET
+;ARGは会ってない日数
+;何日以上会ってなかったら愚痴を言うとかできます
+;CFLAG:オナバレで分岐入れてもよさそう
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;今日会っていない
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;今日会っている
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARG == 0
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレ遭遇時の地の文をデフォルトのものから変更したい場合用。
+;その場合は上下のSKIPSTART~SKIPENDを外してください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_ONABARE_1(ARG)
+;-------------------------------------------------
+:口上色を付けるならコメントアウトを外しXをキャラ番号に
+;CALL M_KOJO_COLOR_K61
+
+IF ARG
+	PRINTFORML A弄ってる場合
+ELSE
+	PRINTFORML V弄ってる場合
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレでそのまま続けてもらう場合の地の文をデフォルトのものから変更したい場合用。
+;その場合は上下のSKIPSTART~SKIPENDを外してください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_ONABARE_2(ARG)
+;-------------------------------------------------
+:口上色を付けるならコメントアウトを外しXをキャラ番号に
+;CALL M_KOJO_COLOR_K61
+
+IF ARG
+	PRINTFORML A弄ってる場合
+ELSE
+	PRINTFORML V弄ってる場合
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+[SKIPSTART]
+;-------------------------------------------------
+;オナバレなし崩しックスの地の文をデフォルトのものから変更したい場合用。
+;その場合は上下のSKIPSTART~SKIPENDを外してください。
+;CFLAG等のキャラ変数を使う場合、キャラ番号の指定が必要になります。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_ONABARE_3(前戯１,本番はどっちか,回数,注入量)
+;-------------------------------------------------
+#DIM 前戯１
+;1=C 2=B 3=M
+#DIM 本番はどっちか
+;0でＶ、1でＡ
+#DIM 注入量
+#DIM 回数
+
+:口上色を付けるならコメントアウトを外しXをキャラ番号に
+;CALL M_KOJO_COLOR_K61
+
+SELECTCASE 前戯１
+	CASE 1
+		PRINTFORML Ｃ責め
+	CASE 2
+		PRINTFORML Ｂ責め
+	CASE 3
+		PRINTFORML Ｍ責め
+ENDSELECT
+
+IF 本番はどっちか
+	PRINTFORML Aで本番
+ELSE
+	PRINTFORML Vで本番
+ENDIF
+;-------------------------------------------------
+[SKIPEND]
+
+
+;-------------------------------------------------
+;処女・無自覚非処女に挿入する直前の口上
+;RETURN 1するとコマンドをキャンセルします
+;RETURN 0なら通します
+;CFLAG:破瓜キャンセル口上有がオンになってないと読み込まれないので注意
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_LOST_VIRGIN_STOP
+;-------------------------------------------------
+PRINTFORML 
+RETURN 1
+
+;-------------------------------------------------
+;CFLAG:口上内抱き寄せ判定_初回がオンになっている場合のみ有効。
+;初めて押し倒した時、ここでRETURN -1すると押し倒しを強制的にキャンセルします。
+;RETURN 0なら通常の判定を行い、RETURN 1すると無条件に成功させます。
+;特定のイベント（デート帰りキスなど）を見るまでうふふできないようにしたいときなどにどうぞ。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_PERMISSION_1
+;-------------------------------------------------
+PRINTFORML 
+;RETURN -1
+RETURN 0
+;RETURN 1
+;-------------------------------------------------
+
+
+;-------------------------------------------------
+;CFLAG:口上内抱き寄せ判定_通常がオンになっている場合のみ有効。
+;合意付きで押し倒した時、ここでRETURN -1すると押し倒しを強制的にキャンセルします。
+;RETURN 0なら通常通り成功させます。
+;合意があっても何らかの理由でうふふできないようにしたいときなどにどうぞ。
+;-------------------------------------------------
+@M_KOJO_EVENT_K61_PERMISSION_2
+;-------------------------------------------------
+PRINTFORML 
+RETURN 0
+;RETURN -1
+;-------------------------------------------------

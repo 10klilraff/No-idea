@@ -1,0 +1,46 @@
+﻿;-------------------------------------------------
+;ゴム装着
+;道具使用コマンド、レベル2
+;-------------------------------------------------
+@COM50
+;com custom code, remove favor processing to prevent favor farm exploit
+TFLAG:102 = 0
+CALL Com_Put_On_Condom ;com custom code
+RETURN RESULT
+;着脱の処理
+IF !TEQUIP:PLAYER:コンドーム
+	ITEM:45 -= 1
+	TEQUIP:PLAYER:コンドーム = 1
+	PRINTFORML %PARSE("You put")% on a condom.
+	PRINTFORMW {ITEM:45} left.
+ELSE
+	TEQUIP:PLAYER:コンドーム = 0
+	PRINTFORMW %PARSE("You take")% off the condom.
+ENDIF
+;-------------------------------------------------
+;COM別FLAGの設定
+;-------------------------------------------------
+;行為者
+TCVAR:116 = PLAYER
+
+RETURN 0
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE50
+;ゴム装着
+SIF !TFLAG:100
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(50)
+	RETURN RESULT
+;解除はいつでも可能
+SIF TEQUIP:PLAYER:コンドーム || TEQUIP:コンドーム ;com custom code
+	RETURN 1
+;Custom code - tweaked so that debug flag would affect this properly
+SIF !ITEM:45 && NOITEM == 0
+	RETURN 0
+SIF !(TALENT:PLAYER:2 & 2) && !HAS_PENIS(TARGET) ;com custom code
+	RETURN 0
+RETURN 1

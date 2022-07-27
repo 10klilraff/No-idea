@@ -1,0 +1,764 @@
+﻿@K97_IDIOT_SOFT, ARG, ARGS
+#FUNCTIONS
+LOCALS '= SPLIT_G("silly:dummy")
+SIF ARG
+	LOCALS '= CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+@K97_IDIOT, ARG, ARGS
+#FUNCTIONS
+LOCALS '= SPLIT_G("idiot:dork:jerk:doofus:weirdo:stupid:fool:dolt")
+SIF ARG
+	LOCALS '= CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+@K97_IDIOT_RUDE, ARG, ARGS
+#FUNCTIONS
+LOCALS '= SPLIT_G("asshole:dumbass:retard:moron:blockhead:dolt:jackass:asshat:jerkoff:cretin:dipshit")
+SIF ARG
+	LOCALS '= CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+@K97_PERV, ARG, ARGS
+#FUNCTIONS
+LOCALS '= SPLIT_G("perv:letch:sleeze:creep")
+SIF ARG
+	LOCALS '= CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+@K97_WHATEV, ARG, ARGS
+#FUNCTIONS
+LOCALS '= SPLIT_G("do what you want:suit yourself:go for it:have it your way:do as you like:do whatever you please:do what you must:knock yourself out")
+IF RAND:2
+	LOCALS:1 '= SPLIT_G("well:just:go ahead:by all means:go on:whatever:I don't care:fine then:sure")
+	;exception
+	SIF LOCALS:1 != "just" && !RAND:5
+		LOCALS '= SPLIT_G("if that's what you want:whatever floats your boat:if you want")
+	
+	LOCALS '= LOCALS:1 + ( LOCALS:1 == "just" || !RAND:3 ? "... " # ", " ) + LOCALS
+ELSEIF !RAND:3
+	LOCALS = do whatever, the world is your oyster
+ENDIF
+SIF ARG
+	LOCALS '= CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+@K97_STOP, ARG
+#FUNCTIONS
+LOCALS '= SPLIT_G("stop it:quit it:cut it out:will you stop:give it a rest:gimme a break")
+SIF ARG
+	LOCALS '= CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+@K97_WHAT, ARG
+#FUNCTIONS
+LOCALS '= SPLIT_G("what's going on:what's up:what's wrong:you need something:whaddya want:is something up:what is it:what's the matter:what's this about:what's the big idea")
+SIF ARG
+	LOCALS '= CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+@K97_PANTY, ARG
+#FUNCTIONS
+LOCALS '= "panty " + SPLIT_G("thief:robber:snatcher:pilferer")
+SIF ARG
+	LOCALS '= CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+@K97_DUDE, ARG
+#FUNCTIONS
+LOCALS '= SPLIT_G("man:chief")
+SIF IS_MALE(MASTER) && !RAND:3
+	LOCALS = dude
+SIF IS_CHILD(MASTER)
+	LOCALS = kid
+SIF ( CFLAG:1302 && !RAND:3 ) ;pantystealer
+	LOCALS = chump
+SIF CFLAG:1304 == 1 && TALENT:恋人
+	LOCALS = pal
+SIF ARG
+	LOCALS '= CAPITALIZE(LOCALS)
+RETURNF LOCALS
+
+;for quick call
+@K97_SEX_VOICE(ARGS)
+IF TALENT:恋慕
+	IF ABL:Ｖ感覚 >= 3
+		SELECTCASE RAND:5
+			CASE 0 TO 3
+				CALL SEX_VOICEK97_01(ARGS)
+			CASE 4
+				CALL SEX_VOICEK97_00(ARGS)
+		ENDSELECT
+	;Ｖ感Lv3未満
+	ELSE
+		CALL SEX_VOICEK97_01(ARGS)
+	ENDIF
+ELSE
+	IF ABL:Ｖ感覚 >= 3
+		CALL SEX_VOICEK97_02(ARGS)
+	;Ｖ感Lv3未満
+	ELSE
+		CALL SEX_VOICEK97_03(ARGS)
+	ENDIF
+ENDIF
+
+;anal
+@K97_SEX_VOICE_A(ARGS)
+IF TALENT:恋慕
+	;Ａ感Lv3以上
+	IF ABL:Ａ感覚 >= 3
+		CALL SEX_VOICEK97_04(ARGS)
+	;Ａ感Lv3未満
+	ELSE
+		CALL SEX_VOICEK97_05(ARGS)
+	ENDIF
+;それ以外
+ELSE
+	;Ａ感Lv3以上
+	IF ABL:Ａ感覚 >= 3
+		CALL SEX_VOICEK97_05(ARGS)
+	;Ａ感Lv3未満
+	ELSE
+		CALL SEX_VOICEK97_05(ARGS)
+	ENDIF
+ENDIF
+	
+;-------------------------------------------------
+;セックス系汎用喘ぎ声(恋慕or服従 + Ｖ感覚Lv3以上)　SEX_VOICEK97の97部分をキャラ番号へ置換する
+;-------------------------------------------------
+@SEX_VOICEK97_00(ARGS)
+
+CALL PRINT_DIALOGUE, @"%MOAN("m:h",, RAND(3,8), @"name:charname_%CALLNAME:MASTER%_%SLUR("Cumming", -3)%_Let it out inside_Cum, cum_So good_Oh yeah_I love it_Deeper_Make me cum_Inside... Do it inside_%SLUR("More", -2)%_So deep_Shove it deeper_Yes please_Stronger_Faster_Fuck me more_I love... you_Gimme more_Your thing... is amazing_Feels so good_%CAPITALIZE(FSYN("stir"))% my %FSYN("vagina")%_Amazing_Keep going_Oh fuck" + (STRLENS(ARGS) ? "_" + ARGS # ""))%...!!!", "l"
+
+RETURN
+;-------------------------------------------------
+;セックス系汎用喘ぎ声(恋慕or服従)
+;-------------------------------------------------
+@SEX_VOICEK97_01(ARGS)
+
+CALL PRINT_DIALOGUE, @"%MOAN("l:m",, RAND(3,6), @"name:charname_Deeper_Fuck me more_Don't hold back_Feels so good_I love %PRINT_HASPENIS("your dick:you being inside me", MASTER)%_Don't you dare... pull out_Make me cum_Oh yeah_Inside_%SLUR("More", -2)%_Gimme more_Give it to me_Use me_Fuck yeah" + (STRLENS(ARGS) ? "_" + ARGS # ""))%...!", "l"
+
+RETURN
+;-------------------------------------------------
+;セックス系汎用喘ぎ声(Ｖ感覚Lv3以上)
+;-------------------------------------------------
+@SEX_VOICEK97_02(ARGS)
+
+CALL PRINT_DIALOGUE, @"%MOAN("l:m",, RAND(2,6), @"name:charname_That feels great_Very good_Awesome_Right there_That spot_Nice_You're doing good_Inside_That... is gonna make me cum_%SLUR("More", -2)%_Thrust it deeper_Do me more_Gonna cuuuummmm_My %FSYN("vagina")%... feels so good_Don't stop moving_This feels kinda nice" + (STRLENS(ARGS) ? "_" + ARGS # ""))%...!", "l"
+
+RETURN
+;-------------------------------------------------
+;セックス系汎用喘ぎ声
+;-------------------------------------------------
+@SEX_VOICEK97_03(ARGS)
+
+CALL PRINT_DIALOGUE, @"%MOAN("l",, RAND(2,4), @"name:charname_That's_You little_%GROAN()%_I feel it... in my %FSYN("vagina")%_Your %FSYN("penis")%... is so hard_I can't stop... my voice_My hips... keep moving_That spot_That place_It's making me feel it_Since when it feels so good_Sex is kinda... alright_Aagh_%FSYN("hii")%" + (STRLENS(ARGS) ? "_" + ARGS # ""))%...", "l"
+
+RETURN
+
+;-------------------------------------------------
+;セックス系汎用喘ぎ声(アナル用)
+;-------------------------------------------------
+@SEX_VOICEK97_04(ARGS)
+
+CALL PRINT_DIALOGUE, @"%MOAN("l:m",, RAND(3,4), @"name:charname_So deep_My %FSYN("ass")%... is gonna make me cum_It feels good... in my %FSYN("ass")%_To think... it'd feel good here_My %FSYN("ass")%... so good_Why is this so good_I actually... kinda like it_I didn't ask you... to stop yet_This is kinda... nice" + (STRLENS(ARGS) ? "_" + ARGS # ""))%...!", "l"
+
+RETURN
+
+;-------------------------------------------------
+;セックス系汎用喘ぎ声(アナル用Ａ感Lv3未満)
+;-------------------------------------------------
+@SEX_VOICEK97_05(ARGS)
+
+CALL PRINT_DIALOGUE, @"%MOAN("l",, RAND(3,6), @"name:charname_Guahh_Ghaa_Gahh_That's_You little_Where are you sticking it_Quit bullying my %SLUR(FSYN("ass"), -2)%..._%SLUR("Fuck", -2)%_%SLUR(GROAN(), -2)%_That place_This is_My %FSYN("ass")%, really_Actually doing it in my %FSYN("ass")%_It's so deep... in my %FSYN("ass")%_My %FSYN("ass")%'s gonna break_My %FSYN("ass")%_I poop from there_Noooo_Not like this_%GROAN(,,RAND(3,8))%_%GROAN(,,RAND(3,8))%_%FSYN("hii")%_The anus is not a sex organ, y'know" + (STRLENS(ARGS) ? "_" + ARGS # ""))%...", "l"
+
+@K97_DEFLOWER()
+PRINTFORMW 「Yeah, I'm ready... I'll be in your... care.」
+PRINTFORMW 「Actually, it's not something I enjoy, but...」
+PRINTFORMW 「If it's with you, then maybe...」
+PRINTFORMDW Seija says before getting into the position and entrusting her body to you.
+PRINTFORMDW You nod as you press your tip against her slit and slowly push it inside...
+
+@K97_DEFLOWER_A()
+PRINTFORMW 「...Nghh...」
+PRINTFORMW 「Whoa-whoa-whoa, wait...! Come on now, my ass is obviously off-limits--... %GROAN()%?!」
+PRINTFORMDW Seija gets really quiet after you bottom out inside her ass.
+
+@K97_HOLIDAYS_NOTE
+LOCAL = LINECOUNT
+
+;謹賀新年
+IF DAY:2 == 1 && DAY:3 == 1 && DAY:0 != 1
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「%CALLNAME:MASTER%, well done making it through. Grats.」
+		PRINTFORMW 「Now then, what to do this year...」
+		PRINTFORMDW Seija says, wishing you a happy new year.
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Have a wonderful new year, %CALLNAME:MASTER%.」
+		PRINTFORMW 「So you're still stuck with me for the rest of the year... Too bad, eh? You'll never be going back to single life again.」
+		PRINTFORMDW Seija smirks smugly at you as she wishes you a happy new year.
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Have a Happy New Year, %CALLNAME:MASTER%!」
+		PRINTFORMDW Seija says, wishing you a happy new year.
+		PRINTFORMW 「See ya around this year. I hope we'll have good fortune ahead.」
+		PRINTFORMDW She continues, smiling somewhat.
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「...Yo.」
+		PRINTFORMW 「Happy... New Year, yeah.」
+		PRINTFORMDW Seija wishes you a happy new year, sounding a little shy.
+	ELSEIF CFLAG:1302 == 1
+		PRINTFORMW 「Yeah... Happy New Year to you too.」
+		PRINTFORMDW Seija says, wishing you a happy new year.
+		PRINTFORMW 「...Do you still insist on scavenging for underwear this year?」
+		PRINTFORMDW That's quite a thing to say...
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「...Congrats on the new year.」
+		PRINTFORMDW Seija wishes you a happy new year.
+		PRINTFORMW 「And, well, err... I look forward to our time together this year... Yeah.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Oh, that's right... Happy New Year.」
+		PRINTFORMDW Seija wishes you a happy new year.
+	ELSE
+		PRINTFORMW 「Hey, Happy New Year!」
+		PRINTFORMDW Seija wishes you a happy new year briefly.
+		PRINTFORMW 「...Uhh, good luck this year.」
+	ENDIF
+;バレンタインデー
+ELSEIF DAY:2 == 4 && DAY:3 == 14 && CFLAG:2 >= 1000
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「%CALLNAME:MASTER%... Guess it's Valentine's Day, so y'know.」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Oh yeah... %CALLNAME:MASTER%, it's Valentine's Day, right?」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Speaking of which, %CALLNAME:MASTER%...」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「%CALLNAME:MASTER%, um... Well, y'know...」
+	ELSEIF CFLAG:1302 == 1 && CFLAG:2 >= 1000
+		PRINTFORMW 「Whoa?! Err, I mean, there you are. On that subject...」
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「...Oh yeah, so today's Valentine apparently.」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Oh, %SPLIT_G("look who's here:it's you:familiar faces")%.」
+	ELSEIF CFLAG:2 >= 1000
+		PRINTFORMW 「Yo, %SPLIT_G("what's up:how's it going:doin' well")%?」
+	ENDIF
+
+	SELECTCASE CFLAG:好感度
+	CASE 1000 TO 3000
+		IF CFLAG:1302 == 1 && CFLAG:2 >= 1000
+			PRINTFORMW 「Here, your chocolate.」
+			PRINTFORMDW Seija says, offering you a simple store-bought chocolate.
+			PRINTFORMW 「...Or would you have preferred underwear instead?」
+			PRINTFORMDW Seija blurts out a sarcastic remark as she walks away.
+		ELSEIF CFLAG:2 >= 1000
+			PRINTFORMW 「You want this? I bought too many.」
+			PRINTFORMW 「I'm gonna pass on it, so go ahead and take it if you want.」
+			PRINTFORMDW Seija hands you a simple store-bought chocolate.
+			PRINTFORMW 「I don't really have a taste for scraps, y'know.」
+		ENDIF
+	CASE 3001 TO 5000
+		IF CFLAG:1304 == 1 && TALENT:恋人
+			PRINTFORMW 「There, some chocolate from yours truly.」
+			PRINTFORMW 「Accept it gratefully, will ya?」
+			PRINTFORMDW With that, Seija hands you a chocolate.
+		ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+			PRINTFORMW 「Here ya go.」
+			PRINTFORMW 「It's not like you're gonna get that from anyone else anyway, are you? But don't worry. I'll take pity on you.」
+			PRINTFORMDW Seija says, handing you a chocolate.
+		ELSEIF TALENT:恋人
+			PRINTFORMDW Seija gives you a chocolate.
+			PRINTFORMW 「Relax, it's not poisoned.」
+			PRINTFORMDW She says, smiling somewhat suggestively all the while for some reason.
+		ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+			PRINTFORMW 「Feel free to throw it away if you don't want it, but, y'know...」
+			PRINTFORMW 「Agh, whatever! Here, I'll just give it away!」
+			PRINTFORMDW Seija looks away in a huff as she hands you the chocolate.
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「There you go, here's your chocolate.」
+			PRINTFORMDW Seija says, offering you a chocolate.
+		ELSEIF CFLAG:1302 == 1 && CFLAG:2 >= 1000
+			PRINTFORMW 「Here's some chocolate.」
+			PRINTFORMDW With that, Seija hands you a chocolate.
+			PRINTFORMW 「Ain't that just so much better than some pair of girl's panties? Hey, don't dump it though.」
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「Here... Take it.」
+			PRINTFORMDW Seija says, handing you a chocolate.
+			PRINTFORMW 「...I've got a surplus, is all. It's not like you're gonna be given this otherwise anyway.」
+		ELSEIF CFLAG:2 >= 1000
+			PRINTFORMW 「Here, you can have this.」
+			PRINTFORMDW Seija says, handing you a chocolate.
+			PRINTFORMW 「Be thankful and enjoy it.」
+		ENDIF
+	CASE IS > 5000
+		IF EXP:愛情経験 >= 100
+			IF CFLAG:1304 == 1 && TALENT:恋人
+				PRINTFORMW 「There ya go, pal. My specially made homemade chocolate.」
+				PRINTFORMW 「Chew on it and savor it like your life depends on it.」
+				PRINTFORMDW Seija then passes you a piece of chocolate.
+			ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+				PRINTFORMW 「%CALLNAME:MASTER%, how about some chocolate? Here, please have it.」
+				PRINTFORMW 「I made it myself, yup. What about it? I just wanna make sure no other chocolate will ever be as good for you again.」
+				PRINTFORMDW Seija says, handing you a chocolate.
+			ELSEIF TALENT:恋人
+				PRINTFORMW 「Alright, here. Dunno if you're into sweets, but I thought you should have it.」
+				PRINTFORMDW Seija says and presents you the chocolate.
+				PRINTFORMW 「Oh, and, uhh... Just so you know, I made it myself. Feel free to dump it if it's not good, but if you eat it still...
+				PRINTFORMW 　That'd make me very happy.」
+			ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+				PRINTFORMW 「Here, uh, chocolate...」
+				PRINTFORMW 「...I didn't make it just for you, though! I did it out of pity, cuz I knew you wouldn't get one anyway!」
+				PRINTFORMDW Seija makes a fuss as she lets you have her chocolate.
+			ELSEIF TALENT:恋慕
+				PRINTFORMW 「Here, have some chocolate. Treat yourself.」
+				PRINTFORMDW Seija says, handing you a chocolate.
+				PRINTFORMW 「Too bad it's all homemade by me. Be grateful even if it tastes bad.」
+			ELSEIF CFLAG:1302 == 1 && CFLAG:2 >= 1000
+				PRINTFORMW 「I made you some chocolate, %K97_DUDE()%.」
+				PRINTFORMDW Seija lets you have a chocolate after saying this.
+				PRINTFORMW 「...Or would you rather have my panties instead?」
+				PRINTFORMDW She says with a sly grin on her face...
+			ELSEIF TALENT:思慕
+				PRINTFORMW 「Chocolate, here. Help yourself.」
+				PRINTFORMDW Seija hands you a chocolate as she says it.
+				PRINTFORMW 「I'd feel sorry for you if you didn't get even a single one of these. Though on that note it was hand-made by me, alas. Double bad luck for ya.」
+			ELSEIF CFLAG:2 >= 1000
+				PRINTFORMW 「I got a present for you, %K97_DUDE()%. Accept it.」
+				PRINTFORMDW With that, Seija hands you a chocolate.
+				PRINTFORMW 「I made it myself, but I can't vouch for the taste.」
+			ENDIF
+		ELSE
+			IF CFLAG:1304 == 1 && TALENT:恋人
+				PRINTFORMW 「Your chocolate.」
+				PRINTFORMW 「Savor it well, my friend.」
+				PRINTFORMDW Seija passes you a piece of chocolate.
+			ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+				PRINTFORMW 「%CALLNAME:MASTER%, want chocolate? Take it.」
+				PRINTFORMW 「It's so good you won't ever have anything else after eating it. Pity, really.」
+				PRINTFORMDW Seija says, handing you a chocolate.
+			ELSEIF TALENT:恋人
+				PRINTFORMW 「Lemme give you some chocolate, here.」
+				PRINTFORMDW Seija says and presents you the chocolate.
+				PRINTFORMW 「...Well, I'd appreciate it if you'd eat it.」
+			ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+				PRINTFORMW 「Here's chocolate, take it.」
+				PRINTFORMW 「It shouldn't taste too bad... I hope.」
+				PRINTFORMDW Seija timidly offers you the chocolate.
+			ELSEIF TALENT:恋慕
+				PRINTFORMW 「So, uh... Here, I'm just gonna give you this...」
+				PRINTFORMDW Seija says, handing you a chocolate.
+				PRINTFORMW 「But it's not like I did it specifically for you, don't get me wrong!」
+			ELSEIF CFLAG:1302 == 1 && CFLAG:2 >= 1000
+				PRINTFORMW 「Let's see... Here you go. Obviously you can't expect me to hand over my panties or whatever.」
+				PRINTFORMDW Seija lets you have a chocolate after saying this.
+				PRINTFORMW 「...In case you don't want it, you can just throw it away.」
+			ELSEIF TALENT:思慕
+				PRINTFORMW 「You like chocolate?」
+				PRINTFORMDW Seija hands you a chocolate as she says it.
+				PRINTFORMW 「...Well, err... I just got some left over, so you can have it.」
+			ELSEIF CFLAG:2 >= 1000
+				PRINTFORMW 「Hey, want some chocolate?」
+				PRINTFORMDW With that, Seija hands you a chocolate.
+				PRINTFORMW 「I don't want it, so... You can have it.」
+			ENDIF
+		ENDIF
+	ENDSELECT
+	
+	;added
+	LOCAL:1 = 0
+	FOR LOCAL, 1, CHARANUM-1
+		IF TALENT:LOCAL:恋人
+			LOCAL:1 = 1
+			BREAK
+		ENDIF
+	NEXT
+	IF !LOCAL:1
+		PRINTFORML
+		PRINTFORMW 「What's that, you actually home alone on Valentine's Day?」
+		PRINTFORMW 「God, you're pathetic.」
+		PRINTFORMW 「Well, cheer up, at least I'm here for ya.」
+		PRINTFORMW 「You better be grateful that I'm so generous today.」
+	ENDIF
+	IF TALENT:恋慕 && IS_MALE(MASTER) && FIRSTTIME("SeijaValentine")
+		PRINTFORML
+		PRINTFORMW 「By the way, men have to give back threefold on White Day next month.」
+		PRINTFORMW 「...I'll accept no less than triple the length AND girth, you hear?」
+		PRINTFORMW 「There you have it, I'll be looking forward to it. %DIVIDER(CALLNAME:MASTER)%～...」
+	ENDIF
+ELSEIF DAY:2 == 1 && DAY:3 == 14 && !FIRSTTIME("SeijaValentine", 1) && FIRSTTIME("SeijaValentine2") ;white day, payback
+	PRINTFORMDW You gift Seija a big heart-shaped white chocolate you spent all morning making.
+	PRINTFORMW 「Wha-- For me?」
+	PRINTFORMDW Seija asks, clearly flustered somewhat, probably because she's unused to receiving gifts.
+	PRINTFORMW 「Gee, thanks, %K97_DUDE()%. So you remembered what I told you that other time, huh?」
+	PRINTFORMW 「I didn't expect you to, I thought you'd forget. I know you're returning the favor, but...」
+	PRINTFORMDW She takes the chocolate, blushing a bit, but then her expression darkens.
+	PRINTFORMDW Without saying a word, Seija breaks the chocolate heart in half, making you gasp.
+	PRINTFORMDW ...
+	PRINTFORMW 「Here, your half. What? Did I spook ya? You should've seen the look on your face, heh.」
+	PRINTFORMDW "Yum," Seija says, proceeding to eat the chocolate without any fuss.
+	PRINTFORMDW Then, she looks down at the chocolate with a serious expression.
+	PRINTFORMW 「Hmph... It's pretty delicious. Like, seriously. Did you make it yourself? Just for me?」
+	PRINTFORMW 「...Thanks. I'll treasure this... moment.」
+	PRINTFORMDW Seija stammers before placing a quick peck on your cheek. She certainly liked it a lot...
+;ハロウィン
+ELSEIF DAY:2 == 3 && DAY:3 == 30
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「So today's Halloween, %CALLNAME:MASTER%.」
+		PRINTFORMW 「Well then, shall we pull a prank or two?」
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「Trick or treat!」
+		PRINTFORMW 「Come on, can't you get into the mood, %CALLNAME:MASTER%?」
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Yo, %CALLNAME:MASTER%.」
+		PRINTFORMDW Seija smiles at you as she comes over.
+		PRINTFORMW 「Today's a wonderful day for pranks! Trick or treat!」
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「Heey, c'mon, gimme some sweets, %CALLNAME:MASTER%.」
+		PRINTFORMW 「It's Halloween today, remember?」
+		PRINTFORMDW Seija says, smiling at you mischievously.
+	ELSEIF CFLAG:1302 == 1
+		PRINTFORMW 「Trick or treat!」
+		PRINTFORMDW Seija says, starting a conversation.
+		PRINTFORMW 「...Ohh right right, you're the prankster here. I barely got any reaction out of this after all.」
+		PRINTFORMDW Looks like at this point you're nothing but an underwear thief for her.
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「...Trick or treat!」
+		PRINTFORMDW Seija says before greeting you and coming over to talk.
+		PRINTFORMW 「Well, it doesn't have to be candy if ya catch my drift...」
+		PRINTFORMDW With that, she steals some suggestive glances at you.
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「...Trick or treat.」
+		PRINTFORMDW Seija whispers from behind, making your hair stand on end.
+		PRINTFORMW 「Today's Halloween, y'know. Gotta stay alert, %K97_DUDE()%.」
+		PRINTFORMDW You wonder if there's anything you can do to keep your guard up at all... 
+	ELSE
+		PRINTFORMW 「Trick or treat!」
+		PRINTFORMDW Seija jumps at you all of a sudden, giving you a scare.
+		PRINTFORMW 「Gimme some candy or Imma play a trick on ya!」
+	ENDIF
+;8歳と9歳と10歳と！12歳と13歳の時も！僕はずっと！待ってた！
+ELSEIF DAY:2 == 4 && DAY:3 == 25
+	IF CFLAG:1304 == 1 && TALENT:恋人
+		PRINTFORMW 「Oh speaking of which, today's Christmas, %CALLNAME:MASTER%.」
+		PRINTFORMW 「I'm quite indebted to you as you may know. Is there anything you want? Ask away.」
+		PRINTFORMDW Seija beams a smile as she comes over to chat.
+	ELSEIF CFLAG:1306 == 1 && TALENT:恋人
+		PRINTFORMW 「...%CALLNAME:MASTER%.」
+		PRINTFORMW 「So today's Christmas, and, well...」
+		PRINTFORMDW Seija looks at you with a complicated look on her face.
+	ELSEIF TALENT:恋人
+		PRINTFORMW 「Yo, sup %CALLNAME:MASTER%.」
+		PRINTFORMDW Seija greets you and comes over.
+		PRINTFORMW 「It's Christmas today for the world around us, it seems. Are you doing something today?」
+		PRINTFORMDW She says, asking you about your schedule.
+	ELSEIF CFLAG:1307 == 1 && TALENT:恋慕
+		PRINTFORMW 「You know what day it is today?」
+		PRINTFORMW 「It's Christmas, apparently. The world around us is celebrating.」
+		PRINTFORMW 「So, I'm sure you have plans for that, hm?」
+	ELSEIF CFLAG:1302 == 1
+		PRINTFORMW 「Oh yeah... It's Christmas today, eh?」
+		PRINTFORMDW Seija notes before coming over to speak with you.
+		PRINTFORMW 「...Hey, uhh, do you happen to be Santa Claus?」
+		PRINTFORMDW She says with a carefree smile on her face, but she's clearly thinking of you as a thief.
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 「...Yo, happy Christmas %K97_DUDE()%.」
+		PRINTFORMDW Seija speaks to you.
+		PRINTFORMW 「Do you have any plans... for today?」
+	ELSEIF TALENT:思慕
+		PRINTFORMW 「Oh... It's you again.」
+		PRINTFORMDW Seija sighs as she comes to speak with you.
+		PRINTFORMW 「...So today's Christmas, huh.」
+		PRINTFORMW 「You got plans or something?」
+	ELSE
+		PRINTFORMW 「Heya. It's Christmas today.」
+		PRINTFORMDW Seija speaks to you.
+		PRINTFORMW 「...Sadly I'm not the rumored Santa Claus or some other thief who's been known to sneak into your bedroom though.」
+	ENDIF
+	
+	;added
+	LOCAL:1 = 0
+	FOR LOCAL, 1, CHARANUM-1
+		IF TALENT:LOCAL:恋人
+			LOCAL:1 = 1
+			BREAK
+		ENDIF
+	NEXT
+	IF !LOCAL:1
+		PRINTFORML
+		PRINTFORMW 「I bet you were gonna spend Christmas alone again this year, weren'tcha?」
+		PRINTFORMW 「But tooooo bad! Seija-sama's here!」
+		PRINTFORMW 「As long as I'm around, your ass won't get another quiet Christmas night anytime soon!」
+	ENDIF
+ENDIF
+;if something was printed, let the other side know
+SIF LOCAL != LINECOUNT
+	RETURN 1
+	
+;clear trailing flags/etc
+@EVENTEND
+#LATER
+
+IF TALENT:97:恋慕 && FIRSTTIME("SeijaHideOutNote", 0, 97)
+	PRINTFORML
+	PRINTFORML
+	PRINTFORMDW As you prepare to fall asleep, you hear a strange noise outside and decide to check it out.
+	PRINTFORMDW Looking around, you find a letter from Seija!
+	CALL M_KOJO_COLOR_K97
+	
+	PRINTFORMW Dear %CALLNAME:MASTER%,
+	
+	PRINTFORMW First off I wanted to apologize for not being able to do this in person.
+	PRINTFORMW I'm still not feeling quite well for the time being. Don't worry though, I'll be fine.
+	PRINTFORMW Anyways, I decided that I'm gonna give you the map to my place.
+	PRINTFORMW There's no way you can get there unless you follow the instructions.
+	PRINTFORMDW You see a complicated map with all sorts of arrows and tips, how to avoid traps and so on...
+	PRINTFORMDW Which seems to be located on the Youkai Mountain Foot!
+	PRINTFORML
+	CALL COLORMESSAGE("Received Seija's hideout directions!",C_YELLOW,2,1)
+	CALL COLORMESSAGE("You can now reach her home place!",C_YELLOW,2,1)
+	PRINTFORML
+	PRINTFORMW Don't lose it, and don't show it to anybody please!
+	PRINTFORMW It's only between us, in case we want some... personal time together, if you know what I'm saying...
+	PRINTFORML
+	PRINTFORMDW Under that you see a kiss mark left with a lipstick. It has a pleasant fragrance...
+	PRINTFORML
+	PRINTFORMW Alright, so... Yeah! I'll be seeing you there, then!
+	PRINTFORMW I'm glad to have you around, I really appreciate it. Welcome aboard.
+	PRINTFORMW I hope we can have a meaningful relationship together and all that.
+	PRINTFORML
+	PRINTFORMW See ya!
+	PRINTFORML
+	PRINTFORML
+	PRINTFORMW Yours truly, Seija Kijin.
+	PRINTFORML
+	PRINTFORML
+	RESETCOLOR
+ENDIF
+
+IF !TALENT:MASTER:恋人 && !TALENT:97:恋人 && TALENT:97:恋慕 && FIRSTTIME("SeijaGF", 1, 97)
+	LOCAL:1 = 0
+	LOCAL:2 = 0
+	;find another character with highest favor, except for randos and seija herself
+	FOR LOCAL, 1, CHARANUM - 1
+		SIF LOCAL == 97
+			CONTINUE
+		IF CFLAG:LOCAL:2 > LOCAL:1
+			LOCAL:1 = CFLAG:LOCAL:2
+			LOCAL:2 = LOCAL
+		ENDIF
+		;PRINTFORML LOCAL:1 - {LOCAL:1} LOCAL:2 - {LOCAL:2}
+	NEXT
+	SIF !INRANGE(LOCAL:2, 0, CHARANUM-1) || CFLAG:(LOCAL:2):2 < 1000 || GROUPMATCH(LOCAL:2, 0, 97)
+		GOTO SKIP
+		
+	PRINTFORMDW Before you go to sleep, you see Seija staring into your window. What could she possibly want right now...?
+	CALL SPTALK, 97, "笑顔", 0, @"「Hey %CALLNAME:MASTER%, how's your love life going? Still can't get a girlfriend?」/「Yeaaah, tough stuff I imagine.」", 1
+	WAIT
+	CALL SPTALK, 97, "通常", 0, @"「Oh, so you're courting %CALLNAME:(LOCAL:2)% right now, huh?」", 1
+	WAIT
+	
+	LOCALS '= @"「Nah-nah-nah, you're doing it wrong, %K97_DUDE()%!」/"
+	LOCALS += @"「A girl that popular won't be interested in you, and I'm sure she'll be annoyed too.」/"
+	LOCALS += @"「You'll get dumped, no doubt about it.」"
+	CALL SPTALK, 97, "怒り", 0, LOCALS, 1
+	WAIT
+	
+	CALL SPTALK, 97, "通常", 0, @"「You should have known your place and chosen someone less popular.」", 1
+	WAIT
+	CALL SPTALK, 97, "発情", 0, @"「Yeah, y'know, for example... I might be a good choice, no?」", 1
+	WAIT
+	
+	LOCALS '= @"「My popularity's been on the rise, too. 'Sides, she's old news, anyway.」/"
+	LOCALS += @"「It's not that I don't recommend it, but it's just an example. You can't go wrong with it, you know.」/"
+	LOCALS += @"「We've known each other for a while, after all.」"
+	CALL SPTALK, 97, "笑顔", 0, LOCALS, 1
+	WAIT
+	
+	LOCALS '= @"「If you let this one slip away, you'll never be lucky enough to get a girl at this rate.」/"
+	LOCALS += @"「So I think you should confess your feelings for her as soon as possible, without giving any thought to other women.」"
+	CALL SPTALK, 97, "通常", 0, LOCALS, 1
+	WAIT
+	
+	CALL SPTALK, 97, "笑顔", 0, @"「C'mon, just do that. I know what I'm talking about, trust me!」", 1
+	WAIT
+
+	PRINTFORMDW ...Seeing Seija recommend herself like that leaves you at a loss for words.
+	
+	CALLF FIRSTTIME("SeijaGF", 0, 97)
+	$SKIP
+ENDIF
+
+;failsafe in case the combat flip flag didn't reset
+IF TCVAR:97:390
+	LOCAL = ABL:97:戦闘能力
+	LOCAL:1 = ABL:MASTER:戦闘能力
+	ABL:MASTER:戦闘能力 = LOCAL
+	ABL:97:戦闘能力 = LOCAL:1
+	TCVAR:97:390 = 0
+ENDIF
+
+;futa transform note
+@EVENTCOMEND
+#LATER
+
+;in heat
+IF TCVAR:97:発情 && !CFLAG:97:うふふ && SHIRAHU(97) && ONCE("SeijaInHeat", 0, 97)
+	;switch to target for ease
+	LOCAL = TARGET
+	TARGET = 97
+	CALL M_KOJO_COLOR_K97
+	
+	IF CFLAG:現在位置 != CFLAG:MASTER:現在位置
+		PRINTFORML
+		PRINTFORML
+		PRINTFORMDW Somewhere, someplace...
+		PRINTFORML
+	ENDIF
+	PRINTFORML
+	PRINTFORML
+	CALL PRINT_FACE, 97, "発情", "服", "", "照れ"
+	PRINTFORMW 「Oh boy... Ooohh dear.」
+	PRINTFORMW 「What's... with this heat?! Haah, haah, haa!」
+	PRINTFORMW 「My skin is burning... My body is aching, and...」
+	PRINTFORMW 「Uaaaghhh!!!」
+	PRINTFORMDW Looks like Seija is about to lose her mind...
+	IF CFLAG:現在位置 == CFLAG:MASTER:現在位置
+		PRINTFORML
+		PRINTFORML
+		PRINTFORMDW Seija walks to you unsteadily before falling into your embrace.
+		PRINTFORMW 「My bad, %K97_DUDE()%... I don't feel so good...」
+		PRINTFORMW 「I'm afraid... You might have to take care of me for a bit...」
+		PRINTFORMW 「Sorry... to be a burden.」
+	ENDIF
+	RESETCOLOR
+
+	TARGET = LOCAL
+	RETURN
+ENDIF
+
+IF !CFLAG:97:1092 && IS_HERM(97) && SHIRAHU(97) && FIRSTTIME("SeijaFuta", 0, 97)
+	;switch to target for ease
+	LOCAL = TARGET
+	TARGET = 97
+	
+	CALL M_KOJO_COLOR_K97
+	
+	IF CFLAG:現在位置 == CFLAG:MASTER:現在位置
+		PRINTFORML
+		PRINTFORML
+		PRINTFORMDW Seija suddenly holds onto her crotch, looking very troubled.
+		PRINTFORMW 「S-Sorry, I, uh... I need to be somewhere right now...」
+		PRINTFORMW 「Nah, I'm okay, I think... See you later!」
+		PRINTFORMDW With that, Seija quickly leaves the place before you could even say anything.
+	ENDIF
+	;move seija to void for the day
+	CFLAG:現在位置 = SUKIMA()
+	TIME += 1
+	
+	PRINTFORML
+	PRINTFORML
+	PRINTFORMDW Somewhere, someplace...
+	PRINTFORML
+	PRINTFORMDW Feeling her crotch being on fire, Seija tosses around on the ground, gasping for breath.
+	CALL PRINT_FACE, 97, "発情", "服", "", "吐息"
+	PRINTFORMW 「Nhaah, haah, haa... What the hell... is going on... Am I dying?」
+	;shamelessly taking my futa transformation event from K
+	PRINTFORMW 「Huh? What the fuck is this?」
+	PRINTFORMDW Noticing a strange bulge in %HIS_HER(TARGET)% pants, Seija decides to take a closer look.
+	PRINTFORMW 「HUUUUHHHH?!?!」
+	PRINTFORMDW Sliding her underwear to the side just a bit, it causes a newly grown manhood spring up between her legs right before her eyes!
+	PRINTFORMW 「...A dick?! I have a fucking dick?!」
+	PRINTFORMW 「Haah, haah, calm down me, it's just a dick... Men have it, so what?」
+	PRINTFORMW 「Even though I'm a girl! I'm not supposed to have this fucking thing!」
+	PRINTFORMDW %BREAKENG(@"Touching the tip and stretching the skin on %HIS_HER(TARGET)% tip with a look of disgust, Seija seems completely baffled.")%
+	CALL PRINT_DIALOGUE, @"Gah, it's so fucking gross and covered with all of this weird gunk... What's up with all that skin anyway?", "w"
+	CALL PRINT_DIALOGUE, @"Is this how an amanojaku dick would look like? Well, at least it's not covered with ugly warts and it doesn't glow in the dark. Phew.", "w"
+	;lmao
+	SELECTCASE TALENT:形状
+		CASE 6
+			PRINTFORMW 「And it's massive, holy crap! It's not gonna fit in my pants, no way!」
+		CASE 5
+			PRINTFORMW 「Oh wait, it actually IS an ugly warty one!」
+			PRINTFORMW 「Guh, how befitting of me...」
+		CASE 4
+			PRINTFORMW 「Oh wait, it actually IS a shiny one! Dammit!」
+			PRINTFORMW 「Well, at least it'll keep me safe at night, right...?」
+	CASEELSE
+		PRINTFORMW 「...But still, I can smell this stench all the way from here though.」
+	ENDSELECT
+	PRINTFORML
+	CALL PRINT_FACE, 97, "発情", "服", "", "照れ"
+	PRINTFORMDW Feeling more and more curious, Seija starts poking at %HIS_HER(TARGET)% hardening prick.
+	PRINTFORMW 「I'll touch it... just a little... to clean it up... Yes, just to clean...」
+	PRINTFORMDW %BREAKENG(@"Grabbing hold of %HIS_HER(TARGET)% throbbing shaft with a gasp, %HE_SHE(TARGET)% pulls %HIS_HER(TARGET)% foreskin at once, instantly peeling %HIS_HER(TARGET)% glans!")%
+	PRINTFORMW 「Uuuoooooghhhh!!! W-What's up with this feeling...?! Why is it so sensitive?!」
+	PRINTFORMW 「I just wanted to touch it, but my hand moved on its own!」
+	PRINTFORMW 「This insane, unknown sensation is surging through every corner of my body! I can't stop convulsing...」
+	PRINTFORMW 「I shouldn't have touched it! It's turning me mad already!」
+	PRINTFORMW 「Aaahhh, cock feels so good, it's unfair!」
+	PRINTFORMW 「It's... gonna be fine... if I keep playing with just a little, right?」
+	PRINTFORMW 「Nothing will go wrong, right?!」
+	PRINTFORML
+	PRINTFORMDW Losing %HIS_HER(TARGET)% cool, Seija begins jerking off like crazy, as if possessed.
+	PRINTFORMW 「Ahh, ah, ah! ha, ha! Keep going, c'mon! Aaghhh!」
+	PRINTFORMW 「S-Something... something's coming, I can feel it... it's gonna do something irreparable to me, I'm sure...」
+	PRINTFORMW 「Fffuuuuuuucckkkk!」
+	PRINTFORMDW %BREAKENG(@"With a loud shriek, Seija experiences %HIS_HER(TARGET)% first ejaculation as %HIS_HER(TARGET)% hot, thick seed lances out of %HIS_HER(TARGET)% throbbing penis.")%
+	PRINTFORMDW %BREAKENG(@"Sticking out %HIS_HER(TARGET)% tongue like a horny beast, %HE_SHE(TARGET)% drools all over %HIMSELF_HERSELF(TARGET)% while screaming at the top of %HIS_HER(TARGET)% lungs.")%
+	CALL AddEXP("射精経験", TARGET, 5)
+	CALL PRINT_FACE, 97, "発情", "服", "", "汗"
+	PRINTFORMW 「Haah... Haah... Is this... semen...? My semen... It comes out that easily, huh...?」
+	PRINTFORMW 「This... This felt so fucking good...!!!」
+	PRINTFORMW 「All at once... spurt after spurt...」
+	PRINTFORMW 「I-Is that what's it like... for a man to ejaculate?」
+	PRINTFORMW 「And it's not stopping either! There's so much coming out!」
+	PRINTFORMW 「So much white, hot, sticky cum! My future amanojaku babies!」
+	CALL PRINT_DIALOGUE, @"Every spurt hits me with a wave of pleasure so strong, I'd prolly piss myself if my urethra wasn't already occupied!", "w"
+	PRINTFORMDW %BREAKENG(@"Losing control over her body, Seija's hand continues to stroke her new organ, chasing after new kind of pleasure she never felt before...")%
+	PRINTFORMDW .........
+	PRINTFORMDW ......
+	PRINTFORMDW ...
+	PRINTFORML
+	PRINTFORML
+	PRINTFORML
+	CALL AddEXP("射精経験", TARGET, 10)
+	CALL AddEXP("精液経験", TARGET, 20)
+	
+	CALL PRINT_FACE, 97, "発情", "裸", "", "汗"
+	PRINTFORMW 「Haa, haa...」
+	PRINTFORMDW Before long, Seija finds herself lying in a puddle of %HIS_HER(TARGET)% own semen, smeared from head to toe.
+	PRINTFORMDW In fact, everything was covered in %HIS_HER(TARGET)% semen.
+	PRINTFORMW 「What just happened...?」
+	PRINTFORMW 「Oh right, somehow I got a dick, and then one thing followed another, and...」
+	PRINTFORMW 「That was awesome... It's like I was shooting my soul out...」
+	PRINTFORMW 「I'm starting to understand what's it like to be a boy...」
+	PRINTFORMW 「Urk!」
+	PRINTFORMDW Seija gags, finally noticing the awful stench of %HIS_HER(TARGET)% own stale semen.
+	PRINTFORMW 「Gah, what a fucking mess... It'll take an entire day to clean up!」
+	PRINTFORMW 「I still have this silly fucking dangling thing attached to me though!」
+	PRINTFORMW 「I thought it'd disappear after I cum once or something...」
+	PRINTFORMW 「Am I stuck with it now? Or maybe I just didn't cum enough?」
+	PRINTFORMW 「No, it's too dangerous to touch it again...」
+	PRINTFORML
+	PRINTFORMDW After some clean up and hot shower, Seija finds herself in deep thought.
+	PRINTFORMW 「Hmm, how come it even appeared in the first place?」
+	PRINTFORMW 「I gotta find out...」
+	PRINTFORML
+	PRINTFORML
+	CFLAG:溜まってる度 = 0
+	CALL M_KOJO_DIARYSETTING_K97(15)
+	RESETCOLOR
+
+	TARGET = LOCAL
+ENDIF
+
+@EVENTCOM
+#LATER
+IF TARGET == 97 && ( IS_COM_VAGINA(TFLAG:3) || IS_COM_ANAL(TFLAG:3) ) && PALAM:潤滑 < PALAMLV:3 && SHIRAHU(TARGET)
+	CALL M_KOJO_COLOR_K97
+	PRINTFORML
+	PRINTFORMW 「...Hey, I ain't wet yet for this, %K97_IDIOT()%. Are you trying to hurt me?」
+	PRINTFORMDW %BREAKENG(@"Losing your patience, you forcibly drive your %TINKO()% inside of Seija, ignoring the uncomfortable chafing and her groans and insults despite her protests.")%
+	PRINTFORMW 「Aaghhh, fuck...! You're... so impatient...!」
+	PRINTFORML
+	RESETCOLOR
+ENDIF

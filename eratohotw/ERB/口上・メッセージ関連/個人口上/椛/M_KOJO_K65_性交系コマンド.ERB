@@ -1,0 +1,1594 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;性交系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;60,正常位
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_60
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_60_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_60_1
+
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 「Wa...!?」
+			PRINTFORMD You grab one of the wolf tengu's legs, 
+				SIF TALENT:MASTER:体型 >= 0
+					PRINTFORMD half lifting her up, 
+			PRINTFORMDW and rub the tip of your cock against her vulva...
+			PRINTFORML 「Ehh, Umm... Are we going to do it while...standing up...?」
+			PRINTFORMDW Momiji looks at you with a little confusion and anxiety.
+			PRINTFORML 「...I would have preferred to do it more normally for my first time, if that's possible...」
+			PRINTFORMDW She murmurs to herself.
+			IF TALENT:恋慕
+				PRINTFORML 「...No, it's fine...」
+				PRINTFORMW 「Just being able to connect with %CALLNAME:MASTER%-san is enough to make me happy...」
+			ELSE
+				
+			ENDIF
+			RETURN 1
+		ELSE
+			PRINTFORMW 「Wa...!?」
+			PRINTFORMD You grab one of the wolf tengu's legs,
+				SIF TALENT:MASTER:体型 >= 0
+					PRINTFORMD half lifting her up, 
+			PRINTFORMDW and rub the tip of your cock against her vulva...
+			PRINTFORML 「Ehh, Umm... Are we going to do it while...standing up...?」
+			PRINTFORMW 「Uuu... This position makes me a little nervous...」
+			IF TALENT:恋慕
+				PRINTFORMW 「Well... Hug me tight and don't let go...」
+			ELSE
+				PRINTFORMW 「Well... Please support me properly...?」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORML 
+		RETURN 1
+	;こなれてない
+	ELSEIF ABL:Ｖ感覚 < 2
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「Nnn... %CALLNAME:MASTER%-san...does it feel good...?」
+				PRINTFORMD Though she's still not used to the uncomfortable feeling in her vagina, Momiji 
+					IF TALENT:恋慕
+						PRINTFORMDW accepts you with a happy smile on her face...
+					ELSE
+						PRINTFORMDW is still concerned about you...
+					ENDIF
+			CASE 1
+				PRINTFORMW 「Ku, Nn, Haah... This position is a bit...」
+		ENDSELECT
+	;MASTERが何度も射精している
+	ELSEIF TCVAR:350 > 3 && RAND:2 == 0
+	;イキすぎ
+	;ここの条件は実際にプレイして弄る必要があるかも
+	;TARGETの性感がかなり開発されてる状況を想定してるけど、どれくらいプレイしたら出るもんなのかわからんしなぁ。
+	ELSEIF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0
+		;これでMASTERが射精する
+		;IF NOWEX:MASTER:11 
+		;RETURN 1
+		;ENDIF
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「Haa, Haa... %CALLNAME:MASTER%-san, let's take a break...!!」
+				CALL HPH_PRINT,@"「～～～～～～～HPHHPH」","L"
+				PRINTFORMDL %BREAKENG(@"You spread Momiji's legs, which are limp from the repeated climaxes, and then slam your raging hard-on into her tight pussy in one thrust.")%
+				PRINTFORMDL The wolfgirl screams inaudibly from the intense pleasure when you push up to her deepest part.
+				PRINTFORMDW As you retract your hips, her voice gradually shifts from a screech to a flirtatious moan...
+			CASE 1
+				CALL HPH_PRINT,@"「Waa... %CALLNAME:MASTER%-san, you're too amazing...HPH Ahh, Kuu...Mnn～～～～～!!」","L"
+				PRINTFORMDL You hold up Momiji's waist and push your passionate meat rod into her.
+				PRINTFORMDL %BREAKENG(@"Her tight pussy, soaked with \@ EX:65:膣内精液 >= 300 ? muddy whiteness # love juice \@ swallows it with little resistance, and the well-developed flesh wraps around your penis.")%
+				CALL HPH_PRINT,@"「...Yaa...HPH AhHPH HaahHPH MnHPH Ah～HPH」","L"
+				PRINTFORMDL As you rhythmically thrust up into the depths of her pussy, her vaginal walls clench and tighten to encourage you to come.
+				PRINTFORMDW The limp and defenseless Momiji lets out intermittent moans and just soaks up the pleasure being given to her...
+		ENDSELECT
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	ELSEIF TALENT:思慕
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;正常位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			IF TALENT:恋慕
+				PRINTFORMW 
+			ELSE
+				PRINTFORMW 「」
+			ENDIF
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;こなれてない
+	ELSEIF ABL:Ｖ感覚 < 2
+		IF TCVAR:発情
+			PRINTFORML 「Ffu, Kuu, Nn, Haah...」
+			PRINTFORMDL It seems that Momiji, who is in heat, is feeling some intense vaginal sensations...
+			PRINTFORMDW But she's still not used to the stimulation and occasionally scrunches up her face...
+		ELSE
+			PRINTFORML 「Nn, Fuu... As I thought, it still might be a bit hard to get used to...」
+			PRINTFORMW 「No, it's fine... %CALLNAME:MASTER%-san, \@ TALENT:恋慕 ? please hug me even tighter # please keep moving \@...」
+		ENDIF
+	;MASTERが何度も射精している
+	ELSEIF TCVAR:350 > 3 && RAND:2 == 0
+		PRINTFORML 「Ah, You ejaculated so much, and you can still go on...!?」
+		PRINTFORMDL %BREAKENG(@"Instead of answering, you cram your \@ GETBIT(STAIN:MASTER:2,4) ? sloppy, semen-drenched # rock hard \@ dick up against the entrance to the wolfgirl's pussy, and insert slowly, as though savoring every vaginal fold...")%
+		IF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0
+			PRINTFORML 「HuuuuUUu...!! I can't do it anymore...」
+			PRINTFORMDL Despite Momiji's complaints about her limitations, you wade through the pussyflesh and reach the very back.
+			PRINTFORMW 「Uu, Ah... It's so hard, so hot... %CALLNAME:MASTER%-san, you're too virile...」
+		ELSEIF TCVAR:発情
+			CALL HPH_PRINT,@"「Uu, Ah... Amazing...HPH」","L"
+			PRINTFORMDL The walls of Momiji's tight pussy clamp down on your cock more tightly than usual...
+			PRINTFORMDL And her folds coil around the glans, feeling so incredible that you almost ejaculate just from moving your hips forward.
+			CALL HPH_PRINT,@"「Ohh, Until...you come...HPH %CALLNAME:MASTER%-san, I'm going to squeeze you even more...HPH」","L"
+			PRINTFORMDW When your dick reaches her deepest part, the wolfgirl hugs you tightly and presses her hips to you in search of more passion...
+		ELSE
+			CALL HPH_PRINT,@"「Uaa... You're amazing...HPH %CALLNAME:MASTER%, san...HPH」","L"
+			PRINTFORMDW Momiji exclaims and clutches you tightly as your meat pole reaches the very bottom... 
+		ENDIF
+	;イキすぎ
+	ELSEIF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0
+		;これでMASTERが射精する
+		;IF NOWEX:MASTER:11 
+		;RETURN 1
+		;ENDIF
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「Haah, Haa... %CALLNAME:MASTER%-san, let's take a break...!!」
+				CALL HPH_PRINT,@"「～～～～～～～HPHHPH」","L"
+				PRINTFORMDL %BREAKENG(@"You spread Momiji's legs, which are limp from the repeated climaxes, and then slam your raging hard-on into her tight pussy in one thrust.")%
+				PRINTFORMDL The wolfgirl screams inaudibly from the intense pleasure when you push up to her deepest part.
+				PRINTFORMDW As you retract your hips, her voice gradually shifts from a screech to a flirtatious moan...
+			CASE 1
+				CALL HPH_PRINT,@"「Waa... %CALLNAME:MASTER%-san, you're too amazing...HPH Ahh, Kuu...Mnn～～～～～!!」","L"
+				PRINTFORMDL You hold up Momiji's waist and push your passionate meat rod into her.
+				PRINTFORMDL %BREAKENG(@"Her tight pussy, soaked with \@ EX:65:膣内精液 >= 300 ? muddy whiteness # love juice \@ swallows it with little resistance, and the well-developed flesh wraps around your penis.")%
+				CALL HPH_PRINT,@"「...Yaa...HPH AhHPH HaahHPH MnHPH Ah～HPH」","L"
+				PRINTFORMDL As you rhythmically thrust up into the depths of her pussy, her vaginal walls clench and tighten to encourage you to come.
+				PRINTFORMDW The limp and defenseless Momiji lets out intermittent moans and just soaks up the pleasure being given to her...
+		ENDSELECT
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;恋慕かつ発情中
+		IF TCVAR:発情
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「Haah, Ah～...HPH My pussy's twitching, and my hips too, AhHPH」","W"
+				CASE 1
+					CALL HPH_PRINT,@"「Aaah～！ Kyun～HPH %CALLNAME:MASTER%-san, I love you, I love you!HPH」","L"
+					PRINTFORMDW Momiji continues to whisper her love to you as she writhes in pleasure...
+			ENDSELECT
+		;恋慕かつ非発情
+		ELSE
+			SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Haa, Afuu, Kuu～HPH %CALLNAME:MASTER%-san...」","L"
+						PRINTFORMDW Momiji wears a blissed-out expression on her face...
+					CASE 1
+						CALL HPH_PRINT,@"「Kuu, Aha, Ahhn...HPH Please make me feel even better...」","L"
+				ENDSELECT
+		ENDIF
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		;まだです
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		;まだです
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;61,後背位
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_61
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_61_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_61_1
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;後背位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;こなれてない
+	ELSEIF ABL:Ｖ感覚 < 2
+		IF TCVAR:発情
+			PRINTFORML 「Aku, Uu, Hah, Kyuun～」
+			PRINTFORMW 「%CALLNAME:MASTER%-san, %CALLNAME:MASTER%-san...」
+		ELSE
+			PRINTFORML 「Mmn...」
+			PRINTFORMW 「This posture is kind of embarrassing...」
+		ENDIF
+	;MASTERが何度も射精している
+	ELSEIF TCVAR:350 > 3 && RAND:2 == 0
+			;イキすぎ
+			IF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0
+				PRINTFORMDL Momiji seems to be approaching the limits of her physical strength, lying on her face and breathing hard.
+				PRINTFORML 「Haah, Haah... If I do any more, I'll break...～～～～～!!」
+				PRINTFORMDL You grab the wolf tengu's waist as she tries to crawl away, and thrust your dick all the way to her very depths.
+				CALL HPH_PRINT,@"「Ya, Ah, Uu...! You're like a beast, OhhHPH Hah, It's good...Ah, AaaAah～HPH」","L"
+				PRINTFORMDW As you continue to pound her devastated vagina, Momiji lets out a scream and twitches madly.
+			ELSEIF TCVAR:発情
+				PRINTFORMDL You pull Momiji's waist closer and line up tip of your penis with her sopping wet labia.
+				CALL HPH_PRINT,@"「Fuaa...HPH You still want to cum after so many times...」","L"
+				CALL HPH_PRINT,@"「I swear... %CALLNAME:MASTER%-san, you're a beast...HPH」","L"
+				PRINTFORMDL Momiji holds her shapely ass high in the air, wagging her tail and smiling mischievously, inviting you to join with her.
+				SIF EX:65:膣内精液 >= 300
+					PRINTFORMDL Foamy semen overflows from her puffy, protruding pussy and trickles down to her white underbelly.
+				PRINTFORMDW Excited by the sight, there's no way you could hold back, and you start to breed the little tengu as hard as you can.
+			ELSE
+				PRINTFORML 「%CALLNAME:MASTER%-san, you still want even more of me...」
+				PRINTFORMDL To better receive you, Momiji thrusts out her small buttocks and places her thin fingertips on her labia, spreading them open herself.
+				PRINTFORML 「Okay... More, please feel even better with me...」
+				PRINTFORMDL Her cheeks turn cherry red as she tries her best to seduce you with a lustrous smile.
+				SIF EX:65:膣内精液 >= 300
+					PRINTFORMDL Foamy semen overflows from her puffy, protruding pussy and trickles down to her white underbelly.
+				PRINTFORMDW Excited by the sight, there's no way you could hold back, and you rut yourself into the little tengu.
+			ENDIF
+	;イキすぎ
+	ELSEIF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0
+		SELECTCASE RAND:2
+			CASE 0
+				CALL HPH_PRINT,@"「KuuHPH AhHPH Aaah～～～～!! %CALLNAME:MASTER%-sanHPH %CALLNAME:MASTER%-sanHPH %CALLNAME:MASTER%-sanHPHHPH」","L"
+				PRINTFORMDL %BREAKENG(@"You plunge into Momiji with long strokes, scraping out her overflowing \@ EX:65:膣内精液 >= 300 ? love juices mixed with semen # love juices \@.")%
+				PRINTFORMDL %BREAKENG(@"Her pussy has completely learned your shape and it tightens around you like a glove, giving you an incredible sense of intimacy and closeness.")%
+				PRINTFORMDW %BREAKENG(@"The wolf girl's reason already melted away in the fire of repeated climaxes, and all she can do is scream out the name of her\@ TALENT:恋慕 ? love # lover \@...")%
+			CASE 1
+				CALL HPH_PRINT,@"「Haah...！ Ah, Ku, FuahHPH Hiah, Mnnn!! AhHPH Ahhhn～HPHHPH」","L"
+				PRINTFORMDL %BREAKENG(@"When Momiji gets down on all fours, you immediately change position and start rutting her from behind, fulfilling some long-dormant instinct.")%
+				PRINTFORMDL %BREAKENG(@"In response to your pumping, the wolf tengu presents her hips and welcomes your towering penis into the deepest part of her body.")%
+				PRINTFORMDW %BREAKENG(@"As the two of you mate like animals, you no longer need words, and only the sounds of flesh bumping and squelching echo around you...")%
+			ENDSELECT
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;恋慕かつ発情
+		IF TCVAR:発情
+			SELECTCASE RAND:3
+				CASE 0
+					CALL HPH_PRINT,@"「It's so good...it's so good...HPH More, %CALLNAME:MASTER%-san, make your dick shake even more...!」","W"
+				CASE 1
+					CALL HPH_PRINT,@"「Waan～HPH It feels so good to be fucked from behind like a beast...!!」","W"
+				CASE 2
+					CALL HPH_PRINT,@"「Hyah, Mnnn, Kuua, Ahn～!! In this pose, it's like you're ravishing me, %CALLNAME:MASTER%-san...HPH」","W"
+			ENDSELECT
+		;恋慕かつ非発情
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「Nuu...! Wa, Ahn! I can't believe you're seeing me like this... Kyaun～HPH」","L"
+					PRINTFORMDW Momiji seems to be embarrassed and excited in equal measure...
+				CASE 1
+					PRINTFORML 「Ahn, Nn, WaaAan～... %CALLNAME:MASTER%-san, you're so deep...」
+					CALL HPH_PRINT,@"（Because I can't see %CALLNAME:MASTER%-san's face, all I can concentrate on is what his dick is doing inside my vagina...HPH）","W"
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+	;まだ
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+	;まだ
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;62,正常位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_62
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_62_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_62_1
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;正常位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;63,後背位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_63
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_63_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_63_1
+;-------------------------------------------------
+;立位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && TFLAG:193
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;後背位
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;64,逆レイプ
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_64
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_64_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_64_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;調教者が処女
+		IF TALENT:PLAYER:処女 == 1
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:PLAYER:100 == TARGET
+		;前回射精した
+		IF TCVAR:PLAYER:102
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;65,騎乗位
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_65
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_65_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_65_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;こなれてない
+	ELSEIF ABL:Ｖ感覚 < 2
+		IF TCVAR:発情
+			PRINTFORML 「Mnn, Ku,Fu, It's deep, Ooh...」
+			PRINTFORMDW As Momiji gingerly wriggles her hips atop you, beads of sweat run down her forehead...
+		ELSE
+			PRINTFORML 「How do you think... Is it feeling good...」
+			PRINTFORMDW Momiji moves frantically, breathing hard...
+		ENDIF
+	;MASTERが何度も射精している
+	ELSEIF TCVAR:350 > 3 && RAND:2 == 0
+			;イキすぎ
+			IF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0
+				CALL HPH_PRINT,@"「A, Ku, AAAAaaaaahh!! %CALLNAME:MASTER%-san, Hah, Haah, %CALLNAME:MASTER%-sann...HPH」","L"
+				PRINTFORMDL Hugging Momiji, who had slumped over onto you, you slam your hips up into her as hard as you can.
+				PRINTFORMDL You call each other's names as you gasp for air, and sink into a bottomless pool of hedonism.
+				PRINTFORMDW The room is filled with an obscene odor from the bodily fluids that have accumulated during your intense intercourse...
+			ELSEIF TCVAR:発情
+				PRINTFORML 「Ehe... You still want to cum, don't you?」
+				PRINTFORMDL Momiji straddles you, smiles bewitchingly, and clamps her hand on your penis.
+				CALL HPH_PRINT,@"「Uaa... So hard...HPH」","L"
+				PRINTFORMDL The wolf tengu slowly lowers her hips, savoring the anticipation, before suddenly gobbling up your shaft with her debauched vulva.
+				PRINTFORMDL Soon, your glans meets something slightly firm, and you can feel that it has reached the very end.
+				CALL HPH_PRINT,@"「Awaah～HPH %CALLNAME:MASTER%-san, you really can bottom out in me...HPH」","W"
+			ELSE
+				PRINTFORML 「Hiyaah... Still not enough for you...?」
+				PRINTFORMDL You spank Momiji's pert butt as she straddles you to encourage her to continue.
+				PRINTFORML 「Uu... Please don't be so impatient... Nn, %MOAN("l:m")%, Aaah, It's so hot...」
+				PRINTFORMDL As the wolfgirl slowly lowers her hips, your throbbing meat stick sinks into her nubile nethers.
+				PRINTFORML 「Fuaah... It's getting bigger and bigger in my belly... %CALLNAME:MASTER%-san, you really can bottom out in me...」
+				PRINTFORMDW As she strokes her lower belly in satisfaction, Momiji starts to work her hips slowly on your shaft.
+			ENDIF
+	;イキすぎ
+	ELSEIF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0
+		;SELECTCASE RAND:2
+		;	CASE 0
+				PRINTFORML 「Hah、Haa, Fuuuー... Mnn... It feels so good that it's like my hips are going crazy... Ahaha～」
+				PRINTFORMDL Momiji smiles helplessly with sweat running down her forehead as you hold her.
+				PRINTFORMDL Somehow excited by this situation, you immediately impale her blown-out pussy and resume your jackhammering rhythm...
+				CALL HPH_PRINT,@"「Hiaaaah!? %CALLNAME:MASTER%-san, Nn, E-Enough, %MOAN("m:h")%, AahHPH AaaAhh～～～HPH」","W"
+		;	CASE 1
+		;		
+		;ENDSELECT
+	;恋慕
+	ELSEIF TALENT:恋慕
+		;恋慕かつ発情
+		IF TCVAR:発情
+			SELECTCASE RAND:4
+				CASE 0
+					CALL HPH_PRINT,@"「Ah, Aah! Hiau... %MOAN("l:m")%, Ahhn～～～～～HPH」","L"
+					PRINTFORMDL You clasp hands with Momiji and thrust up inside her tight slit again and again.
+					PRINTFORMDW She shakes her hips to match your movements, and you continue to devour each other's pleasure.
+				CASE 1
+					PRINTFORML 「Aha, You don't mind if I move, do you...?」
+					CALL HPH_PRINT,@"「Then I'll wring out all of your semen for you, %CALLNAME:MASTER%-san...HPH」","W"
+				CASE 2
+					CALL HPH_PRINT,@"「Ahn, %MOAN("l:m")%, Kyuun～HPH Good dick... Good dick...」","W"
+				CASE 3
+					CALL HPH_PRINT,@"「This position... It's like I'm violating %CALLNAME:MASTER%-san, I'm so turned onHPH」","W"
+			ENDSELECT
+		;恋慕かつ非発情
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					CALL HPH_PRINT,@"「Ah, Waa! Hiau... %MOAN("l:m")%, Ahhn～～～～～HPH」","L"
+					PRINTFORMDL You clasp hands with Momiji and thrust up inside her tight slit again and again.
+					PRINTFORMDW She shakes her hips to match your movements, and you continue to devour each other's pleasure.
+				CASE 1
+					PRINTFORML 「Aahhh... So deep, so deep...」
+					PRINTFORMDW Momiji aggressively swings her hips atop you, and relishing the stimulation of your rock-hard shaft...
+				CASE 2
+					PRINTFORML 「Haa, Ahn... Please leave it to me!」
+					PRINTFORMW 「I'll make you feel so good... Nfu, %MOAN("l:m")%, Fuah～...」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;66,騎乗位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_66
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_66_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_66_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;67,対面座位
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_67
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_67_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_67_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;こなれてない
+	ELSEIF ABL:Ｖ感覚 < 2
+		IF TCVAR:発情
+		;	SELECTCASE RAND:2
+		;		CASE 0
+					PRINTFORML 「Haah... Fu, Mnnn...」
+					PRINTFORMDW Momiji hugs your body, trying to endure the intense, unfamiliar stimulation...
+		;		CASE 1
+		;			PRINTFORML 
+		;	ENDSELECT
+		ELSE
+		;	SELECTCASE RAND:2
+		;		CASE 0
+					PRINTFORML 「Ku, Nn...%CALLNAME:MASTER%-san...」
+					PRINTFORMDW Momiji's fingertips dig into your back as she clings tightly to you.
+		;		CASE 1
+		;			PRINTFORML 
+		;	ENDSELECT
+		ENDIF
+	;イキすぎ
+	ELSEIF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0
+		CALL HPH_PRINT,@"「Fuu, Mmn...HPH Fufu, I've been training, but I'm still exhausted...」","L"
+		PRINTFORMDW Momiji leans against you, trying to catch her breath.
+		CALL HPH_PRINT,@"Let me rest like this, for a while... On your chest...HPH」","L"
+		PRINTFORMDL Her vermilion-flushed skin meets yours, and your whole bodies convey each other's pounding heartbeats.
+		CALL HPH_PRINT,@"「%CALLNAME:MASTER%-san, you're so warm...HPH Keep squeezing me like this... Please don't let me go...HPH」","W"
+	;MASTERが何度も射精している
+	ELSEIF TCVAR:350 > 3 && RAND:2 == 0
+		IF TCVAR:発情
+			CALL HPH_PRINT,@"「Afuu...HPH Let's do more...?」","L"
+			PRINTFORMDL Momiji clutches herself to you tightly and rubs her body against your chest wantonly.
+			PRINTFORMDW The tip of your raging erection traces across her white underbelly, leaving a lewd snail trail of  translucent fluid...
+			CALL HPH_PRINT,@"「%MOAN()%, %FSYN("lips_muffle")%HPH %MOAN("l:m")%... Mnn, I can't get it in right...」","L"
+			PRINTFORMDL Every time the wolfgirl frustratedly wiggles her hips, her labia slide across your glans, giving you a fluffy thrill.
+			CALL HPH_PRINT,@"「%MOAN("l:m",,2,"dot")%... AhhHPH Rubbing it like this...HPH Mmm～～～～～～～HPHHPHHPH」","L"
+			PRINTFORMDL %BREAKENG(@"When your turgid member finally slides into her \@ PALAM:潤滑 >= 10000 ? slippery %FSYN("vagina",,TARGET)% # tight, cute crevasse \@ she squeals with delight and trembles.")%
+		ELSE
+			CALL HPH_PRINT,@"「%MOAN(,,3,"dot")%HPH... Ah...」","L"
+			PRINTFORMDL Momiji, who was facing you, turns her eyes away somewhat shyly.
+			PRINTFORMW 「Uu... It's a little embarrassing to be this close to you...」
+			PRINTFORML
+			PRINTFORML 「Ahaha... It's a little strange that it's embarrassing to stare at each other now...」
+			PRINTFORML 「After all, I'm being held like this, and I'm full of your cum... and we've done lots of other dirty things...」
+			PRINTFORMDW %BREAKENG(@"As you feel each other's body heat while recalling the intimate things you've done so far, an indescribable heat wells up within you.")%
+			PRINTFORML
+			CALL HPH_PRINT,@"「...AhHPH」","L"
+			CALL HPH_PRINT,@"「...Your cock got even harder than before. Would you like to do some more dirty stuff...?HPH」","L"
+			PRINTFORMDW Instead of answering, you push into her tight vagina and savor the heat of the slutty slime that floods her soaking wet flesh.
+			PRINTFORML
+			PRINTFORMDL As you slowly pull out, Momiji's body trembles as if she's constantly climaxing, and she hugs you tightly.
+			PRINTFORMDL ...It seems that she was just as aroused by the memories as you were.
+			CALL HPH_PRINT,@"「%MOAN("l:m",,2,"dot")%, %FSYN("lips_muffle")%HPH...Fufu. More and more, please etch yourself into me %CALLNAME:MASTER%-san...HPH」","W"
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕 && RAND:2
+		;恋慕かつ発情
+		IF TCVAR:発情
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「%MOAN(,,2,"dot")%, %FSYN("lips_muffle")%ー... %MOAN()%HPH... %CALLNAME:MASTER%-san...HPH」","L"
+					PRINTFORMDL Momiji clings to you and dexterously bounces her hips in search of more pleasure...
+					CALL HPH_PRINT,@"「Ahhn...HPH %MOAN("l:m")%HPH %MOAN("l:m",,2)%HPH... I love it when you squeeze me...HPH」","W"
+					PRINTFORMDL You whisper in return that you love her, as you run your hands through the amazingly soft fur of her fluffy tail.
+					CALL HPH_PRINT,@"「Hiuu...!? Nya, AhHPH No, that's...off limits～... %MOAN("l:m",,2,"dot")%...HPH」","L"
+					PRINTFORMDW With each sweet word in her ear or stroke of her tail, her debauched honey hole contracts and milks your meat rod...
+				CASE 1
+					CALL HPH_PRINT,@"「%CALLNAME:MASTER%-san... %MOAN("l:m",,2,"dot")%... Mn, ChuHPH %RANDKISS("kiss")%...HPH」","L"
+					PRINTFORMDL Momiji showers your body with kisses in a state of euphoria...
+					CALL HPH_PRINT,@"「Chu, %RANDKISS("kiss")%, %RANDKISS("kiss")%HPH Puah...HPH %RANDKISS("kiss")%, Chuuu～HPH」","L"
+					PRINTFORMDL From your chest, to the nape of your neck, to your nipple, and then back to the nape of your neck...
+					PRINTFORMDL %BREAKENG(@"As her face gets closer, her fluttering breath tickles the surface of your body and a thrill of pleasure runs through your spine.")%
+					CALL HPH_PRINT,@"「Mn, Fufu～...HPH %CALLNAME:MASTER%-san, you look so good...HPH」","L"
+					CALL HPH_PRINT,@"「When I kiss you like this...your penis twitchesHPH And...HPH I'm feeling good too...HPH Nmu, Lick...HPH」","L"
+					PRINTFORMDL %BREAKENG(@"Taking advantage of your lack of resistance, the wolf tengu runs her tongue around your neck and thoroughly slathers you with her saliva.")%
+					PRINTFORMDW Just like a predator marking her territory...
+			ENDSELECT
+		;恋慕かつ非発情
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「%MOAN()%, %FSYN("lips_muffle")%HPH %MOAN("l:m")%HPH... %CALLNAME:MASTER%-san...HPH」","L"
+					PRINTFORMDL %BREAKENG(@"Momiji clings tightly to you and gazes at your face with moist eyes, and her love nectar flows out incessantly to cover your crotch.")%
+					PRINTFORMDW As you hug her back, you can't help but feel tender love well up inside your chest.
+				CASE 1
+					CALL HPH_PRINT,@"「Mnn... You're so warm...HPH」","L"
+					PRINTFORMDL Momiji hugs you and lets out a contented sigh.
+					PRINTFORMDL The hard tips of her nipples poke into your chest a little uncomfortably, but reminding you of their presence.
+					CALL HPH_PRINT,@"「Ah...HPH %CALLNAME:MASTER%-san, it just got bigger...HPH Do you like hugging like this?」","L"
+					CALL HPH_PRINT,@"「For me... FufuHPH I love itHPH Ehehe, Gyuuu～HPH」","W"
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF TCVAR:発情
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「%MOAN("l:m")%HPH %MOAN("l:m",,2)%HPH」","W"
+				CASE 1
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「%MOAN(,,2,"dot")%, %FSYN("lips_muffle")%ー... %MOAN()%HPH」","W"
+				CASE 1
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;68,背面座位
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_68
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_68_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_68_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;処女
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		;前回射精した
+		IF TCVAR:102
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;69,対面座位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_69
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_69_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_69_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;70,背面座位アナル
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_70
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_70_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_70_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		;アナル処女
+		IF TCVAR:Ａ破瓜
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;71,二穴挿し
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_71
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_71_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_71_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;考えうる分岐が多すぎるので地の文の大まかな分岐だけ
+	;連続
+	IF PREVCOM == SELECTCOM
+		PRINTFORMW 
+		RETURN 1
+	;主人V挿入→助手A挿入
+	ELSEIF TCVAR:100 == MASTER
+		PRINTFORMW 
+		RETURN 1
+	;主人A挿入→助手V挿入
+	ELSEIF TCVAR:101 == MASTER
+		PRINTFORMW 
+		RETURN 1
+	;助手V挿入→主人A挿入
+	ELSEIF TCVAR:100 == ASSI
+		PRINTFORMW 
+		RETURN 1
+	;助手A挿入→主人V挿入
+	ELSEIF TCVAR:101 == ASSI
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;72,挿入Ｇスポット責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_72
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_72_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_72_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;73,挿入子宮口責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_73
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_73_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_73_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;経験不足
+	IF ABL:Ｖ感覚 < 2
+		PRINTFORML
+	;イキすぎ
+	ELSEIF EX:Ｖ絶頂 > 15 && BASE:体力 < MAXBASE:体力/2 && BASE:気力 <= 0
+		CALL HPH_PRINT,@"「It's good, Aahh!! Haah, Ahn, Ahhhh!! Ah, Ahnnn～～～～HPHHPHHPH」","L"
+		PRINTFORMW 
+	;MASTERが何度も射精している
+	ELSEIF TCVAR:350 > 3 && RAND:2 == 0
+		
+	;基本セット
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORML 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORML 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;74,Ｓ状結腸責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_74
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_74_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_74_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;75,膣裏責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_75
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_75_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_75_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;77,小人オナホ(針妙丸用？
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_77
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_77_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_77_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+	ENDIF
+	;-------------------------------------------------
+	;挿入継続
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:101 == PLAYER
+		;前回射精した
+		IF TCVAR:104
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;恋慕
+	IF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

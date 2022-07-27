@@ -1,0 +1,94 @@
+﻿@K61_MASTERNAME(ARGS)
+#FUNCTIONS
+ARGS '= TOLOWER(ARGS)
+SIF !STRLENS(ARGS)
+	RETURNF MASTERNAME:61
+	
+IF ARGS == "nomy" 
+	IF MASTERNAME:61 == "My love"
+		RETURNF "Love"
+	ELSE
+		RETURNF MASTERNAME:61
+	ENDIF
+ENDIF
+	
+SIF ARGS == "my" && MASTERNAME:61 == "My love"
+	RETURNF MASTERNAME:61
+	
+RETURNF ARGS + " " + MASTERNAME:61
+
+;identical code, moved to function
+@K61_CONFESSION_NAMESET
+PRINTFORML 「You can... stop... time?」
+SIF EXP:60 || EXP:61 || EXP:62 || EXP:63
+	PRINTFORML 「Ooh, so that's why I felt so strange sometimes, that explains it.」
+PRINTFORML 「But why bother to talk about that now of all times?」
+PRINTFORML 「...Ah, I see. You don't want to keep secrets from your lover, and neither do I.」
+PRINTFORML 「May I ask for just one more thing?」
+PRINTFORML 「I don't mind if you use this power to toy with me, and I'm not going to try and stop you from using it on others.」
+PRINTFORMW 「So all I want is to share your true love with me when you're not playing with time.」
+PRINTFORML 「Huh? You want me to call you in a special way since we're lovers now?」
+PRINTFORML 「Uhh... It's kind of e-embarrassing though, but if you so desire, then...」
+PRINTFORMW 「So, how should I call you?」
+PRINTL
+;modded code so new options can be added more easily on demand
+;todo: sex checks for others? >reee but why you can be hubby as a female? Cuz you're the husband in this relationship, retard
+;"Dear husband", "Master", "Milord/Milady", "Honey/Hubby/Dear/My love", "Brother/Sister"
+FOR LOCAL, 0, VARSIZE("K61EN_CALLNAME")
+	PRINTFORMDL [{LOCAL}] "%K61EN_CALLNAME:LOCAL%"
+NEXT
+PRINTFORMDL [9] Just keep it the way it is
+REDRAW 0
+$INPUT_NAMELOOP
+INPUT
+SIF INRANGE(RESULT, 0, VARSIZE("K61EN_CALLNAME")-1) && STRLENS(K61EN_CALLNAME:RESULT)
+	MASTERNAME:61 '= K61EN_CALLNAME:RESULT
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「%MASTERNAME:61%, huh... It sounds like we really are a married couple now, don't you think?」
+	CASE 1
+		PRINTFORML 「%MASTERNAME:61%? Are you going for that maid impression or something?」
+	CASE 2
+		IF GETBIT(TALENT:MASTER:性別,1)
+			MASTERNAME:61 '= SPLIT_SINGLE(MASTERNAME:61, 0, "/")
+		ELSE
+			MASTERNAME:61 '= SPLIT_SINGLE(MASTERNAME:61, 1, "/")
+		ENDIF
+		PRINTFORML 「%MASTERNAME:61%? That way of saying it is a little strange, but I guess it's fine in its own way.」
+	CASE 3
+		PRINTFORMDL Which one would you like?
+		SPLIT MASTERNAME:61, "/", LOCALS
+		FOR LOCAL, 0, RESULT
+			PRINTFORMDL [{LOCAL}] "%LOCALS:LOCAL%"
+		NEXT
+		LOCAL = RESULT
+		DO
+			INPUT
+			
+			CLEARLINE 1
+			SIF !INRANGE(RESULT, 0, LOCAL-1)
+				CONTINUE
+				
+			MASTERNAME:61 '= LOCALS:RESULT
+			BREAK
+		LOOP 1
+		PRINTFORML 「%MASTERNAME:61%, huh... I never thought I would have someone to call that way.」
+	CASE 4
+		IF GETBIT(TALENT:MASTER:性別,1)
+			MASTERNAME:61 '= SPLIT_SINGLE(MASTERNAME:61, 0, "/")
+		ELSE
+			MASTERNAME:61 '= SPLIT_SINGLE(MASTERNAME:61, 1, "/")
+		ENDIF
+		PRINTFORML 「%MASTERNAME:61%? Does it mean you have some kind of hidden desire for incest if you want to be called like that?」
+	CASE 9
+		MASTERNAME:61 = %CALLNAME:MASTER%
+		PRINTFORML 「%MASTERNAME:61%... Wait, didn't you just say you wanted a special nickname for yourself or something?」
+		PRINTFORML 「...Y-Yeah, you're right, going out of your way just for that would be too embarrassing.」
+	CASEELSE
+		CLEARLINE 1
+		GOTO INPUT_NAMELOOP
+ENDSELECT
+REDRAW 1
+PRINTFORML 「Now that this is settled, once again, I will be in your care from now on.」
+PRINTFORMW 
+CFLAG:時間停止バレ = 1

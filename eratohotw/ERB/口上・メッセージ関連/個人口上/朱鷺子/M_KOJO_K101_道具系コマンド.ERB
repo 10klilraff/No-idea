@@ -1,0 +1,788 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;道具系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;40,ローター
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_40
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_40_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_40_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「何…？これをアソコに…？」
+		PRINTFORMW 「わっ！んっ…くすぐったい」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 凍えた時の中でローターの振動で朱鷺子のクリトリスが揺れている。
+		PRINTFORMW 朱鷺子自身の表情は変わらないが、秘所は次第に濡れはじめ……
+		PRINTFORMW 気が付くと、彼女の足元には小さな水溜りが出来たいた。
+		RETURN 1
+	;恋人
+	ELSEIF TALENT:恋人
+		IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「んっ%UNICODE(0x2764)% んぅ……こんなんじゃ、足りない……%UNICODE(0x2764)%」 
+						PRINTFORMW 発情した朱鷺子はローターでは物足りないようだ
+					CASE 0
+						PRINTFORMW 「ひぁ……%UNICODE(0x2764)%　ぁ、んんっ%UNICODE(0x2764)%%UNICODE(0x2764)%」
+						PRINTFORMW 朱鷺子は目を閉じて振動が与える刺激を感じている
+						PRINTFORMW 「次は道具じゃなくて直接触って……%UNICODE(0x2764)%」
+				ENDSELECT
+		ELSE
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTFORMW 「ふ、ぁ……あんっ%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子はローターの振動にあわせて思わず声が漏れてしまう
+					PRINTFORMW 「ぃ……んんッ、あっ、んっ%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORMW 「やっ%UNICODE(0x2764)% ぶるぶる……んんッ%UNICODE(0x2764)%」
+					PRINTFORMW 「はぁ…はぁ……ひうっ%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は熱い息を漏らしながら快感を受け入れている
+				CASE 2
+					PRINTFORMW 「ふぁあああっ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)% これ……んんんっ%UNICODE(0x2764)%」
+					PRINTFORMW 「ぃ、ひぁ……～～～～～ッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は目を閉じて快感に従順になっている
+				CASE 3
+					PRINTFORMW 「こんなので……んっ%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子はローターの振動で小さく身体を揺らす
+					PRINTFORMW 「あっ、もっと……%UNICODE(0x2764)%」
+			ENDSELECT
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「んっ%UNICODE(0x2764)% んぅ……こんなんじゃ、足りない……%UNICODE(0x2764)%」 
+						PRINTFORMW 発情した朱鷺子はローターでは物足りないようだ
+					CASE 0
+						PRINTFORMW 「ひぁ……%UNICODE(0x2764)%　ぁ、んんっ%UNICODE(0x2764)%%UNICODE(0x2764)%」
+						PRINTFORMW 朱鷺子は目を閉じて振動が与える刺激を感じている
+						PRINTFORMW 「次は道具じゃなくて直接触って……%UNICODE(0x2764)%」
+				ENDSELECT
+		ELSE
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTFORMW 「…あっ%UNICODE(0x2764)%そんなにされてらっ%UNICODE(0x2764)%…んんんっ%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORMW 「ひうっ%UNICODE(0x2764)% こんな道具で……ああんっ%UNICODE(0x2764)%」
+				CASE 2
+					PRINTFORMW 「震えてる……ッ%UNICODE(0x2764)% ん、んんんっ%UNICODE(0x2764)%」
+					PRINTFORMW 「……～～～～～ッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+				CASE 3
+					PRINTFORMW 「……っ%UNICODE(0x2764)% ん、ぅ……%UNICODE(0x2764)%」
+			ENDSELECT
+		ENDIF
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 「んっ%UNICODE(0x2764)%…ふっ%UNICODE(0x2764)%…あああっ%UNICODE(0x2764)%」
+		PRINTFORMW 「凄い…クリがビリビリしてる%UNICODE(0x2764)%…」
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 「んっ%UNICODE(0x2764)%…あっ%UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;41,Ｅマッサージャ
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_41
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_41_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_41_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「えっ…なにこれ……ふあっ！？」
+		PRINTFORMW 「な……なにこれ…んっ%UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW Eマッサージャは振動しているのにも関わらず、朱鷺子の表情は変わらない。
+		PRINTFORMW それでも暫く放置していると、時折ビクッと動いているのが分かる。
+		PRINTFORMW %CALLNAME:MASTER%は表情はそのままに、感じている彼女の様子を眺めた。
+		RETURN 1
+	;恋人
+	ELSEIF TALENT:恋人
+		IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「あ゛あ゛っ%UNICODE(0x2764)%%UNICODE(0x2764)% んんんんんッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」 
+						PRINTFORMW 朱鷺子は目を見開きながら振動に合わせて身体を震わせている
+					CASE 0
+						PRINTFORMW 「あ゛っ%UNICODE(0x2764)% これ駄目ッ%UNICODE(0x2764)%%UNICODE(0x2764)% ～～～～～～～ッ%UNICODE(0x2764)%」
+						PRINTFORMW 朱鷺子はEマッサージャを見つめながら声を上げている
+				ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「んんんんんんッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子はEマッサージャが当ると身体をビクッと動かした
+					PRINTFORMW 「ひ、ぁ……これ、好き……%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子はうっとりとした表情で甘美な快楽を感じている
+				CASE 1
+					PRINTFORMW 「ん、ふぁ……ぁ…%UNICODE(0x2764)%」
+					PRINTFORMW 「もっと…もっとして……%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は無意識に腰を押し付けている
+				CASE 2
+					PRINTFORMW 「凄い……これ、良いッ%UNICODE(0x2764)%」
+					PRINTFORMW 「く、ぁ……ひぃんッ%UNICODE(0x2764)% ～～～～ッ%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子はEマッサージャの快感に震えている
+			ENDSELECT
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「あ゛あ゛っ%UNICODE(0x2764)%%UNICODE(0x2764)% んんんんんッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」 
+						PRINTFORMW 朱鷺子は目を見開きながら振動に合わせて身体を震わせている
+					CASE 0
+						PRINTFORMW 「あ゛っ%UNICODE(0x2764)% これ駄目ッ%UNICODE(0x2764)%%UNICODE(0x2764)% ～～～～～～～ッ%UNICODE(0x2764)%」
+						PRINTFORMW 朱鷺子はEマッサージャを見つめながら声を上げている
+				ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「んああっ%UNICODE(0x2764)%んっ%UNICODE(0x2764)%…もっと激しくしてもいいのよ…%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORMW 「んんっ%UNICODE(0x2764)% これいいっ%UNICODE(0x2764)% ふ、あぁぁ%UNICODE(0x2764)%」
+				CASE 2
+					PRINTFORMW 「ひ、ぅ……%UNICODE(0x2764)% あんっ%UNICODE(0x2764)% く……ぁ%UNICODE(0x2764)%」
+				ENDSELECT
+		ENDIF
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 「あんっ%UNICODE(0x2764)%…クセになっちゃいそう…%UNICODE(0x2764)%%UNICODE(0x2764)%」
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 「んっ%UNICODE(0x2764)%……あっ%UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;42,クリキャップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_42
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_42_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_42_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「何これ…スポイト…？」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:クリキャップ
+		;時姦中
+		IF FLAG:70
+			PRINTFORMW 
+			RETURN 1
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「んああっ%UNICODE(0x2764)%…凄く敏感になってるっ%UNICODE(0x2764)%」
+			RETURN 1
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW 「あっ%UNICODE(0x2764)%…凄いっ%UNICODE(0x2764)%」
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 「あっ%UNICODE(0x2764)%…んんっ%UNICODE(0x2764)%」
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW クリキャップを外すと同時に朱鷺子は小さく腰を浮かせた。
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;43,オナホール
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_43
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_43_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_43_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:オナホール
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 
+			RETURN 1
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW 
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;44,バイブ
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_44
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_44_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_44_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		IF TCVAR:破瓜 == 1
+			PRINTFORMW 「うーん…折角なら道具じゃない方が良かったな……」
+			RETURN 1
+		ELSE
+			PRINTFORMW 「何これ…凄く振動してるけど……えっ！？それ挿れるの？」
+			RETURN 1
+		ENDIF
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:バイブ
+		;時姦中
+		IF FLAG:70
+			PRINTFORMW 凍えた時の中でバイブは朱鷺子の膣内で振動し続けている。
+			PRINTFORMW 当然反応は無いが、段々水音が大きくなっていく……
+			PRINTFORMW %CALLNAME:MASTER%は辺りに飛び散っている朱鷺子の愛液を見て、解除後の反応が楽しみに思った。
+			RETURN 1
+	;恋人
+	ELSEIF TALENT:恋人
+		IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「やぁ……んんんっ%UNICODE(0x2764)% あ、ふぁあああああッ%UNICODE(0x2764)%%UNICODE(0x2764)%」 
+						PRINTFORMW 朱鷺子は我を忘れて自分の秘所に挿入されたバイブを見つめている
+					CASE 0
+						PRINTFORMW 「あ゛っ%UNICODE(0x2764)% ひ、ぁああああああああ゛ッ%UNICODE(0x2764)%%UNICODE(0x2764)%」
+						PRINTFORMW 強烈な快感に声を上げることしか出来ない
+				ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「ひぁああああッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)% そんな、ずっぷり……ッ%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は膣穴にぴったりと嵌ったバイブに目を見開いている
+					PRINTFORMW 「や、これ、ヤバッ………んひぃいいいいッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORMW 「あ、ひぅ……んぁ………ふ、あ…%UNICODE(0x2764)%」
+					PRINTFORMW 「あんっ%UNICODE(0x2764)% んんんッ%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は与えられる快感を噛みしめている
+				CASE 2
+					PRINTFORMW 「く、ひぃいいいッ%UNICODE(0x2764)% そんな、振るえないで……あッ%UNICODE(0x2764)%」
+					PRINTFORMW 「んん、んんんんんんんッッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は腰を浮かべながら感じている
+			ENDSELECT
+		ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕
+			IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「やぁ……んんんっ%UNICODE(0x2764)% あ、ふぁあああああッ%UNICODE(0x2764)%%UNICODE(0x2764)%」 
+						PRINTFORMW 朱鷺子は我を忘れて自分の秘所に挿入されたバイブを見つめている
+					CASE 0
+						PRINTFORMW 「あ゛っ%UNICODE(0x2764)% ひ、ぁああああああああ゛ッ%UNICODE(0x2764)%%UNICODE(0x2764)%」
+						PRINTFORMW 強烈な快感に声を上げることしか出来ない
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMW 「ああっ%UNICODE(0x2764)%凄いっ%UNICODE(0x2764)%凄く揺れてるっ%UNICODE(0x2764)%」
+			CASE 1
+				PRINTFORMW 「んんんんッ%UNICODE(0x2764)%%UNICODE(0x2764)% 動かさないでぇ………んぁ」
+			CASE 2
+				PRINTFORMW 「だめッ%UNICODE(0x2764)% あっ、ふぅ……%UNICODE(0x2764)% んんんっ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+			RETURN 1
+			ENDSELECT
+		ENDIF
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW 「んああっ%UNICODE(0x2764)%もっとかき回して%UNICODE(0x2764)%」
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 「んんんっ%UNICODE(0x2764)%」
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;45,アナルバイブ
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_45
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_45_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_45_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「う、嘘でしょ！？これをお尻に？…って急にやめっ…んんんんっ！」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:アナルバイブ
+		;時姦中
+		IF FLAG:70
+			PRINTFORMW 凍えた時の中でアナルバイブは朱鷺子のアナルの中で振動し続けている。
+			PRINTFORMW 朱鷺子の身体は全く動いていないように見えるが、尻穴はバイブを離すまいと締め付けている。
+			PRINTFORMW そのギャップに%CALLNAME:MASTER%は興奮した。
+			RETURN 1
+;恋人
+	ELSEIF TALENT:恋人
+		IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「お゛っ%UNICODE(0x2764)%　だめっ%UNICODE(0x2764)% おひりッ%UNICODE(0x2764)%%UNICODE(0x2764)%」 
+						PRINTFORMW 朱鷺子はアナルにバイブが出し入れされる度に獣のような嬌声を上げる
+					CASE 0
+						PRINTFORMW 「ひぎっ%UNICODE(0x2764)% んおおおおおおおッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+						PRINTFORMW 朱鷺子の理性は尻穴に挿入された道具によって蕩けてしまったようだ
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「あ゛っ%UNICODE(0x2764)% お尻……ブルブルして………ひ、ぉ…%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は振動する棒を尻穴に挿入され声をあげている
+					PRINTFORMW 「ん、ぉ……んぅううううッ%UNICODE(0x2764)%%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORMW 「くぅんんんんッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)% ぁ、んんんんッ%UNICODE(0x2764)%」
+					PRINTFORMW 「おほっ%UNICODE(0x2764)% いひぃいいいいいいッ%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は身体を仰け反らしながら感じている
+				CASE 2
+					PRINTFORMW 「ひッ%UNICODE(0x2764)% んぉおおおおおッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					PRINTFORMW 「ぁ、かは、んんんッ%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は目を閉じて快感に従順になっている
+			ENDSELECT
+		ENDIF
+		;恋慕
+		ELSEIF TALENT:恋慕
+			IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「お゛っ%UNICODE(0x2764)%　だめっ%UNICODE(0x2764)% おひりッ%UNICODE(0x2764)%%UNICODE(0x2764)%」 
+						PRINTFORMW 朱鷺子はアナルにバイブが出し入れされる度に獣のような嬌声を上げる
+					CASE 0
+						PRINTFORMW 「ひぎっ%UNICODE(0x2764)% んおおおおおおおッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+						PRINTFORMW 朱鷺子の理性は尻穴に挿入された道具によって蕩けてしまったようだ
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「おっ%UNICODE(0x2764)%激しいっ%UNICODE(0x2764)%んおおっ%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORMW 「お、おしりっ%UNICODE(0x2764)% ひぁああああッ%UNICODE(0x2764)%」
+				CASE 2
+					PRINTFORMW 「ん゛っ%UNICODE(0x2764)% くぅ、はっ、んんん～～～～っ%UNICODE(0x2764)%%UNICODE(0x2764)%」
+			ENDSELECT
+		ENDIF
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW 「んっ%UNICODE(0x2764)%良いっ%UNICODE(0x2764)%もっとしてぇ%UNICODE(0x2764)%」
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 「こんな所で感じるなんて…んんっ%UNICODE(0x2764)%」
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW 朱鷺子のアナルは快楽を求めるようにひくひくしている。
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;46,アナルビーズ
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_46
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_46_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_46_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「こ、これを…？んんっ…んん」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:アナルビーズ
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んひっ%UNICODE(0x2764)%おっ%UNICODE(0x2764)%おおおっ%UNICODE(0x2764)%ずぶずぶしてっ…%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+			RETURN 1
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW 「ひうっ%UNICODE(0x2764)%もっと押し込んでっ%UNICODE(0x2764)%」
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 「うぐっ…どんどん奥に…んんっ」
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW 「んあああああっ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;47,ニプルキャップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_47
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_47_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_47_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「何これ…スポイト…？」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:ニプルキャップ
+		;時姦中
+		IF FLAG:70
+			PRINTFORMW 
+			RETURN 1
+		;恋慕
+		ELSEIF TALENT:恋慕
+			PRINTFORMW 「ああっ%UNICODE(0x2764)%更に敏感になっちゃう%UNICODE(0x2764)%…んんっ%UNICODE(0x2764)%」
+			RETURN 1
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW 「はぁ%UNICODE(0x2764)%…はぁ%UNICODE(0x2764)%…直接弄って%UNICODE(0x2764)%」
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 「んっ%UNICODE(0x2764)%…ふっ%UNICODE(0x2764)%」
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW 朱鷺子は思わず吐息を漏らしてしまった。
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;48,搾乳機
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_48
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_48_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_48_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「ちょ、ちょっと何考えてるの！？」
+		PRINTFORMW 「って話聞いてないし……ひっ！んぎっ！？」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;装着
+	IF TEQUIP:搾乳機
+		;恋慕
+		IF TALENT:恋慕
+			PRINTFORMW 「んんっ…ひうっ%UNICODE(0x2764)%絞り過ぎよっ%UNICODE(0x2764)%…ああんっ%UNICODE(0x2764)%」
+			RETURN 1
+		;屈服3
+		ELSEIF MARK:不埒刻印 == 3
+			PRINTFORMW %UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%…！もっと搾り取ってぇ…%UNICODE(0x2764)%」
+			RETURN 1
+		;それ以外
+		ELSE
+			PRINTFORMW 「ふぐっ…んんっ」
+			RETURN 1
+		ENDIF
+	;解除
+	ELSE
+		PRINTFORMW 「んんっ…はぁはぁ……ふぅ」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;49,乳首ローター
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_49
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_49_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_49_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 「凄く振動してる…これ胸に当てるの…？」
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 凍えた時の中で朱鷺子の乳首はローターによって刺激されている。
+		PRINTFORMW 暫くすると時間を停められているのにも関わらず、ムクムクと乳首が勃っていく……
+		PRINTFORMW その厭らしく尖った突起物を更にローターで刺激した。
+		RETURN 1
+	;恋人
+	ELSEIF TALENT:恋人
+			IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「んんんっ%UNICODE(0x2764)%%UNICODE(0x2764)% あっ%UNICODE(0x2764)% いつもより敏感にッ%UNICODE(0x2764)%%UNICODE(0x2764)% ～～～～ッ%UNICODE(0x2764)%」 
+						PRINTFORMW 朱鷺子は身体を仰け反らして感じている
+					CASE 0
+						PRINTFORMW 「ぃ、ひぃ…%UNICODE(0x2764)% 胸……なんでこんなにぃ……%UNICODE(0x2764)%」
+						PRINTFORMW 朱鷺子は振動するローターの快感に酔いしれている
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「ふ、ぁ……胸……あんっ%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子はローターの振動にあわせて思わず声が漏れてしまう
+					PRINTFORMW 「ぃ……んんッ、あっ、んっ%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORMW 「やっ%UNICODE(0x2764)% ぶるぶる……んんッ%UNICODE(0x2764)%」
+					PRINTFORMW 「はぁ…はぁ……ひうっ%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は熱い息を漏らしながら快感を受け入れている
+				CASE 2
+					PRINTFORMW 「ふぁあああっ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)% ちくび……だめっ………んんんっ%UNICODE(0x2764)%」
+					PRINTFORMW 「ぃ、ひぁ……～～～～～ッ%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子は目を閉じて快感に従順になっている
+			ENDSELECT
+		ENDIF
+	;恋慕
+	ELSEIF TALENT:恋慕
+		IF TCVAR:媚薬 || TCVAR:発情 || CFLAG:TARGET:溜まってる度 > 850
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORMW 「んんんっ%UNICODE(0x2764)%%UNICODE(0x2764)% あっ%UNICODE(0x2764)% いつもより敏感にッ%UNICODE(0x2764)%%UNICODE(0x2764)% ～～～～ッ%UNICODE(0x2764)%」 
+						PRINTFORMW 朱鷺子は身体を仰け反らして感じている
+					CASE 0
+						PRINTFORMW 「ぃ、ひぃ…%UNICODE(0x2764)% 胸……なんでこんなにぃ……%UNICODE(0x2764)%」
+						PRINTFORMW 朱鷺子は振動するローターの快感に酔いしれている
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「んんんっ%UNICODE(0x2764)%…乳首ビリビリするっ%UNICODE(0x2764)%」
+				CASE 1
+					PRINTFORMW 「あんっ%UNICODE(0x2764)% これっ%UNICODE(0x2764)% いいっ%UNICODE(0x2764)%」
+					PRINTFORMDW 朱鷺子はローターの振動が乳首に与える快感に痺れている
+				CASE 2
+					PRINTFORMW 「ふぁあ%UNICODE(0x2764)% んんっ%UNICODE(0x2764)% ～～～っ%UNICODE(0x2764)%」
+				ENDSELECT
+			RETURN 1
+		ENDIF
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 「ああっ%UNICODE(0x2764)%…もっと強くしても良いのよ%UNICODE(0x2764)%」
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 「あっ%UNICODE(0x2764)%…んっ%UNICODE(0x2764)%」
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;50,ゴム装着
+;==================================================
+@M_KOJO_MESSAGE_COM_K101_50
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K101_50_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K101_50_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

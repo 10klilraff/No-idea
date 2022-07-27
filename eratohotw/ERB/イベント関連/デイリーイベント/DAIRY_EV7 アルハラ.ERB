@@ -1,0 +1,94 @@
+﻿@DAILY_CONDITION_EV7
+
+IF !RAND:15 && MAIN_MAP == 9
+	;addition custom code
+	CALL DAILY_EV7_EDIT
+	;CALL DAILY_EV7
+	RETURN 1
+ELSE
+	RETURN -1
+ENDIF
+
+@DAILY_EV7
+#DIM 人数
+#DIM YUGI
+VARSET LOCAL
+YUGI = !RAND:4
+IF YUGI
+	LOCALS = Yuugi and the others
+ELSE
+	LOCALS = the Oni
+ENDIF
+人数 = 1 + RAND:5
+PRINTFORML %PARSE("You are")% about to go to sleep, when {人数} drunk Oni come stumbling in!
+SIF YUGI
+	PRINTFORML Yuugi also comes in...
+PRINTFORMW It seems they intend to stay here and keep drinking...
+PRINTFORML 
+;他の選択肢は後で
+;ASK_M("受け入れる","酒を渡して出て行ってもらう","ぶちのめす")
+PRINTFORML %PARSE("You invite")% %LOCALS% in under duress.
+PRINTFORML They show no restraint, spreading out sake and snacks before getting started.
+LOCAL:1 = 1
+FOR LOCAL,0,人数
+	LOCAL:1 += RAND:3
+NEXT
+SIF YUGI
+	LOCAL:1 += RAND:3 + RAND:3
+
+FOR LOCAL,0,LOCAL:1
+	PRINTFORMW ...
+	PRINTFORMW ......
+	PRINTFORML %PARSE("You are")% forced to drink.
+	SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMW It's surprisingly normal sake.
+			LOCAL:2 = 200
+		CASE 1
+			PRINTFORMW It's a pretty strong sake.
+			LOCAL:2 = 400
+		CASE 2
+			PRINTFORMW This is strong as hell!
+			LOCAL:2 = 700
+	ENDSELECT
+	PRINTFORMW 
+	BASE:MASTER:酒気 += LOCAL:2
+	IF YUGI
+		CALL CHANGE_CFLAG(2,64,3)
+		CALL CHANGE_CFLAG(4,64,1)
+	ENDIF
+	IF BASE:MASTER:酒気 > MAXBASE:MASTER:酒気
+		PRINTFORML 「Kupaaah!」
+		PRINTFORML %PARSE("You breathe",1)% out!
+		YOGORE:(CFLAG:MASTER:初期位置) += 1500
+		BASE:MASTER:気力 -= 500
+		MAXBASE:MASTER:酒気 += 3
+		PRINTFORMW \@YUGI?%LOCALS%#The Oni\@ laugh uncontrollably...
+		IF BASE:MASTER:気力 < 0
+			PRINTFORMW %PARSE("You collapse")%!
+			BASE:MASTER:気力 -= 1000
+			LOCAL:3 ++
+			BREAK
+		ELSE
+			BASE:MASTER:酒気 /= 2
+		ENDIF
+	ELSEIF BASE:MASTER:酒気 > MAXBASE:MASTER:酒気 * 3 / 4
+		PRINTFORMW %PARSE("You start")% feeling a bit ill...
+	ENDIF
+NEXT
+
+IF !LOCAL:3
+	PRINTFORML %PARSE("You manage")% to endure the alcohol harassment!
+	IF YUGI
+		CFLAG:64:好感度 += 150
+		CFLAG:64:信頼度 += 100
+	ENDIF
+	MAXBASE:MASTER:酒気 += 20
+ENDIF
+CFLAG:MASTER:徹夜 = 1
+YOGORE:(CFLAG:MASTER:初期位置) += 1000
+MAXBASE:MASTER:酒気 = LIMIT(MAXBASE:MASTER:酒気,1500,3000)
+PRINTFORML Once dawn breaks %LOCALS% leave.
+PRINTFORML They leave %PARSE("you")% with a large collection of empty bottles\@ LOCAL:3? %" "%and the stench of vomit# \@.
+PRINTW 
+RETURN 1

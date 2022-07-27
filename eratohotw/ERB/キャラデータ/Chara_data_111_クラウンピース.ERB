@@ -1,0 +1,167 @@
+﻿@CHARAMOVE_DATA_111(ARG, ARG:2)
+LOCAL = 111
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+		;たまに連動
+		SIF CFLAG:LOCAL:今日の運勢 % 12 == 0
+			RETURN [[サニー]]
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;三妖精宅内に行きやすい
+			CASE P27三妖精の家・広間 TO P34スター私室
+				RETURN 5
+			;綿月亭には行かない
+			CASE P1020綿月亭・門 TO P1044応接間
+				RETURN -100
+			;静かの海は渡らない
+			CASE P1001槐安通路 TO P1015砂浜
+				RETURN -100
+			;二階はあまり行かない
+			CASE P1070屋上, P1071純狐私室, P1072ヘカーティア私室
+				RETURN -5
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE 桜並木の鳥居, 神社境内, 神社縁側, 妖精の大樹
+				RETURN 1
+			CASE 広場, 商家町, 呑屋小道
+				RETURN 1
+			CASE 中有の道, 三途の川, 彼岸, 地獄
+				RETURN 1
+			CASE 静かの海
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+ENDSELECT
+
+@EXIST_キャラデータ111
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ111(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "クラウンピース")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（ネグリジェ）セット")
+
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "ピエロ帽"))
+CASE "普段着：靴下"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "タイツ"))
+CASE "普段着：ワンピース"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("ワンピース", "ワンピース"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "タイツにラインが響かない")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "ストリングＴバック")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "ミニキャミ")
+CASE "固有下着着用条件"
+	SIF !RAND:(3 - (2 * 勝負下着判定([[クラウンピース]])))
+		CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 0)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 2)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "チーズ/スパイス/揚げ物/ケーキ/ジャンキー/濃厚/鮮やか/豪快/もちもち/地獄風/" + "洋食/甘い/辛い/" * 2  + "グロテスク/ハンバーガー/" * 3)
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "和食/中華/葉物/あっさり/上品/すっぱい/すっぱい/ヘルシー/ヘルシー/淡白/淡白/野菜/野菜/野菜/")
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "地獄風/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "赤/青/混沌/怖い/奇妙/ポップ/派手/ロリータ/" + "火/骨/妖術/照明/" * 3 + "クレイジーな/地獄の/狂気の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "秩序/シンプル/和風/シック/繊細/知的/水/" + "書物/" * 3)
+ENDSELECT
+
+;-------------------------------------------------
+;固有料理設定
+;DISH_NAME          料理名
+;RESULTS            料理の種類（軽食/主食/デザート）
+;CALL 材料設定("")  材料の指定。"汎用"を入れると自動で汎用食材になる
+;DISH_TASTE         味の設定
+;DISH_COMMENT       （任意）一行コメント
+;DISH_TIME          （任意）調理にかかる時間
+;DISH_MAXLIMIT      （任意）料理の持続時間
+;-------------------------------------------------
+@SPECIAL_MENU_111
+DISH_NAME = アビスバーガー
+RESULTS = 軽食
+CALL 材料設定("獣肉", "得体の知れない肉")
+DISH_TASTE = 洋食/ハンバーガー/パン/肉料理/獣肉/スパイス/チーズ/辛い/ガッツリ/ジャンキー/濃厚/温かい/鮮やか/機能的/グロテスク/地獄風/隠し味/
+DISH_COMMENT = 地獄で人気の過激なハンバーガー。着色料マシマシ。
+RETURN 1
+
+;IMAGE_I111_特殊服装(CHARA)-------------------------------------------------------------------
+;キャラクター特有の服装表示条件
+;エフェクトを共有する服装差分はこちらで指定する
+;使用時注意点:
+;	RESULTSに特殊服装を格納すること
+;	書式は %服装%%特殊服装% 適宜"_"等入れること
+;-------------------------------------------------------------------------------------------
+@IMAGE_I111_特殊服装(CHARA)
+#DIM CHARA
+VARSET RESULTS
+
+IF CFLAG:CHARA:差し替え適用
+	;差し替え画像
+	IF CHECK_NUDE(CHARA)
+		;裸
+		IF FLAG:立ち絵種類
+			;顔絵
+		ELSE
+			;立ち絵
+		ENDIF
+	ELSE
+		;服
+		IF FLAG:立ち絵種類
+			;顔絵
+		ELSE
+			;立ち絵
+		ENDIF
+	ENDIF
+ELSE
+	;通常画像
+	IF CHECK_NUDE(CHARA)
+		;裸
+		IF FLAG:立ち絵種類
+			;顔絵
+		ELSE
+			;立ち絵
+		ENDIF
+	ELSE
+		;服
+		IF CFLAG:CHARA:衣装一時変更 == 55 || CFLAG:CHARA:基本服装セット == 55
+			IF FLAG:立ち絵種類
+				;顔絵
+				RESULTS = _バニー
+			ELSE
+				;立ち絵
+				RESULTS = _バニー
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+

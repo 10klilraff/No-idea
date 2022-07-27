@@ -1,0 +1,264 @@
+﻿;-------------------------------------------------
+;関数名:TINKO
+;概　要:二番煎じ上等
+;引　数:ARG…キャラ登録番号
+;戻り値:
+;備　考:文中関数
+;使用例:%TINKO(PLAYER)%
+;-------------------------------------------------
+@TINKO(ARG)
+#FUNCTIONS
+;Custom code, replaced function
+RETURNF TINKO_TR(ARG)
+VARSET LOCALS
+SIF !ARG
+	ARG = MASTER
+;地の文と辻褄合わせが必要なのでとりあえず汚れ描写は保留
+[SKIPSTART]
+IF GETBIT(STAIN:ARG:2,64)
+	LOCALS = 破瓜血
+	LOCAL ++
+ENDIF
+IF GETBIT(STAIN:ARG:2,8)
+	SIF LOCAL
+		LOCALS += "と"
+	LOCALS += "腸液"
+	LOCAL ++
+ENDIF
+IF GETBIT(STAIN:ARG:2,4)
+	SIF LOCAL
+		LOCALS += "と"
+	LOCALS += "精液"
+	LOCAL ++
+ENDIF
+IF GETBIT(STAIN:ARG:2,1)
+	SIF LOCAL
+		LOCALS += "と"
+	LOCALS += "愛液"
+	LOCAL ++
+ENDIF
+SIF LOCAL
+	LOCALS += "にまみれた"
+[SKIPEND]
+;確率で形容詞がつく
+IF !RAND:4 && ARG == MASTER && TCVAR:ARG:100 != TARGET && TCVAR:ARG:101 != TARGET
+	IF BASE:ARG:勃起 > 1000 
+		SELECTCASE RAND:4
+			CASE 0
+				LOCALS += "猛々しく反り返る"
+			CASE 1
+				LOCALS += "先走りをダラダラと滴らせる"
+			CASE 2
+				LOCALS += "血管を浮かせた"
+			CASE 3
+				LOCALS += "濃厚な精臭を放つ"
+		ENDSELECT
+	ELSEIF BASE:ARG:勃起 > 500
+		SELECTCASE RAND:3
+			CASE 0
+				LOCALS += "むくむくと頭をもたげる"
+			CASE 1
+				LOCALS += "固さを増しつつある"
+			CASE 2
+				LOCALS += "半勃ちの"
+		ENDSELECT
+	ELSE
+		LOCALS += "まだ柔らかい"	
+	ENDIF
+ELSEIF !RAND:3
+	SELECTCASE TALENT:ARG:形状
+		CASE 1
+			;未熟
+			SELECTCASE RAND:3
+				CASE 0
+					LOCALS += "可愛らしい"
+				CASE 1
+					LOCALS += "子供の様な"
+				CASE 2
+					LOCALS += "剥けきっていない"
+			ENDSELECT
+		CASE 2
+			;粗末
+			LOCALS += "貧相な"
+		CASE 3
+			;普通
+			LOCALS += "逞しい"
+		CASE 4
+			;光る
+			SELECTCASE RAND:3
+				CASE 0
+					LOCALS += "ぼんやりと光を放つ"
+				CASE 1
+					LOCALS += "チカチカと点滅する"
+				CASE 2
+					LOCALS += "まばゆく輝く"
+			ENDSELECT
+		CASE 5
+			SELECTCASE RAND:3
+				CASE 0
+					LOCALS += "グロテスクな"
+				CASE 1
+					LOCALS += "凶悪な"
+				CASE 2
+					LOCALS += "イボだらけの"
+			ENDSELECT
+		CASE 6
+			;ごんぶと
+			LOCALS += "長大な"
+		CASE 10
+			;馬並
+			LOCALS += "馬のような"
+	ENDSELECT
+ELSEIF ARG == MASTER && TARGET
+	IF !RAND:3
+		IF TALENT:TARGET:妊娠
+			LOCALS += "彼女を孕ませた"
+		ELSEIF STRFIND(CSTR:TARGET:処女喪失履歴, "ペニス") > 0
+			LOCALS += "彼女を女にした"
+		ENDIF
+	ELSEIF !RAND:2 && 妊娠可否(TARGET) && CFLAG:TARGET:生理周期 == 7 && TEQUIP:TARGET:50 == MASTER
+		LOCALS += "孕ませる気満々の"
+	ENDIF
+ENDIF
+SELECTCASE RAND:12
+	CASE 0
+		LOCALS += "雄のシンボル"
+	CASE 1
+		LOCALS += "男根"
+	CASE 2
+		LOCALS += "怒張"
+	CASE 3
+		LOCALS += "陰茎"
+	CASE 4
+		LOCALS += "肉棒"
+	CASE 5
+		LOCALS += "剛直"
+	CASEELSE
+		LOCALS += "ペニス"
+ENDSELECT
+SIF !TALENT:ARG:2 & 2
+	LOCALS = "ペニスバンド"
+RETURNF LOCALS
+
+
+@TINKO_DECIDE(ARG)
+SIF !HAS_PENIS(ARG)
+	RETURN
+$LOOP
+	PRINTFORML Select \@ARG==0?%PARSE("your")%#%CALLNAME:ARG%'s\@ penis Type
+	PRINTL [1] Immature
+	PRINTL [2] Pathetic
+	PRINTL [3] Normal
+	PRINTL [4] Luminescent
+	PRINTL [5] Bumpy
+	PRINTL [6] Huge
+	;PRINTL [7] 小ぶり
+	;PRINTL [8] ドリル
+	;PRINTL [9] パイプカット済み
+	INPUT
+	SIF !INRANGE(RESULT, 1, 6) ;custom code
+		GOTO LOOP
+	IF RESULT == 5
+		PRINTW Putting that inside someone will just hurt - no instant ahegao.
+		PRINTW Is this just a self-satisfying power-fantasy for you? Have you forgotten how to feel compassion?
+		PRINTL [0] Alright, change it
+		PRINTL [1] Mind your own business!
+		INPUT
+		IF RESULT == 1
+			PRINTW You demon!
+			PRINTFORMW \@ARG==0?%PARSE("Your")%#%CALLNAME:ARG%'s\@ penis is bumpy and covered in hard nubs.
+			TALENT:ARG:形状 = 5
+		ELSE
+			GOTO LOOP
+		ENDIF
+	ELSEIF RESULT == 4
+		PRINTL What does that even mean?
+		PRINTL [0] Sorry, my bad, take me back
+		PRINTL [1] It'll shine just like a firefly squid 
+		INPUT
+		IF RESULT == 1
+			PRINTW I see.
+			PRINTFORMW \@ARG==0?%PARSE("Your")%#%CALLNAME:ARG%'s\@ penis is luminescent.
+			TALENT:ARG:形状 = 4
+		ELSE
+			GOTO LOOP
+		ENDIF
+	ELSEIF RESULT == 6
+		PRINTL Do you think bigger is always better? Your heart can only pump so much blood - if it gets too big it'll get soft.
+		PRINTL Besides, it's not the size that counts, it's the compatibility. If your sizes are incompatible it'll just hurt.
+		PRINTL [0] I changed my mind, I want to be able to do XXX stuff to lolis with less effort
+		PRINTL [1] I want to see the faces of maidens twist in pain as they stretch to fit me
+		INPUT
+		IF RESULT == 1
+			PRINTW What the hell...
+			PRINTFORMW \@ARG==0?%PARSE("Your")%#%CALLNAME:ARG%'s\@ penis is large.
+			TALENT:ARG:形状 = 6
+		ELSE
+			GOTO LOOP
+		ENDIF
+	ELSEIF RESULT == 3
+		PRINTFORMW \@ARG==0?%PARSE("Your")%#%CALLNAME:ARG%'s\@ penis is normal.
+		TALENT:ARG:形状 = RESULT
+	ELSEIF RESULT == 2
+		PRINTFORMW \@ARG==0?%PARSE("Your")%#%CALLNAME:ARG%'s\@ penis is pitiful.
+		TALENT:ARG:形状 = RESULT
+	ELSEIF RESULT == 1
+		PRINTFORMW \@ARG==0?%PARSE("Your")%#%CALLNAME:ARG%'s\@ penis is a cute child-sized one.
+		TALENT:ARG:形状 = RESULT
+	ENDIF
+@TINKO_VSOURCE(ARG)
+
+SELECTCASE TALENT:(TEQUIP:ARG:50):形状
+	CASE 5
+	;イボ付き
+		CUP:ARG:快Ｖ /= 4
+	CASE 2
+	;粗末
+		CUP:ARG:快Ｖ /= 2
+	CASE 10
+	;馬並
+		CUP:ARG:快Ｖ *= 2
+ENDSELECT
+SIF 挿入不可(ARG) == -1 && ABL:ARG:膣 < 2
+	CUP:ARG:快Ｖ = CUP:ARG:快Ｖ * 4 / 5
+SIF 挿入不可(ARG) == -2 && ABL:ARG:膣 < 3
+	CUP:ARG:快Ｖ /= 2
+@TINKO_ASOURCE(ARG)
+
+SELECTCASE TALENT:(TEQUIP:ARG:51):形状
+	CASE 5
+	;イボ付き
+		CUP:ARG:快Ａ /= 4
+	CASE 2
+	;粗末
+		CUP:ARG:快Ａ /= 2
+	CASE 10
+	;馬並
+		CUP:ARG:快Ａ *= 2
+SIF 挿入不可(ARG) == -1 && ABL:ARG:アナル < 2
+	CUP:ARG:快Ａ = CUP:ARG:快Ｖ * 4 / 5
+SIF 挿入不可(ARG) == -2 && ABL:ARG:アナル < 3
+	CUP:ARG:快Ａ /= 2
+ENDSELECT
+
+@TINKO_SIMPLE(ARG)
+#FUNCTIONS
+VARSET LOCALS
+SELECTCASE TALENT:ARG:形状
+	CASE 1
+		LOCALS = childish
+	CASE 2
+		LOCALS = thin
+	CASE 3
+		LOCALS = robust
+	CASE 4
+		LOCALS = shining
+	CASE 5
+		LOCALS = fiendish
+	CASE 6
+		LOCALS = monstrous
+	CASE 10
+		LOCALS = horse-like
+ENDSELECT
+LOCALS += (STRLENS(LOCALS) ? " " # "") + "penis"
+RETURNF LOCALS

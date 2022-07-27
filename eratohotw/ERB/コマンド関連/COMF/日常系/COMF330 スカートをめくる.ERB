@@ -1,0 +1,177 @@
+﻿;-------------------------------------------------
+;スカートをめくる
+;日常系コマンド、レベル1
+;-------------------------------------------------
+@COM330
+#DIM MEKURI
+IF FLAG:70 == 1
+	BASE:MASTER:TSP -= 10
+ELSE
+	;Custom Code
+	IF FLAG:甲斐性無 && !FLAG:LUSTMODE
+		DRAWLINE
+		PRINTFORMW %PARSE("You don't")% have enough courage to do that.
+		RETURN -1
+	ENDIF
+	;固定で獲得するソース
+	SOURCE:露出 = 300
+	SOURCE:反感 = 700
+	IF FLAG:異常気象 == 6
+		MEKURI = MAX(0,5000 - 500 * ABL:親密)
+		SELECTCASE MARK:反発刻印
+			CASE 0
+				MEKURI /= 2
+			CASE 2
+				MEKURI *= 2
+			CASE 3
+				MEKURI *= 4
+		ENDSELECT
+		[IF_DEBUG]
+		PRINTFORMW Skirt flip value {MEKURI}
+		[ENDIF]
+		CUP:快Ｖ += MEKURI
+	ENDIF
+	;好感度をみる
+	SELECTCASE CFLAG:2
+		CASE 1000 TO 3000
+			SOURCE:情愛 += CFLAG:2 / 100
+			SOURCE:反感 -= (ABL:親密 * 10)
+		CASE 3001 TO 5000
+			SOURCE:情愛 += 100 + (CFLAG:2 - 500) / 5
+			SOURCE:歓楽 += 100 + (CFLAG:2 - 500) / 4
+			SOURCE:欲情 += (ABL:親密 * 10)
+			SOURCE:露出 += (ABL:親密 * 15)
+			SOURCE:反感 -= (ABL:親密 * 15)
+		CASE IS > 5000
+			SOURCE:情愛 += 500 + (CFLAG:2 - 5000) / 7
+			SOURCE:歓楽 += 500 + (CFLAG:2 - 5000) / 4
+			IF !TALENT:恋慕 && !TALENT:セフレ ;com stuff custom code
+				SOURCE:欲情 += (ABL:親密 * 15)
+				SOURCE:露出 += (ABL:親密 * 20)
+				SOURCE:反感 -= (ABL:親密 * 25)
+			ELSE
+				SOURCE:欲情 += (ABL:親密 * 20)
+				SOURCE:露出 += (ABL:親密 * 30)
+				SOURCE:反感 -= (ABL:親密 * 40)
+			ENDIF
+	ENDSELECT
+	SIF SOURCE:反感 < 0
+		SOURCE:反感 = 0
+	SIF SOURCE:情愛 < 0
+		SOURCE:情愛 = 0
+
+	LOCAL = 0
+	;com stuff custom code, let's not punish the player for doing it during reverse rape okay
+	IF CFLAG:うふふ == 2
+		IF CFLAG:2 > 3000
+			TFLAG:193 = RAND:2
+			TFLAG:スカートめくりすぎ += RAND:5
+		ELSE
+			TFLAG:193 = !RAND:10 ? RAND:2 # -1
+			TFLAG:スカートめくりすぎ += RAND:10
+		ENDIF
+	;好感度が低いと好感度低下
+	ELSEIF CFLAG:2 <= 100 && !CFLAG:既成事実 ;com stuff custom code
+		TFLAG:193 = -5
+		DOWNBASE:MASTER:体力 += ABL:戦闘能力 * 100
+		TFLAG:スカートめくりすぎ += RAND:30
+		;com custom code, favor/trust penalties
+		TFLAG:97 -= 30
+		TFLAG:98 -= 10
+	ELSEIF CFLAG:2 <= 1000 && !CFLAG:既成事実 ;com stuff custom code
+		TFLAG:193 = -3
+		DOWNBASE:MASTER:体力 += ABL:戦闘能力 * 30
+		TFLAG:スカートめくりすぎ += RAND:20
+		TFLAG:97 -= 20
+		TFLAG:98 -= 5
+	ELSEIF CFLAG:2 <= 3000
+		TFLAG:193 = -1
+		TFLAG:スカートめくりすぎ += RAND:10
+		TFLAG:97 -= 10
+		TFLAG:98 -= 3
+	ELSEIF CFLAG:2 <= 5000
+		TFLAG:193 = 0
+		TFLAG:スカートめくりすぎ += RAND:10
+	ELSE
+		TFLAG:193 = 1
+		TFLAG:スカートめくりすぎ += RAND:5
+	ENDIF
+
+	SOURCE:受動 = 100 + 150 * ABL:従順
+	SOURCE:征服 = 100 + 150 * ABL:サドっ気
+
+	;二人きりだと効果アップ、そうでないと露出以外ダウン=============
+	FOR LOCAL,1,CHARANUM
+		SIF CFLAG:LOCAL:同室
+			LOCAL:2 ++
+	NEXT
+	IF LOCAL:2 == 1
+		TIMES SOURCE:欲情 , 1.20
+		TIMES SOURCE:露出 , 0.80
+		LOCAL:3 = 1
+	ELSE
+		TIMES SOURCE:欲情 , 0.50
+		TIMES SOURCE:露出 , 2.00
+		TIMES SOURCE:反感 , 1.50
+	ENDIF
+	;ムードの影響=====================================================
+	IF BASE:ムード == MAXBASE:ムード
+		TIMES SOURCE:欲情 , 1.20
+		TIMES SOURCE:露出 , 1.20
+		TIMES SOURCE:反感 , 0.50
+	ELSEIF BASE:ムード < 600 && BASE:ムード
+		TIMES SOURCE:欲情 , 1.00
+		TIMES SOURCE:露出 , 1.00
+		TIMES SOURCE:反感 , 1.00
+	ELSEIF BASE:ムード <= 200
+		TIMES SOURCE:欲情 , 0.80
+		TIMES SOURCE:露出 , 0.80
+		TIMES SOURCE:反感 , 1.50
+	ENDIF
+
+	TIME += !FLAG:TIME_COMPRESSION ? 5 # 1
+	IF CHK_DATENOW(CFLAG:TARGET:デート中)
+		EXP:MASTER:デート経験 ++
+		EXP:TARGET:デート経験 ++
+	ENDIF
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE330
+;スカートめくり実行判定
+SIF !TFLAG:100
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(330)
+	RETURN RESULT
+;時間停止中はスキップ
+IF !FLAG:70
+	;睡眠中
+	SIF CFLAG:睡眠
+		RETURN 0
+	;仕事中
+	SIF CFLAG:行動 == 5
+		RETURN 0
+	;デート中
+	SIF CHK_DATENOW(CFLAG:デート中) && CFLAG:現在位置 != OMANEKIBEYA()
+		RETURN 0
+	;添い寝中
+	SIF CFLAG:添い寝中
+		RETURN 0
+ENDIF
+;服装制限
+SIF !(EQUIP:スカート || EQUIP:ワンピース || EQUIP:着物 || EQUIP:ズボン) || EQUIP:0 == 0
+	RETURN 0
+;気力0
+SIF BASE:MASTER:気力 <= 0
+	RETURN 0
+SIF !TARGET
+	RETURN 0
+;押し倒され中の制御
+SIF GETBIT (TCVAR:26,7)
+	RETURN 0
+RETURN 1
+

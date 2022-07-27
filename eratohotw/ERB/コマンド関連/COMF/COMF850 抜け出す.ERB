@@ -1,0 +1,132 @@
+﻿;抜け出す
+@COM850
+#DIM なだめ判定
+#DIM 抜け出せない
+なだめ判定 = 0
+抜け出せない = 0
+IF TCVAR:好きにして
+	PRINTFORMW %PARSE("You kick and struggle")%.
+	IF RAND:100 < RAND:(50 + ABL:サドっ気 * 20 + ABL:戦闘能力 * 20) 
+		PRINTFORMW But it's all in vain...
+		CALL KOJO_MESSAGE_SEND("EVENT",10,TARGET,3,1)
+		DOWNBASE:MASTER:気力 += 50
+		DOWNBASE:MASTER:体力 += 50
+		SOURCE:加虐 += 100
+		TCVAR:嗜虐フラグ = 1
+		TIME += 5
+		RETURN 1
+	ENDIF
+ELSEIF TFLAG:泡風呂
+	CALL 泡風呂終了判定("攻守交代時終了")
+ELSEIF TFLAG:抱きつきモード
+	PRINTFORML %PARSE("You shake")% off %CALLNAME:TARGET%.
+	;その他
+	IF CFLAG:TARGET:性格傾向 == 5 || !FLAG:カウンター地の文制御
+		PRINTFORML %HE_SHE(TARGET,1)% looks let down...
+	;気弱系
+	ELSEIF CFLAG:TARGET:性格傾向 == 1
+		PRINTFORML %HE_SHE(TARGET,1)% looks a bit sad...
+	;強気系
+	ELSEIF CFLAG:TARGET:性格傾向 == 2
+		PRINTFORML %HE_SHE(TARGET,1)% laughs coldly...
+	;素直系
+	ELSEIF CFLAG:TARGET:性格傾向 == 3
+		PRINTFORML %HE_SHE(TARGET,1)% enjoys %PARSE("your")% reaction...
+	;真面目系
+	ELSEIF CFLAG:TARGET:性格傾向 == 4
+		PRINTFORML %HE_SHE(TARGET,1)% apologizes for getting carried away...
+	ENDIF
+ELSE
+	FOR LOCAL,1,CHARANUM
+		IF CFLAG:LOCAL:現在位置 == CFLAG:MASTER:現在位置 && CFLAG:LOCAL:溜まってる度 >= 500
+			なだめ判定 = LOCAL
+			BREAK
+		ENDIF
+	NEXT
+	IF !なだめ判定
+		PRINTFORML %PARSE("You slip")% away from %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? %" "%and the others#\@.
+	ELSE
+		IF (TALENT:MASTER:性別 & 1) && (TALENT:性別 & 1) && TIME_PROGRESS(TFLAG:押し倒され開始時間) >= 360
+			PRINTFORMW While %CALLNAME:なだめ判定% looks a little unsatisfied, %HE_SHE(なだめ判定)% relents and lets go of %PARSE("you")%...
+			TFLAG:抱きつきモード = 0
+			TCVAR:抱きつき禁止時間 = 70 + MAX(10 - ABL:欲望, 0) * 3 - MAX((CFLAG:積極性 + CFLAG:恥じらい) * 5, 30)
+		ELSEIF !TALENT:MASTER:非童貞 && TALENT:MASTER:2 & 2
+			PRINTFORMW %CALLNAME:なだめ判定% begs.
+			PRINTFORMW %CALLNAME:なだめ判定% seems intent on having %PARSE("your")% first time.
+			CFLAG:なだめ判定:溜まってる度 += 50
+			BASE:なだめ判定:気力 -= 200
+			TIME += 5
+			;addition custom code, slip-out
+			CALL TSP_SLIP_OUT(なだめ判定)
+			SIF RESULT
+				GOTO END
+			;------------------------------
+			RETURN 1
+		ELSEIF TALENT:MASTER:処女 || TALENT:なだめ判定:処女
+			PRINTFORMW %CALLNAME:なだめ判定% releases %PARSE("you")% awkwardly ...
+			BASE:なだめ判定:気力 -= 100
+			BASE:なだめ判定:ムード = 0
+		ELSE
+			PRINTFORMW %CALLNAME:なだめ判定% seems to have no intention of letting %PARSE("you")% go just yet...
+			CALL KOJO_MESSAGE_SEND("EVENT",10,なだめ判定,3,2)
+			DOWNBASE:MASTER:気力 += 100
+			DOWNBASE:MASTER:体力 += 50
+			TIME += 5
+			;addition custom code, slip-out
+			CALL TSP_SLIP_OUT(なだめ判定)
+			SIF RESULT
+				GOTO END
+			;------------------------------
+			RETURN 1
+		ENDIF
+	ENDIF
+ENDIF
+
+$END
+CALL 押し倒され終了
+
+@押し倒され終了(ARGS)
+
+FOR LOCAL,0,CHARANUM
+	IF CFLAG:LOCAL:うふふ == 2 || LOCAL == TARGET
+		IF ARGS == "満足"
+			CALL KOJO_MESSAGE_SEND("EVENT",30,LOCAL,2)
+		ELSEIF ARGS == "疲れた"
+			CALL KOJO_MESSAGE_SEND("EVENT",30,LOCAL,1)
+		;押し倒されモード終了
+		ELSEIF CFLAG:LOCAL:うふふ == 2 && LOCAL != 0 && !TFLAG:抱きつきモード && CFLAG:MASTER:現在位置 == CFLAG:LOCAL:現在位置
+			CALL KOJO_MESSAGE_SEND("EVENT",10,LOCAL,2,0)
+		;抱きつきモード満足終了
+		ELSEIF TFLAG:抱きつきモード && TARGET == LOCAL
+			CALL KOJO_MESSAGE_SEND("EVENT",10,LOCAL,2,1)
+		;抱きつきモード強制終了
+		ELSEIF TFLAG:102 == 1 && TARGET == LOCAL
+			CALL KOJO_MESSAGE_SEND("EVENT",10,LOCAL,2,2)
+		ENDIF
+		SIF CFLAG:LOCAL:うふふ == 2
+			CALL SET_DERAY(5,LOCAL)
+		BASE:LOCAL:ムード = BASE:LOCAL:ムード / 2
+		BASE:LOCAL:理性 = MIN(BASE:LOCAL:理性 + 300, MAXBASE:LOCAL:理性)
+		CFLAG:LOCAL:うふふ = 0
+		;ウフフ時系装備リセット
+		CALL ENDUFUFU(LOCAL)
+	ENDIF
+NEXT
+TFLAG:102 = 1
+TFLAG:106 = 0
+;MASTERとの接触位置をリセット
+CALL TOUCH_SET(0,0,0,1)
+[SKIPSTART]
+;はだけフラグをオフ
+TEQUIP:2 = 0
+TEQUIP:上半身はだけ状態 = 0
+;キャラ全員の服再セッティング
+FOR LOCAL,0,CHARANUM
+	CALL CLOTHES_SETTING_TRAIN(LOCAL)
+	;上着脱衣済みフラグをオフ
+	TEQUIP:LOCAL:5 = 0
+NEXT
+[SKIPEND]
+
+TIME += 5
+RETURN 1

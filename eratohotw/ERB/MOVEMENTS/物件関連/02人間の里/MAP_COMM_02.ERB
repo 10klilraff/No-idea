@@ -1,0 +1,294 @@
+﻿;--------------------------------------------------
+;地点名変更関数
+;--------------------------------------------------
+@MAP_PLACENAME_2(ARG)
+#FUNCTIONS
+IF GET_MAPID(ARG) == MAIN_MAP
+	SELECTCASE ARG
+		CASE P230空き部屋
+			IF CFLAG:MASTER:初期位置 == ARG
+				RETURNF CALLNAME:MASTER + "'s Room"
+			ELSE
+				RETURNF "Vacant Room"
+			ENDIF
+		CASE SUMIKOMI_ROOM
+			IF FLAG:住み込みキャラ
+				RETURNF CALLNAME:(FLAG:住み込みキャラ) + "'s Room"
+			ELSE
+				RETURNF "Vacant Room"
+			ENDIF
+		CASE MINROOM() TO (MAXROOM - 1)
+			RETURNF STR_TR(ARG + 8000)
+		CASE OMANEKIBEYA()
+			RETURNF OMANEKI_PLACE()
+		CASE SUKIMA()
+			RETURNF "Gap Space"
+		CASE MAXROOM
+			RETURNF "Opposite Street"
+		CASEELSE
+			RETURNF "Unknown"
+	ENDSELECT
+ELSE
+	RETURNF "Outside the Village"
+ENDIF
+
+;--------------------------------------------------
+;場所ARGがどのエリアにあるか
+;表示するマップの番号と連動（TFLAG:マップ切り替え）
+;ARG     場所ID
+;--------------------------------------------------
+@MAP_AREASELECT_2(ARG)
+#FUNCTION
+SELECTCASE ARG
+	;長屋
+	CASE P214長屋前, P230空き部屋 TO P237共同井戸, P208雷鼓の部屋 TO P210弁々の部屋, P241空き部屋
+		RETURNF 2
+	;鈴奈庵
+	CASE P213鈴奈庵, P226小鈴私室
+		RETURNF 3
+	;鯢呑亭
+	CASE P238鯢呑亭, P239美宵の部屋
+		RETURNF 4
+	;人里
+	CASEELSE
+		RETURNF 1
+ENDSELECT
+
+;--------------------------------------------------
+;内部構造がある場所の内部の判定
+;TFLAG:マップ切り替え  内部察知が必要なマップ番号
+;                P_ID  表示ボタンの場所ID
+;                Q_ID  判定する内部の場所ID,必ずP_IDと一致した数値も含める
+;--------------------------------------------------
+@GETMAP_BUILDING_2(P_ID, Q_ID)
+#FUNCTION
+#DIM P_ID
+#DIM Q_ID
+IF TFLAG:マップ切り替え == 1
+	SELECTCASE P_ID
+		CASE P213鈴奈庵
+			SELECTCASE Q_ID
+			CASE P213鈴奈庵, P226小鈴私室
+				RETURNF 1
+			ENDSELECT
+		CASE P214長屋前
+			SELECTCASE Q_ID
+			CASE P214長屋前, P230空き部屋 TO P237共同井戸, P208雷鼓の部屋 TO P210弁々の部屋, P241空き部屋
+				RETURNF 1
+			ENDSELECT
+		CASE P238鯢呑亭
+			SELECTCASE Q_ID
+			CASE P238鯢呑亭, P239美宵の部屋
+				RETURNF 1
+			ENDSELECT
+	ENDSELECT
+ENDIF
+RETURNF 0
+
+
+;--------------------------------------------------
+;移動制限設定
+;ARG    場所ID
+;CHARA  移動するキャラID
+;RETURNF 1=移動できる,0=移動できない
+;TFLAG:移動不能メッセージ   ↓の@MAP_CANNOT_WORD用の設定
+;--------------------------------------------------
+@MAP_CAN_MOVE_2(ARG, CHARA)
+#FUNCTION
+#DIM CHARA
+SELECTCASE ARG
+	CASE P226小鈴私室
+		IF CHARA == MASTER
+			IF FLAG:70
+				RETURNF 1
+			ELSEIF CFLAG:[[小鈴]]:同行 || CFLAG:[[阿求]]:同行
+				RETURNF 1
+			ELSEIF TALENT:[[小鈴]]:恋慕
+				RETURNF 1
+			ELSEIF TALENT:[[小鈴]]:思慕 && CFLAG:[[小鈴]]:現在位置 == ARG
+				RETURNF 1
+			ELSE
+				TFLAG:移動不能メッセージ = 1
+				RETURNF 0
+			ENDIF
+		;本人は入れる,阿求も入れる
+		ELSEIF CHARA == [[小鈴]] || CHARA == [[阿求]]
+			RETURNF 1
+		;他は入れない
+		ELSE
+			RETURNF 0
+		ENDIF
+	CASE P229阿求私室
+		IF CHARA == MASTER
+			IF FLAG:70
+				RETURNF 1
+			ELSEIF CFLAG:[[阿求]]:同行
+				RETURNF 1
+			ELSEIF TALENT:[[阿求]]:恋慕
+				RETURNF 1
+			ELSEIF TALENT:[[阿求]]:思慕 && CFLAG:[[阿求]]:現在位置 == ARG
+				RETURNF 1
+			ELSE
+				TFLAG:移動不能メッセージ = 1
+				RETURNF 0
+			ENDIF
+		;本人は入れる,相性の良いキャラも入れる
+		ELSEIF CHARA == [[阿求]] || RELATION:[[阿求]]:CHARA >= 100
+			RETURNF 1
+		;他は入れない
+		ELSE
+			RETURNF 0
+		ENDIF
+	CASE P239美宵の部屋
+		IF CHARA == MASTER
+			IF FLAG:時間停止
+				RETURNF 1
+			ELSEIF CFLAG:[[美宵]]:同行
+				RETURNF 1
+			ELSEIF TALENT:[[美宵]]:恋慕
+				RETURNF 1
+			ELSEIF TALENT:[[美宵]]:思慕 && CFLAG:[[美宵]]:現在位置 == ARG
+				RETURNF 1
+			ELSE
+				TFLAG:移動不能メッセージ = 1
+				RETURNF 0
+			ENDIF
+		;本人は入れる
+		ELSEIF CHARA == [[美宵]]
+			RETURNF 1
+		;他は入れない
+		ELSE
+			RETURNF 0
+		ENDIF
+	;あなた以外は入らない
+	CASE P220物見櫓, P225連れ込み宿
+		SIF CHARA != MASTER
+			RETURNF 0
+	;あなた以外は入らない,貸し切っていないと入れない
+	CASE P228貸切浴場
+		IF CHARA != MASTER
+			RETURNF 0
+		ELSEIF !銭湯貸切(DAY)
+			TFLAG:移動不能メッセージ = 2
+			RETURNF 0
+		ENDIF
+	;誰かが住んでないと入れない
+	CASE P230空き部屋, P241空き部屋
+		IF !PRIVATEROOM:(ARG % 100) && CFLAG:MASTER:初期位置 != ARG
+			TFLAG:移動不能メッセージ = 999
+			RETURNF 0
+		ENDIF
+ENDSELECT
+RETURNF 1
+
+;--------------------------------------------------
+;貸切浴場に入るときの判定
+;疑似TFLAGとして扱う,日付が変わると終了
+;ARG = DAY
+;--------------------------------------------------
+@銭湯貸切(ARG, 貸し切る)
+#FUNCTION
+#DIM 貸切日
+#DIM 貸し切る
+IF 貸し切る
+	貸切日 = ARG
+	RETURNF 1
+ELSEIF 貸切日 == ARG
+	RETURNF 1
+ENDIF
+RETURNF 0
+
+;--------------------------------------------------
+;移動不能時に表示されるメッセージ
+;--------------------------------------------------
+@MAP_CANNOT_WORD_2(ARG)
+SELECTCASE TFLAG:移動不能メッセージ
+	CASE 1
+		PRINTFORMW Entering without permission is bad.
+	CASE 2
+		PRINTFORMW You have to charter first before entering.
+ENDSELECT
+CLEARLINE 2
+REUSELASTLINE
+
+;-----------------------------------------
+;拠点専用の情景描写
+;WAITはかけないように
+;-----------------------------------------
+@MAP_UNIQUEMESSAGE_2
+IF WITH_MOB()
+	RETURN 1
+ELSE
+	SELECTCASE CFLAG:MASTER:現在位置
+		CASE P205北通り
+			IF INRANGE(TIME, 540, 1020)
+				PRINTFORML An unenthusiastic kappa stands at the reception desk for the cableway.
+			ELSE
+				PRINTFORML The cableway station is closed.
+			ENDIF
+		CASE P213鈴奈庵
+			PRINTFORML There are many bookshelves lining up along the wall.
+		CASE P222寺子屋
+			IF TIME >= 480 && TIME <= 720 || TIME >= 780 && TIME <= 840 && FLAG:時間停止 != 1
+				PRINTDATA
+					DATAFORM %CALLNAME:TARGET% is conducting lessons for the children...
+				ENDDATA
+				PRINTL
+			ELSEIF TIME >= 720 && TIME <= 780 && FLAG:時間停止 != 1
+				PRINTDATA
+					DATAFORM %CALLNAME:TARGET% is eating dinner with the children...
+				ENDDATA
+				PRINTL
+			ELSEIF TIME >= 480 && TIME <= 840 && FLAG:時間停止 == 1 && !CFLAG:MASTER:うふふ
+				PRINTDATA
+					DATAFORM The children have stopped moving...
+				ENDDATA
+				PRINTL
+			ELSEIF TIME >= 480 && TIME <= 840 && FLAG:時間停止 == 1 && CFLAG:MASTER:うふふ
+				PRINTDATA
+					DATAFORM %CALLNAME:TARGET% is being molested in front of the children...
+				ENDDATA
+				PRINTL
+			ENDIF
+		CASE P203南通り TO P206西通り
+			SIF !RAND:50 && INRANGE(TIME, 540, 1020)
+				PRINTFORML A bearded man holding a medicine bag is busily trying to sell things to a passersby.
+	ENDSELECT
+ENDIF
+RETURN 1
+
+;-----------------------------------------
+;拠点の場所IDをお出かけマップ上の場所IDに置換する関数
+;ARG      対象の場所ID（拠点マップ）
+;RETURNF  差し替え場所ID（お出かけマップ）
+;-----------------------------------------
+@MAP_SEARCH_REPLACEMENT_2(ARG)
+#FUNCTION
+SELECTCASE ARG
+	CASE P201人里の門 TO P207龍神像, P217甘味所, P219集会所, P220物見櫓
+		RETURNF 広場
+	CASE P213鈴奈庵, P215花屋, P216食料品店, P226小鈴私室, P227八百屋
+		RETURNF 商家町
+	CASE P223銭湯, P228貸切浴場
+		RETURNF 大衆浴場
+	CASE P225連れ込み宿
+		RETURNF 連れ込み宿
+	CASE P211酒屋, P212カフェ, P218小料理屋, P238鯢呑亭, P239美宵の部屋
+		RETURNF 呑屋小道
+	CASE P222寺子屋, P224慧音宅
+		RETURNF 寺子屋
+	CASEELSE
+		RETURNF 長屋街
+ENDSELECT
+RETURNF 0
+
+;--------------------------------------------------
+;マップの紹介文
+;--------------------------------------------------
+@マップ紹介_2
+;とりあえず5行
+PRINTFORML The well-known human village from the manga.
+PRINTFORML Features good access to other areas, many facilities such as Suzunaan, and many characters visit for work.
+PRINTFORML But there is no Danmaku training area nor a kitchen garden, nor is foraging possible.
+PRINTFORML It also features a cableway to the Youkai Mountain Summit.
+PRINTFORML 

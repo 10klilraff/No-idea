@@ -1,0 +1,1541 @@
+﻿;-------------------------------------------------
+;310,尻を撫でる
+;-------------------------------------------------
+@MESSAGE_COM310
+IF FLAG:70 == 1
+	PRINTFORML %PARSE("You reach your")% hand towards %CALLNAME:TARGET%'s %HIP(TARGET)%.
+	PRINTFORML Being frozen in time, %CALLNAME:TARGET% doesn't resist as %PARSE("you caress")% %HIS_HER(TARGET)% butt...
+ELSEIF CFLAG:TARGET:睡眠 == 1
+	PRINTFORML %PARSE("You reach")% out for the sleeping %CALLNAME:TARGET%'s %HIP(TARGET)%.
+	IF TALENT:恋慕
+		PRINTFORML %CALLNAME:TARGET% blushes a bit as %PARSE("you continue")% %PARSE("your")% ministrations...
+	ELSE
+		PRINTFORML %CALLNAME:TARGET% turns in %HIS_HER(TARGET)% sleep and brushes %PARSE("your")% hand away...
+	ENDIF
+ELSE
+	IF CFLAG:うふふ == 2
+		PRINTFORM %PARSE("You")% 
+		SELECTCASE TCVAR:20
+			;クンニ強制
+			CASE 70
+				IF !TEQUIP:0
+					PRINTFORML %PARSE("massage")% %CALLNAME:TARGET%'s %HIP(TARGET)% slowly while servicing %HIS_HER(TARGET)% %SLIT(TARGET)% with %PARSE("your",1)% tongue...
+				ELSE
+					GOTO NOMALSIRINADE
+				ENDIF
+			;アナル奉仕
+			CASE 72
+				IF !TEQUIP:0
+					PRINTFORML %PARSE("spread")% %CALLNAME:TARGET%'s cheeks, making it easier to penetrate %HIS_HER(TARGET)% asshole with %PARSE("your",1)% tongue... 
+				ELSE
+					GOTO NOMALSIRINADE
+				ENDIF
+			;スカートの中を見せる
+			CASE 35
+				PRINTFORML %PARSE("rotate")% %CALLNAME:TARGET%'s butt closer and begins stroking it...
+			;素股
+			CASE 52
+				PRINTFORML %PARSE("straddle")% %CALLNAME:TARGET%'s %HIP(TARGET)% as %PARSE("you",1)% %PARSE("fondle")% %HIS_HER(TARGET)% behind...
+			CASEELSE
+				$NOMALSIRINADE
+				;シックスナイン パンツ有り顔面騎乗(70～72)はこちら
+				SIF TEQUIP:シックスナイン
+					PRINTFORM %PARSE("move")% %PARSE("your",1)% hands up and %PARSE("start")% to rub %CALLNAME:TARGET%'s %HIP(TARGET)%...
+				PRINTFORM \@TEQUIP:シックスナイン?#%PARSE("rub")% %CALLNAME:TARGET%'s %HIP(TARGET)%...\@
+		ENDSELECT
+	ELSE
+		PRINTFORML %PARSE("You reach")% for %CALLNAME:TARGET%'s %HIP(TARGET)% \@ PREVCOM == 305 ? while lying in %HIS_HER(TARGET)% lap # from behind  \@.
+		SELECTCASE TFLAG:193
+			CASE -5
+				PRINTFORML %CALLNAME:TARGET% squeals and freezes in place for a moment in surprise, before slapping %PARSE("your")% cheek.
+			CASE -3
+				PRINTFORML %CALLNAME:TARGET% gasps before regaining %HIS_HER(TARGET)% senses and then twists %PARSE("your")% hand painfully.
+			CASE 1
+				IF TALENT:TARGET:10 == -1
+					PRINTFORML Tears well up in the corner of %CALLNAME:TARGET%'s eyes as %HE_SHE(TARGET)% endures %PARSE("your")% sexual harassment...
+					PRINTFORML %PARSE("You feel")% a bit guilty...
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%'s shows %HIS_HER(TARGET)% discomfort, and %HE_SHE(TARGET)% brushes %PARSE("your")% hand away...
+				ENDIF
+			CASE 2,3
+				IF OTOKOGIRAI(TARGET)
+					PRINTFORML %CALLNAME:TARGET% lets out a small yelp as %HE_SHE(TARGET)% jumps.
+					PRINTFORML %PARSE("You feel")% a bit guilty...
+				ELSE
+					PRINTFORM 
+					IF TARGET == 57 && !TALENT:恋慕
+						PRINTFORM A Saru mask floats around %CALLNAME:TARGET%
+					ELSE
+						PRINTFORM %CALLNAME:TARGET% blushes heavily
+					ENDIF
+					PRINTFORML  as %HE_SHE(TARGET)% brushes %PARSE("your")% hand away...
+				ENDIF
+			CASE 4
+				IF TARGET == 57 && !TALENT:恋慕
+					PRINTFORM A Saru and an Okina mask float around %CALLNAME:TARGET%
+				ELSE
+					PRINTFORM %CALLNAME:TARGET% looks embarrassed
+				ENDIF
+				PRINTFORML  as %HE_SHE(TARGET)% lets %PARSE("you")% continue...
+		ENDSELECT
+		TFLAG:400 = RAND:2
+		SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+			CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;311,抱き付く
+;-------------------------------------------------
+@MESSAGE_COM311
+IF FLAG:70 == 1
+	PRINTFORML %PARSE("You embrace")% %CALLNAME:TARGET% tightly.
+	PRINTFORML Being frozen in time, %CALLNAME:TARGET% doesn't resist as %HE_SHE(TARGET)%'s hugged...
+ELSEIF CHK_DATENOW(CFLAG:LOCAL:デート中) && CFLAG:MASTER:現在位置 != OMANEKIBEYA()
+	PRINTFORML While \@ TFLAG:デート道中 ? walking alongside # sitting next to \@ %CALLNAME:TARGET%, %PARSE("you embrace")% %HIM_HER(TARGET)% tightly.
+	PRINTFORM 
+	IF TALENT:恋慕
+		PRINTFORML %CALLNAME:TARGET% \@ TFLAG:デート道中 ? is pleasantly surprised # hugs %PARSE("you")% back \@...
+	ELSEIF TALENT:思慕
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM A Saru mask floats around %CALLNAME:TARGET%, 
+		ELSE
+			PRINTFORM %CALLNAME:TARGET% seems a bit embarrassed, 
+		ENDIF
+		PRINTFORML but it doesn't seem like %HE_SHE(TARGET)% dislikes it...
+	ELSEIF ABL:親密 > 5
+		PRINTFORML %CALLNAME:TARGET% is a bit surprised, and struggles a bit...
+	ELSE
+		PRINTFORML %CALLNAME:TARGET% raises %HIS_HER(TARGET)% voice and pushes %PARSE("you")% away.
+	ENDIF
+	TFLAG:400 = RAND:2
+	SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+		CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+ELSEIF CFLAG:うふふ == 2
+	SELECTCASE TCVAR:20
+		;前から抱きつく
+		CASE 32
+			PRINTFORM %PARSE("You")% and %CALLNAME:TARGET% 
+			IF TALENT:恋慕
+				PRINTL embrace each other in a way that only those who love one another can do...
+			ELSEIF TALENT:思慕
+				PRINTL embrace each other tightly...
+			ELSEIF TALENT:愛欲
+				PRINTL embrace each other, their bodies clinging together...
+			ELSE
+				PRINTL embrace each other...
+			ENDIF
+		;ディープキス
+		CASE 60
+			PRINTFORM %PARSE("You")% and %CALLNAME:TARGET% 
+			IF TALENT:恋慕
+				PRINTL embrace each other tightly while exchanging a deep kiss...
+			ELSEIF TALENT:愛欲
+				PRINTL embrace each other tightly while indulging in a deep, lust-filled kiss...
+			ELSE
+				PRINTL embrace each other while exchanging a kiss...
+			ENDIF
+		;ぱふぱふ
+		CASE 73
+			PRINTFORM %PARSE("You")% 
+			IF TALENT:TARGET:バストサイズ >= 0
+				SELECTCASE RAND:5
+				CASE 0
+					PRINTFORML %PARSE("bury")% %PARSE("your",1)% face in %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%, inhaling %HIS_HER(TARGET)% fragrant smell...
+				CASE 1
+					PRINTFORML rubs %PARSE("your",1)% face in %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%...
+					PRINTFORML %CALLNAME:TARGET% writhes in the pleasure given to %HIS_HER(TARGET)% breasts...
+				CASE 2
+					PRINTFORML %PARSE("suck")% on %CALLNAME:TARGET%'s nipples...
+					PRINTFORML %CALLNAME:TARGET% lets out a moan as %HE_SHE(TARGET)% can't withstand the pleasure from %HIS_HER(TARGET)% breasts...
+				CASE 3
+					PRINTFORML %PARSE("press")% %PARSE("your",1)% face in %CALLNAME:TARGET%'s soft valley...
+				CASE 4
+					PRINTFORML happily %PARSE("sink")% %PARSE("your",1)% face deep between %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%...
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML %PARSE("rub")% %PARSE("your",1)% face against %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%, inhaling %HIS_HER(TARGET)% fragrant smell...
+				CASE 1
+					PRINTFORML %PARSE("rub")% %PARSE("your",1)% face against %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%...
+					PRINTFORML %CALLNAME:TARGET% writhes in the pleasure given to %HIS_HER(TARGET)% breasts...
+				CASE 2
+					PRINTFORML %PARSE("suck")% on %CALLNAME:TARGET%'s nipples...
+					PRINTFORML %CALLNAME:TARGET% lets out a moan as %HE_SHE(TARGET)% can't withstand the pleasure from %HIS_HER(TARGET)% breasts...
+				ENDSELECT
+			ENDIF
+		;乳合わせ
+		CASE 74
+			IF GETBIT(TALENT:MASTER:性別,1)
+				PRINTFORML %PARSE("You")% press your body against %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)% tightly...
+			ELSE
+				PRINTFORML %PARSE("You embrace")% %CALLNAME:TARGET% as %PARSE("your",2)% nipples poke into each other...
+			ENDIF
+		;乳を吸わせる
+		CASE 77
+			PRINTFORM %PARSE("You hug")% %CALLNAME:TARGET% as if intent on not letting %HIM_HER(TARGET)% go, as %PARSE("you",1)% 
+			SELECTCASE RAND:6
+				CASE 0
+					PRINTFORM %PARSE("continue")% sucking
+				CASE 1
+					PRINTFORM strongly %PARSE("suck")%
+				CASE 2
+					PRINTFORM playfully %PARSE("bite")%
+				CASE 3
+					PRINTFORM %PARSE("smack")% %PARSE("your",1)% lips around
+				CASE 4
+					PRINTFORM vigorously %PARSE("lick")%
+				CASE 5
+					PRINTFORM %PARSE("run")% %PARSE("your",1)% tongue all over
+			ENDSELECT
+			PRINTFORML  %CALLNAME:TARGET%'s %NIPPLE_DESCRIPTION(TARGET)%.
+			SELECTCASE RAND:6
+				CASE 0
+					IF TARGET == 57 && !TALENT:恋慕
+						PRINTFORM A Saru mask floats around %CALLNAME:TARGET%
+					ELSE
+						PRINTFORM %CALLNAME:TARGET% grits %HIS_HER(TARGET)% teeth
+					ENDIF
+					PRINTFORML  as %HE_SHE(TARGET)% tries to withstand the pleasure...
+				CASE 1
+					PRINTFORML %CALLNAME:TARGET% lets out a sweet voice and jumps each time %HE_SHE(TARGET)%'s touched...
+				CASE 2
+					PRINTFORML %CALLNAME:TARGET% moans from the intermittent stimulation...
+				CASE 3
+					PRINTFORML %CALLNAME:TARGET% writhes from the intense pleasure coming from %HIS_HER(TARGET)% chest...
+				CASE 4
+					PRINTFORML %CALLNAME:TARGET%'s hair is completely disheveled as %HE_SHE(TARGET)%'s absorbed in the pleasure...
+				CASE 5
+					PRINTFORML %CALLNAME:TARGET% can't withstand the pleasure, and hugs %PARSE("you")% tightly...
+			ENDSELECT
+		;85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ
+		CASE 85,87,88,89
+			PRINTFORML %PARSE("You hug")% %CALLNAME:TARGET% close, shaking %HIS_HER(TARGET)% waist up and down.
+			IF TALENT:TARGET:恋慕
+				PRINTFORML %CALLNAME:TARGET%'s \@ TCVAR:20 == 85 || TCVAR:20 == 88 ? honey pot # chrysanthemum gate \@ clenches rhythmically in sync with %PARSE("your")% movements, tightening around %PARSE("your",1)% penis, trying to make %PARSE("you",5)% cum...
+			ELSEIF TALENT:TARGET:愛欲
+				PRINTFORML %CALLNAME:TARGET%'s \@ TCVAR:20 == 85 || TCVAR:20 == 88 ? honey pot # chrysanthemum gate \@ tightens around %PARSE("your")% penis, trying to make %PARSE("you",1)% cum...
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%'s \@ TCVAR:20 == 85 || TCVAR:20 == 88 ? honey pot # intestinal walls \@ overflows with \@ TCVAR:20 == 85 || TCVAR:20 == 88 ? love juice # intestinal liquid \@ in a never-ending torrent...
+			ENDIF
+		;だいしゅきホールド
+		CASE 86
+			PRINTFORML %PARSE("You hug")% %CALLNAME:TARGET% tightly and %PARSE("adjust")% so %PARSE("you",1)% can push even further inside %HIM_HER(TARGET)%.
+			PRINTFORML %CALLNAME:TARGET% returns the hug, and whispers words of love into %PARSE("your")% ears.
+			SELECTCASE BASE:PLAYER:2
+				CASE 10000
+					PRINTFORML %PARSE("You pour your")% %SAMEN_DESCRIPTION(PLAYER)% into %CALLNAME:TARGET%'s womb...
+				CASEELSE
+					PRINTFORML %PARSE("You savor")% the texture and sensation of %CALLNAME:TARGET%'s honey pot...
+			ENDSELECT
+		CASEELSE
+			GOTO NOMALDAKI
+	ENDSELECT
+ELSE
+	$NOMALDAKI
+	PRINTFORML %PARSE("You embrace")% %CALLNAME:TARGET% tightly\@ CFLAG:TARGET:添い寝中 ? %" "%as %PARSE("you",2)% lay in bed # \@.
+	IF CFLAG:TARGET:睡眠
+		IF TALENT:恋慕
+			PRINTFORML %CALLNAME:TARGET% snuggles into %PARSE("your",1)% chest with a happy look on %HIS_HER(TARGET)% face...
+		ELSEIF TALENT:思慕
+			PRINTFORML %CALLNAME:TARGET% hugs %PARSE("you",5)% back in %HIS_HER(TARGET)% sleep...
+		ELSE
+			PRINTFORML %CALLNAME:TARGET% squirms around a bit, but doesn't wake up...
+		ENDIF
+	ELSE
+		IF TALENT:恋慕
+			PRINTFORML %CALLNAME:TARGET% warmly returns the embrace.
+		ELSEIF TALENT:思慕
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM A Saru mask floats around %CALLNAME:TARGET%
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% looks a bit embarrassed
+			ENDIF
+			PRINTL  but doesn't seem to dislike it...
+		ELSEIF TALENT:幼児／幼児退行
+			PRINTFORML %CALLNAME:TARGET% tilts %HIS_HER(TARGET)% head slightly...
+		ELSEIF TALENT:動物耳
+			PRINTFORML %CALLNAME:TARGET% kicks and struggles...
+		ELSE
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM A Shishi-guchi mask floats around %CALLNAME:TARGET%
+			ELSE
+				PRINTFORM %CALLNAME:TARGET% seems very embarrassed by it
+			ENDIF
+			PRINTL ...
+		ENDIF
+	ENDIF
+	TFLAG:400 = RAND:2
+	SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+		CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+ENDIF
+;-------------------------------------------------
+;312,キスする
+;-------------------------------------------------
+@MESSAGE_COM312
+CALL ONGOING_END()
+IF FLAG:70 == 1
+	PRINTFORML %PARSE("You kiss")% %CALLNAME:TARGET%'s lips.
+	PRINTFORML Since time is stopped %CALLNAME:TARGET% can do nothing to resist the kiss...
+ELSEIF CFLAG:TARGET:睡眠
+	PRINTFORML %PARSE("You press")% %PARSE("your",1)% mouth against the sleeping %CALLNAME:TARGET%'s...
+	IF ABL:親密 >= 5
+		PRINTFORM After their lips separate 
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORML an Okina mask floats around %TNAME(TARGET)%...
+		ELSE
+			PRINTFORML %TNAME(TARGET)% smiles slightly...
+		ENDIF
+	ELSEIF ABL:親密 >= 3
+		PRINTFORM %TNAME(TARGET,1)% finds it awkward
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORML  and a Shishi-guchi mask hangs in the air...
+		ELSE
+			PRINTFORML  and %HIS_HER(TARGET)% eyebrows wrinkle...
+		ENDIF
+	ELSE
+		PRINTFORM %TNAME(TARGET,1)% 
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM has an Hannya mask floating beside %HIM_HER(TARGET)%
+		ELSE
+			PRINTFORM grimaces
+		ENDIF
+		PRINTFORML  and turns in %HIS_HER(TARGET)% sleep...
+	ENDIF
+ELSEIF CFLAG:TARGET:添い寝中
+	PRINTFORML %PARSE("You press")% %PARSE("your",1)% lips against %CALLNAME:TARGET%'s as they lay in bed...
+	IF ABL:親密 >= 8
+		PRINTFORML %TNAME(TARGET,1)% leans in towards %PARSE("you",5)% and returns the kiss...
+	ELSEIF ABL:親密 >= 5
+		PRINTFORML %TNAME(TARGET,1)% blushes and puckers %HIS_HER(TARGET)% lips, returning the kiss...
+	ELSE
+		PRINTFORML %TNAME(TARGET,1)% blushes and looks away...
+	ENDIF
+ELSEIF TFLAG:193 == 99
+	PRINTFORM %PARSE("You try")% to kiss %CALLNAME:TARGET%, but 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM a Hannya mask suddenly appears, 
+	ELSE
+		PRINTFORM %HE_SHE(TARGET)% seems to hate it, 
+	ENDIF
+	PRINTFORML so %PARSE("you give",1)% up...
+ELSE
+	IF CFLAG:うふふ == 2
+		SELECTCASE TCVAR:20
+			;前から抱きつく
+			CASE 32
+				PRINTFORM %PARSE("You")% 
+				IF TALENT:恋慕
+					PRINTFORML %PARSE("hold")% %CALLNAME:TARGET% in a close embrace while %PARSE("you",2)% exchange a passionate kiss...
+				ELSEIF TALENT:愛欲
+					PRINTFORML %PARSE("hold")% %CALLNAME:TARGET% close while %PARSE("you",2)% indulge in a lusty kiss...
+				ELSE
+					PRINTFORML %PARSE("embrace")% %CALLNAME:TARGET% as %PARSE("you",2)% kiss...
+				ENDIF
+			;手淫
+			CASE 50
+				IF TALENT:PLAYER:2 & 2
+					PRINTFORM %PARSE("You lean")% in to %CALLNAME:TARGET% for a kiss as %HE_SHE(TARGET)% strokes %PARSE("your",1)% %TINKO(PLAYER)%...
+				ELSE
+					PRINTFORM %PARSE("You lean")% in to %CALLNAME:TARGET% for a kiss as %HE_SHE(TARGET)% fingers %PARSE("you",5)%...
+				ENDIF
+			;キス
+			CASE 60
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML %PARSE("You")% and %CALLNAME:TARGET% engage in a deep kiss, exchanging saliva...
+					CASE 1
+						PRINTFORML %PARSE("You push your")% tongue inside %CALLNAME:TARGET%'s mouth, and the two of %PARSE("you",4)% start making out, %PARSE("your",2)% tongues entangling...
+					CASEELSE
+						PRINTFORML %PARSE("You push your")% tongue inside %CALLNAME:TARGET%'s mouth, tasting every corner of %HIS_HER(TARGET)% mouth...
+				ENDSELECT
+			;85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ
+			CASE 85,87 TO 89
+				PRINTFORML %PARSE("You kiss")% %CALLNAME:TARGET% while %HE_SHE(TARGET)%'s offering %HIS_HER(TARGET)% \@ TCVAR:20 == 85 || TCVAR:20 == 88 ? pussy # ass \@ to %PARSE("you"),1%.
+				SIF TALENT:恋慕 || TALENT:愛欲
+					PRINTFORML %PARSE("You speed")% up the movement of %PARSE("your")% hips, plunging into %CALLNAME:TARGET%'s \@ TCVAR:20 == 85 || TCVAR:20 == 88 ? vagina # anus \@ with hunger...
+			;だいしゅきホールド
+			CASE 86
+				SELECTCASE BASE:PLAYER:2
+					CASE 0 TO 2999
+						PRINTFORML While holding %CALLNAME:TARGET% in a tight embrace, %PARSE("you",2)% exchange a hot kiss.
+						PRINTFORML Wanting to draw it out, %HE_SHE(TARGET)% begins moving %HIS_HER(TARGET)% hips as a slow pace...
+					CASE 3000 TO 9999
+						PRINTFORML While holding %CALLNAME:TARGET% in a tight embrace, %PARSE("you exchange")% a hot kiss.
+						PRINTFORML %TNAME(TARGET,1)% can't bear it anymore and begins moving %HIS_HER(TARGET)% hips violently.
+						PRINTFORML Copious amounts of love juice fly about and the sound of %PARSE("you",3)% two going at it fills the room...
+					CASEELSE
+						PRINTFORML While holding %CALLNAME:TARGET% in a tight embrace, %PARSE("you exchange")% a hot kiss as %PARSE("you feel yourself")% about to cum.
+						PRINTFORML Sensing it as well, %TNAME(TARGET)% begins moving %HIS_HER(TARGET)% hips at a violent pace, wanting to finish at the same time as %PARSE("you",5)%...
+						PRINTFORML %PARSE("You hold")% %HIM_HER(TARGET)% close for a moment, before thrusting deep into %HIS_HER(TARGET)% insides...
+				ENDSELECT
+			CASEELSE
+				GOTO NOMALKISS
+		ENDSELECT
+	ELSE
+		;前回膝枕
+		IF PREVCOM == 305
+			PRINTFORML %PARSE("You lift")% %PARSE("your",1)% head from %CALLNAME:TARGET%'s lap and %PARSE("give")% %HIM_HER(TARGET)% a gentle kiss...
+		ELSE
+			PRINTFORML %PARSE("You press")% %PARSE("your",1)% lips against %CALLNAME:TARGET%'s...
+		ENDIF
+		$NOMALKISS
+		IF ABL:欲望 >= 5
+			PRINTFORML %CALLNAME:TARGET% parts %PARSE("your")% lips and pushes %HIS_HER(TARGET)% tongue inside, french kissing them...
+		ELSEIF ABL:親密 >= 5
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORML An Okina mask floats around %CALLNAME:TARGET%...
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%'s cheeks turn red...
+			ENDIF
+		ELSE
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORML A Shishi-guchi mask floats around %CALLNAME:TARGET%...
+			ELSE
+				PRINTFORML %CALLNAME:TARGET% seems a bit surprised...
+			ENDIF
+		ENDIF
+		TFLAG:400 = RAND:2
+		SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+			CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;313,胸愛撫
+;-------------------------------------------------
+@MESSAGE_COM313
+;Custom code, replaced function
+CALL MESSAGE_COM313_TR
+RETURN RESULT
+IF FLAG:70 == 1
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+	IF TEQUIP:1 & 1 && !TEQUIP:4
+		TEQUIP:4 = 1
+		PRINTFORM %SHOW_TOP(TARGET,1)%をはだけさせ、
+		IF TEQUIP:1 & 2
+			PRINTFORM %SHOW_TOP(TARGET)%越しに%OPPAI_DESCRIPTION(TARGET,1)%を
+		ELSE
+			SIF !(EQUIP:TARGET:上半身下着１ || EQUIP:TARGET:上半身下着２ || EQUIP:TARGET:レオタード || EQUIP:TARGET:ボディースーツ)
+				PRINT 下に何も着ておらず
+			PRINTFORM 露わになった%OPPAI_DESCRIPTION(TARGET,1)%を
+		ENDIF
+	ELSEIF TEQUIP:1 & 2
+		PRINTFORM %OPPAI_DESCRIPTION(TARGET,1)%を%SHOW_TOP(TARGET)%の上から
+	ELSE
+		PRINTFORM %OPPAI_DESCRIPTION(TARGET,1)%を
+	ENDIF
+	PRINTFORML 揉みしだいた
+	PRINTFORML 時間を止められている%CALLNAME:TARGET%は無抵抗のまま%OPPAI_DESCRIPTION(TARGET)%を揉まれ続けている…
+ELSEIF CFLAG:TARGET:睡眠
+	PRINTFORM %CALLNAME:PLAYER%は眠っている%CALLNAME:TARGET%の%OPPAI_DESCRIPTION(TARGET)%を%SHOW_TOP(TARGET)%の上から
+	IF ABL:Ｂ感覚 <= 1
+		PRINT 撫でるように
+	ELSEIF ABL:Ｂ感覚 <= 3
+		PRINT 優しく
+	ELSE
+		PRINT じっくりと
+	ENDIF
+	PRINTFORML 揉みしだいた…
+	IF ABL:Ｂ感覚 <= 1
+		PRINTFORML %CALLNAME:TARGET%はくすぐったそうに身をよじった…
+	ELSEIF ABL:Ｂ感覚 <= 4
+		PRINTFORML %CALLNAME:TARGET%は愛撫に熱い吐息を漏らし始めている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は頬を上気させ%CALLNAME:MASTER%のされるがままになっている…
+	ENDIF
+ELSE
+	IF CFLAG:うふふ == 2
+		SELECTCASE TCVAR:20
+			;谷間を見せる
+			CASE 27
+				IF TALENT:TARGET:バストサイズ >= 1
+					PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の谷間に手を差し入れ、
+				ELSE
+					PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の寄せ上げられた谷間に手を差し入れ、
+				ENDIF
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 谷間を擦るように愛撫した……
+					CASE 1
+						PRINTFORML じっくりと揉みしだいた……
+					CASE 2
+						PRINTFORML 体温を感じながら揉みしだいた……
+				ENDSELECT
+			;胸を揉ませる
+			CASE 33
+				PRINTFORML %CALLNAME:PLAYER%は負けじと手を動かし、%CALLNAME:TARGET%の%OPPAI_DESCRIPTION(TARGET)%を揉みしだいた……
+			;パイズリ
+			CASE 53
+				IF TALENT:TARGET:献身的
+					PRINTFORM %CALLNAME:PLAYER%はパイズリに夢中になっている%CALLNAME:TARGET%の
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML %OPPAI_DESCRIPTION(TARGET)%に手を伸ばし、
+							PRINTFORML 両側からペニスを挟みこむようにさせ、そのまま腰を振り谷間を犯した……
+							SELECTCASE ABL:TARGET:Ｂ感覚
+								CASE 0 TO 3
+									PRINTFORM %CALLNAME:TARGET%は
+									IF TARGET == 57 && !TALENT:恋慕
+										PRINTFORM ひょっとこの面を浮かべ
+									ELSE
+										PRINTFORM 微笑みながら
+									ENDIF
+									PRINTFORML %CALLNAME:PLAYER%の手を退け、奉仕を再開した……
+								CASE 4 TO 7
+									PRINTFORML %CALLNAME:TARGET%は手で口を塞ぎながら快感に耐えている……
+								CASEELSE
+									PRINTFORM %CALLNAME:TARGET%は快感に耐えきれないのか、
+									IF TARGET == 57 && !TALENT:恋慕
+										PRINTFORM 無表情に
+									ENDIF
+									PRINTFORML 頬を紅潮させて%CALLNAME:PLAYER%に抗議してきた……
+							ENDSELECT
+						CASE 1
+							PRINTFORML %NIPPLE_DESCRIPTION(TARGET)%を摘み上げた
+							SELECTCASE ABL:TARGET:Ｂ感覚
+								CASE 0 TO 3
+									PRINTFORML %CALLNAME:TARGET%はこちらに
+									IF TARGET == 57 && !TALENT:恋慕
+										PRINTFORM ひょっとこの面を向けて
+									ELSE
+										PRINTFORM 微笑みかけて
+									ENDIF
+									PRINTFORML 奉仕を再開した……
+								CASE 4 TO 7
+									PRINTFORML %CALLNAME:TARGET%は快感に耐えながら懸命に奉仕している……
+								CASEELSE
+									PRINTFORM %CALLNAME:TARGET%は快感に耐えきれないのか、
+									IF TARGET == 57 && !TALENT:恋慕
+										PRINTFORM 無表情に
+									ENDIF
+									PRINTFORML 頬を紅潮させて%CALLNAME:PLAYER%に抗議してきた……
+							ENDSELECT
+					ENDSELECT
+				ELSE
+					PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の%NIPPLE_DESCRIPTION(TARGET)%を摘み上げた……
+					PRINTFORML %CALLNAME:TARGET%は身を捩りながら%CALLNAME:PLAYER%のペニスを擦り上げている……
+				ENDIF
+			;ぱふぱふ
+			CASE 73
+				IF TALENT:TARGET:バストサイズ >= 0
+					PRINTFORM %PARSE("You")%
+					SELECTCASE RAND:6
+						CASE 0
+							PRINTFORML  %PARSE("bury")% %PARSE("your",1)% face in %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%, enjoying the texture and licking all over soft flesh.
+						CASE 1
+							PRINTFORML %PARSE("r")% nose rubs against %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%.
+						CASE 2
+							PRINTFORML  suck on %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%'s nipples and soft areolas.
+						CASE 3
+							PRINTFORML  %PARSE("sandwich")% %PARSE("your",1)% face between %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)%.
+						CASE 4
+							PRINTFORML %PARSE("r")% tongue travels along %CALLNAME:TARGET% cleavage, while \@THIRD_PERSON?enjoying#you enjoy\@ the sensation of %HIS_HER(TARGET)% %OPPAI_DESCRIPTION_TR(TARGET)% on %PARSE("your",1)% cheeks.
+						CASE 5
+							PRINTFORML %PARSE("r")% face sinks into %CALLNAME:TARGET%'s %OPPAI_DESCRIPTION_TR(TARGET)% and %PARSE("you",1)% %PARSE("enjoy")% the sweet scent.
+					ENDSELECT
+					SELECTCASE RAND:6
+						CASE 0
+							IF TARGET == 57 && !TALENT:恋慕
+								PRINTFORM A Saru mask floats around %CALLNAME:TARGET%
+							ELSE
+								PRINTFORM %CALLNAME:TARGET% grits %HIS_HER(TARGET)% teeth
+							ENDIF
+							PRINTFORML  as %HE_SHE(TARGET)% tries to endure the pleasure...
+						CASE 1
+							PRINTFORML %CALLNAME:TARGET% lets out a sweet voice and jumps each time %HE_SHE(TARGET)%'s touched...
+						CASE 2
+							PRINTFORML %CALLNAME:TARGET% moans from the intermittent stimulation...
+						CASE 3
+							PRINTFORML %CALLNAME:TARGET% writhes from the intense pleasure coming from %HIS_HER(TARGET)% chest...
+						CASE 4
+							PRINTFORML %CALLNAME:TARGET%'s hair is completely disheveled as %HE_SHE(TARGET)%'s absorbed in the pleasure...
+						CASE 5
+							PRINTFORML %CALLNAME:TARGET% can't withstand the pleasure, and hugs %PARSE("you")% tightly...
+					ENDSELECT
+				ELSE
+					PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の%OPPAI_DESCRIPTION(TARGET)%
+					SELECTCASE RAND:4
+						CASE 0
+							PRINTFORML に顔を押し付け感触を堪能しながら柔肉を舌で舐め回した……
+						CASE 1
+							PRINTFORML に鼻先をグリグリと押し付けた
+							PRINTFORML %CALLNAME:TARGET%は胸から伝わる快感に身を悶えさせている……
+						CASE 2
+							PRINTFORML の先端の突起に吸い付いた
+							PRINTFORML %CALLNAME:TARGET%は胸から伝わる快感に耐え切れず嬌声を上げている……
+						CASE 3
+							PRINTFORML に顔を押し付け、甘い香りを吸い込んだ……
+					ENDSELECT
+				ENDIF
+			;乳合わせ
+			CASE 74
+				IF GETBIT(TALENT:MASTER:性別,1)
+					PRINTFORML  %CALLNAME:PLAYER%は%CALLNAME:TARGET%の%OPPAI_DESCRIPTION(TARGET)%を胸板に押しつけさせた……
+				ELSE
+					PRINTFORML  %CALLNAME:PLAYER%は%CALLNAME:TARGET%と胸の先端を擦り付けあった……
+				ENDIF
+			;乳を吸わせる
+			CASE 77
+				IF TALENT:TARGET:バストサイズ >= 0
+					PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+					SELECTCASE RAND:6
+						CASE 0
+							PRINTFORML %NIPPLE_DESCRIPTION(TARGET)%にしゃぶり付きながら%OPPAI_DESCRIPTION(TARGET)%を揉みしだいた
+						CASE 1
+							PRINTFORML %NIPPLE_DESCRIPTION(TARGET)%に音を立てて吸い付きながら顔を%OPPAI_DESCRIPTION(TARGET)%に押し付けた
+						CASE 2
+							PRINTFORML %NIPPLE_DESCRIPTION(TARGET)%を舌で舐め、唇で挟み、歯で甘噛みした
+						CASE 3
+							PRINTFORML %NIPPLE_DESCRIPTION(TARGET)%を周りの柔肉ごと吸い上げた
+						CASE 4
+							PRINTFORML 両乳を掴んで寄せ、二つの%NIPPLE_DESCRIPTION(TARGET)%を同時に吸って責め立てた
+						CASE 5
+							PRINTFORML %OPPAI_DESCRIPTION(TARGET)%に顔を沈み込ませ、甘い香りを吸い込みながら%NIPPLE_DESCRIPTION(TARGET)%を吸った
+					ENDSELECT
+					SELECTCASE RAND:6
+						CASE 0
+							PRINTFORM %CALLNAME:TARGET%
+							IF TARGET == 57 && !TALENT:恋慕
+								PRINTFORM  wears a Saru mask
+							ELSE
+								PRINTFORM  grits %HIS_HER(TARGET)% teeth
+							ENDIF
+							PRINTFORML , trying to endure the pleasure.
+						CASE 1
+							PRINTFORML %CALLNAME:TARGET% lets out a sweet voice and jumps each time %HE_SHE(TARGET)%'s touched...
+						CASE 2
+							PRINTFORML %CALLNAME:TARGET% moans from the intermittent stimulation...
+						CASE 3
+							PRINTFORML %CALLNAME:TARGET% writhes from the intense pleasure coming from %HIS_HER(TARGET)% chest...
+						CASE 4
+							PRINTFORML %CALLNAME:TARGET%'s hair is completely disheveled as %HE_SHE(TARGET)%'s absorbed in the pleasure...
+						CASE 5
+							PRINTFORML %CALLNAME:TARGET% can't withstand the pleasure, and hugs %PARSE("you")% tightly...
+					ENDSELECT
+				ELSE
+					PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+					SELECTCASE RAND:5
+						CASE 0
+							PRINTFORML %NIPPLE_DESCRIPTION(TARGET)%にしゃぶり付きながら%OPPAI_DESCRIPTION(TARGET)%を揉みしだいた
+						CASE 1
+							PRINTFORML %NIPPLE_DESCRIPTION(TARGET)%に音を立てて吸い付きながら顔を%OPPAI_DESCRIPTION(TARGET)%に押し付けた
+						CASE 2
+							PRINTFORML %NIPPLE_DESCRIPTION(TARGET)%を舌で舐め、唇で挟み、歯で甘噛みした
+						CASE 3
+							PRINTFORML %NIPPLE_DESCRIPTION(TARGET)%を周りの柔肉ごと吸い上げた
+						CASE 4
+							PRINTFORML %OPPAI_DESCRIPTION(TARGET)%に顔を押し付け、甘い香りを吸い込みながら%NIPPLE_DESCRIPTION(TARGET)%を吸った
+					ENDSELECT
+					SELECTCASE RAND:6
+						CASE 0
+							PRINTFORM %CALLNAME:TARGET%
+							IF TARGET == 57 && !TALENT:恋慕
+								PRINTFORM  wears a Saru mask
+							ELSE
+								PRINTFORM  grits %HIS_HER(TARGET)% teeth
+							ENDIF
+							PRINTFORML , trying to endure the pleasure.
+						CASE 1
+							PRINTFORML %CALLNAME:TARGET% lets out a sweet voice and jumps each time %HE_SHE(TARGET)%'s touched...
+						CASE 2
+							PRINTFORML %CALLNAME:TARGET% moans from the intermittent stimulation...
+						CASE 3
+							PRINTFORML %CALLNAME:TARGET% writhes from the intense pleasure coming from %HIS_HER(TARGET)% chest...
+						CASE 4
+							PRINTFORML %CALLNAME:TARGET%'s hair is completely disheveled as %HE_SHE(TARGET)%'s absorbed in the pleasure...
+						CASE 5
+							PRINTFORML %CALLNAME:TARGET% can't withstand the pleasure, and hugs %PARSE("you")% tightly...
+					ENDSELECT
+				ENDIF
+			;85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ
+			CASE 85,87,88,89
+				PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+				IF TALENT:TARGET:バストサイズ >= 1
+					SELECTCASE RAND:3
+						CASE 0
+							PRINT 大きく上下する
+						CASE 1
+							PRINT たぷんたぷんと揺れる
+						CASE 2
+							PRINT ぶるんぷるんと弾む
+					ENDSELECT
+					PRINTFORM %OPPAI_DESCRIPTION(TARGET)%に手を伸ばし、
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORML 下から支えるように愛撫した……
+						CASE 1
+							PRINTFORML 鷲掴みにして揺さぶった……
+						CASE 2
+							PRINTFORML その先端を指先で弾いた……
+					ENDSELECT
+				ELSEIF TALENT:TARGET:バストサイズ == 0
+					SELECTCASE RAND:3
+						CASE 0
+							PRINT 腰の動きに合わせて上下する
+						CASE 1
+							PRINT 揺れる
+						CASE 2
+							PRINT 弾む
+					ENDSELECT
+					PRINTFORM %OPPAI_DESCRIPTION(TARGET)%に手を伸ばし、
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORML 下から支えるように愛撫した……
+						CASE 1
+							PRINTFORML 鷲掴みにして揺さぶった……
+						CASE 2
+							PRINTFORML その先端を指先で弾いた……
+					ENDSELECT
+				ELSE
+					PRINTFORM %OPPAI_DESCRIPTION(TARGET)%に手を伸ばし、
+					SELECTCASE RAND:3
+						CASE 0
+							PRINTFORML 撫でるように愛撫した……
+						CASE 1
+							PRINTFORML 鷲掴みにして揺さぶった……
+						CASE 2
+							PRINTFORML その先端を指先で弾いた……
+					ENDSELECT
+				ENDIF
+			;だいしゅきホールド
+			CASE 86
+				PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%と抱き合ったまま%OPPAI_DESCRIPTION(TARGET)%を愛撫した
+				PRINTFORML 胸を刺激するたびに%CALLNAME:TARGET%の膣壁は%CALLNAME:PLAYER%のペニスを締め付けてきた……
+			CASEELSE
+				GOTO NOMALMUNE
+		ENDSELECT
+	ELSE
+		$NOMALMUNE
+		IF TEQUIP:1 & 1 && !TEQUIP:4 && (!DATE_HITOGOMI(CFLAG:PLAYER:現在位置) || GET_TARGETNUM() > 1)
+			TEQUIP:4 = 1
+			PRINTFORM %PARSE("You expose")% %CALLNAME:TARGET%'s %SHOW_TOP(TARGET)%
+			IF TEQUIP:1 & 2
+				PRINTFORM %CALLNAME:TARGET%の%OPPAI_DESCRIPTION(TARGET,1)%を下着越しに
+			ELSE
+				SIF !(EQUIP:TARGET:上半身下着１ || EQUIP:TARGET:上半身下着２ || EQUIP:TARGET:レオタード || EQUIP:TARGET:ボディースーツ)
+					PRINT 下に何も着ておらず
+				PRINTFORM 露わになった%OPPAI_DESCRIPTION(TARGET,1)%を
+			ENDIF
+		ELSEIF TEQUIP:1 & 2
+			PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の%OPPAI_DESCRIPTION(TARGET,1)%を%SHOW_TOP(TARGET)%の上から
+		ELSE
+			PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の%OPPAI_DESCRIPTION(TARGET,1)%を
+		ENDIF
+		IF ABL:Ｂ感覚 <= 1
+			PRINT 撫でるように
+		ELSEIF ABL:Ｂ感覚 <= 3
+			PRINT 優しく
+		ELSE
+			PRINT じっくりと
+		ENDIF
+		
+		PRINTFORML 揉みしだいた…
+		IF ABL:Ｂ感覚 <= 1
+			PRINTFORML Seems %CALLNAME:TARGET% is a bit ticklish...
+		ELSEIF ABL:Ｂ感覚 <= 4
+			PRINTFORML %CALLNAME:TARGET% lets out lust-filled moans as %HE_SHE(TARGET)%'s caressed...
+		ELSE
+			PRINTFORM %CALLNAME:TARGET%は
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM 翁の面をうかべ
+			ELSE
+				PRINTFORM トロンとした表情になって
+			ENDIF
+			PRINTFORML されるがままになっている…
+		ENDIF
+		TFLAG:400 = RAND:2
+		SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+			CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;314,アナル愛撫
+;-------------------------------------------------
+@MESSAGE_COM314
+;Custom code, replaced function
+CALL MESSAGE_COM314_TR
+RETURN
+IF FLAG:70
+	IF TEQUIP:0 > 1
+			PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%のアナルを%SHOW_BOTTOM(TARGET)%の上から
+	ELSE
+		PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%のアナルを
+	ENDIF
+	IF ABL:Ａ感覚 <= 1
+		PRINT 指の腹で撫でるように
+	ELSEIF ABL:Ａ感覚 <= 3
+		PRINT 解きほぐすように
+	ELSE
+		PRINT 指をねじ込むようにして
+	ENDIF
+	PRINTFORML 愛撫した…
+	IF ABL:Ａ感覚 <= 3
+		PRINTFORML 時間を止められた%CALLNAME:TARGET%は無抵抗のままアナルを弄ばれている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%のアナルは時間を止められていても、快楽を貪るように%CALLNAME:PLAYER%の指に絡みついてくる…
+	ENDIF
+ELSEIF CFLAG:うふふ == 2
+	;顔面騎乗アナル
+	IF TCVAR:20 == 72
+		PRINTFORM %CALLNAME:PLAYER%は顔の上にまたがった%CALLNAME:TARGET%のアヌス
+		IF TEQUIP:0 > 1
+			PRINTFORML を%SHOW_BOTTOM(TARGET)%越しに舌でグリグリと刺激した…
+		ELSE
+			PRINTFORML に舌を這わせ奉仕した…
+		ENDIF
+	;シックスナイン体勢
+	ELSEIF TEQUIP:シックスナイン
+		PRINTFORM %CALLNAME:PLAYER%は
+		IF TEQUIP:0 > 1
+			PRINTFORM %CALLNAME:TARGET%の尻に顔を埋め
+			SIF TFLAG:61 < 2
+				PRINTFORM て尻たぶを開き
+			PRINTFORML アヌスを%SHOW_BOTTOM(TARGET)%越しに舌でグリグリと刺激した…
+		ELSE
+			SIF TFLAG:61 < 2
+				PRINTFORM 尻たぶを開き
+			PRINTFORML 目の前でひくつく%CALLNAME:TARGET%の窄まりに口づけし舌を這わせた…
+		ENDIF
+	ELSE
+		PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%のアナルを
+		SIF TEQUIP:0 > 1
+			PRINTFORM %SHOW_BOTTOM(TARGET)%の上から
+		IF ABL:Ａ感覚 <= 1
+			PRINT 指の腹で撫でるように
+		ELSEIF ABL:Ａ感覚 <= 3
+			PRINT 解きほぐすように
+		ELSE
+			PRINT 指をねじ込むようにして
+		ENDIF
+
+		PRINTFORML 愛撫した…
+	ENDIF
+	IF ABL:Ａ感覚 <= 1
+		PRINTFORML %CALLNAME:TARGET%はまだ感触を受け入れられないようだ…
+	ELSEIF ABL:Ａ感覚 <= 3
+		PRINTFORML %CALLNAME:TARGET%は異物感に背筋を震わせている…
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%は
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM 翁の面をうかべ
+		ELSE
+			PRINTFORM 恍惚とした表情になって
+		ENDIF
+		PRINTFORML されるがままになっている…
+	ENDIF
+ELSE
+	IF TEQUIP:0 > 1
+		PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%のアナルを%SHOW_BOTTOM(TARGET)%の上から
+	ELSE
+		PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%のアナルを
+	ENDIF
+
+	IF ABL:Ａ感覚 <= 1
+		PRINT 指の腹で撫でるように
+	ELSEIF ABL:Ａ感覚 <= 3
+		PRINT 解きほぐすように
+	ELSE
+		PRINT 指をねじ込むようにして
+	ENDIF
+
+	PRINTFORML 愛撫した…
+
+	IF ABL:Ａ感覚 <= 1
+		PRINTFORML %CALLNAME:TARGET%はまだ感触を受け入れられないようだ…
+	ELSEIF ABL:Ａ感覚 <= 3
+		PRINTFORML %CALLNAME:TARGET%は異物感に背筋を震わせている…
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%は
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM 翁の面をうかべ
+		ELSE
+			PRINTFORM 恍惚とした表情になって
+		ENDIF
+		PRINTFORML されるがままになっている…
+	ENDIF
+	TFLAG:400 = RAND:2
+	SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+		CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+
+ENDIF
+;-------------------------------------------------
+;315,クリ愛撫
+;-------------------------------------------------
+@MESSAGE_COM315
+;Custom code, replaced function
+CALL MESSAGE_COM315_TR
+RETURN
+IF FLAG:70 == 1
+	PRINTFORM %CALLNAME:PLAYER%は時の止まった%CALLNAME:TARGET%の
+	IF GETBIT(TALENT:性別,1)
+		[SKIPSTART]
+		IF BASE:勃起 >= 1000
+			PRINT 硬くそそり立つ
+		ELSEIF BASE:勃起 > 500
+			PRINT 半勃ちの
+		ELSE
+			PRINT まだ柔らかい
+		ENDIF
+		PRINT 男性器を
+		[SKIPEND]
+		PRINTFORM %TINKO(TARGET)%を
+		IF ABL:Ｃ感覚 <= 3
+			PRINT 弱めの力でしゅにしゅにとこすり上げた
+		ELSEIF ABL:Ｃ感覚 <= 5
+			PRINT 強めに握って、しこしこと手を上下させた
+		ELSE
+			PRINT ぎゅっと握って、ごしゅごしゅと激しくこすり立てた
+		ENDIF
+	ELSE
+		PRINT 秘処を
+		IF TEQUIP:0 > 1
+			IF PALAM:潤滑 > PALAMLV:4
+				PRINTFORM 濡れそぼった
+			ELSEIF PALAM:潤滑 > PALAMLV:2
+				PRINTFORM 湿り気を帯びた
+			ENDIF
+			PRINTFORM %SHOW_BOTTOM(TARGET)%の上から
+		ENDIF
+		IF ABL:Ｃ感覚 <= 3
+			PRINT くにくにと弄り回した
+		ELSEIF ABL:Ｃ感覚 <= 5
+			PRINT 嬲るように指を押しつけた
+		ELSE
+			PRINT ぐりぐりと遠慮無くこすりつけた
+		ENDIF
+	ENDIF
+	PRINTFORML …
+	IF ABL:Ｃ感覚 <= 4
+		PRINTFORML 時間を止められた%CALLNAME:TARGET%は、無抵抗なまま\@ GETBIT(TALENT:性別,1) ? 男性器 # クリトリス \@を弄ばれている…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の\@ GETBIT(TALENT:性別,1) ? 男性器 # クリトリス \@は時間を止められていても、快楽を求めるようにヒクヒクと蠢いている…
+	ENDIF
+ELSEIF CFLAG:TARGET:睡眠 == 1
+	PRINTFORM %CALLNAME:PLAYER%は寝息を立てる%CALLNAME:TARGET%の
+	IF GETBIT(TALENT:性別,1)
+		[SKIPSTART]
+		IF BASE:勃起 >= 1000
+			PRINT 硬くそそり立つ
+		ELSEIF BASE:勃起 > 500
+			PRINT 半勃ちの
+		ELSE
+			PRINT まだ柔らかい
+		ENDIF
+		PRINT 男性器を
+		[SKIPEND]
+		PRINTFORM %TINKO(TARGET)%を
+		IF ABL:Ｃ感覚 <= 3
+			PRINT すっと軽くなで上げた
+		ELSEIF ABL:Ｃ感覚 <= 5
+			PRINT 緩く握って、軽く手を上下させた
+		ELSE
+			PRINT 強めに握って、こしゅこしゅとこすってみた
+		ENDIF
+	ELSE
+		PRINT 秘処を
+		IF TEQUIP:0 > 1
+			IF PALAM:潤滑 > PALAMLV:4
+				PRINTFORM お漏らししたような
+			ELSEIF PALAM:潤滑 > PALAMLV:2
+				PRINTFORM しっとりし始めた
+			ENDIF
+			PRINTFORM %SHOW_BOTTOM(TARGET)%の上から
+		ENDIF
+		IF ABL:Ｃ感覚 <= 3
+			PRINT さわさわと軽く撫でた
+		ELSEIF ABL:Ｃ感覚 <= 5
+			PRINT ふにふにと揺らしている
+		ELSE
+			PRINT くりくりとこすりたてた
+		ENDIF
+	ENDIF
+	PRINTFORML …
+	IF ABL:Ｃ感覚 <= 3
+		PRINTFORML %CALLNAME:TARGET%は無意識に身をよじっている…
+	ELSEIF ABL:Ｃ感覚 <= 5
+		PRINTFORML %CALLNAME:TARGET%はひくんひくんと腰をゆらしている…
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%は
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM 無表情に
+		ENDIF
+		PRINTFORML 頬を上気させ、自ら腰を押しつけてくる…
+	ENDIF
+ELSEIF CFLAG:うふふ == 2
+	PRINTFORM %CALLNAME:PLAYER%は
+	SELECTCASE TCVAR:20
+		;スカートの中を見せる
+		CASE 35
+			PRINTFORML %CALLNAME:TARGET%自ら見せつけてくる下腹部をじっくり視姦し
+			GOTO COUNTERＣ
+		;クンニ強制
+		CASE 70
+			PRINTFORML 目前に迫った%CALLNAME:TARGET%の秘所をじっくり観賞しながら
+			IF GETBIT(TALENT:性別,1)
+				PRINTFORML %TINKO(TARGET)%とワレメをペロペロとなめしゃぶっている
+			ELSE
+				PRINTFORML クリトリスを舐め回している
+			ENDIF
+		;85=Ｖ挿入する 86=だいしゅきホールド 87=Ａ挿入する 88=腰振りＶ 89=腰振り
+		CASE 85 TO 89
+			PRINTFORML %CALLNAME:TARGET%との結合部に手を差し入れ、腰の動きに合わせて
+			GOTO COUNTERＣ
+		CASEELSE
+			PRINTFORM %CALLNAME:TARGET%の
+			GOTO COUNTERＣ
+	ENDSELECT
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+	$COUNTERＣ
+	IF GETBIT(TALENT:性別,1)
+		PRINTFORM %TINKO(TARGET)%を
+		IF ABL:Ｃ感覚 <= 3
+			PRINT 弱めの力でしゅにしゅにとこすり上げた
+		ELSEIF ABL:Ｃ感覚 <= 5
+			PRINT 強めに握って、しこしこと手を上下させた
+		ELSE
+			PRINT ぎゅっと握って、ごしゅごしゅと激しくこすり立てた
+		ENDIF
+	ELSE
+		IF TEQUIP:0 > 1
+			IF PALAM:潤滑 > PALAMLV:4
+				PRINTFORM ぐしょぐしょに濡れた
+			ELSEIF PALAM:潤滑 > PALAMLV:2
+				PRINTFORM ほんのりと湿った
+			ENDIF
+			PRINTFORM %SHOW_BOTTOM(TARGET)%の上から、秘処の
+			IF ABL:Ｃ感覚 <= 3
+				PRINTFORML 縦筋をなで上げた……
+			ELSEIF ABL:Ｃ感覚 <= 5
+				PRINTFORML ワレメの上部を重点的に攻めた……
+			ELSE
+				PRINTFORML クリのあたりをぐりぐりと押し込んだ……
+			ENDIF
+		ELSE
+			PRINTFORM 剥き出しのクリトリスを
+			IF ABL:Ｃ感覚 <= 3
+				PRINTFORML そっと撫で回した……
+			ELSEIF ABL:Ｃ感覚 <= 5
+				PRINTFORML 軽く摘み上げた……
+			ELSE
+				PRINTFORML ゆっくりと揉みしだいた……
+			ENDIF
+		ENDIF
+	ENDIF
+	PRINTFORML …
+	PRINTFORM %CALLNAME:TARGET%は
+	IF ABL:Ｃ感覚 <= 3
+		PRINTFORML くすぐったそうにしている…
+	ELSEIF ABL:Ｃ感覚 <= 5
+		PRINTFORML 愛撫に熱い吐息を漏らし始めている…
+	ELSE
+		PRINTFORM 
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM 翁の面をうかべ
+		ELSE
+			PRINTFORM トロンとした表情になって
+		ENDIF
+		PRINTFORML されるがままになっている…
+	ENDIF
+	TFLAG:400 = RAND:2
+	SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+		CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+ENDIF
+;-------------------------------------------------
+;316,指挿れ
+;-------------------------------------------------
+@MESSAGE_COM316
+;Custom code, replaced function
+CALL MESSAGE_COM316_TR
+RETURN
+IF FLAG:70 == 1
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の下腹部に手を伸ばし
+	IF TEQUIP:0 > 1
+		IF PALAM:潤滑 > PALAMLV:3
+			PRINT ぐしょぐしょに濡れた
+		ELSEIF PALAM:潤滑 > PALAMLV:1
+			PRINT ほんのりと湿った
+		ENDIF
+		PRINTFORML %SHOW_BOTTOM(TARGET)%の隙間から
+	ELSE
+		PRINT むき出しの
+	ENDIF
+	PRINTFORML 膣腔にゆっくりと指を挿入した…
+	PRINTFORM 時を止められた%CALLNAME:TARGET%
+	IF TALENT:処女 == 1
+		PRINTFORML は無抵抗のまま%CALLNAME:PLAYER%に処女膜を撫でられている…
+	ELSEIF ABL:Ｖ感覚 < 4
+		PRINTFORML は無抵抗のまま膣内を弄ばれている…
+	ELSE
+		PRINTFORML の膣内は貪欲に快楽を求めて、挿入された指に絡みついてくる…
+	ENDIF
+ELSEIF CFLAG:うふふ == 2
+	PRINTFORM %CALLNAME:PLAYER%は
+	SELECTCASE TCVAR:20
+		;スカートの中を見せる
+		CASE 35
+			PRINTFORML こちらに差し出された%CALLNAME:TARGET%の下腹部をじっくり視姦し
+			GOTO COUNTERＶ
+		;クンニ強制
+		CASE 70
+			PRINTFORML 目前に迫った%CALLNAME:TARGET%の秘裂をじっくり観賞しながら指を突き入れた……
+		;87=Ａ挿入する 89=腰振りＡ
+		CASE 87,89
+			PRINTFORML %CALLNAME:TARGET%のアナルに締め付けられながらも、膣腔の襞をこすり立てた……
+		;他
+		CASEELSE
+			$COUNTERＶ
+			IF TEQUIP:0 > 1
+				IF PALAM:潤滑 > PALAMLV:4
+					PRINTFORM ぐしょぐしょに濡れた
+				ELSEIF PALAM:潤滑 > PALAMLV:2
+					PRINTFORM ほんのりと湿った
+				ENDIF
+				PRINTFORM %SHOW_BOTTOM(TARGET)%の隙間から%CALLNAME:TARGET%の秘裂に
+			ELSE
+				PRINTFORM 剥き出しになった%CALLNAME:TARGET%の秘裂に
+			ENDIF
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML ゆっくりと指を奥まで突き入れた
+				CASE 1
+					PRINTFORML 指を進入させ小刻みに動かした
+				CASE 2
+					PRINTFORML 指を入れて愛液を掻き出した
+			ENDSELECT
+			IF TALENT:TARGET:処女 == 1
+				PRINTFORML %CALLNAME:TARGET%はビックリして腕を掴み、指を抜くよう要求してきた……
+			ELSE
+				SELECTCASE ABL:TARGET:1
+					CASE 0,1
+						PRINTFORML %CALLNAME:TARGET%は不慣れな感覚に眉をひそめている……
+					CASE 2 TO 5
+						IF TALENT:TARGET:恋慕 || TALENT:TARGET:愛欲
+							PRINTFORML %CALLNAME:TARGET%は喘ぎながら嬉しそうに尻を振っている……
+						ELSE
+							PRINTFORML %CALLNAME:TARGET%は喘ぎながら尻を振っている……
+						ENDIF
+					CASEELSE
+						IF TALENT:TARGET:恋慕 || TALENT:TARGET:愛欲
+							PRINTFORML %CALLNAME:TARGET%は膝をガクガクと震わせ、尻を振って%CALLNAME:PLAYER%を誘惑している……
+						ELSE
+							PRINTFORML %CALLNAME:TARGET%は膝をガクガクと震わせ、%CALLNAME:PLAYER%の指の動きに合わせて嬌声を上げている……
+						ENDIF
+				ENDSELECT
+			ENDIF
+	ENDSELECT
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の秘所に手を伸ばし
+	IF TEQUIP:0 > 1
+		IF PALAM:潤滑 > PALAMLV:3
+			PRINT ぐしょぐしょに濡れた
+		ELSEIF PALAM:潤滑 > PALAMLV:1
+			PRINT ほんのりと湿った
+		ENDIF
+		PRINTFORML %SHOW_BOTTOM(TARGET)%の隙間から
+	ELSE
+		PRINT むき出しの
+	ENDIF
+	PRINTFORML 膣口にゆっくりと指を挿入した…
+	PRINTFORM %CALLNAME:TARGET%は
+	IF TALENT:処女 == 1
+		PRINTFORML %CALLNAME:PLAYER%の指を拒むかのように太ももをきゅっと閉じている…
+	ELSEIF ABL:Ｖ感覚 < 1
+		PRINTFORML 異物感が強いのか身を強ばらせている…
+	ELSEIF ABL:Ｖ感覚 <= 4
+		PRINTFORML 愛撫に熱い吐息を漏らし始めている…
+	ELSE
+		PRINTFORML 涎をたらし、自ら腰を突き出して快楽を貪っている…
+	ENDIF
+	TFLAG:400 = RAND:2
+	SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+		CALL DATE_HITOGOMI_MESSAGE(CFLAG:PLAYER:現在位置)
+ENDIF
+
+;-------------------------------------------------
+;317,腰を振る
+;-------------------------------------------------
+@MESSAGE_COM317
+;TFLAG:193はコンボのつながった回数、TFLAG:194は腰3以上で選択できる攻め方
+IF ONGOING_NIPPLES()
+	PRINTFORML  as you thrust.
+ELSEIF ONGOING_FONDLE()
+	PRINTL
+	CLEARLINE 1
+	PRINTFORML %PARSE("You fondle")% %CALLNAME:TARGET%'s breasts, %OPPAI_DESCRIPTION_ACTION(MASTER, TARGET)%.
+ELSEIF ONGOING()
+	PRINTL ...
+ENDIF
+SELECTCASE TFLAG:194
+	CASE 0
+		PRINTFORM %PARSE("You move")% %PARSE("your",1)% waist
+	CASE 1
+		PRINTFORM %PARSE("You piston")% mercilessly
+	CASE 2
+		PRINTFORM %PARSE("You move")% with long, steady strokes
+	CASE 3
+		PRINTFORM %PARSE("You gyrate")% your hips in a circular motion
+ENDSELECT
+
+IF ABL:Ｖ感覚 < 2
+	PRINTFORML , venturing into %CALLNAME:TARGET%'s insides that still retained some firmness...
+	IF TFLAG:193 < 3
+		PRINTFORML %CALLNAME:TARGET% stiffens up as %HE_SHE(TARGET)% endures the insertion...
+	ELSE
+		PRINTFORML %CALLNAME:TARGET% stiffens up as %HE_SHE(TARGET)% endures the insertion, but shivers just a bit...
+	ENDIF
+ELSEIF ABL:Ｖ感覚 < 5
+	PRINTFORML , the stimulus in %CALLNAME:TARGET%'s meat hole awakening %HIS_HER(TARGET)% sexual instinct and training %HIS_HER(TARGET)% body...  
+	IF TFLAG:193 == 3
+		PRINTFORML %CALLNAME:TARGET% gasps quickly turn to moans and %HIS_HER(TARGET)% insides begins clamping down...
+	ELSE
+		PRINTFORM %CALLNAME:TARGET% throws %HIS_HER(TARGET)% head back
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM  while an Okina mask floats around %HIM_HER(TARGET)%
+		ELSE
+			PRINTFORM , %HIS_HER(TARGET)% face slack with pleasure
+		ENDIF
+		PRINTFORML  as %HE_SHE(TARGET)% surrenders to the sensation...
+	ENDIF
+ELSE
+	SELECTCASE TFLAG:194
+		CASE 0
+			PRINTFORML , enjoying the warm, passionate folds of %CALLNAME:TARGET%...
+		CASE 1
+			PRINTFORML  making loud squelching sounds as %PARSE("you hammer",1)% into %CALLNAME:TARGET%'s honey pot to %PARSE("your",1)% heart's content...
+		CASE 2
+			PRINTFORML , slowly pulling out as the folds drag across %PARSE("your",1)% glans, clinging to it.
+			PRINTFORML Before pushing in again and repeating the motion...
+		CASE 3
+			PRINTFORML , grinding against %CALLNAME:TARGET%'s folds as they try to cling to %PARSE("you",1)%.
+			PRINTFORML %PARSE("You stir")% up %HIS_HER(TARGET)% honey pot, churning it up...
+	ENDSELECT
+	SELECTCASE TFLAG:193
+		CASE IS <= 1
+			PRINTFORML %CALLNAME:TARGET% drools as she matches the rhythm of %PARSE("your")% movements...
+		CASE 2
+			PRINTFORML %CALLNAME:TARGET% seems to enjoy the way %PARSE("you move")%, as she moans alluringly...
+		CASE 3
+			PRINTFORML As %PARSE("you attack")% %CALLNAME:TARGET%'s weak point, her hair becomes disheveled and she sings like a bir.
+			PRINTFORML Continuing to move in the same way, %PARSE("you deliver")% the finishing blow by caressing her clitoris.
+			PRINTFORML From the base to the glans, %TNAME(TARGET)%'s warm folds clamp down on every part of %PARSE("your",1)% length...
+	ENDSELECT
+ENDIF
+
+
+
+;-------------------------------------------------
+;318,腰を振る（Ａ）
+;-------------------------------------------------
+@MESSAGE_COM318
+CALL MESSAGE_COM318_TR
+RETURN
+SELECTCASE TFLAG:194
+	;MASTER腰技能3未満
+	CASE 0
+		PRINTFORML %CALLNAME:PLAYER%はがむしゃらに腰を振って、%CALLNAME:TARGET%のアナルからの悦楽に酔いしれている
+	;激しく
+	CASE 1
+		PRINTFORM %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の
+		IF TEQUIP:TARGET:体位 == 3
+			PRINTFORML 身体が浮かぶ激しさで、腰を突き上げている
+		ELSE
+			PRINTFORML 尻がパンパンと音を立てる勢いで、腰を振っている
+		ENDIF
+	;ねちっこく
+	CASE 2
+		PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%のアナルをじっくりと堪能している
+	;グラインド
+	CASE 3
+		PRINTFORM %CALLNAME:TARGET%が身悶えするのにも構わず、%CALLNAME:PLAYER%は
+		IF TEQUIP:TARGET:体位 == 3
+			PRINTFORML アナルを貪るように腰をくねらせている
+		ELSE
+			PRINTFORML のの字を描くよう腰を振っている
+		ENDIF
+ENDSELECT
+
+IF ABL:Ａ感覚 < 2
+	PRINTFORM 未だ開ききっていない菊座からの苦楽に、%CALLNAME:TARGET%は
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM 猿と翁の面を浮かべ
+	ELSE
+		PRINTFORM 眉根を寄せ
+	ENDIF
+	PRINTFORML 抑えきれない声を漏らしている
+ELSEIF ABL:Ａ感覚 < 5
+	PRINTFORM ほころんだ菊の花弁からの喜悦に、%CALLNAME:TARGET%は
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM 翁の面を浮かべ
+	ELSE
+		PRINTFORM うっとりとした表情で
+	ENDIF
+	PRINTFORML 甘い啼き声を上げている
+ELSE
+	PRINTFORM もう一つの性腔とかした尻穴からの悦楽に、
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM 翁と火男の面を
+	ELSE
+		PRINTFORM 蕩けきった笑みを
+	ENDIF
+	PRINTFORML 浮かべ、半開きの口から涎と悦鳴を垂れ流している
+ENDIF
+
+
+
+
+[SKIPSTART]
+PRINTFORM %CALLNAME:PLAYER%は腰を動かして
+IF ABL:Ａ感覚 < 2
+	PRINTFORML %CALLNAME:TARGET%の固く閉じた菊門を開拓していった…
+	PRINTFORML %CALLNAME:TARGET%は身を強ばらせながら抽挿に耐えている…
+ELSEIF ABL:Ａ感覚 < 5
+	PRINTFORM %CALLNAME:TARGET%の性の悦びに目覚めつつある菊門をさらなる快楽の味を教え込んでいった…
+	PRINTFORM %CALLNAME:TARGET%は鼻にかかった声を上げながら、
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM 翁の面を浮かべながら
+	ELSE
+		PRINTFORM 陶然とした表情で
+	ENDIF
+	PRINTFORML 抽挿を受け入れている…
+ELSE
+	PRINTFORML 快楽を貪る器官と化した%CALLNAME:TARGET%の菊門を堪能した…
+	PRINTFORML %CALLNAME:TARGET%は涎をたらし、%CALLNAME:PLAYER%の動きに合わせて腰を動かしている…
+ENDIF
+[SKIPEND]
+;-------------------------------------------------
+;330,スカートめくり
+;-------------------------------------------------
+@MESSAGE_COM330
+VARSET LOCALS
+;ふたなり以外は有り得ない
+IF GETBIT(TALENT:TARGET:性別,1)
+	LOCALS += TINKO(TARGET) + " and "
+ENDIF
+LOCALS += SLIT(, 1)
+
+IF FLAG:70
+	SIF !PANTS_ALREADY_COLLECTED()
+		SETCOLOR C_PINK
+	IF EQUIP:TARGET:ズボン && EQUIP:TARGET:ワンピース
+		PRINTFORML As time is stopped %PARSE("you")% casually %PARSE("flip")% %CALLNAME:TARGET%'s %SHOW_BOTTOM(TARGET,1)%.
+		PRINTFORML %PARSE("You pull",1)% down %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET)% and %PARSE("stare")% at %UNDER_SKIRT_DESCRIPTION_TR(TARGET,0)% to %PARSE("your",1)% heart's content...
+	ELSEIF EQUIP:TARGET:ズボン
+		PRINTFORML As time is stopped %PARSE("you")% casually %PARSE("pull")% down %CALLNAME:TARGET%'s %SHOW_BOTTOM(TARGET)%.
+		PRINTFORML %PARSE("You stare",1)% at %UNDER_SKIRT_DESCRIPTION_TR(TARGET,0)% to %PARSE("your",1)% heart's content...
+	ELSE
+		PRINTFORML As time is stopped %PARSE("you")% casually %PARSE("flip")% %CALLNAME:TARGET%'s %SHOW_BOTTOM(TARGET,1)%.
+		PRINTFORML %PARSE("You stare",1)% at %UNDER_SKIRT_DESCRIPTION_TR(TARGET,0)% to %PARSE("your",1)% heart's content...
+	ENDIF
+	RESETCOLOR
+ELSE
+	IF EQUIP:TARGET:ズボン
+		PRINTFORML %PARSE("You try")% pulling down %CALLNAME:TARGET%'s %SHOW_BOTTOM(TARGET)%...
+	ELSE
+		PRINTFORML %PARSE("You try")% to flip %CALLNAME:TARGET%'s %SHOW_BOTTOM(TARGET,1)%...
+	ENDIF
+	SELECTCASE TFLAG:193
+		CASE -5
+			PRINTFORML %CALLNAME:TARGET% pins down %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET,1)% quickly, and slaps %PARSE("your")% cheek.
+		CASE -3
+			PRINTFORML %CALLNAME:TARGET% pins down %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET,1)% quickly, and twists %PARSE("your")% hand painfully.
+		CASE -1
+			PRINTFORML %CALLNAME:TARGET% holds down %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET,1)% and protests.
+		CASE 0
+			PRINTFORML %CALLNAME:TARGET% holds down %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET,1)% and protests, but seems a bit happy.
+		CASE 1
+			SIF !PANTS_ALREADY_COLLECTED()
+				SETCOLOR C_PINK
+			IF GET_TARGETNUM() == 1 && !DATE_HITOGOMI(CFLAG:PLAYER:現在位置) && !WITH_MOB()
+				IF ABL:露出癖 > 3
+					IF EQUIP:TARGET:ズボン
+						PRINTFORML %CALLNAME:TARGET% takes off %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET)% on %HIS_HER(TARGET)% own, showing %PARSE("you")% %UNDER_SKIRT_DESCRIPTION_TR(TARGET,1)%...
+					ELSE
+						PRINTFORML %CALLNAME:TARGET% rolls up %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET,1)% on %HIS_HER(TARGET)% own, showing %PARSE("you")% %UNDER_SKIRT_DESCRIPTION_TR(TARGET,1)%...
+					ENDIF
+				ELSE
+					PRINTFORML %CALLNAME:TARGET% lets out a small yelp, but doesn't resist more than that.
+					PRINTFORML %PARSE("You stare")% under %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET,1)%, revealing %UNDER_SKIRT_DESCRIPTION_TR(TARGET,2)%...
+				ENDIF
+				SIF PALAM:欲情 > PALAMLV:4
+					PRINTFORML %CALLNAME:TARGET% looks at %PARSE("you")% with something in %HIS_HER(TARGET)% eyes, hinting %HE_SHE(TARGET)% wants more...
+					;潤滑LV4以上
+				IF PALAM:潤滑 > PALAMLV:4
+					PRINTFORML Spread wide, the aroma wafting from %TNAME(TARGET)%'s secret place mixes with love juices as it dribbles out...
+				ELSEIF PALAM:潤滑 > PALAMLV:2
+					PRINTFORML Spread wide, the aroma wafting from %TNAME(TARGET)%'s secret place fills the air with lust...
+				ENDIF
+			ELSE
+				IF ABL:露出癖 > 5
+					IF EQUIP:TARGET:ズボン
+						PRINTFORML %CALLNAME:TARGET% doesn't care that there are people around, and pulls down %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET)% on %HIS_HER(TARGET)% own, showing off %UNDER_SKIRT_DESCRIPTION_TR(TARGET,1)%...
+					ELSE
+						PRINTFORML %CALLNAME:TARGET% doesn't care that there are people around, and lifts %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET,1)% on %HIS_HER(TARGET)% own, showing off %UNDER_SKIRT_DESCRIPTION_TR(TARGET,1)%...
+					ENDIF
+					SIF PALAM:欲情 > PALAMLV:4
+						PRINTFORML %TNAME(TARGET, 1)%'s eyes are unfocused, staring at %PARSE("you")% as if expecting something...
+					;潤滑LV4以上
+					IF PALAM:潤滑 > PALAMLV:4
+						PRINTFORML Spread wide, the aroma wafting from %TNAME(TARGET)%'s secret place mixes with love juices as it dribbles out...
+					ELSEIF PALAM:潤滑 > PALAMLV:2
+						PRINTFORML Spread wide, the aroma wafting from %TNAME(TARGET)%'s secret place fills the air with lust...
+					ENDIF
+				ELSE
+					IF EQUIP:TARGET:ズボン
+						PRINTFORML %CALLNAME:TARGET% is concerned about being seen and holds down %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET)%, but without much strength.
+						PRINTFORM %CALLNAME:TARGET%'s %SHOW_BOTTOM(TARGET)% is pulled down, 
+					ELSE
+						PRINTFORML %CALLNAME:TARGET% is concerned about being seen and holds down %HIS_HER(TARGET)% %SHOW_BOTTOM(TARGET,1)%, but without much strength.
+						PRINTFORM %CALLNAME:TARGET%'s %SHOW_BOTTOM(TARGET,1)% is flipped, 
+					ENDIF
+					IF !CFLAG:291
+						IF EQUIP:TARGET:レオタード || EQUIP:TARGET:ボディースーツ
+							PRINTFORML and since %HE_SHE(TARGET)%'s not wearing anything, %PARSE("you")% can easily make the shapes out of %HIS_HER(TARGET)% %LOCALS% through %HIS_HER(TARGET)% %SHOW_下半身下着(TARGET,3)%...
+						ELSEIF EQUIP:TARGET:下半身下着１ || EQUIP:TARGET:下半身下着２
+							;Custom code
+							PRINTFORML and %HIS_HER(TARGET)% %PANTS_DESCRIPTION_TR(TARGET)% can be seen...
+						ELSE
+							PRINTFORML but as %HE_SHE(TARGET)% isn't wearing any underwear, %HIS_HER(TARGET)% %LOCALS% get\@GETBIT(TALENT:TARGET:性別,1)  ?#s\@ flashed...
+						ENDIF
+					ELSE
+						IF EQUIP:TARGET:レオタード || EQUIP:TARGET:ボディースーツ
+							PRINTFORML but even under %HIS_HER(TARGET)%, %SHOW_BOTTOM(TARGET,1)% %HE_SHE(TARGET)% is swearing a %SHOW_下半身下着(TARGET,3)%...
+						ELSE
+							PRINTFORML but as %HE_SHE(TARGET)% isn't wearing any underwear, %HIS_HER(TARGET)% %LOCALS% get\@GETBIT(TALENT:TARGET:性別,1)  ?#s\@ flashed...
+						ENDIF
+					ENDIF
+				ENDIF
+				TFLAG:400 = RAND:2
+				SIF TFLAG:400 && (DATE_HITOGOMI() || WITH_MOB() == 9)
+					CALL DATE_HITOGOMI_MESSAGE()
+			ENDIF
+			RESETCOLOR
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;外出先モブ描写
+;-------------------------------------------------
+@DATE_HITOGOMI_MESSAGE(ARG)
+SIF !ARG
+	ARG = CFLAG:PLAYER:現在位置
+;外出先地霊殿および地底内地霊殿
+IF (MAIN_MAP !=9 && ARG == 960) || (IN_HOME(ARG) && !CHK_FOCUS(927,CFLAG:MASTER:現在位置,948) && (ROOMDATA:(CFLAG:MASTER:現在位置 % 100) & 場所_モブ))
+	IF GROUPMATCH(TIME:2,1,6,7)
+		PRINTFORML 近くで眠る%ANIMALNAME()%が、荒い寝息を漏らしている
+	ELSE
+		PRINTFORM 近くにいた%ANIMALNAME()%が、
+		SELECTCASE TIME:1 % 25
+			;小型哺乳類
+			CASE 0 TO 7
+				SELECTCASE RAND:4
+					CASE 3
+						PRINTFORML すりすりと体をこすりつけてくる
+					CASE 2
+						PRINTFORML 不思議そうに見つめている
+					CASE 1
+						PRINTFORML 前足を伸ばしてくる
+					CASE 0
+						PRINTFORML 床をたんっと叩いている
+				ENDSELECT
+			;大型哺乳類
+			CASE 8 TO 13
+				SELECTCASE RAND:4
+					CASE 3
+						PRINTFORML 好奇心を抱いたのか顔を寄せてくる
+					CASE 2
+						PRINTFORML じっとこちらを見ている気がする
+					CASE 1
+						PRINTFORML 軽く身体を揺らしている
+					CASE 0
+						PRINTFORML たしたしと床を叩いている
+				ENDSELECT
+			;超大型哺乳類（屋内にはいってこれないんじゃないのか？
+			CASE 14 TO 15
+				SELECTCASE RAND:2
+					CASE 1
+						PRINTFORML じっとこちらを見下ろしてくる
+					CASE 0
+						PRINTFORML どすんと足を踏みならしている
+				ENDSELECT
+			;鳥類
+			CASE 16 TO 20
+				SELECTCASE RAND:5
+					CASE 4
+						IF TIME:1 % 25 == 18
+							PRINTFORML じっと動かないでいる
+						ELSE
+							PRINTFORML \@ TIME:1 % 25 > 18 ? バサバサ # パタパタ \@と翼をはためかせている
+						ENDIF
+					CASE 3
+						IF TIME:1 % 25 == 18
+							PRINTFORML じっと動かないでいる
+						ELSE
+							PRINTFORML \@ TIME:1 % 25 > 18 ? 鳴いている # さえずっている \@
+						ENDIF
+					CASE 2
+						IF TIME:1 % 25 == 18
+							PRINTFORML じっと動かないでいる
+						ELSE
+							PRINTFORML すぐ傍に来て、撫でて欲しそうに頭を突き出してくる
+						ENDIF
+					CASE 1
+						IF TIME:1 % 25 == 18
+							PRINTFORML じっと動かないでいる
+						ELSE
+							PRINTFORML あちらこちらと動き回っている
+						ENDIF
+					CASE 0
+						IF TIME:1 % 25 == 18
+							PRINTFORML %CALLNAME:MASTER%の会釈に、深々と頭を下げてくる
+						ELSE
+							PRINTFORML 威嚇してくる
+						ENDIF
+				ENDSELECT
+			;爬虫類
+			CASE 21 TO 24
+				SELECTCASE RAND:3
+					CASE 2
+						PRINTFORML するりと近寄ってじっとこちらを見つめている
+					CASE 1
+						PRINTFORML 威嚇のつもりか口を開いている
+					CASE 0
+						PRINTFORML 興味なさげに体を揺らしている
+				ENDSELECT
+		ENDSELECT
+	ENDIF
+ELSEIF IN_HOME(ARG) && CHK_FOCUS(927,CFLAG:MASTER:現在位置,930) && (ROOMDATA:(CFLAG:MASTER:現在位置 % 100) & 場所_モブ)
+	PRINTFORM 近くにいた怨霊が、%CALLNAME:TARGET%
+	SELECTCASE RAND:5
+		CASE 4
+			PRINTFORMDL に近づこうとしたが、%CALLNAME:MASTER%に追い払われた
+		CASE 3
+			PRINTFORMDL を見てじりじり近づいてくるが急に逃げ出した
+		CASE 2
+			PRINTFORMDL の周りを飛び交い、そのまま逃げ出していく
+		CASE 1
+			PRINTFORMDL を見て動きを早めるが、%CALLNAME:MASTER%の側には寄ってこない
+		CASE 0
+			PRINTFORMDL には目もくれない様に、ふよふよと漂っている
+	ENDSELECT
+ELSE
+	PRINTFORM A %DATE_HITOGOMI_SYUBETU(CFLAG:PLAYER:現在位置)% in the area 
+	SELECTCASE RAND:7
+		CASE 6
+			PRINTFORML looks on, visibly shocked.
+		CASE 5
+			PRINTFORML hides her face in a hurry.
+		CASE 4
+			PRINTFORML can't help but stare.
+		CASE 3
+			PRINTFORML watches with a look of surprise.
+		CASE 2
+			PRINTFORML keeps glancing at %PARSE("you",3)% two.
+		CASE 1
+			PRINTFORML blushes heavily and averts her gaze.
+		CASE 0
+			PRINTFORML rubs her eyes in disbelief.
+	ENDSELECT
+ENDIF

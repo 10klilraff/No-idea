@@ -1,0 +1,31 @@
+﻿@DAILY_CONDITION_EV25
+
+IF !FLAG:ファッション && !RAND:20
+	CALL DAILY_EV25
+	RETURN 1
+ENDIF
+RETURN -1
+
+
+@DAILY_EV25
+
+#DIM Type, 3
+#DIMS Desc, 3
+;custom code
+#DIMS strDescTr = "Lovely T-Shirt", "Sailor Suit", "Bunny Suit"
+
+Type:0 = 62
+Desc:0 = 素敵なＴシャツ
+Type:1 = 74
+Desc:1 = セーラー服
+Type:2 = 55
+Desc:2 = バニースーツ
+
+LOCAL = RAND:2
+
+PRINTFORML It seems %strDescTr:LOCAL% has become fashionable as of late.
+FLAG:ファッション = Type:LOCAL
+;62の代わりに望みの衣装セット番号を入れれば全員の服装を変更できる
+;衣装セット.ERBを参照
+PRINTW 
+RETURN 1

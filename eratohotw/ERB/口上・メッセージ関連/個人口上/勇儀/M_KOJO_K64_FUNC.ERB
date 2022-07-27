@@ -1,0 +1,96 @@
+﻿;added
+@K64_CALLIN
+SIF CFLAG:64:現在位置 == CFLAG:MASTER:現在位置 || FIRSTTIME("YuugiBath", 1, 64)
+	RETURN 0
+IF FLAG:デート相手
+	PRINTFORMDW Calling Yuugi while you're dating someone else would be pretty bad...
+	RETURN 0
+ELSEIF DAY * 1440 + TIME - EX:MASTER:前回の入浴時刻 < 360
+	PRINTFORMDW You don't feel like bathing just yet, so calling Yuugi right now would be a bit rude...
+	RETURN 0
+ELSEIF CFLAG:64:睡眠
+	PRINTFORMDW Yuugi seems to be away or asleep...
+	RETURN 0
+ELSEIF CFLAG:64:ブチギレ || MARK:64:反発刻印
+	PRINTFORMDW Yuugi doesn't seem to be in the mood...
+	RETURN 0
+ELSEIF BATHCHECK(CFLAG:64:現在位置) || IN_TOILET(CFLAG:64:現在位置) || CFLAG:64:現在位置 == OMANEKIBEYA()
+	PRINTFORMDL Yuugi seems to be busy at the moment.
+	PRINTFORMDL Would you like to wait for her?
+	CALL ASK_YN
+	IF !RESULT
+		LOCAL = RAND(5, 31)
+		TIME += LOCAL
+		PRINTFORMDW After some time, Yuugi finally appears!
+		PRINTFORMDW It only took {LOCAL} minutes...
+	ELSE
+		RETURN 0
+	ENDIF
+ENDIF
+TIME += 3
+CFLAG:64:現在位置 = CFLAG:MASTER:現在位置
+CFLAG:64:同室 = 1
+;自由行動の中断
+Activity_Duration:64 = 0
+Activity_Type:64 = 0
+PRINTFORMDL %CALLNAME:64% comes as if out of nowhere at your request.
+CALL SPTALK, [[勇儀]], "笑顔", 0, @"「Sorry for the wait!/　Hey %MASTERNAME:64%, you called me? How are you doing?/　Hehe, that's nice to hear. Well, let's go get soaked and relax a little in the hot springs, shall we?」", 1
+WAIT
+
+CALL TARGETSET_CHACK
+TARGET = 64
+
+@EVENTEND
+;trigger before #LATER events hopefully, event by linguine
+IF !ONCE("YuugiCheatingPunish", 1, 64)
+	LOCAL = TARGET
+	TARGET = 64
+	
+	PRINTFORMDL
+	PRINTFORMDW Yuugi crashes into your room unexpectedly, leaving the door fractured and struggling to stay on its hinges.
+	IF !FIRSTTIME("YuugiSurpriseRape", 1)
+		CALL SPTALK, [[勇儀]], "笑顔", 0, @"「Oh, I see you repaired it from the last time, eh? Aww, it almost makes me feel bad.」", 1
+		WAIT
+	ENDIF
+	PRINTFORMDW She blubbers to herself with a hand on her forehead until she spots you.
+	PRINTFORMDW Her posture becomes erect in an instant, her arm falling limp to her side.
+	CALL SPTALK, [[勇儀]], "笑顔", 0, @"「Doing something so treacherous in front of an oni, \@ FIRSTTIME("YuugiSurpriseRape", 1) ? twice?! # are you?\@」", 1
+	WAIT
+	PRINTFORMDW Yuugi bursts into a peal of thunderous laughter, forcing you to cover your ears for the sake of your hearing—but even that doesn't help much.
+	PRINTFORMDW She calms down soon after, wiping some tears from her eyes.
+	CALL SPTALK, [[勇儀]], "通常", 0, @"「You did it on purpose, didn't you? Your bravery and brashness amazes me.」", 1
+	WAIT
+	CALL SPTALK, [[勇儀]], "発情", 0, @"「I think you require a reward and well-deserved punishment for your actions.」", 1
+	WAIT
+	IF FIRSTTIME("YuugiButINeverCared")
+		CALL SPTALK, [[勇儀]], "通常", 0, @"「Oh? Didn't I say that I didn't really care if you were with other women?」", 1
+		WAIT
+		CALL SPTALK, [[勇儀]], "笑顔", 0, @"「Well, y'see, it was *then*.」/「And now, things are different between us.」", 1
+		WAIT
+		CALL SPTALK, [[勇儀]], "発情", 0, @"「Therefore... No amount of talking will save you now!」", 1
+		WAIT
+	ENDIF
+	IF TALENT:妊娠
+		PRINTFORMDW Moving as quick as ever even with her gravid belly, the oni slams her fist into her open palm as a wild look emerges on her face. 
+		PRINTFORMDW A broad and crazed smile stretches from cheek to cheek and her pupils shrink into pin pricks, solely focused on you.
+	ELSE
+		PRINTFORMDW Dropping the red sake dish, the oni slams her fist into her open palm as a wild look emerges on her face. 
+		PRINTFORMDW A broad and drunk smile stretches from cheek to cheek and her pupils shrink into pin pricks, solely focused on you.
+	ENDIF
+	PRINTFORMDW She rolls her neck as she approaches in a confident jaunt, like an overgrown lioness approaching a young gazelle.
+	;PRINTFORMDW Needless to say, the only choice you had in the matter is swift and total capitulation...
+	PRINTFORMDL
+	CALL SPTALK, [[勇儀]], "発情", 0, @"「Hey, hey, don't you cry now. I'll give you a chance, alright? Just one.」/「If you make me cum before you pass out, I s'pose I'll let you go! How does that sound?」", 1
+	WAIT
+	CALL SPTALK, [[勇儀]], "笑顔", 0, @"「Well, down you go then!」", 1
+	WAIT
+	PRINTFORMDL
+	TRYCALL Add_LOST_GYAKURE_EX(TARGET, 1) ;function from addition branch
+	TRYCALL Add_LOST_GYAKURE(TARGET) ;function from addition branch
+	PRINTFORMDL
+	PRINTFORMDW ...Giving you a glimmer of hope just before taking it all away... As expected of a heinous oni.
+	PRINTFORMDW You realize you lost this match before it even began.
+	CALLF FIRSTTIME("YuugiSurpriseRape")
+	TARGET = LOCAL
+	RETURN 1
+ENDIF

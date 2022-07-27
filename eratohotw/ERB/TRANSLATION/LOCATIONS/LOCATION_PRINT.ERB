@@ -1,0 +1,17 @@
+﻿;prints locations the player can go to, either one, or multiple
+;if ARG:1 isn't specified it prints just one
+;if ARG:1 is specified it prints all from ARG to ARG:1
+@PRINT_DESTINATION(ARG, ARG:1 = -1)
+IF ARG:1 == -1
+	SIF CFLAG:MASTER:現在位置 == 100*MAIN_MAP+ARG ;highlight current location
+		SETCOLOR C_AQUA
+	PRINTBUTTON @"{ARG}:%STR_TR(8000+100*MAIN_MAP+ARG)% ",100*MAIN_MAP+ARG
+	RESETCOLOR
+ELSE
+	FOR LOCAL, ARG, ARG:1+1
+		SIF CFLAG:MASTER:現在位置 == 100*MAIN_MAP+LOCAL ;highlight current location
+			SETCOLOR C_AQUA
+		PRINTBUTTON @"{LOCAL}:%STR_TR(8000+100*MAIN_MAP+LOCAL)% ",100*MAIN_MAP+LOCAL
+		RESETCOLOR
+	NEXT
+ENDIF

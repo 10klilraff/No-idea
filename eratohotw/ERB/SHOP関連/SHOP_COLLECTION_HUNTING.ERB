@@ -1,0 +1,190 @@
+﻿;-----------------------------------------------------------
+;狩った鳥獣リストの表示
+;-----------------------------------------------------------
+@SHOW_COLLECTION_HUNTED
+#DIM 選んだ獣
+#DIM 全種数
+#DIM 狩った種数
+#DIM 狩った総数
+#DIM 消去行数
+#DIM 改行
+
+VARSET LOCAL
+全種数 = 0
+狩った種数 = 0
+狩った総数 = 0
+消去行数 = 0
+改行 = 0
+
+CLEARLINE 1
+PRINTFORML List of birds and animals hunted.
+DRAWLINE
+FOR LOCAL, 1, 51
+	CALL CRITTER_DATA(LOCAL)
+	;獣が無名でない
+	IF CritterName != ""
+		全種数 ++
+		SIF LOCAL < 10
+			PRINTFORM  
+		IF CAPTURE_RECORD:LOCAL
+			狩った種数 ++
+			PRINTFORM [{LOCAL}] %CritterName, 20, LEFT%
+			SETCOLOR C_L_GRAY
+			PRINTFORM （Number of animals hunted: 
+			SELECTCASE CAPTURE_RECORD:LOCAL
+				CASE IS < 10
+					PRINTFORM     
+				CASE IS < 100
+					PRINTFORM    
+				CASE IS < 1000
+					PRINTFORM   
+				CASE IS < 10000
+					PRINTFORM  
+			ENDSELECT
+			狩った総数 += CAPTURE_RECORD:LOCAL
+			PRINTFORM {CAPTURE_RECORD:LOCAL}）
+		ELSE
+			PRINTFORM [{LOCAL}] ????????????                                
+		ENDIF
+		改行 ++
+		IF 改行 == 2
+			PRINTL 
+			改行 = 0
+		ELSE
+			PRINT 　　　
+		ENDIF
+	ENDIF
+	RESETCOLOR
+	;獣関連の変数リセット
+	CALL CRITTER_V_RESET
+NEXT
+SETCOLOR 0x00FF00
+PRINTFORM Unique beings hunted: {狩った種数}／{全種数}
+IF 狩った総数
+	PRINTFORML 　Total number of birds and animals hunted: {狩った総数}
+ELSE
+	PRINTL 
+ENDIF
+RESETCOLOR
+DRAWLINE
+PRINT [0] - Return
+
+$LOOP
+INPUT
+
+選んだ獣 = RESULT
+SELECTCASE 選んだ獣
+	CASE 1 TO 50
+		CALL CRITTER_DATA(選んだ獣)
+		IF CritterName != ""
+			CLEARLINE 1
+			CALL PRINT_CRITTERINFO(選んだ獣)
+			IF CAPTURE_RECORD:選んだ獣
+				消去行数 = 5
+			ELSE
+				消去行数 = 2
+			ENDIF
+			CLEARLINE 消去行数
+			GOTO LOOP
+		ELSE
+			CLEARLINE 1
+			GOTO LOOP
+		ENDIF
+	CASE 0
+		RETURN
+		;獣関連の変数リセット
+		CALL CRITTER_V_RESET
+	CASEELSE
+		CLEARLINE 1
+		GOTO LOOP
+ENDSELECT
+
+;-----------------------------------------------------------
+;選択した獣の説明／ヒント表記
+;ARG …選んだ獣番号
+;-----------------------------------------------------------
+@PRINT_CRITTERINFO(ARG)
+
+DRAWLINE
+IF CAPTURE_RECORD:ARG
+	FONTSTYLE 1
+	PRINTPLAINFORM [{ARG}] %CritterName%
+	FONTREGULAR
+	PRINTFORML （Numbers hunted: {CAPTURE_RECORD:ARG}）
+	IF ABL:MASTER:教養 < 3
+		CALL COLORMESSAGE(@"　　（Increase Knowledge Lv to learn of hunting areas and seasons...）",C_L_GRAY,1)
+	ELSE
+		CALL HUNTING_HINT(ARG)
+	ENDIF
+	PRINTFORML 　　◇Aveage yield: %ITEMNAME_TR(CritterMeat)% × {CritterMeat_Value} ◇
+	PRINTFORML 　　%CritterIntro%
+ELSE
+	PRINTPLAINFORM [{ARG}] ?????????????
+	CALL HUNTING_HINT(ARG)
+ENDIF
+WAIT
+
+;-----------------------------------------------------------
+;選択した獣のヒント文
+;ARG …選んだ獣番号
+;-----------------------------------------------------------
+@HUNTING_HINT(ARG)
+
+SELECTCASE ARG
+	CASE 1 ;ネズミ
+		PRINTFORML 　　Found in all environments - Small
+	CASE 2 ;イタチ
+		PRINTFORML 　　Found in all but the darkest environments - Small
+	CASE 3 ;テン
+		PRINTFORML 　　Found in all but the darkest environments - Small
+	CASE 4 ;ミンク
+		PRINTFORML 　　Found in all but the darkest environments - Small
+	CASE 5 ;リス
+		PRINTFORML 　　Found near the Bamboo Groves, but not in dark areas. Hybernates - Small
+	CASE 6 ;アライグマ
+		PRINTFORML 　　Found in the mountains, but not in dark areas - Medium
+	CASE 7 ;タヌキ
+		PRINTFORML 　　Found in the mountains, but not in dark areas - Medium
+	CASE 8 ;アナグマ
+		PRINTFORML 　　Found everywhere but the summit. Hybernates - Medium
+	CASE 9 ;ハクビシン
+		PRINTFORML 　　Found in the mountains, but not in dark areas - Medium
+	CASE 10 ;キツネ
+		PRINTFORML 　　Found in all but the darkest environments - Medium
+	CASE 11 ;ノイヌ
+		PRINTFORML 　　Prefers being close to the human world - Medium
+	CASE 12 ;ノネコ
+		PRINTFORML 　　Prefers being close to the human world - Medium
+	CASE 13 ;ノウサギ
+		PRINTFORML 　　Found in all but the darkest environments - Medium
+	CASE 14 ;ヌートリア
+		PRINTFORML 　　Prefers watery areas such as swamps and rivers - Medium
+	CASE 15 ;イノシシ
+		PRINTFORML 　　Found in all but the darkest environments - Large
+	CASE 16 ;シカ
+		PRINTFORML 　　Found near the Bamboo Groves, but not in dark areas. Fattest during autumn - Large
+	CASE 17 ;カモシカ
+		PRINTFORML 　　Found near the Bamboo Groves, but not in dark areas. Fattest during autumn - Large
+	CASE 18 ;サル
+		PRINTFORML 　　Prefers being far from the human world - Medium
+	CASE 19 ;ツキノワグマ
+		PRINTFORML 　　Prefers being far from the human world. Hybernates. Fattest during autumn - Large
+	CASE 20 ;ヘビ
+		PRINTFORML 　　Found away from the mountain. Hybernates - Small
+	CASE 21 ;オオコウモリ
+		PRINTFORML 　　Prefers dimly lit areas. Hybernates - Medium
+	CASE 22 ;モグラ
+		PRINTFORML 　　Prefers dimly lit areas - Small
+	CASE 23 ;デスワーム
+		PRINTFORML 　　Rare. Hides deep underground in the dark - Large
+	CASE 24 ;ツチノコ
+		PRINTFORML 　　Rare. Said to be hiding in the woods - Medium
+	CASE 25 ;スライム
+		PRINTFORML 　　... Is this even an animal? Prefers dimly lit areas - Medium
+	CASE 26 ;マタンゴ
+		PRINTFORML 　　Rare. Mushrooms are said to appear where they grow - Large
+	CASE 27 ;ヤベオオツノジカ
+		PRINTFORML 　　Rare. Said to appear as a sacred forest animal - Large
+	CASE 28 ;ハナイズミモリウシ
+		PRINTFORML 　　Rare. Said to live quietly in the high mountains - Large
+ENDSELECT

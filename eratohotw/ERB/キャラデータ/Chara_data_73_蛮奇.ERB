@@ -1,0 +1,138 @@
+﻿@CHARAMOVE_DATA_73(ARG, ARG:2)
+LOCAL = 73
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+		;水曜日は連動
+		SIF YOUBI_MATCH(DAY, "水")
+			RETURN [[わかさぎ姫]]
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;酒屋,自室,広場によく居る
+			CASE P211酒屋, P231蛮奇の部屋, P202中央広場
+				RETURN 5
+			;私室には行かない
+			CASE P221稗田邸, P224慧音宅, P222寺子屋, P226小鈴私室, P229阿求私室
+				RETURN -100
+			CASE P208雷鼓の部屋, P209八橋の部屋, P210弁々の部屋, P226小鈴私室, P229阿求私室
+				RETURN -100
+			CASE P232蓮子の部屋, P233メリーの部屋, P234ユキの部屋, P235マイの部屋, P239美宵の部屋
+				RETURN -100
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE お地蔵通り, 枝垂れ柳の下, 命蓮寺境内, 墓地
+				RETURN 1
+			CASE 広場, 商家町, 呑屋小道, 長屋街
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+ENDSELECT
+
+@EXIST_キャラデータ73
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ73(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "蛮奇")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（襦袢）セット")
+
+CASE "普段着：外衣"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("外衣", "ケープマント"))
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "リボン"))
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "靴"))
+CASE "普段着：スカート"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("スカート", "スカート"))
+CASE "普段着：上半身上着２"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("上半身上着２", "ブラウス"))
+CASE "普段着：その他１"
+;とりあえず冬限定にしてみる
+	SIF DAY:2 == 4
+		CALLF MAKE_INT(V_NAME, CLOTHES_ID("その他１", "マフラー"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "グラデーションが美しい")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "薄紅色のショーツ")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "薄紅色のブラ")
+CASE "固有下着着用条件"
+	SIF !RAND:(3 - (2 * 勝負下着判定([[蛮奇]])))
+		CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 1)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "卵/スパイス/中華/汁物/あっさり/ジャンキー/淡白/機能的/上品/鮮やか/もちもち/辛い/辛い/しょっぱい/しょっぱい/")
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "米/ガッツリ/野趣/すっぱい/すっぱい/")
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "薄味/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "かわいい/オシャレ/大陸風/シック/マニアック/" + "赤/" * 3 + "騎士の/マント/マスク/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "派手/知的/ロリータ/" + "書物/" * 3)
+
+;農民関連
+;首が落ちる＋赤色
+;あんま人付き合いなさそうだけど一応
+CASE "農民：説明"
+	CALLF MAKE_STR(V_NAME, "椿農家")
+CASE "農民：作物"
+	CALLF MAKE_STR(V_NAME, "椿油")
+CASE "農民：畑の種類"
+	CALLF MAKE_STR(V_NAME, "椿農園")
+CASE "農民：畑のマップ"
+	CALLF MAKE_STR(V_NAME, "人里")
+
+CASE "農民：マップID"
+	CALLF MAKE_INT(V_NAME, 2)
+CASE "農民：場所ID"
+	CALLF MAKE_INT(V_NAME, 206)
+CASE "農民：報酬"
+	CALLF MAKE_INT(V_NAME, 350)
+CASE "農民：金利"
+	CALLF MAKE_INT(V_NAME, 6)
+ENDSELECT
+
+;-------------------------------------------------
+;固有料理設定
+;DISH_NAME          料理名
+;RESULTS            料理の種類（軽食/主食/デザート）
+;CALL 材料設定("")  材料の指定。"汎用"を入れると自動で汎用食材になる
+;DISH_TASTE         味の設定
+;DISH_COMMENT       （任意）一行コメント
+;DISH_TIME          （任意）調理にかかる時間
+;DISH_MAXLIMIT      （任意）料理の持続時間
+;-------------------------------------------------
+@SPECIAL_MENU_73
+DISH_NAME = 飛頭饅頭
+RESULTS = 軽食
+CALL 材料設定("獣肉", "たけのこ", "ハクサイ")
+DISH_TASTE = 中華/肉まん/辛い/濃厚/温かい/温かい/冬物/芸術的/グロテスク/もちもち/
+DISH_COMMENT = リアルな頭の形をした中華まん。肉まんよりだいぶ辛い。
+RETURN 1

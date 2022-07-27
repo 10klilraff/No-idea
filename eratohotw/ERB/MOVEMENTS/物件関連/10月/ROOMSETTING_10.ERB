@@ -1,0 +1,298 @@
+﻿;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+;地点の属性設定
+;場所_ワンルーム   家主が不在のとき鍵がかかる,布団・屋内・厨房・勉強・休憩・飲食・プライベートが自動で付与
+;場所_布団         休憩が自動で付与
+;場所_洋室         屋内だけど靴を履いたまま,屋内が自動で付与
+;場所_屋内         
+;場所_屋根         屋外だけど屋根がある場所,屋内でも屋根でも無い場合は野外判定（旧青天井）
+;場所_広い         
+;場所_月見         屋内や屋根があっても月が見える場所
+;場所_休憩         
+;場所_風呂         
+;場所_トイレ       
+;場所_厨房         つまみ食いが自動で付与
+;場所_訓練         
+;場所_勉強         
+;場所_天の声       
+;場所_菜園         
+;場所_水汲み       
+;場所_身体測定     
+;場所_物干し       風景描写用
+;場所_飲食         自由行動用
+;場所_つまみ食い   自由行動用
+;場所_留まらない   あまりキャラが留まらない（移動しやすい）
+;場所_過疎         あまりキャラが立ち入らない（移動されにくい）
+;場所_プライベート 節度のあるキャラは入ってこない,主に私室と風呂・トイレ
+;場所_炬燵         自由行動用
+;場所_公共の場     押し倒してこない
+;＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+@ROOMSETTING_10
+#DIM ROOM
+VARSET ROOMDATA
+MAXROOM = 1073
+ENTRANCE = P1001槐安通路
+避難先 = P1055ドレミー宅・トイレ
+
+SIF GET_MAPID(拠点_酒虫) != MAIN_MAP
+	拠点_酒虫 = P1023門番詰め所
+
+MAP_PAGES = 4
+MAPNAME:1 = Lunar World
+MAPNAME:2 = Watatsuki Residence
+MAPNAME:3 = Doremy's Residence
+MAPNAME:4 = Junko's Residence
+
+;qol custom code
+SUMIKOMI_ROOM = 0
+
+
+CFLAG:[[橙]]:(450 + MAIN_MAP) = P1016入り江
+CFLAG:[[藍]]:(450 + MAIN_MAP) = P1016入り江
+CFLAG:[[紫]]:(450 + MAIN_MAP) = P1016入り江
+CFLAG:[[映姫]]:(450 + MAIN_MAP) = P1016入り江
+CFLAG:[[輝夜]]:(450 + MAIN_MAP) = P1016入り江
+
+FOR LOCAL, MINROOM(), MAXROOM
+	ROOM = LOCAL % 100
+	SELECTCASE LOCAL
+	;布団・屋内・厨房・勉強・休憩・飲食・プライベートが自動で付与
+	CASE P1008鈴瑚宅, P1009清蘭宅
+		ROOMDATA:ROOM |= 場所_ワンルーム
+	;自室になると布団,勉強,プライベートが付与
+	CASE P1007空き家
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_厨房
+		ROOMDATA:ROOM |= 場所_休憩
+		ROOMDATA:ROOM |= 場所_飲食
+	CASE P1001槐安通路
+		ROOMDATA:ROOM |= 場所_留まらない
+	CASE P1002月の都, P1003玉兎街, P1004広場
+		ROOMDATA:ROOM |= 場所_広い
+		ROOMDATA:ROOM |= 場所_公共の場
+	CASE P1005サグメ宅・居間
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_厨房
+		ROOMDATA:ROOM |= 場所_勉強
+		ROOMDATA:ROOM |= 場所_飲食
+		ROOMDATA:ROOM |= 場所_プライベート
+		ROOMDATA:ROOM |= 場所_炬燵
+	CASE P1006サグメ宅・寝室
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_布団
+		ROOMDATA:ROOM |= 場所_プライベート
+	CASE P1010食事処, P1011甘味処
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_公共の場
+		ROOMDATA:ROOM |= 場所_飲食
+	CASE P1012酒屋, P1013八百屋
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_公共の場
+	CASE P1014桃林
+		ROOMDATA:ROOM |= 場所_訓練
+		ROOMDATA:ROOM |= 場所_つまみ食い
+	CASE P1015砂浜
+		ROOMDATA:ROOM |= 場所_訓練
+		ROOMDATA:ROOM |= 場所_広い
+		ROOMDATA:ROOM |= 場所_過疎
+	CASE P1016入り江
+		ROOMDATA:ROOM |= 場所_訓練
+		ROOMDATA:ROOM |= 場所_広い
+
+	CASE P1020綿月亭・門
+		ROOMDATA:ROOM |= 場所_屋根
+		ROOMDATA:ROOM |= 場所_留まらない
+	CASE P1021綿月亭・玄関, P1022一階回廊, P1040二階回廊
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_留まらない
+	CASE P1023門番詰め所
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_休憩
+		ROOMDATA:ROOM |= 場所_過疎
+		ROOMDATA:ROOM |= 場所_公共の場
+	CASE P1024玉兎食堂
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_厨房
+		ROOMDATA:ROOM |= 場所_飲食
+		ROOMDATA:ROOM |= 場所_公共の場
+	CASE P1025玉兎詰め所
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_休憩
+		ROOMDATA:ROOM |= 場所_過疎
+		ROOMDATA:ROOM |= 場所_勉強
+		ROOMDATA:ROOM |= 場所_公共の場
+	CASE P1026食堂
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_飲食
+	CASE P1027厨房
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_厨房
+	CASE P1028食料庫
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_つまみ食い
+		ROOMDATA:ROOM |= 場所_過疎
+	CASE P1029綿月亭・脱衣所
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_身体測定
+		ROOMDATA:ROOM |= 場所_留まらない
+		ROOMDATA:ROOM |= 場所_プライベート
+	CASE P1030綿月亭・風呂
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_風呂
+		ROOMDATA:ROOM |= 場所_プライベート
+	CASE P1031宝物庫
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_過疎
+		ROOMDATA:ROOM |= 場所_プライベート
+	;綿月亭の空き部屋は最初から整ってる
+	CASE P1032レイセン私室, P1033綿月亭・空き部屋, P1041豊姫私室, P1042依姫私室
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_布団
+		ROOMDATA:ROOM |= 場所_勉強
+		ROOMDATA:ROOM |= 場所_プライベート
+	CASE P1035中庭
+		ROOMDATA:ROOM |= 場所_広い
+		ROOMDATA:ROOM |= 場所_訓練
+		ROOMDATA:ROOM |= 場所_菜園
+		ROOMDATA:ROOM |= 場所_水汲み
+	CASE P1036四阿
+		ROOMDATA:ROOM |= 場所_屋根
+		ROOMDATA:ROOM |= 場所_休憩
+		ROOMDATA:ROOM |= 場所_飲食
+		ROOMDATA:ROOM |= 場所_天の声
+	CASE P1043書斎
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_勉強
+	CASE P1044応接間
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_休憩
+
+	CASE P1050ドレミー宅・居間
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_厨房
+		ROOMDATA:ROOM |= 場所_休憩
+		ROOMDATA:ROOM |= 場所_勉強
+		ROOMDATA:ROOM |= 場所_飲食
+		ROOMDATA:ROOM |= 場所_炬燵
+	CASE P1051ドレミー宅・寝室
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_布団
+		ROOMDATA:ROOM |= 場所_休憩
+		ROOMDATA:ROOM |= 場所_プライベート
+	;自室になると布団,勉強,プライベートが付与
+	CASE P1052ドレミー宅・倉庫
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_過疎
+	CASE P1053ドレミー宅・洗面所
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_身体測定
+		ROOMDATA:ROOM |= 場所_留まらない
+	CASE P1054ドレミー宅・風呂
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_風呂
+		ROOMDATA:ROOM |= 場所_プライベート
+	CASE P1055ドレミー宅・トイレ
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_トイレ
+		ROOMDATA:ROOM |= 場所_プライベート
+
+	CASE P1060純狐邸・玄関
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_留まらない
+	CASE P1061居間
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_飲食
+		ROOMDATA:ROOM |= 場所_炬燵
+	CASE P1062台所
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_厨房
+	;自室になると勉強,プライベートが付与
+	CASE P1063純狐邸・空き部屋, 
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_布団
+	CASE P1064クラウンピース私室
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_布団
+		ROOMDATA:ROOM |= 場所_プライベート
+	CASE P1065物置
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_過疎
+	CASE P1066純狐邸・脱衣所
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_身体測定
+		ROOMDATA:ROOM |= 場所_留まらない
+	CASE P1067純狐邸・風呂
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_風呂
+		ROOMDATA:ROOM |= 場所_プライベート
+	CASE P1068純狐邸・中庭
+		ROOMDATA:ROOM |= 場所_水汲み
+	CASE P1070屋上
+		ROOMDATA:ROOM |= 場所_広い
+		ROOMDATA:ROOM |= 場所_訓練
+	CASE P1071純狐私室, P1072ヘカーティア私室
+		ROOMDATA:ROOM |= 場所_屋内
+		ROOMDATA:ROOM |= 場所_布団
+		ROOMDATA:ROOM |= 場所_勉強
+		ROOMDATA:ROOM |= 場所_プライベート
+	ENDSELECT
+NEXT
+
+;-----------------------------------------
+;デフォルトの初期位置と大家の設定
+;-----------------------------------------
+;qol custom code
+SUMIKOMI_ROOM = 0
+
+@DEFAULT_OWNER_10
+デフォルト初期位置 = P1007空き家
+拠点_大家 = [[豊姫]]
+
+;-----------------------------------------
+;お出かけマップの設定
+;ARG   対象の地点
+;ARGS  判定文字引数
+;-----------------------------------------
+@ODEKAKEMAP_SETTING_10(ARG, ARGS)
+#FUNCTION
+;＼1 2 3 4 5 6 7 8 9 
+;01　　　　　　　　　
+;02　　　　　　　　　
+;03　　　　　　　　　
+;04６　　　　　　　　
+;05５　７　　８　　　
+;06　　　　　　　　９
+;07　　　　　　　　　
+;08　　　　　　　　　
+;09１　　　　　　　　
+SELECTCASE ARG
+CASE 槐安通路
+	SIF ARGS == "座標"
+		RETURNF 19
+	SIF GROUPMATCH(ARGS, "屋根")
+		RETURNF 1
+CASE 月の都
+	SIF ARGS == "座標"
+		RETURNF 15
+	SIF GROUPMATCH(ARGS, "屋根", "広い", "モブ")
+		RETURNF 1
+CASE 綿月亭
+	SIF ARGS == "座標"
+		RETURNF 14
+	SIF GROUPMATCH(ARGS, "屋内", "勉強")
+		RETURNF 1
+CASE 玉兎の街
+	SIF ARGS == "座標"
+		RETURNF 35
+	SIF GROUPMATCH(ARGS, "屋根", "広い", "モブ")
+		RETURNF 1
+CASE 桃林～砂浜
+	SIF ARGS == "座標"
+		RETURNF 65
+	SIF GROUPMATCH(ARGS, "広い", "訓練", "お弁当")
+		RETURNF 1
+CASE 静かの海
+	SIF ARGS == "座標"
+		RETURNF 96
+	SIF GROUPMATCH(ARGS, "広い", "訓練")
+		RETURNF 1
+ENDSELECT

@@ -1,0 +1,98 @@
+﻿;-------------------------------------------------
+;楽譜の入手条件を取得
+;SCORE_NO 楽譜番号
+;
+;RETURNFS 入手条件
+;-------------------------------------------------
+@GET_SCORE_INFO_MESSAGE(SCORE_NO)
+#FUNCTIONS
+#DIM SCORE_NO		; 楽譜番号
+#DIM SCORE_INFO_NO	; 入手条件番号
+#DIMS MESSAGE		; メッセージ
+
+SCORE_INFO_NO = GET_SCORE_INFO_NO(SCORE_NO)
+SELECTCASE SCORE_INFO_NO
+	CASE IS < 楽譜入手方法：ランダム
+		; 関連キャラの演奏大成功時に入手
+		MESSAGE = Perform well for「%CSVNAME(SCORE_INFO_NO)%」
+	CASE 楽譜入手方法：ランダム
+		MESSAGE = Get randomly while performing
+	CASE 楽譜入手方法：シリーズ初取得
+		MESSAGE = Get any score from this series
+	CASE 楽譜入手方法：シリーズランダムコンプ
+		MESSAGE = Get all random scores from this series
+	CASE 楽譜入手方法：シリーズ関連キャラ弾幕勝負
+		MESSAGE = Fight this theme's dedicatee with Danmaku
+	CASE 楽譜入手方法：シリーズ関連キャラ陥落
+		MESSAGE = Get Love or Lust with a character from this set
+	CASE 楽譜入手方法：シリーズ完全コンプ
+		MESSAGE = Get all the other scores in this series
+	CASE 楽譜入手方法：ランダム（キャラ無し）
+		; キャラテーマだが、関連キャラがいないのでランダム入手
+		MESSAGE = Get randomly while playing
+	; --- 特殊条件 ---
+	CASE 楽譜入手方法：妖精依頼成功
+		; 妖精大戦争
+		MESSAGE = Do requests for Sunny, Luna, Star, Daiyousei, or Cirno
+	CASE 楽譜入手方法：文依頼成功
+		;東方文花帖
+		MESSAGE = Complete a request for Aya
+	CASE 楽譜入手方法：はたて依頼成功
+		;ダブルスポイラー
+		MESSAGE = Complete a request for Hatate
+	CASE 楽譜入手方法：依賴失敗時
+		;弾幕アマノジャク
+		MESSAGE = Fail a request
+	CASEELSE
+		; それ以外
+		MESSAGE = エラー
+ENDSELECT
+
+RETURNF MESSAGE
+
+;-------------------------------------------------
+;楽譜入手時のメッセージを取得
+;SCORE_NO 楽譜番号
+;
+;RETURNFS 楽譜入手時のメッセージ
+;-------------------------------------------------
+@GET_SCORE_OBTAIN_MESSAGE(SCORE_NO)
+#FUNCTIONS
+#DIM SCORE_NO	; 楽譜番号
+
+#DIM SERIES_NO		; シリーズ番号
+#DIM SCORE_INFO_NO	; 入手条件番号
+#DIMS MESSAGE		; メッセージ
+
+SERIES_NO = GET_SERIES_NO(SCORE_NO)
+SCORE_INFO_NO = GET_SCORE_INFO_NO(SCORE_NO)
+
+SELECTCASE SCORE_INFO_NO
+	CASE IS < 楽譜入手方法：ランダム
+		MESSAGE = After the performance, %CSVCALLNAME(SCORE_INFO_NO)% gives you%GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	CASE 楽譜入手方法：ランダム, 楽譜入手方法：ランダム（キャラ無し）
+		MESSAGE = You get %GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	CASE 楽譜入手方法：シリーズ初取得
+		MESSAGE = Started collecting %GET_SERIES_SHORT_NAME_TR(SERIES_NO)%! Got%GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	CASE 楽譜入手方法：シリーズランダムコンプ
+		MESSAGE = Got all normal stages in %GET_SERIES_SHORT_NAME_TR(SERIES_NO)%! Got%GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	CASE 楽譜入手方法：シリーズ関連キャラ弾幕勝負
+		MESSAGE = Pichuun! As the lives ran out you got%GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	CASE 楽譜入手方法：シリーズ関連キャラ陥落
+		MESSAGE = You find%GET_SCORE_FULLNAME_TR(SCORE_NO)%at your bedside.
+	CASE 楽譜入手方法：シリーズ完全コンプ
+		MESSAGE = Cleared %GET_SERIES_SHORT_NAME_TR(SERIES_NO)%! Got%GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	; --- 特殊条件 ---
+	CASE 楽譜入手方法：妖精依頼成功
+		MESSAGE = ⑨！ You got%GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	CASE 楽譜入手方法：文依頼成功
+		MESSAGE = Interview Successful! You got%GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	CASE 楽譜入手方法：はたて依頼成功
+		MESSAGE = Shutter Chance! You got%GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	CASE 楽譜入手方法：依賴失敗時
+		MESSAGE = You got%GET_SCORE_FULLNAME_TR(SCORE_NO)%!
+	CASEELSE
+		MESSAGE = エラー
+ENDSELECT
+
+RETURNF MESSAGE

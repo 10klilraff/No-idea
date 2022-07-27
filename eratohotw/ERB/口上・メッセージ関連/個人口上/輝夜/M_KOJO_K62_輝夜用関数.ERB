@@ -1,0 +1,1498 @@
+﻿;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;CFLAG:1100 アップデート処理
+;CFLAG:62:1101 告白回数分岐
+;CFLAG:62:1102 思慕特殊セリフ
+;CFLAG:62:1103 恋慕特殊セリフ
+;CFLAG:62:1104 恋人特殊セリフ
+;CFLAG:62:1105 輝夜嫉妬フラグ
+;TCVAR:62:351 遭遇回数
+;TCVAR:62:352 えっちもーど遭遇回数
+;TCVAR:62:353 意識ありえっち判定用
+;TCVAR:62:354 デート遭遇回数用
+;TCVAR:62:355 お手伝い回数
+;TCVAR:62:356 お手伝いえっち
+;******************************************************************************
+
+;-----------------------------------------------------------------------------------------------
+;@CHARA_INFO_KOJO_K62()
+;個人情報の「キャラ紹介」の文章を書き換える
+;これがあれば「CSTR」の20番以降(20～39)に文字列を書き込むだけで書き換わるはず
+;早苗口上より引用した諏訪子口上のものを更に輝夜用に改変。
+;-----------------------------------------------------------------------------------------------
+@CHARA_INFO_KOJO_K62()
+;===============================================================================================
+;記述例
+;このコメントアウトを外すと「CSTR」の20番以降に文字列を書き込むだけで書き換わるようになる
+;FOR LOCAL,20,40
+;	SIF CSTR:31:(LOCAL) != ""
+;		PRINTFORMDL %CSTR:31:(LOCAL)%
+;NEXT
+;RETURN 1
+;…とまあ、こんな感じでCSTR20番以降を使えばいいはず
+;===============================================================================================
+;本口上は、書き換わる文章が多いのでCSTRへの保存をせずに直接書き込む
+;現時点で下の2行が書き込まれている
+;PRINTL □ キャラ紹介 □---------------------------------------------------------------------
+;PRINTL 
+
+;##################################################################################
+;①「～永遠と須臾の罪人～ ●種族：月人 ●能力：永遠と須臾を操る程度の能力」をプリント
+;##################################################################################
+CALL M_KOJO_COLOR_K62
+PRINTFORML %CSVCSTR(62, 10)%
+RESETCOLOR
+PRINTL 
+
+;##################################################################################
+;②キャラ紹介文を書き込み
+;##################################################################################
+;共通部
+PRINTFORMDL The master of Eientei located deep within the Bamboo Forest of the lost, a former citizen of the moon.
+PRINTFORMDL Despite her appearance, she has lived for an extraordinarily long time.
+PRINTFORMDL She was originally a Lunarian princess, but she rejected the never-changing lifestyle of the moon.
+PRINTFORMDL She was exiled after consuming the Hourai Elixir, a forbidden medicine that grants immortality.
+PRINTFORMDL The wrath of the Lunarians has faded after all these years, and now all parties live a leisurely life.
+PRINTFORMDL In the past, it seems that she was subjected to numerous courting attempts, and is now a bit distant from other men.
+PRINTFORMDL 
+IF TALENT:62:恋人
+	PRINTFORMDL That is, until she met you.
+	PRINTFORMDL Nowadays, she spends her days, her duty in life is being your diligent wife.
+	PRINTFORMDL She's much more honest with herself than before and seems to be happy.
+	IF TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4
+		CALL M_KOJO_COLOR_K62
+		PRINTFORMDL In regards to infidelity, Kaguya has told you that they are just trifling distractions.
+		PRINTFORMDL It's only natural after for someone who will live that long, so she doesn't mind if you love another woman.
+		PRINTFORMDL No matter how much you cheat on her, she won't be mad.
+		PRINTFORMDL Because time heals all wounds, even if it takes an eternity.
+		PRINTFORMDL That's why she doesn't feel jealousy anymore, why she doesn't feel anxious.
+		PRINTFORMDL 
+		PRINTFORMDL ――Because her and her dear husband are bound by an『Eternal Bond of Love』...♥
+		PRINTFORMDL 
+		PRINTFORMDL She views her love with you, as another being who has consumed the Hourai Elixir, with such eyes.
+		PRINTFORMDL An fevered expression of obsessive love, lasting forever, and ever.
+		RESETCOLOR
+	ELSEIF CFLAG:62:1105 > 0
+		PRINTFORMDL Perhaps it's due to her mindset as someone who lives eternally, but she surprisingly views infidelity on your part as a mere distraction.
+		PRINTFORMDL She might even enjoy being jealous.
+		PRINTFORMDL However, it's best to keep in mind that it's because she has the utmost trust in you.
+		PRINTFORMDL Kaguya smiles when you spend time with other women, but who's to say how she feels really.
+		PRINTFORMDL 
+		CALL M_KOJO_COLOR_K62
+		SIF CFLAG:62:1105 > 30
+			PRINTFORMDL That being said, you remember seeing her talk to Eirin at one point with a pretty serious expression.
+		SIF CFLAG:62:1105 > 50
+			PRINTFORMDL It seems that she requested Eirin to do something lately.
+		SIF CFLAG:62:1105 > 60
+			PRINTFORMDL When you ask Kaguya about it, she says that she had Eirin teach how to make some medicine.
+		SIF CFLAG:62:1105 > 70
+			PRINTFORMDL You've also seen the two of them head out somewhere, but you're sure there's nothing to worry about.
+		SIF CFLAG:62:1105 > 80
+			PRINTFORMDL When you complimented her on her initiative to learn something, Kaguya smiled so brightly.
+		SIF CFLAG:62:1105 > 90
+			PRINTFORMDL Kaguya is so brave recently, so lovely——
+		RESETCOLOR
+	ENDIF
+ELSEIF TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4
+	PRINTFORMDL That is, until she met you.
+	PRINTFORMDL Nowadays, she spends her days, her duty in life is being your diligent wife.
+	PRINTFORMDL She's much more honest with herself than before and seems to be happy.
+	PRINTFORMDL 
+	CALL M_KOJO_COLOR_K62
+	PRINTFORMDL ...There are no problems aside from the fact that she forced you to drink the Hourai Elixir.
+	RESETCOLOR
+ELSEIF TALENT:62:恋慕 
+	PRINTFORMDL Now, she seems to have really opened up to you.
+	PRINTFORMDL The wall that she put up is gone, and she no longer avoids your touch.
+	PRINTFORMDL However, the gaze in which she looks at you sometimes is filled with bitter longing.
+	PRINTFORMDL 
+	CALL M_KOJO_COLOR_K62
+	SIF CFLAG:62:1105 > 30
+		PRINTFORMDL That being said, you remember seeing her talk to Eirin at one point with a pretty serious expression.
+	SIF CFLAG:62:1105 > 50
+		PRINTFORMDL It seems that she requested Eirin to do something lately.
+	SIF CFLAG:62:1105 > 60
+		PRINTFORMDL When you ask Kaguya about it, she says that she had Eirin teach how to make some medicine.
+	SIF CFLAG:62:1105 > 70
+		PRINTFORMDL You've also seen the two of them head out somewhere, but you're sure there's nothing to worry about.
+	SIF CFLAG:62:1105 > 80
+		PRINTFORMDL When you complimented her on her initiative to learn something, Kaguya smiled so brightly.
+	SIF CFLAG:62:1105 > 90
+		PRINTFORMDL Kaguya is so brave recently, so lovely——
+	RESETCOLOR
+ELSEIF TALENT:62:セフレ || TALENT:62:愛欲
+	PRINTFORMDL However, recently, she seems to have drowned in the pleasure you give her, her resistance to sexual pleasures now completely gone.
+	SIF TALENT:62:処女 == 0
+		PRINTFORMDL It seems her dislike of men intensifies those sensations and causes her to become quite weak to insertions.
+ELSEIF TALENT:62:思慕
+	PRINTFORMDL However, she seems to have opened up quite a bit to you.
+	PRINTFORMDL Her gaze towards you is much softer now.
+ENDIF
+PRINTL 
+RETURN 1
+
+
+;==================================================
+;膣内挿入関係
+;==================================================
+@OSAKAN_HIMESAMA_V
+CALL M_KOJO_COLOR_K62
+IF NOWEX:PLAYER:11
+	;射精寸前になると一生懸命子宮口を押しつけちゃう輝夜様。
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		IF RAND:10 > 6
+			SELECTCASE RAND:7
+				CASE 6
+					PRINTFORML 「%MOAN()%...♥ My husband, you're... about to...♥♥」
+				CASE 5
+					PRINTFORML 「Pour everything into Kaguya...♥」
+				CASE 4
+					PRINTFORML 「My husband♥ I love you♥ I love you...♥」
+				CASE 3
+					PRINTFORML 「My husband♥ Fill Kaguya's womb with your love...♥」
+				CASE 2
+					PRINTFORML 「My husband...♥ Hurry and fill Kaguya with your...♥」
+				CASE 1
+					PRINTFORML 「My husband♥ Your thing is twitching...♥」
+				CASE 0
+					PRINTFORML 「%MOAN()%♥ Together♥ Let's both climax together...♥」
+			ENDSELECT
+		ELSE
+			CALL K62_AUTO_AEGI
+		ENDIF
+	ELSEIF TALENT:62:恋慕
+		IF RAND:10 > 6
+			SELECTCASE RAND:7
+				CASE 6
+					PRINTFORML 「%MOAN()%...♥ %CALLNAME:MASTER%, you're... about to...♥」
+				CASE 5
+					PRINTFORML 「Pour it all inside...♥」
+				CASE 4
+					PRINTFORML 「...Nnh♥ I love you♥ I love you...♥」
+				CASE 3
+					PRINTFORML 「My womb♥ Thoroughly fill it up...♥」
+				CASE 2
+					PRINTFORML 「%CALLNAME:MASTER%...♥ Hurry♥ Pour it inside me...♥」
+				CASE 1
+					PRINTFORML 「%CALLNAME:MASTER%♥ Your thing is twitching...♥」
+				CASE 0
+					PRINTFORML 「%MOAN()%♥ Together♥ Let's both climax together...♥」
+			ENDSELECT
+		ELSE
+			CALL K62_AUTO_AEGI
+		ENDIF
+	ELSE
+		CALL K62_AUTO_AEGI
+	ENDIF
+		IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4) || TALENT:62:恋慕 || TALENT:62:愛欲
+			SELECTCASE RAND:7
+				CASE 6
+					PRINTFORMDW As you're on the verge of ejaculation, Kaguya's cervix tightens around you, clinging onto your %TINKO(PLAYER)%.
+				CASE 5
+					PRINTFORMDW Kaguya notices that you're close to blowing your load, and she encourages you by begging for your %SEMEN(,1)% with a seductive whisper.
+				CASE 4
+					PRINTFORMDW %BREAKENG(@"Your %TINKO(PLAYER)% begins to jerk and twitch as you're almost at your limit. Kaguya rocks hips as much as she can, desperately pressing your tip against her cervix.")%
+				CASE 3
+					PRINTFORMDW %BREAKENG(@"Kaguya tightens her wet folds and the mouth of her womb on your ready-to-blow %TINKO(PLAYER)%, devoting her entire body to help you reach the best possible ejaculation.")%
+				CASE 2
+					;PRINTFORMDW Kaguya senses your oncoming ejaculation, repeatedly kissing your glans by pressing her cervix against it.
+					;todo replaced
+					PRINTFORMDW 射精をせがむ無意識の行動か、子宮口を押しつけるようにして亀頭にキスを繰り返した。
+				CASE 1
+					PRINTFORMDW Sensing your oncoming ejaculation, Kaguya presses her cervix against your glans, almost as if intending to suck out all of your %SEMEN(,1)%.
+				CASE 0
+					PRINTFORMDW Deliberately or not, right before you ejaculate, Kaguya repositions her hips to naturally align the entrance of her womb to your thrusts.
+			ENDSELECT
+				IF TALENT:62:ポルチオ性感
+					SELECTCASE RAND:6
+						CASE 5
+							PRINTFORMDW %BREAKENG(@"Her sexual organ, personally trained by you, now rivals that of a succubus as she learns how to suck up all leftover %SEMEN(,1)% in a sort of vacuum.")%
+						CASE 4
+							PRINTFORMDW %BREAKENG(@"Her cervix is clearly coated in a different kind of slimy mucous, and every time your glans and the sticky opening come into contact, there's a strange feeling of adhesion.")%
+						CASE 3
+							PRINTFORMDW Her cervix is like a pair of lips, eagerly begging for a deep kiss every time it comes into contact with your glans.
+						CASE 2
+							PRINTFORMDW %BREAKENG(@"Everytime the opening to her womb is stimulated, her walls constrict around you with surprising force, trying to squeeze every last drop of %SEMEN(,1)% out of you.")%
+						CASE 1
+							PRINTFORMDW Her cervix, now completely belonging to you, clings to your glans with each thrust.
+						CASE 0
+							PRINTFORMDW %BREAKENG(@"Every time her fully developed cervix comes into contact with your glans, her inner folds convulse as she repeatedly experiences a sensation akin to small orgasms.")%
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:6
+						CASE 2
+							PRINTFORMDW She desperately desires your ejaculation, clenching her walls around you with each thrust.
+						CASE 1
+							PRINTFORMDW Everytime your glans presses up tightly against her cervix, her back arches in an incredibly lewd manner.
+						CASE 0
+							PRINTFORMDW She writhes every time your glans presses against her cervix, causing her folds to convulse around you.
+					ENDSELECT
+				ENDIF
+				
+		ELSEIF TALENT:62:セフレ || TALENT:62:思慕
+			SELECTCASE RAND:3
+				CASE 2
+					PRINTFORMDW Kaguya senses your oncoming ejaculation, repeatedly kissing your glans by pressing her cervix against it.
+				CASE 1
+					PRINTFORMDW Sensing your oncoming ejaculation, Kaguya presses her cervix against your glans, almost as if intending to suck out all of your %SEMEN(,1)%.
+				CASE 0
+					PRINTFORMDW Deliberately or not, right before you ejaculate, Kaguya repositions her hips to naturally align the entrance of her womb to your thrusts.
+			ENDSELECT
+		ENDIF
+ELSE
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		IF RAND:10 > 6
+			SELECTCASE RAND:7
+				CASE 6
+					PRINTFORML 「%MOAN()%...♥ My husband♥ It feels good...♥」
+				CASE 5
+					PRINTFORML 「%MOAN()%♥ %MOAN()%♥ %MOAN()%♥ My husband♥♥ So intense...♥」
+				CASE 4
+					PRINTFORML 「My husband♥ Slower♥ %MOAN()%♥♥♥」
+				CASE 3
+					PRINTFORML 「Use Kaguya's insides all you want...♥♥♥」
+				CASE 2
+					PRINTFORML 「My husband♥ Rougher, please...♥」
+				CASE 1
+					PRINTFORML 「%MOAN()%♥ My husband♥ A bit gentler...♥」
+				CASE 0
+					PRINTFORML 「Aah, I can't♥ I'm going to cum by myself...♥」
+			ENDSELECT
+		ELSE
+			CALL K62_AUTO_AEGI
+		ENDIF
+	ELSEIF TALENT:62:恋慕
+		IF RAND:10 > 6
+			SELECTCASE RAND:7
+				CASE 6
+					PRINTFORML 「%MOAN()%♥ It feels good...♥」
+				CASE 5
+					PRINTFORML 「%MOAN()%♥ %MOAN()%♥ %MOAN()%♥ So intense...♥」
+				CASE 4
+					PRINTFORML 「Slower♥ %MOAN()%♥ ...♥♥♥」
+				CASE 3
+					PRINTFORML 「Use my insides all you want...♥♥♥」
+				CASE 2
+					PRINTFORML 「Aah♥ Rougher, please...♥」
+				CASE 1
+					PRINTFORML 「%MOAN()%♥ A bit gentler...♥」
+				CASE 0
+					PRINTFORML 「Aah, I can't♥ I'm going to cum by myself...♥」
+			ENDSELECT
+		ELSE
+			CALL K62_AUTO_AEGI
+		ENDIF
+	ELSE
+		CALL K62_AUTO_AEGI
+	ENDIF
+		IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4) || TALENT:62:恋慕 || TALENT:62:愛欲
+			SELECTCASE RAND:7
+				CASE 6
+					PRINTFORMDW You move inside her with long, deep strokes and Kaguya's body is wracked with pleasure.
+				CASE 5
+					PRINTFORMDW You stimulate her shallow areas, and she stares at you with an expression of eager longing.
+				CASE 4
+					PRINTFORMDW You stimulate her shallow areas, and she desperately tries to get you deeper, to push your tip against her cervix.
+				CASE 3
+					PRINTFORMDW Kaguya raises her hips, using her entire cavity to devotedly service your %TINKO(PLAYER)%.
+				CASE 2
+					PRINTFORMDW Kaguya senses your oncoming ejaculation, repeatedly kissing your glans by pressing her cervix against it.
+				CASE 1
+					PRINTFORMDW Every time your glans presses against her cervix, it clings onto you, not wanting to let go.
+				CASE 0
+					PRINTFORMDW Deliberately or not, right before you ejaculate, Kaguya repositions her hips to naturally align the entrance of her womb to your thrusts.
+			ENDSELECT
+				IF TALENT:ポルチオ性感
+					SELECTCASE RAND:6
+						CASE 5
+							PRINTFORMDW %BREAKENG(@"Her cervix, thoroughly trained by you and softened to the point where it can fit your %TINKO(PLAYER)% into its entrance, tries to suck up all of your %SEMEN(,1)% like some sort of sexual fiend.")%
+						CASE 4
+							PRINTFORMDW Her cervix is now like a second mouth, the vulgar membrane performing oral sex on your glans, making you feel an intense pleasure.
+						CASE 3
+							PRINTFORMDW %BREAKENG(@"Her cervix, which has been developed to the point that it exclusively belongs to you, retains none of its former innocent dignity as it quivers only for the pleasure of its current master.")%
+						CASE 2
+							PRINTFORMDW A womb only by name, its entrance has been repurposed into an ejaculation servicing hole that exists only to bring pleasure to its master.
+						CASE 1
+							PRINTFORMDW Her cervix, now completely owned by you, clings to your glans with every thrust.
+						CASE 0
+							PRINTFORMDW Kaguya's cervix now provides more pleasure than her clit, her entire body twitching as she orgasms repeatedly.
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:6
+						CASE 2
+							PRINTFORMDW She desperately desires your %TINKO(PLAYER)%, forcefully tightening her grip on you with every thrust.
+						CASE 1
+							PRINTFORMDW Everytime your glans presses up tightly against her cervix, her back arches in an incredibly lewd manner.
+						CASE 0
+							PRINTFORMDW She writhes every time your glans presses against her cervix, causing her folds to convulse around you.
+					ENDSELECT
+				ENDIF
+		ELSEIF TALENT:62:セフレ || TALENT:62:思慕
+			SELECTCASE RAND:3
+				CASE 2
+					PRINTFORMDW Kaguya senses your oncoming ejaculation, repeatedly kissing your glans by pressing her cervix against it.
+				CASE 1
+					PRINTFORMDW Sensing your oncoming ejaculation, Kaguya presses her cervix against your glans, almost as if intending to suck out all of your %SEMEN(,1)%.
+				CASE 0
+					PRINTFORMDW Deliberately or not, right before you ejaculate, Kaguya repositions her hips to naturally align the entrance of her womb to your thrusts.
+			ENDSELECT
+		ENDIF
+ENDIF
+RESETCOLOR
+;todo added lines
+;==================================================
+;ラブハメえっち　ご奉仕姫様。正常位と騎乗位、対面座位。
+;==================================================
+@OSAKAN_HIMESAMA_V_L
+CALL M_KOJO_COLOR_K62
+IF NOWEX:PLAYER:11
+	;射精寸前になると一生懸命子宮口を押しつけちゃう輝夜様。
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「あぁっ♥　すき♥　すき♥　いっぱいだしてくらさい……っ♥♥♥」
+			CASE 8
+				PRINTFORML 「だんなさま♥　しきゅーにちゅーしながら……っ♥　びゅっびゅって……♥」
+			CASE 7
+				PRINTFORML 「んんっ♥　だんなさま♥　ぴくぴく♥　ってしてます……♥」
+			CASE 6
+				PRINTFORML 「ぁ……♥　だんなさまっ、しきゅーにたくさんください……っ♥♥♥」
+			CASE 5
+				PRINTFORML 「かぐやに♥　かぐやにいっぱいそそいでください……っ♥」
+			CASE 4
+				PRINTFORML 「だんなさまっ♥　すきです♥　すき♥　だいすき……♥」
+			CASE 3
+				PRINTFORML 「かぐやのっ♥　しきゅーに……っ♥　だんなさまのおなさけください……♥」
+			CASE 2
+				PRINTFORML 「だんなさま♥　いっぱい♥　注いでくださいね……♥」
+			CASE 1
+				PRINTFORML 「だんなさまのが♥　すごくぴくぴくして……っ♥」
+			CASE 0
+				PRINTFORML 「んっ♥　いっしょに♥　いっしょに……♥♥♥」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「あぁっ♥　すき♥　すき♥　いっぱいだして……っ♥」
+			CASE 8
+				PRINTFORML 「ん……っ♥　しきゅーにちゅーしながら……っ♥　びゅっびゅって……♥」
+			CASE 7
+				PRINTFORML 「んんっ♥　あ……っ♥　ぴくぴく♥　って……♥　だして♥　そのままだして……♥」
+			CASE 6
+				PRINTFORML 「ぁ……♥　%CALLNAME:MASTER%っ、の……出そうになって……♥」
+			CASE 5
+				PRINTFORML 「なかに♥　中にそそいで……っ♥」
+			CASE 4
+				PRINTFORML 「……っ♥　すき♥　すき♥　だいすき……♥」
+			CASE 3
+				PRINTFORML 「わたしのっ♥　しきゅーに……っ♥　ちゃんと……♥」
+			CASE 2
+				PRINTFORML 「%CALLNAME:MASTER%のっ♥　いっぱい♥　注いで……っ♥」
+			CASE 1
+				PRINTFORML 「%CALLNAME:MASTER%のが♥　ぴくぴくして……っ♥」
+			CASE 0
+				PRINTFORML 「らめっ♥　いっしょに♥　いっしょに……♥」
+		ENDSELECT
+	ENDIF
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 輝夜は甘えるように結合部を密着させながら甘い声で鳴いている。
+				PRINTFORMDL 激しくもなく、かと言って緩やかとも言えず、%CALLNAME:MASTER%の快楽を重視した腰遣い。
+			CASE 5
+				PRINTFORMDL 輝夜は従順さを見せるように、%CALLNAME:MASTER%の動きに合わせて腰を揺する。
+				PRINTFORMDL 自分の粘膜が誰のためにあるのかと教えるように、愛情のに満ちた動き。
+			CASE 4
+				PRINTFORMDL 引き抜かれる際には男根を襞でしゃぶるように、挿れられる際には無抵抗に。
+				PRINTFORMDL 緩急を使い分けながら、愛情に満ちた粘膜奉仕。
+			CASE 3
+				PRINTFORMDL 本気汁と先走りで白濁した粘膜は恐ろしいほどの密着感を与えてくる。
+				PRINTFORMDL 糊か何かのように纏わり付く愛液によって、夥しい襞との摩擦は極上。
+			CASE 2
+				PRINTFORMDL 入り口から最奥まで、余すところなく使いながら輝夜は腰を動かし男根を扱く。
+				PRINTFORMDL 淫らな牝穴の隅々まで味わってもらうように、襞の一枚さえ意志を持つかのよう。
+			CASE 1
+				PRINTFORMDL 全身全霊で奉仕する輝夜は男根の僅かな反応も見落とさず、求める快楽を与えてくる。
+				PRINTFORMDL それは極上の媚肉を使った、まさに極上の奉仕。
+			CASE 0
+				PRINTFORMDL 奉仕する様を見せつけるように、輝夜はしなやかな腰を反らし、紅潮した肌を汗にてからせる。
+				PRINTFORMDL 動きに合わせて腰を揺すりながら、そこにいるのは堕落の天女。
+		ENDSELECT
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDW 射精を目前にした%CALLNAME:MASTER%の亀頭へ、輝夜は子宮口をむにゅむにゅと密着させた。
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に余裕がないのを感じ取った輝夜は、甘い声で精液をせがんだ。
+			CASE 4
+				PRINTFORMDW ピクピクと痙攣し始めた男根を目一杯締め上げ、輝夜は必死に先端を子宮口に押しつけようと腰を揺すった。
+			CASE 3
+				PRINTFORMDW 輝夜は射精寸前の男根に肉襞と子宮口を用い、最高の射精をしてもらえるよう%CALLNAME:MASTER%に全身全霊で奉仕した。
+			CASE 2
+				PRINTFORMDW 射精の予兆を感じ取った輝夜は、子宮口を押しつけるようにして亀頭にキスを繰り返した。
+			CASE 1
+				PRINTFORMDW 射精の予感に輝夜の子宮口は亀頭に吸い付き、まるで精液を吸い出すように蠢いた。
+			CASE 0
+				PRINTFORMDW 意識的にか無意識か、輝夜は自ら腰の位置を変え、射精寸前の突き上げに自然と子宮の入り口を合わせた。
+		ENDSELECT
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に開発された彼女の性器はもはや淫魔のそれに匹敵する搾精器であり、半ば真空状態で精液を子宮口に吸い上げようとしている。
+			CASE 4
+				PRINTFORMDW 子宮口は明らかに粘り気の違う本気汁を纏わり付かせ、亀頭と入り口の粘膜が触れあう度、異様な密着感で男根を悦ばせる。
+			CASE 3
+				PRINTFORMDW 彼女の子宮口はまるで唇のように、亀頭と触れあう度に熱心なディープキスをせがんでいる。
+			CASE 2
+				PRINTFORMDW 蕩けきった子宮の入り口が刺激される度、驚くほどの力で淫肉を収縮させ、放たれる精液全てを搾り取ろうとしている。
+			CASE 1
+				PRINTFORMDW 完全に%CALLNAME:MASTER%のものとなった彼女の子宮口は、ひと突きごとに亀頭に纏わり付いている。
+			CASE 0
+				PRINTFORMDW 開発されきった子宮口が亀頭に触れる度、彼女は小さな絶頂を繰り返すように肉襞を痙攣させている。
+		ENDSELECT
+ELSE
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORML 「ぁ……っ♥♥♥　だんなさまっ♥　それ♥　きもち、ぃ……っ♥」
+			CASE 5
+				PRINTFORML 「あ♥　ぁ♥　あっ♥　だんなさまっ♥♥　はげし……っ♥」
+			CASE 4
+				PRINTFORML 「だんなさまっ♥　ゆっくり♥　あ♥　それすき……♥♥♥」
+			CASE 3
+				PRINTFORML 「かぐやのっ♥　なか……っ♥　いっぱいつかってください……♥♥♥」
+			CASE 2
+				PRINTFORML 「だんなさま♥　もっとっ♥　もっと……っ♥」
+			CASE 1
+				PRINTFORML 「ひっ♥　だんなさまっ♥　もっとやさしく……っ♥」
+			CASE 0
+				PRINTFORML 「それらめっ♥　ひとりで♥　ひとりでイっちゃぃますから……っ♥」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORML 「ぁ……♥　それっ♥　きもち、ぃ……っ♥」
+			CASE 5
+				PRINTFORML 「あ♥　ぁ♥　あっ♥　だめっ♥♥　はげし……っ♥」
+			CASE 4
+				PRINTFORML 「ちょっ♥　ゆっくり♥　あ……っ♥　それすき……♥♥♥」
+			CASE 3
+				PRINTFORML 「私のっ♥　なか……っ♥　いっぱいつかって……♥♥♥」
+			CASE 2
+				PRINTFORML 「あっ♥　もっとっ♥　らんぼうに……っ♥」
+			CASE 1
+				PRINTFORML 「ひっ♥　だめだからっ♥　もっとやさしく……っ♥」
+			CASE 0
+				PRINTFORML 「それらめっ♥　ひとりで♥　ひとりでイっちゃぅから……っ♥」
+		ENDSELECT
+	ENDIF
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 輝夜は甘えるように結合部を密着させながら甘い声で鳴いている。
+				PRINTFORMDL 激しくもなく、かと言って緩やかとも言えず、%CALLNAME:MASTER%の快楽を重視した腰遣い。
+			CASE 5
+				PRINTFORMDL 輝夜は従順さを見せるように、%CALLNAME:MASTER%の動きに合わせて腰を揺する。
+				PRINTFORMDL 自分の粘膜が誰のためにあるのかと教えるように、愛情のに満ちた動き。
+			CASE 4
+				PRINTFORMDL 引き抜かれる際には男根を襞でしゃぶるように、挿れられる際には無抵抗に。
+				PRINTFORMDL 緩急を使い分けながら、愛情に満ちた粘膜奉仕。
+			CASE 3
+				PRINTFORMDL 本気汁と先走りで白濁した粘膜は恐ろしいほどの密着感を与えてくる。
+				PRINTFORMDL 糊か何かのように纏わり付く愛液によって、夥しい襞との摩擦は極上。
+			CASE 2
+				PRINTFORMDL 入り口から最奥まで、余すところなく使いながら輝夜は腰を動かし男根を扱く。
+				PRINTFORMDL 淫らな牝穴の隅々まで味わってもらうように、襞の一枚さえ意志を持つかのよう。
+			CASE 1
+				PRINTFORMDL 全身全霊で奉仕する輝夜は男根の僅かな反応も見落とさず、求める快楽を与えてくる。
+				PRINTFORMDL それは極上の媚肉を使った、まさに極上の奉仕。
+			CASE 0
+				PRINTFORMDL 奉仕する様を見せつけるように、輝夜はしなやかな腰を反らし、紅潮した肌を汗にてからせる。
+				PRINTFORMDL 動きに合わせて腰を揺すりながら、そこにいるのは堕落の天女。
+		ENDSELECT
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDW 長いストロークでゆっくりと動かしてやると、輝夜は目を細め、全身を快楽に震わせた。
+			CASE 5
+				PRINTFORMDW 浅い部分を中心に刺激してやると、輝夜は切なげに%CALLNAME:MASTER%を見つめた。
+			CASE 4
+				PRINTFORMDW 浅い部分を刺激されてばかりの輝夜は、必死に先端を子宮口に押しつけようと腰を揺すった。
+			CASE 3
+				PRINTFORMDW 輝夜は腰を浮かせると、入り口から奥までを使い、%CALLNAME:MASTER%の男根に全身全霊で奉仕した。
+			CASE 2
+				PRINTFORMDW 射精の予兆を感じ取った輝夜は、子宮口を押しつけるようにして亀頭にキスを繰り返した。
+			CASE 1
+				PRINTFORMDW 子宮口が亀頭に触れる度、輝夜はそこを唇のように吸い付かせた。
+			CASE 0
+				PRINTFORMDW どんなに体勢を変えても、輝夜の膣肉は促すように自然と子宮の入り口を亀頭に合わせた。
+		ENDSELECT
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に開発され、男根さえ咥え込むほど柔らかくなった子宮口は、淫魔のように精液を吸い上げようとしている。
+			CASE 4
+				PRINTFORMDW 子宮の入り口はもはや第二の口であり、蕩けた粘膜で口淫のように亀頭に極上の快楽を与えている。
+			CASE 3
+				PRINTFORMDW %CALLNAME:MASTER%専用というほどに開発され切った子宮口はもはや神聖さなど消え、主人の快楽のためだけに蠢いている。
+			CASE 2
+				PRINTFORMDW 子宮という響きとは裏腹に、快楽に蕩けきったその入り口はもはや主人の射精のための奉仕穴となっている。
+			CASE 1
+				PRINTFORMDW 完全に%CALLNAME:MASTER%のものとなった彼女の子宮口は、ひと突きごとに蕩けた粘膜を亀頭に纏わり付かせている。
+			CASE 0
+				PRINTFORMDW 開発されきった子宮口はもはや陰核以上の快楽を輝夜に与え、彼女はまるで絶頂を繰り返すように全身を痙攣させている。
+		ENDSELECT
+ENDIF
+RESETCOLOR
+TCVAR:62:357 = 1
+
+;==================================================
+;ゆったりえっち　密着姫様。正常位と騎乗位、対面座位。欲求不満低。
+;==================================================
+@OSAKAN_HIMESAMA_V_S
+CALL M_KOJO_COLOR_K62
+IF NOWEX:PLAYER:11
+	;射精寸前になると一生懸命子宮口を押しつけちゃう輝夜様。
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　ふふ、旦那さま、出そうですか……？　ぴくぴくって……♥」
+			CASE 8
+				PRINTFORML 「旦那さま♥　このまま輝夜の子宮に直接……っ♥　びゅーってしてくださいね……♥♥♥」
+			CASE 7
+				PRINTFORML 「んんっ♥　旦那さま♥　ぴくぴく♥　ってして来ましたよ……♥」
+			CASE 6
+				PRINTFORML 「ぁ……♥♥♥　旦那さま……♥　子宮に沢山出していいですからね……っ♥」
+			CASE 5
+				PRINTFORML 「輝夜に♥　輝夜に全部注いでください……♥」
+			CASE 4
+				PRINTFORML 「旦那さまっ♥　好きです♥　好き♥　大好き……♥」
+			CASE 3
+				PRINTFORML 「このままっ♥　子宮に……♥　旦那さまのお情けをください……♥」
+			CASE 2
+				PRINTFORML 「うふ♥　いっぱい♥　注いでくださいね……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　旦那さまのが♥　すごくぴくぴくして……っ♥♥♥」
+			CASE 0
+				PRINTFORML 「旦那さまっ♥　輝夜と♥　輝夜と一緒に……♥♥♥」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　ふふ、出そうなの……？　今ぴくぴくって……♥」
+			CASE 8
+				PRINTFORML 「あ♥　このままわたしの子宮に直接……っ♥　いっぱい……♥♥♥」
+			CASE 7
+				PRINTFORML 「んんっ♥　%CALLNAME:MASTER%♥　ぴくぴく♥　ってしてる……♥」
+			CASE 6
+				PRINTFORML 「ぁ……♥♥♥　このまま……♥　子宮に沢山出していいからね……っ♥」
+			CASE 5
+				PRINTFORML 「全部……♥　わたしに全部注いで……♥」
+			CASE 4
+				PRINTFORML 「……っ♥　好き♥　好き♥　大好き……♥」
+			CASE 3
+				PRINTFORML 「このままっ♥　子宮に……♥　溜まったの全部出して……♥♥♥」
+			CASE 2
+				PRINTFORML 「うふ♥　いっぱい♥　注いで……♥　出したいの全部……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　%CALLNAME:MASTER%のが♥　すごくぴくぴくして……っ♥♥♥」
+			CASE 0
+				PRINTFORML 「ん……っ♥　わたしと♥　わたしと一緒に……♥♥♥」
+		ENDSELECT
+	ENDIF
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 輝夜は焦らすような腰つきで、器用に粘膜だけを動かしてみせる。
+				PRINTFORMDL 根元からまるでポンプで吸い上げ続けるような、いやらしい牝の粘膜。
+			CASE 5
+				PRINTFORMDL 輝夜は%CALLNAME:MASTER%に動かないよう求めながら、ちゅうちゅうと男根を器用に吸い立てる。
+				PRINTFORMDL 入り口から奥までを自在に波打つように動かしながら、男根は型取りされるよう。
+			CASE 4
+				PRINTFORMDL 繋がり合ったまま、ほとんど止まったような状態でなお、輝夜のそこは極上であった。
+				PRINTFORMDL 腰をほとんど振らず、切なげな粘膜の動きだけで精液を搾り取るような奉仕を行なう。
+			CASE 3
+				PRINTFORMDL 本気汁と先走りで白濁した粘膜は恐ろしいほどの密着感を与えてくる。
+				PRINTFORMDL 糊か何かのように纏わり付く愛液によって、肉襞と溶け合う快楽は極上。
+			CASE 2
+				PRINTFORMDL 雁首どころかまるで男根に浮かぶ血管の一つ一つまで確かめるような、ねっとりとした粘膜愛撫。
+				PRINTFORMDL はしたなく腰を振るでもなく、輝夜の与える快楽は極上のもの。
+			CASE 1
+				PRINTFORMDL まるでそのように生まれた一匹の動物であるかのように、%CALLNAME:MASTER%と輝夜の結合部は溶け合っていた。
+				PRINTFORMDL 両者は繋がり合ったままほとんど動かず、男根と粘膜の動きだけが雄弁に。
+			CASE 0
+				PRINTFORMDL 腰を動かすのではなく、雁を引っかけるような肉襞の収縮だけで男根を上下に輝夜は扱いた。
+				PRINTFORMDL そこはもはや体の一部と言うより、そうするために生まれた生物のよう。
+		ENDSELECT
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDW 射精を目前にした%CALLNAME:MASTER%の亀頭へ、輝夜は子宮口をむにゅむにゅと密着させた。
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に余裕がないのを感じ取った輝夜は、甘い声で精液をせがんだ。
+			CASE 4
+				PRINTFORMDW ピクピクと痙攣し始めた男根を目一杯締め上げ、輝夜は必死に先端を子宮口に押しつけようと腰を揺すった。
+			CASE 3
+				PRINTFORMDW 輝夜は射精寸前の男根に肉襞と子宮口を用い、最高の射精をしてもらえるよう%CALLNAME:MASTER%に全身全霊で奉仕した。
+			CASE 2
+				PRINTFORMDW 射精の予兆を感じ取った輝夜は、子宮口を押しつけるようにして亀頭にキスを繰り返した。
+			CASE 1
+				PRINTFORMDW 射精の予兆に輝夜の子宮口は亀頭に吸い付き、まるで精液を吸い出すように蠢いた。
+			CASE 0
+				PRINTFORMDW 輝夜は自ら腰の位置を変え、射精のための突き上げに自然と子宮の入り口を合わせた。
+		ENDSELECT
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に開発された彼女の性器はもはや淫魔のそれに匹敵する搾精器であり、半ば真空状態で精液を子宮口に吸い上げようとしている。
+			CASE 4
+				PRINTFORMDW 子宮口は明らかに粘り気の違う本気汁を纏わり付かせ、亀頭と入り口の粘膜が触れあう度、異様な密着感で男根を悦ばせる。
+			CASE 3
+				PRINTFORMDW 彼女の子宮口はまるで唇のように、亀頭と触れあう度に熱心なディープキスをせがんでいる。
+			CASE 2
+				PRINTFORMDW 蕩けきった子宮の入り口が刺激される度、驚くほどの力で淫肉を収縮させ、放たれる精液全てを搾り取ろうとしている。
+			CASE 1
+				PRINTFORMDW 完全に%CALLNAME:MASTER%のものとなった彼女の子宮口は、ひと突きごとに亀頭に纏わり付いている。
+			CASE 0
+				PRINTFORMDW 開発されきった子宮口が亀頭に触れる度、彼女は小さな絶頂を繰り返すように肉襞を痙攣させている。
+		ENDSELECT
+ELSE
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		SELECTCASE RAND:8
+			CASE 7
+				PRINTFORML 「えへ……っ♥　輝夜の子宮……♥　旦那さまのちゅうちゅうしてますよ……♥♥♥」
+			CASE 6
+				PRINTFORML 「もう……っ♥♥♥　旦那さまっ♥　動いちゃ♥　駄目ですよぅ……っ♥」
+			CASE 5
+				PRINTFORML 「～～っ♥　ぁっ♥♥　ふぅ♥　ふぅ……♥　えへへ♥　ぎゅうぎゅうするの……♥　気持ちいいですか……？」
+			CASE 4
+				PRINTFORML 「旦那さま♥　我慢ですよ♥　我慢……♥　ほら、ゆっくり……♥♥♥」
+			CASE 3
+				PRINTFORML 「あ、……っ♥　これ♥　輝夜の中……♥　すごく敏感になっちゃいます……♥♥♥」
+			CASE 2
+				PRINTFORML 「旦那さまの形♥　これすっごくわかって……♥　すごくえっちです……っ♥」
+			CASE 1
+				PRINTFORML 「ゃんっ♥　旦那さまっ♥　腰をぎゅってしちゃ駄目ですよ……♥」
+			CASE 0
+				PRINTFORML 「あ……っ♥　動いてないのに♥　イっちゃぃそうで……っ♥」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORML 「もう……っ♥♥♥　駄目っ♥　動いちゃ♥　駄目だからぁ……っ♥」
+			CASE 5
+				PRINTFORML 「～～っ♥　ぁっ♥♥　ふぅ♥　ふぅ……♥　えへへ♥　ぎゅうぎゅうするの……♥　気持ちいい……？」
+			CASE 4
+				PRINTFORML 「だーめ♥　我慢よ♥　我慢……♥　ほら、ゆっくり……♥♥♥」
+			CASE 3
+				PRINTFORML 「あ、……っ♥　これ♥　わたしの中……♥　すごく敏感になっちゃう……♥♥♥」
+			CASE 2
+				PRINTFORML 「%CALLNAME:MASTER%の形♥　これすっごくわかって……♥　すごくやらし……っ♥」
+			CASE 1
+				PRINTFORML 「ゃんっ♥　ちょっと……っ♥　腰をぎゅってしちゃ駄目……♥」
+			CASE 0
+				PRINTFORML 「ん……っ♥　動いてないのに♥　イっちゃぃそぅ……っ♥」
+		ENDSELECT
+	ENDIF
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 輝夜は焦らすような腰つきで、器用に粘膜だけを動かしてみせる。
+				PRINTFORMDL 根元からまるでポンプで吸い上げ続けるような、いやらしい牝の粘膜。
+			CASE 5
+				PRINTFORMDL 輝夜は%CALLNAME:MASTER%に動かないよう求めながら、ちゅうちゅうと男根を器用に吸い立てる。
+				PRINTFORMDL 入り口から奥までを自在に波打つように動かしながら、男根は型取りされるよう。
+			CASE 4
+				PRINTFORMDL 繋がり合ったまま、ほとんど止まったような状態でなお、輝夜のそこは極上であった。
+				PRINTFORMDL 腰をほとんど振らず、切なげな粘膜の動きだけで精液を搾り取るような奉仕を行なう。
+			CASE 3
+				PRINTFORMDL 本気汁と先走りで白濁した粘膜は恐ろしいほどの密着感を与えてくる。
+				PRINTFORMDL 糊か何かのように纏わり付く愛液によって、肉襞と溶け合う快楽は極上。
+			CASE 2
+				PRINTFORMDL 雁首どころかまるで男根に浮かぶ血管の一つ一つまで確かめるような、ねっとりとした粘膜愛撫。
+				PRINTFORMDL はしたなく腰を振るでもなく、輝夜の与える快楽は極上のもの。
+			CASE 1
+				PRINTFORMDL まるでそのように生まれた一匹の動物であるかのように、%CALLNAME:MASTER%と輝夜の結合部は溶け合っていた。
+				PRINTFORMDL 両者は繋がり合ったままほとんど動かず、男根と粘膜の動きだけが雄弁に。
+			CASE 0
+				PRINTFORMDL 腰を動かすのではなく、雁を引っかけるような肉襞の収縮だけで男根を上下に輝夜は扱いた。
+				PRINTFORMDL そこはもはや体の一部と言うより、そうするために生まれた生物のよう。
+		ENDSELECT
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDW 雁を肉襞に押しつけるように動かすと、輝夜は目を細め、全身を快楽に震わせた。
+			CASE 5
+				PRINTFORMDW ゆっくりと浅い部分を中心に刺激してやると、輝夜は切なげに%CALLNAME:MASTER%を見つめた。
+			CASE 4
+				PRINTFORMDW ゆっくり腰を引こうとすると、輝夜は必死に先端を子宮口に押しつけようと腰を押しつけてきた。
+			CASE 3
+				PRINTFORMDW 我慢出来ずに腰を突き上げると、輝夜は悲鳴のような嬌声を上げて全身をふるふると震わせた。
+			CASE 2
+				PRINTFORMDW 先走りさえ感じ取るように、子宮口を押しつけるようにして亀頭にディープキスを繰り返した。
+			CASE 1
+				PRINTFORMDW ほとんど動きがないにも関わらず、輝夜のそこは収縮する度男根を引き込み、自ら子宮口を密着させた。
+			CASE 0
+				PRINTFORMDW どんなに体勢を変えても、輝夜の膣肉は促すように自然と子宮の入り口を亀頭に合わせた。
+		ENDSELECT
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に開発され、男根さえ咥え込むほど柔らかくなった子宮口は、淫魔のように精液を吸い上げようとしている。
+			CASE 4
+				PRINTFORMDW 子宮の入り口はもはや第二の口であり、蕩けた粘膜で口淫のように亀頭に極上の快楽を与えている。
+			CASE 3
+				PRINTFORMDW %CALLNAME:MASTER%専用というほどに開発され切った子宮口はもはや神聖さなど消え、主人の快楽のためだけに蠢いている。
+			CASE 2
+				PRINTFORMDW 子宮という響きとは裏腹に、快楽に蕩けきったその入り口はもはや主人の射精のための奉仕穴となっている。
+			CASE 1
+				PRINTFORMDW 完全に%CALLNAME:MASTER%のものとなった彼女の子宮口は、ひと突きごとに蕩けた粘膜を亀頭に纏わり付かせている。
+			CASE 0
+				PRINTFORMDW 開発されきった子宮口はもはや陰核以上の快楽を輝夜に与え、彼女はまるで絶頂を繰り返すように全身を痙攣させている。
+		ENDSELECT
+ENDIF
+RESETCOLOR
+TCVAR:62:357 = 2
+
+;==================================================
+;ごつごつエッチモード　後背位や背面座位。子宮口責め。欲求不満高。もしくは気力０。
+;==================================================
+@OSAKAN_HIMESAMA_V_H
+CALL M_KOJO_COLOR_K62
+IF NOWEX:PLAYER:11
+	;射精寸前になると一生懸命子宮口を押しつけちゃう輝夜様。
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　らんなさまっ♥　それだめっ♥　しんじゃ♥　しんじゃぃます……♥♥♥」
+			CASE 8
+				PRINTFORML 「ひぅっ♥　あっ♥　あっ♥　あっ♥　――――……っ♥♥♥」
+			CASE 7
+				PRINTFORML 「むりっ♥　らんなさまっ♥　それむり♥　むりれす……っ♥　ひぅっ♥　～～っ♥♥♥」
+			CASE 6
+				PRINTFORML 「っ……♥♥♥　ぅぁ……っ♥　……っ♥　ひっ♥　うっ♥　あっらめ……っ♥」
+			CASE 5
+				PRINTFORML 「ゆるして♥　ゆるし……っ♥　あっ♥　あっ♥　あぁ……っ♥♥♥」
+			CASE 4
+				PRINTFORML 「らんなさまっ♥　しゅきです♥　しゅき♥　らいしゅき……♥♥♥」
+			CASE 3
+				PRINTFORML 「らめっ♥　しきゅー……っ♥　こわれちゃ……♥　こわれちゃぅ……っ♥♥♥」
+			CASE 2
+				PRINTFORML 「ああっ♥　らめれすっ♥　それいじょうはっ♥　む、っ……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　あ♥　あ♥　あっ♥　むりれすっ♥　ゆるひ♥　～～っ♥♥♥」
+			CASE 0
+				PRINTFORML 「こわれちゃっ♥　かぐやっ♥　こわれちゃいますっ♥　から……っ♥♥♥」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　らめっ♥　それだめっ♥　しんじゃ♥　しんじゃぅから……♥♥♥」
+			CASE 8
+				PRINTFORML 「ひぅっ♥　あっ♥　あっ♥　あっ♥　――――……っ♥♥♥」
+			CASE 7
+				PRINTFORML 「むりっ♥　ほんとにっ♥　それむり♥　むりなの……っ♥　ひぅっ♥　～～っ♥♥♥」
+			CASE 6
+				PRINTFORML 「っ……♥♥♥　ぅぁ……っ♥　……っ♥　ひっ♥　うっ♥　あっらめ……っ♥」
+			CASE 5
+				PRINTFORML 「ゆるして♥　ゆるし……っ♥　あっ♥　あっ♥　あぁ……っ♥♥♥」
+			CASE 4
+				PRINTFORML 「らんなさまっ♥　しゅきです♥　しゅき♥　らいしゅき……♥♥♥」
+			CASE 3
+				PRINTFORML 「らめっ♥　しきゅー……っ♥　こわれちゃ……♥　こわれちゃぅ……っ♥♥♥」
+			CASE 2
+				PRINTFORML 「ああっ♥　らめっ♥　それいじょうはっ♥　む、っ……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　あ♥　あ♥　あっ♥　むりれすっ♥　ゆるひ♥　～～っ♥♥♥」
+			CASE 0
+				PRINTFORML 「こわれちゃっ♥　わたしっ♥　こわれちゃっ♥　ひぐ……っ♥♥♥」
+		ENDSELECT
+	ENDIF
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 悲鳴のような輝夜の声を無視して、%CALLNAME:MASTER%は快楽のまま腰を打ち付ける。
+				PRINTFORMDL 杭打ちでもするかのように、射精を目的とした腰遣いにも関わらず、輝夜の粘膜は悦びうねる。
+			CASE 5
+				PRINTFORMDL %CALLNAME:MASTER%は輝夜の細腰を握りつぶさんばかりに掴み、オナホールのように動かす。
+				PRINTFORMDL 入り口から奥までを使うように快楽のまま腰を振らせ、牝穴のもたらす快楽は極上。
+			CASE 4
+				PRINTFORMDL 蓬莱人には遠慮もいらぬとばかり、%CALLNAME:MASTER%は暴力的に腰を打ち付けた。
+				PRINTFORMDL 姫君との交わりと言うより交尾や自慰、けれど牝穴は悦び震え、男根に与えるのは極上の快楽。
+			CASE 3
+				PRINTFORMDL 本気汁と先走りで白濁した粘液を飛び散らせながら、牡の欲求に身を任せる。
+				PRINTFORMDL 獣もかくやという粘膜の交わり、肉槍がもたらす充足感と快楽は極上のそれ。
+			CASE 2
+				PRINTFORMDL 気高く神聖なる相手をどこまでも下劣な肉の欲と男根で支配する。
+				PRINTFORMDL 牡としてこれ以上の悦びなどあるまい。子宮を突き上げながら身を任せるは充足感。
+			CASE 1
+				PRINTFORMDL まるで動物のように本能のまま腰を使い、屈服させるように男根を突き立てていく。
+				PRINTFORMDL 輝夜の悲鳴を無視しながら、快楽だけに意識を傾け、獣欲に身を任せる。
+			CASE 0
+				PRINTFORMDL 遠慮の必要すらない。荒々しく使ったところで牝穴は容易に受け入れ、悦び鳴くのだ
+				PRINTFORMDL まるで道具でも使うように腰を掴み、荒々しく、体中の体液を撒き散らしながら快楽のために男根を打ち付ける。
+		ENDSELECT
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 射精を目前にした%CALLNAME:MASTER%の突き上げに、輝夜は髪を振り乱している。
+			CASE 5
+				PRINTFORMDL %CALLNAME:MASTER%の射精に気付いた輝夜は、自分から精液をせがんで甘い声で鳴いた。
+			CASE 4
+				PRINTFORMDL ピクピクと痙攣し始めた男根を目一杯締め上げ、輝夜は子宮口への突き上げに恐怖すら滲ませ嬌声を漏らした。
+			CASE 3
+				PRINTFORMDL 輝夜は%CALLNAME:MASTER%に最高の射精をしてもらえるよう、無抵抗に子宮口を差し出した。
+			CASE 2
+				PRINTFORMDL 射精するための%CALLNAME:MASTER%の動きに、輝夜は甘い嬌声を響かせた。
+			CASE 1
+				PRINTFORMDL 子宮への集中攻撃に輝夜は髪を振り乱し、悲鳴のような嬌声を上げた。
+			CASE 0
+				PRINTFORMDL 輝夜は子宮に精液を注ごうとする%CALLNAME:MASTER%を感じて、ひと突きごとに膣肉を絞り上げた。
+		ENDSELECT
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に開発され、男根さえ咥え込むほど柔らかくなった子宮口は、淫魔のように精液を吸い上げようとしている。
+			CASE 4
+				PRINTFORMDW 子宮の入り口はもはや第二の口であり、蕩けた粘膜で口淫のように亀頭に極上の快楽を与えている。
+			CASE 3
+				PRINTFORMDW %CALLNAME:MASTER%専用というほどに開発され切った子宮口はもはや神聖さなど消え、主人の快楽のためだけに蠢いている。
+			CASE 2
+				PRINTFORMDW 子宮という響きとは裏腹に、快楽に蕩けきったその入り口はもはや主人の射精のための奉仕穴となっている。
+			CASE 1
+				PRINTFORMDW 完全に%CALLNAME:MASTER%のものとなった彼女の子宮口は、ひと突きごとに蕩けた粘膜を亀頭に纏わり付かせている。
+			CASE 0
+				PRINTFORMDW 開発されきった子宮口はもはや陰核以上の快楽を輝夜に与え、彼女はまるで絶頂を繰り返すように全身を痙攣させている。
+		ENDSELECT
+ELSE
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　らんなさまっ♥　それだめっ♥　しんじゃ♥　しんじゃぃます……♥♥♥」
+			CASE 8
+				PRINTFORML 「ひぅっ♥　あっ♥　あっ♥　あっ♥　――――……っ♥♥♥」
+			CASE 7
+				PRINTFORML 「むりっ♥　らんなさまっ♥　それむり♥　むりれす……っ♥　ひぅっ♥　～～っ♥♥♥」
+			CASE 6
+				PRINTFORML 「っ……♥♥♥　ぅぁ……っ♥　……っ♥　ひっ♥　うっ♥　あっらめ……っ♥」
+			CASE 5
+				PRINTFORML 「ゆるして♥　ゆるし……っ♥　あっ♥　あっ♥　あぁ……っ♥♥♥」
+			CASE 4
+				PRINTFORML 「らんなさまっ♥　しゅきです♥　しゅき♥　らいしゅき……♥♥♥」
+			CASE 3
+				PRINTFORML 「らめっ♥　しきゅー……っ♥　こわれちゃ……♥　こわれちゃぅ……っ♥♥♥」
+			CASE 2
+				PRINTFORML 「ああっ♥　らめれすっ♥　それいじょうはっ♥　む、っ……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　あ♥　あ♥　あっ♥　むりれすっ♥　ゆるひ♥　～～っ♥♥♥」
+			CASE 0
+				PRINTFORML 「こわれちゃっ♥　かぐやっ♥　こわれちゃいますっ♥　から……っ♥♥♥」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　らめっ♥　それだめっ♥　しんじゃ♥　しんじゃぅから……♥♥♥」
+			CASE 8
+				PRINTFORML 「ひぅっ♥　あっ♥　あっ♥　あっ♥　――――……っ♥♥♥」
+			CASE 7
+				PRINTFORML 「むりっ♥　ほんとにっ♥　それむり♥　むりなの……っ♥　ひぅっ♥　～～っ♥♥♥」
+			CASE 6
+				PRINTFORML 「っ……♥♥♥　ぅぁ……っ♥　……っ♥　ひっ♥　うっ♥　あっらめ……っ♥」
+			CASE 5
+				PRINTFORML 「ゆるして♥　ゆるし……っ♥　あっ♥　あっ♥　あぁ……っ♥♥♥」
+			CASE 4
+				PRINTFORML 「らんなさまっ♥　しゅきです♥　しゅき♥　らいしゅき……♥♥♥」
+			CASE 3
+				PRINTFORML 「らめっ♥　しきゅー……っ♥　こわれちゃ……♥　こわれちゃぅ……っ♥♥♥」
+			CASE 2
+				PRINTFORML 「ああっ♥　らめっ♥　それいじょうはっ♥　む、っ……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　あ♥　あ♥　あっ♥　むりれすっ♥　ゆるひ♥　～～っ♥♥♥」
+			CASE 0
+				PRINTFORML 「こわれちゃっ♥　わたしっ♥　こわれちゃっ♥　ひぐ……っ♥♥♥」
+		ENDSELECT
+	ENDIF
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 悲鳴のような輝夜の声を無視して、%CALLNAME:MASTER%は快楽のまま腰を打ち付ける。
+				PRINTFORMDL 杭打ちでもするかのように、射精を目的とした腰遣いにも関わらず、輝夜の粘膜は悦びうねる。
+			CASE 5
+				PRINTFORMDL %CALLNAME:MASTER%は輝夜の細腰を握りつぶさんばかりに掴み、オナホールのように動かす。
+				PRINTFORMDL 入り口から奥までを使うように快楽のまま腰を振らせ、牝穴のもたらす快楽は極上。
+			CASE 4
+				PRINTFORMDL 蓬莱人には遠慮もいらぬとばかり、%CALLNAME:MASTER%は暴力的に腰を打ち付けた。
+				PRINTFORMDL 姫君との交わりと言うより交尾や自慰、けれど牝穴は悦び震え、男根に与えるのは極上の快楽。
+			CASE 3
+				PRINTFORMDL 本気汁と先走りで白濁した粘液を飛び散らせながら、牡の欲求に身を任せる。
+				PRINTFORMDL 獣もかくやという粘膜の交わり、肉槍がもたらす充足感と快楽は極上のそれ。
+			CASE 2
+				PRINTFORMDL 気高く神聖なる相手をどこまでも下劣な肉の欲と男根で支配する。
+				PRINTFORMDL 牡としてこれ以上の悦びなどあるまい。子宮を突き上げながら身を任せるは充足感。
+			CASE 1
+				PRINTFORMDL まるで動物のように本能のまま腰を使い、屈服させるように男根を突き立てていく。
+				PRINTFORMDL 輝夜の悲鳴を無視しながら、快楽だけに意識を傾け、獣欲に身を任せる。
+			CASE 0
+				PRINTFORMDL 遠慮の必要すらない。荒々しく使ったところで牝穴は容易に受け入れ、悦び鳴くのだ
+				PRINTFORMDL まるで道具でも使うように腰を掴み、荒々しく、体中の体液を撒き散らしながら快楽のために男根を打ち付ける。
+		ENDSELECT
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDW 雁を肉襞に押しつけるように動かすと、輝夜は目を細め、全身を快楽に震わせた。
+			CASE 5
+				PRINTFORMDW 浅い部分を小刻みに刺激してやると、輝夜は切なげに鳴いて腰を押しつけた。
+			CASE 4
+				PRINTFORMDW 腰を引こうとすると、輝夜は必死に先端へと子宮口を押しつけてきた。
+			CASE 3
+				PRINTFORMDW 力強く腰を突き上げると、輝夜は悲鳴のような嬌声を上げて全身を跳ねさせた。
+			CASE 2
+				PRINTFORMDL ピクピクと痙攣し始めた男根を目一杯締め上げ、輝夜は子宮口への突き上げに恐怖すら滲ませ嬌声を漏らした。
+			CASE 1
+				PRINTFORMDL 輝夜は%CALLNAME:MASTER%のひと突きごとに、膣肉を絞り上げた。
+			CASE 0
+				PRINTFORMDW どんなに激しく体勢を変えても、輝夜の膣肉は促すように自然と子宮の入り口を亀頭に合わせた。
+		ENDSELECT
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に開発され、男根さえ咥え込むほど柔らかくなった子宮口は、淫魔のように精液を吸い上げようとしている。
+			CASE 4
+				PRINTFORMDW 子宮の入り口はもはや第二の口であり、蕩けた粘膜で口淫のように亀頭に極上の快楽を与えている。
+			CASE 3
+				PRINTFORMDW %CALLNAME:MASTER%専用というほどに開発され切った子宮口はもはや神聖さなど消え、主人の快楽のためだけに蠢いている。
+			CASE 2
+				PRINTFORMDW 子宮という響きとは裏腹に、快楽に蕩けきったその入り口はもはや主人の射精のための奉仕穴となっている。
+			CASE 1
+				PRINTFORMDW 完全に%CALLNAME:MASTER%のものとなった彼女の子宮口は、ひと突きごとに蕩けた粘膜を亀頭に纏わり付かせている。
+			CASE 0
+				PRINTFORMDW 開発されきった子宮口はもはや陰核以上の快楽を輝夜に与え、彼女はまるで絶頂を繰り返すように全身を痙攣させている。
+		ENDSELECT
+ENDIF
+RESETCOLOR
+TCVAR:62:357 = 3
+
+;==================================================
+;子宮口責め
+;==================================================
+@OSAKAN_HIMESAMA_V_P
+CALL M_KOJO_COLOR_K62
+IF NOWEX:PLAYER:11
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　らんなさまっ♥　それだめっ♥　しんじゃ♥　しんじゃぃます……♥♥♥」
+			CASE 8
+				PRINTFORML 「ひぅっ♥　あっ♥　あっ♥　あっ♥　――――……っ♥♥♥」
+			CASE 7
+				PRINTFORML 「むりっ♥　らんなさまっ♥　それむり♥　むりれす……っ♥　ひぅっ♥　～～っ♥♥♥」
+			CASE 6
+				PRINTFORML 「っ……♥♥♥　ぅぁ……っ♥　……っ♥　ひっ♥　うっ♥　あっらめ……っ♥」
+			CASE 5
+				PRINTFORML 「ゆるして♥　ゆるし……っ♥　あっ♥　あっ♥　あぁ……っ♥♥♥」
+			CASE 4
+				PRINTFORML 「らんなさまっ♥　しゅきです♥　しゅき♥　らいしゅき……っ♥♥♥」
+			CASE 3
+				PRINTFORML 「らめっ♥　しきゅー……っ♥　こわれちゃ……♥　こわれちゃぅ……っ♥♥♥」
+			CASE 2
+				PRINTFORML 「ああっ♥　らめれすっ♥　それいじょうはっ♥　む、っ……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　あ♥　あ♥　あっ♥　むりっ♥　むりれす……っ♥　ゆるひっ♥　～～っ♥♥♥」
+			CASE 0
+				PRINTFORML 「こわれちゃっ♥　かぐやっ♥　こわれちゃいますっ♥　から……っ♥♥♥」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　らめっ♥　それだめっ♥　しんじゃ♥　しんじゃぅから……♥♥♥」
+			CASE 8
+				PRINTFORML 「ひぅっ♥　あっ♥　あっ♥　あっ♥　――――……っ♥♥♥」
+			CASE 7
+				PRINTFORML 「むりっ♥　ほんとにっ♥　それむり♥　むりなの……っ♥　ひぅっ♥　～～っ♥♥♥」
+			CASE 6
+				PRINTFORML 「っ……♥♥♥　ぅぁ……っ♥　……っ♥　ひっ♥　うっ♥　あっらめ……っ♥」
+			CASE 5
+				PRINTFORML 「ゆるして♥　ゆるし……っ♥　あっ♥　あっ♥　あぁ……っ♥♥♥」
+			CASE 4
+				PRINTFORML 「らんなさまっ♥　しゅきです♥　しゅき♥　らいしゅき……っ♥♥♥」
+			CASE 3
+				PRINTFORML 「らめっ♥　しきゅー……っ♥　こわれちゃ……♥　こわれちゃぅ……っ♥♥♥」
+			CASE 2
+				PRINTFORML 「ああっ♥　らめっ♥　それいじょうはっ♥　む、っ……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　あ♥　あ♥　あっ♥　むりっ♥　むりれす……っ♥　ゆるひ……っ♥　～～っ♥♥♥」
+			CASE 0
+				PRINTFORML 「こわれちゃっ♥　わたしっ♥　こわれちゃっ♥　ひぐ……っ♥♥♥」
+		ENDSELECT
+	ENDIF
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 悲鳴のような輝夜の声を無視して、%CALLNAME:MASTER%は快楽のまま腰を打ち付ける。
+				PRINTFORMDL 杭打ちでもするかのように、子宮を押しつぶすような腰遣いにも関わらず、輝夜の粘膜は悦びうねる。
+			CASE 5
+				PRINTFORMDL %CALLNAME:MASTER%は輝夜の細腰を握りつぶさんばかりに掴み、オナホールのように動かす。
+				PRINTFORMDL 入り口から奥までを使うように快楽のまま腰を振らせ、牝穴のもたらす快楽は極上。
+			CASE 4
+				PRINTFORMDL 蓬莱人には遠慮もいらぬとばかり、%CALLNAME:MASTER%は暴力的に腰を打ち付けた。
+				PRINTFORMDL 姫君との交わりと言うより交尾や自慰、けれど牝穴は悦び震え、男根に与えるのは極上の快楽。
+			CASE 3
+				PRINTFORMDL 本気汁と先走りで白濁した粘液を飛び散らせながら、牡の欲求に身を任せる。
+				PRINTFORMDL 獣もかくやという粘膜の交わり、肉槍がもたらす充足感と快楽は極上のそれ。
+			CASE 2
+				PRINTFORMDL 気高く神聖なる相手をどこまでも下劣な肉の欲と男根で支配する。
+				PRINTFORMDL 牡としてこれ以上の悦びなどあるまい。子宮を突き上げながら身を任せるは充足感。
+			CASE 1
+				PRINTFORMDL まるで動物のように本能のまま腰を使い、屈服させるように男根を突き立てていく。
+				PRINTFORMDL 輝夜の悲鳴を無視しながら、快楽だけに意識を傾け、獣欲に身を任せる。
+			CASE 0
+				PRINTFORMDL 遠慮の必要すらない。荒々しく使ったところで牝穴は容易に受け入れ、悦び鳴くのだ
+				PRINTFORMDL まるで道具でも使うように腰を掴み、荒々しく、体中の体液を撒き散らしながら快楽のために男根を打ち付ける。
+		ENDSELECT
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 射精を目前にした%CALLNAME:MASTER%の突き上げに、輝夜は髪を振り乱している。
+			CASE 5
+				PRINTFORMDL %CALLNAME:MASTER%の射精に気付いた輝夜は、自分から精液をせがんで甘い声で鳴いた。
+			CASE 4
+				PRINTFORMDL ピクピクと痙攣し始めた男根を目一杯締め上げ、輝夜は子宮口への突き上げに恐怖すら滲ませ嬌声を漏らした。
+			CASE 3
+				PRINTFORMDL 輝夜は%CALLNAME:MASTER%に最高の射精をしてもらえるよう、無抵抗に子宮口を差し出した。
+			CASE 2
+				PRINTFORMDL 射精するための%CALLNAME:MASTER%の動きに、輝夜は甘い嬌声を響かせた。
+			CASE 1
+				PRINTFORMDL 子宮への集中攻撃に輝夜は髪を振り乱し、悲鳴のような嬌声を上げた。
+			CASE 0
+				PRINTFORMDL 輝夜は子宮に精液を注ごうとする%CALLNAME:MASTER%を感じて、ひと突きごとに膣肉を絞り上げた。
+		ENDSELECT
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に開発され、男根さえ咥え込むほど柔らかくなった子宮口は、淫魔のように精液を吸い上げようとしている。
+			CASE 4
+				PRINTFORMDW 子宮の入り口はもはや第二の口であり、蕩けた粘膜で口淫のように亀頭に極上の快楽を与えている。
+			CASE 3
+				PRINTFORMDW %CALLNAME:MASTER%専用というほどに開発され切った子宮口はもはや神聖さなど消え、主人の快楽のためだけに蠢いている。
+			CASE 2
+				PRINTFORMDW 子宮という響きとは裏腹に、快楽に蕩けきったその入り口はもはや主人の射精のための奉仕穴となっている。
+			CASE 1
+				PRINTFORMDW 完全に%CALLNAME:MASTER%のものとなった彼女の子宮口は、ひと突きごとに蕩けた粘膜を亀頭に纏わり付かせている。
+			CASE 0
+				PRINTFORMDW 開発されきった子宮口はもはや陰核以上の快楽を輝夜に与え、彼女はまるで絶頂を繰り返すように全身を痙攣させている。
+		ENDSELECT
+ELSE
+	IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　らんなさまっ♥　それだめっ♥　しんじゃ♥　しんじゃぃます……♥♥♥」
+			CASE 8
+				PRINTFORML 「ひぅっ♥　あっ♥　あっ♥　あっ♥　――――……っ♥♥♥」
+			CASE 7
+				PRINTFORML 「むりっ♥　らんなさまっ♥　それむり♥　むりれす……っ♥　ひぅっ♥　～～っ♥♥♥」
+			CASE 6
+				PRINTFORML 「っ……♥♥♥　ぅぁ……っ♥　……っ♥　ひっ♥　うっ♥　あっらめ……っ♥」
+			CASE 5
+				PRINTFORML 「ゆるして♥　ゆるし……っ♥　あっ♥　あっ♥　あぁ……っ♥♥♥」
+			CASE 4
+				PRINTFORML 「らんなさまっ♥　しゅきです♥　しゅき♥　らいしゅき……っ♥♥♥」
+			CASE 3
+				PRINTFORML 「らめっ♥　しきゅー……っ♥　こわれちゃ……♥　こわれちゃぅ……っ♥♥♥」
+			CASE 2
+				PRINTFORML 「ああっ♥　らめれすっ♥　それいじょうはっ♥　む、っ……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　あ♥　あ♥　あっ♥　むりっ♥　むりれす……っ♥　ゆるひっ♥　～～っ♥♥♥」
+			CASE 0
+				PRINTFORML 「こわれちゃっ♥　かぐやっ♥　こわれちゃいますっ♥　から……っ♥♥♥」
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:10
+			CASE 9
+				PRINTFORML 「……っ♥♥♥　らめっ♥　それだめっ♥　しんじゃ♥　しんじゃぅから……♥♥♥」
+			CASE 8
+				PRINTFORML 「ひぅっ♥　あっ♥　あっ♥　あっ♥　――――……っ♥♥♥」
+			CASE 7
+				PRINTFORML 「むりっ♥　ほんとにっ♥　それむり♥　むりなの……っ♥　ひぅっ♥　～～っ♥♥♥」
+			CASE 6
+				PRINTFORML 「っ……♥♥♥　ぅぁ……っ♥　……っ♥　ひっ♥　うっ♥　あっらめ……っ♥」
+			CASE 5
+				PRINTFORML 「ゆるして♥　ゆるし……っ♥　あっ♥　あっ♥　あぁ……っ♥♥♥」
+			CASE 4
+				PRINTFORML 「らんなさまっ♥　しゅきです♥　しゅき♥　らいしゅき……っ♥♥♥」
+			CASE 3
+				PRINTFORML 「らめっ♥　しきゅー……っ♥　こわれちゃ……♥　こわれちゃぅ……っ♥♥♥」
+			CASE 2
+				PRINTFORML 「ああっ♥　らめっ♥　それいじょうはっ♥　む、っ……♥♥♥」
+			CASE 1
+				PRINTFORML 「んっ♥　あ♥　あ♥　あっ♥　むりっ♥　むりれす……っ♥　ゆるひ……っ♥　～～っ♥♥♥」
+			CASE 0
+				PRINTFORML 「こわれちゃっ♥　わたしっ♥　こわれちゃっ♥　ひぐ……っ♥♥♥」
+		ENDSELECT
+	ENDIF
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL 悲鳴のような輝夜の声を無視して、%CALLNAME:MASTER%は快楽のまま腰を打ち付ける。
+				PRINTFORMDL 杭打ちでもするかのように、射精を目的とした腰遣いにも関わらず、輝夜の粘膜は悦びうねる。
+			CASE 5
+				PRINTFORMDL %CALLNAME:MASTER%は輝夜の細腰を握りつぶさんばかりに掴み、オナホールのように動かす。
+				PRINTFORMDL 入り口から奥までを使うように快楽のまま腰を振らせ、牝穴のもたらす快楽は極上。
+			CASE 4
+				PRINTFORMDL 蓬莱人には遠慮もいらぬとばかり、%CALLNAME:MASTER%は暴力的に腰を打ち付けた。
+				PRINTFORMDL 姫君との交わりと言うより交尾や自慰、けれど牝穴は悦び震え、男根に与えるのは極上の快楽。
+			CASE 3
+				PRINTFORMDL 本気汁と先走りで白濁した粘液を飛び散らせながら、牡の欲求に身を任せる。
+				PRINTFORMDL 獣もかくやという粘膜の交わり、肉槍がもたらす充足感と快楽は極上のそれ。
+			CASE 2
+				PRINTFORMDL 気高く神聖なる相手をどこまでも下劣な肉の欲と男根で支配する。
+				PRINTFORMDL 牡としてこれ以上の悦びなどあるまい。子宮を突き上げながら身を任せるは充足感。
+			CASE 1
+				PRINTFORMDL まるで動物のように本能のまま腰を使い、屈服させるように男根を突き立てていく。
+				PRINTFORMDL 輝夜の悲鳴を無視しながら、快楽だけに意識を傾け、獣欲に身を任せる。
+			CASE 0
+				PRINTFORMDL 遠慮の必要すらない。荒々しく使ったところで牝穴は容易に受け入れ、悦び鳴くのだ
+				PRINTFORMDL まるで道具でも使うように腰を掴み、荒々しく、体中の体液を撒き散らしながら快楽のために男根を打ち付ける。
+		ENDSELECT
+		PRINTFORML 
+		SELECTCASE RAND:7
+			CASE 6
+				PRINTFORMDL %CALLNAME:MASTER%の子宮口への集中攻撃に、輝夜は髪を振り乱している。
+			CASE 5
+				PRINTFORMDL 子宮口を責められている輝夜は、どうしようもない快楽に甘い声で鳴いた。
+			CASE 4
+				PRINTFORMDL 男根を目一杯締め上げ、輝夜は子宮口への突き上げに恐怖すら滲ませ嬌声を漏らした。
+			CASE 3
+				PRINTFORMDL 輝夜は%CALLNAME:MASTER%の求めに応じるよう、無抵抗に子宮口を差し出した。
+			CASE 2
+				PRINTFORMDL 子宮口という最大の弱点を刺激されている輝夜は甘い嬌声を響かせた。
+			CASE 1
+				PRINTFORMDL 子宮への集中攻撃に輝夜は髪を振り乱し、悲鳴のような嬌声を上げた。
+			CASE 0
+				PRINTFORMDL 輝夜は%CALLNAME:MASTER%のひと突きごとに、膣肉を絞り上げた。
+		ENDSELECT
+		SELECTCASE RAND:6
+			CASE 5
+				PRINTFORMDW %CALLNAME:MASTER%に開発され、男根さえ咥え込むほど柔らかくなった子宮口は、淫魔のように精液を吸い上げようとしている。
+			CASE 4
+				PRINTFORMDW 子宮の入り口はもはや第二の口であり、蕩けた粘膜で口淫のように亀頭に極上の快楽を与えている。
+			CASE 3
+				PRINTFORMDW %CALLNAME:MASTER%専用というほどに開発され切った子宮口はもはや神聖さなど消え、主人の快楽のためだけに蠢いている。
+			CASE 2
+				PRINTFORMDW 子宮という響きとは裏腹に、快楽に蕩けきったその入り口はもはや主人の射精のための奉仕穴となっている。
+			CASE 1
+				PRINTFORMDW 完全に%CALLNAME:MASTER%のものとなった彼女の子宮口は、ひと突きごとに蕩けた粘膜を亀頭に纏わり付かせている。
+			CASE 0
+				PRINTFORMDW 開発されきった子宮口はもはや陰核以上の快楽を輝夜に与え、彼女はまるで絶頂を繰り返すように全身を痙攣させている。
+		ENDSELECT
+ENDIF
+RESETCOLOR
+TCVAR:62:357 = 3
+;==================================================
+;えっちモードによるEXソース分岐 正常位
+;==================================================
+@M_KOJO_EXTRASOURCE_COM_K62_60
+IF TCVAR:62:357 == 1
+	SOURCE:快Ｖ += 50
+	SOURCE:情愛 += 50
+	SOURCE:MASTER:快Ｃ += 100
+ELSEIF TCVAR:62:357 == 2
+	DOWNBASE:体力 -= 30
+	DOWNBASE:気力 -= 30
+	SOURCE:性行動 += 150
+	SOURCE:MASTER:快Ｃ -= 50
+	SOURCE:快Ｖ -= 50
+ELSEIF TCVAR:62:357 == 3
+	SOURCE:性行動 += 50
+	SOURCE:屈従 += 50
+	SOURCE:MASTER:快Ｃ += 100
+	SOURCE:快Ｖ += 100
+ENDIF
+
+;==================================================
+;えっちモードによるEXソース分岐 後背位
+;==================================================
+@M_KOJO_EXTRASOURCE_COM_K62_61
+IF TCVAR:62:357 == 1
+	SOURCE:快Ｖ += 50
+	SOURCE:情愛 += 50
+	SOURCE:MASTER:快Ｃ += 100
+ELSEIF TCVAR:62:357 == 2
+	DOWNBASE:体力 -= 30
+	DOWNBASE:気力 -= 30
+	SOURCE:性行動 += 150
+	SOURCE:MASTER:快Ｃ -= 50
+	SOURCE:快Ｖ -= 50
+ELSEIF TCVAR:62:357 == 3
+	SOURCE:性行動 += 50
+	SOURCE:屈従 += 50
+	SOURCE:MASTER:快Ｃ += 100
+	SOURCE:快Ｖ += 100
+ENDIF
+
+;==================================================
+;えっちモードによるEXソース分岐 騎乗位
+;==================================================
+@M_KOJO_EXTRASOURCE_COM_K62_65
+IF TCVAR:62:357 == 1
+	SOURCE:快Ｖ += 50
+	SOURCE:情愛 += 100
+	SOURCE:MASTER:快Ｃ += 100
+ELSEIF TCVAR:62:357 == 2
+	DOWNBASE:体力 -= 30
+	DOWNBASE:気力 -= 30
+	SOURCE:性行動 += 100
+	SOURCE:MASTER:快Ｃ -= 50
+	SOURCE:快Ｖ -= 50
+ELSEIF TCVAR:62:357 == 3
+	SOURCE:性行動 += 50
+	SOURCE:屈従 += 50
+	SOURCE:MASTER:快Ｃ += 100
+	SOURCE:快Ｖ += 100
+ENDIF
+
+;==================================================
+;えっちモードによるEXソース分岐 対面座位
+;==================================================
+@M_KOJO_EXTRASOURCE_COM_K62_67
+IF TCVAR:62:357 == 1
+	SOURCE:快Ｖ += 50
+	SOURCE:情愛 += 150
+	SOURCE:MASTER:快Ｃ += 100
+ELSEIF TCVAR:62:357 == 2
+	DOWNBASE:体力 -= 30
+	DOWNBASE:気力 -= 30
+	SOURCE:性行動 += 250
+	SOURCE:MASTER:快Ｃ -= 50
+	SOURCE:快Ｖ -= 50
+ELSEIF TCVAR:62:357 == 3
+	SOURCE:性行動 += 50
+	SOURCE:屈従 += 50
+	SOURCE:MASTER:快Ｃ += 100
+	SOURCE:快Ｖ += 100
+ENDIF
+
+;==================================================
+;えっちモードによるEXソース分岐 背面座位
+;==================================================
+@M_KOJO_EXTRASOURCE_COM_K62_68
+IF TCVAR:62:357 == 1
+	SOURCE:快Ｖ += 50
+	SOURCE:情愛 += 50
+	SOURCE:MASTER:快Ｃ += 100
+ELSEIF TCVAR:62:357 == 2
+	DOWNBASE:体力 -= 30
+	DOWNBASE:気力 -= 30
+	SOURCE:性行動 += 150
+	SOURCE:MASTER:快Ｃ -= 50
+	SOURCE:快Ｖ -= 50
+ELSEIF TCVAR:62:357 == 3
+	SOURCE:性行動 += 50
+	SOURCE:屈従 += 50
+	SOURCE:MASTER:快Ｃ += 100
+	SOURCE:快Ｖ += 100
+ENDIF
+
+;==================================================
+;えっちモードによるEXソース分岐 Ｇスポット責め　前回のえっちモード参照。
+;==================================================
+@M_KOJO_EXTRASOURCE_SCOM_K62_6
+IF TCVAR:62:357 == 1
+	SOURCE:快Ｖ += 50
+	SOURCE:情愛 += 50
+	SOURCE:MASTER:快Ｃ += 100
+ELSEIF TCVAR:62:357 == 2
+	DOWNBASE:体力 -= 30
+	DOWNBASE:気力 -= 30
+	SOURCE:性行動 += 150
+	SOURCE:MASTER:快Ｃ -= 50
+	SOURCE:快Ｖ -= 50
+ELSEIF TCVAR:62:357 == 3
+	SOURCE:性行動 += 50
+	SOURCE:屈従 += 50
+	SOURCE:MASTER:快Ｃ += 100
+	SOURCE:快Ｖ += 100
+ENDIF
+
+;==================================================
+;えっちモードによるEXソース分岐 子宮口責め
+;==================================================
+@M_KOJO_EXTRASOURCE_SCOM_K62_7
+IF TCVAR:62:357 == 1
+	SOURCE:快Ｖ += 50
+	SOURCE:情愛 += 50
+	SOURCE:MASTER:快Ｃ += 100
+ELSEIF TCVAR:62:357 == 2
+	DOWNBASE:体力 -= 30
+	DOWNBASE:気力 -= 30
+	SOURCE:性行動 += 150
+	SOURCE:MASTER:快Ｃ -= 50
+	SOURCE:快Ｖ -= 50
+ELSEIF TCVAR:62:357 == 3
+	SOURCE:性行動 += 50
+	SOURCE:屈従 += 50
+	SOURCE:MASTER:快Ｃ += 100
+	SOURCE:快Ｖ += 100
+ENDIF
+
+;==================================================
+;輝夜のお楽しみタイム。汎用
+;==================================================
+@HIMESAMA_OTANOSHIMI_HANYOU(ARG) ;custom code
+CALL M_KOJO_COLOR_K62
+IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+	SELECTCASE RAND:7
+		CASE 6
+			PRINTFORML 「%MOAN()%...♥ My husband, you're... about to...♥」
+		CASE 5
+			PRINTFORML 「Pour everything into Kaguya...♥」
+		CASE 4
+			PRINTFORML 「My husband♥ I love you♥ I love you...♥」
+		CASE 3
+			PRINTFORML 「My husband♥ Fill Kaguya's womb with your love...♥」
+		CASE 2
+			PRINTFORML 「My husband...♥ Hurry and fill Kaguya with your...♥」
+		CASE 1
+			PRINTFORML 「My husband♥ Your thing is twitching...♥」
+		CASE 0
+			PRINTFORML 「%MOAN()%♥ Together♥ Let's both climax together...♥」
+	ENDSELECT
+ELSEIF TALENT:62:恋慕 || TALENT:62:愛欲
+	SELECTCASE RAND:7
+		CASE 6
+			PRINTFORML 「%MOAN()%...♥ %CALLNAME:MASTER%, you're... about to...♥」
+		CASE 5
+			PRINTFORML 「Pour it all inside...♥」
+		CASE 4
+			PRINTFORML 「...Nnh♥ I love you♥ I love you...♥」
+		CASE 3
+			PRINTFORML 「My womb♥ Pour it straight into...♥」
+		CASE 2
+			PRINTFORML 「%CALLNAME:MASTER%...♥ Hurry♥ Pour it inside me...♥」
+		CASE 1
+			PRINTFORML 「%CALLNAME:MASTER%♥ Your thing is twitching...♥」
+		CASE 0
+			PRINTFORML 「%MOAN()%♥ Together♥ Let's both climax together...♥」
+	ENDSELECT
+ELSE
+	PRINTFORML 「Nh♥ It's twitching...♥」
+ENDIF
+PRINTFORMDW You let out a small grunt from the pleasure, Kaguya wrapped tight around your %TINKO(PLAYER)%.
+IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4) || TALENT:62:恋慕 || TALENT:62:愛欲
+	SELECTCASE RAND:7
+		CASE 6
+			PRINTFORMDW As you're on the verge of ejaculation, Kaguya's cervix tightens around you, clinging onto your %TINKO(PLAYER)%.
+		CASE 5
+			PRINTFORMDW Kaguya notices that you're close to blowing your load, and she encourages you by begging for your %SEMEN(,1)% with a seductive whisper.
+		CASE 4
+			PRINTFORMDW %BREAKENG(@"Your %TINKO(PLAYER)% begins to jerk and twitch as you're almost at your limit. Kaguya rocks hips as much as she can, desperately pressing your tip against her cervix.")%
+		CASE 3
+			PRINTFORMDW %BREAKENG(@"Kaguya tightens her wet folds and the mouth of her womb on your ready-to-blow %TINKO(PLAYER)%, devoting her entire body to help you reach the best possible ejaculation.")%
+		CASE 2
+			PRINTFORMDW Kaguya senses your oncoming ejaculation, repeatedly kissing your glans by pressing her cervix against it.
+		CASE 1
+			PRINTFORMDW Sensing your oncoming ejaculation, Kaguya presses her cervix against your glans, almost as if intending to suck out all of your %SEMEN(,1)%.
+		CASE 0
+			PRINTFORMDW Deliberately or not, right before you ejaculate, Kaguya repositions her hips to naturally align the entrance of her womb to your thrusts.
+	ENDSELECT
+		IF TALENT:62:ポルチオ性感
+			SELECTCASE RAND:6
+				CASE 5
+					PRINTFORMDW %BREAKENG(@"Her sexual organ, personally trained by you, now rivals that of a succubus as she learns how to suck up all leftover %SEMEN(,1)% in a sort of vacuum.")%
+				CASE 4
+					PRINTFORMDW %BREAKENG(@"Her cervix is clearly coated in a different kind of slimy mucous, and every time your glans and the sticky opening come into contact, there's a strange feeling of adhesion.")%
+				CASE 3
+					PRINTFORMDW Her cervix is like a pair of lips, eagerly begging for a deep kiss every time it comes into contact with your glans.
+				CASE 2
+					PRINTFORMDW %BREAKENG(@"Everytime the opening to her womb is stimulated, her walls constrict around you with surprising force, trying to squeeze every last drop of %SEMEN(,1)% out of you.")%
+				CASE 1
+					PRINTFORMDW Her cervix, now completely belonging to you, clings to your glans with each thrust.
+				CASE 0
+					PRINTFORMDW %BREAKENG(@"Every time her fully developed cervix comes into contact with your glans, her inner folds convulse as she repeatedly experiences a sensation akin to small orgasms.")%
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:6
+				CASE 2
+					PRINTFORMDW She desperately desires your ejaculation, clenching her walls around you with each thrust.
+				CASE 1
+					PRINTFORMDW Everytime your glans presses up tightly against her cervix, her back arches in an incredibly lewd manner.
+				CASE 0
+					PRINTFORMDW She writhes every time your glans presses against her cervix, causing her folds to convulse around you.
+			ENDSELECT
+		ENDIF
+ELSEIF TALENT:62:セフレ || TALENT:62:思慕
+	SELECTCASE RAND:3
+		CASE 2
+			PRINTFORMDW Kaguya senses your oncoming ejaculation, repeatedly kissing your glans by pressing her cervix against it.
+		CASE 1
+			PRINTFORMDW Sensing your oncoming ejaculation, Kaguya presses her cervix against your glans, almost as if intending to suck out all of your %SEMEN(,1)%.
+		CASE 0
+			PRINTFORMDW Deliberately or not, right before you ejaculate, Kaguya repositions her hips to naturally align the entrance of her womb to your thrusts.
+	ENDSELECT
+ENDIF
+PRINTFORMDL Unable to hold back any longer, you %FSYN("shoot")% all of your %SEMEN(,1)% into her womb with great force.
+PRINTFORMDL 
+SELECTCASE RAND:7
+	CASE 6
+		PRINTFORMDL Kaguya's narrow passage tightens around you, your shape imprinting onto her insides.
+		PRINTFORMDL The only outlet for all your %SEMEN(,1)% to escape to is a straight shot into her womb.
+	CASE 5
+		PRINTFORMDL Almost like a vacuum, Kaguya's cervix tightly presses down against your, accepting all of your %SEMEN(,1)% straight into her womb.
+		PRINTFORMDL It felt so good that there's a mental image of your %TINKO(PLAYER)% and her womb melding together to form a single organ.
+	CASE 4
+		PRINTFORMDL Kaguya's cervix delightfully kisses your glans over and over, clinging to it all the while.
+		PRINTFORMDL The vulgar expression of her affection can't be seen, yet is a testament of her true self.
+	CASE 3
+		PRINTFORMDL While her cervix clings tightly onto your glans, Kaguya's %FSYN("vagina")% pulsates in rhythm with your oncoming ejaculation.
+		PRINTFORMDL Her vulgar %FSYN("vagina")% has completely memorized the pattern.
+	CASE 2
+		PRINTFORMDL Kaguya's walls wrap around you, her countless folds caressing your %TINKO(PLAYER)% as she screams out your name.
+		PRINTFORMDL Her %FSYN("vagina")%s sole purpose is for you to fill it with your %SEMEN(,1)%.
+	CASE 1
+		PRINTFORMDL Kaguya wrings your %TINKO(PLAYER)% while pressing her cervix against you.
+		PRINTFORMDL You're not entirely sure who's the one in charge of your ejaculation as the pleasure overtakes you.
+	CASE 0
+		PRINTFORMDL Her cervix kisses your glans, clinging to it as her countless folds caress your %TINKO(PLAYER)%.
+		PRINTFORMDL Kaguya's %FSYN("lewd")% %FSYN("vagina")% convulses wildly as you ejaculate deep inside.
+ENDSELECT
+SELECTCASE RAND:5
+	CASE 4
+		PRINTFORML 「...Nnh♥ ...♥♥♥」
+		PRINTFORMW
+	CASE 3
+		PRINTFORML 「%MOAN()%...♥」
+		PRINTFORMW
+	CASE 2
+		PRINTFORML 「%MOAN()%♥ %MOAN()%♥ It came out...♥」
+		PRINTFORMW
+	CASE 1
+		PRINTFORML 「Nnh...♥」
+		PRINTFORMW
+	CASE 0
+		PRINTFORML 「Ah, it's so full inside...♥」
+		PRINTFORMW
+ENDSELECT
+PRINTFORMDL After you finish cumming inside, Kaguya takes in the aftermath in a daze.
+PRINTFORMDW The reprieve is shortlived, however, as Kaguya once again starts moving her hips.
+IF TALENT:62:恋人 || (TALENT:62:妄信 && TALENT:MASTER:追加種族 == 4)
+	PRINTFORML 「...Just a bit more, just a little bit more...♥」
+ELSE
+	PRINTFORML 「...I only need a little more...♥」
+ENDIF
+PRINTFORMDW She says, completely overtaken by lust. She doesn't look like she has any intention of releasing you anytime soon.
+PRINTFORMDW As time passes, you eventually give up and savor the exquisite pleasure she brings you.
+IF BASE:MASTER:精力 >= 400
+	CALL ADD_SAMEN_V(62, 400)
+ELSE
+	CALL ADD_SAMEN_V(62, BASE:MASTER:精力)
+ENDIF
+;custom code
+SELECTCASE ARG
+	CASE 1
+		CALL SET_DOUTEILOSS_MASTER(@"forfeited to Kaguya after losing to her in a Danmaku match. To the victor belong the spoils.")
+	CASE 2
+		CALL SET_DOUTEILOSS_MASTER(@"casually gave it to Kaguya to please her throbbing body when she was busy with \"work\".")
+ENDSELECT
+CALL AddEXP("Ｖ性交経験", 62, 5)
+CALL AddEXP("絶頂経験", 62, 5)
+CALL AddEXP("精液経験", 62, 5)
+CALL AddEXP("膣射経験", 62, 5)
+CALL AddEXP("絶頂経験", MASTER, 5)
+CALL AddEXP("射精経験", MASTER, 5)
+CALL AddEXP("挿入経験", MASTER, 10)
+TCVAR:62:媚薬 = 0
+TCVAR:62:発情 = 0
+CFLAG:62:溜まってる度 = 0
+RESETCOLOR

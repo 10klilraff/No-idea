@@ -1,0 +1,3755 @@
+﻿
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;日常系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;300,会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_300
+;コマンド共通メッセージ(TRAIN_MESSAGE) 
+;削除すると「～说着话。」とかが消えます
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+CALL M_KOJO_MESSAGE_COM_K80_300_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_300_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:時間停止
+	IF DAY: 2 == 1 && DAY: 3==1 && CFLAG:1029 == 0
+		IF TALENT:恋人
+			PRINTFORML
+			PRINTFORMW 「Today... marks the beginning of a new year...」
+			PRINTFORMDW That's right.
+			PRINTFORMDL You say while laughing.
+			PRINTFORMDW Happy New Year, Akyuu.
+			PRINTFORMDW Blushing, Akyuu returns the greeting.
+			PRINTFORMW 「Happy New Year to you as well...」
+			PRINTFORMDW She seems to be worried about something.
+			PRINTFORMDW Akyuu stares off into the distance. You don't really understand what's on her mind.
+			PRINTFORMDW You grasp her hands.
+			PRINTFORMDW No matter what happens, we'll be together... It's a promise.
+			PRINTFORMW 「Yes...」
+			PRINTFORMDW Akyuu smiles as she embraces you.
+			CFLAG:1029 = 1
+		ELSEIF TALENT:恋慕
+			PRINTFORML
+			PRINTFORMW 「%CALLNAME:MASTER%-san... Happy New Year.」
+			PRINTFORMDW Akyuu happily moves to your side.
+			PRINTFORMdW Happy New Year to you too.
+			PRINTFORMDW You reply in return.
+			PRINTFORMDW Do you have any sort of resolution this year?
+			PRINTFORMDW You continue asking her.
+			PRINTFORMW 「Yes... I have something I'd like to do...」
+			PRINTFORMDW Akyuu embarrassingly tries to dodge the question.
+			CFLAG:1029 = 1
+		ELSEIF TALENT:思慕
+			PRINTFORML
+			PRINTFORMW 「Happy New Year, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW Akyuu happily gives her New Year's greeting.
+			PRINTFORMDW Thank you, Happy New Year to you too.
+			CFLAG:1029 = 1
+		ELSE
+			PRINTFORML
+			PRINTFORMW 「Happy New Year.」
+			PRINTFORMDW Akyuu greets you with this.
+			PRINTFORMDW Ah, Happy Near Year to you as well.
+			CFLAG:1029 = 1
+		ENDIF
+	ELSEIF CFLAG:900 == 1 && CFLAG:1229 != DAY 
+		IF TALENT:恋人
+			PRINTFORML
+			PRINTFORMW 「Today... is my special day of the month...」
+			PRINTFORMDW Akyuu's complexion looks a little off, and her movements are kind of sluggish.
+			PRINTFORMW 「So... Please take care of me.」
+			PRINTFORMW 「Also...」
+			PRINTFORMDW Akyuu shyly hangs her head and speaks in a low whisper.
+			PRINTFORMW 「...I-It's okay... to let it out inside for now...」
+			CFLAG:1229 = DAY 
+		ELSEIF TALENT:恋慕
+			PRINTFORML
+			PRINTFORMW 「...Excuse me... I have a bit of a stomach ache today...」
+			PRINTFORMDW Akyuu looks lethargic——her complexion is paler than usual.
+			PRINTFORMDW Are you sick? Would you like to see a doctor?
+			PRINTFORMW 「Uh...uhm...」
+			PRINTFORMDW Akyuu is fidgeting bashfully.
+			PRINTFORMW 「I'm a girl so...uhm... You understand, right...?」
+			PRINTFORMDW You don't get it at all. What is she talking about?
+			CFLAG:1229 = DAY 
+		ELSEIF TALENT:思慕
+			PRINTFORML
+			PRINTFORMW 「It seems... My body isn't feeling very well today...」
+			PRINTFORMDW Akyuu is wearing thicker clothes than normal. Her complexion looks a little off.
+			PRINTFORMDW Are you okay? You worriedly ask her.
+			PRINTFORMW 「I'm fine... I'll be better if I get some rest.」
+			PRINTFORMDW So you say, but your complexion isn't looking good.
+			PRINTFORMW 「...Uuh————Thank you very much... for worrying about me.」
+			PRINTFORMDW Akyuu blushes slightly while accepting your kindness.
+			CFLAG:1229 = DAY 
+		ELSE
+			PRINTFORML
+			PRINTFORMW 「Hello, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW Akyuu greets you, but it's obvious in her tone of voice that she's lacking energy.
+			PRINTFORMDW I wonder if she's sick. You think to yourself.
+			CFLAG:1229 = DAY 
+		ENDIF
+		RETURN 0
+	ELSEIF TALENT:恋人
+		PRINTFORMD Akyuu listens to you while you talk. 
+			IF CFLAG:TARGET:添い寝中
+				PRINTFORMDW With happiness coming from the bottom of her heart, she hugs your arm.
+			ELSEIF CFLAG:TARGET:デート中
+				PRINTFORMDW Her hands are firmly clasped in yours. 
+			ELSEIF CFLAG:TARGET:風呂
+				PRINTFORMDW She shyly embraces you. 
+			ELSE
+				PRINTFORMDW On her face is a smile full of happiness. 
+			ENDIF
+		SELECTCASE RAND:16
+			CASE 0
+				PRINTFORML 
+				PRINTFORML 「Oh, so something like that happened.」
+				PRINTFORMDL Akyuu is seriously listening to your story.
+				PRINTFORML 「You're pretty knowledgeable, %CALLNAME:MASTER%-san.」
+				PRINTFORMDL The two of you have a long conversation.
+			CASE 1
+				PRINTFORML 
+				PRINTFORML 「One time, Yukari-san came over...」
+				PRINTFORMDL Akyuu is smiling as she has a pleasant conversation with you.
+				PRINTFORML 「————%CALLNAME:MASTER%-san? Are you listening?」
+				PRINTFORMDL Sorry, you looked cute, so I spaced out for a second while looking at you. You reply to her.
+				PRINTFORML 「Hmm! Please don't give any excuses. I'll just stop talking to you then.」
+				PRINTFORMDL Whaat? It was my fault, I'm sorry, I'm sorry. Please keep talking.
+				PRINTFORML 「Fine... Learn from this time. Even though you looked cute while spaced out, you should definitely listen to someone while they're talking to you.」
+				PRINTFORML 「Uhm, where was I...」
+			CASE 2
+				PRINTFORML  
+				PRINTFORML 「――%CALLNAME:MASTER%-san? Are you listening?」
+				PRINTFORMDL Akyuu seems to have noticed something by looking at your face.
+				PRINTFORMDL I'm listening, you reply while laughing.
+				PRINTFORML 「Well... What was I talking about then?」
+				PRINTFORMDL ……
+			CASE 3
+				PRINTFORML 
+				PRINTFORML 「————For some reason, I feel so... happy...」
+				PRINTFORMDL Akyuu suddenly said while by your side.
+				PRINTFORMDL What's this all of a sudden? You ask her.
+				PRINTFORML 「Right now, I feel truly blessed. This kind of happiness is unprecedented even to my predecessors.」
+				PRINTFORMDL While speaking, Akyuu snuggles up close to your chest.
+				PRINTFORML 「Hey... %CALLNAME:MASTER%-san, if... if the day comes when I'm not here with you anymore...」
+				PRINTFORMDL You gently pinch Akyuu's soft lips shut.
+				PRINTFORMDL What nonsense are you even saying all of a sudden. You lightly flick Akyuu's forehead.
+				PRINTFORMDL Don't think about stuff like that... I want you to become immersed in our happiness-filled days. I want every day for you to be filled with fun and pleasure. 
+				PRINTFORMDL I dont want you to waste even one second being sad about the future.
+				PRINTFORMDL After telling her that, you gently kiss her forehead. At the same time, you slip your arms between the gaps of hers as you hug her tightly.
+				PRINTFORML 「I'm sorry————%CALLNAME:MASTER%-san.」
+				PRINTFORMDL Akyuu, overcome with emotion, begins to shed her held back tears.
+			CASE 4
+				PRINTFORML
+				PRINTFORML 「Hey, %CALLNAME:MASTER%-san.」
+				PRINTFORMDL Akyuu seems to be reflecting on something that's depressing her, her complexion seems a bit off.
+				PRINTFORML 「Is it fun... being together with me?」
+				PRINTFORMDL She asks you uneasily.
+				PRINTFORMDL You gently stroke Akyuu's head.
+				PRINTFORMDL Don't be silly, you don't have to brood about stuff like that. It'll only tire you out. You say as you try to comfort her.
+				PRINTFORMDL You don't have to worry about that, I want to see your bright smile as we talk.
+				PRINTFORMDL Akyuu, you idiot. Why would you think that I wouldn't have fun together with you?
+				PRINTFORM 「Yes, that's right...」 
+				PRINTFORMDL Not knowing why, Akyuu seems to be considerably relieved.
+			CASE 5
+				PRINTFORML
+				PRINTFORML 「The other day, I went to the Garden of the Sun to visit Kazami Yuuka-san.」
+				PRINTFORMDL Akyuu is smiling happily as she speaks to you.
+				PRINTFORMDL Hearing that name, you shiver and break out in goosebumps.
+				PRINTFORML 「Don't make that kind of face. Yuuka-san is really a very nice person. It's just that she's been alone for so long...」
+				PRINTFORMDL Remembering something, Akyuu suddenly falls silent with a sad expression. 
+				PRINTFORMDL You wave your hand in front of her face.
+				PRINTFORML 「Eh————Aah?! I'm sorry, I spaced out there.」
+				PRINTFORMDL Not all memories are meant to be reminisced. You thought to yourself as you hug Akyuu.
+				PRINTFORML 「Thank you, %CALLNAME:MASTER%-san. Whenever I'm lonely, all it takes is for you to be near my side and I feel truly happy.」
+				PRINTFORML 「It'd be great if Yuuka-san could find her fated person as well...」
+			CASE 6
+				PRINTFORML
+				PRINTFORML 「Kosuzu and I are close friends.」
+				PRINTFORMDL Akyuu speaks with a slight pride in her voice.
+				PRINTFORML 「That girl is honestly amazing. She can read books that I can't even begin to comprehend. Her personality is so cheerful as well, and she's so thoughtful...」
+				PRINTFORMDL You start laughing to yourself while listening to Akyuu talking about her friend's best features.
+				PRINTFORMDL That's right, next time let's have a conversation with the three of us. You tell her.
+			CASE 7
+				PRINTFORML 
+				PRINTFORML 「Yukari-san has put in a lot of effort for Gensokyo's sake.」
+				PRINTFORMDL Recollecting on her supernatural memories, Akyuu speaks to you.
+				PRINTFORML 「There was once a time when the drafts for the 『Gensokyo Chronicle』 and 『Perfect Memento in Strict Sense』 weren't even written yet.」
+				PRINTFORML 「One day, I was writing down some records when Yukari-san suddenly appeared. She told me that she would like for those two works to be completed.」
+				PRINTFORML 「When I asked her why, she said that it was for Reimu-san's sake.」
+				PRINTFORMDL You earnestly listen to Akyuu.
+				PRINTFORML 「But when Reimu-san finally came, I was relieved that her health had considerably improved.」
+				PRINTFORMDL Akyuu lets out an overflowing laughter.
+			CASE 8
+				PRINTFORML 
+				PRINTFORML 「Hey————%CALLNAME:MASTER%-san, have you ever been to the former hell?」
+				PRINTFORMDL You shake your head.
+				PRINTFORML 「A mysterious person lives in the underground palace there.」
+				PRINTFORML 「When I first met her, she clearly told me that she hates humans. And after I we spoke somewhat, I realized that this place wasn't hell for her. Rather, it was a form of paradise.」
+				PRINTFORML 「The one I talked to, Komeiji Satori seems to dote on  her sister Komeiji Koishi a lot. I can tell that Satori-san loves her sister very much.」
+				PRINTFORMDL Only talking up to this point, she looks over at you before continuing.
+				PRINTFORML 「To tell you the truth, at that moment I envied their relationship.」
+				PRINTFORML 「In the Hieda household, I'm surrounded by many people but it was never fun. Everyone always seemed out of reach, and they would always talk behind my back.」
+				PRINTFORML 「So that's why,」Akyuu hugs your arms.
+				PRINTFORML 「I will always treasure these days with my beloved.」
+			CASE 9
+				PRINTFORML 
+				PRINTFORML 「————I truly am happy.」
+				PRINTFORMDL What's this all of a sudden, you ask Akyuu.
+				PRINTFORML 「It's... nothing. I'm just enjoying my time by your side, %CALLNAME:MASTER%-san.」
+				PRINTFORML 「Every time I think about it, I feel very happy.」
+				PRINTFORMDL You silently hug Akyuu.
+			CASE 10
+				PRINTFORML 
+				PRINTFORML 「I'm truly happy to be able to spend time with you like this, %CALLNAME:MASTER%-san.」
+				PRINTFORMDL Akyuu looks at you with a warm gaze.
+				PRINTFORML 
+				PRINTFORML
+				PRINTFORML
+			CASE 11
+				PRINTFORML
+				PRINTFORML 「That's amazing, %CALLNAME:MASTER%-san.」
+				PRINTFORMDL Akyuu is enthusiastically listening to your story.
+				PRINTFORMDL Seeing her so engrossed while listening, you start laughing aloud.
+			CASE 12
+				PRINTFORML
+				PRINTFORML 「————Well, something like that-」
+				PRINTFORMDL Akyuu is participating in the conversation.
+				PRINTFORML 「Aah, that's right. The other day————」
+				PRINTFORMDL As a new topic is brought up, she happily continues talking to you.
+			CASE 13
+				PRINTFORML 
+				PRINTFORML 「I heard Kosuzu's Suzunaan acquired some new books. I think I'll go see them for myself next time.」
+				PRINTFORMDL You and Akyuu are speaking quietly to each other.
+			CASE 14
+				PRINTFORML 
+				PRINTFORML 「I love you, %CALLNAME:MASTER%-san...」
+				PRINTFORMDL Saying that, Akyuu rests on your chest.
+				PRINTFORMDL You let her know that you love her as well.
+			;Chinese poetry
+			CASE 15
+				PRINTFORML
+				PRINTFORML 『勧君金屈卮（I offer you this golden cup）
+				PRINTFORML 　満酌不須辞（Do not refrain from filling it to the brim）
+				PRINTFORML 　花発多風雨（When the flowers bloom, the wind and rain will eventually come）
+				PRINTFORML 　人生足別離（Farewells are a part of life）』
+				PRINTFORMDL In life... partings may be what becomes most engraved into a person's heart.
+		ENDSELECT
+		PRINTFORMW
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		PRINTFORMD While having a pleasant chat with you, Akyuu 
+			IF CFLAG:TARGET:添い寝中
+				PRINTFORMDW cuddles up by your side.
+			ELSEIF CFLAG:TARGET:デート中
+				PRINTFORMDW firmly holds your hand.
+			ELSEIF CFLAG:TARGET:風呂
+				PRINTFORMDW is leaning towards you.
+			ELSE
+				PRINTFORMDW is intently staring at you.
+			ENDIF
+		SELECTCASE RAND:9
+			CASE 0
+				PRINTFORML
+				PRINTFORML 「Heeh————So something like happened...」
+				PRINTFORMDL Akyuu is admiring you with wonder as the two of you have a conversation.
+				PRINTFORML 「You're amazing %CALLNAME:MASTER%-san. You know things that not even I am aware of.」
+				PRINTFORMDL She looks at you with a gentle gaze.
+			CASE 1
+				PRINTFORML
+				PRINTFORML 「And then, and then? What happened next?」
+				PRINTFORMDL Akyuu is curious and listening attentively to you.
+				PRINTFORML 「Please tell me more.」
+				PRINTFORMDL You continue to tell her about recent events.
+			CASE 2
+				PRINTFORML
+				PRINTFORML 「...You spaced out, didn't you?」
+				PRINTFORMDL Ah... Sorry.
+				PRINTFORML 「It's fine but, do you have anything worrying you, %CALLNAME:MASTER%-san?」
+			CASE 3
+				PRINTFORML 
+				PRINTFORML 「Hey————%CALLNAME:MASTER%-san.」
+				PRINTFORMdL Hm? What is it?
+				PRINTFORML 「Are you bored being with me, %CALLNAME:MASTER%-san?」
+				PRINTFORMDL Why would I be? You're so interesting in a lot of ways.
+				PRINTFORML 「Really? I'm so glad.」
+				PRINTFORMDL Akyuu seems relieved.
+			CASE 4
+				PRINTFORML 
+				PRINTFORML 「Um... %CALLNAME:MASTER%-san.」
+				PRINTFORMDL What is it?
+				PRINTFORML 「Uhm...well... Is it fun, being with me?」
+				PRINTFORMDL It's always fun, you reply to her.
+				PRINTFORMDL Akyuu relaxes with a smile.
+			CASE 5
+				PRINTFORML 
+				PRINTFORML 「Nn————%CALLNAME:MASTER%-san...」
+				PRINTFORMDL Akyuu closes her eyes and gently rests her head on your shoulder. She seems a bit tired.
+				PRINTFORML 「I'm sorry... I ended up leaning against you, %CALLNAME:MASTER%-san.」
+				PRINTFORMDL Despite saying that, she doesn't separate from you.
+				PRINTFORML 「But it's very peaceful like this... %CALLNAME:MASTER%-san.」
+			CASE 6
+				PRINTFORML 
+				PRINTFORML 「Gensokyo is a very... mysterious place.」
+				PRINTFORMDL Being curious about Gensokyo, you want to know more about it's interesting history.
+				PRINTFORML 「Yes, let's see... To begin with, I'll talk about how Yukari-san——along with the first generation of the Hakurei shrine maiden——created the Great Hakurei Barrier... 」
+				PRINTFORMDL Akyuu speaks and you listen.
+			CASE 7
+				PRINTFORML 
+				PRINTFORML 「If... If a girl without much life expectancy suddenly got involved with you,...N-... Nevermind.」
+				PRINTFORMDL Akyuu suddenly stopped mid-sentence, seemingly worried about something.
+			CASE 8
+				PRINTFORML 
+				PRINTFORML 「...Romeo and Juliet... What a sad story...」
+				PRINTFORMDL Really...?
+				PRINTFORML 「Eh?」
+				PRINTFORMDL Even if the time they were able to be happy was but a moment in the story, I don't think that they would regret loving each other.
+				PRINTFORMDL You tell her what you thought.
+				PRINTFORMDL After all, you should choose and act based on your emotions, not according to your thoughts and worries.
+				PRINTFORMDL Akyuu is looking down in contemplation.
+				PRINTFORMDL In yours and Akyuu's future, there will be a time when you have to make a similar decisive choice.
+				PRINTFORMDL You keep talking while stroking Akyuu's smooth, purple hair.
+				PRINTFORMDL No matter what happens, I won't let go of the happiness I've attained.
+				PRINTFORML 「A... All of this suddenly... It's embarrassing!」
+				PRINTFORMDL Akyuu says so in a loud voice, her cheeks as red as an apple.
+		ENDSELECT
+		PRINTFORMW
+	ELSEIF TALENT:思慕
+		PRINTFORMD Akyuu is 
+			IF CFLAG:TARGET:添い寝中
+				PRINTFORMDW talking and looking at you with twinkling eyes.
+			ELSEIF CFLAG:TARGET:デート中
+				PRINTFORMDW bringing her body closer to you as the conversation continues.
+			ELSEIF CFLAG:TARGET:風呂
+				PRINTFORMDW talking with you while blushing.
+			ELSE
+				PRINTFORMDW smiling as she talks with you.
+			ENDIF
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML 
+				PRINTFORML 「Ohh————%CALLNAME:MASTER%-san, you understand?」
+				PRINTFORMDL Do I look like the kind of person that wouldn't understand? You look at Akyuu unhappily.
+				PRINTFORML 「T-That's not what I-」
+				PRINTFORMDL Akyuu looks agitated.
+				PRINTFORML 「Uhm... You understand, don't you? The Child of Miare lives with extensive knowledge on various subjects.」
+				PRINTFORMDL Suddenly turning her red face away, she tries to make excuses. Akyuu continues speaking in a small voice. 
+				PRINTFORML 「But it seems like something nuanced like that completely escapes you, %CALLNAME:MASTER%-san...」
+				PRINTFORMDL It's ok, it's ok. You gently stroke Akyuu's head.
+				PRINTFORMDL I've said it before, haven't I? I come from a different world, remember? You say, trying to console her.
+				PRINTFORMDL People can't be omniscient. Even I'm nothing but a pebble by the roadside. You tell her.
+				PRINTFORML 「Yeah...」
+				PRINTFORMDL Hearing that, Akyuu seems to have calmed down slightly.
+			CASE 1
+				PRINTFORML 
+				PRINTFORML 「Ahaha.」
+				PRINTFORMDL Akyuu is laughing after listening to your story.
+				PRINTFORML 「You're so funny, %CALLNAME:MASTER%-san. Spending time with you puts me at ease.」
+				PRINTFORMDL The same goes for me, you say while looking at her.
+			CASE 2
+				PRINTFORML
+				PRINTFORML 「————Hey, %CALLNAME:MASTER%-san?」
+				PRINTFORMDL Akyuu calls out for you.
+				PRINTFORMDL Yes?
+				PRINTFORML 「Are you having fun spending time with me?」
+				PRINTFORMDL That's obvious, of course. You reply to her.
+				PRINTFORMDL Akyuu smiles for a moment, but quickly changes the topic.
+			CASE 3
+				PRINTFORML
+				PRINTFORML 「%CALLNAME:MASTER%-san?」
+				PRINTFORMDL Akyuu is smiling.
+				PRINTFORML 「Tell me more about the outside world again, please.」
+		ENDSELECT
+		PRINTFORMW
+	ELSE
+		PRINTFORMDW Akyuu is gracefully speaking to you.
+		SELECTCASE RAND:6
+			CASE 0
+				PRINTFORML
+				PRINTFORMDL You talk to her about normal, everyday things.
+				PRINTFORMDL Just by talking to this polite girl, you can tell the differences between your two worlds.
+			CASE 1
+				PRINTFORML 
+				PRINTFORMDL You listen to her talk a little about Gensokyo.
+				PRINTFORMDL She cheerfully, and politely provided her commentary.
+			CASE 2
+				PRINTFORML 
+				PRINTFORML 「%CALLNAME:MASTER%-san, do you enjoy reading books?
+				PRINTFORMDL Yeah, in a way.
+				PRINTFORML 「Reading many books is very good for you.」
+			CASE 3
+				PRINTFORML 
+				PRINTFORML 「How are you, %CALLNAME:MASTER%-san?」
+				PRINTFORMDL Akyuu gladly converses with you.
+			CASE 4
+				PRINTFORML 
+				PRINTFORML 「You're full of information, %CALLNAME:MASTER%-san.」
+				PRINTFORMDL You're overestimating me, you reply to her.
+			CASE 5
+				PRINTFORML 
+				PRINTFORML 「I apologize if the manner of my speech and the way I conduct myself is a little stiff.」
+				PRINTFORMDL Akyuu says with a slightly slumped posture.
+				PRINTFORMDL Eh, aah... It's fine. You answer hastily.
+		ENDSELECT
+		PRINTFORMW
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;301,お茶を淹れる
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_301
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_301_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_301_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML
+				PRINTFORML 「%CALLNAME:MASTER%-san, the tea you made is delicious...」
+				PRINTFORMDL Akyuu says so while tasting the tea in her cup.
+				PRINTFORML 「From now on, please stay together with me.」
+			CASE 1
+				PRINTFORML
+				PRINTFORML 「Nn...Fuuh————」
+				PRINTFORMDL Akyuu breathes out comfortably.
+				PRINTFORML 「You're getting better at making tea, %CALLNAME:MASTER%-san.」
+				PRINTFORMDL Thank you.
+			CASE 2
+				PRINTFORML
+				PRINTFORML 「%CALLNAME:MASTER%-san, the tea you made is... delicious.」
+				PRINTFORMDL ...You can hear Akyuu sipping from the cup.
+				PRINTFORMDL I'm glad that you like it. You say while laughing next to her.
+			CASE 3
+				PRINTFORML
+				PRINTFORMDL Akyuu really likes tea... You thought while sitting next to Akyuu.
+				PRINTFORML 「That's not really... That is... It's because this is something %CALLNAME:MASTER%-san made...」
+				PRINTFORMDL She shyly continues drinking her tea.
+			CASE 4
+				PRINTFORML 「%CALLNAME:MASTER%-san's tea... I like it.」
+				PRINTFORMDL Akyuu softly said while drinking.
+				PRINTFORML 「It's like there's... the taste of love in it.」
+				PRINTFORMDL What an embarrassing way to say it... You teasingly say while next to her.
+				PRINTFORML 「Really! Even though I complimented you.」
+		ENDSELECT
+		PRINTFORMW
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML
+				PRINTFORML 「This is... Did you brew this for me?」
+				PRINTFORML 「Then... Don't mind if I do...」
+				PRINTFORMDL Fuh————(Gulp)...
+				PRINTFORML 「Thank you very much, %CALLNAME:MASTER%-san.」
+			CASE 1
+				PRINTFORML
+				PRINTFORML 「For me?」
+				PRINTFORMDL Akyuu holds the tea that you made for her with both hands.
+				PRINTFORM 「Nn～～」 
+				PRINTFORMDW Akyuu breathes out comfortably.
+				PRINTFORML 「...Thank you for the tea.」
+			CASE 2
+				PRINTFORML 
+				PRINTFORML 「(Gulp, gulp)————Fuuh————」
+				PRINTFORMDL Akyuu relaxes her shoulders and breathes out comfortably.
+				PRINTFORML 「Even though this is delicious... %CALLNAME:MASTER%-san's method of brewing... still needs some work.」
+				PRINTFORMDL That's right... Next time, I'll have to sample some of Akyuu-sensei's tea to learn from it. You say while laughing.
+			CASE 3
+				PRINTFORML
+				PRINTFORML 「————This is for me?」
+				PRINTFORMDL Akyuu's eyelids are slightly drooping out of fatigue.
+				PRINTFORMDL ...
+				PRINTFORML 「Nn... Delicious.」
+				PRINTFORMDL Her energy slightly restored, she praises your tea.
+			CASE 4
+				PRINTFORML 
+				PRINTFORML 「...Fuuh————。」
+				PRINTFORMDL Akyuu breathes out a long sigh.
+				PRINTFORML 「It's like I can... sense your feelings in this, %CALLNAME:MASTER%-san.」
+		ENDSELECT
+		PRINTFORMW
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORML
+				PRINTFORML 「Oh, you made tea for me... T-Thank you, %CALLNAME:MASTER%-san.」
+				PRINTFORMDL Akyuu politely accepts the cup and starts to sip her tea.
+			CASE 1
+				PRINTFORML
+				PRINTFORML 「Oh... Is that tea?」
+				PRINTFORML 「Thank you very much...」
+				PRINTFORMDL Akyuu is slightly blushing.
+				PRINTFORML 「The tea still has some ways to be improved... but it was still very delicious.」
+				PRINTFORMDL She has a tender smile on her face as she sips her tea.
+			CASE 2
+				PRINTFORML
+				PRINTFORML 「You're a nice person... %CALLNAME:MASTER%-san...」
+				PRINTFORMDL Akyuu quenches her thirst with her tea.
+				PRINTFORML 「Fuuh...Haah————。」
+				PRINTFORMDL She breathes out a lovely sigh.
+			CASE 3
+				PRINTFORML
+				PRINTFORML 「Thank you very much... %CALLNAME:MASTER%-san.」
+				PRINTFORMDL Akyuu places her small lips on the cup.
+				PRINTFORML 「I'll be sure to drink all of it.」
+		ENDSELECT
+		PRINTFORMW
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML
+				PRINTFORML 「Is that...tea?」
+				PRINTFORML 「Thank you for your consideration.」
+				PRINTFORMDL Akyuu quietly drinks her tea.
+				PRINTFORMDL She winces slightly, but she turns towards you and shows you a smile.
+			CASE 1
+				PRINTFORML 
+				PRINTFORML 「...Thank you very much for making tea.」
+				PRINTFORMDL Akyuu bows slightly toward you in gratitude.
+		ENDSELECT
+		PRINTFORMW
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;302,スキンシップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_302
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_302_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_302_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		SELECTCASE RAND:6
+			CASE 0
+				PRINTFORML
+				PRINTFORMDL Akyuu starts to lean towards your direction.
+				PRINTFORML 「I'm feeling tired... Please hold me tight.」
+				PRINTFORMDL She reaches out and snuggles up to your chest.
+				PRINTFORML 「This truly is... happiness.」
+			CASE 1
+				PRINTFORML 「Fuh...Nnn...」
+				PRINTFORMDL Akyuu's eyes are half-closed as you run your fingers through her violet hair.
+			CASE 2
+				PRINTFORML
+				PRINTFORML 「Kya!————」
+				PRINTFORMDL You lightly kiss Akyuu's stiff shoulders, by the base of her neck.
+				PRINTFORML 「Right there is... no good.」
+				PRINTFORMDL She holds up her index finger to her mouth to prevent any further indecent voices from coming out.
+				PRINTFORMDL You start to massage those stiff shoulders of hers.
+			CASE 3
+				PRINTFORML
+				PRINTFORML 「Nn————Nnn———— ...That feels good...」
+				PRINTFORMDL Akyuu's eyes are closed, looking very relaxed as you massage her shoulders.
+			CASE 4
+				PRINTFORML
+				PRINTFORML 「M-My ears...」
+				PRINTFORMDL Akyuu is drained of strength as you kiss behind her ears. She leans against your chest for support.
+				PRINTFORML 「Ah...Nn, more————」
+				PRINTFORMDL Her shaking body is gradually becoming hotter.
+			CASE 5
+				PRINTFORML
+				PRINTFORMDL Fuuh——————You taste... delicious. You say to Akyuu.
+				PRINTFORML 「Please don't say such embarrassing things.」
+				PRINTFORMDL Akyuu says, out of breath.
+				PRINTFORML 「%CALLNAME:MASTER%-san is... a pervert.」
+				PRINTFORMDL That's correct... But aren't you happy from my compliment?
+				PRINTFORML 「I'm a little————happy but...」
+		ENDSELECT
+		PRINTFORMW
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:6
+			CASE 0
+				PRINTFORML
+				PRINTFORML 「%CALLNAME:MASTER%-san——————」
+				PRINTFORMDL Akyuu draws up close to you.
+				PRINTFORML 「May I ask you to massage my shoulders?」
+			CASE 1
+				PRINTFORML 
+				PRINTFORML 「Nn...Unn————」
+				PRINTFORMDL While hugging Akyuu tight, you lick Akyuu's ears to your heart's content.
+			CASE 2
+				PRINTFORML
+				PRINTFORML 「%CALLNAME:MASTER%-san...Nnn——————」
+				PRINTFORMDL Closing her eyes, Akyuu is satisfied from the intimate sensation.
+			CASE 3
+				PRINTFORML 
+				PRINTFORML 「Please don't do that... If someone sees us like this, it'd be embarrassing.」
+				PRINTFORMDL Akyuu moves her body, trying to escape from the frisky hands embracing her.
+			CASE 4
+				PRINTFORML
+				PRINTFORML 「U-Uhm...」
+				PRINTFORMDL Akyuu fidgets restlessly as she comes closer to you.
+				PRINTFORMDL Understanding without needing her to ask anything, you gently start to stroke her head.
+				PRINTFORMDL And so the two of you enjoyed this peaceful moment together.
+			CASE 5
+				PRINTFORML 
+				PRINTFORMDL You hug Akyuu from behind and rest your chin on her head.
+				PRINTFORML 「Muu——————For some reason, I'm feeling frustrated...」
+				PRINTFORMDL Akyuu pouts and complains to you.
+				PRINTFORMDL Eh? Let me know, why's that?
+				PRINTFORML 「What I'm trying to say is... I haven't finished growing yet!!!」
+				PRINTFORMDL Akyuu struggles while complaining.
+		ENDSELECT
+		PRINTFORMW
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML
+				PRINTFORML 「%CALLNAME:MASTER%-san, you pervert...」
+				PRINTFORMDL Why would you say that? You ask as you smell Akyuu's scent.
+			CASE 1
+				PRINTFORML
+				PRINTFORML 「Eh? What's that?... You want to pat my head?」
+				PRINTFORMDL Akyuu enjoys the warmth of your hands combing through her hair.
+				PRINTFORML 「Yes... I could get used to this.」
+			CASE 2
+				PRINTFORML 
+				PRINTFORML 「Nnn————」
+				PRINTFORMDL Akyuu puffs her cheeks in a pout as a sign of refusal to your touch on her body.
+				PRINTFORMDL It's not very effective...
+			CASE 3
+				PRINTFORML 
+				PRINTFORML 「Wah?!」
+				PRINTFORMDL You hug Akyuu from behind and rest your chin on her head.
+				PRINTFORML 「Muu————I don't know why but... this is frustrating...」
+				PRINTFORMDL Helpless, you stroke Akyuu's head. 
+			CASE 4
+				PRINTFORML
+				PRINTFORML 「%CALLNAME:MASTER%-san, your hands are... splendid.」
+				PRINTFORMDL Akyuu's cold hands come into contact with your palms.
+				PRINTFORML 「Yes... it's wonderful... The sensation of your body.」
+		ENDSELECT
+		PRINTFORMW
+	ELSE
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML
+				PRINTFORML 「Please don't touch me like that.」
+				PRINTFORMDL Akyuu weakly resists your skinship.
+				PRINTFORMDL She frowns uncomfortably.
+			CASE 1
+				PRINTFORML
+				PRINTFORML 「Please don't touch me.」
+				PRINTFORMDL Akyuu's hands brushes off your shady advances.
+			CASE 2
+				PRINTFORML
+				PRINTFORML 「%CALLNAME:MASTER%-san... Please stop...」
+				PRINTFORMDL Akyuu makes a small gap between the two of you as she distances herself away.
+		ENDSELECT
+		PRINTFORMW
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;303,謝る
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_303
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_303_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_303_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SELECTCASE TFLAG:193
+	CASE 0,1,2
+		IF TALENT:恋人
+			PRINTFORML 
+			PRINTFORMW 「......」
+			PRINTFORMDW ...Akyuu, can't you forgive me?
+			PRINTFORMW 「Hmm! ...%CALLNAME:MASTER%-san, you idiot!」
+			PRINTFORMDW Akyuu's brows are furrowed into a frown and she turns away from you.
+			PRINTFORMDW I'm sorry, um, that all was my fault.
+			PRINTFORMDW For a while, the two of you were stuck like this.
+			PRINTFORMW 「...Haah————What a bothersome person...」
+			PRINTFORMW 「I won't forgive you if there's a next time.」
+			PRINTFORMDW Akyuu slightly relaxes her expression as she laughs, forgiving you.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 
+			PRINTFORMW 「...%CALLNAME:MASTER%-san... Do you have anything to say to me?」
+			PRINTFORMDW Akyuu seems a little angry.
+			PRINTFORMDW ...Akyuu, I'm really sorry... I won't do it ever again.
+			PRINTFORMW 「I understand... Please raise her head, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW Hearing your sincere apology, Akyuu decides to forgive you.
+			;反省してると言いつつもう一回怒らせるとかすると一気に屑っぽく見えてくるけどね
+		ELSE
+			PRINTFORML 
+			PRINTFORMDW Akyuu-san.
+			PRINTFORMDW Akyuu looks at you prostrating yourself on the ground without batting an eye.
+			PRINTFORMW 「Yes, what is it?」
+			PRINTFORMDW I'm sorry... I shouldn't have done that. Will you forgive me?
+			PRINTFORMW 「...Muu————If this happens again... I won't care anymore.」
+			PRINTFORMDW Akyuu says without any emotion.
+			PRINTFORMDW ...You'll forgive me?
+		ENDIF
+	CASEELSE
+		IF TALENT:恋人
+			PRINTFORML 
+			PRINTFORMW 「Hm!」
+			PRINTFORMDW Akyuu angrily made a noise with her nose.
+			PRINTFORMDW I'm begging you, can't you forgive me?
+			PRINTFORMW 「No...!」
+			PRINTFORMDW Akyuu folds her arms and turns her face away, not even looking at you.
+			PRINTFORMDW You hang your head down out of anxiety.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 
+			PRINTFORMDW Uhm... Akyuu-san... Can you forgive me?
+			PRINTFORMDW An awkward mood is hanging in the air.
+			PRINTFORMDW I did something bad... I've reflected on it...
+			PRINTFORMW 「%CALLNAME:MASTER%-san, this time you went too far.」
+			PRINTFORMW 「You haven't reflected on your actions enough...」
+			PRINTFORMW 「Even if it's my beloved %CALLNAME:MASTER%-san...」
+			PRINTFORMW 「If you do something wrong, you can't make half-hearted conciliations.」
+			PRINTFORMDW So... That's a no?
+			PRINTFORMW 「......No, I can't forgive you yet.」
+		ELSE
+			PRINTFORML 
+			PRINTFORMW 「......」
+			PRINTFORMDW Akyuu's silence is piercing.
+			PRINTFORMDW An awkward atmosphere is hovering between the two of you.
+			PRINTFORMDW Both of you remain silent.
+			PRINTFORMDW After a short time passes, you finally open your mouth.
+			PRINTFORMDW ...Akyuu... I'm sorry.
+			PRINTFORMW 「Did you do something wrong?」
+			PRINTFORMDW Despite saying that, her expression doesn't relax at all.
+			PRINTFORMW 「I'm a complete stranger so, I can't say anything about %CALLNAME:MASTER%-san's behavior.」
+			PRINTFORMDW I'm really sorry... It was my fault. You say as you prostrate yourself.
+			PRINTFORMW 「I am not a special person. Such an exaggerated apology like that is just a bother. Please raise your head, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW Akyuu says, still with an unpleasant expression. It seems she won't forgive you just yet.
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;304,仕事を手伝う
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_304
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_304_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_304_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:80:350 == 43
+		IF TALENT:恋人
+			PRINTFORML 「Ah... %CALLNAME:MASTER%-san.」
+			PRINTFORMDW Holding her brush, Akyuu looks in your direction.
+			PRINTFORMW 「Eh————You'll give me a hand...?」
+			PRINTFORMW 「Then... Can you help me organize the documents over here?」
+			PRINTFORMDW Akyuu says as she points to a mountain of papers.
+			PRINTFORMW 「Thank you very much.」
+			PRINTFORMDW You and Akyuu quickly get to work.
+			RETURN 1
+		ELSEIF TALENT:恋慕
+			PRINTFORML 「%CALLNAME:MASTER%-san, did you come to help me?」 
+			PRINTFORMW 「Thank you so very much.」
+			PRINTFORMW 「Then please transcribe this... Please don't make a mistake, I'll notice it right away.」
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Ara? %CALLNAME:MASTER%-san... Did you need something?」
+			PRINTFORMW 「You want to help?」
+			PRINTFORMW 「I'd appreciate it.」
+			PRINTFORMDW Akyuu shows you a happy smile.
+		ELSE
+			PRINTFORML 
+			PRINTFORMW 「Ah, ————%CALLNAME:MASTER%-san, did you need something?」
+			PRINTFORMW 「Y-You want to help?」
+			PRINTFORMW 「Why yes, please. Thank you very much.」
+			PRINTFORMDW Akyuu assigns you a suitable task to do.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;305,膝枕してもらう
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_305
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_305_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_305_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORML 「Eh? A lap pillow?」
+				PRINTFORML 「I don't mind...」
+				PRINTFORMDL Akyuu straightens her sitting posture and lets you rest your head on her soft thighs.
+				PRINTFORML 「Does it feel good...? Going to sleep like this?」
+				PRINTFORMDL It's as if I'm floating on cloud nine.
+				PRINTFORMDL Akyuu seems a bit embarrassed hearing that.
+				PRINTFORML 「Then that's good...」
+			CASE 1
+				PRINTFORML 
+				PRINTFORML 「Ehh?————A lap pillow?」
+				PRINTFORML 「That's fine...」
+				PRINTFORMDL Akyuu cheerfully accepts your request.
+				PRINTFORMDL You happily lie down on your side. You feel her shyness emanating from her as you place your head on her thighs.
+				PRINTFORML 「Nnn...Ah————」
+				PRINTFORMDL In addition, you also place a hand on her thigh as well.
+				PRINTFORMDL You can sense Akyuu's body temperature as you relax.
+				PRINTFORMDL You feel as if you're in heaven.
+		ENDSELECT
+		PRINTFORMW 
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML
+				PRINTFORML 「A lap pillow————?」
+				PRINTFORML 「...If it's you, %CALLNAME:MASTER%... Then, it's fine.」
+				PRINTFORMDL Slightly blushing, Akyuu sits down and indicates that it's fine for you to lie down now.
+				PRINTFORML 「...How does it feel...?」
+				PRINTFORMDL It's soft and warm... Just like you are, Akyuu.
+				PRINTFORML 「Eh?!————W-What are you saying all of a sudden...」
+				PRINTFORMDL Akyuu firmly places her hands on your mouth and nose as she says that.
+				PRINTFORMDL ...Uuh————...D-Dying...
+				PRINTFORMDL When you admit defeat, Akyuu finally lets go.
+			CASE 1
+				PRINTFORML 
+				PRINTFORML 「Eh? ...A lap pillow for you, %CALLNAME:MASTER%-san...? That's not a bad idea.」
+				PRINTFORML 「That sounds fine. Please come over here...」
+				PRINTFORMDL Akyuu straightens out the wrinkles in her skirt and pats her thighs invitingly.
+				PRINTFORML 「Please don't move around so much... Because————」
+				PRINTFORMDL Akyuu lets out a sharp voice. 
+				PRINTFORMDL You shift and move your head about on her thighs.
+				PRINTFORML 「Really now... It tickles when you move around like that.」
+		ENDSELECT
+		PRINTFORMW 
+	ELSEIF TALENT:思慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORML 「A lap pillow...」
+				PRINTFORMDL Akyuu looks slightly embarrassed.
+				PRINTFORML 「It's a bit embarrassing but...but... that's fine.」
+				PRINTFORMDL Akyuu reseats herself into the proper position and lets you rest your head on her thighs.
+				PRINTFORMDL It's so soft. It feels really... good.
+				PRINTFORML 「That's... Thank you.」
+			CASE 1
+				PRINTFORML 「A lap pillow...」
+				PRINTFORMDL Akyuu is silent for a bit.
+				PRINTFORML 「Ok, that's fine.」
+				PRINTFORMDL Akyuu steals glances at your face as you lie down on her thighs.
+		ENDSELECT
+		PRINTFORMW 
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORMDL Can you give me a lap pillow?
+				PRINTFORML 「Don't make such jokes please.」
+				PRINTFORMDL But your eyes are serious.
+				PRINTFORML 「Eh?————You're being serious?」
+				PRINTFORMDL You nod.
+				PRINTFORML 「Well then... That's fine...」
+				PRINTFORMDL Akyuu gives you a slightly stiff reply.
+			CASE 1
+				PRINTFORMDL Can I ask you to let me use your legs as a pillow, Akyuu?
+				PRINTFORML 「Eh? ...You mean a lap pillow?」
+				PRINTFORMDL After thinking about it to herself, Akyuu accepts.
+				PRINTFORML 「Please don't move too much... It tickles.」
+		ENDSELECT
+		PRINTFORMW 
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;306,お腹を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_306
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_306_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_306_1
+;-------------------------------------------------http://www.transamerica-movie.jp/img/kensin_a1c.jpg
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:時間停止
+	IF TFLAG:193 == -1
+		PRINTFORML 
+		PRINTFORMDL You place your hand on Akyuu's clothes and gently caress her.
+		PRINTFORMDL Akyuu doesn't resist as you stroke her soft stomach.
+	;妊娠中
+	ELSEIF TALENT:TARGET:妊娠
+		IF TFLAG:193 == 1
+			IF TALENT:恋人
+				PRINTFORML 
+				PRINTFORMW 「%CALLNAME:MASTER%-san...」
+				PRINTFORMDW You continue to pat her bulging belly.
+				PRINTFORMW 「Thank you... %CALLNAME:MASTER%-san... I'm very happy.」
+				PRINTFORMDW Akyuu earnestly says.
+				PRINTFORMW 「I love you...」
+			ELSEIF TALENT:恋慕
+				PRINTFORML
+				PRINTFORMW 「%CALLNAME:MASTER%-san...」
+				PRINTFORMDW She smiles embarrassedly.
+				PRINTFORMW 「I understand... The movements are getting... 」
+				PRINTFORMDW Akyuu places her hands on top of yours.
+				PRINTFORMDW The two of you share this quiet moment together.
+			ELSE
+				PRINTFORML
+				PRINTFORMW 「...Ah... %CALLNAME:MASTER%-san...」
+				PRINTFORMDW You gently pat her bulging abdomen.
+				PRINTFORMW 「Ehe...Ehehe...」
+				PRINTFORMDW Akyuu smiles in response to your touch.
+			ENDIF
+		ELSE
+			IF TALENT:恋人
+				PRINTFORML 
+				PRINTFORMW 「Hah... %CALLNAME:MASTER%-san, what are you doing all of a sudden...?」
+				PRINTFORMDW You continue to pat her belly.
+				PRINTFORMW 「...The fruit of our... love.」
+				PRINTFORMW 「I never thought it would end up like this...」
+				PRINTFORMDW Akyuu is lost in thought while in contact with you.
+			ELSEIF TALENT:恋慕
+				PRINTFORML 
+				PRINTFORMW 「Fuuh...」
+				PRINTFORMDW She lets out a long breath as she enjoys the sensation of your touch.
+				PRINTFORMW 「My dear baby... Please grow up to be healthy...」
+				PRINTFORMDW Akyuu says with a gentle voice as she places her hand on yours.
+			ELSE
+				PRINTFORML
+				PRINTFORMW 「You're a kind person, %CALLNAME:MASTER%-san.」
+				PRINTFORMDW Akyuu says as she looks at you.
+				PRINTFORMW 「From now on... We'll be happy together, right? ...Riight?」
+				PRINTFORMDW She looks at you with gentle eyes.
+			ENDIF
+		ENDIF
+	ELSE
+		IF TFLAG:193 == 1
+			IF TALENT:恋人
+				PRINTFORML 
+				PRINTFORMW 「...Fuuh...Nnn————」
+				PRINTFORMDW Akyuu's eyes start drooping from how relaxed she is.
+				PRINTFORMW 「%CALLNAME:MASTER%-san, your hand... It's warm.」
+				PRINTFORMDW While saying that, she strokes your hand with hers.
+				PRINTFORMDW The two of you laugh and share this happy moment together.
+				PRINTFORMDW The radiant light of your love is blinding.
+			ELSEIF TALENT:恋慕
+				PRINTFORML
+				PRINTFORMW 「Unn————Nn...」
+				PRINTFORMW 「You're a nice person, %CALLNAME:MASTER%-san...」
+				PRINTFORMDW Akyuu laughs softly and caresses your hand.
+				PRINTFORMDW Holding hands like this... It's like we're a couple.
+				PRINTFORMW 「...Don't say that out loud... It's embarrassing...」
+				PRINTFORMDW She pouts playfully.
+			ELSEIF TALENT:思慕
+				PRINTFORML
+				PRINTFORMW 「Eh...? %CALLNAME:MASTER%-san... What's this all of a sudden?」
+				PRINTFORMDW Akyuu seems to be confused as you caress her stomach.
+				PRINTFORMW 「Nnn———— ...But... This isn't bad either.」
+				PRINTFORMDW She says as she places her hands on top of yours.
+			ELSE
+				PRINTFORML
+				PRINTFORMW 「————What is it? ...Is there something you're trying to do...?」
+				PRINTFORMDW Akyuu looks at you with a suspicious expression. Fixing her clothes, she brushes your hands away.
+			ENDIF
+		ELSE
+			IF TALENT:恋人
+				PRINTFORML
+				PRINTFORMW 「Nnn————Nn... My stomach...」
+				PRINTFORMDW Akyuu happily accepts your caress as she tries to hold back her voice.
+				PRINTFORMW 「Yaah...」
+				PRINTFORMDW Some cute moans manage to leak out regardless of her efforts.
+				PRINTFORMW 「Nn————%CALLNAME:MASTER%-san, you bully...」
+			ELSEIF TALENT:恋慕
+				PRINTFORML
+				PRINTFORMW 「Eh? My stomach... Please stop... It's embarrassing.」
+				PRINTFORMDW You feel a bit cold, Akyuu.
+				PRINTFORMW 「It can't be helped... Nn————Because... My body is weak after all.」
+				PRINTFORMDW Akyuu answers shyly as she accepts your touch.
+			ELSEIF TALENT:思慕
+				PRINTFORML
+				PRINTFORMW 「Nn... %CALLNAME:MASTER%-san, this isn't... proper.」
+				PRINTFORMDW Straightening her clothes, Akyuu brushes away your hand.
+				PRINTFORMDW But she doesn't seem to be very angry at all.
+				PRINTFORMW
+			ELSE
+				PRINTFORML
+				PRINTFORMW 「What are you doing... all of a sudden?」
+				PRINTFORMDW Confused, Akyuu endures your caress.
+			ENDIF
+		ENDIF
+	ENDIF
+WAIT
+ENDIF
+RETURN 1
+;==================================================
+;307,頬をつまむ
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_307
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_307_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_307_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORML 
+		PRINTFORMDW You pinch Akyuu's cheeks.
+		PRINTFORMDW It's softer than you were expecting...
+		PRINTFORMDW You knead her cheeks to your heart's content.
+	ELSEIF TALENT:恋人
+		PRINTFORML 「Nn————What is it, %CALLNAME:MASTER%-san?」
+		PRINTFORMDW Akyuu's cheeks are being squished by your hands.
+		PRINTFORMW 「Stop it... Are you an idiot?!」
+		PRINTFORMDW It's pretty relaxing to touch your cheeks, Akyuu.
+		PRINTFORMW 「Muu... Don't tease me!」
+		PRINTFORMDW Akyuu starts to pinch your cheeks as well.
+	ELSEIF ABL:親密 > 5
+		PRINTFORML 「————Nn? Uuuh————」
+		PRINTFORMDW You continue to hold her cheeks in your hands.
+		PRINTFORMW 「Muh...hah!」
+		PRINTFORMDW Grabbing onto your torso, Akyuu rubs her elbows into your shoulders.
+		PRINTFORMW 「Thinking of teasing me again? It won't be that easy... Ehehe.」
+		PRINTFORMDW Akyuu looks happy.
+	ELSEIF ABL:従順 >= 5
+		PRINTFORML 「Nn————Nn——————」
+		PRINTFORMDW Akyuu obediently lets your fingers touch all they want.
+		PRINTFORMDW You rub her squishy cheeks.
+		PRINTFORMW 「%CALLNAME:MASTER%-san... Please continue if you'd like...」
+		PRINTFORMDW Placing her head by your chest, Akyuu enjoys your warmth.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「......」
+		PRINTFORMW 「%CALLNAME:MASTER%-san... What are you doing?」
+		PRINTFORMDW Akyuu frowns as she tries to endure her cheeks getting pinched.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;308,頬をつつく
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_308
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_308_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_308_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;309,頭を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_309
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_309_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_309_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:時間停止
+	IF TALENT:恋人
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「......」
+			PRINTFORMDW Fast asleep, Akyuu breathes peacefully.
+			PRINTFORMW 「Ahn...mya... %CALLNAME:MASTER%-san... I love...you.」
+			PRINTFORMDW You gently comb your fingers through her hair covering her face.
+			PRINTFORMDW Not wanting to disturb her peaceful slumber, you continue to caress her head——lulling her into a more tranquil sleep.
+		ELSEIF CFLAG:TARGET:添い寝中
+			PRINTFORML 
+			PRINTFORMW 「Munyaa...Nn————」
+			PRINTFORMDW You gently caress Akyuu's head.
+			PRINTFORMW 「Uun————Ehehe... I love... you...」
+			PRINTFORMDW Her eyes are like a playful kitten, as she enjoys your warmth.
+			PRINTFORMDW And she soon fell into a tranquil sleep.
+		ELSEIF CFLAG:TARGET:デート中
+			PRINTFORML 
+			PRINTFORMW 「Fuah————What is it...? Nn...」
+			PRINTFORMDW Akyuu quietly consents to your movement.
+			PRINTFORMDW You gently stroke Akyuu's head.
+			PRINTFORMW 「...Nnyah————」
+			PRINTFORMDW It seems she's really getting into it.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「Fuuh...Haa————」
+					PRINTFORML 「%CALLNAME:MASTER%-san's warmth... I could stay like this forever.」
+					PRINTFORMDL You're gently caressing Akyuu's head.
+					PRINTFORMDL A happiness filled smile appears on her.
+					PRINTFORMDL Your mind is at ease from seeing that dazzling smile as well.
+				CASE 1
+					PRINTFORML 
+					PRINTFORML 「...Nnn...」
+					PRINTFORMDL Akyuu shows you a bright and peaceful smile.
+					PRINTFORMDL It seems to have come from the bottom of her heart.
+					PRINTFORML 「Don't stop... %CALLNAME:MASTER%-san.」
+					PRINTFORMDL Akyuu says with a small voice.
+					PRINTFORMDL You laugh and continue to stroke her head.
+			ENDSELECT
+			PRINTFORMW 
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「————————」
+			PRINTFORMDW Akyuu is quietly sleeping.
+			PRINTFORMW 「Uhーnn...Ehehe... %CALLNAME:MASTER%-san...」
+			PRINTFORMDW As you caress her head, she lets out some lovely sleep-talking.
+			PRINTFORMDW This really is happiness.
+		ELSEIF CFLAG:TARGET:添い寝中
+			PRINTFORML 
+			PRINTFORMW 「Yes... Please pat my head...」
+			PRINTFORMDW You gently stroke Akyuu's purple hair.
+			PRINTFORMW 「...%CALLNAME:MASTER%-san, your hand... I love it...」
+			PRINTFORMDW With this sense of security, she slowly starts to fall asleep.
+		ELSEIF CFLAG:TARGET:デート中
+			PRINTFORML 
+			PRINTFORMW 「Aah... %CALLNAME:MASTER%-san... All of a sudden...」
+			PRINTFORMDW You stroke Akyuu's head.
+			PRINTFORMW 「Nnn... %CALLNAME:MASTER%-san, your hand is warm. I like it.」
+			PRINTFORMDW Laughing shyly, Akyuu enjoys your warmth.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「... Oh, %CALLNAME:MASTER%-san... Come on...」
+					PRINTFORMDL You pat Akyuu's head like you do for children.
+					PRINTFORML 「If you treat me like a child, you'll regret it...」
+					PRINTFORMDL Despite complaining to you, Akyuu laughs happily.
+					PRINTFORMDL Seeing her reaction, you also start to laugh with her.
+				CASE 1
+					PRINTFORML 
+					PRINTFORML 「Wah... %CALLNAME:MASTER%-san...」
+					PRINTFORMDL You gently caress Akyuu's head.
+					PRINTFORMDL Her young face turning red, the strength in her neck gradually weakens.
+					PRINTFORMDL Akyuu sways back and forth as you continue to pat her head.
+					PRINTFORML 「...Haa...」
+					PRINTFORMDL Her cute eyes are half-closed as the two of you share this pleasurable moment together.
+			ENDSELECT
+			PRINTFORMW
+		ENDIF
+	ELSE
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「————」
+			PRINTFORMDW Akyuu is quietly sleeping.
+			PRINTFORMDW You reach out and rearrange her disheveled hair.
+			PRINTFORMW 「Nn————...Uuーhnn...」
+			PRINTFORMDW Akyuu is letting out small voices.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「...%CALLNAME:MASTER%-san... What are you doing?」
+					PRINTFORMDL Akyuu questions you, seeming a bit embarrassed.
+					PRINTFORML 「Nnn... Please don't do that...」
+					PRINTFORMDL She tries to escape from your bothersome hands.
+				CASE 1
+					PRINTFORML 
+					PRINTFORML 「...Wha... Why are... you stroking my head?」
+					PRINTFORMDL Lowering her head, Akyuu asks you uncomfortably.
+					PRINTFORMDL You continue to gently pat her head.
+					PRINTFORML 「I don't understand... What benefit do you get from this...?」
+					PRINTFORMDL Yet you silently continue to enjoy the sensation of Akyuu's hair.
+			ENDSELECT
+			PRINTFORMW
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;310,尻を撫でる
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_310
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_310_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_310_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORML 
+		PRINTFORMDW You start caressing Akyuu's ass.
+		PRINTFORMDW While not fully mature, it's still exceptionally beautiful.
+		PRINTFORMDW Especially the sensation of her smooth, supple skin.
+		PRINTFORMDW You feel like you're getting addicted to Akyuu's soft butt.
+	ELSEIF TALENT:恋人
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORML 「Iyaa————aah?!...」
+				PRINTFORMDL Akyuu jumps at your sudden movement.
+				PRINTFORML 「Haa...Haa————...Nnn...」
+				PRINTFORMDL However, she quickly gives into your touch and you continue your groping.
+				PRINTFORML 「This much kind of touching... It's not proper... %CALLNAME:MASTER%-san, you pervert!」
+			CASE 1
+				PRINTFORML 
+				PRINTFORML 「Wawa!?... M-My butt...?」
+				PRINTFORMDL You reached inside Akyuu's skirt and started to grope her slender butt.
+				PRINTFORML 「Please... Don't roll up my skirt...」
+				PRINTFORMDL Akyuu's face is bright red as she pins down her skirt.
+				PRINTFORMDL Meanwhile, you continue to satisfy your lust.
+		ENDSELECT
+		PRINTFORMW 
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORML 「Wha...Aah!————My butt... Don't...」
+				PRINTFORMDL Akyuu's body shakes as you touch her to your liking.
+				PRINTFORML 「Stop... Please control yourself!」
+				PRINTFORMDL Though she's showing some resistance, it seems she's not putting much effort into it.
+				PRINTFORMDL You continue groping her to your heart's content.
+			CASE 1
+				PRINTFORML 
+				PRINTFORML 「Ah!? What's this all of a sudden? ...Don't do stuff like this... What would you do if others saw?」
+				PRINTFORMDL Her face bright red, Akyuu tries to brush away the hands groping her butt.
+				PRINTFORML 「Yah?! Idiot! ...You did it again...」
+				PRINTFORMDL Akyuu manages to lightly grab onto your hands and pulls them out of her skirt.
+				PRINTFORMDL That felt pretty great.
+		ENDSELECT
+		PRINTFORMW 
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「...Yah...Nnn...Haah————」
+		PRINTFORMDW Akyuu's face is dyed red as you stroke her small butt.
+		PRINTFORMW 「Don't you think it's time you stop? ...Hyah?!」
+		PRINTFORMDW With Akyuu unintentionally letting out an indecent moan... You stop your groping.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;311,抱き付く
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_311
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_311_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_311_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL In the frozen world,
+		PRINTFORMDW You grab Akyuu's torso and give her a hug.
+		PRINTFORMDW Not being able to show any reaction, she stands there frozen with a smile.
+		PRINTFORMDW She's just like a doll.
+		PRINTFORMDW You continue to hug Akyuu's slender body tightly.
+	ELSEIF TALENT:恋人
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「————————」
+			PRINTFORMDW Akyuu is peacefully sleeping. You can occasionally hear her light breathing.
+			PRINTFORMDW As you embrace her, you can feel her heartbeat.
+			PRINTFORMW 「...Uu—hn...Haah————...%CALLNAME:MASTER%...san...」
+			PRINTFORMDW Akyuu calls out your name in her dream.
+			PRINTFORMDW Smiling, you arrange her messy hair covering her forehead and kiss her there.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「Nn... %CALLNAME:MASTER%-san's chest...」
+					PRINTFORMDL Akyuu embraces you with all of her strength.
+					PRINTFORML 「So warm... How nice would it be if a life like this would last forever...」
+					PRINTFORMDL Getting slightly anxious hearing that, you unconsciously tighten your hug.
+					PRINTFORML 「Uuuh———— ...%CALLNAME:MASTER%-san? ...It hurts.」
+					PRINTFORMDL Ah, sorry... You say as you return to your senses.
+					PRINTFORML 「I'm happy... as long as I have your love, %CALLNAME:MASTER%-san.」
+				CASE 1
+					PRINTFORML 
+					PRINTFORMDL You hug Akyuu from behind.
+					PRINTFORML 「This position... Somehow, it feels very relaxing...」
+					PRINTFORMDL Akyuu closes her eyes and smiles, leaning into your chest.
+					PRINTFORML 「Haah... %CALLNAME:MASTER%-san～%UNICODE(0x2665)%」
+					PRINTFORMDL She happily calls out your name.
+			ENDSELECT
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「————————」
+			PRINTFORMDW Akyuu is sleeping peacefully. Sometimes you are able to hear her quiet breathing.
+			PRINTFORMDW As you hug her, you can sense her heartbeat.
+			PRINTFORMW 「...Uhーhn...Ha————....%CALLNAME:MASTER%...san...」
+			PRINTFORMDW Akyuu calls out your name in her dream.
+			PRINTFORMDW Smiling, you arrange her messy hair covering her forehead and kiss her there.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「...%CALLNAME:MASTER%-san? ...What's the matter?」
+					PRINTFORMDL You hug Akyuu from behind.
+					PRINTFORML 「...What is it?...」
+					PRINTFORMDL She asks.
+					PRINTFORMDL But you didn't say anything, staying silent as you continue to hug her.
+				CASE 1
+					PRINTFORML 
+					PRINTFORML 「...%CALLNAME:MASTER%-san...」
+					PRINTFORMDL You hug Akyuu and place her head near your chest.
+					PRINTFORML 「Please let me... stay like this...」
+					PRINTFORMDL The two of you close your eyes and share in this peaceful moment together.
+			ENDSELECT
+			PRINTFORMW 
+		ENDIF
+	ELSE
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「————————」
+			PRINTFORMDW Akyuu is quietly sleeping.
+			PRINTFORMW 「Uhーhn...Nnn...」
+			PRINTFORMDW As you hug Akyuu, she lets out some sleeping noises.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「Ehh?————%CALLNAME:MASTER%-san... suddenly hugging me like this... What's the matter?」
+					PRINTFORMDL You continue to hug Akyuu.
+					PRINTFORML 「Nnn...」
+					PRINTFORMDL Akyuu tries to push away from you but eventually stops her pointless struggling.
+				CASE 1
+					PRINTFORML 
+					PRINTFORML 「Mouh... Please stop...」
+					PRINTFORMDL Akyuu says in your embrace with a slightly annoyed voice.
+					PRINTFORMDL You reluctantly release her from your hug.
+					PRINTFORMDL Akyuu makes a cautious gap between the two of you.
+			ENDSELECT
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;312,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_312
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_312_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_312_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF EXP:TARGET:キス経験 == 1
+		IF TALENT:恋人
+			PRINTFORMDL You gently hug Akyuu.
+			PRINTFORMDW Though she looks embarrassed, you draw her closer.
+			PRINTFORMW 「Chu～————, nchu...」
+			PRINTFORMDW While embracing each other, the two of you begin kissing.
+			PRINTFORMDW A small tongue invades inside your mouth.
+			PRINTFORMDW You were temporarily stunned but you respond to it positively.
+			PRINTFORMDW You capture her tongue with your lips, letting your tongue run carefully and thoroughly all over hers.
+			PRINTFORMDW Akyuu's mind goes blank from the sensation from her first kiss.
+			PRINTFORMW 
+			PRINTFORMW 「Ehehe... We... kissed...」
+			PRINTFORMDW Akyuu's face is dyed a deep red, her lips still wet from your kiss. The more you look at her, the more alluring she is.
+			PRINTFORMW 「This was my first kiss... I'll never forget it...」
+		ELSEIF TALENT:恋慕
+			PRINTFORML 
+			PRINTFORMDW You gently hug Akyuu.
+			PRINTFORMDW Seemingly knowing what's going to happen next, she closes her eyes.
+			PRINTFORMDW Your lips meet four times.
+			PRINTFORMW 「Chu————...Nnn...Haah...」
+			PRINTFORMDW After a while, your lips part. A line of saliva hanging in between still connects the two of you.
+			PRINTFORMW 「A kiss... That was... my first time.」
+			PRINTFORMW 「Please take good care of me.」
+		ELSEIF TALENT:思慕
+			PRINTFORML 
+			PRINTFORMW 「Nnn?! ...Chu————Uuh! ...Nn, chu～」
+			PRINTFORMDW Agitated, Akyuu tries to push you away, but fails to do so.
+			PRINTFORMDW It seems that her energy is being drained the longer the kiss goes on, until the hands that were pushing at your chest drops down altogether.
+			PRINTFORMDW After a while and a bit reluctantly, you finally release Akyuu.
+			PRINTFORMDW Akyuu's eyes are dim, her cheeks are flushed red. Her tongue is still hanging out while saliva is dripping from the corner of her open mouth.
+			PRINTFORMDW Suddenly returning to her sense, she immediately squirms and escapes from your hold. She made a wide gap between the two of you and shouted at you with a blushing face.
+			PRINTFORMW 「Wh-What are you doing all of a sudden?!」
+			PRINTFORMDW Akyuu is pointing at you.
+			PRINTFORMDW You don't really know how to answer her.
+		ELSE
+			PRINTFORML
+			PRINTFORMW 「Nnn?! ...Chu————Nnー!」
+			PRINTFORMDW Plap!!!
+			PRINTFORMDW A loud noise resounds from the side of your face.
+			PRINTFORMW 「...」
+			PRINTFORMDW Akyuu scowls, looking at you as if she was looking at something disgusting.
+			PRINTFORMDW You forcibly stole Akyuu's kiss.
+			PRINTFORMDW S-Sorry...
+			PRINTFORMW 「......」
+			PRINTFORMDW Akyuu tries to hold in her anger and is quietly shedding tears. She looks at you with a scornful glance.
+			BASE:怒り += 10000
+			BASE:MASTER:体力 -= 500
+			RETURN 1
+		ENDIF
+	ELSEIF FLAG:時間停止
+		PRINTFORML 
+		PRINTFORMDL You kiss the time-frozen Akyuu.
+		PRINTFORMDW Her warm sensation, her smooth tongue, her sweet saliva.
+		PRINTFORMDW You experience all of those with no restraint.
+		PRINTFORMDW You continue to kiss Akyuu to your heart's content in this still world.
+	ELSEIF TALENT:恋人
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「————————」
+			PRINTFORMW 「Chuu……」
+			PRINTFORMDW You kiss the fast asleep Akyuu.
+			PRINTFORMW 「Fufu... Ehehe... %CALLNAME:MASTER%-san... I love you.」
+			PRINTFORMDW She cutely mumbles in her sleep.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「Nnn————Chu...kuchu...nku...Haah————」
+					PRINTFORML 「Fua...haah, Haah, ahh...Chu————」
+					PRINTFORMDL You and Akyuu passionately kiss.
+					PRINTFORMDL When your lips part, a strand of saliva makes a silver thread between the two of you.
+					PRINTFORMDL Her face blushing, Akyuu breathes heavily out of her small, open mouth. Tears are formed in the corners of her eyes.
+					PRINTFORMDL Why are you crying?
+					PRINTFORML 「...I feel... like I'm... melting...」
+					PRINTFORMDL Laughing at that, you continue to attack Akyuu's pink tongue in an instant.
+					PRINTFORML 「Nnnn...chu, nchuu...Haah————Uuh...」
+				CASE 1
+					PRINTFORML 
+					PRINTFORML 「Chu...Haah————Nn...nnn...chuu!」
+					PRINTFORMDL You passionately kiss Akyuu.
+					PRINTFORMDL The two of you taste each other's saliva to your heart's content.
+					PRINTFORML 「Haaaah... Yes, more... Nn————Chuu...」
+					PRINTFORMDL Akyuu is immersed in the pleasure of kissing.
+			ENDSELECT
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「————————」
+			PRINTFORMW 「Chuu……」
+			PRINTFORMDW You kiss the fast asleep Akyuu.
+			PRINTFORMW 「Fufu... Ehehe... %CALLNAME:MASTER%-san... I love you.」
+			PRINTFORMDW She cutely mumbles in her sleep.
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「Nnn————Chuu...nchu...nku...Puah————」
+					PRINTFORMDL Akyuu breathes out heavily.
+					PRINTFORMDL Her blushing face, seemingly out of breath looks erotic.
+					PRINTFORML 「I might get... addicted..... More...」
+					PRINTFORML 「Fuwa...haah, haah, haah...chuu————」
+				CASE 1
+					PRINTFORML 
+					PRINTFORML 「Chuu...Nnn...Puah...Chuu...nkuu!」
+					PRINTFORMDL You kiss Akyuu.
+					PRINTFORML 「Amazing... This sensation...」
+					PRINTFORMDL Akyuu's face is completely red. She is drowning in the sensation of the kiss.
+				CASE 2
+					PRINTFORML 
+					PRINTFORML 「Chuu...Nnn...Chuu...nku...puaah!」
+					PRINTFORMDL Akyuu's body starts to get hotter and hotter.
+					PRINTFORML 「%CALLNAME:MASTER%-san... amazing... More...」
+					PRINTFORML 「Nnmu————Chuu...」
+			ENDSELECT
+			PRINTFORMW 
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「————」
+			PRINTFORMDW Akyuu is sleeping gracefully.
+			PRINTFORMDW Chuu～. You kiss the sound asleep Akyuu.
+			PRINTFORMDW You invade her wet mouth with your tongue and lap at her saliva.
+			PRINTFORMW 「Chuu...Nnn～ %CALLNAME:MASTER%-san...」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「Nnn...Chuu～Nnn!————」
+					PRINTFORMDL As a result of your attack, Akyuu shows a lively reaction.
+					PRINTFORMDL Your tongue engaged Akyuu's young mouth several times.
+					;PRINTFORML まるで博奕を打っているみたいだな……%CALLNAME:MASTER%は心の裏で思った。
+				CASE 1
+					PRINTFORML 
+					PRINTFORML 「Nnn?!————Nnmu! Chu～」
+					PRINTFORMDL Akyuu can't move because her body is being held down by you.
+					PRINTFORMDL She can't do anything except feeling your tongue ravishing her.
+					PRINTFORML 「%CALLNAME:MASTER%...san... Stop... This is...chuu～」
+			ENDSELECT
+			PRINTFORMW 
+		ENDIF
+	ELSE
+		IF CFLAG:TARGET:睡眠
+			PRINTFORML 
+			PRINTFORMW 「————」
+			PRINTFORMDW You kiss Akyuu.
+			PRINTFORMW 「Nn...nnu...」
+			PRINTFORMDW Akyuu moves slightly but she is still sound asleep.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 
+					PRINTFORML 「Nn?!————Please sto-...Aah...Chuu...No!」
+					PRINTFORMDL Ow ow ow! You push Akyuu away.
+					PRINTFORML 「%CALLNAME:MASTER%-san, what are you doing all of a sudden...?」
+					PRINTFORMDL Akyuu's face is red anger and shame.
+				CASE 1
+					PRINTFORML 
+					PRINTFORML 「Nnn?!————Haah...Chu, chuu～...Nnmu...」
+					PRINTFORMDL You overpower and hold down Akyuu's body.
+					PRINTFORMDL Only being able to stay still, she can only accept your violation.
+					PRINTFORMDL Tears are flowing down from both her eyes.
+			ENDSELECT
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;313,胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_313
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_313_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_313_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORML 
+		PRINTFORMDW You start to caress Akyuu's chest.
+		PRINTFORMDW In this still world, she can't feel anything yet. She can only endure it silently.
+		PRINTFORMDW Her breasts are soft to the touch but they haven't developed much in size.
+		PRINTFORMDW I'll help them grow... You think to yourself.
+	ELSEIF CFLAG:睡眠
+		PRINTFORML 
+		PRINTFORMW 「Nn～、Nn～、Nnn～... Haah————」
+		PRINTFORMDW Akyuu is letting her cute moans leak out.
+		PRINTFORMDW You continue to stimulate her breasts.
+		PRINTFORMDW Her nipples are slowly becoming erect. Seeing that, you quicken your stimulation.
+		RETURN 1
+	;感覚の数値を参照します。素質による分岐は特に无
+	ELSEIF ABL:Ｂ感覚 > 4
+		PRINTFORML 
+		PRINTFORMW 「Wah?!————It feels good...Nnn...Haah...!」
+		PRINTFORMDW It seems her chest's sensitivity has become completely developed...
+		PRINTFORMW 「%CALLNAME:MASTER%-san... Please continue... It feels very good... Ah...!」
+		PRINTFORMDW Akyuu entrusts herself to your lustful touch.
+	ELSEIF ABL:Ｂ感覚 > 2
+		PRINTFORML 
+		PRINTFORMW 「...Nnn...Haah...Hnn...」
+		PRINTFORMDW It seems Akyuu's chest has become more sensitive...
+		PRINTFORMW 「Good... More... Ah!——————」
+		PRINTFORMDW Akyuu looks at you with eyes full of desire.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「Don't... Ah!————」
+		PRINTFORMDW You grope Akyuu's small chest.
+		PRINTFORMW 「%CALLNAME:MASTER%-san... You pervert...」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;314,アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_314
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_314_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_314_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORML 
+		PRINTFORMDW You approach Akyuu from behind and start to gently play with her asshole.
+		PRINTFORMDW Akyuu is frozen in time, unable to do anything at all.
+		PRINTFORMDW While she won't experience any shame or resentment, the pleasure she feels will remain with her.
+		PRINTFORMDW You imagine her expression after you resume time and you get more and more excited.
+		PRINTFORMDW You caress all around her tight butt.
+	ELSEIF CFLAG:睡眠
+		PRINTFORMW
+		PRINTFORMW 「————————」
+		PRINTFORMDW Akyuu breathes evenly and seems to be sleeping very well.
+		PRINTFORMDW You reach out and begin to play with her ass.
+		PRINTFORMW 「Nn————Ah...」
+		PRINTFORMDW You slowly stimulate and caress her tight hole.
+		PRINTFORMW 「Ah... Hah————」
+		PRINTFORMDW Akyuu lets out a small moan as you insert the tip of your finger inside.
+		RETURN 1
+	;感覚の数値を参照します。
+	ELSEIF TALENT:恋慕
+		IF ABL:Ａ感覚 > 4
+			PRINTFORML 
+			PRINTFORMW 「Nnn～ Ahh————Hah, Hnn...」
+			PRINTFORMDW Akyuu's eyes start to moisten and tear up.
+			PRINTFORMDW Your bold fingers easily slide into her developed asshole.
+			PRINTFORMW 「Yah?!————It went inside————! It feels good... More...!」
+			PRINTFORMDW It seems Akyuu's ass has become very sensitive.
+		ELSEIF ABL:Ａ感覚 > 2
+			PRINTFORML 
+			PRINTFORMW 「Nnn～, Aah————My body's going to become weird...」
+			PRINTFORMDW Akyuu's body shakes and twist as you gently use your fingers to play with her.
+			PRINTFORMDW Seeing her in such a state, you slightly push your fingers inside her ass.
+			PRINTFORMW 「Aaah?!————Yah! ...Nnn————」
+			PRINTFORMDW She places her hand over her mouth to stifle her moans.
+			PRINTFORMW 「W-What are you doing all of a sudden?」
+		ELSE
+			PRINTFORML 
+			PRINTFORMW 「...Nnn...Aah————」
+			PRINTFORMDW Akyuu seems to have not gotten used to this feeling yet.
+			PRINTFORMDW Her body shakes in response to the movements of your fingers.
+			PRINTFORMW 「...%CALLNAME:MASTER%-san... This feels... weird...」
+			PRINTFORMDW You'll get used to it, you assure the embarrassed Akyuu.
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF ABL:Ａ感覚 > 4
+			PRINTFORML 
+			PRINTFORMW 「...Don't...Nnn————」
+			PRINTFORMDW Akyuu's body trembles, as if she can't stand a strong stimulus like this.
+			PRINTFORMW 「My body is getting...Ahh————」
+			PRINTFORMDW You keep constantly teasing her ass.
+			PRINTFORMW 「...It's your fault my...」
+		ELSEIF ABL:Ａ感覚 > 2
+			PRINTFORML 
+			PRINTFORMW 「Ahh!————Nnn, hah...」
+			PRINTFORMDW It looks like you're craving more of my touch, whisper into Akyuu's ears.
+			PRINTFORMW 「...You're a pervert, %CALLNAME:MASTER%-sa—Huah?!」
+			PRINTFORMDW You press your fingers into her waiting, warm rectum.
+			PRINTFORMDW Your fingers move in and out, stretching and rubbing her insides.
+			PRINTFORMDW Akyuu's leg shudders. It's almost impossible for her to stand.
+		ELSE
+			PRINTFORML 
+			PRINTFORMW 「Haah?!————」
+			PRINTFORMW 「My... My rear...」
+			PRINTFORMDW Akyuu sways, trying to get rid of the discomfort.
+			PRINTFORMW 「I feel so strange... Hnn...」
+		ENDIF
+	ELSE
+		IF ABL:Ａ感覚 > 4
+			PRINTFORML 
+			PRINTFORMW 「...Nn, hah...」
+			PRINTFORMDW A torrent of pleasure coming from her ass is washing over her.
+			PRINTFORMW 「I'm going to... become weird...」
+			PRINTFORMW 「You're... A pervert, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW Akyuu looks at you, slightly angry. But in those angry eyes contain a small sliver of expectation.
+		ELSEIF ABL:Ａ感覚 > 2
+			PRINTFORML 
+			PRINTFORMW 「…………」
+			PRINTFORMDW Akyuu patiently endures your finger's violation.
+			PRINTFORMDW If you relax, I promise you that you'll feel even better.
+			PRINTFORMW 「...Pervert! ...Ahh————haa...」
+			PRINTFORMDW Akyuu shakes and moves in accordance with your finger's movement inside her anus.
+		ELSE
+			PRINTFORML 
+			PRINTFORMW 「…………」
+			PRINTFORMDW Akyuu patiently endures your fingers caressing her anus.
+			PRINTFORMW 「…………」
+			PRINTFORMDW All of a sudden, she looks disgustedly at you.
+			PRINTFORMW 「Hiih?!————It's... going inside?!」
+			PRINTFORMDW You gently press your finger into her hole, stimulating her inner walls.
+		ENDIF
+	ENDIF	
+ENDIF
+RETURN 1
+;==================================================
+;315,クリ愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_315
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_315_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_315_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORML 
+		PRINTFORMDW You reach out and start to play with the portrusion above Akyuu's slit.
+		PRINTFORMDW Although time is stopped, her hole starts to leak clear liquids because of the attack on her clit.
+		PRINTFORMDW Gently pinching it, rubbing it back and forth,
+		PRINTFORMDW You can feel slight shaking coming from her body.
+	ELSEIF CFLAG:睡眠
+		RETURN 1
+	;感覚の数値を参照します。
+	ELSEIF ABL:Ｃ感覚 > 4
+		PRINTFORML 
+		PRINTFORMW 「Hah?!————Aah!... It's too... intense!」
+		PRINTFORMDW Akyuu's body bends, trying hard to endure the wave of intense pleasure.
+		PRINTFORMW 「Ah! Nn, haah!————I'm going... to break!」
+		PRINTFORMDW Stunned by the pleasure crashing over her, she seems completely immersed in it and unable to recover.
+	ELSEIF ABL:Ｃ感覚 > 2
+		PRINTFORML 
+		PRINTFORMW 「...Ah, hah————D-Don't!」
+		PRINTFORMDW Akyuu tries to stop your movements by pinning down your hands.
+		PRINTFORMDW But this doesn't completely stop you from playing with her clit.
+		PRINTFORMDW She tries to escape but ends up giving in to the pleasure.
+		PRINTFORMW 「Nn, ah...Nnn, nn...Aaaah!」
+		PRINTFORMDW You further develop her sensitivity.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「...I think it's almost, Ahh?!————Nnn!————」
+		PRINTFORMDW Akyuu's sentence is interrupted with her surprised moans as you attack her clit.
+		PRINTFORMW 「This is... so... embarrassing... but it feels... very good...!」
+		PRINTFORMDW Looks like there's still room for further development of her clit's sensitivty.
+		PRINTFORMDW You think to yourself as you continue to rub her clitoris.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;316,指挿入れ ;the entire fingering section is weird and has a bunch of small variations for some reason
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_316
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_316_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_316_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+SIF FLAG:70 == 1
+RETURN 1
+
+SIF CFLAG:TARGET:睡眠
+RETURN 1
+
+IF LOCAL
+	SELECTCASE TCVAR:20
+	CASE 35
+		IF TALENT:TARGET:70 == -1
+			IF TALENT:TARGET:処女
+				PRINTFORML
+				PRINTFORMW 「Ah!」
+				PRINTFORMDW Akyuu holds your hands in place, your fingers looking to invade her vagina.
+				PRINTFORMW 「I'll let you touch it... Just please don't do anything reckless.」
+				PRINTFORMDW Her face is a bright red.
+				PRINTFORMW 「I'm still a virgin, so... Please keep that in mind.」
+			ELSE
+				PRINTFORML 「%CALLNAME:MASTER%-san... Just a quick touch then...」
+			ENDIF
+		ELSE
+			PRINTFORML
+			PRINTFORMW 「You're going to mess my outfit... You really are a pervert, %CALLNAME:MASTER%-san.」
+			PRINTFORMW 「Yaah?!————I... I can't stand like this...」
+		ENDIF 
+	CASE 70
+		IF TALENT:TARGET:70 == -1
+			IF TALENT:TARGET:処女
+				PRINTFORML
+				PRINTFORMW 「Hah... Don't!」
+				PRINTFORMW 「Just... Nnn...」
+				PRINTFORMW 「... Your fingers aren't allowed inside.」
+			ELSE
+				PRINTFORML
+				PRINTFORMW 「Uhnn————」
+				PRINTFORMW 「一Your fingers... are stimulating inside...」
+				PRINTFORMW 「I'm melting————」
+			ENDIF
+		ELSE
+			PRINTFORML 「%CALLNAME:MASTER%-san... You're very gentle.」
+			PRINTFORMW 「Your fingers are...」
+			PRINTFORMW 「If you continue... I'll start to get excited...」
+		ENDIF
+	CASEELSE
+		IF CFLAG:うふふ == 2
+			IF TALENT:70 == -1
+				IF TALENT:TARGET:処女
+					PRINTFORML 「Hah!...」
+					PRINTFORMW 「Not there...」
+				ELSE
+					IF ABL:Ｖ感覚 <= 1
+						IF PALAM:1 < 3000
+							PRINTFORML 「Nnn... It tickles a little.」
+							PRINTFORMW 「But... please continue.」
+						ELSE
+							PRINTFORML 「This is embarrassing...」
+							PRINTFORMW 「I'm being touched down there...」
+						ENDIF
+					ELSE
+						IF PALAM:9 <= PALAMLV:1
+							PRINTFORML 「Ahh————」
+							PRINTFORMW 「%CALLNAME:MASTER%-san, you're being too rough.」
+						ELSEIF PALAM:9 <= PALAMLV:3
+							PRINTFORML 「...Haah...Nnn...」
+							PRINTFORMW 「Slower, slower...」
+						ELSE
+							PRINTFORML 「I'm already this wet...」
+							PRINTFORMW 「Your fingers have gotten drenched...」
+						ENDIF
+					ENDIF
+				ENDIF
+			ENDIF
+		ELSE
+			IF TALENT:恋人 || TALENT:恋慕
+				IF TALENT:15 == 1 && SOURCE:反感 * 3 * (2000 - BASE:ムード) * (500 + BASE:理性) / ((2000 + BASE:ムード) * (500 + MAXBASE:理性)) >=300
+					DRAWLINE
+					PRINTFORMD You put your hands into Akyuu's skirt, and move your fingers to in between her legs.
+					SIF CFLAG:291 == 0
+						PRINTFORML Moving aside her underwear, 
+					PRINTFORMDL You start fingering her small hole.
+					PRINTFORMDL Because of this sudden attack, Akyuu lets out a loud moan and starts to yell at you...
+					PRINTFORMW 
+					IF TALENT:TARGET:処女
+						PRINTFORML
+						PRINTFORMW 「Hah... Nn... Don't... go all the way...」
+					ELSE
+						PRINTFORML 「Ahh...Stop!」
+						PRINTFORML 「If you're going to do this... Then at least properly get me excited... Or else it'll hurt...」
+					ENDIF
+				ELSEIF TALENT:15 == -1 && SOURCE:反感 * 3 * (2000 - BASE:ムード) * (500 + BASE:理性) / ((2000 + BASE:ムード) * (500 + MAXBASE:理性)) >=140
+					DRAWLINE
+					PRINTFORMD You put your hands into Akyuu's skirt, and move your fingers to in between her legs.
+					SIF CFLAG:291 == 0
+						PRINTFORMD Moving aside her underwear, 
+					PRINTFORMDL You start fingering her small hole.
+					PRINTFORMDL Because of this sudden attack, Akyuu lets out a loud moan and starts to yell at you...
+					PRINTFORMW 
+					IF TALENT:TARGET:処女
+						PRINTFORML 「What are you doing...?!」
+						PRINTFORMW 「Hah... Nn... Don't... go all the way...」
+					ELSE
+						PRINTFORML 「Ahh...Stop!」
+						PRINTFORML 「If you're going to do this... Then at least properly get me excited... Or else it'll hurt...」
+					ENDIF
+				ELSEIF SOURCE:反感 * 3 * (2000 - BASE:ムード) * (500 + BASE:理性) / ((2000 + BASE:ムード) * (500 + MAXBASE:理性)) >=200
+					DRAWLINE
+					PRINTFORMD You put your hands into Akyuu's skirt, and move your fingers to in between her legs.
+					SIF CFLAG:291 == 0
+						PRINTFORMD Moving aside her underwear, 
+					PRINTFORMDL You start fingering her small hole.
+					PRINTFORMDL Because of this sudden attack, Akyuu lets out a loud moan and starts to yell at you...
+					PRINTFORMW 
+					IF TALENT:TARGET:処女
+						PRINTFORML 「What are you doing...?!」
+						PRINTFORMW 「Hah... Nn... Don't... go all the way...」
+					ELSE
+						PRINTFORML 「Ahh...Stop!」
+						PRINTFORML 「If you're going to do this... Then at least properly get me excited... Or else it'll hurt...」
+					ENDIF
+				ELSE
+					SELECTCASE PALAM:3
+					CASE 0 TO 2000
+						DRAWLINE
+						PRINTFORMD You put your hands into Akyuu's skirt, and move your fingers to in between her legs.
+						SIF CFLAG:291 == 0
+							PRINTFORMD Moving aside her underwear, 
+						PRINTFORML You start fingering her exposed slit.
+						IF TALENT:TARGET:処女
+							PRINTFORMDL Akyuu's body stiffens with a jolt, she tries holding down your hands.
+						ELSE
+							PRINTFORMDL Akyuu can feel your fingers inside of her.
+						ENDIF
+						PRINTFORMW 
+						IF TALENT:TARGET:処女
+							PRINTFORML 「%CALLNAME:MASTER%-san... No, not there...」
+							PRINTFORMW 「I'm... not ready yet...」
+						ELSE
+							PRINTFORML 「Hnn.....Haah......」
+							IF TALENT:TARGET:快感応答 == -1
+								PRINTFORMW 「S-Sure, keep going... It doesn't hurt...」
+							ELSE
+								PRINTFORML 「Yes, I'm fine...」
+								PRINTFORMW 「Nnnh...」
+							ENDIF
+						ENDIF
+					CASE 2001 TO 7000
+						DRAWLINE
+						PRINTFORMD You put your hands into Akyuu's skirt, and move your fingers to in between her legs.
+						SIF CFLAG:291 == 0
+							PRINTFORMD Moving aside her underwear, 
+						PRINTFORML You start fingering her small hole.
+						IF TALENT:TARGET:70 == -1
+							PRINTFORMDL Akyuu's body lightly trembles...
+						ELSE
+							PRINTFORMDL Akyuu's breathing is constant, her body doesn't shake at all...
+						ENDIF
+						PRINTFORMW 
+						IF TALENT:TARGET:70 == -1
+							PRINTFORML 「Nnnh...Yaah————」
+							PRINTFORMW 「Haah...Hih...」
+						ELSE
+							PRINTFORML 「Ah...Aah...%CALLNAME:MASTER%-san...」
+							PRINTFORMW 「Can you... do it a bit harder...」
+						ENDIF
+					CASEELSE
+						DRAWLINE
+						PRINTFORMD You put your hands into Akyuu's skirt, and move your fingers to in between her legs.
+						SIF CFLAG:291 == 0
+							PRINTFORMD Moving aside her underwear, 
+						PRINTFORMDL You start fingering her small hole.
+						IF TALENT:TARGET:70 == -1
+							PRINTFORMDL Akyuu grabs onto you and shuts her eyes tight.
+						ELSE
+							PRINTFORMDL The pleasure becoming unbearable for Akyuu, you grab her waist and intensify your attack.
+						ENDIF
+						PRINTFORMW 
+						IF TALENT:TARGET:70 == -1
+							PRINTFORML 「Nna, aahn... %CALLNAME:MASTER%-san... More gently...」
+							PRINTFORMW 「Hold me please... Aah...Nnh....」
+						ELSE
+							PRINTFORML 「%CALLNAME:MASTER%-san... I want more than just your finger... Your other thing...」
+							PRINTFORMW 「Aaah————hh! %CALLNAME:MASTER%-san!」
+						ENDIF
+					ENDSELECT
+				ENDIF
+			ELSE
+				DRAWLINE
+				IF TALENT:15 == 1 && SOURCE:反感 * 3 * (2000 - BASE:ムード) * (500 + BASE:理性) / ((2000 + BASE:ムード) * (500 + MAXBASE:理性)) >=1500
+					PRINTFORMDL You try sliding your fingers inside Akyuu's hole but she catches your hands.
+					PRINTFORMDL Akyuu stares at you tearfully.
+					PRINTFORMW 
+					PRINTFORML 「That was a really bold move, %CALLNAME:MASTER%-san...」
+					PRINTFORMW 「Just... this one time...」
+					PRINTFORMDW Akyuu whispers with a red face.
+				ELSEIF TALENT:15 == -1 && SOURCE:反感 * 3 * (2000 - BASE:ムード) * (500 + BASE:理性) / ((2000 + BASE:ムード) * (500 + MAXBASE:理性)) >=670
+					PRINTFORMDL You try sliding your fingers inside Akyuu's hole but she catches your hands.
+					PRINTFORMDL Akyuu stares at you tearfully.
+					PRINTFORMW 
+					PRINTFORML 「That was a really bold move, %CALLNAME:MASTER%-san...」
+					PRINTFORMW 「...This isn't proper...」
+					PRINTFORMDW Akyuu whispers with a red face.
+				ELSEIF SOURCE:反感 * 3 * (2000 - BASE:ムード) * (500 + BASE:理性) / ((2000 + BASE:ムード) * (500 + MAXBASE:理性)) >=1000
+					PRINTFORMDL You try sliding your fingers inside Akyuu's hole but she catches your hands.
+					PRINTFORMDL Akyuu stares at you tearfully.
+					PRINTFORMW 
+					PRINTFORML 「That was a really bold move, %CALLNAME:MASTER%-san...」
+					PRINTFORMW 「...Don't do it again...」
+				ELSEIF TALENT:15 == 1 && SOURCE:反感 * 3 * (2000 - BASE:ムード) * (500 + BASE:理性) / ((2000 + BASE:ムード) * (500 + MAXBASE:理性)) >=320
+					PRINTFORMDL You try sliding your fingers inside Akyuu's hole but she catches your hands.
+					PRINTFORMDL Akyuu stares at you tearfully.
+					PRINTFORMW 
+					PRINTFORML 「Where were you planning on touching me?」
+					PRINTFORMW 「I can't believe it.」
+				ELSEIF TALENT:15 == -1 && SOURCE:反感 * 3 * (2000 - BASE:ムード) * (500 + BASE:理性) / ((2000 + BASE:ムード) * (500 + MAXBASE:理性)) >=150
+					PRINTFORMDL You try sliding your fingers inside Akyuu's hole but she catches your hands.
+					PRINTFORMDL Akyuu stares at you disdainfully.
+					PRINTFORMW 
+					PRINTFORML 「Where were you planning on touching me?」
+					PRINTFORMW 「Please don't do something so bothersome.」
+				ELSEIF SOURCE:反感 * 3 * (2000 - BASE:ムード) * (500 + BASE:理性) / ((2000 + BASE:ムード) * (500 + MAXBASE:理性)) >=220
+					PRINTFORMDL You try sliding your fingers inside Akyuu's hole but she catches your hands.
+					PRINTFORMDL Akyuu stares at you disdainfully.
+					PRINTFORMW 
+					PRINTFORML 「Where were you planning on touching me?」
+					PRINTFORMW 「Please don't do something so bothersome.」
+				ELSE
+					DRAWLINE
+					PRINTFORMD You put your hands into Akyuu's skirt, and move your fingers to in between her legs.
+					SIF CFLAG:291 == 0
+						PRINTFORM Moving aside her underwear, 
+					PRINTFORMDL You gently insert your finger into her privates.
+					PRINTFORMDL Akyuu's body begins to shake.
+					PRINTFORMW 
+					PRINTFORML 「No... %CALLNAME:MASTER%-san, don't do this... Don't...」
+					PRINTFORMW 「Please... Please take your finger out!」
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;317,Ｖ腰を振る
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_317
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_317_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_317_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF ABL:Ｖ感覚 > 5
+		PRINTFORML 
+		PRINTFORMW 「Haa..nnn, aah... Deeper...Nnn, ah!～ Yes... There...there————!」
+		PRINTFORMDW Moving her hips against you, your penis invades the deepest part of Akyuu.
+		PRINTFORMW 「Ah, ahh, a little harder... %CALLNAME:MASTER%-san... Please, a little harder...」
+		PRINTFORMDW Akyuu's womb is constantly getting stimulated by you. Her waist begins to twitch uncontrollably.
+		PRINTFORMDW Every deep thrust inside of her leaves an unforgetable mark on her memories.
+		PRINTFORMDW The pleasure from the movements between your bodies have already been etched into her soul.
+	ELSEIF ABL:Ｖ感覚 > 2
+		PRINTFORML 
+		PRINTFORMW 「Haa...Nnn～」
+		PRINTFORMDW Moving her hips against you, your penis invades the deepest part of Akyuu.
+		PRINTFORMDW She struggles to hold back her moans.
+		PRINTFORMW 「Uhnn, ahh!～ Haah...yaah...」
+		PRINTFORMDW Akyuu starts twisting her soft waist, instinctively looking for the most pleasurable position.
+		PRINTFORMDW At this point, she is constantly moaning.
+		PRINTFORMDW Though she's still unwilling to ask for it directly,
+		PRINTFORMDW You will develop her sensitivity and make her accept the pleasure.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「Hnn...naah～...haah...」
+		PRINTFORMDW Akyuu moves her hips back against yours a steady rhythm.
+		PRINTFORMDW Though, she still seems nervous.
+		PRINTFORMW 「%CALLNAME:MASTER%-san... Does this... feel good?」
+		PRINTFORMDW She asks cautiously.
+		PRINTFORMDW Seeing her cute expression, you feel determined to make Akyuu feel even better.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;318,Ａ腰を振る
+;==================================================
+;@M_KOJO_MESSAGE_COM_K80_318
+;CALL TRAIN_MESSAGE
+;CALL M_KOJO_MESSAGE_COM_K80_318_1
+;RETURN RESULT
+
+;@M_KOJO_MESSAGE_COM_K80_318_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+;LOCAL = 1
+;-------------------------------------------------
+;IF LOCAL
+	IF ABL:Ａ感覚 > 5
+		PRINTFORML 
+		PRINTFORMW 「Nnaah!————My butt, feels good... I'm so ashamed————」
+		PRINTFORMW 「But... it's feels really good...Aaah!!...」
+		PRINTFORMDW Whenever she moves against your penis, her waist twitches erratically.
+		PRINTFORMDW She seems to be feeling a lot of pleasure.
+		PRINTFORMW 「...There, haah, so good————I still... want more...」
+		PRINTFORMDW Akyuu instinctively moves her hips to get a stronger stimulation.
+	ELSEIF ABL:Ａ感覚 > 2
+		PRINTFORML 
+		PRINTFORMW 「Hnn... My butt... So shameful...yaah, nnn...」
+		PRINTFORMDW Your penis reaches into the Akyuu's depths.
+		PRINTFORMDW She seems to be breathing wildly.
+		PRINTFORMDW You also try to stimulate her womb from the inside of her anus.
+		PRINTFORMW 「My butt... I'm going to... become weird...」
+		PRINTFORMDW Akyuu twists her waist, feeling good from this unusual pleasure.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「Nnnha...%CALLNAME:MASTER%-san... A little gentler...hah?!」
+		PRINTFORMDW Your penis throbs inside Akyuu.
+		PRINTFORMDW You also start stimulated her anus, trying to make it more enjoyable for her.
+		PRINTFORMW 「Hah... It's getting a little easier...Aah———」
+		PRINTFORMDW Akyuu tries to relax her asshole to fully accept your length.
+	ENDIF
+;ENDIF
+;RETURN 1
+;==================================================
+;330,スカートめくり
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_330
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_330_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_330_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORML 
+		PRINTFORMDW You flip open Akyuu's skirt.
+		PRINTFORMDW Of course, she shows no reaction.
+		IF TCVAR:80:350 == 0
+			PRINTFORMDW For a while, you stare at her tempting little holes.
+		ELSE
+			PRINTFORMDW For a while, you stare at her enticing panties.
+		ENDIF
+		PRINTFORMDW After growing bored,
+		PRINTFORMDW You put down and rearrange her skirt.
+	ELSEIF ABL:露出癖 > 3
+		PRINTFORML 
+		PRINTFORMW 「Well if you want to see it...!」
+		PRINTFORMDW Akyuu looks at you and shakes her head slightly.
+		PRINTFORMDW Her hands pinching the sides of her skirt, she flips it open,
+		IF TCVAR:80:350 == 0
+			PRINTFORMDW Exposing her lower-half to you.
+		ELSE
+			PRINTFORMDW Revealing her underwear.
+		ENDIF
+		PRINTFORMDW And on a closer look...
+		PRINTFORMDW Akyuu doesn't seem embarrassed at all.
+		PRINTFORMDW On the contrary, she seems excited.
+	ELSEIF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「Ah?!————What are you doing...? %CALLNAME:MASTER%-san wants to see...?」
+		PRINTFORMDW You step forward and gently lift up her skirt,
+		IF TCVAR:80:350 == 0
+			PRINTFORMDW Exposing her lower-half to you.
+			PRINTFORMW 「I...I don't enjoy exposing myself!」
+			PRINTFORMW 「It's just...」
+			PRINTFORMDW Akyuu is completely red in the face, incoherently defending herself.
+		ELSE
+			PRINTFORMDW Revealing her tidy underwear.
+			PRINTFORMW 「D...Don't laugh...」
+			PRINTFORMDW Completely red in the face, Akyuu keeps this position, looking elsewhere.
+			PRINTFORMW 「Oh... That's enough!」
+		ENDIF
+		PRINTFORMDW Akyuu rearranges her skirt.
+	ELSE
+		SELECTCASE CFLAG:2
+			CASE IS < 100
+				PRINTFORML 
+				PRINTFORMDW Slap!
+				PRINTFORMDW A rapidly reddening hand-shaped print appears on your face.
+				PRINTFORMW 「Disgusting!」
+				PRINTFORMDW Akyuu looks at you indignantly.
+			CASE 100 TO 1000
+				PRINTFORML 
+				PRINTFORMDW Akyuu slaps away your hand reaching out for her skirt.
+				PRINTFORMW 「Does it hurt...? It'll hurt more the next time.」
+				PRINTFORMDW She tries to show off her nonexistant strength.
+				PRINTFORMW 「Please stop attempting such a thing... okay?」
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;331,お茶を淹れる（薬入り）
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_331
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_331_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_331_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;350,押し倒す（時姦時イタズラする
+;TFLAG:194 (0=成功 1=人目がある　2=野外は嫌でござりまする　3=多人数プレイは勘弁　4=合意があっても情绪が足りぬ）
+;TCVAR:初次拥抱　1=普通に合意ゲット　2=先にキスぐらいしろよ　3=媚薬or発情には勝てなかったよお…　4=悔しい…刻印さえなければﾋﾞｸﾋﾞｸﾝ
+;5=強引に迫られると断れぬ(素質胆小持ち専用) 6=まんざらでもない　7=駄目　8=論外
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_350
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_350_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_350_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;351,連れ出す
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_351
+;連れ出しにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K80_351_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_351_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && CFLAG:同行 == 60
+	IF TALENT:恋人
+		SELECTCASE RAND:2
+			CASE 0 
+				PRINTFORML 
+				PRINTFORMDL Akyuu... Can you come with me?
+				PRINTFORML 「Hmm...」
+				PRINTFORMDL Akyuu smiles happily and starts to follow you.
+			CASE 1
+				PRINTFORML 
+				PRINTFORMDL Akyuu, come with me.
+				PRINTFORML 「Mm... Ok. Where do you want to take me, %CALLNAME:MASTER%-san?」
+				PRINTFORMDL She holds your hand.
+		ENDSELECT
+		PRINTFORMW 
+	ELSEIF TALENT:恋慕
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORMDL Akyuu, can you come with me?
+				PRINTFORML 「Well... I wouldn't want to be rude.」
+				PRINTFORMDL She moves closer to you, grabbing your hand.
+			CASE 1
+				PRINTFORML 
+				PRINTFORMDL You grab one of Akyuu's hands.
+				PRINTFORML 「Hm? ...You want to go for a walk?」
+				PRINTFORMDL She looks at you and smiles.
+				PRINTFORML 「That's fine... Be sure to protect me.」
+		ENDSELECT
+		PRINTFORMW 
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 
+				PRINTFORMDL Akyuu, can you come with me?
+				PRINTFORML 「...Is something the matter, %CALLNAME:MASTER%-san?」
+				PRINTFORMDL I want... to take you for a walk.
+				PRINTFORML 「...Um... I understand.」
+				PRINTFORMDL She starts following you.
+			CASE 1
+				PRINTFORML 
+				PRINTFORMDL Akyuu... Can you come with me?
+				PRINTFORML 「Hm? ...Um, I understand.」
+				PRINTFORMDL She does as she's asked and starts to follow you.
+				PRINTFORML
+		ENDSELECT
+		PRINTFORMW 
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;352,告白する
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_352
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_352_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_352_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193
+		PRINTFORMW 「――――――」
+		PRINTFORMW
+		PRINTFORML 
+		PRINTFORMDW ————Wait a moment, Akyuu.
+		PRINTFORMW 「...What is it, %CALLNAME:MASTER%-san?」
+		PRINTFORMDW ...I have something to ask you...
+		PRINTFORMW 「I'll gladly answer, if I can..」
+		PRINTFORMDW Akyuu smiles.
+		PRINTFORMDW You dig deep inside for courage.
+		PRINTFORMDW Akyuu-san...
+		PRINTFORM 「......」 
+		PRINTFORMDW She listens carefully.
+		PRINTFORMDW I fell in love from the moment I met you...
+		PRINTFORMDW Please... Please accept my love!
+		PRINTFORMDW You bow your head, not daring to look at her.
+		PRINTFORM 「...」
+		PRINTFORMDW Akyuu stares at you quietly.
+		PRINTFORMDW She tries to speak a few times but she doesn't know how to reply.
+		PRINTFORMDW Akyuu is initially surprised and delighted by your confession,
+		PRINTFORMDW But her heart is full of sorrow.
+		PRINTFORML
+		PRINTFORMW 「...I'm...sorry.」
+		PRINTFORMDW Akyuu's eyes are filling with tears, her voice trembling.
+		PRINTFORMW 「...I'm so sorry, %CALLNAME:MASTER%-san...」
+		PRINTFORMDW She turns away from you, not wanting you to see her tears.
+		PRINTFORMW 「%CALLNAME:MASTER%-san, you've lived in Gensokyo for a while now... Do you want to hear about the fate of the Children of Miare?」
+		PRINTFORMW 「It's... impossible for me to acquire the same love as a normal person.」
+		PRINTFORMDW You slowly straighten out of your bow.
+		PRINTFORMW 「...So... please... give up... on me... It's for your own good.」
+		PRINTFORML
+		PRINTFORMDW I refuse!
+		PRINTFORMDW You suddenly hug her from behind.
+		PRINTFORMW 「...Ah?! ...Please... let me go.」
+		PRINTFORMDW Akyuu struggles weakly but you can already hear her crying.
+		PRINTFORMDW You continue to silently hold her like this.
+		PRINTFORMW 「30 years old...」
+		PRINTFORMW 「That's the limit to my lifespan.」
+		PRINTFORMDW I know this already.
+		PRINTFORMDW Akyuu stops struggling.
+		PRINTFORMW 「...Even knowing, you still... Are you an idiot?」
+		PRINTFORMDW You stay silent, continuing to hold her in your embrace.
+		PRINTFORMW 「It will be painful... After ten years, I will be forced to leave you alone in this world...」
+		PRINTFORML
+		PRINTFORM 「...So...」 
+		PRINTFORMDW Akyuu places her small hand on yours.
+		PRINTFORML
+		PRINTFORMW 「Please give up on me... For your own sake...」
+		PRINTFORMDW Hot tears slide down Akyuu's cheeks, dripping onto your arms.
+		PRINTFORML
+		PRINTFORMDW You stand there, listening to her quietly... You can sense that her heart is hurting.
+		PRINTFORMDW After a long time, you finally start to speak.
+		PRINTFORMDW If you would let me, I will gladly shoulder any of your burdens.
+		PRINTFORMDW Love is like that, isn't it? To bask in each other's happiness; to experience the other's hardships; to share each other's pain.
+		PRINTFORMDW If I couldn't do that, you can't even call it love.
+		PRINTFORMW
+		PRINTFORMDW Akyuu turns and buries her head into your chest, crying softly.
+		PRINTFORMDW You gently lift her chin up, looking directly into her face.
+		PRINTFORMDW No matter what happens in the future, let's face it together.
+		PRINTFORMDW After saying that, you kiss Akyuu's soft lips.
+		PRINTFORMW 「Nnn————chu...」
+		PRINTFORMDW After a short moment of shock, Akyuu throws her arms around your neck for a powerful hug.
+		PRINTFORML
+		PRINTFORMW 『Thank you... Thank you so much...』
+		PRINTFORMW 『In this life, I'm so glad I was able to meet you, %CALLNAME:MASTER%-san... Really... I'm so happy...』
+		PRINTFORMW
+		;プレイヤーの妄想を阻害不ために一人称をあえて使ってなかったというのはないしょ
+	ELSE
+		PRINTFORML 
+		PRINTFORMDW ...Akyuu-san.
+		PRINTFORMW 「What is it? And you're so serious all of a sudden.」
+		PRINTFORMDW Akyuu looks and smiles at you.
+		PRINTFORML 『(You have... to say it.)』
+		PRINTFORML 『(From the bottom of your heart...)』
+		PRINTFORMDW ...Ah, it's nothing. Nevermind...
+		PRINTFORMW 「You seem to be really worried about something... Are you sure it's nothing?」
+		PRINTFORMDW ...It's fine, really...
+		PRINTFORML 「Well, ok then...」
+		PRINTFORMDW Akyuu replies with a gentle smile.
+		PRINTFORMDW You feel a pain tearing through your heart.
+		PRINTFORMW 『(Why...? Why couldn't I find the courage...?!)』
+			IF TALENT:恋慕
+				PRINTFORMDW Preoccupied with being upset and blaming yourself,
+				PRINTFORMDW You don't notice the sad look Akyuu's face.
+			
+			ELSE
+				PRINTFORMDW You firmly clench your fist.
+				PRINTFORMDW You're determined to be more proactive next time.
+			ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;353,イタズラする
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_353
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_353_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_353_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+PRINTFORML 
+PRINTFORMW 「————————」
+PRINTFORMDW Akyuu is fast asleep.
+PRINTFORMDW It doesn't look like she'll wake up anytime soon.
+PRINTFORMDW You snicker to yourself and slowly approach her.
+ENDIF
+RETURN 1
+;==================================================
+;354,添い寝する（相手は起きて布団に招く感じ）開始側
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_354
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_354_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_354_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「Um... That is...」
+		PRINTFORMDW Akyuu seems a little embarrassed.
+		PRINTFORMW 「Can we... sleep together?」
+		PRINTFORMDW You lie down next to Akyuu, holding her in your arms.
+		PRINTFORMW 「...Good night...」
+		PRINTFORMDW Akyuu smiles, closes her eyes, and falls asleep.
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「...%CALLNAME:MASTER%-san... Can we sleep together?」
+		PRINTFORMDW Akyuu whispers while yawning.
+		PRINTFORMW 「Why...? Because...」
+		PRINTFORMDW Akyuu's cheeks turns a deep red.
+		PRINTFORMW 「%CALLNAME:MASTER%-san's embrace... is very reassuring...」
+		PRINTFORMDW You agree to her request.
+	ELSEIF TALENT:思慕
+		PRINTFORML 
+		PRINTFORMW 「...%CALLNAME:MASTER%-san?」
+		PRINTFORMDW What is it? You say as you get ready to leave to sleep.
+		PRINTFORMW 「Can we... sleep together?」
+		PRINTFORMDW You agree to her request.
+		PRINTFORMW 「But first let me say... Don't do anything weird!」
+		PRINTFORMDW Lying down next to you, Akyuu soon falls asleep.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「...%CALLNAME:MASTER%-san... I...」
+		PRINTFORMDW Blushing heavily, Akyuu is holding her pillow up to her chest.
+		PRINTFORMW 「...I'm a little scared so... Can we... sleep together?」
+		PRINTFORMDW Feeling like this a rare occasion, you agree to her request.
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+;==================================================
+;355,時止め（地の文の改変程度に留めるべき
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_355
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_355_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_355_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;360,任凭摆布
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_360
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_360_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_360_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;363,朗读（[幼稚]持ち）
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_363
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_363_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_363_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;364,撒豆子(萃香、勇儀、スカーレット姉妹用
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_364
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_364_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_364_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;365,往守矢神社移動(早苗、神奈子、諏訪子用
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_365
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_365_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_365_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;402,就寝（添い寝時）
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_402
+;就寝にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K80_402_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_402_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「Fuua————ah————」
+		PRINTFORMDW Akyuu is sound asleep.
+		PRINTFORMDW You smile and hold Akyuu in your arms.
+		PRINTFORMDW You sense her steady breathing and smell her body's light fragrance.
+		PRINTFORMDW Eventually, you also quietly fall asleep.
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「————————」
+		PRINTFORMDW You listen to Akyuu's steady breathing.
+		PRINTFORMDW Eventually, your body also has an urgent need to sleep.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「…………」
+		PRINTFORMDW You listen to Akyuu's weak breathing.
+		PRINTFORMDW Very quietly, 
+		PRINTFORMDW You lie down in front of Akyuu to guard her as you sleep.
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+;==================================================
+;403,休憩
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_403
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_403_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_403_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		IF RAND:3 == 0
+			PRINTFORML 
+			PRINTFORML 「Are you tired, %CALLNAME:MASTER%-san?」
+			PRINTFORMDL Closing your eyes, Akyuu seems to be worried about you.
+			PRINTFORML 「It's okay... We can take a break.」
+			PRINTFORMDL Akyuu gently leans on your shoulder and the two of you enjoy this moment of peace.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 
+			PRINTFORML 「Do you want to rest?」
+			PRINTFORMDL Akyuu notices that you're slightly tired and asks you.
+			PRINTFORMDL Sure, let's take a break.
+			PRINTFORMDL You say as you pull her into an embrace.
+			PRINTFORML 「Ah?! Hnn————%CALLNAME:MASTER%-san, you bully.」
+		ELSE
+			PRINTFORML 
+			PRINTFORML 「Are you resting...? Do you feel tired?」
+			PRINTFORMDL Akyuu seems to want to be held.
+			PRINTFORMDL You take note of that and wrap your arms around her waist.
+			PRINTFORML 「Gensokyo sure is peaceful recently...」
+			PRINTFORMDL Akyuu says with a relaxed sigh.
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:3 == 0
+			PRINTFORML 
+			PRINTFORML 「%CALLNAME:MASTER%-san? Are you tired...?」
+			PRINTFORMDL Akyuu gentle pulls on your cheeks.
+			PRINTFORMDL Don't make a fuss...
+			PRINTFORMDL In response, you use both of your hands to grab her cheeks.
+			PRINTFORML 「Wah... %CALLNAME:MASTER%-san, you bully...」
+			PRINTFORMDL For a while, the two of you play with each other.
+			PRINTFORML 「...It really is peaceful... The two of us...」
+			PRINTFORMDW Akyuu breathes out relaxedly, and starts leaning on you.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 
+			PRINTFORML 「%CALLNAME:MASTER%-san, are you meditating?」
+			PRINTFORMDL Akyuu asks a strange question.
+			PRINTFORMDL No, just taking a break.
+			PRINTFORML 「Hmm, that's not a bad idea.」
+			PRINTFORMW 
+		ELSE
+			PRINTFORML 
+			PRINTFORML 「%CALLNAME:MASTER%-san... Are you okay?」
+			PRINTFORMDL Akyuu notices you resting and asks you. 
+			PRINTFORML 「What's the matter? Tired?」
+			PRINTFORMDL It's nothing, just taking a small break.
+			PRINTFORMDL Through your half-closed eyes, you can see her beautiful eyes looking at you worriedly.
+			PRINTFORMDW Eh... You worry too much.
+			PRINTFORMDW You say, turning to the side, hiding your blushing face.
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:2 == 0
+			PRINTFORML 
+			PRINTFORML 「Are you resting?」
+			PRINTFORMDL Akyuu asks with a smile.
+			PRINTFORML 「If you're tired, you should take a nap.」
+			PRINTFORMDL She says as she sits down next to you.
+		ELSE
+			PRINTFORML 
+			PRINTFORML 「%CALLNAME:MASTER%-san?」
+			PRINTFORMDL You return to your senses.
+			PRINTFORML 「Did I wake you up?」
+			PRINTFORMDL Akyuu smiles lightly and sits down next to you.
+			PRINTFORMDL It was only for just a moment.
+			PRINTFORMW 「So, what do you want to do next, %CALLNAME:MASTER%-san?」
+			PRINTFORMDW She looks at you happily.
+		ENDIF
+	ELSE
+		IF RAND:2 == 0
+			PRINTFORML 
+			PRINTFORML 「...%CALLNAME:MASTER%-san, are you resting?」
+			PRINTFORMDL Akyuu asks you while standing by your side.
+			PRINTFORML 「It's still too early to go to bed, you shouldn't fall asleep like that...」
+			PRINTFORMDL She says, lecturing you.
+			PRINTFORMDW You close your eyes and take a short rest anyways.
+		ELSE
+			PRINTFORML 
+			PRINTFORML 「...%CALLNAME:MASTER%-san, are you resting?」
+			PRINTFORMDL Akyuu sees you with your eyes closed.
+			PRINTFORMDL You tell her that you're taking a short break.
+			PRINTFORMDL Also that you're wondering what to do next.
+			;if I'm understanding the chinese correctly, this seems a bit out of character and inconsistent.
+			;PRINTFORML 「色色的事么？」
+			;PRINTFORMW 阿求调笑似的问道
+			;PRINTFORMW 怎么会，我才不是用下体思考的人好吧……
+			;PRINTFORMW %CALLNAME:MASTER%笑着和阿求说着话。
+		ENDIF
+	ENDIF
+WAIT
+ENDIF
+RETURN 1
+;==================================================
+;405,外出(同行時デートに外出
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_405
+;外出にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K80_405_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_405_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SIF FLAG:時間停止 ;fix
+		RETURN 0
+	;デート
+	IF CFLAG:TARGET:同行
+		IF TALENT:恋人
+			PRINTFORML
+			PRINTFORMDW Akyuu... Will you please go on an outing with me?
+			PRINTFORMW 「Well, well... Where does %CALLNAME:MASTER%-san want to take me?」
+			PRINTFORMDW Akyuu happily wraps her hands around your arms.			
+		ELSEIF TALENT:恋慕
+			PRINTFORML 
+			PRINTFORMDW Akyuu... Will you go on a date with me?
+			PRINTFORMW 「A date...? Since it's you, %CALLNAME:MASTER%-san... I'll go with you.」
+			PRINTFORMDW Her face is red as she moves next to you.
+			PRINTFORMDW You hold her hand as the two of you walk away together.
+		ELSEIF TALENT:思慕
+			PRINTFORML 
+			PRINTFORMDW Akyuu, staying at home all the time isn't good for your health. 
+			PRINTFORMDW I'm going to take you for a walk.
+			PRINTFORMW 「...Thank you for worrying about me.」
+			PRINTFORMDW Akyuu moves next to you.
+			PRINTFORMDW The two of you go out together.
+		ELSE
+			PRINTFORML 
+			PRINTFORMDW Akyuu-san... Would you accompany me on a trip?
+			PRINTFORMW 「Hm...? Why me?」
+			PRINTFORMDW I'm just thinking that it wouldn't be very relaxing going out for a walk by myself.
+			PRINTFORMW 「...Well, okay.」
+			PRINTFORMDW With that matter resolved, Akyuu follows you outside.
+		ENDIF
+	ELSE
+		IF TALENT:恋人
+			PRINTFORML 
+			PRINTFORMDW Akyuu, I'm leaving now.
+			PRINTFORMDW You kiss her and turn away to leave.
+			PRINTFORMW 「Ah... Okay, I'll see you later...」
+			PRINTFORMDW She stands and watches you walk away.
+			PRINTFORMDW You start thinking about what to do next.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 
+			PRINTFORMDW Later Akyuu, I'm going out for a trip.
+			PRINTFORMW 「Ah... Be careful out there.」
+			PRINTFORMDW I'll stay safe.
+			PRINTFORMDW You tell her as she watches you leave.
+		ELSEIF TALENT:思慕
+			PRINTFORML 
+			PRINTFORMDW I'm going out for a bit, Akyuu.
+			PRINTFORMW 「Okay... Stay safe.」
+			PRINTFORMDW She seems slightly worried.
+			PRINTFORMDW I will... There should be no problems.
+			PRINTFORMDW You smile at her and take your leave.
+		ELSE
+			PRINTFORML 
+			PRINTFORMDW I'm going to leave now, Akyuu.
+			PRINTFORMW 「Take care, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW Thank you.
+			PRINTFORMDW You take your leave.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;410,掃除
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_410
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_410_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_410_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORML 
+		PRINTFORMDW You start sweeping in the frozen time-space.
+		PRINTFORMDW Thinking that this is extremely efficient,
+		PRINTFORMDW You energetically clean the area.
+		PRINTFORMDW This will provide a much better environment for Akyuu.
+	ELSEIF CFLAG:TARGET:睡眠
+		PRINTFORML 
+		PRINTFORMDW Akyuu is sleeping soundly.
+		PRINTFORMDW You clean as much as possible making the least amount of noise that you can.
+		PRINTFORMDW A warm feeling rises in you while watching her sleeping face.
+	ELSE
+		PRINTFORMW
+		PRINTFORMW 「Are you going to clean? You don't have to bother yourself, %CALLNAME:MASTER%-san.」
+		PRINTFORMDW It's no bother at all, I'll be glad to.
+		PRINTFORMW 「Ah, then please and thank you.」
+		PRINTFORMDW Akyuu watches over you as you clean.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;411,戦闘訓練
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_411
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_411_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_411_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;412,学习
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_412
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_412_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_412_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && !FLAG:70 
+	SIF CFLAG:睡眠
+		RETURN 0
+	;初回
+	IF FIRSTTIME(412)
+		PRINTFORML 「Are you studying, %CALLNAME:MASTER%-san?」
+		PRINTFORMDW Akyuu notices you stting at a table.
+		PRINTFORMW 「I didn't expect %CALLNAME:MASTER%-san to have such a serious side...」
+		PRINTFORMDW Just what kind of person do you think I am?
+		PRINTFORMDW You ask her.
+		PRINTFORML 「Hehe...」
+		PRINTFORMDW Akyuu laughs.
+		PRINTFORML 「Let me help you.」
+		PRINTFORMW 「If there's one advantage to my abilities, it's this...」
+	ELSEIF CFLAG:80:1230 != DAY
+		IF FIRSTTIME(CFLAG:80:1230)
+			PRINTFORML
+			PRINTFORMW 「That's correct...」
+			PRINTFORMW 「I'll test you every day to check on your progress, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW I hope it won't be too hard...
+			PRINTFORMDW You think to yourself, a little scared to say it aloud.
+			PRINTFORMW 「Do your best!」
+			PRINTFORMDW Akyuu declares energetically.
+		ELSE
+			IF ABL:MASTER:教養 >= ABL:TARGET:教養
+				SELECTCASE RAND:3
+					;教養の基準なんて知りません、ごめんなさい
+					CASE 2
+						PRINTFORML 
+						PRINTFORML 「...%CALLNAME:MASTER%-san, what are you studying?」
+						PRINTFORMDL Ah... Just learning about astrophysics.
+						PRINTFORMDL Even though this kind of knowledge is useless in Gensokyo...
+						PRINTFORML 「Can you... teach me?」
+						PRINTFORMDL Akyuu curiously asks you.
+						PRINTFORMDL Of course.
+						CFLAG:80:1230 = DAY
+					CASE 1
+						PRINTFORML 「You really are knowledgeable, %CALLNAME:MASTER%-san.」 
+						PRINTFORMDL Thank you for the compliment.
+						PRINTFORMDL You humbly say to her.
+						CFLAG:80:1230 = DAY
+					CASE 0
+						PRINTFORML 「What are you doing, %CALLNAME:MASTER%-san?」
+						PRINTFORMDL I'm studying something called microphysics. It's very interesting.
+						PRINTFORML 「Ah... Can you... teach me?」
+						CFLAG:80:1230 = DAY
+				ENDSELECT
+			ELSE
+				PRINTFORML 「So, let's begin today's test...」
+				SELECTCASE RAND:50
+					CASE 49
+						PRINTFORML 
+						PRINTFORMW 
+						PRINTFORMW
+						PRINTFORMW
+						PRINTFORMW
+						PRINTFORMW
+						PRINTFORMW
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ELSE
+		IF TALENT:恋人
+			PRINTFORML 
+			PRINTFORMW 「Ah... Are you still studying, %CALLNAME:MASTER%-san?」
+			PRINTFORMDW Akyuu moves behind you and places her chin on your shoulders to see what you're studying.
+			PRINTFORMDW Gensokyo sure is peaceful lately...
+			PRINTFORMDW She breathes out a relaxed sigh in agreement.
+		ELSEIF TALENT:恋慕
+			PRINTFORML 
+			PRINTFORMW 「%CALLNAME:MASTER%-san... Are you still studying?」
+			PRINTFORMDW Akyuu looks at the book in your hand.
+			PRINTFORMDW Do you want to read it together?
+			PRINTFORMDW You invite her.
+			PRINTFORMW 「Please don't mind if I do.」
+		ELSE
+			PRINTFORML 
+			PRINTFORMW 「Are you studying, %CALLNAME:MASTER%-san?」
+			PRINTFORMDW Yes, I want to increase my knowledge.
+			PRINTFORMW 「You don't often hear that...」
+			PRINTFORMDW Akyuu sits down and studies with you.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;413,料理
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_413
+;料理にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K80_413_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_413_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SIF FLAG:時間停止 || CFLAG:睡眠
+		RETURN 0
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「Hm...? Are you cooking something %CALLNAME:MASTER%-san?」
+		PRINTFORMDW Akyuu looks at the kitchenware in your hands.
+		PRINTFORMDW Yes, I am.
+		PRINTFORMDW You answer her casually and she moves to your side.
+		PRINTFORMW 「Do you mind if I watch? I think I should hone more cooking skills for the future.」
+		PRINTFORMDW Thinking about the future, Akyuu has a determined look.
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「————%CALLNAME:MASTER%-san? What are you cooking?」
+		PRINTFORMDW Something from the outside world. You should like it, Akyuu.
+		PRINTFORMW 「Hmm, I'm looking forward to it.」
+		PRINTFORMDW Akyuu is happy to hear that you're cooking for her.
+		PRINTFORMDW She stands by your side and watches you cook.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「Are you cooking, %CALLNAME:MASTER%-san?」
+		PRINTFORMDW Akyuu asks you as you prepare to cook.
+		PRINTFORMDW Do you want something specific to eat?
+		PRINTFORMDW You ask her for her preference.
+		PRINTFORMW 「%STR:(3000 + FLAG:20)% would be great...」
+ 		PRINTFORMDW Hearing her answer, you start to move your hands.
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+;==================================================
+;414,吃饭
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_414
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_414_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_414_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMDW Akyuu, do you want to eat together?
+		PRINTFORMW 「Of course, %CALLNAME:MASTER%-san.」
+		PRINTFORMDW Akyuu sits at a table with you.
+		PRINTFORMW 「Thank you for the food...」
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMDW Do you want to eat together, Akyuu?
+		PRINTFORMDW You ask her.
+		PRINTFORMW 「...R-Really? Well then... Don't mind if I do.」
+		PRINTFORMDW Akyuu sits down a table with you.
+	ELSE
+		PRINTFORML 
+		PRINTFORMDW Akyuu-san, would you like to eat together?
+		PRINTFORMDW You invite her.
+		PRINTFORMW 「...Did you make this?」
+		PRINTFORMDW Well, yeah.
+		PRINTFORMW 「...You went to a lot of trouble.」
+		PRINTFORMDW It was no trouble at all.
+		PRINTFORMDW You eat together with Akyuu.
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+;==================================================
+;415,招待吃饭
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_415
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_415_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_415_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMDW Akyuu, say "Aaah"————
+		PRINTFORMW 「Aaah————」
+		PRINTFORMDW She opens her mouth.
+		PRINTFORMW 「————」
+		PRINTFORMDW Is it good?
+		PRINTFORMW 「Yes, very good. Thank you.」
+		PRINTFORMDW Akyuu smiles in gratitude.
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		PRINTFORML  
+		PRINTFORMDW I finished making something to eat. Do you want to try some of it?
+		PRINTFORMDW You ask Akyuu.
+		PRINTFORMW 「You'll let me eat it...? Thank you...」
+		PRINTFORMDW Akyuu blushes and thanks you.
+		RETURN 1
+	ELSE
+		PRINTFORML 
+		PRINTFORMDW Akyuu seems to smell something good.
+		PRINTFORMW 「...Something smells delicious.」
+		PRINTFORMDW Do you want some?
+		PRINTFORMW 「Really?」
+		PRINTFORMDW You can hear Akyuu swallow in anticipation.
+		PRINTFORMDW Of course.
+		PRINTFORMW 「Thank you.」
+		PRINTFORMDW Akyuu blushes and thanks you.
+	ENDIF
+	RETURN 1
+ENDIF
+RETURN 1
+;==================================================
+;416,演奏(凍結中？
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_416
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_416_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_416_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;417,午睡をする
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_417
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_417_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_417_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMW 「...%CALLNAME:MASTER%-san, good morning.」
+		PRINTFORMDW Akyuu greets you.
+		PRINTFORMDW Good morning, you reply to her.
+		PRINTFORMW 「Fuaah————...That was a good sleep... What do you want to do today?」
+		PRINTFORMDW She asks about your schedule.
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW 「Nnn... Good morning, %CALLNAME:MASTER%-san.」
+		PRINTFORMDW Akyuu greets you.
+		PRINTFORMW 「Well... What do you want to do today?」
+		PRINTFORMDW She asks you, slightly blushing.
+	ELSE
+		PRINTFORML 
+		PRINTFORMW 「Good morning...」
+		PRINTFORMDW Akyuu politely greets you.
+		PRINTFORMDW Good morning Akyuu.
+		PRINTFORMW 「It's the start of a new day...」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;421,祈愿する
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_421
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_421_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_421_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMDW Clap, clap.
+		PRINTFORMDW A clapping sound comes from you.
+		PRINTFORMDW After a second set of claps ring out, Akyuu moves to your side.
+		PRINTFORMDW What kind of wish did you make?
+		PRINTFORMW 「Hehe... It's a secret.」
+		PRINTFORMDW Akyuu says while smiling at you.
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMDW Clap, clap.
+		PRINTFORMDW A clapping sound rings out.
+		PRINTFORMDW What kind of wish did you make, Akyuu?
+		PRINTFORMW 「Mm————That's not... important.」
+		PRINTFORMDW Akyuu says, slightly panicked.
+	ELSE
+		PRINTFORML 
+		PRINTFORMDW You and Akyuu finish praying.
+		PRINTFORMDW What did you wish for? You ask her.
+		PRINTFORMW 「Well... I hope my body's health can improve.」
+		PRINTFORMDW Your wish is very realistic.
+		PRINTFORMDW You'll definitely be fine.
+		PRINTFORMW 「Thank you.」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;431,在浴室里放松
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_431
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_431_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_431_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;440,等待
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_440
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_440_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_440_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;441,听课(慧音専用？
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_441
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_441_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_441_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;442,採伐
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_442
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_442_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_442_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;デート系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+[SKIPSTART]
+;現状未実装
+;==================================================
+;600,デート会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_600
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_600_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_600_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;601,デート身体接触
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_601
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_601_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_601_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;602,デートキス
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_602
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_602_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_602_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;603,牵手
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_603
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_603_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_603_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193 == 1
+		IF TALENT:恋慕
+			PRINTFORML 
+			PRINTFORMW 「…………」
+			PRINTFORMDW Akyuu tries to build up courage several times to hold your hand.
+			PRINTFORMDW Finally, she gathers enough bravery to grab your hand.
+			PRINTFORMDW It's a bit of a surprise to you, but not an unwelcome one.
+			PRINTFORMDW You wrap your hands around hers and continue walking.
+		ELSE
+			PRINTFORML 
+			PRINTFORMW 「...Nn...Hehe..」
+			PRINTFORMDW Akyuu laughs happily.
+			PRINTFORMDW You gently hold her hands.
+			PRINTFORMDW Do you like this feeling?
+			PRINTFORMW 「Yes, very much. I feel safe with you, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW While feeling the warmth of your hands, Akyuu says that with a smile.
+		ENDIF
+	ELSEIF TFLAG:193 == -1
+		IF TALENT:思慕
+			PRINTFORML 
+			PRINTFORMW 「%CALLNAME:MASTER%-san?」
+			PRINTFORMDW Akyuu is slightly surprised that you grabbed her hand.
+			PRINTFORMDW I'm sorry for the sudden touch.
+			PRINTFORMDW You say though you have no intentions of letting go.
+			PRINTFORMW 「......」
+			PRINTFORMDW Akyuu quietly follows you, a warm smile on her face.
+		ELSE
+			PRINTFORML
+			PRINTFORMW 「...Ah...? %CALLNAME:MASTER%-san's... hand is...」
+			PRINTFORMDW Akyuu notices you holding her hand.
+			PRINTFORMDW A blush starts to show on her cheeks.
+			PRINTFORMW 「You're holding my hands...?」
+			PRINTFORMDW She asks you shyly.
+		ENDIF
+	ELSE
+		IF TALENT:恋人
+			PRINTFORML
+			PRINTFORMW 「%CALLNAME:MASTER%-san, will you hold my hand?」
+			PRINTFORMDW You nod and clasp her hand in yours.
+			PRINTFORMW 「Hehe...」
+			PRINTFORMDW Akyuu happily stays by your side.
+		ELSEIF TALENT:恋慕
+			PRINTFORML
+			PRINTFORMW 「Ah... Your hand is...?」
+			PRINTFORMDW You hold the shy Akyuu's hand in yours.
+			PRINTFORMW 「...Thank you very much.」
+			PRINTFORMDW She holds her blushing face down and stays by your side.
+		ELSEIF TALENT:思慕
+			PRINTFORML 
+			PRINTFORMW 「Would you like to... hold hands?」
+			PRINTFORMDW Akyuu looks at you and stretches out her hand.
+			PRINTFORMDW That's a good idea. You're not that good at watching the road, so this way you won't fall.
+			PRINTFORMW 「Ah... Thank you, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW You grab her small hand.
+		ELSE
+			PRINTFORML
+			PRINTFORMW 「Hm...?」
+			PRINTFORMDW Akyuu is a bit surprised seeing you stretching out your hand.
+			PRINTFORMW 「Do you want to... hold hands?」
+			PRINTFORMDW You're too embarrassed to say much.
+			PRINTFORMDW So you don't slip and fall, you say to her.
+			PRINTFORMW 「Thank you for your consideration, %CALLNAME:MASTER%-san.」
+			PRINTFORMDW Akyuu smiles and holds your hand.
+		ENDIF
+	ENDIF
+WAIT
+ENDIF
+RETURN 1
+
+;==================================================
+;604,散步
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_604
+;散步にはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K80_604_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_604_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && CFLAG:TARGET:同行
+	IF TALENT:恋人
+		PRINTFORML
+		PRINTFORMDW Akyuu, let's go to this place and take a walk.
+		PRINTFORMW 「Hmm... That's a good idea, %CALLNAME:MASTER%-san.」
+		PRINTFORMDW Akyuu happily grabs your arm.
+		PRINTFORMDW The two of you walk together.
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		PRINTFORML
+		PRINTFORMDW Akyuu, let's go this place.
+		PRINTFORMW 「Okay... Lead the way, %CALLNAME:MASTER%-san.」
+		PRINTFORMDW Akyuu hesitantly places her hands in yours.
+		PRINTFORMDW You wrap your hands fully around hers.
+		PRINTFORMDW Akyuu has an embarrassed look on her face.
+	ELSE
+		PRINTFORML 
+		PRINTFORMDW Akyuu, do you want to go over there?
+		PRINTFORMW 「Hm... That's fine.」
+		PRINTFORMDW With that answer, the two of you walk together side by side.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;605,绕道
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_605
+;绕道にはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K80_605_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_605_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMDW Akyuu, do you mind taking a little detour?
+		PRINTFORMDW You ask her.
+		PRINTFORMW 「Hm, that's fine... Where are we going?」
+		PRINTFORMDW Akyuu asks while holding onto your arm.
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMDW Akyuu, let's make a detour.
+		PRINTFORMW 「Hmm————, okay. Where do you want to go, %CALLNAME:MASTER%-san?」
+		PRINTFORMDW You take Akyuu's hand and lead the way.
+	ELSE
+		PRINTFORML 
+		PRINTFORMDW Sorry Akyuu-san, can we take a detour?
+		PRINTFORMW 「Hm... Yes, I'll follow you.」
+		PRINTFORMDW Not knowing why, she still follows you in your detour.
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;610,请吃饭
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_610
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_610_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_610_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMDW Akyuu, do you want to grab a bite to eat?
+		PRINTFORMW 「Hmm... Well, I am quite hungry.」
+		PRINTFORMDW You and Akyuu find a decent place to eat.
+		PRINTFORMDW The two of you chat happily during your meal.
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMDW Akyuu, it's about time to eat.
+		PRINTFORMW 「Yes... I am little hungry as well.」
+		PRINTFORMDW So, what do you want to eat?
+		PRINTFORMW 「You can choose, %CALLNAME:MASTER%-san...」
+		PRINTFORMDW The two of you enjoy your meal together.
+	ELSE
+		PRINTFORML 
+		PRINTFORMDW Akyuu-san, I'm feeling a little hungry.
+		PRINTFORMW 「...I am as well..」
+		PRINTFORMDW With that said, the two of you look for a place to eat.
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;613,赚钱
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_613
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_613_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_613_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;614,采购食材
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_614
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_614_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_614_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;615,吃便当
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_615
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_615_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_615_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF ABL:料理技能 < 2
+		PRINTFORML 
+		PRINTFORMW 「%CALLNAME:MASTER%-san, I made a bento. Would you like to try eating it?」
+		PRINTFORMDW Akyuu brings out a lunch box and hands a pair of chopsticks to you.
+		PRINTFORMDW You first taste the sushi.
+		PRINTFORMDW ...Oh, this is pretty good, you think to yourself.
+		PRINTFORMW 「How is it? Is it good?」
+		PRINTFORMDW Looking at Akyuu's sparking, expectant eyes, you unintentionally raise your score.
+		PRINTFORMDW It tastes delicious. Your cooking skills are amazing, Akyuu.
+	ELSEIF ABL:料理技能 < 4
+		PRINTFORML 
+		PRINTFORMW 「%CALLNAME:MASTER%-san, I made you lunch.」
+		PRINTFORMDW Akyuu says and hands you a bento box.
+		PRINTFORMDW The food inside looks well-cooked and nutritious.
+		PRINTFORMDW You use your chopsticks to start tasting it.
+		PRINTFORMDW ...It's really good.
+		PRINTFORMW 「How is it?」
+		PRINTFORMDW You smile and praise her delicious cooking.
+			IF TALENT:恋慕
+				PRINTFORMDW And then, using your chopsticks, you pick up some food and place in Akyuu's direction.
+				PRINTFORMDW Say "aaah"————
+				PRINTFORMW 「...Aaah————」
+				PRINTFORMDW Akyuu opens her mouth and eats the food.
+				PRINTFORMDW The two of you happily enjoy your meal together, feeding each other from time to time.
+			ENDIF
+	ELSE
+	;「孤独のグルメ」良いですよね
+		PRINTFORML 
+		PRINTFORMW 「%CALLNAME:MASTER%-san, are you hungry?」
+		PRINTFORMDW Akyuu asks you. You nod in response.
+		PRINTFORMW 「I made lunch... If you don't mind... will you try it?」
+		PRINTFORMDW You thank her and pick up your chopsticks.
+		PRINTFORMDW Your first thoughts on the taste is that it's bland. But even so, after swallowing you compliment her cooking.
+		PRINTFORMDW You quickly finish your lunch.
+			SIF TALENT:恋慕
+				PRINTFORMDW You continue letting her know how good it is.
+		PRINTFORMW 「Is it really that good?」
+		PRINTFORMDW Akyuu asks doubtfully.
+		PRINTFORMDW You nod enthusiastically.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;617,甘味処に誘う
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_617
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_617_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_617_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		PRINTFORMDW It looks like there's a candy store over there. Let's go and have a look.
+		PRINTFORMW 「Hmm... I wouldn't mind some sweets.」
+		PRINTFORMDW Quickly agreeing, she holds your hand.
+		PRINTFORMDW The two of you go to the candy store.
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMDW Do you want to go to the candy store together, Akyuu?
+		PRINTFORMW 「Hm... That's fine, let's go together...」
+		PRINTFORMDW Though you don't hear any urgency in her tone of voice, you can tell she really wants to go.
+		PRINTFORMDW You lead Akyuu into the candy store.
+	ELSE
+		PRINTFORML 
+		PRINTFORMDW Do you want to go to the candy store? I'll treat you.
+		PRINTFORMW 「Well then... Thank you...」
+		PRINTFORMDW Akyuu says with a bit of eagerness in her eyes.
+		PRINTFORMDW You chuckle and walk to the candy shop with Akyuu.
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;618,花屋
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_618
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_618_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_618_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;620,鈴奈庵
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_620
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_620_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_620_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋人
+		PRINTFORML 
+		;PRINTFORMW 「小铃、这本书我借走了哦。」
+		;PRINTFORMW 阿求开心的向小铃说道。
+		PRINTFORMW 
+		PRINTFORMW
+		PRINTFORMW
+		PRINTFORMW
+		RETURN 1
+	ELSEIF TALENT:恋慕
+		PRINTFORML 
+		PRINTFORMW
+		PRINTFORMW
+		PRINTFORMW
+		PRINTFORMW
+		PRINTFORMW
+		PRINTFORMW
+	ELSE
+		PRINTFORML 
+		PRINTFORMW
+		PRINTFORMW
+		PRINTFORMW
+		PRINTFORMW
+		PRINTFORMW
+		PRINTFORMW
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;436,読書 custom code, edited
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_436
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_436_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_436_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;698,进入房间
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_698
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_698_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_698_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;699,外出
+;==================================================
+@M_KOJO_MESSAGE_COM_K80_699
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K80_699_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K80_699_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;派生コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;60,掏耳朵
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K80_60
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K80_60_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K80_60_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;61,抱き枕
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K80_61
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K80_61_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K80_61_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;62,亲额头
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K80_62
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K80_62_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K80_62_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;63,更多的キス
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K80_63
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K80_63_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K80_63_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;80,拉手
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K80_80
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K80_80_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K80_80_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1

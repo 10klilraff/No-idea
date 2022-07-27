@@ -1,0 +1,59 @@
+﻿;-------------------------------------------------
+;危ない薬を買う
+;-------------------------------------------------
+@COM426
+
+$LOOP
+PRINTFORML Please select items to purchase. Available money: %金額表示(MONEY)%
+PRINTL
+VARSET LOCALS
+LOCALS = [41] Aphrodisiac　￥3000
+PRINTFORM %LOCALS,48,LEFT%
+PRINTL 
+LOCALS = [42] Diuretic　￥3000
+PRINTFORM %LOCALS,48,LEFT%
+PRINTL 
+LOCALS = [250] Love Potion　￥5000
+PRINTFORM %LOCALS,48,LEFT%
+PRINTL 好意を抱きやすくなる
+
+;LOCALS = [2] 豊胸剤　￥2000
+LOCALS = [2] Cow milk　￥2000
+PRINTFORM %LOCALS,48,LEFT%
+PRINTL Drinking this might make one's chest bigger
+LOCALS = [501] Chest shrinking drug　￥2000
+PRINTFORM %LOCALS,48,LEFT%
+PRINTL Drinking this might make one's chest smaller
+LOCALS = [502] Apoptoxin 4869　￥10000
+PRINTFORM %LOCALS,48,LEFT%
+PRINTL Drug that makes Shinichi an idiot
+LOCALS = [503] Chanko 072　￥10000
+PRINTFORM %LOCALS,48,LEFT%
+PRINTL Training drug that can instantly enlarge the body
+LOCALS = [42] Fun drink　￥3000
+PRINTFORM %LOCALS,48,LEFT%
+PRINTL Enjoy the euphoria before it goes away
+DRAWLINE
+PRINTL [100] Cancel
+INPUT
+SELECTCASE RESULT
+	CASE 0
+		IF MONEY < ITEMPRICE:RESULT
+			PRINTW Not enough money.
+			GOTO LOOP
+		ELSEIF ITEM:RESULT > 50
+			PRINTW Can't hold any more
+			GOTO LOOP
+		ELSE
+			PRINTFORMW Bought %ITEMNAME_TR(RESULT)%
+			ITEM:RESULT += 5
+			MONEY -= ITEMPRICE:RESULT
+			GOTO LOOP
+		ENDIF
+	CASE 100
+		RETURN -1
+	CASEELSE
+		GOTO LOOP
+ENDSELECT
+
+RETURN 1

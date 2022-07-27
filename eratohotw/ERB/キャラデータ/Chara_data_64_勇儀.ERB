@@ -1,0 +1,247 @@
+﻿@CHARAMOVE_DATA_64(ARG, ARG:2)
+LOCAL = 64
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;地霊殿には行かない
+			CASE P901地霊殿前 TO P930旧血の池地獄
+				RETURN -100
+			;酒場と鬼の溜まり場に行きやすい
+			CASE P933酒場, P938鬼の溜まり場
+				RETURN 5
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			;春と秋だけ
+			CASE 呑屋小道
+				SIF GROUPMATCH(DAY:2, 1, 3)
+					RETURN 1
+			CASE 麓の樹海, 玄武の沢, 大蝦蟇の池
+				SIF GROUPMATCH(DAY:2, 1, 3)
+					RETURN 1
+			CASE 幻想風穴, 地獄の深道, 旧地獄街道
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+		;夜はよく酒場
+		SIF CFLAG:LOCAL:今日の運勢 % 4 == 0 && INRANGE(TIME, 1200, 1440)
+			TCVAR:LOCAL:引力点 = P933酒場
+ENDSELECT
+
+@EXIST_キャラデータ64
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ64(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "勇儀")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（襦袢）セット")
+
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "下駄"))
+CASE "普段着：スカート"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("スカート", "スカート"))
+CASE "普段着：上半身上着２"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("上半身上着２", "ブラウス"))
+CASE "普段着：その他１"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("その他１", "拘束具"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "とっても強い")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "虎皮の鬼パンツ")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "サラシ")
+CASE "固有下着着用条件"
+	SIF !RAND:(1 + (2 * 勝負下着判定([[勇儀]])))
+		CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 3)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "肉料理/スパイス/和食/鍋物/おつまみ/辛い/ガッツリ/濃厚/芸術的/野趣/豪快/サクサク/地底風/天狗流/" + "しょっぱい/" * 3)
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "あっさり/淡白/甘い/甘い/謎料理/謎料理/謎料理/化学的/化学的/化学的/" + "小人族秘伝の味/" * 5)
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "地底風/得意料理＊豪快＊/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "赤/金/混沌/かっこいい/パワフル/壮大/" + "食器/鎖の/酒/" * 3 + "鬼の/華の/鬼力の/力の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "精神/ポップ/繊細/知的/ロリータ/" + "刃物/弾/書物/機械/" * 3 + "河童の/天狗の/" * 10)
+	
+;Image Tweak custom code
+;特殊衣装
+CASE "デート衣装", "人里デート衣装", "おうちデート衣装"
+	CALLF MAKE_INT(V_NAME, OBJNAME_TO_ID(ARG, "GET", "衣装セット", "鬼セット"))
+ENDSELECT
+
+;-------------------------------------------------
+;固有料理設定
+;DISH_NAME          料理名
+;RESULTS            料理の種類（軽食/主食/デザート）
+;CALL 材料設定("")  材料の指定。"汎用"を入れると自動で汎用食材になる
+;DISH_TASTE         味の設定
+;DISH_COMMENT       （任意）一行コメント
+;DISH_TIME          （任意）調理にかかる時間
+;DISH_MAXLIMIT      （任意）料理の持続時間
+;-------------------------------------------------
+@SPECIAL_MENU_64
+DISH_NAME = ぼたん鍋
+RESULTS = 主食
+CALL 材料設定("獣肉")
+DISH_TASTE = 肉料理/野菜/和食/鍋物/ガッツリ/濃厚/芸術的/野趣/しょっぱい/
+DISH_COMMENT = 妖怪に極めて近い猪の肉を使った鍋料理。綺麗に並べられた肉が牡丹の花のように美しい。
+RETURN 1
+
+;IMAGE_I64_差分(CHARA)-----------------------------------------------------------------------
+;Image Tweak custom code
+;IMAGE_I64_特殊服装(CHARA)-----------------------------------------------------------------------
+;キャラクター特有の服装表示条件
+;エフェクトを共有する服装差分はこちらで指定する
+;使用時注意点:
+;	RESULTSに特殊服装を格納すること
+;	書式は %服装%%特殊服装% 適宜"_"等入れること
+;-------------------------------------------------------------------------------------------
+@IMAGE_I64_特殊服装(CHARA)
+#DIM CHARA
+VARSET RESULTS
+
+IF CFLAG:CHARA:差し替え適用
+	;差し替え画像
+	IF FLAG:立ち絵種類
+		;顔絵
+	ELSE
+		;立ち絵
+	ENDIF
+ELSE
+	;using (our) method
+	;SIF CFLAG:CHARA:1001
+	;	RESULTS = _黄昏
+	;通常画像
+	;SIF CHK_DATENOW(CFLAG:CHARA:デート中) && CFLAG:CHARA:同行 && CHK_DATENOW(CFLAG:MASTER:デート中) && !CHECK_NUDE(CHARA)
+	SIF CFLAG:CHARA:基本服装セット == OBJNAME_TO_ID(CHARA, "GET", "衣装セット", "鬼セット") && !CHECK_NUDE(CHARA)
+		RESULTS = _鬼
+ENDIF
+;image tweak custom code, set clothes
+SIF RESULTS == "_鬼" && CFLAG:CHARA:基本服装セット != OBJNAME_TO_ID(CHARA, "GET", "衣装セット", "鬼セット")
+	CALL EX_COSTUME(CHARA, "人里デート")
+	
+;IMAGE_I64_特殊照れ(CHARA)--------------------------------------------------------------------
+;キャラクター特有の照れエフェクト表示条件
+;使用時注意点:
+;	RESULTSに特殊照れを格納すること
+;	書式は %特殊照れ%照れ
+;	"裸"は本編で実装済み %特殊照れ%裸照れ で追記可能
+;-------------------------------------------------------------------------------------------
+@IMAGE_I64_特殊照れ(CHARA)
+#DIM CHARA
+VARSET RESULTS
+
+IF CFLAG:CHARA:差し替え適用
+	;差し替え画像
+	IF FLAG:立ち絵種類
+		;顔絵
+	ELSE
+		;立ち絵
+	ENDIF
+ELSE
+	;通常画像
+	IF FLAG:立ち絵種類
+		;顔絵
+		;image tweak custom code
+		SIF FLAG:巨乳差分表示 && TALENT:CHARA:バストサイズ > 1 && CFLAG:CHARA:基本服装セット != OBJNAME_TO_ID(CHARA, "GET", "衣装セット", "鬼セット")
+			RESULTS = 巨乳
+	ELSE
+		;立ち絵
+	ENDIF
+ENDIF
+
+;IMAGE_I64_特殊吐息(CHARA)--------------------------------------------------------------------
+;キャラクター特有の吐息エフェクト表示条件
+;使用時注意点:
+;	RESULTSに特殊吐息を格納すること
+;	書式は %特殊吐息%吐息
+;	"裸"は本編で実装済み %特殊吐息%裸吐息 で追記可能
+;-------------------------------------------------------------------------------------------
+@IMAGE_I64_特殊吐息(CHARA)
+#DIM CHARA
+VARSET RESULTS
+
+IF CFLAG:CHARA:差し替え適用
+	;差し替え画像
+	IF FLAG:立ち絵種類
+		;顔絵
+	ELSE
+		;立ち絵
+	ENDIF
+ELSE
+	;通常画像
+	IF FLAG:立ち絵種類
+		;顔絵
+		;image tweak custom code, big boobs, either nude or oni set
+		IF FLAG:巨乳差分表示 && TALENT:CHARA:バストサイズ > 1 && CFLAG:CHARA:基本服装セット != OBJNAME_TO_ID(CHARA, "GET", "衣装セット", "鬼セット")
+			RESULTS = 巨乳
+			SIF CHECK_NUDE(CHARA)
+				RESULTS = 裸%RESULTS%
+		ENDIF
+	ELSE
+		;立ち絵
+	ENDIF
+ENDIF
+
+;IMAGE_I64_特殊汗(CHARA)--------------------------------------------------------------------
+;キャラクター特有の汗エフェクト表示条件
+;使用時注意点:
+;	RESULTSに特殊汗を格納すること
+;	書式は %特殊汗%汗
+;	"裸"は本編で実装済み %特殊汗%裸汗 で追記可能
+;-------------------------------------------------------------------------------------------
+@IMAGE_I64_特殊汗(CHARA)
+#DIM CHARA
+VARSET RESULTS
+
+IF CFLAG:CHARA:差し替え適用
+	;差し替え画像
+	IF FLAG:立ち絵種類
+		;顔絵
+	ELSE
+		;立ち絵
+	ENDIF
+ELSE
+	;通常画像
+	IF FLAG:立ち絵種類
+		;顔絵
+		;image tweak custom code, big boobs, either nude or oni set
+		IF FLAG:巨乳差分表示 && TALENT:CHARA:バストサイズ > 1 && CFLAG:CHARA:基本服装セット != OBJNAME_TO_ID(CHARA, "GET", "衣装セット", "鬼セット")
+			RESULTS = 巨乳
+			SIF CHECK_NUDE(CHARA)
+				RESULTS = 裸%RESULTS%
+		ENDIF
+	ELSE
+		;立ち絵
+	ENDIF
+ENDIF
+;********************************************************************************************

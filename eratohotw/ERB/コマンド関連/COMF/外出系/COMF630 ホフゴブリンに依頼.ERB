@@ -1,0 +1,44 @@
+﻿;お掃除サービス
+@COM630
+PRINTFORML What services should be requested from the hobgoblins?
+CALL ASK_M("Don't ask", 1, "Cleaning services", !TFLAG:出張お掃除, "Watering services", ITEM:150)
+SIF !RESULT
+	RETURN -1
+IF RESULT == 1
+	PRINTFORML Request hobgoblins to clean %GET_MAPNAME(MAIN_MAP)%?
+	CALL PAY_YEN_OR_CM(3000,10)
+	SIF !RESULT
+		RETURN -1
+	PRINTFORML %PARSE("You request")% cleaning services.
+	TFLAG:出張お掃除 = 1
+ELSEIF RESULT == 2
+	PRINTFORML Request hobgoblins to water the kitchen garden? (For this month)
+	CALL PAY_YEN_OR_CM(15000,70)
+	SIF !RESULT
+		RETURN -1
+	PRINTFORML %PARSE("You request")% watering services.
+	FLAG:水やり代行 = 1
+ENDIF
+TIME += 5
+RETURN 1
+
+@COM_ABLE630
+;一括管理
+SIF GLOBAL_COMABLE(630)
+	RETURN RESULT
+SIF MAIN_MAP == 3
+	RETURN 0
+SIF !HOBGOBLIN(CFLAG:MASTER:現在位置)
+	RETURN 0
+;時間停止中
+SIF FLAG:70
+	RETURN 0
+RETURN 1
+
+@HOBGOBLIN(ARG)
+#FUNCTION
+IF !IN_HOME(ARG)
+	SIF ARG == 広間
+		RETURNF 1
+ENDIF
+RETURNF 0

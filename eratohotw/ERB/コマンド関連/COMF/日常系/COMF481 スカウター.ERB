@@ -1,0 +1,1728 @@
+﻿;-------------------------------------------------
+;スカウター
+;道具使用コマンド、レベル1
+;-------------------------------------------------
+@COM481
+PRINTFORML Select someone to measure the power of.
+FOR LOCAL,0,CHARANUM
+	SIF CFLAG:LOCAL:現在位置 !=  CFLAG:MASTER:現在位置
+		CONTINUE
+	PRINTFORML [{LOCAL}] - %CALLNAME:LOCAL%
+NEXT
+DRAWLINE
+PRINTFORML [999] - Quit
+INPUT
+IF RESULT == 999
+	RETURN -1
+ELSE
+	CALL EVALUATE_GIRLPOWER(RESULT)
+	;bug fix - fix favor exploit
+	SIF !FLAG:70 ;no time progression in time stop
+		TIME += 3
+	;remove favor processing
+	TFLAG:102 = 0
+	;return 0 skips source processing, but doesn't fix favor problem, so we set the flag above
+	;return -1 would fix both, but then it wouldn't show time progression
+	RETURN 0
+	;---------------------------
+ENDIF
+;-------------------------------------------------
+;COM別FLAGの設定
+;-------------------------------------------------
+;行為者
+TCVAR:116 = PLAYER
+
+RETURN 0
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE481
+;スカウター
+SIF !TFLAG:100
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(481)
+	RETURN RESULT
+SIF !ITEM:スカウター
+	RETURN 0
+RETURN 1
+
+;ここで算出
+@EVALUATE_GIRLPOWER, ARG
+#DIM 合計女子力
+#DIM 評価値
+#DIM 万単位
+#DIM 端数
+#DIM PADDING
+
+;キャラの原価は一律10000とする
+合計女子力 = 10000
+PADDING = 26
+
+FOR LOCAL, 0, 5
+	REUSELASTLINE  Checking %CALLNAME:ARG%'s \@ ARG ? girl- #  \@power level.%"." * LOCAL%
+	TWAIT 150, 1
+NEXT
+
+FONTBOLD
+SETCOLOR COLOR("PINK")
+PRINTL 
+CALL PRINTLINE, "Scan Results"
+PRINTL 
+PRINTL ◇Body Assessment◇
+PRINTL 
+
+;体力をみる　成長量を評価
+評価値 = (MAXBASE:ARG:体力 - CSVBASE(ARG,0)) * 2
+IF MAXBASE:ARG:体力 >= 9000
+	評価値 = 評価値 / 10 * 17 + 700
+ELSEIF MAXBASE:ARG:体力 >= 8000
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF MAXBASE:ARG:体力 >= 7000
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF MAXBASE:ARG:体力 >= 6000
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF MAXBASE:ARG:体力 >= 5000
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF MAXBASE:ARG:体力 >= 4000
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF MAXBASE:ARG:体力 >= 3000
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+IF 評価値 > 0
+	合計女子力 += 評価値
+	PRINTFORML %"Maximum Strength",PADDING,LEFT%　：{MAXBASE:ARG:体力} ＋{評価値}　
+ENDIF
+
+;気力をみる　成長量を評価
+評価値 = (MAXBASE:ARG:気力 - CSVBASE(ARG,1)) * 2
+IF MAXBASE:ARG:気力 >= 9000
+	評価値 = 評価値 / 10 * 17 + 700
+ELSEIF MAXBASE:ARG:気力 >= 8000
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF MAXBASE:ARG:気力 >= 7000
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF MAXBASE:ARG:気力 >= 6000
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF MAXBASE:ARG:気力 >= 5000
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF MAXBASE:ARG:気力 >= 4000
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF MAXBASE:ARG:気力 >= 3000
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+IF 評価値 > 0
+	合計女子力 += 評価値
+	PRINTFORML %"Maximum Energy",PADDING,LEFT%　：{MAXBASE:ARG:気力} ＋{評価値}　
+ENDIF
+
+;Ｃ感覚をみる
+評価値 = ABL:ARG:Ｃ感覚 * 100
+IF ABL:ARG:Ｃ感覚 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:Ｃ感覚 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:Ｃ感覚 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:Ｃ感覚 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:Ｃ感覚 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:Ｃ感覚 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:Ｃ感覚 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:Ｃ感覚 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:Ｃ感覚 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+IF 評価値 > 0
+	IF TALENT:ARG:Ｃ感度 == 1
+		評価値 = 評価値 / 10 * 15
+		PRINTFORM %"C Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ｃ感覚} ＋{評価値, 6, LEFT}　
+		PRINTFORML （C Sensitive ×１.５）
+	ELSE
+		PRINTFORML %"C Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ｃ感覚} ＋{評価値}　
+	ENDIF
+	合計女子力 += 評価値
+ENDIF
+
+;Ｖ感覚をみる
+評価値 = ABL:ARG:Ｖ感覚 * 100
+IF ABL:ARG:Ｖ感覚 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:Ｖ感覚 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:Ｖ感覚 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:Ｖ感覚 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:Ｖ感覚 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:Ｖ感覚 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:Ｖ感覚 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:Ｖ感覚 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:Ｖ感覚 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	IF TALENT:ARG:Ｖ感度 == 1
+		評価値 = 評価値 / 10 * 15
+		PRINTFORM %"V Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ｖ感覚} ＋{評価値, 6, LEFT}　
+		PRINTFORML （V Sensitive ×１.５）
+	ELSE
+		PRINTFORML %"V Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ｖ感覚} ＋{評価値}
+	ENDIF
+	合計女子力 += 評価値
+ENDIF
+
+;Ａ感覚をみる
+評価値 = ABL:ARG:Ａ感覚 * 100
+IF ABL:ARG:Ａ感覚 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:Ａ感覚 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:Ａ感覚 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:Ａ感覚 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:Ａ感覚 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:Ａ感覚 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:Ａ感覚 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:Ａ感覚 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:Ａ感覚 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	IF TALENT:ARG:Ａ感度 == 1
+		評価値 = 評価値 / 10 * 15
+		PRINTFORM %"A Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ａ感覚} ＋{評価値, 6, LEFT}　
+		PRINTFORML （A Sensitive ×１.５）
+	ELSE
+		PRINTFORML %"A Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ａ感覚} ＋{評価値}　
+	ENDIF
+	合計女子力 += 評価値
+ENDIF
+
+;Ｂ感覚をみる
+評価値 = ABL:ARG:Ｂ感覚 * 100
+IF ABL:ARG:Ｂ感覚 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:Ｂ感覚 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:Ｂ感覚 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:Ｂ感覚 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:Ｂ感覚 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:Ｂ感覚 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:Ｂ感覚 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:Ｂ感覚 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:Ｂ感覚 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	IF TALENT:ARG:Ｂ感度 == 1
+		評価値 = 評価値 / 10 * 15
+		PRINTFORM %"B Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ｂ感覚} ＋{評価値, 6, LEFT}　
+		PRINTFORML （B Sensitive ×１.５）
+	ELSE
+		PRINTFORML %"B Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ｂ感覚} ＋{評価値}　
+	ENDIF
+	合計女子力 += 評価値
+ENDIF
+
+;Ｍ感覚をみる
+評価値 = ABL:ARG:Ｍ感覚 * 100
+IF ABL:ARG:Ｍ感覚 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:Ｍ感覚 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:Ｍ感覚 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:Ｍ感覚 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:Ｍ感覚 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:Ｍ感覚 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:Ｍ感覚 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:Ｍ感覚 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:Ｍ感覚 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	IF TALENT:ARG:Ｍ感度 == 1
+		評価値 = 評価値 / 10 * 15
+		PRINTFORM %"M Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ｍ感覚} ＋{評価値, 6, LEFT}　
+		PRINTFORML （M Sensitive ×１.５）
+	ELSE
+		PRINTFORML %"M Sensitivity",PADDING,LEFT%　：LV{ABL:ARG:Ｍ感覚} ＋{評価値}　
+	ENDIF
+	合計女子力 += 評価値
+ENDIF
+
+
+;親密はあなたとの仲の良さなので測定外
+
+
+;ABL:従順をみる 評価高め
+評価値 = ABL:ARG:従順 * 200
+IF ABL:ARG:従順 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:従順 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:従順 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:従順 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:従順 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:従順 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:従順 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:従順 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:従順 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Obedience",PADDING,LEFT%　：LV{ABL:ARG:従順} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:欲望をみる 評価最高
+評価値 = ABL:ARG:欲望 * 300
+IF ABL:ARG:欲望 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:欲望 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:欲望 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:欲望 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:欲望 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:欲望 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:欲望 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:欲望 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:欲望 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Desire",PADDING,LEFT%　：LV{ABL:ARG:欲望} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:技巧をみる 評価最高
+評価値 = ABL:ARG:技巧 * 300
+IF ABL:ARG:技巧 >= 20
+	評価値 = 評価値 / 10 * 20 + 1000
+ELSEIF ABL:ARG:技巧 >= 18
+	評価値 = 評価値 / 10 * 19 + 900
+ELSEIF ABL:ARG:技巧 >= 16
+	評価値 = 評価値 / 10 * 18 + 800
+ELSEIF ABL:ARG:技巧 >= 14
+	評価値 = 評価値 / 10 * 17 + 700
+ELSEIF ABL:ARG:技巧 >= 12
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:技巧 >= 10
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:技巧 >= 8
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:技巧 >= 6
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:技巧 >= 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:技巧 >= 2
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Technique",PADDING,LEFT%　：LV{ABL:ARG:技巧} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:奉仕精神をみる 評価高め
+評価値 = ABL:ARG:奉仕精神 * 200
+IF ABL:ARG:奉仕精神 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:奉仕精神 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:奉仕精神 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:奉仕精神 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:奉仕精神 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:奉仕精神 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:奉仕精神 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:奉仕精神 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:奉仕精神 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Servitude",PADDING,LEFT%　：LV{ABL:ARG:奉仕精神} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:露出癖をみる 評価高め
+評価値 = ABL:ARG:露出癖 * 200
+IF ABL:ARG:露出癖 >= 20
+	評価値 = 評価値 / 10 * 20 + 1000
+ELSEIF ABL:ARG:露出癖 >= 18
+	評価値 = 評価値 / 10 * 19 + 900
+ELSEIF ABL:ARG:露出癖 >= 16
+	評価値 = 評価値 / 10 * 18 + 800
+ELSEIF ABL:ARG:露出癖 >= 14
+	評価値 = 評価値 / 10 * 17 + 700
+ELSEIF ABL:ARG:露出癖 >= 12
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:露出癖 >= 10
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:露出癖 >= 8
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:露出癖 >= 6
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:露出癖 >= 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:露出癖 >= 2
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Exposure",PADDING,LEFT%　：LV{ABL:ARG:露出癖} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;教養をみる
+評価値 = ABL:ARG:教養 * 300
+IF ABL:ARG:教養 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:教養 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:教養 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:教養 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:教養 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:教養 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:教養 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:教養 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Learning",PADDING,LEFT%　：LV{ABL:ARG:教養} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;話術技能をみる
+評価値 = ABL:ARG:話術技能 * 300
+IF ABL:ARG:話術技能 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:話術技能 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:話術技能 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:話術技能 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:話術技能 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:話術技能 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:話術技能 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:話術技能 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Speech",PADDING,LEFT%　：LV{ABL:ARG:話術技能} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;戦闘能力をみる 評価超高い
+評価値 = ABL:ARG:戦闘能力 * 500
+IF ABL:ARG:戦闘能力 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:戦闘能力 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:戦闘能力 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:戦闘能力 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:戦闘能力 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:戦闘能力 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:戦闘能力 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:戦闘能力 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Combat",PADDING,LEFT%　：LV{ABL:ARG:戦闘能力} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;清掃技能をみる
+評価値 = ABL:ARG:清掃技能 * 300
+IF ABL:ARG:清掃技能 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:清掃技能 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:清掃技能 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:清掃技能 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:清掃技能 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:清掃技能 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:清掃技能 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:清掃技能 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Cleaning",PADDING,LEFT%　：LV{ABL:ARG:清掃技能} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;料理技能をみる
+評価値 = ABL:ARG:料理技能 * 300
+IF ABL:ARG:料理技能 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:料理技能 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:料理技能 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:料理技能 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:料理技能 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:料理技能 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:料理技能 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:料理技能 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Cooking",PADDING,LEFT%　：LV{ABL:ARG:料理技能} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;音楽技能をみる
+評価値 = ABL:ARG:音楽技能 * 300
+IF ABL:ARG:音楽技能 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:音楽技能 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:音楽技能 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:音楽技能 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:音楽技能 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:音楽技能 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:音楽技能 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:音楽技能 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Music",PADDING,LEFT%　：LV{ABL:ARG:音楽技能} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;指をみる
+評価値 = ABL:ARG:指 * 300
+IF ABL:ARG:指 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:指 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:指 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:指 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:指 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:指 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:指 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:指 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Fingers",PADDING,LEFT%　：LV{ABL:ARG:指} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;膣をみる
+評価値 = ABL:ARG:膣 * 500
+IF ABL:ARG:膣 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:膣 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:膣 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:膣 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:膣 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:膣 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:膣 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:膣 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Vagina",PADDING,LEFT%　：LV{ABL:ARG:膣} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;アナルをみる
+評価値 = ABL:ARG:アナル * 500
+IF ABL:ARG:アナル >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:アナル >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:アナル >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:アナル == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:アナル == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:アナル == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:アナル == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:アナル == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Anus",PADDING,LEFT%　：LV{ABL:ARG:アナル} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;胸をみる
+評価値 = ABL:ARG:胸 * 300
+IF ABL:ARG:胸 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:胸 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:胸 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:胸 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:胸 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:胸 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:胸 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:胸 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Chest",PADDING,LEFT%　：LV{ABL:ARG:胸} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;舌をみる
+評価値 = ABL:ARG:舌 * 300
+IF ABL:ARG:舌 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:舌 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:舌 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:舌 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:舌 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:舌 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:舌 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:舌 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Tongue",PADDING,LEFT%　：LV{ABL:ARG:舌} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;腰をみる
+評価値 = ABL:ARG:腰 * 500
+IF ABL:ARG:腰 >= 10
+	評価値 = 評価値 / 10 * 18 + 600
+ELSEIF ABL:ARG:腰 >= 9
+	評価値 = 評価値 / 10 * 17 + 600
+ELSEIF ABL:ARG:腰 >= 8
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:腰 == 7
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:腰 == 6
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:腰 == 5
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:腰 == 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:腰 == 3
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Waist",PADDING,LEFT%　：LV{ABL:ARG:腰} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+
+;ABL:サドっ気をみる
+評価値 = ABL:ARG:サドっ気 * 300
+IF ABL:ARG:サドっ気 >= 20
+	評価値 = 評価値 / 10 * 20 + 1000
+ELSEIF ABL:ARG:サドっ気 >= 18
+	評価値 = 評価値 / 10 * 19 + 900
+ELSEIF ABL:ARG:サドっ気 >= 16
+	評価値 = 評価値 / 10 * 18 + 800
+ELSEIF ABL:ARG:サドっ気 >= 14
+	評価値 = 評価値 / 10 * 17 + 700
+ELSEIF ABL:ARG:サドっ気 >= 12
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:サドっ気 >= 10
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:サドっ気 >= 8
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:サドっ気 >= 6
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:サドっ気 >= 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:サドっ気 >= 2
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Sadist",PADDING,LEFT%　：LV{ABL:ARG:サドっ気} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:マゾっ気をみる
+評価値 = ABL:ARG:マゾっ気 * 300
+IF ABL:ARG:マゾっ気 >= 20
+	評価値 = 評価値 / 10 * 20 + 1000
+ELSEIF ABL:ARG:マゾっ気 >= 18
+	評価値 = 評価値 / 10 * 19 + 900
+ELSEIF ABL:ARG:マゾっ気 >= 16
+	評価値 = 評価値 / 10 * 18 + 800
+ELSEIF ABL:ARG:マゾっ気 >= 14
+	評価値 = 評価値 / 10 * 17 + 700
+ELSEIF ABL:ARG:マゾっ気 >= 12
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:マゾっ気 >= 10
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:マゾっ気 >= 8
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:マゾっ気 >= 6
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:マゾっ気 >= 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:マゾっ気 >= 2
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Masochist",PADDING,LEFT%　：LV{ABL:ARG:マゾっ気} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:レズっ気
+評価値 = ABL:ARG:レズっ気 * 300
+IF ABL:ARG:レズっ気 >= 20
+	評価値 = 評価値 / 10 * 20 + 1000
+ELSEIF ABL:ARG:レズっ気 >= 18
+	評価値 = 評価値 / 10 * 19 + 900
+ELSEIF ABL:ARG:レズっ気 >= 16
+	評価値 = 評価値 / 10 * 18 + 800
+ELSEIF ABL:ARG:レズっ気 >= 14
+	評価値 = 評価値 / 10 * 17 + 700
+ELSEIF ABL:ARG:レズっ気 >= 12
+	評価値 = 評価値 / 10 * 16 + 600
+ELSEIF ABL:ARG:レズっ気 >= 10
+	評価値 = 評価値 / 10 * 15 + 500
+ELSEIF ABL:ARG:レズっ気 >= 8
+	評価値 = 評価値 / 10 * 14 + 400
+ELSEIF ABL:ARG:レズっ気 >= 6
+	評価値 = 評価値 / 10 * 13 + 300
+ELSEIF ABL:ARG:レズっ気 >= 4
+	評価値 = 評価値 / 10 * 12 + 200
+ELSEIF ABL:ARG:レズっ気 >= 2
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Lesbian",PADDING,LEFT%　：LV{ABL:ARG:レズっ気} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+
+;ABL:自慰中毒をみる
+評価値 = ABL:ARG:自慰中毒 * 300
+IF ABL:ARG:自慰中毒 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:自慰中毒 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:自慰中毒 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:自慰中毒 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:自慰中毒 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:自慰中毒 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:自慰中毒 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:自慰中毒 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:自慰中毒 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Masturbation Addiction",PADDING,LEFT%　：LV{ABL:ARG:自慰中毒} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:精液中毒をみる
+評価値 = ABL:ARG:精液中毒 * 300
+IF ABL:ARG:精液中毒 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:精液中毒 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:精液中毒 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:精液中毒 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:精液中毒 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:精液中毒 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:精液中毒 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:精液中毒 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:精液中毒 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Semen Addiction",PADDING,LEFT%　：LV{ABL:ARG:精液中毒} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:レズ中毒
+評価値 = ABL:ARG:レズ中毒 * 300
+IF ABL:ARG:レズ中毒 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:レズ中毒 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:レズ中毒 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:レズ中毒 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:レズ中毒 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:レズ中毒 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:レズ中毒 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:レズ中毒 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:レズ中毒 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Lesbian Addiction",PADDING,LEFT%　：LV{ABL:ARG:レズ中毒} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:膣射中毒をみる
+評価値 = ABL:ARG:膣射中毒 * 300
+IF ABL:ARG:膣射中毒 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:膣射中毒 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:膣射中毒 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:膣射中毒 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:膣射中毒 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:膣射中毒 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:膣射中毒 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:膣射中毒 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:膣射中毒 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Creampie Addiction",PADDING,LEFT%　：LV{ABL:ARG:膣射中毒} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+;ABL:肛射中毒をみる
+評価値 = ABL:ARG:肛射中毒 * 300
+IF ABL:ARG:肛射中毒 >= 50
+	評価値 = 評価値 / 10 * 19 + 500
+ELSEIF ABL:ARG:肛射中毒 >= 45
+	評価値 = 評価値 / 10 * 18 + 450
+ELSEIF ABL:ARG:肛射中毒 >= 40
+	評価値 = 評価値 / 10 * 17 + 400
+ELSEIF ABL:ARG:肛射中毒 >= 35
+	評価値 = 評価値 / 10 * 16 + 350
+ELSEIF ABL:ARG:肛射中毒 >= 30
+	評価値 = 評価値 / 10 * 15 + 300
+ELSEIF ABL:ARG:肛射中毒 >= 25
+	評価値 = 評価値 / 10 * 14 + 250
+ELSEIF ABL:ARG:肛射中毒 >= 20
+	評価値 = 評価値 / 10 * 13 + 200
+ELSEIF ABL:ARG:肛射中毒 >= 15
+	評価値 = 評価値 / 10 * 12 + 150
+ELSEIF ABL:ARG:肛射中毒 >= 10
+	評価値 = 評価値 / 10 * 11 + 100
+ENDIF
+
+IF 評価値 > 0
+	PRINTFORML %"Anal Addiction",PADDING,LEFT%　：LV{ABL:ARG:肛射中毒} ＋{評価値}　
+	合計女子力 += 評価値
+ENDIF
+
+PRINTL 
+PRINTFORML Base Girl-Power Level：%DIGIT_GROUP(合計女子力)%
+PRINTL 
+PRINTL ◇Quality Assessment◇
+PRINTL 
+
+;[処女]をみる
+IF TALENT:ARG:処女 == 1
+	合計女子力 = 合計女子力 / 100 * 175
+	PRINTFORML %"【Virgin】",PADDING,LEFT%　×１.７５
+ELSEIF TALENT:ARG:処女 == 2
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Restored Virgin】",PADDING,LEFT%　×１.２
+ENDIF
+;[恋人]をみる　愛情補正
+IF TALENT:ARG:恋人
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Lover】",PADDING,LEFT%　×２.０
+ENDIF
+;[度胸]をみる
+IF TALENT:ARG:度胸 == 1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Brave】",PADDING,LEFT%　×１.２
+ELSEIF TALENT:ARG:度胸 == -1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Timid】",PADDING,LEFT%　×１.２
+ENDIF
+;[態度]をみる
+IF TALENT:ARG:態度 == 1
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Defiant】",PADDING,LEFT%　×０.８
+ELSEIF TALENT:ARG:態度 == -1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Docile】",PADDING,LEFT%　×１.２
+ENDIF
+;[応答]をみる
+IF TALENT:ARG:応答 == 1
+	合計女子力 = 合計女子力 / 10 * 9
+	PRINTFORML %"【Cheeky】",PADDING,LEFT%　×０.９
+ELSEIF TALENT:ARG:応答 == -1
+	合計女子力 = 合計女子力 / 10 * 11
+	PRINTFORML %"【Calm】",PADDING,LEFT%　×１.１
+ENDIF
+;[プライド]をみる
+IF TALENT:ARG:プライド == 1
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Prideful】",PADDING,LEFT%　×１.５
+ELSEIF TALENT:ARG:プライド == -1
+	合計女子力 = 合計女子力 / 10 * 11
+	PRINTFORML %"【Low Pride】",PADDING,LEFT%　×１.１
+ENDIF
+;[ツンデレ]をみる
+IF TALENT:ARG:ツンデレ
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Tsundere】",PADDING,LEFT%　×１.３
+ENDIF
+;[容姿]をみる
+IF TALENT:ARG:容姿 == 1 || ARG == 62
+	合計女子力 = 合計女子力 / 10 * 18
+	PRINTFORML %"【Beautiful】",PADDING,LEFT%　×１.８
+ELSEIF TALENT:ARG:容姿 == -1
+	合計女子力 = 合計女子力 / 10 * 2
+	PRINTFORML %"【Ugly】",PADDING,LEFT%　×０.２
+ENDIF
+;[自制心]をみる
+IF TALENT:ARG:自制心
+	合計女子力 = 合計女子力 / 10 * 14
+	PRINTFORML %"【Self Control】",PADDING,LEFT%　×１.４
+ENDIF
+;[無関心]をみる
+IF TALENT:ARG:無関心
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Apathetic】",PADDING,LEFT%　×０.８
+ENDIF
+;[感情乏しい]をみる
+IF TALENT:ARG:感情乏しい
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Emotionless】",PADDING,LEFT%　×０.８
+ENDIF
+;[性的興味]をみる
+IF TALENT:ARG:性的興味 == 1
+	合計女子力 = 合計女子力 / 10 * 14
+	PRINTFORML %"【Sexual Interest】",PADDING,LEFT%　×１.４
+ELSEIF TALENT:ARG:性的興味 == -1
+	IF ABL:ARG:欲望 >= 20
+		合計女子力 = 合計女子力 / 10 * 12
+		PRINTFORML %"【Conservative】",PADDING,LEFT%　×１.２
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 5
+		PRINTFORML %"【Conservative】",PADDING,LEFT%　×０.５　（Invert condition: 20 Desire, currently {ABL:ARG:欲望}）
+	ENDIF
+ENDIF
+;[陽気／陰気]をみる
+IF TALENT:ARG:陽気／陰気 == 1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Cheerful】",PADDING,LEFT%　×１.２
+ELSEIF TALENT:ARG:陽気／陰気 == -1
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Gloomy】",PADDING,LEFT%　×０.８
+ENDIF
+;[一線越えない]をみる
+IF TALENT:ARG:一線越えない
+	IF ABL:ARG:欲望 >= 20
+		合計女子力 = 合計女子力 / 10 * 15
+		PRINTFORML %"【Reserved】",PADDING,LEFT%　×１.５
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 5
+		PRINTFORML %"【Reserved】",PADDING,LEFT%　×０.５　（Invert condition: 20 Desire, currently {ABL:ARG:欲望}）
+	ENDIF
+ENDIF
+;[目立ちたがり]をみる
+IF TALENT:ARG:目立ちたがり
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Show-off】",PADDING,LEFT%　×１.２
+ENDIF
+;[無知]をみる
+IF TALENT:ARG:無知
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Ignorant】",PADDING,LEFT%　×１.３
+ENDIF
+;[貞操]をみる
+IF TALENT:ARG:貞操 == 1
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Virtuous】",PADDING,LEFT%　×１.５
+ELSEIF TALENT:ARG:貞操 == -1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Unchaste】",PADDING,LEFT%　×１.２
+ENDIF
+;[解放]をみる
+IF TALENT:ARG:自己愛 == 1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Liberated】",PADDING,LEFT%　×１.２
+ELSEIF TALENT:ARG:自己愛 == -1
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Repressed】",PADDING,LEFT%　×０.８
+ENDIF
+;[抵抗]をみる
+IF TALENT:ARG:抵抗
+	IF ABL:ARG:従順 >= 20
+		合計女子力 = 合計女子力 / 10 * 15
+		PRINTFORML %"【Reluctant】",PADDING,LEFT%　×１.５
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 5
+		PRINTFORML %"【Reluctant】",PADDING,LEFT%　×０.５　（Invert condition: 20 Obedience, currently {ABL:ARG:従順}）
+	ENDIF
+ENDIF
+;[羞恥心]をみる
+IF TALENT:ARG:羞恥心 == 1
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Shy】",PADDING,LEFT%　×１.３
+ELSEIF TALENT:ARG:羞恥心 == -1
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Shameless】",PADDING,LEFT%　×１.３
+ENDIF
+;[痛覚]をみる
+IF TALENT:ARG:痛覚 == 1
+	合計女子力 = 合計女子力 / 10 * 9
+	PRINTFORML %"【Low Pain Tolerance】",PADDING,LEFT%　×０.９
+ELSEIF TALENT:ARG:痛覚 == -1
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【High Pain Tolerance】",PADDING,LEFT%　×１.３
+ENDIF
+;[濡れやすさ]をみる
+IF TALENT:ARG:濡れやすさ == 1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Easy To Get Wet】",PADDING,LEFT%　×１.２
+ELSEIF TALENT:ARG:濡れやすさ == -1
+	合計女子力 = 合計女子力 / 10 * 9
+	PRINTFORML %"【Hard To Get Wet】",PADDING,LEFT%　×０.９
+ENDIF
+
+;[習得速度]をみる
+IF TALENT:ARG:習得速度 == 1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Fast Learner】",PADDING,LEFT%　×１.２
+ELSEIF TALENT:ARG:習得速度 == -1
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Slow Learner】",PADDING,LEFT%　×０.８
+ENDIF
+;[針さばき]をみる
+IF TALENT:ARG:針さばき
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Needle Skill】",PADDING,LEFT%　×１.２
+ENDIF
+;[猫舌]をみる
+IF TALENT:ARG:猫舌
+	IF ABL:ARG:技巧 >= 5
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【Cat Tongue】",PADDING,LEFT%　×１.３
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 9
+		PRINTFORML %"【Cat Tongue】",PADDING,LEFT%　×０.９
+	ENDIF
+ENDIF
+;[調合知識]をみる
+IF TALENT:ARG:調合知識
+	合計女子力 = 合計女子力 / 100 * 125
+	PRINTFORML %"【Mixing Knowledge】",PADDING,LEFT%　×１.２５
+ENDIF
+;[薬毒耐性]をみる
+IF TALENT:ARG:薬毒耐性
+	合計女子力 = 合計女子力 / 100 * 125
+	PRINTFORML %"【Drug Resistant】",PADDING,LEFT%　×１.２５
+ENDIF
+;[おもらし癖]をみる
+IF TALENT:ARG:おもらし癖
+	合計女子力 = 合計女子力 / 10 * 11
+	PRINTFORML %"【Peeing Habit】",PADDING,LEFT%　×１.１
+ENDIF
+
+;[自慰しやすい]をみる
+IF TALENT:ARG:自慰しやすい
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Masturbator】",PADDING,LEFT%　×１.２
+ENDIF
+;[汚臭耐性]をみる
+IF TALENT:ARG:汚臭耐性 == 2
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Ignores Filth】",PADDING,LEFT%　×１.２
+ELSEIF TALENT:ARG:汚臭耐性 == 1
+	合計女子力 = 合計女子力 / 10 * 11
+	PRINTFORML %"【Smell Resistant】",PADDING,LEFT%　×１.１
+ELSEIF TALENT:ARG:汚臭耐性 == -1
+	合計女子力 = 合計女子力 / 10 * 9
+	PRINTFORML %"【Smell Sensitive】",PADDING,LEFT%　×０.９
+ELSEIF TALENT:ARG:汚臭耐性 == -2
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Clean Freak】",PADDING,LEFT%　×０.８
+ENDIF
+;[献身的]をみる
+IF TALENT:ARG:献身的
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Devoted】",PADDING,LEFT%　×１.２
+ENDIF
+
+;[快感応答]をみる
+IF TALENT:ARG:快感応答 == 1
+	合計女子力 = 合計女子力 / 10 * 18
+	PRINTFORML %"【Enjoys Pleasure】",PADDING,LEFT%　×１.８
+ELSEIF TALENT:ARG:快感応答 == -1
+	IF ABL:ARG:欲望 >= 20
+		合計女子力 = 合計女子力 / 10 * 15
+		PRINTFORML %"【Denies Pleasure】",PADDING,LEFT%　×１.５
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 6
+		PRINTFORML %"【Denies Pleasure】",PADDING,LEFT%　×０.６　（Invert condition: 20 Desire, currently {ABL:ARG:欲望}）
+	ENDIF
+ENDIF
+
+;[中毒しやすい]をみる
+IF TALENT:ARG:中毒しやすい
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Easily Addicted】",PADDING,LEFT%　×１.２
+ENDIF
+
+IF TALENT:ARG:器用な指 && TALENT:ARG:舌使い && TALENT:ARG:淫壺 && TALENT:ARG:尻穴狂い && TALENT:ARG:淫乳
+	SETCOLOR COLOR("RED")
+	合計女子力 = 合計女子力 / 10 * 40
+	PRINTFORML %"【Master of Marital Arts】",PADDING,LEFT%　×４.０
+	SETCOLOR COLOR("PINK")
+ELSE
+	;[器用な指]をみる
+	IF TALENT:ARG:器用な指
+		合計女子力 = 合計女子力 / 10 * 12
+		PRINTFORML %"【Nimble-Fingered】",PADDING,LEFT%　×１.２
+	ENDIF
+	;[舌使い]をみる
+	IF TALENT:ARG:舌使い
+		合計女子力 = 合計女子力 / 10 * 12
+		PRINTFORML %"【Skilled Tongue】",PADDING,LEFT%　×１.２
+	ENDIF
+	;[淫壺]をみる
+	IF TALENT:ARG:淫壺
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【Lewd Vagina】",PADDING,LEFT%　×１.３
+	ENDIF
+	;[尻穴狂い]をみる
+	IF TALENT:ARG:尻穴狂い
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【Lewd Anus】",PADDING,LEFT%　×１.３
+	ENDIF
+	;[淫乳]をみる
+	IF TALENT:ARG:淫乳
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【Lewd Breasts】",PADDING,LEFT%　×１.３
+	ENDIF
+ENDIF
+
+;[キス魔]をみる
+IF TALENT:ARG:キス魔
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Lewd Lips】",PADDING,LEFT%　×１.３
+ENDIF
+;[自慰狂い]をみる
+IF TALENT:ARG:自慰狂い
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Love To Masturbate】",PADDING,LEFT%　×１.３
+ENDIF
+;[ポルチオ性感]をみる
+IF TALENT:ARG:ポルチオ性感
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Lewd Cervix】",PADDING,LEFT%　×１.３
+ENDIF
+
+;[倒錯的]をみる
+IF TALENT:ARG:倒錯的
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Perverted】",PADDING,LEFT%　×１.２
+ENDIF
+;[両刀]をみる
+IF TALENT:ARG:性別嗜好 == -1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Bisexual】",PADDING,LEFT%　×１.２
+ENDIF
+;[サド]をみる
+IF TALENT:ARG:サド
+	合計女子力 = 合計女子力 / 10 * 14
+	PRINTFORML %"【Sadist】",PADDING,LEFT%　×１.４
+ENDIF
+;[マゾ]をみる
+IF TALENT:ARG:マゾ
+	合計女子力 = 合計女子力 / 10 * 14
+	PRINTFORML %"【Masochist】",PADDING,LEFT%　×１.４
+ENDIF
+;[嫉妬]をみる
+IF TALENT:ARG:嫉妬
+	IF ABL:ARG:奉仕精神 >= 20
+		合計女子力 = 合計女子力 / 10 * 15
+		PRINTFORML %"【Jealous】",PADDING,LEFT%　×１.５
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 5
+		PRINTFORML %"【Jealous】",PADDING,LEFT%　×０.５　（Invert condition: 20 Servitude, currently {ABL:ARG:奉仕精神}）
+	ENDIF
+ENDIF
+;[小悪魔]をみる
+IF TALENT:ARG:小悪魔
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Little Devil】",PADDING,LEFT%　×１.２
+ENDIF
+
+;[妖狐]をみる
+IF TALENT:ARG:妖狐
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Youko】",PADDING,LEFT%　×１.５
+ENDIF
+;[魅力]をみる
+IF TALENT:ARG:魅力
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Charming】",PADDING,LEFT%　×１.５
+ENDIF
+;[魅惑]をみる
+IF TALENT:ARG:魅惑
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Captivating】",PADDING,LEFT%　×１.５
+ENDIF
+;[謎の魅力]をみる
+IF TALENT:ARG:謎の魅力
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Mysterious Charm】",PADDING,LEFT%　×２.０
+ENDIF
+
+;五箇所全て敏感だとまとめてボーナス
+IF TALENT:ARG:Ｃ感度 == 1 && TALENT:ARG:Ｖ感度 == 1 && TALENT:ARG:Ａ感度 == 1 && TALENT:ARG:Ｂ感度 == 1 && TALENT:ARG:Ｍ感度 == 1
+	SETCOLOR COLOR("RED")
+	合計女子力 = 合計女子力 / 10 * 40
+	PRINTFORML %"【Erogenous Body】",PADDING,LEFT%　×４.０
+	SETCOLOR COLOR("PINK")
+ELSE
+	;[Ｃ感度]をみる
+	IF TALENT:ARG:Ｃ感度 == 1
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【C Sensitive】",PADDING,LEFT%　×１.３
+	ELSEIF TALENT:ARG:Ｃ感度 == -1
+		合計女子力 = 合計女子力 / 10 * 8
+		PRINTFORML %"【C Insensitive】",PADDING,LEFT%　×０.８
+	ENDIF
+	;[Ｖ感度]をみる
+	IF TALENT:ARG:Ｖ感度 == 1
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【V Sensitive】",PADDING,LEFT%　×１.３
+	ELSEIF TALENT:ARG:Ｖ感度 == -1
+		合計女子力 = 合計女子力 / 10 * 8
+		PRINTFORML %"【V Insensitive】",PADDING,LEFT%　×０.８
+	ENDIF
+	;[Ａ感度]をみる
+	IF TALENT:ARG:Ａ感度 == 1
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【A Sensitive】",PADDING,LEFT%　×１.３
+	ELSEIF TALENT:ARG:Ａ感度 == -1
+		合計女子力 = 合計女子力 / 10 * 8
+		PRINTFORML %"【A Insensitive】",PADDING,LEFT%　×０.８
+	ENDIF
+	;[Ｂ感度]をみる
+	IF TALENT:ARG:Ｂ感度 == 1
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【B Sensitive】",PADDING,LEFT%　×１.３
+	ELSEIF TALENT:ARG:Ｂ感度 == -1
+		合計女子力 = 合計女子力 / 10 * 8
+		PRINTFORML %"【B Insensitive】",PADDING,LEFT%　×０.８
+	ENDIF
+	;[Ｍ感度]をみる
+	IF TALENT:ARG:Ｍ感度 == 1
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【M Sensitive】",PADDING,LEFT%　×１.３
+	ELSEIF TALENT:ARG:Ｍ感度 == -1
+		合計女子力 = 合計女子力 / 10 * 8
+		PRINTFORML %"【M Insensitive】",PADDING,LEFT%　×０.８
+	ENDIF
+ENDIF
+;[バストサイズ]をみる
+IF TALENT:ARG:バストサイズ == 2
+	IF TALENT:ARG:体型 < 0
+		合計女子力 = 合計女子力 / 10 * 17
+		PRINTFORML %"【Loli Super-Oppai】",PADDING,LEFT%　×１.７
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 15
+		PRINTFORML %"【Huge Breasts】",PADDING,LEFT%　×１.５
+	ENDIF
+ELSEIF TALENT:ARG:バストサイズ == 1
+	IF TALENT:ARG:体型 < 0
+		合計女子力 = 合計女子力 / 10 * 15
+		PRINTFORML %"【Loli Oppai】",PADDING,LEFT%　×１.５
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 13
+		PRINTFORML %"【Big Breasts】",PADDING,LEFT%　×１.３
+	ENDIF
+ELSEIF TALENT:ARG:バストサイズ == -1
+	IF TALENT:ARG:体型 < 0
+		合計女子力 = 合計女子力 / 10 * 9
+		PRINTFORML %"【Small Breasts】",PADDING,LEFT%　×１.１
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 9
+		PRINTFORML %"【Small Breasts】",PADDING,LEFT%　×０.９
+	ENDIF
+ELSEIF TALENT:ARG:バストサイズ == -2
+	IF TALENT:ARG:体型 < 0
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 8
+		PRINTFORML %"【Flatty】",PADDING,LEFT%　×０.８
+	ENDIF
+ENDIF
+;[精愛味覚]をみる
+IF TALENT:ARG:精愛味覚
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Loves Taste Of Semen】",PADDING,LEFT%　×１.３
+ENDIF
+
+;[回復速度]をみる
+IF TALENT:ARG:回復速度 == 1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Fast Recovery】",PADDING,LEFT%　×１.２
+ELSEIF TALENT:ARG:回復速度 == -1
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Slow Recovery】",PADDING,LEFT%　×０.８
+ENDIF
+
+;[日光浴]をみる
+IF TALENT:ARG:日光浴
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Early Bird】",PADDING,LEFT%　×１.２
+ENDIF
+;[月光浴]をみる
+IF TALENT:ARG:月光浴
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Night Person】",PADDING,LEFT%　×１.２
+ENDIF
+;[治療]をみる
+IF TALENT:ARG:治療
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Treatment】",PADDING,LEFT%　×１.５
+ENDIF
+;[鼓舞]をみる
+IF TALENT:ARG:鼓舞
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Inspiring】",PADDING,LEFT%　×１.５
+ENDIF
+;[不思議な根]をみる
+IF TALENT:ARG:不思議な根
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Mysterious Origin】",PADDING,LEFT%　×１.２
+ENDIF
+
+;[狂気]をみる
+IF TALENT:ARG:狂気
+	IF ABL:ARG:従順 >= 20 || ABL:ARG:奉仕精神 >= 20
+		合計女子力 = 合計女子力 / 10 * 15
+		PRINTFORML %"【Insane】",PADDING,LEFT%　×１.５
+	ELSE
+		合計女子力 = 合計女子力 / 10 * 5
+		PRINTFORML %"【Insane】",PADDING,LEFT%　×０.５　（Invert Condition: Obedience or Servicing 20, currently {ABL:ARG:従順}/{ABL:ARG:奉仕精神}）
+	ENDIF
+ENDIF
+;[ヤリマン]をみる
+IF TALENT:ARG:ヤリマン
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Slut】",PADDING,LEFT%　×２.０
+ENDIF
+
+;[動物耳]をみる
+IF TALENT:ARG:動物耳 == 2
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Rabbit Ears】",PADDING,LEFT%　×１.５
+ELSEIF TALENT:ARG:動物耳 == 3
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Dog Ears】",PADDING,LEFT%　×１.５
+ELSEIF TALENT:ARG:動物耳 == 4
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Cat Ears】",PADDING,LEFT%　×１.５
+ELSEIF TALENT:ARG:動物耳
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Animal Ears】",PADDING,LEFT%　×１.５
+ENDIF
+;[禁断の知識]をみる
+IF TALENT:ARG:禁断の知識
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Forbidden Knowledge】",PADDING,LEFT%　×１.５
+ENDIF
+;[人気]をみる
+IF TALENT:ARG:人気
+	合計女子力 = 合計女子力 / 100 * 125
+	PRINTFORML %"【Popular】",PADDING,LEFT%　×１.２５
+ENDIF
+;[具現]をみる
+IF TALENT:ARG:具現
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Embodiment】",PADDING,LEFT%　×１.３
+ENDIF
+
+;[母乳体質]をみる
+IF TALENT:ARG:母乳体質
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Lactating】",PADDING,LEFT%　×１.３
+ENDIF
+;[妊娠]をみる
+IF TALENT:ARG:妊娠
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Pregnant】",PADDING,LEFT%　×０.８
+ENDIF
+;[母性]をみる
+IF TALENT:ARG:母性
+	合計女子力 = 合計女子力 / 10 * 11
+	PRINTFORML %"【Maternity】",PADDING,LEFT%　×１.１
+ENDIF
+;[初潮]をみる
+IF TALENT:ARG:初潮
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【First Menstruation】",PADDING,LEFT%　×１.５
+ENDIF
+;[音楽知識]をみる
+IF TALENT:ARG:音楽知識 == 1
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Musical Knowledge】",PADDING,LEFT%　×１.３
+ELSEIF TALENT:ARG:音楽知識 == 2
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Singing Knowledge】",PADDING,LEFT%　×１.３
+ELSEIF TALENT:ARG:音楽知識 == 3
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Dancing Knowledge】",PADDING,LEFT%　×１.３
+ENDIF
+;[音感]をみる
+IF TALENT:ARG:音感 == -1
+	合計女子力 = 合計女子力 / 10 * 8
+	PRINTFORML %"【Tone Deaf】",PADDING,LEFT%　×０.８
+ELSEIF TALENT:ARG:音感 == 1
+	合計女子力 = 合計女子力 / 10 * 11
+	PRINTFORML %"【Sense Of Sound】",PADDING,LEFT%　×１.１
+ELSEIF TALENT:ARG:音感 == 2
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Perfect Pitch】",PADDING,LEFT%　×１.３
+ENDIF
+
+;[水棲]をみる
+IF TALENT:ARG:水棲
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Aquatic】",PADDING,LEFT%　×１.２
+ENDIF
+;[氷精]をみる
+IF TALENT:ARG:氷精 == 1
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Ice Fairy】",PADDING,LEFT%　×１.２
+ELSEIF TALENT:ARG:氷精 == 2
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Yuki Onna】",PADDING,LEFT%　×１.２
+ENDIF
+;[半白澤]をみる
+IF TALENT:ARG:半白澤
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Were-hakutaku】",PADDING,LEFT%　×１.５
+ENDIF
+;[人間]をみる
+IF GET_TRIBENAME(ARG, GETNUM(TALENT, "人間")) == "天人"
+	合計女子力 = 合計女子力 / 10 * 18
+	PRINTFORML %"【Celestial】",PADDING,LEFT%　×１.８
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "人間")) == "仙人"
+	合計女子力 = 合計女子力 / 10 * 18
+	PRINTFORML %"【Hermit】",PADDING,LEFT%　×１.８
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "人間")) == "月人"
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Lunarian】",PADDING,LEFT%　×２.０
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "人間")) == "魔界人"
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Makai】",PADDING,LEFT%　×２.０
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "人間")) == "外界人"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Outsider】",PADDING,LEFT%　×１.２
+ENDIF
+;[妖怪]をみる
+IF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "鬼"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Oni】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "吸血鬼"
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Vampire】",PADDING,LEFT%　×２.０
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "河童"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Kappa】",PADDING,LEFT%　×１.２
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "天狗"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Tengu】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "妖獣"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Youjuu】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "妖鳥"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Youchuu】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "妖蟲"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Bug】",PADDING,LEFT%　×１.２
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "悪魔"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Devil】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "小人"
+	合計女子力 = 合計女子力 / 10 * 18
+	PRINTFORML %"【Inchling】",PADDING,LEFT%　×１.８
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "座敷わらし"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Zashiki-Warashi】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖怪")) == "山童"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Yamawaro】",PADDING,LEFT%　×１.２
+ENDIF
+;[妖精]をみる
+IF GET_TRIBENAME(ARG, GETNUM(TALENT, "妖精")) == "妖精"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Fairy】",PADDING,LEFT%　×１.２
+ENDIF
+;[神霊]をみる
+IF GET_TRIBENAME(ARG, GETNUM(TALENT, "神霊")) == "神霊"
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Divine Spirit】",PADDING,LEFT%　×２.０
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "神霊")) == "死神"
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Shinigami】",PADDING,LEFT%　×２.０
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "神霊")) == "閻魔"
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Enma】",PADDING,LEFT%　×２.０
+ENDIF
+;[幽霊]をみる
+IF GET_TRIBENAME(ARG, GETNUM(TALENT, "幽霊")) == "幽霊"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Phantom】",PADDING,LEFT%　×１.２
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "幽霊")) == "騒霊"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Poltergeist】",PADDING,LEFT%　×１.２
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "幽霊")) == "亡霊"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Ghost】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "幽霊")) == "悪霊"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Evil Spirit】",PADDING,LEFT%　×１.５
+ENDIF
+;[付喪神]をみる
+IF GET_TRIBENAME(ARG, GETNUM(TALENT, "付喪神")) == "付喪神"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Tsukumogami】",PADDING,LEFT%　×１.２
+ENDIF
+;[人形]をみる
+IF GET_TRIBENAME(ARG, GETNUM(TALENT, "人形")) == "人形"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Doll】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "人形")) == "ロボット"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Robot】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "人形")) == "ゴーレム"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Jizo】",PADDING,LEFT%　×１.２
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "人形")) == "埴輪"
+	合計女子力 = 合計女子力 / 10 * 12
+	PRINTFORML %"【Haniwa】",PADDING,LEFT%　×１.２
+ENDIF
+;[追加種族]をみる
+IF GET_TRIBENAME(ARG, GETNUM(TALENT, "追加種族")) == "巫女"
+	合計女子力 = 合計女子力 / 10 * 18
+	PRINTFORML %"【Miko】",PADDING,LEFT%　×１.８
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "追加種族")) == "魔法使い"
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Magician】",PADDING,LEFT%　×１.５
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "追加種族")) == "メイド"
+	合計女子力 = 合計女子力 / 10 * 18
+	PRINTFORML %"【Maid】",PADDING,LEFT%　×１.８
+ELSEIF GET_TRIBENAME(ARG, GETNUM(TALENT, "追加種族")) == "蓬莱人"
+	合計女子力 = 合計女子力 / 10 * 20
+	PRINTFORML %"【Hourai】",PADDING,LEFT%　×２.０
+ENDIF
+;さとり
+IF ARG == 38 || ARG == 49
+	合計女子力 = 合計女子力 / 10 * 13
+	PRINTFORML %"【Satori】",PADDING,LEFT%　×１.３
+ENDIF
+;阿求
+IF ARG == 80
+	合計女子力 = 合計女子力 / 10 * 15
+	PRINTFORML %"【Child of Maire】",PADDING,LEFT%　×１.５
+ENDIF
+IF TALENT:ARG:行きずり
+	合計女子力 = 合計女子力 / 10 * 3
+	PRINTFORML %"【Generic Character】",PADDING,LEFT%　×０.３
+ENDIF
+PRINTL 
+
+
+PRINTL 
+CALL PRINTLINE, "Measurement Results"
+PRINTL 
+RESETCOLOR
+FONTREGULAR
+
+LOCAL = 合計女子力 ;custom code
+
+SIF 合計女子力 > 5000000
+	PRINTFORMW Girl-Power Level at two million... 3 million... It's still rising!?
+SIF 合計女子力 > 10000000
+	PRINTFORMW T-The Girl-Power Level is over 10 million!
+SIF 合計女子力 > 50000000
+	PRINTFORMW O-Over 50 million!? Bakana! This scouter must be broken!
+IF 合計女子力 >= 100000000
+	PRINTFORMW Boom!!
+	PRINTFORMW The scouter shows off %DIGIT_GROUP(合計女子力)% for a split second before exploding!
+	合計女子力 /= 100000000
+	CALL COLORMESSAGE(@"%CALLNAME:ARG%'s Girl-Power Level: {合計女子力} Billion",C_YELLOW,2,1)
+ELSE
+	万単位 = 合計女子力 / 10000
+	端数 = 合計女子力 % 10000
+	CALL COLORMESSAGE(@"%CALLNAME:ARG%'s Girl-Power Level: %DIGIT_GROUP(合計女子力)%",C_YELLOW,2,1)
+SIF 合計女子力 < 100000
+	PRINTFORMW %HIS_HER(TARGET,1)% Girl-Power Level... It's just at %DIGIT_GROUP(合計女子力)%! Trash!
+ENDIF
+
+;custom code, uncommented
+SIF IS_MALE(TARGET)
+	RETURN
+合計女子力 = LOCAL ;custom code
+;一億オーバー
+IF 合計女子力 >= 100000000
+	PRINTFORMW SSS Rank!!! The most beloved woman in Gensokyo by far, wife material.
+;五千万オーバー
+ELSEIF 合計女子力 >= 50000000
+	PRINTFORMW SS Rank!! A beauty so stunning that even the most powerful people would flock to marry her.
+;一千万オーバー
+ELSEIF 合計女子力 >= 10000000
+	PRINTFORMW Ｓ Rank!! A national beauty and treasure.
+;五百万オーバー
+ELSEIF 合計女子力 >= 5000000
+	PRINTFORMW Ａ Rank! A high-class lady, well beyond the reach of average folk.
+;百万オーバー
+ELSEIF 合計女子力 >= 1000000
+	PRINTFORMW Ｂ Rank! A top-notch lover who can hold her own in any scenario.
+;五十万オーバー
+ELSEIF 合計女子力 >= 500000
+	PRINTFORMW Ｃ Rank! A full-fledged excellent partner.
+;十万オーバー
+ELSEIF 合計女子力 >= 100000
+	PRINTFORMW Ｄ Rank! Would be so-so as a girlfriend.
+ELSE
+	PRINTFORMW Ｅ Rank! Just a naive little girl.
+ENDIF
+
+RETURN 1

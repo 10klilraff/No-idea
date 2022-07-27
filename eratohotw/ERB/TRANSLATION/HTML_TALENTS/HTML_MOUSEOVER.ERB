@@ -1,0 +1,735 @@
+﻿;--------------------------------------------------
+;ARGはタレント番号に対応
+;大部分の説明文はTALENT.CSVのそれを持ってきています
+;ARGの番号の素質の説明を返す
+;Warning! Do not use ' or " or & in the description, use ’ or ” or ＆ instead or escape them with \. Warning #2: You were warned.
+@TALENT_INFO(ARG,ARG:1)
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#FUNCTIONS
+SELECTCASE ARG
+	CASE 0
+
+	
+	;Virgin
+		;Unknown virginity-loss
+		IF ARG:1 == -1
+			RETURNF "This character has lost their virginity, but they don’t know about that yet. Might be a bit shocking for them when they find that out though."
+		;Virgin
+		ELSEIF ARG:1 == 1
+			RETURNF "Maiden’s proof of innocence. This character has never experienced V penetration. Losing it is very painful, so be sure to have some sort of attachment before getting rid of it."
+		;Restored Virgin
+		ELSEIF ARG:1 == 2
+			RETURNF "This character’s vagina has a new fresh hymen, the ”proof” of her virginity. With this you can pretend that you were her first."
+		ENDIF
+	CASE 1
+	;Male Virgin
+		SIF ARG:1 == 0
+			RETURNF "This character has never used their penis for penetration."
+	CASE 2
+	;Gender
+		;Futa
+		IF ARG:1 == 3
+			RETURNF "Possible to execute training commands that utilize penis/vagina even if not a male/female."
+		;Male
+		ELSEIF ARG:1 == 2
+			RETURNF "Indicates that this character is a man."
+		ENDIF
+		
+	CASE 3
+	;Love
+		RETURNF "This character has developed a romantic bond with you. You can call yourself a couple now.\nMakes it much easier to execute commands. More likely to obey you overall."
+	CASE 4
+	;Lewd
+		RETURNF "This character discovered their new self, lusty and degenerate, totally enjoying it and having no regrets."
+	CASE 5
+	;Submission
+		RETURNF "This character submitted themselves at your mercy. You can truly call yourself a master now."
+	CASE 6
+	;Never Kissed
+		SIF ARG:1
+			RETURNF "This character has never experienced kissing before."
+			
+	CASE 7
+	;Couple
+		RETURNF "You and this character have formed a couple. You can only be in one relationship like this."
+	CASE 8
+	;Yearning
+		RETURNF "This character feels a strange yearning for you. If you keep working on your relationship, they may truly fall in love with you.\nMakes it easier to execute commands. Also more likely to obey you overall."
+	CASE 9
+	;Broken
+		RETURNF "Not used."
+		
+	CASE 10
+	;Courage
+		;Timid
+		IF ARG:1 == -1
+			RETURNF "This character is a coward.\nIf player: Harder to get good date results. Harder to push down target.\n If not player: More likely to obey you overall. Easier to push down. Less likely to push you down. Easier to negotiate for raw penetration.\nGems: Fear↑ Hostility↑"
+		;Brave
+		ELSEIF ARG:1 == 1
+			RETURNF "This character is brave.\nIf player: Easier to push down target. Easier to get a good date results. \nIf target: Harder to execute commands. Harder to negotiate for raw penetration.\n More likely to take the lead. Less likely to obey you overall. Harder to push down. \nGems: Loyalty↓ Desire↓ Submission↓ Fear↓ Favour↓ Hostility↑ Depression↑ "
+		ENDIF
+	CASE 11
+	;Attitude
+		;Docile
+		IF ARG:1 == -1
+			RETURNF "This character is obedient and docile, and does what it’s told.\nIf player: Harder to push down target.\nIf not player: Makes it easier to execute commands. Easier to negotiate for raw penetration.\nMore likely to obey you overall. Less likely to push you down.\nGems: Loyalty↑ Favour↑ Hostility↓. "
+		;Defiant
+		ELSEIF ARG:1 == 1
+			RETURNF "This character is defiant and rebellious.\nIf player: \nIf not player: Talent disappears on love. Makes it harder to execute commands. More likely to walk around on their own. Much harder to negotiate for raw penetration. Less likely to obey you overall.\nGems: Loyalty↓ Submission↓ Favour↓ Hostility↑. "
+		ENDIF	
+	CASE 12
+	;Response
+		;Calm
+		IF ARG:1 == -1	
+			RETURNF "This character is calm and doesn’t speak up.\n If player: \nIf not player: More likely to obey you overall. Easier to push down.\nGems: Loyalty↓ Hostility↓"
+		;Cheeky
+		ELSEIF ARG:1 == 1
+			RETURNF "This character is cheeky and rather brazen.\n If player: Easier to push down target. \nIf not player: More likely to take the lead. Less likely to obey you overall. \nGems: Loyalty↓ Submission↓ Hostility↑"
+		ENDIF
+	CASE 13
+	;Pride
+		;Humble
+		IF ARG:1 == -1
+			RETURNF "This character is humble and doesn’t like to brag.\nIf player: \nIf not player: Makes it easier to execute commands. Easier to negotiate for raw penetration. More likely to obey you overall.\nGems: Submission↑ Fear↑ Hostility↓"
+		;Prideful
+		ELSEIF ARG:1 == 1
+			RETURNF "This character is prideful and haughty.\nIf player: \nIf not player: Makes it much harder to execute commands. More likely to take the lead. Harder to negotiate for raw penetration. Less likely to obey you overall. \nGems: Submission↓ Fear↓ Hostility↑."
+		ENDIF	
+	CASE 14
+		;Tsundere
+		RETURNF "This character is a tsundere.\nIf player: \nIf not player: Harder to negotiate for raw penetration. Love reverses all, Lewd/Submission reverses only gems. \nGems: Loyalty↓ Submission↓ Hostility↑"
+	CASE 15
+	;Mood
+		RETURNF "Shows whether this character has a good or bad mood. Bad Mood makes them angry faster and their Favour raise slower. Good Mood makes them raise Favour faster instead."
+		
+	CASE 16
+	;Appearance
+		RETURNF "(Not implemented)"
+		
+	CASE 17
+	;Age
+		RETURNF "Shows the physical age of the character."
+		
+	CASE 18
+	;Sleazy
+		RETURNF "Makes character’s private room dirty faster, showing that their Cleaning Skill is pretty bad."
+	
+	;Moody
+	CASE 19
+		RETURNF "Easier to change the mood. Doesn’t do anything."
+	CASE 20
+	;Self Control
+		RETURNF "This character exhibits great restraint and self control.\nIf player: Gains less Sexual Behavior. Gains less Performance.\nIf not player: Harder to ejaculate or lactate. Raises less Lust from orgasms. Loses Sexual Frustration 2 times faster and acquires it slower. Much harder to get good date results. More resistive and less assertive to sexual commands. Less likely to take the lead.\nGems: Submission↓ Fear↓ Hostility↑ C↓ V↓ B↓ M↑"
+	CASE 21
+	;Apathetic
+		RETURNF "This character is apathetic.\nIf player: \nIf not player: Makes dating harder. Less likely to push you down. Favorability (only without Love) and Reliability raise 2 times slower.\nGems: Loyalty↓ Desire↓ Submission↓ Favour↓ Fear↓ Hostility↓ "
+	CASE 22
+	;Emotionless
+		RETURNF "This character shows very little emotion.\nIf player: \nIf not player: Favorability and Reliability raise slower. Less likely to get a good effect from drinking alcohol. Cannot gain or lose Obedience ability from acquiring Marks.\nGems: ALL↓"
+	CASE 23
+	;Sexual Interest
+		;Conservative
+		IF ARG:1 == -1
+			RETURNF "This character is conservative and doesn’t like new things.\nIf player: \nIf not player: More resistant to sexual commands. Less likely to take the lead. Less likely to push you down. Harder to get a good date results. Deviation source raises slower.\nGems: Learning↓ \n"
+		;Curious
+		ELSEIF ARG:1 == 1
+			RETURNF "This character is curious and enjoys experiencing new things.\nIf player: \nIf not player: Less resistant to sexual commands. Deviation source raises much faster. More likely to take the lead. More likely to push you down. Easier to get a good date results.\nGems: Learning↑."
+		ENDIF
+	CASE 24
+	;Cheerful/Gloomy
+		;Gloomy
+		IF ARG:1 == -1	
+			RETURNF "This character is gloomy and melancholic.\nIf player: \nIf not player: \nGems: Depression↑ Favorability↑(if both have it)"
+		;Cheerful
+		ELSEIF ARG:1 == 1	
+			RETURNF "This character is cheerful and lively.\nIf player: \nIf not player: \nGems: Depression↓ Favorability↑(if both have it)"
+		ENDIF
+	CASE 25
+	;Reserved
+		RETURNF "This character is reserved and doesn’t give in to the heat of the moment.\nIf player: Harder to get pushed down. \nIf not player: Makes it harder to raise all abilities (reversed after love). Harder to get first kiss event and confession event after dates. Harder to make a successful confession. Harder to negotiate for raw penetration (depends on Love Experience). Favorability raises 2 times slower without Love.\nGems: "
+	CASE 26
+	;Show-off
+		RETURNF "This character is a show-off, clamoring for attention.\nIf player: \nIf not player: Makes it easier to execute commands.\nGems: Loyalty↑"
+	CASE 27
+	;Ignorant
+		RETURNF "This character is ignorant when it comes to sex, doesn’t know about pregnancy and will as such not ask for contraception.\nIf player:\nIf not player: Will be very scared losing their Virginity and hate you for it more. Disappears after following the Masturbation Addiction event chain.\nGems:"
+	CASE 30
+	;Virtue
+		;Unchaste
+		IF ARG:1 == -1
+			RETURNF "This character is indifferent when it comes to chastity.\nIf player:\nIf not player: Easier to negotiate for raw penetration. Gains less Hostility from seeing a kiss mark on you. More likely to push you down.\nGems:"
+		;Virtuous
+		ELSEIF ARG:1 == 1
+			RETURNF "This character cares about their chastity and being virtous.\nIf player: Much harder to initiate vaginal sex for player.\nIf not player: Will give lots of Hostility if lost virginity before having a Love. Harder to negotiate for raw penetration. Gains more Hostility from seeing a kiss mark on you. Less likely to push you down.\nGems:"
+		ENDIF
+	CASE 31
+	;Openness
+		;Repressed
+		IF ARG:1 == -1
+			RETURNF "This character isn’t very open when it comes to sex.\nIf player:\nIf not player: Makes it harder to execute commands. Loses Sexual Frustration 2 times faster and acquires it slower. Gains Depression source from almost every sexual command. Disappears after having 7 Lust or more.\nGems: Depression↑ Hostility↑ Desire↓"
+		;Liberated
+		ELSEIF ARG:1 == 1
+			RETURNF "This character is very open about sex.\nIf player:\nIf not player: Pleasure from CVAB and affection sources raise more.\nGems: Desire↑ Submission↑"
+		ENDIF
+	CASE 32
+	;Reluctant
+		RETURNF "This character is reluctant to do anything.\nIf player:\nIf not player: Makes it harder to execute commands. Gains Depression source from almost every sexual command. Much harder to negotiate for raw penetration. Disappears after having 7 Obedience or more.\nGems: Favorability↓ Reliability↓ Depression↑ Hostility↑ Loyalty↓"
+	CASE 33
+	;Shyness
+		;Shameless
+		IF ARG:1 == -1
+			RETURNF "Panics less when sees you intruding the bathroom. More likely to take the lead. More likely to push you down.\nLess likely to panic from embarrassing things. Effect of the exposure-based commands is weaker."
+		;Shy
+		ELSEIF ARG:1 == 1
+			RETURNF "Makes it a bit harder to execute sexual commands. Less likely to take the lead. Less likely to push you down.\nMore likely to panic from embarrassing things. Exposure-based commands are highly effective."
+		ENDIF
+	CASE 34
+	;Weakness
+		RETURNF "Makes it much easier to execute commands."
+	
+	CASE 40
+	;Sense Of Pain
+		;Pain Resistant
+		IF ARG:1 == -1
+			RETURNF "This character is resitant to pain\nGems: Pain↓"
+		;Pain Sensitive
+		ELSEIF ARG:1 == 1
+			RETURNF "This character is sensitive to pain\nGems: Pain↑"
+		ENDIF
+	CASE 41
+	;Wet Ease
+		;Hard To Get Wet
+		IF ARG:1 == -1
+			RETURNF "This character doesn’t get wet easily.\nGems: Lubrication↓"
+		;Easy To Get Wet
+		ELSEIF ARG:1 == 1
+			RETURNF "This character gets wet easily.\nGems: Lubrication↑"
+		ENDIF	
+	CASE 49
+		;Mixing Lv
+		RETURNF "How good the character is at synthesizing items."
+	CASE 46
+		;Logging Lv
+		RETURNF "How good the character is at logging."
+	CASE 47
+		;Fishing Lv
+		RETURNF "How good the character is at fishing."
+	CASE 48
+		;Collecting Lv
+		RETURNF "How good the character is at foraging and finding ingredients."
+	CASE 50
+	;Learning Speed
+		;Slow Learner
+		IF ARG:1 == -1
+			RETURNF "This character is a slow learner.\nIf player: Harder to raise sexual techniques.\nIf not player: Harder to raise sexual techniques.\nGems: Learning↓"
+		;Fast Learner
+		ELSEIF ARG:1 == 1
+			RETURNF "This character is a fast learner.\nIf player: Easier to raise sexual techniques.\nIf not player: Easier to raise sexual techniques.\nGems: Learning↑"
+		ENDIF
+	CASE 51
+	;Nimble-fingered
+		RETURNF "Commands that use fingers are highly effective. Easier to raise finger sexual technique."	
+	CASE 52
+	;Skilled Tongue
+		RETURNF "Commands that use tongue are highly effective. Easier to raise tongue sexual technique."	
+	CASE 53
+	;Needle Skill
+		RETURNF "Effectiveness of the commands that utilize needles is increased."	
+	CASE 54
+	;Cat Tongue
+		RETURNF "This character has a cat tongue made to scrape flesh from bone. Commands that use tongue receive some penalties and the effect is changed."	
+	CASE 55
+	;Mixing Knowledge
+		RETURNF "You can purchase special items. Using aphrodisiac consumes less STA and ENE. Can help Eirin with her job. Tea with medicine will more likely to work.\nCan mix Sleeping Pill into the tea. Target will swallow the pill on their own when starting intercourse if target has it."	
+	CASE 56
+	;Drug Resistant
+		RETURNF "Impossible to use aphrodisiac or diuretic on this person."	
+	CASE 57
+	;Peeing Habit
+		RETURNF "Urination command is always available. Will piss everything around when orgasming."	
+	
+	CASE 60
+	;Masturbating
+		RETURNF "Masturbation-related commands are easier to execute. Masturbation Addiction raises faster."	
+	CASE 61	
+		;Clean Freak 
+		IF ARG:1 == -2
+			RETURNF "This character is very sensitive to filth.\nIf player: \nIf not player: Much harder to execute most sexual commands. Favorability and Reliability growth gets greater penalty if dirt is present.\n   Private room will be much cleaner. Some commands may not be executed because of the dirt. Will bathe far more often.\nGems:"
+		;Smell Sensitive
+		ELSEIF ARG:1 == -1
+			RETURNF "This character is sensitive to filth.\nIf player: \nIf not player: Harder to execute most sexual commands. Favorability and Reliability growth gets greater penalty if dirt is present.\n   Private room will be cleaner. Some commands may not be executed because of the dirt. Will bathe more often.\nGems:"
+		;Resistant to Smell
+		ELSEIF ARG:1 == 1
+			RETURNF "This character isn’t bothered by filth.\nIf player: \nIf not player: Easier to execute most sexual commands. Favorability and Reliability growth get less penalty if dirt is present.\n   Private room will be dirtier. Less likely to bathe.\nGems:"
+		;Ignores Dirt
+		ELSEIF ARG:1 == 2
+			RETURNF "This character practically ignores filth.\nIf player: Unable to clean unless the area is very dirty. \nIf not player: Easier to execute most sexual commands. Favorability and Reliability growth get much less penalty if dirt is present.\n   Private room will be a lot dirtier. Less likely to bathe.\nGems:"
+		ENDIF
+	CASE 62
+	;Devoted
+		RETURNF "Easier to execute service commands. Submission parameter raises faster.\nFavorability and Reliability raise faster if there wasn’t any penalty to them."			
+	CASE 70
+	;Pleasure Response
+		IF ARG:1 == -1
+			;Denies Pleasure
+			RETURNF "Makes it harder to execute commands (disappears after having Love or Lewd depending on the command). Gets depressed from feeling pleasure if not Lewd. Harder to make them ejaculate or lactate.\nDesire parameter raises slower. Much harder to negotiate for raw penetration. Favorability raises slower from sexual commands."	
+		ELSEIF ARG:1 == 1
+			;Enjoys Pleasure
+			RETURNF "Makes it easier to execute commands. Easier to make them ejaculate or lactate. Desire parameter raises faster.\nMuch easier to negotiate for raw penetration. Favorability raises faster from sexual commands."
+		ENDIF
+	CASE 71
+	;Easily Addicted
+		RETURNF "Addiction abilities are raised more easily."
+	CASE 72
+	;Submits Easily
+		RETURNF "Much easier to execute commands. All parameters raise 2 times faster, except for Hostility, Discomfort and Depression which raise 2 times slower. Abilities may raise after executing commands."
+	CASE 73
+	;Loves to Masturbate
+		RETURNF "Increases the effect of C type commands and masturbating commands. Desire parameter raises faster."	
+	CASE 74
+	;Lewd Vagina
+		RETURNF "Increases the effect of V type commands. Loyalty parameter raises faster."	
+	CASE 75
+	;Loves Anal
+		RETURNF "Increases the effect of A type commands. Submission parameter raises faster."	
+	CASE 76
+	;Lewd Breasts
+		RETURNF "Increases the effect of B type commands. Embarrassment parameter raises faster."	
+	CASE 77
+	;Kissing Devil
+		RETURNF "Increases the effect of M type commands and kissing. Favour parameter raises faster."	
+	CASE 78
+	;Lewd Cervix
+		RETURNF "Not implemented yet"
+	CASE 80
+	;Perverted
+		RETURNF "Easier to negotiate for raw penetration. Submission and Embarrassment parameters raise faster. Easier to receive a Footjob and do A penetration commands on player."
+	CASE 81
+	;Gender Preference
+		;Bisexual
+		IF ARG:1 == -1
+			RETURNF "Easier to execute commands with both genders. Lesbianism/Lesbianism Addiction/BoyLove/BoyLove Addiction are raised more easily."
+		ELSEIF ARG:1 == 3
+			RETURNF "Will never push you down."
+		;Man Hater
+		ELSEIF ARG:1 == 1
+			RETURNF "There’s a penalty if player is a male. Penalty disappears after getting Love."
+		;Misogynist
+		ELSEIF ARG:1 == 2
+			RETURNF "There’s a penalty if player is a female. Penalty disappears after getting Love."	
+		ENDIF
+	CASE 82
+	;Sadist
+		RETURNF "Much more likely to take the lead. More likely to cause Pain and Fear with any action. Easier to execute commands if player has it. Bypasses Obedience checks for many commands.\nSadism ability is easier to raise. Easier to push down if player or target or both have it.\nSupremacy parameter raises faster. Fear and Submission parameters raise slower. Gives Abnormal Experience after raising Pain Mark."		
+	CASE 83
+	;Masochist
+		RETURNF "Much less likely to take the lead. Masochism ability is easier to raise. Fear and Submission parameters raise faster.\nDepression parameter raises slower. More likely to get pushed down if player has it."
+	CASE 84
+		;Jealousy
+		RETURNF "(Not implemented)"	
+	CASE 85
+		;Gullible
+		RETURNF "Easier to execute commands. Submission parameter raises faster. Hostility parameter raises slower."
+	CASE 86
+		;Little Devil
+		RETURNF "Easier to receive a Footjob and do A penetration commands on player if target has it. More likely to push you down."
+
+
+	CASE 90
+	;Kitsune
+		RETURNF "A Kitsune, a fox Youkai.\nThe more tails the have the stronger they are.\nThey are also alluring by nature."
+	CASE 91
+	;Youko
+		RETURNF "A Youko (fox spirit), differs from a Kitsune in mythology."
+	CASE 92
+	;Charming
+		RETURNF "Favorability raises faster."	
+	CASE 93
+	;Captivating
+		RETURNF "Favorability raises faster. Easier to execute commands and parameters raise faster if player has it."	
+	CASE 94
+	;Mysterious Charm
+		RETURNF "Favorability raises faster. Easier to execute commands and more parameters raise faster if player has it."
+		
+	CASE 100
+	;Figure
+		RETURNF "Indicates the body size. Many commands are unavailable if body is too big or small without Forbidden Knowledge. Harder to insert if the body size difference is large.\nInchlings get more Pain, less Desire (for majority of the commands), CVABM Pleasure and Lubrication parameters. It’s possible to use Inchlings as onaholes."
+	CASE 101 TO 104, 106
+	;Sensitivity
+		;Insensitive
+		IF ARG:1 == -1
+			RETURNF "Indicates that this parameter is raised harder unless player has a corresponding ”Ignores Insensitivity”.\nHarder to raise the corresponding ability."
+		;Sensitive
+		ELSEIF ARG:1 == 1
+			RETURNF "Indicates that this parameter is raised easier. Easier to raise the corresponding ability."
+		ENDIF
+	CASE 105
+	;Breast Size
+		RETURNF "Indicates the breast size. Description changes depending on the breast size. Some breast-related commands are impossible to execute if breast is too small.\nIf it’s big, it’s easier to raise Breast sex technique, easier to lactate and breast-related commands get a bonus."
+	CASE 120
+	;Thick Semen
+		RETURNF "Effect of the ejaculated semen is much stronger. Increases chances of pregnancy."	
+	CASE 121
+	;Alcohol Tolerance
+		RETURNF "Indicates the resistance to the effect of alcohol and how faster they get drunk.\nThose who have little resistance try to avoid drinking since they may get molested while being unconscious. Their DRUNK meter restores much slower as well."	
+	CASE 122
+	;Loves Taste Of Semen
+		RETURNF "Effect of blowjob and handjob commands increases. Deepthroat is especially effective. M Pleasure raises very fast from having semen in mouth."
+	
+	CASE 130
+	;Recovery Speed
+		RETURNF "Affects recovery speed of STA and ENE from every action that restores them (Resting, Sleeping, Pillow Talk, etc.)"	
+	
+	CASE 132
+	;Vampire
+		RETURNF "Immortal creatures of the night closely related to the Oni.\nThey can regenerate from the most mortal of wounds, even decapitation.\nThey can travel faster than any mortal, almost approaching the realm of the Tengu.\nThey can change shapes, becoming wolves and even fog.\nOn the other hand, they have a large list of weaknesses.\nSardine heads, broken holly branches, running water.\nSunlight, crosses, wooden stakes.\nFire, garlic, and silver weapons.\nBeing related to Oni, they are also weak to roasted beans.\nBeing technically dead, they are very difficult to impregnate."
+	CASE 133
+	;Early Bird
+		RETURNF "Increases amount of restored STA and ENE when resting at Noon time."	
+	CASE 134
+	;Night Person
+		RETURNF "Increases amount of restored STA and ENE when resting at Night time."	
+	CASE 135
+	;Treatment
+		RETURNF "Increases amount of restored STA and ENE if assistant has it. Doesn’t do anything."	
+	CASE 136
+	;Inspiring
+		RETURNF "Easier to execute commands if assistant has it."
+	CASE 137
+	;Insatiable
+		RETURNF "Increases pleasure from eating, gets hungry faster."
+	CASE 138
+	;Mysterious Origin
+		RETURNF "Can become a futanari if can be assistant. Doesn’t do anything."	
+	CASE 141
+	;Insane
+		RETURNF "Lowers the cost when selling, Lowers the reward when working. Doesn’t do anything."	
+	CASE 142
+	;Slut
+		RETURNF "Pushing down attempt is always successful. Desire parameter raises faster. Hostility parameter raises slower.\nFavorability raises faster, but much slower if there’s too much Intimacy."	
+	CASE 143
+	;Animal Ears
+		RETURNF "Can be ”In Heat”. Doesn’t like water and washing. Prefers Doggy Style.\nFavorability and Reliability raise faster with the corresponding Fortune."
+	CASE 144
+	;Forbidden Knowledge
+		RETURNF "Possible to purchase special items and execute special commands. Ignores or makes body/hole size check easier."	
+	CASE 145
+	;Popular
+		RETURNF "Favorability raises faster."
+	CASE 146
+	;Embodiment
+		RETURNF "Can become a futanari if can be assistant. Doesn’t do anything."	
+
+	CASE 149
+	;Lactating
+		RETURNF "Breasts can lactate with milk."	
+	CASE 150
+	;Infant Regression
+		RETURNF "Breast-related commands are highly effective."	
+	CASE 151
+	;Childlike
+		RETURNF "Private room gets dirty faster. Loses Sexual Frustration 4 times faster and can’t get pregnant without First Menstruation.\nBreast-related commands are highly effective if player has it. Spanking commands are highly effective."	
+	CASE 152
+	;Unmatched
+		RETURNF "Can ejaculate 2 times faster."	
+	CASE 153
+	;Pregnant
+		RETURNF "There’s a growing child in that big belly of hers. Many restrictions to the commands (depends on settings).\nLikes belly caress. Loses Sexual Frustration 4 times faster."	
+	CASE 154
+	;Childcare
+		RETURNF "Indicates that this character is raising a child. Loses Sexual Frustration 2 times faster."	
+	CASE 155
+	;Maternity
+		RETURNF "A maternal love of a mother who gave birth to the child."	
+	CASE 156
+	;First Menstruation
+		RETURNF "Can become pregnant even if child."	
+	CASE 157
+	;Lust Sense
+		RETURNF "Can figure out who has a large Sexual Desire or Frustration. Special command becomes available."	
+	CASE 158
+	;Panty Smuggler
+		RETURNF "You may avoid losing pilfered panties if others try to confiscate them when you didn’t add them to the collection yet."	
+	CASE 159
+	;Whereabouts Sense
+		RETURNF "Can sense everyone’s position on a current map. Special command becomes available."	
+	CASE 160
+	;Dirtiness Sense
+		RETURNF "Can sense dirtiness of each room on a current map. Special command becomes available."		
+	CASE 161
+	;Musicality
+		RETURNF "Indicates a deep musical or singing knowledge. Musical commands become more effective."	
+	CASE 162
+	;Sense Of Sound
+		RETURNF "Indicates a musical sensitivity. Gets bonus or penalty to musical activities depending on the state of this talent."
+	CASE 163
+	;Aquatic
+		RETURNF "Recovers STA and ENE under rain, gets exhausted under the blazing sun."
+	CASE 164
+	;Ice Fairy
+		SIF ARG:1 == 1
+			RETURNF "An ice fairy.\nThey recover in cold places but become exhausted in warm places.\nWhile stronger than a human, they are weaker than most Youkai."
+		;Snow Fairy
+		SIF ARG:1 == 2
+		RETURNF "A seasonal Youkai that only appears during winter.\nHas the ability to reinforce the natural cold that is in nature.\nThus, it is the strongest during winter and weakest during summer."
+	CASE 166
+	;Were-hakutaku
+		RETURNF "In their human form, the Were-hakutaku can devour history, erasing it from causality.\nDuring full moon, they transform into full Hakutaku, that can create history.\nOften depicted with horns like an Oni, they have a foul temper during full moons.\nAs with all Youkai, it is difficult to impregnate one."
+	
+	CASE 169 TO 173
+	;Ignores Insensitivity
+		RETURNF "This character ignores a certain insensitivity of other characters. Penalties to corresponding pleasure are removed."	
+	CASE 174
+	;Cleaning Addiction
+		RETURNF "This character is obsessed with cleaning. Bonus to cleaning activities."	
+	CASE 175
+	;Many Visitors
+		RETURNF "Increases probability of visitors appearing on the map."	
+	CASE 176
+	;One In Each Hand
+		RETURNF "Does nothing right now."
+	CASE 182
+	;Cleaner
+		RETURNF "Cleans up their location"
+	CASE 183
+	;Twin Dicks
+		RETURNF "Double the fun! Double Penetration becomes available."
+	CASE 184
+	;Passion
+		RETURNF "Similar to Yearning, but based on Lust. Effects are a bit stronger than Yearning. Can become Love after acquiring enough Intimacy."
+	CASE 185
+	;Fuck Buddy
+		RETURNF "One of the falling conditions based on Lust. Stronger if character has Yearning as well. Can become Love after acquiring enough Intimacy."
+
+	CASE 189
+	;Delusion
+		RETURNF "Not a real person, just an imagination. Everything that will happen between you is just a lie."
+	
+	;人間
+	CASE 190
+		IF ARG:1 == 1; 人間 Human
+			RETURNF "A featherless biped with broad flat nails.\nSome are from Gensokyo and others from the outside world.\nWhile weaker than Youkai they have the potential to hone their skills in the meager lifespan they are given."
+		ELSEIF ARG:1 == 2; 仙人 Hermit
+			RETURNF "A human that has through spiritual training ascended their mortal bonds and gotten one step closer to immortality.\nHermits spend their days reading sutras and can live for hundreds of years while consuming the barest of food.\nThe wisest of hermits can survive on fog alone.\nHaving left their humanity behind, they are difficult to impregnate."
+		ELSEIF ARG:1 == 3; 天人
+			RETURNF "Living above the clouds, Celestials are neither quite human nor Youkai.\nThey live idyllic lives above the clouds, holding parties each day.\nIn the past people used to be able to attain enlightenment and reach heaven, but no more.\nNo longer human, it is difficult to impregnate them."
+		ELSEIF ARG:1 == 4; 月人
+			RETURNF "A humanoid creature who lives on the moon, obsessed with purity.\nThey are far more powerful than normal humans with greater stamina to match.\nTheir lifespans are so long it is said to only end in battle or accident.\nAs they are not humans, they are difficult to impregnate."
+		ELSEIF ARG:1 == 5; 魔界人 Makai
+			RETURNF "One hailing from the realm of Makai.\nIt is a realm of demons and strong Youkai, even the environment is hostile.\nLegally regarded as humans as Opantsu-sama has not seemed fit to make them harder to impregnate."
+		ELSEIF ARG:1 == 6; 外界人 Outsider
+			RETURNF "A human that has managed to find themselves in Gensokyo.\nFair game for Youkai unless they befriend a Miko.\nLife is simply unfair."
+		ENDIF
+	;妖怪
+	CASE 191
+		IF ARG:1 == 1; 妖怪
+			RETURNF "A supernatural being.\nThere are thousand of tales about what Youkai are and can do, where they come from and what sustains them.\nThus, there is no single definition.\nThey are distinctively not human, even if they can be alive and have a pulse.\nFor this reason it can be hard for them to conceive."
+		ELSEIF ARG:1 == 2; 鬼 Oni
+			RETURNF "Happy, jovial, and strong as hell.\nOriginating from shapeless somethingness, they are not like Youkai.\nThey hate beans, lies, and liars.\nLoves to compete with others and proving their superiority.\nThe only way a human can win against one is by cheating.\nEven more unrelated to humans than Youkai are, it is exceedingly difficult to impregnate one."
+		ELSEIF ARG:1 == 3; 吸血鬼
+			RETURNF "Bats and blood.\nA being who sustains itself by drinking blood.\nBecause the spelling for Vampire contains the character for Oni, they are also weak to soy beans.\nNocturnal creatures, they shun the sun and go out at night instead.\nPowerful ones can simply walk around with a parasol if they want.\nAs their bodies are dead, it is difficult for them to conceive."
+		ELSEIF ARG:1 == 4; 河童
+			RETURNF "Cucumbers and power-tools.\nWater-dwelling Youkai that love cucumbers and sating their curiosity.\nWith an innate ADHD-like condition, they usually leave projects in a half-finished and dislike long projects.\nThey are known to extract Shirikodama from anuses of humans, killing them.\nDeath to anus bandits."
+		ELSEIF ARG:1 == 5; 天狗
+			RETURNF "Feathers, furs and sandals.\nTengu are highly territorial Youkai divided into 2 distinct races.\nThe soaring Crow Tengu can move faster than any other Youkai.\n   Can create gales of wind, even whirlwinds on command.\nThe stalwart Wolf Tengu defends the mountain but can get caught up in Shogi for days.\n   Possesses sharp senses and have the power of telegnosis.\nPerhaps because of their proud aura, they are very difficult to impregnate."
+		ELSEIF ARG:1 == 6; 妖獣
+			RETURNF "A catch-all term for animals that have become Youkai.\nWhen an animal lives to long or experiences too much, it sometimes awakens.\nExamples include Nekomata and Bake-danuki from cats and takuni respectively.\nBeing Youkai, it is difficult for them to conceive.\nBut as they were originally living animals, they are more fertile than conceptual Youkai."
+		ELSEIF ARG:1 == 7; 妖鳥
+			RETURNF "Bird Youkai.\nIs a less broad term specifying Youkai related to birds.\nFrom the three-legged Yatsuhashi to the Yosuzume.\nDespite being animal-related like the Youjuu, their origins are mythical.\nThey themselves were not originally animals.\nBecause of this, it is hard for them to conceive."
+		ELSEIF ARG:1 == 8; 妖蟲
+			RETURNF "Bug Youkai.\nBecause arachnology and entomology only split recently, spider and insect Youkai are of the same type.\nBorn from things disliked by humans, they are usually associated with things no one wants to do with.\nMammals and bugs do not breed easily, and these really just take the form of insects."
+		ELSEIF ARG:1 == 9; 悪魔
+			RETURNF "A devil of some kind.\nSummoned to Gensokyo from Makai or other hellish domains. They are strongly associated with magic and are often bound to contracts.\nCreatures of innate evil and death, it is difficult to fill them with life."
+		ELSEIF ARG:1 == 10; 小人
+			RETURNF "Descendants of Issun-Boushi, who famously rode a bowl and fought an Oni.\nDespite being small, they are incredibly strong, stepping on one will not kill them.\nThey have long been in possession of the Miracle Mallet, that can conveniently change the size of things.\nNot being human, and having very, very, small hallways, it is difficult for them to conceive."
+		ELSEIF ARG:1 == 11; 座敷わらし
+			RETURNF "House spirits that bring fortune.\nUsually takes the form of small girls.\nThey play harmless pranks to draw attention to themselves.\nNeglecting a house makes them leave, bringing misfortune.\nIt is difficult for them to conceive."
+		ENDIF
+	;妖精
+	CASE 192
+		SIF ARG:1 == 1; 妖精
+			RETURNF "A small being made of magic, fueled by nature itself.\nAs long as nature remains, they will always reshape.\nBeing aspects of nature, it is very difficult to impregnate one."
+	;神霊
+	CASE 193
+		IF ARG:1 == 1; 神霊
+			RETURNF "The spirit of a human that has achieved godhood, during or after life.\nWhile gods, they are not related to the Myriad Gods.\nTwenty times harder to impregnate than humans."
+		ELSEIF ARG:1 == 2
+			RETURNF "A god of death.\nTasked with collecting the souls of the dead and ferrying them across the Sanzu River.\nThose who live for too long will inevitably be visited by one.\nBeing gods, it is difficult to make one pregnant."
+		ELSEIF ARG:1 == 3 ;Enma
+			RETURNF "A judge in the afterlife.\nThey peer into people\'s past through a crystal mirror.\nJudging souls, they hand down punishment through their Rods of Remorse.\nTheir greatest ability is to judge any person\'s deed as good or bad, with absolute certainty.\nIt is virtually impossible to impregnate one."
+		ENDIF
+	;幽霊
+	CASE 194
+		IF ARG:1 == 1; 幽霊
+			RETURNF "Another type of spirit, much like a ghost.\nThe exact difference between the two is not known.\nGhosts tend to be more passive though, possessing less will and agency.\nThere are also half-phantoms, beings who are half-human half-phantom.\nBeing partially fully human and partially non-human, it is tricky for them to conceive."
+		ELSEIF ARG:1 == 2; 騒霊
+			RETURNF "A ghost that can move objects around easily.\nThey tend to be violent and easily get carried away.\nBut if they can channel their energy into something, they\'re no longer a danger.\nBe careful as you can still be swept along when they do things.\nBeing ghosts, it is difficult for them to conceive."
+		ELSEIF ARG:1 == 3; 亡霊
+			RETURNF "The spirit of someone that has died. Sometimes malevolent, sometimes not.\nAs they are dead, they cannot house life, rendering them effectively impossible to impregnate.\nThey are certain they will never get pregnant, and thus they do not bother with contraception.\nThey do not get affected by the Pink Wind."
+		ELSEIF ARG:1 == 4; 悪霊
+			RETURNF "A ghost that is innately evil.\nSomeone who died with regret or was cursed after death.\nTend to be very hostile and mean.\nBeing ghosts, it is difficult for them to conceive."
+		ENDIF
+	;付喪神
+	CASE 195
+		SIF ARG:1 == 1; 付喪神 Tsukumogami
+			RETURNF "A Type of Youkai formed when the god dwelling inside an object becomes angry at its disposal.\nIt animates the object to get revenge on the one that disrespectfully threw it away.\nBeing inanimate objects originally, it is difficult to impregnate them.\nBut, understanding tools and using them respectfully can make it easier."
+	;人形
+	CASE 196
+		IF ARG:1 == 1; 人形
+			RETURNF "A living doll.\nOriginally moved only with direct instructions, but eventually developed its own intellect.\nFor some reason, it has fully modeled intimate parts.\nThey are not intended to house live though, so conceiving should be impossible."
+		ELSEIF ARG:1 == 2; ロボット
+			IF TALENT:MASTER:万能孕ませ
+				RETURNF "An artificial construct that is not technically alive.\nDespite not containing the parts required, something has happened to allow them to be impregnated.\nThey are certain they will never get pregnant, and thus, they do not bother with contraception.\nThey do not get affected by the Pink Wind."
+			ELSE
+				RETURNF "An artificial construct that is not technically alive.\nAs they do not contain the parts required it is impossible to impregnate them.\nThey are certain they will never get pregnant, and thus, they do not bother with contraception.\nThey do not get affected by the Pink Wind."
+			ENDIF
+		ELSEIF ARG:1 == 3; ゴーレム
+			RETURNF "A statue that protects travelers, given life by belief.\nThey have a lot of experience with humans, but have little experience expressing themselves.\nOriginally statues, it is difficult for them to conceive."
+		ELSEIF ARG:1 == 4; 埴輪
+			RETURNF "A hollow clay figure that has had life breathed into it.\nNot having lived long, they are rather rigid and strict.\nAs they were originally clay figures, it is difficult for them to conceive."
+		ELSEIF ARG:1 == 5; キョンシー
+			RETURNF "A form of Vampire from China.\nAs rigor mortis has set in, they often have difficulty moving, forced to bounce and hop on rigid legs.\nJust like Vampires, they shun the sun and drink blood to survive.\nAs they are dead, it is difficult for them to conceive."
+		ENDIF
+	;追加種族
+	CASE 197
+		IF ARG:1 == 1; 巫女 Miko
+			RETURNF "A human that has devoted their lives to serving the gods.\nTheir duties involve purification, sealing, and exterminating Youkai.\nExpected to fight Youkai, they can channel divine will to smite their foes.\nThey are said to be the strongest creatures in Gensokyo.\nAs it would be rather inconvenient if they became pregnant, it is difficult for them to conceive."
+		ELSEIF ARG:1 == 2; 魔法使い Magician
+			RETURNF "One who practices the art of magic.\nHaving cast their humanity aside, they count as pseudo-Youkai.\nAs with all Youkai, it is difficult to impregnate one."
+		ELSEIF ARG:1 == 3; メイド
+			RETURNF "A strange lifeform with contradictory powers.\nOrigins are unknown, and powers are unexplainable.\nSome say they can stop time, other say they move fast with no mass.\nStill human in the end, but pregnancy might bother their master."
+		ELSEIF ARG:1 == 4; 蓬莱人
+			RETURNF "Someone who has drunk of the Hourai Elixir three times and become cursed with immortality.\nTheir bodies constantly regenerate meaning it is practically impossible to impregnate them.\nBecause of this, they do not ask for protection either."
+		ENDIF
+	CASE 264
+	;Almighty Impregnation
+		RETURNF "Makes it possible to impregnate Hourai Persons or Non-living races. Applies standard chances for their impregnation."
+	
+	CASE 270
+	;Good Gracing
+		RETURNF "Good at gracing.\nDodging is more effective."
+	CASE 271
+	;Extend
+		RETURNF "Has gotten enough score to get an extra life.\nStart with an extra life."
+	CASE 272
+	;Full Spirit Power
+		RETURNF "Full power.\nDodging increases damage done."
+	CASE 273
+	;Luna Shooter
+		RETURNF "An absolute lunatic.\nStart with an extra bomb, bombs are also better."
+
+ENDSELECT
+
+;Returns a persons race talents in HTML-form
+;ARG - the person in question
+@RACE_INFO(ARG)
+#FUNCTIONS
+#DIMS STR_LIST, 10
+
+VARSET STR_LIST
+LOCALS =  %CSVCSTR(ARG,10)%
+IF STRFIND(LOCALS, "●") > -1
+	SPLIT LOCALS, "●", STR_LIST
+	FOR LOCAL, 0, RESULT
+		IF STRFIND(STR_LIST:LOCAL, "Race:") > -1
+			LOCALS:1 = %REPLACE(STR_LIST:LOCAL, "Race:", "")%
+			LOCALS:1 = %REPLACE(LOCALS:1, "　", "")%
+			LOCALS = %LOCALS:1%
+			BREAK
+		ENDIF
+	NEXT
+ELSEIF ARG == [[小悪魔]]
+	LOCALS = Demon
+ENDIF
+SELECTCASE LOCALS
+	CASE "Youkai"
+		LOCALS '= "Phantoms, ghosts, apparitions, beasts, they are known by many names.\nTheir very nature is aligned with traditional misinterpretations of facts.\nBeing metaphysical concepts, they are difficult to impregnate."
+	CASE "Half-human half-phantom"
+		LOCALS '= "One whose body consists of two parts - a human part, and a phantom part.\nThey live and die like any other human being, but they two bodies.\nPossessing a lifespan greater than normal humans, their bodies are slightly colder than others.\nIt is also more difficult for them to conceive."
+	CASE "Shikigami（Bakeneko）"
+		LOCALS '= "After having lived for ten years a cat\'s tail splits in two.\nThus begins its journey towards becoming a Bakeneko.\nCapable of taking on human form, Bakeneko can often wield powers of necromancy and shamanism.\nTheir human forms are sometimes not perfect, leaving a tail, ears, and a rough tongue unchanged.\nThe transformation also makes it difficult to impregnate them."
+	CASE "Shikigami（Kitsune）"
+		LOCALS '= "Kitsune are fox Youkai that can take on human form.\nTricksters by heart, they are skillful at deceit.\nA fox at heart, they love fried tofu and are difficult to impregnate by humans.\nShikigami are servants bound to a master, receiving power as long as they obey them.\nBinding a Kitsune is no easy task."
+	CASE "Firefly Youkai"
+		LOCALS '= "This Youkai was once a firefly burning brightly in the night.\nPossesses the power to control all other insect.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Night Sparrow"
+		LOCALS '= "The Night Sparrow Youkai stalks those who walk at night and sings its song, blinding them.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Goddess"
+		LOCALS '= "A being of power, but not an absolute one.\nWorshiped, they are content and will grant generous boons and protection to their believers.\nBut draw their ire and disasters and curses will follow.\nWhile gods in their own right, they are not related to the Myriad Gods.\nTrying to impregnate the self-purifying body of a Goddess takes a miracle.\nThey were human at some point though, so it is not impossible."
+	CASE "Youkai（Oarfish）"
+		LOCALS '= "Envoys from the Dragon Palace.\nCapable of borrowing the power of the Dragon God, they can unleash lighting, thunder, and rainfall.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Kasha"
+		LOCALS '= "Youkai from hell that spirit away the corpses of evil doers on their carts.\nThe corpses are thrown into giant furnaces, feeding the flames of hell.\nThose cremated this way are forever cursed to remain as vengeful spirits.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Hell Raven"
+		LOCALS '= "Raven Youkai born from the darkness of hell.\nThey have existed in the Hell of Blazing Fires for as long as it\'s been burning.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Satori"
+		LOCALS '= "Mountain dwelling Youkai that are capable of reading minds.\nThey have a third eye attached to their body they use to peer into consciousness itself.\nShould they close the third eye, they seal away themselves from consciousness.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Mouse Youkai"
+		LOCALS '= "Tiny in stature but overwhelming in numbers.\nThey have the power to find objects that people are looking for.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Nue"
+		LOCALS '= "Legendary beasts not too dissimilar from chimeras.\nTraditionally depicted with the head of a monkey, the body of a raccoon dog, the legs of a tiger, and a snake for a tail.\nThey are spreaders of misfortune and are known to take on many shapes.\nNo one is certain what their original appearance is like, if it even exists.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Demon"
+		LOCALS '= "Malevolent beings that originate from their Makai or Hell.\nOften summoned and bound by a magician.\nThey are more closely related to Youkai than Oni.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Kappa"
+		LOCALS '= "An aquatic race of Youkai that can excel in any field that is their passion.\nOften manifesting in the form of great inventions of architecture.\nTheir fickle nature makes them ill suited for collaboration.\nOften found in rivers, they are fond of cucumbers and wrestling.\nThey also steal people\'s souls by pulling it out of their asses.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Moon Rabbit"
+		LOCALS '= "A humanoid race of Youkai rabbits that come from the Moon.\nWhile they enjoy a laid back lifestyle, they are at times forced to go to war.\nThey pound Mochi to atone for the sins of their master.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Youkai Rabbit"
+		LOCALS '= "A humanoid race of Youkai rabbits that come from Earth.\nThey value having a laid back lifestyle and are naturally gifted with magical powers.\nThey pound Mochi in order to keep the Full Moon away.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Hashihime"
+		LOCALS '= "Bridge Princess, Youkai born of jealousy and envy.\nAs their name implies, they “guard” bridges, hassling people trying to cross them.\nDo not let them envy you.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Wolf-woman"
+		LOCALS '= "A female wolf-man.\nWhile similar to werewolves, they do not turn into wolves at full moon.\nInstead, they just become very hairy.\nThey also tend to go into heat around that time.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Bake-danuki"
+		LOCALS '= "Raccoon Youkai capable of transforming themselves as well as items.\nIf they are surprised the ability immediately loses its efficacy.\nKnown for having massive testicles.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Inchling"
+		LOCALS '= "Tiny Youkai, often around 10-15 centimeters.\nThe most famous Inchling in history is Issun-bōshi, who was found in a bowl in a turnip field.\nIssun-bōshi had a mallet called the Miracle Mallet.\nIt can change the size of any object and grant wishes.\nOnly descendants of Issun-bōshi can use it.\nBeing so small, it is difficult for them to find love with other species.\nThey are remarkably stretchy though.\nAs with all Youkai, it is difficult to impregnate one.\nIn this case though the size is the bigger concern."
+	CASE "Rokurokubi"
+		LOCALS '= "A headless Youkai with many heads.\nIt can detach and create heads at will without any ill side effect.\nThey have a tendency to lose their body at times.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Tsurube-otoshi"
+		LOCALS '= "Youkai that hide from above and then drop down upon unsuspecting victims, killing them.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Tsuchigumo"
+		LOCALS '= "Dirt Spider - Youkai capable of firing spider-like webs.\nThe “dirt” comes from that they are riddled with diseases and are carriers of death.\nCapable of manipulating diseases, they sometimes lose control and spread terrible plagues.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Youkai（Formerly Human）"
+		LOCALS '= "To maintain Gensokyo the way it is for the benefit of everyone, an ironclad rule was laid down.\nTransforming from human to youkai is the greatest sin one can commit.\nAt times, that rule is broken.\nAt times, that rule is conveniently forgotten."
+	CASE "Ship Phantom"
+		LOCALS '= "Ghosts of those who have drowned at sea.\nThey haunt ships and use their ladles to sink them.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Yamabiko"
+		LOCALS '= "An echo Youkai.\nOften living in mountains, they echo back sounds they hear.\nSuch is their skill that they can echo back any sound.\nSometimes they rip a terrible and long scream that carries for immeasurable distances.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Mermaid"
+		LOCALS '= "A youkai with the lower part of a fish and the upper part of a human.\nSome aspects of their human half still reveal their fish ancestry.\nHas a lot of difficulty getting around on land.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Amanojaku"
+		LOCALS '= "Youkai that find themselves more comfortable the more at odds with the world they are.\nThey find joy in sadness, rage in happiness, and companionship in solitude.\nPossess the power to turn things upside down, they are universally hated.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Makai Resident"
+		LOCALS '= "A resident of Makai, thus clearly not a human.\nThere is no real classification for them.\nBut as they are from Makai, they\'re classified as demons.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Witch（Makai Resident）"
+		LOCALS '= "A witch living in Makai.\nNeither a human nor a demon, they classify as Youkai.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Baku"
+		LOCALS '= "A regulator Youkai within the World of Dreams.\nThey have the powers to control, create, and eat dreams.\nWhile they consume mostly nightmares, there are times when they consume good dreams as well.\nDreams themselves look like pinkish blob-like objects, and have no taste to humans.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Yamanba"
+		LOCALS '= "Female Youkai once humans but corrupted into their current form.\nThey prefer solitude within the mountains and only deal with other Youkai when they require something from them.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Komainu"
+		LOCALS '= "Guardian dogs.\nThey watch over places of worship with stonelike vigilance.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Human（？）"
+		LOCALS '= "Breathes, thinks, acts, lives, looks, and talks like a human.\nThis anomaly has been classified as a Youkai.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Secret God"
+		LOCALS '= "Called the God of the Ultimate Secret at times.\nNo one is sure which secret that is though.\nNot one of the Myriad Gods, nor a Goddess, it is a mystery why it\'s even called a God in the first place.\nThus, it\'s been classified as a Youkai.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Pestilence God"
+		LOCALS '= "A God of pestilence, bringing ruination to all that comes near it.\nNot an actual god.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Poverty God"
+		LOCALS '= "A god of misfortune, bringing misfortune to all that comes near it, even itself.\nNot an actual god.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Divine Spirit"
+		LOCALS '= "The spirit of a human that has achieved godhood, during or after life.\nWhile gods, they are not related to the Myriad Gods.\nWhile Goddesses are still in some form human, these have thrown that away.\nIt requires a miracle to impregnate one."
+	CASE "Shinigami"
+		LOCALS '= "Youkai in charge of ferrying souls across the Sanzu river.\nEmployed by the Yama, they serve many purposes.\nActing as guides, recording court proceedings, transcribing the lives of mortals etc.\nAs with all Youkai, it is difficult to impregnate one.\nThe time it takes to cross the Sanzu river depends on them.\nThus, they have the ability to control distance.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Goddess of Autumn Leaves"
+		LOCALS '= "A goddess in charge of turning over the leaves for the autumn season.\nNot a real goddess.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Harvest Goddess"
+		LOCALS '= "A Goddess bringing the boon of great harvest to mortals.\nBut only for autumnal crops.\nNot a real goddess.\nAs with all Youkai, it is difficult to impregnate one."
+	CASE "Misfortune Goddess"
+		LOCALS '= "A Goddess of Misfortune.\nTakes misfortune from mortals and gives it to the other gods.\nNot a real Goddess.\nAs with all Youkai, it is difficult to impregnate one."
+	CASEELSE
+		LOCALS '= @""
+ENDSELECT
+RETURNF LOCALS

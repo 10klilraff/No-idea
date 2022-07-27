@@ -1,0 +1,234 @@
+﻿;----------------------------------------------------------------------------------------------------
+;潜伏率の増減処理
+;----------------------------------------------------------------------------------------------------
+@潜伏率増減処理
+CALL Add_SeedOfUnknownForm("init") ;addition custom code
+
+IF GETBIT(FLAG:潜伏,2)
+	;会話モードはこれで判定
+	SELECTCASE SELECTCOM
+		CASE 300
+			BASE:MASTER:潜伏率 += 10
+		CASE 19,20,21
+			BASE:MASTER:潜伏率 += 0
+		CASEELSE
+			IF NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂 || NOWEX:Ｍ絶頂
+				BASE:MASTER:潜伏率 -= 18
+			ELSE
+				BASE:MASTER:潜伏率 -= 6
+			ENDIF
+	ENDSELECT
+	CALL 会話モード継続判定
+ELSEIF GETBIT(FLAG:潜伏,1)
+	;探索モードはこれで判定
+	SELECTCASE SELECTCOM
+		CASE 19,20,21
+			BASE:MASTER:潜伏率 += 3
+		CASEELSE
+			IF NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂 || NOWEX:Ｍ絶頂
+				BASE:MASTER:潜伏率 -= 12
+			ELSE
+				BASE:MASTER:潜伏率 -= 4
+			ENDIF
+		ENDSELECT
+	CALL 探索判定
+ELSE
+	;潜伏モードはこれで判定
+	IF GET_TARGETNUM() > 1
+		SELECTCASE SELECTCOM
+			CASE 19,20,21
+				BASE:MASTER:潜伏率 += 5
+			CASEELSE
+				IF NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂 || NOWEX:Ｍ絶頂
+					BASE:MASTER:潜伏率 -= 6
+				ELSE
+					BASE:MASTER:潜伏率 -= 2
+				ENDIF
+			ENDSELECT
+		SIF BASE:MASTER:潜伏率 < 40
+			CALL 探索者決定処理
+	ELSE
+	;周囲に誰もいなければ常に100％
+		BASE:MASTER:潜伏率 = 100
+	ENDIF
+
+ENDIF
+
+;会話モード以外で継続キス中は＋7
+SIF TEQUIP:継続キス && !GETBIT(FLAG:潜伏,2)
+	BASE:MASTER:潜伏率 += 7
+CALL Add_SeedOfUnknownForm("proc") ;addition custom code
+;潜伏率100以上なら100に
+BASE:MASTER:潜伏率 = MIN(BASE:MASTER:潜伏率, 100)
+
+;潜伏率0%で潜伏モード終了、ウフフバレへ
+IF BASE:MASTER:潜伏率 <=0
+	;bug fix (snooper is always chosen randomly now, perhaps set it at the start and go from there next time?)
+	LOCAL = GET_SNOOPER()
+	;if no suitable actors are detected (everyone moved away etc)
+	IF LOCAL <= 0 
+		SETCOLOR COLOR("緑")
+		PRINTFORML Looks like the threat is gone...
+		RESETCOLOR
+		;reset stealth at 100
+		BASE:MASTER:潜伏率 = 100
+	ELSE
+		;all flags are cleared before characters in a current spot are kicked out
+		CALL 潜伏モード終了処理
+		;hacky temp flag set
+		RESULT:10 = 99
+		CALL AFFAIR_DISCLOSURE(LOCAL, 0)
+		RESULT:10 = 0
+		;forcibly end ufufu anyway
+		IF CFLAG:MASTER:うふふ
+			PRINTFORML After being seen, the session had to be terminated...
+			FOR LOCAL,0,CHARANUM
+				CALL ENDUFUFU(LOCAL)
+				;SIF CFLAG:LOCAL:現在位置 != CFLAG:MASTER:現在位置
+				;	CONTINUE
+				;CALL GETOUT(LOCAL)
+			NEXT
+			TFLAG:106 = 0
+		ENDIF
+	ENDIF
+	;-------
+ENDIF
+;----------------------------------------------------------------------------------------------------
+;潜伏モードの終了処理
+;----------------------------------------------------------------------------------------------------
+@潜伏モード終了処理
+;CFLAG:潜伏状態が1以上のキャラを全て0に
+FOR LOCAL, 1, GET_TARGETNUM() + 1
+	;全CFLAG:探索状態をオフに
+	SIF GETBIT(CFLAG:(TARGET:LOCAL):潜伏状態,0)
+		CLEARBIT CFLAG:(TARGET:LOCAL):潜伏状態,0
+	SIF GETBIT(CFLAG:(TARGET:LOCAL):潜伏状態,1)
+		CLEARBIT CFLAG:(TARGET:LOCAL):潜伏状態,1
+	SIF GETBIT(CFLAG:(TARGET:LOCAL):潜伏状態,2)
+		CLEARBIT CFLAG:(TARGET:LOCAL):潜伏状態,2
+NEXT
+;潜伏フラグをオールクリア
+CLEARBIT FLAG:潜伏,0
+CLEARBIT FLAG:潜伏,1
+CLEARBIT FLAG:潜伏,2
+TFLAG:探索試行回数 = 0
+TFLAG:会話回数 = 0
+
+
+;----------------------------------------------------------------------------------------------------
+;探索者の決定処理
+;----------------------------------------------------------------------------------------------------
+@探索者決定処理
+;(LOCAL:1)＝探索者
+;bug fix------------- (as the previous method will point at TARGET you're fucking currently with high favor, now it chooses someone random in the room)
+LOCAL:1 = GET_SNOOPER()
+SIF LOCAL:1 <= 0
+	RETURN
+;--------------------
+SIF CFLAG:(LOCAL:1):好感度 < 1500
+	RETURN
+SIF GETBIT(CFLAG:(LOCAL:1):潜伏状態,0)
+	RETURN
+
+SETBIT CFLAG:(LOCAL:1):潜伏状態,1
+
+;探索モード(1)をオンに
+SETBIT FLAG:潜伏,1
+SETCOLOR COLOR("黄")
+PRINTFORML Noticing %PARSE("your")% presence, %CALLNAME:(LOCAL:1)% seems to have started searching the surroundings...
+RESETCOLOR
+
+;----------------------------------------------------------------------------------------------------
+;探索モードの探索判定関連
+;----------------------------------------------------------------------------------------------------
+@探索判定
+;(LOCAL:1)＝探索者
+;bug fix-------------
+LOCAL:1 = GET_SNOOPER()
+SIF LOCAL:1 <= 0
+	RETURN
+;--------------------
+IF !GETBIT(CFLAG:(LOCAL:1):潜伏状態,1)
+;探索キャラが移動した等でいない場合は探索モード(1)をオフ
+	CLEARBIT FLAG:潜伏,1
+	TFLAG:探索試行回数 = 0
+	SETCOLOR COLOR("緑")
+	PRINTFORML Whoever was snooping around here must have gone somewhere.
+	RESETCOLOR
+ENDIF
+
+
+
+IF TFLAG:探索試行回数 < 6
+	IF RAND:10 < 1 
+		;探索された場合会話モード(2)をオンに、探索モード(1)はオフに
+		SETBIT CFLAG:(LOCAL:1):潜伏状態,2
+		CLEARBIT CFLAG:(LOCAL:1):潜伏状態,1
+		SETBIT FLAG:潜伏,2
+		CLEARBIT FLAG:潜伏,1
+		TFLAG:探索試行回数 = 0
+		SETCOLOR COLOR("赤")
+		PRINTFORML %CALLNAME:(LOCAL:1)% spots %PARSE("you")% and comes over to talk from a distance!
+		RESETCOLOR
+	ELSE
+		TFLAG:探索試行回数 ++
+		SETCOLOR COLOR("黄")
+		PRINTFORML %CALLNAME:(LOCAL:1)% is searching for %PARSE("you")%...
+		RESETCOLOR
+	ENDIF
+ELSE
+	;探索試行回数が6回以上なら探索終了
+	CLEARBIT CFLAG:(LOCAL:1):潜伏状態,1
+	CLEARBIT FLAG:潜伏,1
+	TFLAG:探索試行回数 = 0
+	SETCOLOR COLOR("緑")
+	PRINTFORML Looks like %CALLNAME:(LOCAL:1)% has given up on searching for %PARSE("you")%...
+	RESETCOLOR
+ENDIF
+
+;----------------------------------------------------------------------------------------------------
+;会話モードの継続判定
+;----------------------------------------------------------------------------------------------------
+@会話モード継続判定
+;(LOCAL:1)＝会話者
+;bug fix-------------
+LOCAL:1 = GET_SNOOPER()
+SIF LOCAL:1 <= 0
+	RETURN
+;--------------------
+IF !GETBIT(CFLAG:(LOCAL:1):潜伏状態,2)
+;会話キャラが移動した等でいない場合は会話モード(2)をオフ
+	CLEARBIT FLAG:潜伏,2
+	TFLAG:会話回数 = 0
+	SETCOLOR COLOR("緑")
+	PRINTFORML Before long, the person %PARSE("you were")% conversing with was gone.
+	RESETCOLOR
+ENDIF
+
+;会話回数以下のRANDを出せば会話終了。それ以外ならモード続行
+IF RAND:20 < TFLAG:会話回数
+	CLEARBIT CFLAG:(LOCAL:1):潜伏状態,2
+	CLEARBIT FLAG:潜伏,2
+	TFLAG:会話回数 = 0
+	SETCOLOR COLOR("緑")
+	PRINTFORML %CALLNAME:(LOCAL:1)% seems satisfied after having a conversation with %PARSE("you")%.
+	RESETCOLOR
+ELSE
+	TFLAG:会話回数 ++
+	SETCOLOR COLOR("赤")
+	PRINTFORML %CALLNAME:(LOCAL:1)% is still eager to talk with %PARSE("you")%.
+	RESETCOLOR
+ENDIF
+
+;custom code, added
+@GET_SNOOPER()
+#FUNCTION
+IF GET_TARGETNUM() > 1
+	LOCAL:1 = 0
+	DO
+		LOCAL = IN_ROOM_MEMBER(, CFLAG:MASTER:現在位置, "RAND")
+	LOOP LOCAL == MASTER || LOCAL == TARGET || LOCAL:1++ >= 10
+	SIF LOCAL:1 >= 10
+		LOCAL = -1
+ENDIF
+RETURNF LOCAL

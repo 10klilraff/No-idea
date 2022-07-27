@@ -1,0 +1,78 @@
+﻿@DAILY_CONDITION_EV13
+#DIM 対象
+
+SIF RAND:(10 - TALENT:MASTER:劣情察知)> 0
+	RETURN -1
+対象 = 0
+CALL FISHER_YATES_SHAFFLE(CHARANUM - 1)
+FOR LOCAL:10, 0, CHARANUM - 1
+	LOCAL = SHAFFLE_ARRAY:(LOCAL:10) + 1
+	SIF !CFLAG:LOCAL:神社在住
+		CONTINUE
+	IF CFLAG:LOCAL:溜まってる度 >  700
+		対象 = LOCAL
+		BREAK
+	ENDIF
+NEXT
+SIF !対象
+	RETURN -1
+
+CALL DAILY_EV13(対象)
+RETURN 1
+
+
+@DAILY_EV13(ARG)
+PRINTFORMW %PARSE("You wake")% up in the middle of the night.
+PRINTFORMW Falling back asleep seems impossible...
+CALL ASK_YN("Go outside","Stay in the room")
+IF RESULT
+	PRINTFORM %PARSE("You")% 
+	PRINTDATA
+		DATAFORM %PARSE("spend")% some time arranging and appreciating %PARSE("your",1)% collection
+		DATAFORM %PARSE("think")% deeply about beauty, goodness, and panties
+		DATAFORM %PARSE("chat")% with a stain on the wall
+	ENDDATA
+	PRINTFORML  until %PARSE("you feel",1)% sleepy again...
+	CALL COLORMESSAGE("With the mind stimulated, ENE and TSP has been temporarily increased",C_YELLOW,2,1)
+	CALL BUFF_BASE(MASTER,BASE_気力,100)
+	CALL BUFF_BASE(MASTER,BASE_TSP,100)
+ELSEIF !RAND:4 || (!RAND:4 && ABL:ARG:親密 >= 7)
+	PRINTFORMW %PARSE("You go")% for a walk, \@ CFLAG:MASTER:311 == CFLAG:ARG:311 ? and when %PARSE("you return",1)% to %PARSE("your",1)% room %PARSE("you hear",1)% a sound# and when %PARSE("you're",1)% about to return %PARSE("you hear",1)% a sound coming from %CALLNAME:ARG%'s room\@.
+	CALL ONABARE(ARG)
+	CFLAG:MASTER:徹夜 = 1
+ELSEIF ITEM:兎符「開運大紋」
+		PRINTL Huh? The Great Fortune Crest is...
+		CALL ASK_YN("Activate it","Leave it")
+		IF !RESULT
+			ITEM:兎符「開運大紋」 --
+			SETCOLOR COLOR ("YELLOW")
+			PRINTFORMW Rabbit Sign『Great Fortune Crest』activates!
+			RESETCOLOR
+			PRINTFORMW %PARSE("You go")% for a walk, \@ CFLAG:MASTER:311 == CFLAG:ARG:311 ? and when %PARSE("you return",1)% to %PARSE("your",1)% room %PARSE("you hear",1)% a sound# and when %PARSE("you're",1)% about to return %PARSE("you hear",1)% a sound coming from %CALLNAME:ARG%'s room\@.
+			CALL ONABARE(ARG)
+			CFLAG:MASTER:徹夜 = 1
+		ELSEIF !RAND:2
+			GOTO OYATU
+		ELSE
+			GOTO NANIMONAI
+		ENDIF
+ELSEIF !RAND:2
+	$OYATU
+	PRINTFORML %PARSE("You feel")% a bit peckish, and %PARSE("decide")% to go to bed after eating something first.
+	PRINTFORMW %PARSE("You scrounge",1)% through the kitchen cupboards and %PARSE("find")% a snack.
+	PRINTFORMW It's not one %PARSE("you",1)% bought. But there's a chance someone bought it %PARSE("for you",1)%, so %PARSE("you take",1)% it.
+	PRINTFORML 
+	CALL COLORMESSAGE("Oh no it's about to expire! Won't someone eat it soon?!",C_YELLOW,2,2)
+	PRINTFORML 
+	PRINTFORML %PARSE("You say")% as %PARSE("you eat",1)% the snack.
+	CALL BUFF_BASE(MASTER,BASE_気力,300)
+	CALL COLORMESSAGE(@"%PARSE("Your")% ENE has increased temporarily after eating a delicious snack.",C_YELLOW,2,1)
+	PRINTFORMW %PARSE("You brush your")% teeth again and %PARSE("go")% to bed in a good mood.
+	CALL COLORMESSAGE(@"Wonder why %CALLNAME:ARG% is in a bad mood...",C_RED,2,1)
+	TALENT:ARG:機嫌 = -1
+ELSE
+	$NANIMONAI
+	PRINTFORMW Going outside isn't that interesting, %PARSE("you")% quietly %PARSE("go")% back to bed afterwards.
+	CFLAG:MASTER:就寝時間 += 60
+	CALL COLORMESSAGE("Hours of sleep decreased by one hour.",C_YELLOW,2)
+ENDIF

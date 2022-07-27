@@ -1,0 +1,175 @@
+﻿@EXIST_FreeAct17
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+;オブジェクト本体
+@FreeAct17(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+#DIM 経過時間
+経過時間 = Activity_Duration:TARGET
+SELECTCASE O_DATA
+;自由行動に付き合うコマンドの名称
+CASE "名称"
+	CALLF MAKE_STR(V_NAME, "一緒に雪作り")
+CASE "CHAIN"
+;他キャラに連鎖しない場合コメントアウトすること
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "経過時間"
+;自由行動に付き合うコマンドでの経過時間
+;未入力だと最大30分
+;	CALLF MAKE_INT(V_NAME, 0)
+ENDSELECT
+
+@自由行動内容_17(CHARA, ARGS, 時間係数, CHAIN)
+#DIM CHARA
+#DIM CHAIN
+#DIM 現在地
+#DIM メッセージ表示
+#DIM 時間係数
+#DIM 経過時間
+現在地 = CFLAG:CHARA:現在位置
+メッセージ表示 = 現在地 == CFLAG:MASTER:現在位置 ? 1 # 0
+IF GROUPMATCH(CHARA, [[瓔花]])
+	LOCALS = 超多段雪だるま
+	LOCAL = 90
+ELSEIF GROUPMATCH(CHARA, [[幽香]])
+	LOCALS = アイスフラワー
+	LOCAL = 40
+ELSEIF GROUPMATCH(CHARA, [[ぬえ]])
+	LOCALS = 雪宇宙人
+ELSEIF GROUPMATCH(CHARA, [[マミゾウ]])
+	LOCALS = 雪だぬき
+ELSEIF GROUPMATCH(CHARA, [[ミケ]])
+	LOCALS = 雪まねきねこ
+ELSEIF GROUPMATCH(CHARA, [[魅須丸]])
+	LOCALS = 陰陽雪玉
+ELSEIF GROUPMATCH(CHARA, [[磨弓]], [[袿姫]])
+	LOCALS = 雪はにわ
+	LOCAL = 40
+ELSEIF GROUPMATCH(CHARA, [[里香]])
+	LOCALS = 雪戦車
+	LOCAL = 60
+;ウサミミ
+ELSEIF TALENT:CHARA:動物耳 == 2
+	LOCALS = 雪うさぎ
+;月人
+ELSEIF GET_TRIBENAME(CHARA, GETNUM(TALENT, "人間")) == "月人"
+	LOCALS = 雪うさぎ
+;教養3以上
+ELSEIF CSVABL(CHARA, GETNUM(ABL, "教養")) >= 3
+	LOCALS = 雪うさぎ
+ELSE
+	LOCALS = 雪だるま
+ENDIF
+SIF !LOCAL
+	LOCAL = 30
+SELECTCASE ARGS
+	CASE "発生"
+		;冬の屋外で訓練できる場所
+		SIF !OUTROOF(現在地)
+			RETURN 0
+		SIF !戦闘訓練可(現在地)
+			RETURN 0
+		SIF DAY:2 != 4
+			RETURN 0
+		SIF BASE:CHARA:気力 <= 500
+			RETURN 0
+		;積もってないとダメ
+		SIF YOGORE:現在地 < 500
+				RETURN 0
+		;吹雪,猛吹雪中はダメ
+		SIF GROUPMATCH(天候, 10)
+			RETURN 0
+		SIF FLAG:異常気象 == 10
+			RETURN 0
+		;連鎖でない場合は先に作ってあったらダメ
+		SIF !CHAIN && FA17_OBJ:(現在地 % 100)
+			RETURN 0
+			
+		CALL FA17_OBJNAME(CHARA) ;custom code
+		SIF メッセージ表示
+			PRINTFORMW %CALLNAME:CHARA% \@ CHAIN ? joins in and starts helping %CALLNAME:CHAIN% with the %RESULTS%# begins building %ARTICLE(RESULTS)%\@.
+		RETURN LOCAL + RAND:30
+			
+	CASE "行動中"
+		;ちょっとだけ掃除される
+		YOGORE:(現在地) = MAX(YOGORE:(現在地) -50 * TIME_PROGRESS(TIME:1) / 5, 0)
+		IF メッセージ表示
+			PRINTFORMW %CALLNAME:CHARA% %TEXTR(@"is %SPLIT_G("gathering:collecting")% snow/is patting down the snow, making it harder/is shaping up the snow")%.
+		ENDIF
+	CASE "完了"
+		CALL FA17_OBJNAME(CHARA) ;custom code
+		SIF メッセージ表示
+			PRINTFORMW %CALLNAME:CHARA% %SPLIT_G("appears happy to complete:seems satisfied to have completed")% the %RESULTS%.
+	CASE "中断"
+		;中断メッセージはうふふ突入時等でも表示されてしまうので表示しない
+	CASE "付き合う"
+		CALL FA17_OBJNAME(TARGET) ;custom code
+		PRINTFORML %PARSE("You help")% %CALLNAME:TARGET% with building the %RESULTS%.
+	CASE "ソース"
+		;遊びに付き合うと一緒
+		DOWNBASE:MASTER:体力 += 40 * 時間係数
+		DOWNBASE:MASTER:気力 += 40 * 時間係数
+		DOWNBASE:TARGET:体力 += 20 * 時間係数
+		DOWNBASE:TARGET:気力 += 20 * 時間係数
+		SOURCE:歓楽 = (150 + ((ABL:親密 + 好感度係数(TARGET)) * 50)) * 時間係数
+		SOURCE:受動 = (100 + ((ABL:従順 + 好感度係数(TARGET)) * 50)) * 時間係数
+		SOURCE:征服 = (100 + (ABL:サドっ気 * 100)) * 時間係数
+		TFLAG:98 = 1
+ENDSELECT
+
+@FA17_OBJNAME(CHARA) ;also used in ANOTHER_TALK.ERB
+#DIM CHARA
+#DIM 作成者
+LOCAL = 30
+作成者 = CHARA > 1000 ? CHARA % 1000 # CHARA
+RESULTS:1 = on display
+SELECTCASE 作成者
+	CASE [[瓔花]]
+		RESULTS = super multistage snowman
+		RESULTS:1 = %SPLIT_G("standing tall:towering above you")%
+		LOCAL = 90
+	CASE [[幽香]]
+		RESULTS = ice flower
+		LOCAL = 40
+	CASE [[ぬえ]]
+		RESULTS = snow alien
+		RESULTS:1 = staring right at %PARSE("you")% ominously..
+	CASE [[マミゾウ]]
+		RESULTS = snow tanuki
+		RESULTS:1 = with a single leaf placed on top
+	CASE [[ミケ]]
+		RESULTS = snow lucky cat
+	CASE [[魅須丸]]
+		RESULTS = yin-yang snowball
+		RESULTS:1 = floating buoyantly
+	CASE [[磨弓]], [[袿姫]]
+		RESULTS = snow Haniwa
+		RESULTS:1 = that are \@ CHARA == [[磨弓]] ? standing in a line # moving around.. \@
+		LOCAL = 40
+	CASE [[里香]]
+		RESULTS = snow tank
+		RESULTS:1 = left in there
+		LOCAL = 60
+	CASEELSE
+		;ウサミミ
+		IF TALENT:作成者:動物耳 == 2
+			RESULTS = snow rabbit
+		;月人
+		ELSEIF GET_TRIBENAME(作成者, GETNUM(TALENT, "人間")) == "月人"
+			RESULTS = snow rabbit
+		;教養3以上
+		ELSEIF CSVABL(作成者, GETNUM(ABL, "教養")) >= 3
+			RESULTS = snow rabbit
+		ELSE
+			RESULTS = snowman
+			RESULTS:1 = standing there
+		ENDIF
+		SIF CHARA > 1000
+			RESULTS = %\@ RESULTS == "snowman" ? huge # lovely \@% %RESULTS%
+ENDSELECT
+RETURN LOCAL + RAND:30

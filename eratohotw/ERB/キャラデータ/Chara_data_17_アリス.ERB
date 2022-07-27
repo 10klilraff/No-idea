@@ -1,0 +1,162 @@
+﻿@CHARAMOVE_DATA_17(ARG, ARG:2)
+LOCAL = 17
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;あんまり入らない
+			CASE P512魔理沙宅・寝室, P522人形の館・神綺の部屋, P523人形の館・夢子の部屋
+				RETURN -5
+			;引きこもらない
+			CASE P521人形の館・アリスの部屋
+				RETURN -10
+			;リビング, 研究室に行きやすい
+			CASE P524人形の館・研究室, P525人形の館・リビング
+				RETURN 5
+			;他所の私室には入らない
+			CASE P514魔理沙宅・風呂, P515魔理沙宅・倉庫, P535エレン宅・寝室, P536エレン宅・倉庫, P537エレン宅・風呂
+				RETURN -100
+			CASE P541朱鷺子の棲み処 TO P544成美の小屋
+				RETURN -100
+			;addition custom code, eientei
+			CASE P404診察室, P405調剤室
+				RETURN 5
+			;addition custom code, kourindou
+			CASE P502香霖堂
+				RETURN 3
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE 桜並木の鳥居, 神社境内, 神社縁側
+				RETURN 1
+			CASE 広場, 商家町, 呑屋小道
+				RETURN 1
+			CASE 広間, 食堂, 大図書館
+				RETURN 1
+			CASE 森の入り口, 香霖堂, 古木の大樹, 霧雨魔法店, 人形の洋館, 再思の道, 無縁塚
+				RETURN 1
+			;addition custom code, eientei
+			CASE 永遠亭, 永遠亭奥ノ院
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+ENDSELECT
+
+@EXIST_キャラデータ17
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+;年越し
+;とりあえずこれひとまず封印して他所でやりましょう
+;なんか晴れ着でも設定すりゃええの？
+;「年越し」でいいか？
+;IF (DAY:2 == 1 && DAY:3 == 1) || (DAY:2 == 4 && DAY:3 == 31) 
+;ELSE
+;ENDIF
+@キャラデータ17(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "アリス")
+CASE "今日の衣装"
+	SIF (DAY:2 == 1 && DAY:3 == 1) || (DAY:2 == 4 && DAY:3 == 31)
+		CALLF MAKE_STR(V_NAME, "年越し")
+CASE "明日の衣装"
+	SIF DAY:2 == 4 && (DAY:3 == 30 || DAY:3 == 31)
+		CALLF MAKE_STR(V_NAME, "年越し")
+CASE "今日のパジャマ"
+	IF (DAY:2 == 1 && DAY:3 == 1) || (DAY:2 == 4 && DAY:3 == 31)
+		CALLF MAKE_STR(V_NAME, "パジャマ（襦袢）セット")
+	ELSEIF CFLAG:ARG:初期位置 == CFLAG:MASTER:初期位置
+		CALLF MAKE_STR(V_NAME, "パジャマ（ベビードール）セット")
+	ELSE
+		CALLF MAKE_STR(V_NAME, "パジャマ（ズボン）セット")
+	ENDIF
+
+CASE "普段着：外衣"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("外衣", "ケープ"))
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "カチューシャ"))
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "ロングブーツ"))
+CASE "普段着：靴下"
+	IF FLAG:2 > 0
+		CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "パンティストッキング"))
+	ELSE
+		CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "ニーソックス"))
+	ENDIF
+CASE "普段着：ワンピース"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("ワンピース", "ワンピース"))
+
+CASE "年越し：着物"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("着物", "着物"))
+CASE "年越し：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "カチューシャ"))
+CASE "年越し：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "ロングブーツ"))
+CASE "年越し：靴下"
+	IF FLAG:2 > 0
+		CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "パンティストッキング"))
+	ELSE
+		CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "ニーソックス"))
+	ENDIF
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "アリスお手製の")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "手編みレースショーツ")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "スリップ")
+CASE "固有下着着用条件"
+	SIF !RAND:(3 - (2 * 勝負下着判定([[アリス]])))
+		CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 1)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "パン/ミルク/葉物/パイ/しょっぱい/あっさり/淡白/豪華/芸術的/鮮やか/サクサク/魔界風/洋食/洋食/" + "甘い/" * 3)
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "肉料理/和食/ガッツリ/辛い/辛い/" + "カエル/虫肉/濃厚/" * 3 + "謎料理/" * 5)
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "彩り/魔界風/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "虹/繊細/秩序/かわいい/オシャレ/洋風/シック/知的/" + "魔法/装飾/蓬莱の/魔界の/鏡の国の/" * 3 + "七色の/魔女の/魔採光の/グリモワール/人形/ぬいぐるみ/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "混沌/和風/パワフル/" + "小手/" * 3)
+ENDSELECT
+
+;-------------------------------------------------
+;固有料理設定
+;DISH_NAME          料理名
+;RESULTS            料理の種類（軽食/主食/デザート）
+;CALL 材料設定("")  材料の指定。"汎用"を入れると自動で汎用食材になる
+;DISH_TASTE         味の設定
+;DISH_COMMENT       （任意）一行コメント
+;DISH_TIME          （任意）調理にかかる時間
+;DISH_MAXLIMIT      （任意）料理の持続時間
+;-------------------------------------------------
+@SPECIAL_MENU_17
+DISH_NAME = ジンジャーブレッドマン
+RESULTS = デザート
+CALL 材料設定("甘味材")
+DISH_TASTE = 洋食/クッキー/卵/甘い/芸術的/芸術的/家庭的/サクサク/
+DISH_COMMENT = ポップでカワイイ人型のクッキー。今にも動き出しそう。
+RETURN 1

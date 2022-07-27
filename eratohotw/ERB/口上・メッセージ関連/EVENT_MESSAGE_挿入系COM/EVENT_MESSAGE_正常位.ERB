@@ -1,0 +1,117 @@
+﻿@MESSAGE_COM60_1
+;-------------------------------------------------
+;60,正常位（シラフ）
+;-------------------------------------------------
+;Custom code, override
+CALL MESSAGE_COM60_1_TR
+RETURN
+IF TFLAG:193
+	;抜かず
+	IF TCVAR:V挿入管理フラグ == PLAYER && TARGET == TFLAG:103
+		IF NOWEX:MASTER:射精
+			PRINTFORML %CALLNAME:TARGET%を\@ OPENPLACE(CFLAG:MASTER:現在位置) == 2 ? 腰を抱きしめて # 壁に押し付けて \@激しく腰を振り、
+			PRINTFORML 射精の瞬間に%TINKO(PLAYER)%を膣の奥深くまで突き入れた…
+		ELSEIF TCVAR:102
+			PRINTFORML %CALLNAME:TARGET%の膣内に精液を注ぎ込み終えると、
+			PRINTFORML %TINKO(PLAYER)%が硬度を失わないうちに再び腰を動かし始めた…
+		ELSEIF TEQUIP:体位２ == 1
+			;調教者についてる
+			IF TALENT:PLAYER:2 & 2
+				PRINTFORML %CALLNAME:TARGET%の膣内の感触を味わいながら、再び腰を動かし始めた…
+			;ペニスバンドを使用している場合
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%の膣内から抜かずに、再び腰を動かし始めた…
+			ENDIF
+		ELSE
+			IF TEQUIP:体位２ == 1
+				PRINTFORML %CALLNAME:TARGET%の膣内から%TINKO(PLAYER)%抜き去ることなく再び腰を動かし始めた…
+			;背面立位から
+			ELSE
+				PRINTFORML 一旦%CALLNAME:TARGET%から%TINKO(PLAYER)%を抜いてこちらを振り向かせてから
+				PRINTFORML %CALLNAME:TARGET%の片足を持ち上げて挿入し再び腰を動かし始めた…
+			ENDIF
+		ENDIF
+	ELSEIF TALENT:処女 == 1
+		PRINTFORML %CALLNAME:TARGET%の片足を持ち上げて%SLIT(TARGET)%に
+		PRINTFORML 亀頭をあてがい一気に貫いた…
+	ELSE
+		IF MASTER_POSE(SET_V,SET_P,1) && MASTER_POSE(SET_V,SET_P,1) != TARGET
+			PRINTFORML %CALLNAME:(MASTER_POSE(SET_V,SET_P,1))%から%TINKO(PLAYER)%を抜くと同時に
+			PRINTFORML %CALLNAME:TARGET%に挿入した…
+		ELSE
+			PRINTFORM %CALLNAME:TARGET%の片足を持ち上げて
+			SIF TEQUIP:0 & 2
+				PRINTFORM %SHOW_BOTTOM(TARGET,2)%をずらし、
+			PRINTFORML %SLIT(TARGET)%に%TINKO(PLAYER)%をあてがい貫いた…
+		ENDIF
+		IF TALENT:恋慕
+			IF TALENT:処女
+				PRINTFORML %CALLNAME:TARGET%は痛みに耐えながら%CALLNAME:PLAYER%にきゅっと抱きついた…
+			ENDIF
+		ENDIF
+	ENDIF
+;正常位
+ELSE
+	;抜かず
+	IF TCVAR:100 == PLAYER && TARGET == TFLAG:103
+		IF NOWEX:MASTER:射精
+			PRINTFORML 仰向けに寝かせた%CALLNAME:TARGET%に覆いかぶさりながら腰を振り、
+			PRINTFORML 射精の瞬間に%TINKO(PLAYER)%を膣の奥深くまで突き入れた…
+		ELSEIF TCVAR:102
+			PRINTFORML %CALLNAME:TARGET%の膣内に精液を注ぎ込み終えると、
+			PRINTFORML %TINKO(PLAYER)%が硬度を失わないうちに再び腰を動かし始めた…
+		ELSEIF TEQUIP:体位２ == 1
+			;調教者についてる
+			IF TALENT:PLAYER:2 & 2
+				PRINTFORML %CALLNAME:TARGET%の膣内の感触を味わいながら、再び腰を動かし始めた…
+			;ペニスバンドを使用している場合
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%の膣内から抜かずに、再び腰を動かし始めた…
+			ENDIF
+		ELSE
+			PRINTFORML 膣内から抜き去ることなく%CALLNAME:TARGET%を仰向けに寝かせ、再び腰を動かし始めた…
+		ENDIF
+	ELSE
+		IF TALENT:処女 == 1
+			PRINTFORML 仰向けに寝かせた%CALLNAME:TARGET%の足を開き亀頭を浅く挿入してから、
+			PRINTFORML %SLIT(TARGET)%を貫いていった…
+		ELSEIF MASTER_POSE(SET_V,SET_P,1) && MASTER_POSE(SET_V,SET_P,1) != TARGET
+			PRINTFORML %CALLNAME:(MASTER_POSE(SET_V,SET_P,1))%から%TINKO(PLAYER)%を抜くと同時に
+			PRINTFORML %CALLNAME:TARGET%に挿入した…
+		ELSE
+			PRINTFORM 仰向けに寝かせた%CALLNAME:TARGET%の
+			SIF TEQUIP:0 & 2
+				PRINTFORM %SHOW_BOTTOM(TARGET,2)%をずらし、
+			PRINTFORML %SLIT(TARGET)%に%TINKO(PLAYER)%をあてがい貫いた…
+		ENDIF
+		IF TALENT:恋慕
+			IF TALENT:処女 && TALENT:処女 != -1
+				PRINTFORML %CALLNAME:TARGET%は痛みに耐えながら%CALLNAME:PLAYER%にきゅっと抱きついた…
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;320,相手主導正常位
+;-------------------------------------------------
+@MESSAGE_COM320
+IF TALENT:処女 == 1
+	PRINTFORML %CALLNAME:TARGET% aligns the head of %PARSE("your")% %TINKO(MASTER)% with %HIS_HER(TARGET)% virginal \@ TALENT:体型 < 0 ? young slit # slit \@ and begins pushing it in.
+	PRINTFORML It slowly spreads %HIS_HER(TARGET)% lips open and pushes further inside, before tearing %HIS_HER(TARGET)% maidenhood.
+		SIF TALENT:恋慕
+			PRINTFORML %CALLNAME:TARGET% bears the pain as %HE_SHE(TARGET)% clings to %PARSE("you")%...
+ELSE
+	PRINTFORML %PARSE("You hang")% over %CALLNAME:TARGET% and slowly %PARSE("sink")% %PARSE("your",1)% glans into her greedy, twitching hole...
+	SELECTCASE ABL:TARGET:膣
+		CASE 0
+			PRINTFORML %PARSE("You thrust")% %PARSE("your",1)% %TINKO()% into %HIS_HER(TARGET)% tight and narrow opening, wrenching it open and reaching deep inside...
+		CASE 1
+			PRINTFORML %PARSE("You bury your")% %TINKO()% in %CALLNAME:TARGET%'s still slightly stiff insides...
+		CASE 2,3
+			PRINTFORML %PARSE("You pound your")% %TINKO()% into %CALLNAME:TARGET%'s tight insides, reaching deep inside...
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%'s warm insides melt around %PARSE("your")% %TINKO()%, %PARSE("inviting you",1)%, %PARSE("letting you",1)% push deep inside without force...
+	ENDSELECT
+	PRINTFORML Wrapped up in %CALLNAME:TARGET%'s warm insides, %PARSE("your")% %TINKO()% twitches excitedly knowing it's where it belongs...
+ENDIF

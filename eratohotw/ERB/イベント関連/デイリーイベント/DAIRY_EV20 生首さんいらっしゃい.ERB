@@ -1,0 +1,88 @@
+﻿@DAILY_CONDITION_EV20
+SIF RAND:15 > 0
+	RETURN -1
+SIF CFLAG:[[蛮奇]]:神社在住
+	RETURN -1
+SIF CFLAG:[[蛮奇]]:出禁
+	RETURN -1
+SIF !TALENT:[[蛮奇]]:思慕 && ! TALENT:[[蛮奇]]:恋慕
+	RETURN -1
+CALL DAILY_EV20
+RETURN 1
+
+@DAILY_EV20
+#DIM 来客数
+
+PRINTFORML Late at night, %PARSE("you hear")% a voice coming from the window.
+PRINTFORMW %PARSE("You rub your",1)% eyes as %PARSE("you open",1)% the window, and %PARSE("see")% a floating, severed head.
+PRINTFORML ... It's %CALLNAME:[[蛮奇]]%'s.
+PRINTFORML %HE_SHE([[蛮奇]],1)% says %HE_SHE([[蛮奇]])% was passing through and decided to pay a visit.
+CALL ASK_YN(@"Let %HIM_HER([[蛮奇]])% in",@"Send %HIM_HER([[蛮奇]])% off")
+IF RESULT
+	PRINTFORMW %PARSE("You send")% %HIM_HER([[蛮奇]])% away because %PARSE("you are",1)% too sleepy. 
+	RETURN
+ENDIF
+PRINTFORML %PARSE("You decide")% to invite %HIM_HER([[蛮奇]])%.
+
+来客数 = 1
+IF ABL:[[蛮奇]]:親密 >= 10 && !RAND:3
+	PRINTFORML %HIS_HER([[蛮奇]],1)% head comes floating in through the window... But, it's not just the one.
+	FOR LOCAL,2,ABL:73:親密 - 5
+		SIF !RAND:2
+			CONTINUE
+		来客数 ++
+		PRINTFORMW {来客数} heads come floating in.
+		SIF 来客数 >= 9
+			BREAK
+	NEXT
+	SIF 来客数 == 1
+		PRINTFORML Or, on second thought, it is just the one.
+	SIF 来客数 >= 4
+		PRINTFORMW Being surrounded by this many identical faces is a bit uncomfortable...
+ENDIF
+IF TIME:5 >= 4
+	PRINTFORML Since %CALLNAME:[[蛮奇]]% is wet from the rain, %PARSE("you give")% %HIM_HER([[蛮奇]])% a towel.
+	PRINTFORML Watching %HIS_HER([[蛮奇]])% head rolling around on top of it is rather entertaining.
+ELSE
+	SELECTCASE RAND:3
+		CASE 0
+			PRINTFORML To put %PARSE("your",2)% eyes at an equal level, %PARSE("you put")% a cushion on the desk and %PARSE("let")% %HIM_HER([[蛮奇]])% sit on it.
+			SIF 来客数 > 1
+				PRINTFORML The heads all lined up looks extremely morbid, like heads on spikes after an execution.
+		CASE 1
+			PRINTFORML %PARSE("You give")% %HIM_HER([[蛮奇]])% some tea, but since %HE_SHE([[蛮奇]])% struggles with it %PARSE("you put",1)% in a straw as well.
+			PRINTFORML Wait, where exactly does the tea %HE_SHE([[蛮奇]])% drinks go...?
+		CASE 2
+			PRINTFORML %PARSE("You remove")% a leaf that had gotten stuck to the back of %HIS_HER([[蛮奇]])% head.
+	ENDSELECT
+ENDIF
+PRINTFORMW 
+PRINTFORMW ...
+PRINTFORMW ......
+PRINTFORMW .........
+
+IF RAND:100 < ABL:[[蛮奇]]:親密 * 3 + TALENT:[[蛮奇]]:恋慕 * 15
+	PRINTFORM After chatting for a while, the friendly head\@ 来客数 > 1 ? s say# %" "%says\@ %HIS_HER([[蛮奇]])% body will come by tomorrow
+	IF !PRIVATEROOM:(CFLAG:MASTER:初期位置 % 100) && TALENT:[[蛮奇]]:恋慕
+		PRINTFORML , and ask\@来客数 > 1 ? #s\@ to stay for the night.
+		PRINTFORML %PARSE("You")% \@ 来客数 > 1 ? %PARSE("line")% up the heads# %PARSE("place")% the head\@ on the pillow %PARSE("beside you",1)% and %PARSE("fall")% asleep...
+	ELSE
+		PRINTFORML .
+	ENDIF
+	CFLAG:[[蛮奇]]:翌日来訪 = 1
+ELSE
+	PRINTFORML After chatting for a while, the friendly head\@ 来客数 > 1 ? s fly# %" "%flies\@ away through the window.
+	SIF !RAND:2
+		CFLAG:[[蛮奇]]:翌日来訪 = 1
+ENDIF
+;システムメッセージつき好感度変化
+;最後の引数だけ好感度が変化
+CALL CHANGE_CFLAG(2,[[蛮奇]],50)
+
+;システムメッセージつき信頼度変化
+;最後の引数だけ信頼度が変化
+CALL CHANGE_CFLAG(4,[[蛮奇]],20)
+
+;睡眠時間減少
+CFLAG:MASTER:就寝時間 += 60
+CALL COLORMESSAGE("Hours of sleep decreased by one hour.",C_YELLOW,2)

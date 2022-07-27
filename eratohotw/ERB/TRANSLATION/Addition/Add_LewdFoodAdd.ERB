@@ -1,0 +1,336 @@
+﻿@ADD_LewdFoodAdd(SELECT_LEWD)
+#DIM SELECT_LEWD
+PRINTPLAINFORM %"Lewd",11%: 
+IF BASE:MASTER:体力 < 1000 || BASE:MASTER:気力 < 0
+	CALL COLORMESSAGE("You're too tired", C_GRAY,0,1)
+	RETURN 0
+ENDIF
+	
+FOR LOCAL, 91, 95
+	SELECTCASE LOCAL
+	CASE 91
+		LOCALS = None
+	CASE 92
+		IF HAS_PENIS(MASTER)
+			LOCALS = \@ BASE:MASTER:精力 <= 150 ? (Low VIG)#\@
+		ELSE
+			LOCALS = (No Penis)
+		ENDIF
+		LOCALS = Semen%LOCALS%
+	CASE 93
+		LOCALS = Pussy Juice
+	CASE 94
+		IF TALENT:MASTER:母乳体質
+			LOCALS = \@ BASE:MASTER:母乳 <= 150 ? (Low MLK)#\@
+		ELSE
+			LOCALS = (No Milk)
+		ENDIF
+		LOCALS = Breast Milk%LOCALS%
+	ENDSELECT
+	IF LOCAL == 91
+		SIF !SELECT_LEWD
+			SETCOLOR C_AQUA
+		PRINTFORM [{LOCAL, 2}]%"None", 24, LEFT%
+	ELSE
+		IF SELECT_LEWD + 90 == LOCAL
+			SETCOLOR C_AQUA
+		ELSE
+			SELECTCASE LOCAL
+				CASE 92
+					SIF !HAS_PENIS(MASTER) || BASE:MASTER:精力 <= 150
+						SETCOLOR C_GRAY
+				CASE 93
+					SIF !HAS_VAGINA(MASTER)
+						SETCOLOR C_GRAY
+				CASE 94
+					SIF !TALENT:MASTER:母乳体質 || BASE:MASTER:母乳 <= 150
+						SETCOLOR C_GRAY
+			ENDSELECT
+		ENDIF
+		LOCALS = [{LOCAL, 2}]%LOCALS%
+		PRINTFORM %LOCALS, 28, LEFT%
+	ENDIF
+	RESETCOLOR
+NEXT
+
+@ADD_LewdFoodAdd_Process(SELECT_LEWD, ARG)
+#DIM REF SELECT_LEWD
+SIF BASE:MASTER:体力 < 1000 || BASE:MASTER:気力 < 0
+	RETURN
+
+SELECTCASE ARG
+	CASE 91
+		SELECT_LEWD = 0
+	CASE 92
+		SIF HAS_PENIS(MASTER) && BASE:MASTER:精力 > 150
+			SELECT_LEWD = 2
+	CASE 93
+		SIF HAS_VAGINA(MASTER)
+			SELECT_LEWD = 3
+	CASE 94
+		SIF TALENT:MASTER:母乳体質 && BASE:MASTER:母乳 > 150
+			SELECT_LEWD = 4
+ENDSELECT
+
+@ADD_LewdFoodAdd_Process2(SELECT_LEWD)
+#DIM SELECT_LEWD
+;failsafe
+SELECTCASE SELECT_LEWD
+	CASE 2
+		SIF !HAS_PENIS(MASTER) || BASE:MASTER:精力 <= 150
+			SELECT_LEWD = 0
+	CASE 3
+		SIF !HAS_VAGINA(MASTER)
+			SELECT_LEWD = 0
+	CASE 4
+		SIF !TALENT:MASTER:母乳体質 || BASE:MASTER:母乳 <= 150
+			SELECT_LEWD = 0
+ENDSELECT
+
+;re-set the flag
+DISH_LEWD = SELECT_LEWD
+
+SIF SELECT_LEWD < 2
+	RETURN
+SIF DISH_NAME == ""
+	RETURN
+	
+LOCALS = freshly made
+SIF STRCOUNT(DISH_TASTE, "劣化") == 1
+	LOCALS = stale
+SIF STRCOUNT(DISH_TASTE, "劣化") >= 2
+	LOCALS = rotting
+SELECTCASE DISH_LEWD
+	CASE 2
+		PRINTFORML Revealing your %TINKO()%, you quickly stroke it towards %LOCALS% %DISHNAME_TR(DISH_NAME)%.
+		PRINTFORML After finishing, the dish got covered by your %SAMEN_DESCRIPTION(MASTER)%...
+		SIF TALENT:MASTER:濃厚精液
+			PRINTFORML The amount of rich, virile cum lacing the food almost makes it look like it's inseminating it.
+		DOWNBASE:MASTER:体力 += 100
+		DOWNBASE:MASTER:気力 += 150
+		;精力25%カット
+		TIMES BASE:MASTER:精力, 0.75
+		BASE:MASTER:勃起 = 300
+		EXP:MASTER:自慰経験 ++
+		EXP:MASTER:射精経験 ++
+		EX:MASTER:射精 ++
+		SIF TALENT:MASTER:濃厚精液
+			DISH_LEWD = 102
+		CALL DISH_TASTE_ADD(-1, "しょっぱい/濃厚/未知の味/水気/怪しい/予想外")
+	CASE 3
+		PRINTFORML Revealing your %FSYN("vagina",,MASTER)%, you start pleasing your body in front of %LOCALS% %DISHNAME_TR(DISH_NAME)%.
+		PRINTFORML After reaching climax, %DISHNAME_TR(DISH_NAME)% got covered by your %FSYN("juice")%...
+		PRINTFORML You mixed it a bit, trying to make it as less visible as possible...
+		DOWNBASE:MASTER:体力 += 40
+		DOWNBASE:MASTER:気力 += 80
+		EXP:MASTER:自慰経験 ++
+		EX:MASTER:Ｃ絶頂 ++
+		CALL DISH_TASTE_ADD(-1, "しょっぱい/未知の味/水気/怪しい/予想外")
+	CASE 4
+		PRINTFORML Exposing your %OPPAI_DESCRIPTION_TR(PLAYER)%, you start squeezing your nipples in front of %LOCALS% %DISHNAME_TR(DISH_NAME)%...
+		PRINTFORML After making yourself lactate, %DISHNAME_TR(DISH_NAME)% got covered by your fresh breast milk.
+		DOWNBASE:MASTER:体力 += 40
+		DOWNBASE:MASTER:気力 += 80
+		TIMES BASE:MASTER:母乳, 0.75
+		EXP:MASTER:噴乳経験 ++
+		EX:MASTER:噴乳 ++
+		CALL DISH_TASTE_ADD(-1, "おふくろの味/濃厚/未知の味/水気/怪しい/予想外/生命力")
+ENDSELECT
+IF DISH_LEWD
+	PRINTFORML You stir it up a bit, trying to make it as less visible as possible.
+	PRINTFORMW You can't wait to see someone feasting upon this finely-spiced dish...
+ENDIF
+TIME += 10
+
+@ADD_LewdFoodAdd_Eat(ARG)
+SIF DISH_LEWD < 2 || ARG == MASTER
+	RETURN
+SELECTCASE DISH_LEWD
+	CASE 2, 102 ;semen
+		LOCAL = 0
+		IF ABL:ARG:精液中毒 < 3
+			IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+				TCVAR:ARG:料理評価値 -= 100
+			ELSEIF EXP:ARG:精液経験 > 50 || EXP:ARG:精飲経験 > 50
+				TCVAR:ARG:料理評価値 -= 150
+			ELSEIF EXP:ARG:精液経験 > 25 || EXP:ARG:精飲経験 > 25
+				TCVAR:ARG:料理評価値 -= 300
+			ELSEIF TALENT:ARG:無知
+				TCVAR:ARG:料理評価値 -= 200
+			ELSE
+				TCVAR:ARG:料理評価値 = 0
+			ENDIF
+			LOCAL = 1
+		ELSE
+			IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+				TCVAR:ARG:料理評価値 += 150
+				CFLAG:ARG:溜まってる度 = LIMIT(CFLAG:ARG:溜まってる度 + 300, 0, 1000)
+				EXP:ARG:精液経験 ++
+				EXP:ARG:精飲経験 ++
+			ELSEIF EXP:ARG:精液経験 > 50 || EXP:ARG:精飲経験 > 50
+				TCVAR:ARG:料理評価値 += 100
+				CFLAG:ARG:溜まってる度 = LIMIT(CFLAG:ARG:溜まってる度 + 200, 0, 1000)
+			ELSEIF EXP:ARG:精液経験 > 25 || EXP:ARG:精飲経験 > 25
+				TCVAR:ARG:料理評価値 += 50
+				CFLAG:ARG:溜まってる度 = LIMIT(CFLAG:ARG:溜まってる度 + 100, 0, 1000)
+			ELSEIF TALENT:ARG:無知
+				TCVAR:ARG:料理評価値 += 50
+				CFLAG:ARG:溜まってる度 = LIMIT(CFLAG:ARG:溜まってる度 + 100, 0, 1000)
+			ELSE
+				TCVAR:ARG:料理評価値 += 25
+				CFLAG:ARG:溜まってる度 = LIMIT(CFLAG:ARG:溜まってる度 + 50, 0, 1000)
+			ENDIF
+			EXP:ARG:精液経験 ++
+			EXP:ARG:精飲経験 ++
+		ENDIF
+		SIF TCVAR:ARG:料理評価値 < 0
+			TCVAR:ARG:料理評価値 = 0
+		EXP:ARG:精液経験 ++
+		EXP:ARG:精飲経験 ++
+		IF !LOCAL
+			;use source method for addiction
+			TCVAR:MASTER:射精した箇所フラグ = 4
+			LOCAL:1 = MULTIPLY(MAXBASE:MASTER:精力, 25) ;approx 25%
+			NOWEX:MASTER:射精量 = LOCAL:1
+			CALL ADDICTION_SOURCE(ARG, MASTER)
+			CALL ADDICTION_SHOW(ARG, "口内射精補正", "精液中毒")
+			CALL JUEL_UP_SPECIAL(ARG,"欲情","欲望",DISH_LEWD == 102 ? 8 # 5,1)
+			CALL JUEL_UP_SPECIAL(ARG,"屈服","奉仕精神",DISH_LEWD == 102 ? 6 # 3,1)
+			SIF TALENT:ARG:精愛味覚
+				SOURCE:ARG:快Ｍ += (LOCAL:1 * 10) / 2
+			IF !TALENT:ARG:無知
+				SOURCE:ARG:欲情 += 500
+				SOURCE:ARG:露出 += 200
+				SOURCE:ARG:恭順 += 140
+				SOURCE:ARG:不潔 += 100
+			ENDIF
+			TCVAR:MASTER:射精した箇所フラグ = 0
+			NOWEX:MASTER:射精量 = 0
+			IF DISH_LEWD == 102
+				EXP:ARG:精液経験 += 3
+				EXP:ARG:精飲経験 += 3
+			ENDIF
+		ENDIF
+	CASE 3 ;juice
+		IF ABL:ARG:レズっ気 < 3
+			IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+				CFLAG:ARG:溜まってる度 = LIMIT(CFLAG:ARG:溜まってる度 + 50, 0, 1000)
+			ELSE
+				TCVAR:ARG:料理評価値 -= 100
+			ENDIF
+		ELSE
+			IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+				TCVAR:ARG:料理評価値 += 100
+			ELSE
+				TCVAR:ARG:料理評価値 += 50
+			ENDIF
+			CFLAG:ARG:溜まってる度 = LIMIT(CFLAG:ARG:溜まってる度 + 100, 0, 1000)
+		ENDIF
+		
+		IF !TALENT:ARG:無知
+			SOURCE:ARG:欲情 += 200
+			SOURCE:ARG:露出 += 120
+			SOURCE:ARG:恭順 += 80
+			SOURCE:ARG:不潔 += 50
+		ENDIF
+		
+		CALL ADD_EXP_LESNIAN(5, ARG, "PRINT")
+	CASE 4 ;milk
+		IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+			CFLAG:ARG:溜まってる度 = LIMIT(CFLAG:ARG:溜まってる度 + 100, 0, 1000)
+			TCVAR:ARG:料理評価値 += 200
+		ELSE
+			TCVAR:ARG:料理評価値 += 50
+		ENDIF
+		
+		IF !TALENT:ARG:無知
+			SOURCE:ARG:欲情 += 250
+			SOURCE:ARG:露出 += 80
+			SOURCE:ARG:恭順 += 300
+			SOURCE:ARG:不潔 += 50
+		ENDIF
+ENDSELECT
+
+CALL ADD_LewdFoodAdd_React(ARG)
+
+@ADD_LewdFoodAdd_React(ARG)
+SIF DISH_LEWD < 2 || ARG == MASTER
+	RETURN
+SELECTCASE DISH_LEWD
+	CASE 2, 102 ;semen
+		IF ABL:ARG:精液中毒 < 3
+			IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+				PRINTFORML %CALLNAME:ARG% quickly recognizes your taste, although still finds it a bit too appalling to enjoy...
+			ELSEIF EXP:ARG:精液経験 > 50 || EXP:ARG:精飲経験 > 50
+				PRINTFORML %CALLNAME:ARG% doesn't find the weird taste and texture of semen on food all that bad.
+				PRINTFORML Although %HE_SHE(ARG)% does seem a bit unamused by it...
+				CALL CHANGE_CFLAG(2, ARG, -10)
+			ELSEIF EXP:ARG:精液経験 > 25 || EXP:ARG:精飲経験 > 25
+				PRINTFORML %CALLNAME:ARG% seems to have recognized the taste of semen somehow, placing the food back after the very first bite...
+				CALL CHANGE_CFLAG(2, ARG, -20)
+			ELSEIF TALENT:ARG:無知
+				PRINTFORML %CALLNAME:ARG% finds the odd bitter taste of semen quite unpleasant, completely unaware of what it actually is...
+			ELSE
+				PRINTFORML As soon as %CALLNAME:ARG% takes first bite, %HE_SHE(ARG)% immediately spits it out and glares at you...
+				CALL CHANGE_CFLAG(2, ARG, -50)
+				CALL CHANGE_CFLAG(4, ARG, -5)
+			ENDIF
+		ELSE
+			IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+				PRINTFORML Quickly recognizing your taste, %CALLNAME:ARG% eats it deliciously until the last drop and thanks you for the treat...
+				CALL CHANGE_CFLAG(2, ARG, 100)
+				CALL CHANGE_CFLAG(4, ARG, 25)
+			ELSEIF EXP:ARG:精液経験 > 50 || EXP:ARG:精飲経験 > 50
+				PRINTFORML The familiar taste filling %CALLNAME:ARG%'s mouth seems to have added extra pleasant flavor to the dish...
+				CALL CHANGE_CFLAG(2, ARG, 100)
+				CALL CHANGE_CFLAG(4, ARG, 10)
+			ELSEIF EXP:ARG:精液経験 > 25 || EXP:ARG:精飲経験 > 25
+				PRINTFORML %CALLNAME:ARG% seems to have recognized the taste of semen somehow.
+				PRINTFORML But %HE_SHE(ARG)% stays calm, secretly enjoying the food without attracting attention...
+				CALL CHANGE_CFLAG(2, ARG, 25)
+			ELSEIF TALENT:ARG:無知
+				PRINTFORML %CALLNAME:ARG% seems to enjoy the food apparently, asking what was that delicious sauce you added...
+				CALL CHANGE_CFLAG(2, ARG, 50)
+				CALL CHANGE_CFLAG(4, ARG, 5)
+			ELSE
+				PRINTFORML The smell and the taste makes %CALLNAME:ARG% wince, but %HE_SHE(ARG)%'s too far gone to reject it anymore...
+			ENDIF
+		ENDIF
+	CASE 3 ;juice
+		IF ABL:ARG:レズっ気 < 3
+			IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+				PRINTFORML %CALLNAME:ARG% seems to be put off at first, but recognizing the taste of your juices, %HE_SHE(ARG)% finishes the meal...
+			ELSE
+				PRINTFORML %CALLNAME:ARG% seems to be grossed out by the sudden weird taste of the dish...
+			ENDIF
+		ELSE
+			IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+				PRINTFORML %CALLNAME:ARG% seems to be greatly enjoying the addition of the secret yet familiar ingredient...
+			ELSE
+				PRINTFORML %CALLNAME:ARG% somehow likes the taste of the dish, noting how exciting it makes %HIM_HER(ARG)% feel...
+			ENDIF
+		ENDIF
+	CASE 4 ;milk
+		IF MARK:ARG:不埒刻印 == 3 || MARK:ARG:時姦刻印 == 3
+			PRINTFORML The taste of fresh and yummy mother's milk makes %CALLNAME:ARG% quite joyous to say the least...
+		ELSE
+			PRINTFORML %CALLNAME:ARG% seems to be bewildered by the presence of milk, but finds it acceptable.
+			PRINTFORML Somehow it reminded them of good early days...
+		ENDIF
+ENDSELECT
+
+@ADD_LewdFoodAdd_Show()
+#FUNCTIONS
+LOCALS =
+SELECTCASE DISH_LEWD
+	CASE 2
+		LOCALS = Semen
+	CASE 102
+		LOCALS = Thick Semen
+	CASE 3
+		LOCALS = Pussy Juice
+	CASE 4
+		LOCALS = Breast Milk
+ENDSELECT
+SIF STRLENS(LOCALS)
+	RETURNF "(" + LOCALS + ")"

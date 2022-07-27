@@ -1,0 +1,122 @@
+﻿;変数の書き換えなどを伴なうバージョンアップ用
+@VERSION_UP
+SIF !GETBIT(FLAG:1000, 1)
+	CALL KAISYONASI
+SIF !GETBIT(FLAG:1000, 2) && FLAG:地主
+	CALL MODE_NOUMIN
+SIF !GETBIT(FLAG:1000, 3)
+	CALL BUGFIX_KOIBITO
+SETBIT FLAG:1000, 3
+SIF !GETBIT(FLAG:1000, 4)
+	CALL BUGFIX_KOIBITO
+SETBIT FLAG:1000, 4
+@KAISYONASI
+SETBIT FLAG:1000, 1
+;Bugfix
+SETBIT FLAG:1000, 3
+SETBIT FLAG:1000, 4
+;Custom code, replaced
+CALL KAISYONASI_TR
+RETURN
+PRINTFORML 自分から相手に告白できる程度は度胸ある？
+CALL ASK_YN("そりゃもう","無理です")
+IF !RESULT
+	PRINTFORMW 甲斐性無しモードを使用しません
+	FLAG:甲斐性無 = 0
+ELSE
+	PRINTFORMW 甲斐性無しモードをオンにします（一部コマンドが使用不能・相手からの押し倒し強化）
+	FLAG:甲斐性無 = 1
+ENDIF
+
+@KAISYONASI_TR
+$REPRINT
+LOCAL = LINECOUNT
+PRINTFORML %PARSE("Do you")% have enough courage to confess %PARSE("your",1)% love to someone?
+PRINTL [0] No
+PRINTL [1] Yes
+PRINTL [2] Explain
+PRINTFORML [3] Yes, but %PARSE("you play",1)% hard to catch
+INPUT 
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORMW Incompetent mode has been turned on. Some actions will be unavailable, and girls will generally be more pushy.
+		FLAG:甲斐性無 = 1
+		FLAG:LUSTMODE = 0
+	CASE 1
+		PRINTFORMW Incompetent mode won't be used (Normal Mode Selected).
+		FLAG:甲斐性無 = 0
+		FLAG:LUSTMODE = 0
+	CASE 2
+		PRINTFORML Not having courage will render some actions unavailable, like confessing, sexually harassment in public etc. 
+		PRINTFORMW However, everyone else will be more likely to do those things instead.
+		PRINTFORMW Playing hard to get activates lust mode, enjoy escaping being pinned down.
+		CLEARLINE LINECOUNT - LOCAL
+		GOTO REPRINT
+	CASE 3
+		PRINTFORMW Lust mode has been turned on. No restrictions on actions, and girls will generally be more pushy.
+		FLAG:甲斐性無 = 1
+		FLAG:LUSTMODE = 1
+ENDSELECT
+PRINTL 
+
+;Custom code
+$REPRINT_TWO
+LOCAL = LINECOUNT
+PRINTFORML Ignore stable period restrictions?
+PRINTL [0] No (Normal Mode)
+PRINTL [1] Yes
+PRINTL [2] Stable period?
+
+INPUT
+IF RESULT == 0
+	PRINTW Pregnancy sex restriction restored
+ELSEIF RESULT == 1
+	PRINTW Pregnancy sex restriction removed
+	FLAG:STABLEBYPASS = !FLAG:STABLEBYPASS
+ELSEIF RESULT == 2
+	PRINTL Normally it's impossible to have sex during the early and late stages of pregnancy.
+	PRINTW It's only possible to have sex during the "stable period" - hence the name.
+	CLEARLINE LINECOUNT - LOCAL
+	GOTO REPRINT_TWO
+ENDIF
+
+
+@BUGFIX_KOIBITO
+VARSET LOCAL
+
+PRINTFORML To fix a bug from last version, lover will be reset for all but one.
+PRINTFORMW As an apology, have a Stone of Mirada.
+
+FLAG:追加恋人枠 = 0
+ITEM:ミラダの石 += 1
+
+FOR LOCAL,1,CHARANUM
+	SIF TALENT:LOCAL:恋人
+		LOCAL:1 ++
+NEXT
+
+
+
+SIF LOCAL:1 <= 1
+	RETURN
+
+
+PRINTFORML Please select a character to keep as lover.
+
+FOR LOCAL,1,CHARANUM
+	SIF TALENT:LOCAL:恋人
+		PRINTFORMLC [{LOCAL}] %CALLNAME:LOCAL%
+NEXT
+PRINTFORML 
+INPUT
+SIF TALENT:RESULT:恋人
+	LOCAL:2 = RESULT
+
+FOR LOCAL,1,CHARANUM
+	TALENT:LOCAL:恋人 = 0
+NEXT
+
+TALENT:(LOCAL:2):恋人 = 1
+TALENT:MASTER:恋人 = LOCAL:2
+
+PRINTFORMW Reset done.

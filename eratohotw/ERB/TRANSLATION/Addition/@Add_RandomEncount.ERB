@@ -1,0 +1,306 @@
+﻿;expanded experience gains for original LOST_GYAKURE function, lose penile virginity during reverse rape (no female virginity though, too precious)
+@Add_LOST_GYAKURE(ARG)
+#DIM nSexCount
+SIF ARG <= 0 || !HAS_PENIS(MASTER)
+	RETURN 0
+;sex count
+CFLAG:ARG:溜まってる度 = LIMIT(CFLAG:ARG:溜まってる度 + RAND:200, 500, 1000)
+nSexCount = MAX(MIN(ABL:ARG:欲望 / 2, 5) + CFLAG:ARG:溜まってる度 / 200,RAND(5,16))
+;style
+IF IS_HERM(ARG) || IS_MALE(ARG) ;futa/gay (gayyyyyyyyyyyyyyy) (males are not generated as of now, but just in case)
+	CALL AddEXP("Ｃ経験", ARG, nSexCount)
+	CALL AddEXP("Ｃ絶頂経験", ARG, nSexCount)
+	CALL AddEXP("絶頂経験", ARG, nSexCount)
+	CALL AddEXP("挿入経験", ARG, 2*nSexCount)
+	CALL AddEXP("射精経験", ARG, nSexCount)
+	
+	IF HAS_VAGINA(MASTER)
+		CALL AddEXP("Ｖ経験", MASTER, 2*nSexCount)
+		CALL AddEXP("Ｖ絶頂経験", MASTER, nSexCount)
+		CALL AddEXP("Ｖ性交経験", MASTER, 2*nSexCount)
+		CALL AddEXP("膣射経験", MASTER, nSexCount)
+		CALL AddEXP("絶頂経験", MASTER, nSexCount)
+		LOCAL = MAX((ABL:MASTER:膣 + 1) * 20 + BASE:ARG:精力 / 25, 1)
+		FOR LOCAL:1,1,nSexCount
+			LOCAL:2 += LOCAL + RAND:(LOCAL)
+		NEXT
+		LOCAL:2 = MIN(LOCAL:2, BASE:ARG:精力)		
+		CALL SAMEN_SHOOT3(LOCAL:2, ARG, MASTER)
+		EX:MASTER:膣内精液 += LOCAL:2
+		CFLAG:MASTER:累計膣内精液 += LOCAL:2
+		CALL JUEL_UP_SPECIAL(MASTER,"快Ｖ","Ｖ感覚",15,1)
+	ELSE
+		CALL AddEXP("Ａ経験", MASTER, 2*nSexCount)
+		CALL AddEXP("Ａ絶頂経験", MASTER, nSexCount)
+		CALL AddEXP("Ａ性交経験", MASTER, 2*nSexCount)
+		CALL AddEXP("肛射経験", MASTER, nSexCount)
+		CALL AddEXP("絶頂経験", MASTER, nSexCount)
+		LOCAL = MAX((ABL:MASTER:アナル + 1) * 20 + BASE:ARG:精力 / 25, 1)
+		FOR LOCAL:1,1,nSexCount
+			LOCAL:2 += LOCAL + RAND:(LOCAL)
+		NEXT
+		LOCAL:2 = MIN(LOCAL:2, BASE:ARG:精力)
+		EX:MASTER:アナル内精液 += LOCAL:2
+		CFLAG:MASTER:累計アナル精液 += LOCAL:2
+		CALL JUEL_UP_SPECIAL(MASTER,"快Ａ","Ａ感覚",15,1)
+	ENDIF
+	IF HAS_PENIS(MASTER)
+		CALL AddEXP("射精経験", MASTER, nSexCount)
+		BASE:MASTER:精力 = 0
+	ENDIF
+	CALL JUEL_UP_SPECIAL(ARG,"欲情","欲望",20,1)
+	CALL JUEL_UP_SPECIAL(ARG,"快Ｃ","Ｃ感覚",10,1)
+	
+	CALL SET_VIRGINLOSS_MASTER(@"forfeited during one-sided rape after losing a match to %CALLNAME:ARG%\@ TALENT:ARG:行きずり ? %" "%in a random encounter #\@.")
+	CALL SET_DOUTEILOSS_MASTER(@"threw it away in a moment's intense desire after claiming victory over %CALLNAME:MASTER%'s body.", ARG)
+ELSEIF IS_FEMALE(MASTER) && IS_SAMESEX(MASTER, ARG) ;lez
+	CALL AddEXP("Ｃ経験", ARG, 2*nSexCount)
+	CALL AddEXP("Ｃ絶頂経験", ARG, 2*nSexCount)
+	CALL AddEXP("絶頂経験", ARG, 2*nSexCount)
+	
+	CALL AddEXP("Ｃ経験", MASTER, nSexCount)
+	CALL AddEXP("Ｃ絶頂経験", MASTER,nSexCount)
+	CALL AddEXP("絶頂経験", MASTER, nSexCount)
+	SIF HAS_PENIS(MASTER)
+		CALL AddEXP("射精経験", MASTER, nSexCount)
+	SIF HAS_PENIS(TARGET)
+		CALL AddEXP("射精経験", ARG, nSexCount)
+	CALL JUEL_UP_SPECIAL(TARGET,"快Ｃ","Ｃ感覚",15,1)
+	CALL JUEL_UP_SPECIAL(MASTER,"快Ｃ","Ｃ感覚",15,1)
+ELSE ;het
+	CALL AddEXP("Ｖ経験", ARG, 2 * nSexCount)
+	CALL AddEXP("Ｖ絶頂経験", ARG, 1 * nSexCount)
+	CALL AddEXP("絶頂経験", ARG, 1 * nSexCount)
+
+	LOCAL = MAX((ABL:ARG:膣 + 1) * 20 + BASE:MASTER:精力 / 25, 1)
+	CALL AddEXP("膣射経験", ARG, 1 * nSexCount)
+	CALL AddEXP("Ｖ性交経験", ARG, 2 * nSexCount)
+	FOR LOCAL:1,1,nSexCount
+		LOCAL:2 += LOCAL + RAND:(LOCAL)
+	NEXT
+	LOCAL:2 = MIN(LOCAL:2, BASE:MASTER:精力)
+	CALL ADD_SAMEN_V(ARG, LOCAL:2)
+	CALL JUEL_UP_SPECIAL(ARG,"快Ｖ","Ｖ感覚",15,1)
+	CALL JUEL_UP_SPECIAL(ARG,"欲情","欲望",20,1)
+	CALL JUEL_UP_SPECIAL(MASTER,"快Ｃ","Ｃ感覚",10,1)
+	CALL ADD_EXP_LESNIAN(5, ARG, "PRINT")
+
+	CALL AddEXP("Ｃ経験", MASTER, nSexCount)
+	CALL AddEXP("Ｃ絶頂経験", MASTER, nSexCount)
+	CALL AddEXP("絶頂経験", MASTER, nSexCount)
+	CALL AddEXP("射精経験", MASTER, nSexCount)
+	CALL AddEXP("挿入経験", MASTER, 2 * nSexCount)
+
+	CALL SET_DOUTEILOSS_MASTER(@"forfeited during one-sided rape after losing a match to %CALLNAME:ARG%\@ TALENT:ARG:行きずり ? %" "%in a random encounter #\@.")
+	CALL SET_VIRGINLOSS_MASTER(@"threw it away in a moment's intense desire after claiming victory over %CALLNAME:MASTER%'s body.", ARG)
+ENDIF
+
+@Add_LOST_GYAKURE_EX(ARG, HORNY)
+#DIM HORNY
+IF IS_HERM(ARG) || IS_MALE(ARG) ;futa/gay (gayyyyyyyyyyyyyyy) (males are not generated as of now, but just in case)
+	PRINTFORMW %BREAKENG(@"Next thing %PARSE("you know",1)%, %PARSE("you feel")% something stiff pressed against %PARSE("your",1)% \@ IS_MALE(MASTER) ? %FSYN("anus")% # %FSYN("slit")%\@.")%
+	PRINTFORMW Oh dear... Could it be?
+	PRINTFORMW %BREAKENG(@"Before %PARSE("you",1)% could react, %PARSE("you sense",1)% a sharp pain coursing through %PARSE("you",1)%, feeling as though %PARSE("you were",1)% impaled on a hot, almost molten rod.")%
+	PRINTFORMW %BREAKENG(@"Looking down timidly, %PARSE("you're")% met with %CALLNAME:ARG% grinning broadly, her %FSYN("penis")% ramming %PARSE("your",1)% \@ !IS_MALE(MASTER) ? precious place # bumhole\@ %FSYN("base")%.")%
+	PRINTFORMW \@ HORNY ? Aroused to %HIS_HER(ARG)% peak, %CALLNAME:ARG% # Estrus hits its peak during full moon, and %CALLNAME:ARG%\@ deals with the thirst by ravaging, tormenting, and violating %PARSE("you",5)%...
+	PRINTFORMW .........
+	PRINTFORMW ......
+	PRINTFORMW ...
+	PRINTFORMW %CALLNAME:ARG% continues indulging in %PARSE("you")% until she's satisfied, before just leaving %PARSE("you",5)% dead-tired and exhausted on the ground.
+	RETURN 1
+ELSEIF IS_FEMALE(MASTER) && IS_SAMESEX(MASTER, ARG) ;lez
+	PRINTFORMW Next thing %PARSE("you know",1)%, %PARSE("you feel")% something warm is pressing against %PARSE("your",1)% genitals.
+	PRINTFORMW %BREAKENG(@"Looking down timidly, %PARSE("you're")% met with %CALLNAME:ARG% grinning broadly, her pussy is slamming against %PARSE("yours",1)% as both of %PARSE("your",1)% clits get stimulated.")%
+	PRINTFORMW \@ HORNY ? Aroused to %HIS_HER(ARG)% peak, %CALLNAME:ARG% # Estrus hits its peak during full moon, and %CALLNAME:ARG%\@ deals with the thirst by ravaging, tormenting, and violating %PARSE("you",5)%...
+	PRINTFORMW .........
+	PRINTFORMW ......
+	PRINTFORMW ...
+	PRINTFORMW %CALLNAME:ARG% continues indulging in %PARSE("you")% until she's satisfied, before just leaving %PARSE("you",5)% dead-tired and exhausted on the ground.
+	RETURN 1
+ENDIF
+
+;expands tanuki event by giving extra lines
+@Add_Tanuki_Ex(ARG, 色１, 色２, 色３, 呼び名)
+#DIM 色１
+#DIM 色２
+#DIM 色３
+#DIMS 呼び名
+
+SELECTCASE ARG
+	CASE 1 ;tanuki back off when they try to rob you if you're friends with mamizou
+		IF CFLAG:[[マミゾウ]]:好感度 >= 1500
+			PRINTFORMW ...Or so you thought, but it appears that nothing was stolen from you.
+			PRINTFORMW Come to think of it, you recall a particular talk they had right before you went unconscious.
+			CALL SPTALK, 0, @"通常", 21, @"「...Wait, guys, I think %HE_SHE(MASTER)% had enough. Let's just stop here. We can't afford messing with Boss' friend like that.」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"通常", 22, @"「Say whaaaaat?! Boss' is? With this \@ TALENT:MASTER:性別 == 2 ? boyo # lassie \@? For real?」", 1, TOSTR(色２, "X")
+			WAIT
+			CALL SPTALK, 0, @"通常", 21, @"「Yeah, there's no mistake about it. %HE_SHE(MASTER,1)%'s got her scent all over %HIM_HER(MASTER,,1)% after all.」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"怒り", 22, @"「Ugyaaahhh!!! 'Tis was a bad idea to begin with, but if we 'bout to get our asses whooped by Boss,/　we're in sum serious dung pie fer sure!」", 1, TOSTR(色２, "X")
+			WAIT
+			CALL SPTALK, 0, @"怒り", 23, @"「Dang it... Can't we just... y'know... take at least something for ourselves?」/「\@ MONEY >= 100000 ? I mean, this %PRINT_MALE("dude", MASTER)%'s loaded! # Just as formality...\@」", 1, TOSTR(色３, "X")
+			WAIT
+			CALL SPTALK, 0, @"通常", 21, @"「Noooope! Not a single yen! In fact, I'll stay here and make sure nothing happens to %HIM_HER(MASTER,,1)%!/　You two should just go now!」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"通常", 22, @"「A'iiight...」", 1, TOSTR(色２, "X")
+			WAIT
+			CALL SPTALK, 0, @"怒り", 23, @"「Fiiiine...」/「I bet you're gonna pocket some for yourself without us knowin', you little rascal...」", 1, TOSTR(色３, "X")
+			WAIT
+			CALL SPTALK, 0, @"怒り", 21, @"「Shush you!」", 1, TOSTR(色１, "X")
+			WAIT
+			PRINTL
+			PRINTL
+			PRINTW ...
+			CALL SPTALK, 0, @"笑顔", 21, @"「That's it, everything's chill now. Here, take a rest, you'll be fine.」/「Oh, and, um... Please don't tell Boss about this if at all possible? Pleaaaase?」", 1, TOSTR(色１, "X")
+			WAIT
+			PRINTFORML You get up and continue on your way to your original destination, feeling relieved...
+			PRINTFORML Perhaps having good relations with certain people is useful after all.
+			PRINTFORMW
+			TARGET = 0
+			RESETCOLOR
+			RETURN 1
+		ENDIF
+	CASE 2 ;tanuki spare you from rape if you're friends with momiji as a male/futa
+		IF CFLAG:[[マミゾウ]]:好感度 >= 1500
+			WAIT
+			CALL ASK_YN("Mention Mamizou's name", "Give up and let it happen")
+			SIF RESULT
+				RETURN 0
+			RESETCOLOR
+			PRINTFORML As a last resort, trying to \@ IS_VIRGIN(MASTER) + IS_DOUTEI(MASTER) ? save what little chastity you still had # stop this before it goes completely out of hand \@, you scream out Mamizou's name...
+			PRINTFORMW Somehow, the tanuki immediately sober up as they all stare at you with their eyes wide open.
+			CALL SPTALK, 0, @"通常:裸", 21, @"「...Boss? You... you know Boss? Sniff-sniff... Oh... Uh oh...」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"怒り:裸", 21, @"「Oh dear... This is bad! Like, real bad! If Boss finds about it, and she prolly will, we're screwed!」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"通常:裸", 22, @"「So what yer sayin' is, we're gonna be in deep water if we dare lay our paws on Boss' favorite human?」", 1, TOSTR(色２, "X")
+			WAIT
+			CALL SPTALK, 0, @"怒り:裸", 23, @"「Maaan, of all the people, of course we just had to run into this one! Are we unlucky or what?!」", 1, TOSTR(色３, "X")
+			WAIT
+			CALL SPTALK, 0, @"怒り:裸", 21, @"「In fact just what we did already might get us in trouble! Oh boy, I don't wanna die yet...!」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 22, @"「Well, we can always just make sure the word never gets out, uehehe...～」", 1, TOSTR(色２, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 23, @"「Mfufufu...～」", 1, TOSTR(色３, "X")
+			WAIT
+			CALL SPTALK, 0, @"怒り:裸", 21, @"「Don't even think about it, you two! Don't listen to 'em %呼び名%, they're drunk and horny to boot...」", 1, TOSTR(色１, "X")
+			WAIT
+			PRINTFORMW The tanuki begin to dress, as the other two leave. The first one then looks at you with a friendly smile.
+			CALL SPTALK, 0, @"笑顔", 21, @"「Here, lemme show you a safe way out.」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔", 21, @"「And, um, please tell Boss we didn't mean anything by it, we just played a little... Hahaha...」", 1, TOSTR(色１, "X")
+			WAIT
+			PRINTFORML
+			PRINTFORML
+			PRINTFORMW ...
+			PRINTFORML Luckily, you manage to get out of this fairly unscathed.
+			PRINTFORML Got to thank Mamizou for being such a helpful ally, even if she wasn't here at the moment...
+			PRINTFORML +15 Minutes
+			PRINTFORMW 
+			CALL AddEXP("Ｃ経験", MASTER, 15)
+			SIF IS_FEMALE(MASTER)
+				CALL AddEXP("レズ経験", MASTER, 15)
+			TIME += 15
+			TARGET = 0
+			RESETCOLOR
+			RETURN 1
+		ENDIF
+	CASE 3 ;extra fluff before popping cherry (todo - naked sptalk sprite?)
+		IF IS_DOUTEI(MASTER)
+			RESETCOLOR
+			CALL SPTALK, 0, @"通常:裸", 22, @"「Hmm...? Wait a sec...」/「Sniff-sniff...」", 1, TOSTR(色２, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 22, @"「Oh, ooh! What do we 'ave 'ere? A fresh untouched virgin \@ IS_HERM(MASTER) ? dick # boyo\@, eh?」", 1, TOSTR(色２, "X")
+			WAIT
+			CALL SPTALK, 0, @"通常:裸", 21, @"「Whaaaat?!」/「So that's why %HE_SHE(MASTER)% seemed kinda awkward about the whole thing, huh?」/「You don't meet those very often in the wild, right?」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 23, @"「\@ IS_CHILD(MASTER) ? Heheh, no wonder, it's just a kid after all... # Yeah, especially adults. Late bloomer much?\@」", 1, TOSTR(色３, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 21, @"「Ahahaha!」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 22, @"「Heh heh, heh, heh!」", 1, TOSTR(色２, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 23, @"「Mfufufu...!」", 1, TOSTR(色３, "X")
+			WAIT
+			PRINTFORMW The tanuki all start giggling creepily while staring at you.
+			CALL SPTALK, 0, @"通常:裸", 23, @"「Well, perhaps %HE_SHE(MASTER)% came here exactly to find %HIS_HER(MASTER)% way reaching %HIS_HER(MASTER)% maturity.」", 1, TOSTR(色３, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 21, @"「So whaddya think, %呼び名%? You want us to lend you a helping hand, hmm～?」", 1, TOSTR(色１, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 22, @"「No one's askin' though!」", 1, TOSTR(色２, "X")
+			WAIT
+			CALL SPTALK, 0, @"笑顔:裸", 23, @"「Nooope!」", 1, TOSTR(色３, "X")
+			WAIT
+			PRINTFORMW The other two tanuki hold you from both sides, as the first one sits on top of you, not letting you move an inch!
+			SETCOLOR 色１
+		ENDIF
+ENDSELECT
+
+;caught prey event extra
+@Add_Hunt_Ev(nLuck, strPrey, nPartner)
+#DIM nLuck
+#DIMS strPrey
+#DIM nPartner
+#DIM DYNAMIC nBake
+
+PRINTFORMW You feel sorry for the animal and the hunter, but %PRINT_MALE("a man's gotta eat:that's how nature works", MASTER)%.
+PRINTFORMW Without wasting any time, you quickly put the animal down and get to work.
+SIF nPartner
+	PRINTFORMW %CALLNAME:nPartner% simply stares at you with %HIS_HER(nPartner)% brow raised, but doesn't say anything.
+	
+IF nLuck > 7
+	PRINTFORMW It squealed a lot harder than usual, resisting until the very end, but then finally went silent.
+	PRINTFORMW ...Weird.
+	nBake = 1
+ENDIF
+
+PRINTFORML
+PRINTFORML Hmm-hmm-mm!
+PRINTFORML %CAPITALIZE(strPrey)% stew!
+PRINTFORML %CAPITALIZE(strPrey)% sashimi!
+PRINTFORML %CAPITALIZE(strPrey)% karaage!
+PRINTFORML %CAPITALIZE(strPrey)% steak!
+PRINTFORMW Mmm-mm-mm!
+PRINTFORML
+PRINTFORMW While humming a tune and imagining the meals you can make out of it, you finally receive your ill-gotten spoils.
+CALL GET_ITEM(ITEMNAME:702, (2 + SPOIL_ENHANCEMENT(strPrey == "tanuki" ? 7 # 10)), 2)
+IF nBake
+	PRINTFORMW This meat is a little strange however, but it should be fine... right?
+	CALL GET_ITEM(ITEMNAME:705, 1, 2)
+ENDIF
+PRINTFORMW +60 Minutes
+TIME += 60
+PRINTFORML
+
+IF nPartner && nBake
+	PRINTFORMW For some reason %CALLNAME:nPartner% seems quite sour about it. Was it that off-putting to watch...?
+	BASE:nPartner:ムード = BASE:nPartner:ムード / 3
+ELSEIF nLuck < 4
+	PRINTFORML ...However, as soon as you prepare to leave, you realize there was someone standing behind you.
+	PRINTFORMW When you turn around, you spot a hunter, seething with anger and really furious over the stolen prey...!
+	IF nPartner
+		PRINTFORMW Before you knew it, %CALLNAME:nPartner% was already nowhere in sight!
+		PRINTFORMW That little...
+	ENDIF
+	PRINTFORML 
+	PRINTFORML You get whacked on the head for you transgressions!
+	PRINTFORML ...Extra hard!
+	CALL RECOVER(MASTER, -300, "体力")
+	WAIT
+	PRINTFORML Moreover, you also get lectured at length...
+	CALL RECOVER(MASTER, -300, "気力")
+	WAIT
+	PRINTFORML And of course, you were forced to give all the meat back...
+	CALL LOST_ITEM(ITEMNAME:702, (2 + SPOIL_ENHANCEMENT(strPrey == "tanuki" ? 7 # 10)), 2)
+	IF nBake
+		PRINTFORML You got to keep that odd piece of meat though. Again, strange...
+	ENDIF
+	WAIT
+	PRINTFORML Perhaps stealing wasn't the best choice, you think, slogging your way home.
+	
+	PRINTFORMW +60 Minutes
+	TIME += 60
+ELSE
+	PRINTFORMW High in spirits, you\@ nPartner ? %" "%and %CALLNAME:nPartner%#\@ return back home, happy that you'll have something to eat today.
+ENDIF

@@ -1,0 +1,408 @@
+﻿;2hus will share rumors about how great/awful you are depending on the favor change
+;concept: the game will track the favor change for each character, after reaching a certain threshold that depends on personality + modifiers the character will tell to their friends about you
+;friends are decided by RELATION stat, the lower the threshold the faster characters will speak about you, they will tell about you to the highest RELATION characters first (decided by random, but most likely)
+;in turn, the positive favor gain is decided by how high their RELATION is towards the rumorer
+;for example youmu might tell yuyuko almost right away, and yuyuko will be very impressed and listen attentively
+;at the same time yukari might tell reimu, but reimu won't take it too seriously
+;after each time the threshold has been reached, it will be changed to a new value, thus increasing (similar to palams)
+;2hus will stop spreading positive rumors when: all their friends already have at least 500 favor towards you, or if they don't have friends to share it with
+;most relations are decided by RELATION stat so it might be funky at times
+;sometimes 2hus might decide to tell all of their friends at once if they're talkative, in that case all their friends get a favor boost, but decreased in power
+;
+;bad rumors are rare since it's hard to decrease your favor (rape/failed requests/minor stuff can be the cause)
+;therefore it's much stronger, and only counts when it goes below 0, the thresholds are the same for everyone
+;characters who are in love are immune to bad rumors and won't spread them
+@Add_Rumor
+#DIMS DYNAMIC strArr, 100
+#DIM nTemp
+CVARSET nRumorNeg
+;seek characters who had enough favor gain to spread rumors
+FOR LOCAL,1,CHARANUM
+	SIF TALENT:LOCAL:行きずり ;ignore randoms
+		CONTINUE
+	SIF CFLAG:LOCAL:出禁 ;ignore banned characters
+		CONTINUE
+	SIF (MARK:LOCAL:反発刻印 || CFLAG:LOCAL:ブチギレ) && FavorGainTracker:LOCAL:0 > 0 ;ignore pissed off characters for positive change
+		CONTINUE
+
+	;positive rumor
+	IF FavorGainTracker:LOCAL:0 >= Add_Rumor_Threshold(LOCAL)
+		SIF Add_Rumor_Spread(LOCAL) != ""
+			CALL COLORMESSAGE(@"%CALLNAME:LOCAL% shares a good word about you with %HIS_HER(LOCAL)% friends!",C_GREEN,1,1)
+		;handle rumor spread and favor change
+		CALL Add_Rumor_Spread_Decide(LOCAL)
+		FavorGainTracker:LOCAL:0 = 0 ;reset counter for next time
+	;negative rumor
+	ELSEIF FavorGainTracker:LOCAL:0 < -50 && !TALENT:LOCAL:恋慕
+		SELECTCASE ABS(FavorGainTracker:LOCAL:0)
+			CASE IS >= 250
+				LOCAL:2 = 50
+			CASE IS >= 100
+				LOCAL:2 = 30
+			CASE IS >= 50
+				LOCAL:2 = 10
+		CASEELSE
+			LOCAL:2 = 100
+		ENDSELECT
+		DEBUGPRINTFORML --------
+		;this is much simpler, we find all friends of this character and sour the favor with you because ruining relationships is much easier
+		LOCALS '= Add_Rumor_Spread(LOCAL, "neg")
+		DEBUGPRINTFORML Mod: {LOCAL:2}, List: %LOCALS%
+		SIF !STRLENS(LOCALS)
+			CONTINUE
+		CALL COLORMESSAGE(@"%CALLNAME:LOCAL% spreads bad rumors about you to %HIS_HER(LOCAL)% friends...",C_RED,1,1)
+		SPLIT LOCALS, ":", strArr
+		FOR LOCAL:1, 0, RESULT
+			nTemp = TOINT(strArr:(LOCAL:1))
+			SIF nTemp == 0
+				CONTINUE
+			SIF TALENT:nTemp:恋慕
+				CONTINUE
+			CALL CHANGE_CFLAG(2,nTemp,-( MAX(ABL:nTemp:親密 * LOCAL:2, 25) ))
+			;FavorGainTracker:nTemp:0 = 0 ;reset negative rumor (does only once, too easy, no impact)
+		NEXT
+		nRumorNeg:LOCAL:0 = 1
+		FavorGainTracker:LOCAL:0 = 0 ;reset counter for next time
+	ENDIF
+NEXT
+FOR LOCAL, 1, CHARANUM
+	SIF FavorGainTracker:LOCAL:0 < 0 ;prevent from chaining
+		FavorGainTracker:LOCAL:0 = -20 ;still on guard
+NEXT
+
+@Add_Rumor_Threshold(ARG)
+#FUNCTION
+#DIM DYNAMIC nMultiplier = 100
+;base threshold values (favor gain required per each Lv before characters will spread good rumors)
+SELECTCASE ABL:ARG:親密
+	CASE 0
+		LOCAL = 50
+	CASE 1
+		LOCAL = 100
+	CASE 2
+		LOCAL = 150
+	CASE 3
+		LOCAL = 200
+	CASE 4
+		LOCAL = 250
+	CASE 5
+		LOCAL = 300
+	CASE 6
+		LOCAL = 500
+	CASE 7
+		LOCAL = 700
+	CASE 8
+		LOCAL = 900
+	CASE 9
+		LOCAL = 1200
+	CASEELSE
+		LOCAL = 500 * (ABL:ARG:親密 - 7)
+ENDSELECT
+
+;modifiers (lifted off of TRACHECK_好感度上昇処理.ERB)
+;goes towards the multiplier, the higher it is the higher the value is required
+;主人と対象が同性
+IF HETEROSEX(ARG,PLAYER)
+	;男ならホモっ気、女ならレズっ気を見る
+	IF ABL:ARG:(HETEROSEX(ARG,PLAYER) + 16) == 0
+		nMultiplier += 5
+	ELSEIF ABL:ARG:(HETEROSEX(ARG,PLAYER) + 16) < 5
+		nMultiplier += 0
+	ELSEIF ABL:ARG:(HETEROSEX(ARG,PLAYER) + 16) < 9
+		nMultiplier -= 1
+	ELSE
+		nMultiplier -= 3
+	ENDIF
+	;男ならＢＬ中毒、女ならレズ中毒を見る
+	IF ABL:ARG:(HETEROSEX(ARG,PLAYER) + 31) > 9
+		nMultiplier -= 2
+	ELSEIF ABL:ARG:(HETEROSEX(ARG,PLAYER) + 31) > 4
+		nMultiplier -= 1
+	ENDIF
+	;両刀
+	SIF TALENT:ARG:性別嗜好 == -1
+		nMultiplier -= 3
+ENDIF
+;素質による増減
+;反抗的
+SIF TALENT:ARG:態度 > 0
+	nMultiplier += 5
+;プライド高い
+SIF TALENT:ARG:プライド > 0
+	nMultiplier += 3
+;素直
+SIF TALENT:ARG:態度 < 0 && nMultiplier > 0
+	nMultiplier -= 5
+;自制心
+SIF TALENT:ARG:自制心
+	nMultiplier += 10
+;感情乏しい
+SIF TALENT:ARG:感情乏しい
+	nMultiplier += 20
+;抵抗
+SIF TALENT:ARG:抵抗
+	nMultiplier += 15
+;献身的
+SIF TALENT:ARG:献身的 && nMultiplier > 0
+	nMultiplier -= 10
+;陽気同士
+SIF TALENT:ARG:陽気／陰気 > 0 && TALENT:MASTER:陽気／陰気 > 0
+	nMultiplier -= 5
+;narcissist
+SIF TALENT:ARG:自己愛
+	nMultiplier += 20
+;boastful
+SIF TALENT:ARG:目立ちたがり
+	nMultiplier -= 20
+
+;陰気同士
+SIF TALENT:ARG:陽気／陰気 < 0 && TALENT:MASTER:陽気／陰気 < 0
+	nMultiplier -= 5
+;快感に素直
+IF TALENT:ARG:快感応答 > 0
+	nMultiplier -= 5
+;快感の否定
+ELSEIF TALENT:ARG:快感応答 < 0
+	nMultiplier += 5
+ENDIF
+;機嫌
+nMultiplier -= TALENT:ARG:15*3
+;男嫌い
+IF OTOKOGIRAI(ARG)
+	nMultiplier += 30
+	IF GETBIT (CFLAG:ARG:引き継ぎ, 1)
+		nMultiplier -= 20
+	ELSEIF GETBIT (CFLAG:ARG:引き継ぎ, 0)
+		nMultiplier -= 10
+	ENDIF
+ENDIF
+;恋慕
+SIF TALENT:ARG:恋慕
+	nMultiplier -= 20
+;思慕
+SIF TALENT:ARG:思慕
+	nMultiplier -= 10
+;主人の魅力
+SIF TALENT:MASTER:魅力
+	nMultiplier -= 10
+;主人の魅惑
+SIF TALENT:MASTER:魅惑
+	nMultiplier -= 10
+;主人の謎の魅力
+SIF TALENT:MASTER:謎の魅力
+	nMultiplier -= 10
+;主人の人気
+SIF TALENT:MASTER:人気
+	nMultiplier -= 5
+
+IF GETBIT (CFLAG:ARG:引き継ぎ, 1)
+	nMultiplier -= 8
+ELSEIF GETBIT (CFLAG:ARG:引き継ぎ, 0)
+	nMultiplier -= 3
+ENDIF
+
+;無関心の場合、恋慕がないと好感度が上がりにくい
+IF TALENT:ARG:無関心 && !TALENT:ARG:恋慕
+	IF nMultiplier < 200
+		nMultiplier *= 2
+	ELSEIF nMultiplier < 100
+		nMultiplier = 100
+	ENDIF
+	SIF ABL:ARG:サドっ気 >= 4
+		nMultiplier -= 10
+ENDIF
+;ヤリマンだと親密５から上げにくくなる
+IF TALENT:ARG:ヤリマン
+	nMultiplier -= 20
+	SIF ABL:ARG:親密 >= 5
+		nMultiplier *= 2
+ENDIF
+
+;apply final modifier, min 10%, max 300%
+RETURNF MULTIPLY(LOCAL, LIMIT(nMultiplier, 10, 300))
+
+;find appropriate characters
+@Add_Rumor_Spread(ARG, ARGS)
+#FUNCTIONS
+LOCALS =
+FOR LOCAL,1,CHARANUM
+	SIF TALENT:LOCAL:行きずり ;ignore randoms
+		CONTINUE
+	SIF CFLAG:LOCAL:出禁 ;ignore banned characters
+		CONTINUE
+	SIF ARGS == "neg" && nRumorNeg:LOCAL:0
+		CONTINUE
+	IF RELATION:ARG:LOCAL > 100 && ( ARGS == "neg" || CFLAG:LOCAL:好感度 < nRumorUpperFavorLimit) ;make sure the 2hu in question isn't overly friendly already (unless for bad rumors)
+		;write it down to string
+		LOCALS += TOSTR(LOCAL) + ":"
+	ENDIF
+NEXT
+RETURNF LOCALS
+
+;decide how we want to spread the rumor, to the character with highest RELATION score, to a character with highest RELATION, or everyone
+@Add_Rumor_Spread_Decide(ARG)
+#DIMS strList
+#DIMS DYNAMIC strArr, 100
+#DIM DYNAMIC nPercent = 30 ;base percent chance at which the rumor will be spread to everyone
+SIF Add_Rumor_Spread(ARG) == "" ;terminate function if no character is eligible for spreading rumors to them
+	RETURN 0
+strList '= Add_Rumor_Spread(ARG)
+	
+;素質による増減
+;反抗的
+SIF TALENT:ARG:態度 > 0
+	nPercent += 5
+;プライド高い
+SIF TALENT:ARG:プライド > 0
+	nPercent -= 5
+;素直
+SIF TALENT:ARG:態度 < 0
+	nPercent += 5
+;自制心
+SIF TALENT:ARG:自制心
+	nPercent -= 10
+
+	
+;献身的
+SIF TALENT:ARG:献身的
+	nPercent += 10
+;陽気同士
+SIF TALENT:ARG:陽気／陰気 > 0 && TALENT:MASTER:陽気／陰気 > 0
+	nPercent += 5
+;narcissist
+SIF TALENT:ARG:自己愛
+	nPercent -= 20
+;boastful
+SIF TALENT:ARG:目立ちたがり
+	nPercent += 20
+
+;陰気同士
+SIF TALENT:ARG:陽気／陰気 < 0 && TALENT:MASTER:陽気／陰気 < 0
+	nPercent += 5
+;快感に素直
+IF TALENT:ARG:快感応答 > 0
+	nPercent += 5
+;快感の否定
+ELSEIF TALENT:ARG:快感応答 < 0
+	nPercent -= 5
+ENDIF
+SIF TALENT:ARG:感情乏しい || TALENT:ARG:抵抗 || TALENT:ARG:無関心 ;always prevent for dead fish talents
+	nPercent = 0  
+	
+DEBUGPRINTFORML -----------------
+DEBUGPRINTFORML Percent: {nPercent}
+IF PERCENT(MAX(nPercent, 0)) && STRCOUNT(strList, ":") > 1
+	SPLIT strList, ":", strArr
+	DEBUGPRINTFORML Choice - Spread to all RESULT - {RESULT}
+	FOR LOCAL, 0, RESULT
+		CALL Add_Rumor_Effect(TOINT(strArr:LOCAL), ARG, "all")
+	NEXT
+ELSEIF ((TALENT:ARG:感情乏しい || TALENT:ARG:抵抗 || TALENT:ARG:無関心) || PERCENT(30)) && STRCOUNT(strList, ":") > 1 ;dead fish characters prefer speaking with their closest friends
+	;this will go towards the character with the highest relation that's available at the time (meaning when best friends are unavailable it'll go towards second best, etc), I'll allow it for now
+	SPLIT strList, ":", strArr
+	LOCAL:1 = 0
+	LOCAL:2 = 0
+	DEBUGPRINTFORM Choice - Spread to closest friend RESULT - {RESULT}, 
+	FOR LOCAL, 0, RESULT
+		IF RELATION:ARG:TOINT(strArr:LOCAL) > LOCAL:2
+			LOCAL:2 = RELATION:ARG:TOINT(strArr:LOCAL)
+			LOCAL:1 = TOINT(strArr:LOCAL)
+		ENDIF
+	NEXT
+	DEBUGPRINTFORML Friend no: {LOCAL:1}, Rel: {LOCAL:2}
+	CALL Add_Rumor_Effect(LOCAL:1, ARG)
+ELSE
+	LOCAL:1 = TOINT(SPLIT_G(REPLACE(strList, ":$", "")))
+	DEBUGPRINTFORML Choice - Spread to random LOCAL:1 - {LOCAL:1}
+	CALL Add_Rumor_Effect(LOCAL:1, ARG)
+ENDIF
+
+;effect, ARG is the target character, ARG:1 is the one spreading rumors
+@Add_Rumor_Effect(nTarg, nRumorer, strEff)
+#DIM nTarg
+#DIM nRumorer
+#DIMS strEff
+#DIM DYNAMIC nFavor = 5 ;base favor increase value
+SIF nTarg == 0
+	RETURN 0
+;solidarity between fellow animal ear havers
+SIF TALENT:nTarg:動物耳 && TALENT:nTarg:動物耳 == TFLAG:耳補正
+	nFavor += 3
+	
+SIF TALENT:nTarg:陽気／陰気 > 0 && TALENT:MASTER:陽気／陰気 > 0
+	nFavor += 1
+SIF TALENT:nTarg:陽気／陰気 < 0 && TALENT:MASTER:陽気／陰気 < 0
+	nFavor += 1
+	
+IF OTOKOGIRAI(nTarg)
+	nFavor -= 5
+	IF GETBIT (CFLAG:nTarg:引き継ぎ, 1)
+		nFavor += 3
+	ELSEIF GETBIT (CFLAG:nTarg:引き継ぎ, 0)
+		nFavor += 1
+	ENDIF
+ENDIF
+
+IF GETBIT (CFLAG:nTarg:引き継ぎ, 1)
+	nFavor += 3
+ELSEIF GETBIT (CFLAG:nTarg:引き継ぎ, 0)
+	nFavor += 1
+ENDIF
+
+IF GETBIT (CFLAG:nTarg:既成事実, 1)
+	nFavor += 3
+ELSEIF GETBIT (CFLAG:nTarg:既成事実, 0)
+	nFavor += 1
+ENDIF
+
+;主人の人気
+SIF TALENT:MASTER:人気
+	nFavor += 3
+;恋人
+SIF TALENT:nTarg:恋人
+	nFavor += 10
+;these probably would never work but still
+;恋慕
+SIF TALENT:nTarg:恋慕
+	nFavor += 10
+;思慕
+SIF TALENT:nTarg:思慕
+	nFavor += 5
+
+;結果が一定数未満の場合
+IF MARK:nTarg:反発刻印 >= 3
+	nFavor -= 5
+ELSEIF MARK:nTarg:反発刻印 == 2
+	nFavor -= 3
+ELSEIF MARK:nTarg:反発刻印 == 1
+	nFavor -= 1
+ELSEIF nFavor <= 0
+	nFavor = 1
+ENDIF
+;modify increase based on target's favor, sort of a bell curve
+SELECTCASE ABL:nTarg:親密
+	CASE 0
+		nFavor += RAND(3, 6)
+	CASE 1
+		nFavor += RAND(6, 11)
+	CASE 2
+		nFavor += RAND(10, 15)
+	CASE 3
+		nFavor += RAND(8, 13)
+	CASE 4
+		nFavor += RAND(6, 11)
+CASEELSE
+	nFavor += RAND(3, 6)
+ENDSELECT
+
+;final modifier based on relation between the target character and the one who told her the rumor
+nFavor = MULTIPLY(nFavor, RELATION:nTarg:nRumorer)
+SIF strEff == "all"
+	nFavor = MULTIPLY(nFavor, 30) ;only 30% is allowed when rumor is spread to all friends at once
+;final
+nFavor = LIMIT(nFavor, 1, 100)
+CALL CHANGE_CFLAG(2,nTarg,nFavor)
+
+;reset var for ng+
+@CUSTOM_RESET_VAR_0(ARG)
+FavorGainTracker:ARG:0 = 0

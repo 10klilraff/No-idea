@@ -1,0 +1,112 @@
+﻿@CHARAMOVE_DATA_12(ARG, ARG:2)
+LOCAL = 12
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;私室には入らない
+			CASE P512魔理沙宅・寝室, P514魔理沙宅・風呂, P521人形の館・アリスの部屋, P522人形の館・神綺の部屋
+				RETURN -100
+			CASE P523人形の館・夢子の部屋, P526人形の館・風呂, P531人形の館・空き部屋
+				RETURN -100
+			CASE P541朱鷺子の棲み処, P542リグルの棲み処, P544成美の小屋
+				RETURN -100
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE お地蔵通り, 枝垂れ柳の下, 墓地
+				RETURN 1
+			CASE 森の入り口, 古木の大樹, 再思の道, 無縁塚
+				RETURN 1
+			CASE 中有の道, 三途の川
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+ENDSELECT
+
+@EXIST_キャラデータ12
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ12(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "ルーミア")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（ズボン）セット")
+
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "リボン"))
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "靴"))
+CASE "普段着：靴下"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "靴下"))
+CASE "普段着：スカート"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("スカート", "スカート"))
+CASE "普段着：上半身上着２"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("上半身上着２", "ブラウス"))
+CASE "普段着：上半身上着１"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("上半身上着１", "袖無し上着"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "闇を固めたような")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "漆黒のショーツ")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "漆黒のキャミソール")
+CASE "固有下着着用条件"
+	SIF !RAND:(1 + (2 * 勝負下着判定([[ルーミア]])))
+		CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 0)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 0)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 2)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "魚料理/肉料理/揚げ物/甘い/濃厚/豪華/野趣/サクサク/ガッツリ/ガッツリ/" + "カエル/しょっぱい/グロテスク/" * 3)
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "野菜/すっぱい/淡白/質素/あっさり/あっさり/あっさり/")
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "濃い味/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "怖い/ロリータ/" + "黒/闇/生体品/" * 3 + "妖魔の/宵闇の/闇の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "知的/" + "白/光/日/照明/" * 3)
+
+ENDSELECT
+
+;-------------------------------------------------
+;固有料理設定
+;DISH_NAME          料理名
+;RESULTS            料理の種類（軽食/主食/デザート）
+;CALL 材料設定("")  材料の指定。"汎用"を入れると自動で汎用食材になる
+;DISH_TASTE         味の設定
+;DISH_COMMENT       （任意）一行コメント
+;DISH_TIME          （任意）調理にかかる時間
+;DISH_MAXLIMIT      （任意）料理の持続時間
+;-------------------------------------------------
+@SPECIAL_MENU_12
+DISH_NAME = 闇ドーナツ
+RESULTS = デザート
+CALL 材料設定("甘味材", "高級チョコ", "チョコレート")
+DISH_TASTE = 洋食/揚げ物/卵/甘い/濃厚/サクサク/ふわふわ/謎料理/
+DISH_COMMENT = 闇をまとった怪しいドーナツ。穴の向こうは真っ暗。
+RETURN 1

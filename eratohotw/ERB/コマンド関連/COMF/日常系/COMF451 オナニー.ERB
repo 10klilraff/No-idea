@@ -1,0 +1,97 @@
+﻿;-------------------------------------------------
+;オナニー
+;日常系コマンド、レベル1
+;-------------------------------------------------
+@COM451
+#DIM C_ID
+#DIM AMT
+IF TARGET
+	CALL Com_Mast ;com custom code
+	SIF RESULT
+		RETURN 1
+	;Kodoku no Gourmet reference
+	PRINTFORML When we masturbate, we want to indulge ourselves freely, without interruption. We want to feel relaxed.
+	PRINTFORMW We want to be alone somewhere quiet and comfortable...
+	RETURN -1
+ENDIF
+PRINTFORML Who comes to %PARSE("your")% mind?
+DRAWLINE
+FOR LOCAL,1,CHARANUM
+	IF !IS_NAMED(LOCAL) || !CFLAG:LOCAL:面識
+		CONTINUE
+	ENDIF
+	PRINTFORMLC [{LOCAL, 3}] %CALLNAME:LOCAL%
+NEXT
+PRINTL
+DRAWLINE
+PRINTL [999] No need to fantasize about anyone! [1000] Cancel
+INPUT
+C_ID = RESULT
+SELECTCASE C_ID
+	CASE 1 TO CHARANUM
+		CALL PRINT_FACE, C_ID, "発情", "裸", "", "照れ" ;custom code tweak - doesn't show nude version
+		PRINTFORML %PARSE("You take")% care of %PARSE("your",1)% sexual urges while thinking about %CALLNAME:C_ID%.
+	CASE 999
+		PRINTFORML %PARSE("You deal")% with %PARSE("your",1)% sexual urges while contemplating %SPLIT_G("the movements of the celestial bodies:the secrets of the cosmos:the nature:the mountains, rivers, trees and grasses:the travails of life:the issues of birth, old age, illness and dying:the purpose of life")%.
+	CASEELSE
+		RETURN -1
+ENDSELECT
+AMT = 50 + RAND:50
+;custom code for onahole
+IF ITEM:オナホール && HAS_PENIS(MASTER) ;this is male/futanari only command as of now, but put a check to future proof 
+	PRINTFORML Use onahole?
+	CALL ASK_YN
+	IF !RESULT
+		AMT = 100 + RAND:100
+	    PRINTFORML Using the onahole, %PARSE("you enhance")% the experience quite a bit.
+	ENDIF
+ENDIF
+;custom code for color
+SETCOLOR C_CREAM
+IF TALENT:MASTER:濃厚精液
+	AMT *= 2
+	PRINTFORMW ... %PARSE("You release")% {AMT}ml of %PARSE("your",1)% extra thick stuff.
+ELSE
+	PRINTFORMW ... %PARSE("You release")% {AMT}ml.
+ENDIF
+RESETCOLOR
+
+BASE:MASTER:精力 -= AMT
+DOWNBASE:MASTER:気力 = 100
+;custom code for exp and message
+EXP:MASTER:自慰経験 += 1
+SIF TALENT:MASTER:濃厚精液
+	PRINTFORMW %PARSE("You feel")% relieved.
+;-----------
+
+nSexDone -- ;addition custom code
+
+TIME += 20
+RETURN 1
+
+;待つ
+@COM_ABLE451
+;ショップ画面では不可
+SIF !TFLAG:100
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(451)
+	RETURN RESULT
+;気力0では不可
+SIF BASE:MASTER:気力 <= 0
+	RETURN 0
+;精力0では不可
+SIF BASE:MASTER:精力 <= 0
+	RETURN 0
+SIF !HAS_PENIS(MASTER) ;bug fix
+	RETURN 0
+;ウフフ中は不可
+SIF CFLAG:うふふ && !CFLAG:イタズラ ;com custom code, allow in sleep molestation
+	RETURN 0
+;停止中は不可
+SIF FLAG:70 == 1
+	RETURN 0
+;私室以外では不可
+SIF CFLAG:MASTER:現在位置 != CFLAG:MASTER:初期位置 && !CFLAG:イタズラ ;com custom code, allow in sleep molestation
+	RETURN 0
+RETURN 1

@@ -1,0 +1,173 @@
+﻿@CHARAMOVE_DATA_65(ARG, ARG:2)
+LOCAL = 65
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;天界には行かない
+			CASE P830玄雲海 TO P842比那名居邸物置
+				RETURN -100
+			;私室やお風呂は入らない
+			CASE P817神奈子私室, P818諏訪子私室, P820早苗私室
+				RETURN -100
+			CASE P851久侘歌の小屋, P852駒草の小屋, P853魅須丸の小屋, P824トイレ, P825風呂
+				RETURN -100
+			;虹龍洞は無理
+			CASE P855虹龍洞, P856百々世の住処
+				RETURN -100
+			;橋、滝の裏によく居る
+			CASE P802橋, P806滝の裏
+				RETURN 5
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE 麓の樹海, 玄武の沢, 大蝦蟇の池, 森の深奥
+				RETURN 1
+			CASE 九天の滝, 絶景の丘, 山の湖, 守矢神社境内
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+ENDSELECT
+
+@EXIST_キャラデータ65
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ65(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "椛")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（襦袢）セット")
+
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "兜巾"))
+CASE "普段着：アクセサリ"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("アクセサリ", "袖"))
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "下駄"))
+CASE "普段着：靴下"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "靴下"))
+CASE "普段着：スカート"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("スカート", "スカート"))
+CASE "普段着：上半身上着１"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("上半身上着１", "袖無し上着"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "実用性第一の")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "端切れふんどし")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "サラシ")
+CASE "固有下着着用条件"
+	SIF !RAND:(1 + (2 * 勝負下着判定([[椛]])))
+		CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 0)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 3)
+
+CASE "固有コマンド"
+	CALLF MAKE_STR(V_NAME, "千里眼")
+CASE "固有コマンド実行可能"
+	CALLF MAKE_INT(V_NAME, 1)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "魚料理/獣肉/虫肉/和食/揚げ物/ガッツリ/機能的/野趣/豪快/もちもち/天狗流/甘い/甘い/しょっぱい/しょっぱい/" + "秋物/" * 3)
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "野菜/すっぱい/すっぱい/地底風/地底風/地底風/謎料理/謎料理/謎料理/謎料理/謎料理/")
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "切れ味/得意料理＊秋物＊/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "白/秩序/かわいい/シンプル/和風/" + "刃物/" * 3 + "イヌの/オオカミの/紅葉の/天狗の/千里の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "混沌/ロリータ/威厳/マニアック/" + "弾/" + "河童の/鬼の/" * 10)
+
+;農民関連
+;山っぽい作物を
+CASE "農民：説明"
+	CALLF MAKE_STR(V_NAME, "ソバ農家")
+CASE "農民：作物"
+	CALLF MAKE_STR(V_NAME, "ソバ")
+CASE "農民：畑の種類"
+	CALLF MAKE_STR(V_NAME, "ソバ畑")
+CASE "農民：畑のマップ"
+	CALLF MAKE_STR(V_NAME, "妖怪の山・山頂")
+
+CASE "農民：マップID"
+	CALLF MAKE_INT(V_NAME, 8)
+CASE "農民：場所ID"
+	CALLF MAKE_INT(V_NAME, 801)
+CASE "農民：報酬"
+	CALLF MAKE_INT(V_NAME, 400)
+CASE "農民：金利"
+	CALLF MAKE_INT(V_NAME, 7)
+ENDSELECT
+
+;-------------------------------------------------
+;固有料理設定
+;DISH_NAME          料理名
+;RESULTS            料理の種類（軽食/主食/デザート）
+;CALL 材料設定("")  材料の指定。"汎用"を入れると自動で汎用食材になる
+;DISH_TASTE         味の設定
+;DISH_COMMENT       （任意）一行コメント
+;DISH_TIME          （任意）調理にかかる時間
+;DISH_MAXLIMIT      （任意）料理の持続時間
+;-------------------------------------------------
+@SPECIAL_MENU_65
+DISH_NAME = もみじ饅頭
+RESULTS = デザート
+CALL 材料設定("甘味材")
+DISH_TASTE = 和食/饅頭/卵/甘い/濃厚/秋物/芸術的/上品/ふわふわ/天狗流/
+DISH_COMMENT = もみじの形をした、こしあん入りのおまんじゅう。
+RETURN 1
+
+;image tweak custom code
+;IMAGE_I65_体形(CHARA)-----------------------------------------------------------------------
+;キャラクター特有の体形表示条件
+;エフェクトを共有する体形差分はこちら
+;服装を指定しても自動で表示されるので注意
+;使用時注意点:
+;	RESULTSに体形を格納すること
+;	書式は %体形%%服装% 適宜"_"等入れること
+;	"巨乳"は本編で実装済み %体形%巨乳%服装% で追記可能
+;-------------------------------------------------------------------------------------------
+@IMAGE_I65_体形(CHARA)
+#DIM CHARA
+VARSET RESULTS
+
+IF CFLAG:CHARA:差し替え適用
+	;差し替え画像
+	IF FLAG:立ち絵種類
+		;顔絵
+		SIF FLAG:巨乳差分表示 && TALENT:CHARA:バストサイズ == 0
+			RESULTS = Big
+	ELSE
+		;立ち絵
+	ENDIF
+ELSE
+	;通常画像
+	IF FLAG:立ち絵種類
+		;顔絵
+	ELSE
+		;立ち絵
+	ENDIF
+ENDIF

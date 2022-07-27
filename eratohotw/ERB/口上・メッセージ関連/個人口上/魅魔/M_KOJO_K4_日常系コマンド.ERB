@@ -1,0 +1,2189 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;日常系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;300,会話
+;TFLAG:193(1=大成功 0=成功 -1=失敗 -2=大失敗（TARGETがMASTERより教養が4以上高い)
+;TCVAR:302(0=会話可能 1>=非恋慕時会話不能)
+;MARK:反発刻印(3以上=会話不能)(4以上はバグ
+;TCVAR:泥酔(1=通常成功or大失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_300
+;コマンド共通メッセージ(TRAIN_MESSAGE) 
+;削除すると「～話をした。」とかが消えます
+CALL TRAIN_MESSAGE
+;口上メイン呼出
+CALL M_KOJO_MESSAGE_COM_K4_300_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_300_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML
+	IF CFLAG:318 == 1
+		PRINTFORML 「...」
+		PRINTFORMDW Mima refused to talk with you.
+	;会話不能
+	ELSEIF TCVAR:302
+		IF TALENT:恋慕
+			IF RAND:5 == 0
+				PRINTFORML 「Ahaha!　Don't make me laugh so much!」
+				PRINTFORMDW Mima happily listens to your story.
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「I see, that is one way of looking at things...」
+				PRINTFORMDW Mima nods in admiration.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「So even %CALLNAME:MASTER% lives a surprisingly hard life...」
+				PRINTFORMDW Mima shows sympathy after hearing about your struggles.
+			ELSEIF RAND:2 == 0
+				PRINTFORMDL Mima looks at you with a drowsy expression.
+				PRINTFORMW 「Eh? Yes, yes, I am listening.」
+			ELSEIF RAND:1 == 0
+				PRINTFORMDL You ask Mima if she could tell you a story about her life.
+				PRINTFORMW 「Very well then, I'll tell you about my favorite pupil...」
+			ENDIF
+		ELSE
+			PRINTFORML 「You are much too persistent. Go away.」
+			PRINTFORMDW Mima seems unable to hide her irritation.
+		ENDIF
+	ELSEIF TALENT:恋慕
+		IF RAND:5 == 0
+			PRINTFORML 「Ahaha!　Don't make me laugh so much!」
+			PRINTFORMDW Mima happily listens to your story.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「I see, that is one way of looking at things...」
+			PRINTFORMDW Mima nods in admiration.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「So even %CALLNAME:MASTER% lives a surprisingly hard life...」
+			PRINTFORMDW Mima shows sympathy after hearing about your struggles.
+		ELSEIF RAND:2 == 0
+			PRINTFORMDL Mima looks at you with a drowsy expression.
+			PRINTFORMW 「Eh? Yes, yes, I am listening.」
+		ELSEIF RAND:1 == 0
+			PRINTFORMDL You ask Mima if she could tell you a story about her life.
+			PRINTFORMW 「Very well then, I'll tell you about my favorite pupil...」
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:5 == 0
+			PRINTFORML 「You are too persistent. Do you want to talk with me that badly?」
+			PRINTFORMDW Mima sounded a little bashful with her words.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「You seem harmless. But I don't understand what you'd get out of this.」
+			PRINTFORMDW Mima stares at you while judging you.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Is talking with me fun to you?」
+			PRINTFORMW 「I'm not that good at small talk...」
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「I see...」
+			PRINTFORMDW Mima is looking away, but at least she seems to be listening to you.
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「...」
+			PRINTFORMDW Mima quietly listens to your story.
+		ENDIF
+	ELSE
+		IF RAND:5 == 0
+			PRINTFORML 「Mmm?　Why are you talking to me?」
+			PRINTFORMDW Mima looks puzzled.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「I don't know what your intentions are, but don't get too close.」
+			PRINTFORMDW Mima seems somewhat gloomy.
+		ELSEIF RAND:3 == 0
+			PRINTFORMDL Mima lets out an annoyed sigh.
+			PRINTFORMW 「Don't you have anything else to do?」
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「If you want to chitchat go and do it with Reimu.」
+			PRINTFORMDW Mima dismissively waves her hand.
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「What, you've never seen an Evil Spirit before?」
+			PRINTFORMDW Mima looks sulky.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;301,お茶を淹れる
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_301
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_301_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_301_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML
+	IF CFLAG:318 == 1
+		PRINTFORML 「Suu... I don't want it.」
+		PRINTFORMDW Mima takes a small sip of your tea and gives it back to you.
+	ELSEIF TALENT:恋慕
+		IF RAND:5 == 0
+			PRINTFORML 「I definitely should give you some sort of reward, wouldn't you agree?」
+			PRINTFORMDW Mima received the tea with a smile and laughed.
+		ELSEIF RAND:4 == 0
+			PRINTFORMDL After Mima took a sip of the tea she fanned her tongue with one of her hands.
+			PRINTFORMW 「Too hot...!」
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Suu... Thank you.」
+			PRINTFORMDW Mima elegantly drinks your tea.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「Umm... You know my tastes very well.」
+			PRINTFORMDW Mima speaks highly of your tea.
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「Thank you %CALLNAME:MASTER%.」
+			PRINTFORMDW Mima received the tea with a smile.
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:5 == 0
+			PRINTFORML 「How considerate. You didn't happen to put anything weird in the tea, did you?」
+			PRINTFORMDW Mima slaps you on the back and laughs.
+		ELSEIF RAND:4 == 0
+			PRINTFORMDL After Mima takes a sip of the tea she fans her tongue with one of her hands.
+			PRINTFORMW 「Too hot...!」
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Thanks, I was thirsty.」
+			PRINTFORMDW Mima receives the tea and drinks it all at once.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「Hmm, it's passable.」
+			PRINTFORMDW Mima seems satisfied with the taste of the tea.
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「Oh, how thoughtful.」
+			PRINTFORMDW Mima gladly receives the tea.
+		ENDIF
+	ELSE
+		IF RAND:5 == 0
+			PRINTFORML 「Gokkun... Gokkun...」
+			PRINTFORMDW Mima quickly drinks the tea and gives the cup back to you.
+		ELSEIF RAND:4 == 0
+			PRINTFORMDL After Mima takes a sip of the tea she fans her tongue with one of her hands.
+			PRINTFORMW 「Too hot...!」
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「You didn't put anything weird in the tea, right?」
+			PRINTFORMDW Mima drinks the tea while looking at you suspiciously.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「... It doesn't suit my tastes.」
+			PRINTFORMDW Mima complains about the taste of the tea.
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「Gokkun...」
+			PRINTFORMDW Mima silently drinks the tea.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;302,スキンシップ
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_302
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_302_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_302_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML
+	IF CFLAG:318 == 1
+		PRINTFORML 「Don't touch me...!」
+		PRINTFORMDW Mima gives you a death stare.
+	ELSEIF TALENT:恋慕
+		IF RAND:5 == 0
+			PRINTFORML 「Ahh, that is...!」
+			PRINTFORMDW Mima doesn't seem to mind your sexual advances.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「Does it feel different from touching a living body?」
+			PRINTFORMDW You touch the spiritual parts of Mima.
+		ELSEIF RAND:3 == 0
+			PRINTFORMDL When you get closer to Mima, she moves her body closer to you.
+			PRINTFORMW 「Nn?　fufuu...♪」
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「Ukhuu... Stop touching too much around there...」
+			PRINTFORMDW You touch Mima's body.
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「Do you want to touch me?　I guess it can't be helped...」
+			PRINTFORMDW Mima enjoys your skinship.
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:5 == 0
+			PRINTFORML 「You are getting too close.」
+			PRINTFORMDW Mima looks nervous as you get within an arm's length of her.
+		ELSEIF RAND:4 == 0
+			PRINTFORMDL Mima gets upset when you try to touch her spiritual parts.
+			PRINTFORMW 「What do you think you are trying to touch?」
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Don't get too attached to me.」
+			PRINTFORMDW Mima complains, yet offers little resistance.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「Who said you could touch me?」
+			PRINTFORMDW Mima moves your hands away.
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「Really now, is this even fun for you?」
+			PRINTFORMDW Mima uncomfortably scratches her head.
+		ENDIF
+	ELSE
+		IF RAND:5 == 0
+			PRINTFORML 「If you want to touch someone, go and touch Reimu instead.」
+			PRINTFORMDW Mima rudely dismisses you.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「Don't get any closer.」
+			PRINTFORMDW Mima tries to move away from you.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Wait, where do you think you're touching.」
+			PRINTFORMDW Mima grabs your hand and gives you a stern look.
+		ELSEIF RAND:2 == 0
+			PRINTFORMDL Mima looks at you with a cold stare as you try to touch her.
+			PRINTFORMW 「Don't complain if I chop off your arm.」
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「Don't touch my body.」
+			PRINTFORMDW Mima leaps away from your hand.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;303,謝る
+;TFLAG:193(2=菓子折成功 1=大成功 0=成功 -1=失敗 -2=菓子折失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_303
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_303_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_303_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+SELECTCASE TFLAG:193 
+	CASE 0,1,2
+		IF TALENT:恋慕
+			PRINTFORML 「... I understand...」
+			PRINTFORML 「Raise your face, I forgive you.」
+			PRINTFORMDW Mima gives you a compassionate look and forgives you.
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Haaa... It can't be helped.」
+			PRINTFORMDW Mima lets out a sigh and forgives you.
+		ELSE
+			PRINTFORML 「... Don't make the same mistake twice.」
+			PRINTFORMDW Mima says this as she looks away from you.
+		ENDIF
+	CASEELSE
+		IF TALENT:恋慕
+			PRINTFORML 「I'm sorry %CALLNAME:MASTER%, but I can't forgive you.」
+			PRINTFORMDW Mima frowns and looks down at you.
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Hmmph.」
+			PRINTFORMDW Mima angrily looks away.
+		ELSE
+			PRINTFORML 「Tch...」
+			PRINTFORMDW Mima clicks her tongue and ignores you.
+		ENDIF
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;304,仕事を手伝う
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;CFLAG:350(仕事内容(JOB_仕事内容.ERB参照のこと
+;TCVAR:手伝えない(=2 手伝っても早くは終わらない、時間停止中不可 永琳の診察等)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_304
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_304_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_304_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時間停止中
+	IF FLAG:70
+	;通常
+	PRINTFORML
+	ELSE
+		IF CFLAG:318 == 1
+			PRINTFORML 「Don't you have anything else to do?」
+			PRINTFORMDW Mima glares at you after saying this.
+		ELSEIF TALENT:恋慕
+			IF RAND:5 == 0
+				PRINTFORML 「Come and help me out whenever you want to.」
+				PRINTFORMDW Mima shyly grasps your hand.
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「Your movements are splendid.」
+				PRINTFORMDW Mima is impressed with your skills.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「Here, a reward for your hard work.」
+				PRINTFORMDW Mima hands you some money.
+				;added
+				CALL GET_MONEY_YEN(RAND(100, 1001), 2)
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「I'm happy you came to help me out...」
+				PRINTFORMDW Mima blushes as she thanks you.
+			ELSEIF RAND:1 == 0
+				PRINTFORML 「Thank you %CALLNAME:MASTER%, you saved me some trouble.」
+				PRINTFORMDW Mima shows her appreciation.
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF RAND:5 == 0
+				PRINTFORML 「You came to help me out, you've changed.」
+				PRINTFORMDW Mima looks happily at you.
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「You're becoming better at this.」
+				PRINTFORMDW Mima evaluates your movements.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「Here, is this enough?」
+				PRINTFORMDW Mima hands you some money.
+				;added
+				CALL GET_MONEY_YEN(RAND(10, 101), 2)
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「Oh, I don't really mind.」
+				PRINTFORMDW Mima gives you a faint smile.
+			ELSEIF RAND:1 == 0
+				PRINTFORML 「Do you want to help out?」
+				PRINTFORMDW Mima seems grateful for your assistance.
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORML 「Can you work a little harder?」
+				PRINTFORMDW Mima offers you harsh but honest advice.
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「If you want some money go to the Human Village.」
+				PRINTFORMDW Mima points in the direction of the village.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「You really want to help me out?」
+				PRINTFORMDW Mima frowns at your suggestion.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「Try to keep up the pace.」
+				PRINTFORMDW Mima gives you some advice.
+			ELSEIF RAND:1 == 0
+				PRINTFORML 「I'm not sure you'd be of much help.」
+				PRINTFORMDW Mima seems a little anxious about working with you.
+			ENDIF
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;305,膝枕してもらう
+;TFLAG:193(-5=MASTERがTARGETよりも巨体の場合(TALENT:MASTER:体型 > TALENT:体型 + 2) 1=大成功 0=成功 -1=失敗)(-5以外は地の文分岐無し)
+;ABL:親密(6以上=顔をのぞき込みながら頭を撫でてくれる 3以上=ただ頭を撫でてくれる 2以下=縮こまっている)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_305
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_305_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_305_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORML
+	IF CFLAG:318 == 1
+		PRINTFORML 「Don't lean your head in there!」
+		PRINTFORMDW You try to lay down your head on Mima's knees, but the spirit slaps you in the head.
+	ELSEIF TALENT:恋慕
+		IF RAND:5 == 0
+			PRINTFORML 「Hey, come here.」
+			PRINTFORMDW Mima pats her lap, telling you to rest your head on it.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「Do you want to rest your head on my lap?」
+			PRINTFORMDW Mima welcomes your head with a smile.
+		ELSEIF RAND:3 == 0
+			PRINTFORMDL When you tried to look up at Mima's breasts, her hands blocked your view.
+			PRINTFORMW 「Hey, where are you looking at?」
+		ELSEIF RAND:2 == 0
+			PRINTFORMDL Mima has a gentle expression as she looks at you sleeping.
+			PRINTFORMW 「What a troublesome child...」
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「Fufu...♪」
+			PRINTFORMDW Mima gently pats your head as he sleeps.
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:5 == 0
+			PRINTFORML 「Really now, I hope no one else sees us.」
+			PRINTFORMDW Mima is blushing while you rests your head on her knees.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「It's as if you were an overgrown child.」
+			PRINTFORMDW Mima grumbles, slightly annoyed.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「You're starting to feel heavy, how long do you plan on doing this?」
+			PRINTFORMDW Mima taps you on the forehead to get your attention.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「I don't see what's so good about this...」
+			PRINTFORMDW Mima ponders while looking at you.
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「You're a mama's boy...」
+			PRINTFORMDW Mima looks slightly astonished while you sleep on her lap.
+		ENDIF
+	ELSE
+		IF RAND:5 == 0
+			PRINTFORML 「Are you trying to sleep on my lap?」
+			PRINTFORMDW Your head is slapped by Mima.
+		ELSEIF RAND:4 == 0
+			PRINTFORMDL You try to put his head on Mima's lap but she keeps moving away.
+			PRINTFORMW 「This isn't funny at all.」
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Is this a joke?」
+			PRINTFORMDW Mima moves your head away forcefully.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「Stop that, it's creepy...」
+			PRINTFORMDW Mima moves her knees to push your head away.
+		ELSEIF RAND:1 == 0
+			PRINTFORML 「Why are you resting on my lap?」
+			PRINTFORMDW Mima looks disgusted.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;306,お腹を撫でる
+;TFLAG:193(1=ABL:親密6以上かつ妊娠時 0=成功 -1=ABL:親密5以下)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_306
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_306_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_306_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;時間停止中
+	IF FLAG:70
+	;通常
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;307,頬をつまむ
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文分岐無し
+	;以下は先に書いた条件が優先される
+	;TALENT:恋慕(受け入れつつ笑顔でやり返す
+	;ABL:親密(6以上=おずおずとやり返す
+	;ABL:従順(5以上=されるがまま
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_307
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_307_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_307_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時間停止中
+	IF FLAG:70
+	;睡眠中
+	ELSEIF CFLAG:睡眠
+	;通常
+	ELSE
+		PRINTFORML
+		IF CFLAG:318 == 1
+			PRINTFORML 「What the...!?」
+			PRINTFORMDW Mima twists your wrist for trying to pinch her cheeks...
+		ELSEIF TALENT:恋慕
+			IF RAND:5 == 0
+				PRINTFORML 「Let's see who throws the towel first!」
+				PRINTFORMDW Mima and you engage in an endurance match while pinching each other cheeks.
+			ELSEIF RAND:4 == 0
+				PRINTFORMDL You enjoy the softness of Mima's skin as you pinch her cheeks.
+				PRINTFORMW 「Nmyuu... Too...rough... Pfu...」
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「Nmuu... Take this.」
+				PRINTFORMDW Not wanting to be outdone, Mima returns the pinch.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「Hey... Be less rough...」
+				PRINTFORMDW Mima has teary eyes while her cheeks are pinched.
+			ELSEIF RAND:1 == 0
+				PRINTFORML 「Iiigh... Kyaa...」
+				PRINTFORMDW Mima is shaking and waves her arms.
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF RAND:5 == 0
+				PRINTFORMDL After you pinch Mima's cheeks, Mima returns the pinch.
+				PRINTFORMW 「Fufu, now we're even.」
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「Nnngh...」
+				PRINTFORMDW Mima's cheek swelled a little.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「Ow! Ow...!　Stop it...!」
+				PRINTFORMDW Mima holds her reddened cheek with her hand.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「Nmuu... Take this.」
+				PRINTFORMDW Not wanting to be outdone, Mima returns the pinch.
+			ELSEIF RAND:1 == 0
+				PRINTFORML 「That actually hurts...」
+				PRINTFORMDW Mima protests as you pinch her cheeks.
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORML 「Hey, don't touch me.」
+				PRINTFORMDW Mima frowns angrily.
+			ELSEIF RAND:4 == 0
+				PRINTFORMDL Mima slaps your hand away.
+				PRINTFORMW 「What are you trying to do?」
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「Do you want to get beaten up?」
+				PRINTFORMDW Mima says after you pinch her cheek.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「Are you trying to pull a prank on me?」
+				PRINTFORMDW Mima threatens to break your fingers...
+			ELSEIF RAND:1 == 0
+				PRINTFORML 「Ah...?」
+				PRINTFORMDW Mima violently pinches your cheeks in response.
+			ENDIF
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;308,頬をつつく
+;添い寝中or睡眠中限定
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_308
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_308_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_308_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;睡眠中
+	IF CFLAG:睡眠
+	;通常
+	ELSE
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;309,頭を撫でる
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;ABL:親密(6以上=通常成功時分岐
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_309
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_309_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_309_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時間停止中
+	IF FLAG:70
+	;睡眠中
+	ELSEIF CFLAG:睡眠
+	;通常
+	ELSE
+		PRINTFORML
+		IF CFLAG:318 == 1
+			PRINTFORML 「I'm not in the mood... Scram...!」
+			PRINTFORMDW Mima slaps your hand away.
+		ELSEIF TALENT:恋慕
+			IF RAND:5 == 0
+				PRINTFORMDL Mima gently caresses your hand as you headpat her.
+				PRINTFORMW 「Thank you. It feels as if I was reliving my childhood.」
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「Aren't you getting a little too close?」
+				PRINTFORMDW You ask Mima if you could pat her head.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「It's nice to be caressed once in a while.」
+				PRINTFORMDW Mima has a mesmerized expression as you caress her head.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「It's strange... I don't mind being caressed by you.」
+				PRINTFORMDW Mima wears a confused face.
+			ELSEIF RAND:1 == 0
+				PRINTFORML 「...♪」
+				PRINTFORMDW Mima seems to be glad that you're headpatting her.
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF RAND:5 == 0
+				PRINTFORMDL Mima has an awkward face as she's patted.
+				PRINTFORMW 「... I don't like headpats that much...」
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「Could you please not treat me like a child?」
+				PRINTFORMDW Mima seems to dislike being headpatted by you.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「This is feels weird, shouldn't I be the one headpatting you?」
+				PRINTFORMDW Mima tilts her head while you caress it.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「I guess I'm already satisfied. Now stop.」
+				PRINTFORMDW It seems Mima is a little shy.
+			ELSEIF RAND:1 == 0
+				PRINTFORML 「Hey! I'm older than you...」
+				PRINTFORMDW Mima has mixed feelings about letting you pat her head.
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORMDL You put your hand on Mima's head, but she rejects you.
+				PRINTFORMW 「Don't touch me with those hands.」
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「What the heck are you doing?」
+				PRINTFORMDW Mima is obviously irritated.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「Do you think I'm a child or something?」
+				PRINTFORMDW Mima is giving you a dead stare.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「Don't make fun of me!」
+				PRINTFORMDW Mima moves your hand away.
+			ELSEIF RAND:1 == 0
+				PRINTFORML 「...!!!」
+				PRINTFORMDW You try to pat Mima's head, but the spirit moves you away.
+			ENDIF
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;331,お茶を淹れる（薬入り）
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_331
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_331_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_331_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;332,お酒をふるまう
+;TFLAG:193(0=下戸飲み成功 -1=下戸飲み失敗 -2=下戸飲み大失敗 -5=下戸飲みあきらめ)
+;TFLAG:194(51=どぶろく 52=清酒 53=鬼殺し)
+;ALCOHOL_TASTE(TFLAG:194)(15以上=気に入る 9以下=口に合わない)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_332
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_332_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_332_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;333,愚痴を聞く
+;TFLAG:193(6=大成功(酔い) 5=成功(酔い) 4=失敗(酔い) 3=大成功 2=成功 1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_333
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_333_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_333_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	SELECTCASE TFLAG:193
+		CASE 6
+		;大成功（酔い）
+		CASE 5
+		;成功（酔い）
+		CASE 4
+		;失敗（酔い）
+		CASE 3
+		;大成功
+		CASE 2
+		;成功
+		CASE 1
+		;失敗
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;334,杯を交わす
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;CFLAG:妊娠自覚状態(1=食事)
+;TALENT:酒耐性(-2=食事)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_334
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_334_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_334_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	SELECTCASE TFLAG:193
+		CASE 1
+		;大成功
+		CASE 0
+		;成功
+		CASE -1
+		;失敗
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;335,介抱する
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_335
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_335_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_335_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	SELECTCASE TFLAG:193
+		CASE 1
+		;大成功
+		CASE 0
+		;成功
+		CASE -1
+		;失敗
+	ENDSELECT
+ENDIF
+RETURN 1
+;==================================================
+;336,膝枕する
+;ABL:親密(4以下=居心地悪げ 9以下=恥ずかしげ それ以上=幸せそう
+;TIME_PROGRESS(TFLAG:膝枕した)(44以下=失敗
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_336
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_336_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_336_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193 > 0
+	;寝ちゃった
+	ELSE
+	;それ以外
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;350,押し倒す（時姦時イタズラする
+;TFLAG:194 (0=成功 1=人目がある　2=野外は嫌でござりまする　3=多人数プレイは勘弁　4=合意があってもムードが足りぬ）
+;TCVAR:抱き寄せ初回　1=普通に合意ゲット　2=先にキスぐらいしろよ　3=媚薬or発情には勝てなかったよお…　4=悔しい…刻印さえなければﾋﾞｸﾋﾞｸﾝ
+;5=強引に迫られると断れぬ(素質臆病持ち専用) 6=まんざらでもない　7=駄目　8=論外
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_350
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_350_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_350_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL While time is frozen you move closer.
+		PRINTFORMDW You slowly reach for Mima's body, who is incapable of defending herself.
+	ELSEIF TFLAG:194
+		SELECTCASE TFLAG:194
+			CASE 1
+				IF TALENT:恋慕
+					PRINTFORML 「Ahh, it's feels good to embrace with %CALLNAME:MASTER%...」
+					PRINTFORMW 「But there are a lot of eyes around us....」
+				ELSEIF TALENT:思慕
+					PRINTFORML 「Hey... Look around you.」
+					PRINTFORMDW Mima is concerned others will notice you.
+				ELSE
+					PRINTFORML 「Do you really want to do this is public?」
+					PRINTFORMW 「I refuse.」
+				ENDIF
+			CASE 2
+				IF TALENT:恋慕
+					PRINTFORML 「We are outdoors.」
+					PRINTFORMW 「What would you do if someone saw us?」
+				ELSEIF TALENT:思慕
+					PRINTFORML 「No, I don't feel safe doing it outside...」
+					PRINTFORMW 「If you want to do it, then let's do it indoors.」
+				ELSE
+					PRINTFORMW 「Doing it outside?　I'm not an animal, you know?」
+				ENDIF
+			CASE 3
+				IF TALENT:恋慕
+					PRINTFORML 「... I don't want that.」
+					PRINTFORMW 「I...want it to be only the two of us...」
+				ELSEIF TALENT:思慕
+					PRINTFORML 「What, you're thinking of bringing someone else?」
+					PRINTFORMW 「... Don't even joke about it.」
+				ELSE
+					PRINTFORMW 「If you want to do it, go and do it with that girl.」
+				ENDIF
+			CASE 4
+				IF TALENT:恋慕
+					PRINTFORMW 「... I'm not in the right mood for that sort of thing.」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「I'm not in the mood for that.」
+				ELSE
+					PRINTFORMW 「If you're turned on then go somewhere else and pleasure yourself.」
+				ENDIF
+		ENDSELECT
+	ELSEIF TCVAR:抱き寄せ初回
+		SELECTCASE TCVAR:抱き寄せ初回
+			CASE 1
+				IF TALENT:恋慕
+					PRINTFORML 「Nnn... %CALLNAME:MASTER%...%UNICODE(0x2665)%」
+					PRINTFORML 「Will you embrace me...?」
+					PRINTFORMDW Mima looks at you expectantly with shining eyes.
+				ELSEIF TALENT:思慕
+					PRINTFORML 「Come, embrace the evil spirit.」
+					PRINTFORMW 「Fufuu, this feels good, however...♪」
+				ELSE
+					PRINTFORML 「You want to do it with me?」
+					PRINTFORMW 「Well...I don't mind but...」
+				ENDIF
+			CASE 2
+				IF TALENT:恋慕
+					PRINTFORML 「%CALLNAME:MASTER%... We haven't kissed yet...」
+					PRINTFORMW 「Nnnn... Would you show me your love...?」
+				ELSEIF TALENT:思慕
+					PRINTFORML 「... I'm don't mind being embraced by you...」
+					PRINTFORMW 「How about we kiss?」
+				ELSE
+					PRINTFORML 「How uneducated, holding me without even giving me a kiss.」
+					PRINTFORMW 「Well, I don't really mind.」
+				ENDIF
+			CASE 3
+				IF TALENT:恋慕
+					PRINTFORML 「Aah%UNICODE(0x2665)%　%CALLNAME:MASTER%%UNICODE(0x2665)%」
+					PRINTFORMDW Mima is so excited that she stretches her arms and clings to %CALLNAME:MASTER%.
+				ELSEIF TALENT:思慕
+					PRINTFORML 「Haa...fuu...%UNICODE(0x2665)%」
+					PRINTFORMW 「It's becoming hard to control myself, is this okay...?」
+				ELSE
+					PRINTFORML 「Haa...%UNICODE(0x2665)%　haaa...%UNICODE(0x2665)%」
+					PRINTFORMW 「M-My...body, it's throbbing...%UNICODE(0x2665)%」
+				ENDIF
+			CASE 4
+				IF TALENT:恋慕
+					PRINTFORML 「Ah...%UNICODE(0x2665)%」
+					PRINTFORMDW Mima pushes you down.
+				ELSEIF TALENT:思慕
+					PRINTFORML 「It's strange...」
+					PRINTFORMW 「I don't feel like resisting at all...」
+				ELSE
+					PRINTFORML 「Uuunh...」
+					PRINTFORMW 「I-I can't resist...」
+				ENDIF
+			CASE 5
+			CASE 6
+				IF TALENT:恋慕
+					PRINTFORML 「What's the matter?　Be more passionate.」
+					PRINTFORMDW Mima is resisting, but seems happy at the same time.
+				ELSEIF TALENT:思慕
+					PRINTFORML 「Sorry, but I can't forgive what you did.」
+					PRINTFORMDW Mima resists while blushing.
+				ELSE
+					PRINTFORML 「I don't want that.」
+					PRINTFORMW 「I hate it... I'm not in the mood for something so unpleasant...」
+				ENDIF
+			CASE 7
+				IF TALENT:恋慕
+					PRINTFORMW 「I don't hate %CALLNAME:MASTER%...but I still don't want to do that.」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「You and I?　Sorry but no.」
+				ELSE
+					PRINTFORMW 「Hah?　I'll have to disagree.」
+				ENDIF
+			CASE 8
+				IF TALENT:恋慕
+					PRINTFORMW 「Don't even joke about it!」
+				ELSEIF TALENT:思慕
+					PRINTFORMW 「Would you stop with the jokes?」
+				ELSE
+					PRINTFORMW 「You seem eager to die.」
+				ENDIF
+		ENDSELECT
+	ELSE
+		IF TALENT:恋慕
+			IF RAND:5 == 0
+				PRINTFORML 「Can you make me feel good?」
+				PRINTFORMW 「If you do, I promise to do the same for you%UNICODE(0x2665)%」
+			ELSEIF RAND:4 == 0
+				PRINTFORMDL Mima whispers in your ear as she pushes you down.
+				PRINTFORMW 「Naughty...%UNICODE(0x2665)%」
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「Let's see how long you'll last this time...%UNICODE(0x2665)%」
+				PRINTFORMDW Mima rubs your crotch.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「You sure love being spoiled %UNICODE(0x2665)%」
+				PRINTFORMW 「Well then, allow me to spoil you in the adult's way%UNICODE(0x2665)%」
+			ELSE
+				PRINTFORML 「Are you ready to be embraced by an Evil Spirit?」
+				PRINTFORMW 「Even if I lack a lower body, I can still please you%UNICODE(0x2665)%」
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF RAND:5 == 0
+				PRINTFORMW 「It can't be helped. I'll keep you company♪」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Really now, I guess it because you're still young...」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Fufu♪　Let's enjoy this, okay?」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Keep it down, don't get so excited.」
+			ELSE
+				PRINTFORMW 「Oh, are you sure?」
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORMW 「You're one dirty individual...」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Haa...again?...」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Could you at least make me feel good?」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Oh dear, it must be mating season...」
+			ELSE
+				PRINTFORMW 「Do you want to do it again with me?」
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;351,連れ出す
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_351
+;連れ出しにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K4_351_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_351_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;TARGET連れ出し
+	IF CFLAG:同行 == 60
+		IF TALENT:恋慕
+			IF RAND:5 == 0
+				PRINTFORMW 「Mmm?　What's the matter %CALLNAME:MASTER%?」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Yeah yeah, we are going there, right?」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「I'll follow you, don't worry.」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Hey, let's hold hands.」
+			ELSE
+				PRINTFORMW 「Alright, I'll go with you.」
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF RAND:5 == 0
+				PRINTFORMW 「Does this concern me?」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Shall we go there?」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Wait, don't pull my arm.」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Eh, do you want me to go there with you?」
+			ELSE
+				PRINTFORMW 「Mmm?　What's wrong?」
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORMW 「You want me come with you?」
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Where are you waking me?」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Errands? Let's finish them quickly then.」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Why should I follow you?」
+			ELSE
+				PRINTFORMW 「Don't pull my arm.」
+			ENDIF
+		ENDIF
+	;TARGET以外連れ出し(TARGET同行中のみ
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;352,告白する
+;FLAG:甲斐性無(1=失敗)
+;TFLAG:193 (1=成功 0=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_352
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_352_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_352_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TFLAG:193
+		IF TALENT:恋慕
+			PRINTFORMW 「... Are you...all right with me?」
+			PRINTFORMDW Mima quickly asks.
+			PRINTFORMW 「Is it really a good idea to be the lover of an Evil Spirit like me?」
+			PRINTFORMW 「There are many pretty girls in this shrine, such as Reimu, the oni and that robot maid.」
+			PRINTFORMDW Tears form in the corners of Mima's eyes when you tell her that she's the one you want.
+			PRINTFORMW 「...E-Eh?　I can't be crying at my age...」
+			PRINTFORMDW Mima gives a determined look and turns around to face you.
+			PRINTFORMW 「I've loved you since the first moment I saw you. I'd never regret this, %CALLNAME:MASTER%.」
+			PRINTFORMDW And thus, the relation between Mima and you has taken a new step. You are now lovers!
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「Eh, You want to go out with me?」
+			PRINTFORMDW Mima shows a worried expression in response to your confession.
+			PRINTFORMDW She finally talks after keeping silence for a while.
+			PRINTFORMW 「It's okay, but don't expect me to act any different just because we're lovers, alright?」
+			PRINTFORMDW And thus, Mima accepts the proposal. You are now Mima's lover! 
+		ENDIF
+	ELSE
+		IF TALENT:恋慕
+			PRINTFORMW 「... Sorry, but could you give me some more time to think about it?」
+			PRINTFORMDW By her expression, it seems to be a rejection...
+		ELSEIF TALENT:思慕
+			PRINTFORMW 「I'm sorry but, maybe we should wait until we know each other a little better...」
+			PRINTFORMDW It seems Mima has rejected you...
+		ELSE
+			PRINTFORMW 「Are you sleep talking? Taking a beating should wake you up.」
+			PRINTFORMDW You quickly bow your head, asking for forgiveness...
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;353,イタズラする
+;FLAG:甲斐性無(1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_353
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_353_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_353_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;354,添い寝する（相手は起きて布団に招く感じ）
+;CFLAG:衰弱(1以上=起きない
+;CFLAG:お招き(0以外=起きない
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_354
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_354_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_354_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;355,時止め（地の文の改変程度に留めるべき
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_355
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_355_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_355_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;360,身を任せる
+;TCVAR:20(27=谷間を見せる 32=前から抱きつく 35=スカートの中を見せる 53=パイズリ 73=ぱふぱふ 77=乳を吸わせる 85=Ｖ挿入する 86=だいしゅきホールド 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_360
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_360_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_360_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;363,読み聞かせ（[幼稚]持ち専用）
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文分岐無し
+;CFLAG:添い寝中(1=布団orベッドの中で本を読む
+;MASTERがTARGETより大柄の場合、膝の上にTARGETを乗せる
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_363
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_363_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_363_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;364,豆まき(萃香、勇儀、スカーレット姉妹用
+;TFLAG:193(豆まきに参加してる人数
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_364
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_364_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_364_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;365,守矢神社へ移動(早苗、神奈子、諏訪子用
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_365
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_365_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_365_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;402,就寝
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_402
+;就寝にTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K4_402_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_402_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;403,休憩
+;CFLAG:TARGET:睡眠(1=TARGETが寝てる隣で休憩
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_403
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_403_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_403_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;405,出掛ける(同行時デート
+;条件が厄介なので、COMF405 出掛ける.ERBを参照のこと
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_405
+;出掛けるにTRAIN_MESSAGEは無い
+CALL M_KOJO_MESSAGE_COM_K4_405_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_405_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SIF FLAG:時間停止 || CFLAG:睡眠
+		RETURN 0
+	;TARGETとデート
+	IF CFLAG:同行
+		IF TALENT:恋慕
+			IF RAND:5 == 0
+				PRINTFORMDW Mima grasps your hand and the two of you go out on a date.
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Going out on dates at my age is a little embarrassing... Fufu...♪」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Tell me %CALLNAME:MASTER%, where are we going?♪」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Would you get mad at me if I took the lead?」
+			ELSE
+				PRINTFORMW 「A date? It would be my pleasure...♪」
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF RAND:5 == 0
+				PRINTFORMDW Mima goes out with you, feeling somewhat embarrassed.
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Where are you taking me?」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Eh, do I go too?」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Hmm, should I come too?」
+			ELSE
+				PRINTFORMW 「Where are we going?」
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORMDW Mima looks a little annoyed.
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Shouldn't you be dating younger girls?」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Fuwaaah... How bothersome...」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Why me?...」
+			ELSE
+				PRINTFORMW 「You should go alone...」
+			ENDIF
+		ENDIF
+	;TARGET以外とデート
+	ELSEIF CFLAG:MASTER:同行
+	;お出かけお見送り
+	ELSE
+		IF TALENT:恋慕
+			IF RAND:5 == 0
+				PRINTFORMDW Mima smiles and waves at you when she sees you.
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「Are you going out alone?　Are you sure you don't want me to go with you.」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「If you don't mind, bring me a souvenir.」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Be careful out there. Call me if something happens.」
+			ELSE
+				PRINTFORMW 「Are you going out?... See you soon.」
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF RAND:5 == 0
+				PRINTFORMDW Mima waves as she sees you off.
+			ELSEIF RAND:4 == 0
+				PRINTFORMW 「You aren't strong enough. Remember to be careful around Youkai.」
+			ELSEIF RAND:3 == 0
+				PRINTFORMW 「Hmm, where are you going?」
+			ELSEIF RAND:2 == 0
+				PRINTFORMW 「Are you going out?　See you.」
+			ELSE
+				PRINTFORMW 「Bring me a souvenir.」
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORMW 「Are you leaving?　Hmm.」
+			ELSEIF RAND:4 == 0
+				PRINTFORMDW You tell Mima that you're leaving, but Mima stays silent.
+			ELSEIF RAND:3 == 0
+				PRINTFORMDW Mima stays quiet as you leave.
+			ELSEIF RAND:2 == 0
+				PRINTFORMDW Mima seems indifferent as she sees you off.
+			ELSE
+				PRINTFORMDW Mima meets eyes with you, but she doesn't say anything.
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;410,掃除
+;FLAG:70(1=時間停止中
+;TFLAG:193(0=見てるだけ 1=一緒に掃除)
+;TFLAG:194(3=汚れ高 2=汚れ中 1=汚れ低 0=汚れ最小
+;OUTROOF(CFLAG:現在位置)(野外掃除（冬は雪かき
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_410
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_410_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_410_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;Custom code, prevents people from cleaning when sleeping
+	SIF CFLAG:睡眠
+		RETURN 0
+	IF FLAG:70
+	ELSE
+		IF TALENT:恋慕
+			IF RAND:5 == 0
+				PRINTFORML 「Oh dear, there's a little dust on your hair.」
+				PRINTFORMDW Mima lightly dusts you.
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「If I help this place will look prettier even faster.」
+				PRINTFORMDW Mima smiles as she helps you clean.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「Look, if you only squint your eyes...」
+				PRINTFORMDW Mima hands you a dust cloth.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「Come on, sweep.」
+				PRINTFORMDW Mima takes a dustpan as you sweep the trash. 
+			ELSE
+				PRINTFORML 「Are you cleaning?　Let me help.」
+				PRINTFORMDW Mima takes the initiative and helps you out with the cleaning.
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF RAND:5 == 0
+				PRINTFORML 「We can't sweep that part with a broom...」
+				PRINTFORMDW Mima is forced to pick up the garbage with her hands.
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「Are you taking a break?」
+				PRINTFORMDW Mima serves you a cup of tea.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「There's still garbage over there.」
+				PRINTFORMDW Mima points at a place you overlooked.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「You seem to be working hard. Want my help?」
+				PRINTFORMDW Mima has brought a dustpan with her.
+			ELSE
+				PRINTFORML 「You're doing it wrong, when you clean corner with a broom...」
+				PRINTFORMDW Mima teaches you a more efficient way of cleaning.
+			ENDIF
+		ELSE
+			IF RAND:5 == 0
+				PRINTFORML 「If you're going to clean up at least do it properly.」
+				PRINTFORMDW Mima shows you a dusty finger.
+			ELSEIF RAND:4 == 0
+				PRINTFORML 「Mmm... Oh you're cleaning...」
+				PRINTFORMDW Mima moves aside to avoid disturbing your cleaning.
+			ELSEIF RAND:3 == 0
+				PRINTFORML 「Oh... Are you cleaning up?」
+				PRINTFORMDW Mima looks a little impressed.
+			ELSEIF RAND:2 == 0
+				PRINTFORML 「Try cleaning up more calmly, there so much dust in the air.」
+				PRINTFORMDW Mima coughs as she calls you out.
+			ELSE
+				PRINTFORML 「Do your best.」
+				PRINTFORMDW Mima relaxes while you clean up the place.
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;411,戦闘訓練
+;TFLAG:194(3=夏の昼間 2=ヤバい天気 1=悪天候 0=屋内or通常天気
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_411
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_411_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_411_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TALENT:恋慕
+		IF RAND:5 == 0
+			PRINTFORML 「Well, it was a good training!」
+			PRINTFORMDW Mima wipes off the sweat with a towel.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「... Where are you looking?」
+			PRINTFORMDW You stare at Mima's bouncing breasts whenever she avoids an attack.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「%CALLNAME:MASTER%, did that hurt?」
+			PRINTFORMDW Mima carefully treats your wound after you got hit by one of her attacks.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「Hey... You overdid it...」
+			PRINTFORMDW Mima got hit by one of your projectiles, so you lightly massage the spot where she was hit.
+		ELSE
+			PRINTFORML 「Haa!　Yaaah!」
+			PRINTFORMDW Mima and you compete against each other.
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:5 == 0
+			PRINTFORML 「We've been getting stronger.」
+			PRINTFORMDW Mima laughs fearlessly.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「Sorry... Are you okay?」
+			PRINTFORMDW Mima is concerned about your injury.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Wrong, you should be avoiding those like this...」
+			PRINTFORMDW Mima gives you a lecture.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「Hmm... Not a bad move!」
+			PRINTFORMDW Mima evaluates your movements.
+		ELSE
+			PRINTFORML 「Haa!　Yaaah!」
+			PRINTFORMDW Mima and you train your skills.
+		ENDIF
+	ELSE
+		IF RAND:5 == 0
+			PRINTFORML 「You seem to lack discipline.」
+			PRINTFORMDW Mima shakes her head in disappointment.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「What was that attack?」
+			PRINTFORMDW Mima looks astounded.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「We didn't get much out of this training...」
+			PRINTFORMDW Mima turns around and leaves.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「Why don't you stop holding back?」
+			PRINTFORMDW Mima provokes you.
+		ELSE
+			PRINTFORML 「Hey, stop boasting, it wasn't such a big deal.」
+			PRINTFORMDW Mima scolds you.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;412,勉強
+;ABL:教養(ABL:MASTER:教養より大=MASTERが教えてもらう ABL:MASTER:教養より小=TARGETが教えてもらう
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_412
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_412_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_412_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	SIF FLAG:時間停止 || CFLAG:睡眠
+		RETURN 0
+	IF TALENT:恋慕
+		IF RAND:5 == 0
+			PRINTFORMDL When you glance at Mima's breasts, Mima scolds you.
+			PRINTFORMW 「What are you looking at? Study properly.」
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「Fufufu♪　I got a lot of correct answers♪」
+			PRINTFORMDW You and Mima compare your answers.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Hmmm, you got a higher grade than me...?」
+			PRINTFORMDW You and Mima compare your answers.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「I see... So that's what it means...」
+			PRINTFORMDW Mima learns a lot from you.
+		ELSE
+			PRINTFORML 「Great!　Now you understand.」
+			PRINTFORMDW Mima happily educates you.
+		ENDIF
+	ELSEIF TALENT:思慕
+		IF RAND:5 == 0
+			PRINTFORML 「Studying, huh?... Do your best.」
+			PRINTFORMDW Mima taps your back to cheer you up.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「Could you explain it to me?」
+			PRINTFORMDW You teach Mima what you've learned.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Check...Check... This one is wrong...」
+			PRINTFORMDW Mima grades your answers.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「I don't dislike young people who want to learn more.」
+			PRINTFORMDW Mima serves you a cup of teas and places it on the table.
+		ELSE
+			PRINTFORML 「If you use this procedure you can...」
+			PRINTFORMDW Mima gives you advice.
+		ENDIF
+	ELSE
+		IF RAND:5 == 0
+			PRINTFORML 「Studying, huh? Do your best.」
+			PRINTFORMDW Mima quietly supports you.
+		ELSEIF RAND:4 == 0
+			PRINTFORML 「It seems I misjudged yo.u」
+			PRINTFORMDW Mima admires your search for knowledge.
+		ELSEIF RAND:3 == 0
+			PRINTFORML 「Learning is always a good thing.」
+			PRINTFORMDW Mima nods in approval.
+		ELSEIF RAND:2 == 0
+			PRINTFORML 「...」
+			PRINTFORMDW Mima quietly observes you.
+		ELSE
+			PRINTFORML 「Oh... You're studying.」
+			PRINTFORMDW Mima looks at you curiously.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;413,料理
+;TFLAG:194(100以上=禁断のメニュー 3=デザート 2=主食 1=軽食
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_413
+;TFLAG:194が100以上の場合のみ
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_413_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_413_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+ENDIF
+RETURN 1
+;==================================================
+;414,食事を取る
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;TFLAG:194(1=ノーパンしゃぶしゃぶ 2=禁断のメニュー 31=ドーピングコンソメスープ 30=モッツァレラチーズとトマトのサラダ 34=ギンギー料理
+;TCVAR:MASTER:308(bit0=濃い味 bit1=薄味 bit3=激辛 bit4=激甘 bit5=わさび bit6=激酸っぱ
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_414
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_414_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_414_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;415,食事をふるまう
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;TCVAR:MASTER:308(bit0=濃い味 bit1=薄味 bit3=激辛 bit4=激甘 bit5=わさび bit6=激酸っぱ
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_415
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_415_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_415_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;416,演奏する
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;TFLAG:使用楽器(1=キーボード 2=ピアノ 3=ギター 4=トランペット 5=ヴァイオリン)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_416
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_416_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_416_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;417,昼寝をする
+;TFLAG:193(0=MASTERを抱き枕にして寝ている 1=MASTERの膝を枕にして寝ている 2=寝顔にキスされた 3=寝顔をのぞき込まれた 4=MASTERが膝枕されてる 5=秘処orペニス揉み
+;CFLAG:添い寝中(1=一緒に寝ている
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_417
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_417_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_417_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;421,願掛けする
+;条件が複雑なので、COMF421 願掛け.ERBおよび、EVENT_MESSAGE_COM400.ERBの願掛けするの項を参照のこと
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_421
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_421_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_421_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;422～430は、特殊コマンドなのでテンプレでは対応しません
+;==================================================
+
+;==================================================
+;431,お風呂でくつろぐ
+;TFLAG:209(4=人里の銭湯で番台ちゃんを怒らせている 1=銭湯に入った
+;TFLAG:211(4=地底の温泉で番台妖怪を怒らせている 1=温泉に入った
+;TFLAG:194(1=連続入浴不可(表示しない可能性あり？
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_431
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_431_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_431_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;432,お風呂でくつろぐ
+;表示タイミングは入浴後なので、お風呂上がりでの
+;TFLAG:209(4=人里の銭湯で番台ちゃんを怒らせている 1=銭湯に入った
+;TFLAG:211(4=地底の温泉で番台妖怪を怒らせている 1=温泉に入った
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_432
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_432_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_432_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;440,待つ
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_440
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_440_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_440_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;441,授業を受ける(慧音専用
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_441
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_441_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_441_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;442,伐採する（未実装
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_442
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_442_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_442_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;442以降のコマンドは、実行しても口上はおそらく表示されないのでテンプレでもスルー
+;==================================================
+
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;デート系コマンド
+;デート系口上は文字通り外出先で発生
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+[SKIPSTART]
+;現状未実装
+;==================================================
+;600,デート会話
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_600
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_600_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_600_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;601,デートスキンシップ
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_601
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_601_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_601_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;602,デートキス
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_602
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_602_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_602_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+[SKIPEND]
+;==================================================
+;603,手を繋ぐ
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(失敗でもふりほどかれたりはしません
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_603
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_603_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_603_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;604,散策する
+;デート中の場合、CFLAG:現在位置に移動先の場所が既に入ってる
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_604
+;散策するにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K4_604_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_604_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;605,寄り道する
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文無し
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_605
+;寄り道するにはTRAIN_MESSAGEが無い
+CALL M_KOJO_MESSAGE_COM_K4_605_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_605_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;610,食事に誘う
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_610
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_610_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_610_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;==================================================
+;613,お金稼ぎする（オミットされました
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_613
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_613_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_613_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;614,食材の買い出し
+;TFLAG:193(1=購入＆デート経験アップ 0=購入 -1=非購入)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_614
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_614_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_614_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;615,お弁当を食べる
+;実行可能場所　お地蔵通り,枝垂れ柳の下,霧の湖,玄武の沢,大蝦蟇の池,絶景の丘,山の湖,天界
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;ABL:料理技能(2未満=微妙な出来 4未満=そこそこ美味しい 4以上=絶品)
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_615
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_615_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_615_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;617,甘味処に誘う
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文分岐は大成功のみ追加
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_617
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_617_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_617_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;618,花屋（口上は表示されない模様？
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_618
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_618_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_618_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;620,鈴奈庵
+;TFLAG:193(1=貸し出しOK 0=貸し出し不可
+;ITEM:10X (X=1戦術指南書 X=2調理指南書 X=3字引 X=4御伽草子
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_620
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_620_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_620_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;436,読書 custom code, edited
+;TFLAG:193(選択肢文学(1=忍殺(文学？) 2=失敗 3=文学),選択肢実用書(4=失敗 5=実用書),選択肢エッチな本(6=薄い高い本 7=保健体育 8=カーマスートラ))
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_436
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_436_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_436_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;698,部屋に入る
+;TARGETの部屋に入る場合のみ表示
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_698
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_698_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_698_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;699,外に出る
+;==================================================
+@M_KOJO_MESSAGE_COM_K4_699
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K4_699_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K4_699_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;派生コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;60,耳かき
+;前ターン膝枕後スキンシップコマンド
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(失敗するのはTARGET
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K4_60
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K4_60_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K4_60_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;61,抱きまくら
+;(TARGET睡眠時間or衰弱)添い寝中、前ターン抱きつく後就寝コマンド
+;分岐無し
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K4_61
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K4_61_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K4_61_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;62,デコちゅー
+;前ターン頭撫で後キスする
+;TFLAG:193(1=大成功 0=成功 -1=失敗)(地の文分岐無し
+;ABL:欲望(5以上=物足りない
+;ABL:親密(5以上=照れる
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K4_62
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K4_62_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K4_62_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;63,もっとキスする
+;前ターンキスする後キスする
+;分岐条件はEVENT_MESSAGE_COM500.ERB参照
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K4_63
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K4_63_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K4_63_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;80,手を引く
+;デート出発後目的地に着くまでの間
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;==================================================
+@M_KOJO_MESSAGE_SCOM_K4_80
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_SCOM_K4_80_1
+RETURN RESULT
+@M_KOJO_MESSAGE_SCOM_K4_80_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1

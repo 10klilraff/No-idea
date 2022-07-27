@@ -1,0 +1,254 @@
+﻿;==================================================
+;弾幕勝負
+;==================================================
+;
+@M_KOJO_MESSAGE_COM_K26_DANMAKU(ARGS, 相手残機)
+#DIM 相手残機
+;全体の流れ
+;①【戦闘前】→②ダイスロールとプレイヤー選択肢、ハンデをつけた場合は【ハンデ口上】→③対応スキルが発動した場合【スキル口上】→④被弾判定、キャラが被弾したなら【被弾口上】→
+;どちらかの残機が0になっていなければ②に戻る→⑤【戦闘後口上】
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;戦闘前
+	HANDICAP_FIXED = 0
+	HANDICAP_RAND = 0
+	;ハンデをつけることができ、数値が大きいほどあなたが不利になる　数値が負ならあなたが有利に
+	;キャラの能力に関わらずクッソ強くしたり弱くしたりできる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘前"
+		;怒り
+		IF CFLAG:318 == 1
+			;SWR reference, "official" translation
+			PRINTFORMW 「You shall leave the earth beautifully yet cruelly!」
+		ELSEIF RAND:4 == 0
+			;PCB Phantasm stage reference, "official" translation
+			PRINTFORMW 「Unfortunately for you, my Danmaku is thinner and more intricate than any spider's web.」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「Will you be able to break my barriers, I wonder.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Time for a little scolding.」
+		ELSE
+			PRINTFORMW 「Do you not know your own place? Recognize the foolishness of your bravery.」
+		ENDIF
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;ハンデ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "ハンデ"
+		;ハンデつけなかったら表示されないので無記入でよい
+		PRINTFORML 
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中TARGET被弾時口上
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" 
+		;別に一律で「やられたー」だけでもいいよ
+		SELECTCASE 相手残機
+			;残り残機3が表示されるのは【洽覧深識】持ちのみ
+			CASE 3
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「I let my guard down...」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「My barriers aren't few in numbers.」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「Ara? Did it hit?」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「...Did you just hit something?」
+				ELSE
+					PRINTFORMW 「Oh no, my clothes are going to tear at this rate.」
+				ENDIF
+			CASE 2
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「Why, you!」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「Hmm, this isn't a good situation I'm in.」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「Well, aren't you quite the experienced one, %CALLNAME:MASTER%.」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「...I won't let you out of my sight!」
+				ELSE
+					PRINTFORMW 「How long will I be able to shoot Danmaku out of my gaps, I wonder.」
+				ENDIF
+			CASE 1
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「...It won't end well if this keeps up.」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「Where did Ran and Chen go anyways?」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「I'm becoming a cornered fox, aren't I?」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「I'll show you my last resort.」
+				ELSE
+					PRINTFORMW 「I'll praise you for cornering me thus far.」
+				ENDIF
+			CASE 0
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「......」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「I didn't think you'd come this far...」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「Have you crossed the boundary of humans and youkai, I wonder.」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Ara? It seems that I've lost.」
+				ELSE
+					PRINTFORMW 「...I wonder what the color of victory is like.」
+				ENDIF
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【残忍酷薄】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "残忍酷薄"
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【乾坤一擲】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "乾坤一擲"
+		IF RAND:4 == 0
+			PRINTFORMW 「My last spell, how nostalgic.」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「I let my guard down? Take a closer look...」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「Don't let your focus down at times like this.」
+		ELSE
+			PRINTFORMW 「This is called a counter punch.」
+		ENDIF
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【怪力乱神】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "怪力乱神"
+		IF RAND:4 == 0
+			PRINTFORMW 「Is this what they call using your opponent against themselves?」
+		ELSEIF RAND:3 == 0
+			PRINTFORMW 「My apologies, but that won't work.」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「It might not be exactly corrent, but I'd be close in saying:『That didn't just happen』」
+		ELSE
+			PRINTFORMW 「You won't be able to hit me like that.」
+		ENDIF
+		
+	ENDIF
+	
+	;-------------------------------------------------
+	;戦闘後
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" 
+		PRINTFORML 
+		;残り残機4が表示されうるのは【洽覧深識】持ちのみ
+		;残機が1以上ならあなたの負け、0の場合はあなたの勝利
+		SELECTCASE 相手残機
+			CASE 4
+				;怒り
+				IF CFLAG:318 == 1
+					;Hisoutensoku reference, "official" translation
+					PRINTFORML 「The monkey who arose to the heavens rebelled from his post in rage.」
+					PRINTFORMW 「In the end, he was imprisoned upon the mountain.」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「Unfortunately, this ended in your complete defeat, %CALLNAME:MASTER%.」
+				ELSEIF RAND:3 == 0
+					;IAMP reference
+					PRINTFORMW 「Shooting, cutting, stabbing, hitting, killing... It's all useless against me.」
+				ELSEIF RAND:2 == 0
+					;SWR reference
+					PRINTFORMW 「Even if you stop time, spilt milk can't be recovered. Should you fill your cup with milk?」
+				ELSE
+					;IAMP reference
+					PRINTFORMW 「I'll tell you a secret... I don't have any weaknesses.」
+				ENDIF
+			CASE 3
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「Would you prefer that I dismember you, or that I fillet you?」
+				ELSEIF RAND:4 == 0
+					;IAMP reference
+					PRINTFORMW 「Gensokyo accepts everything and that's a cruel, cruel thing.」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「Shooting, cutting, stabbing, hitting, killing... It's all useless against me.」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Unfortunately for you, I'm not as weak as you.」
+				ELSE
+					PRINTFORMW 「I've had tougher challenges from dandelions.」
+				ENDIF
+			CASE 2
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「This exactly is why I'm so troubled.」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「You.. hurt me quite a bit.」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「Well? Have you become more accustomed to it?」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Even though we went in evenly matched, I'm still the superior.」
+				ELSE
+					PRINTFORMW 「You might win if you were to go up against Ran.」
+				ENDIF
+			CASE 1
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「I hate stubborn people.」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「You have some talent, %CALLNAME:MASTER%.」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「You were a formidable opponent, %CALLNAME:MASTER%.」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「How about it? Why don't you try to solve an incident?」
+				ELSE
+					PRINTFORMW 「Though it might seem paper-thin, the gap between you and I is wider than the Sanzu river itself.」
+				ENDIF
+			CASE 0
+				;怒り
+				IF CFLAG:318 == 1
+					PRINTFORMW 「...Unbelievable, to make me of all people go this far...!」
+				ELSEIF RAND:4 == 0
+					PRINTFORMW 「It takes a considerate amount of skill to beat me.」
+				ELSEIF RAND:3 == 0
+					PRINTFORMW 「You might be stronger than Reimu.」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Should I have fought together with Chen and Ran?」
+				ELSE
+					PRINTFORMW 「Would you spar with me again?」
+				ENDIF
+		ENDSELECT
+	ENDIF
+RESETCOLOR
+ENDIF
+RETURN 1
+

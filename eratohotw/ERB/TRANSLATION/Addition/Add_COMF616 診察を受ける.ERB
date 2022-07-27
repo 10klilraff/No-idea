@@ -1,0 +1,1429 @@
+﻿;addition custom code - expanded + added dialogue
+
+@COM616_TR
+#DIM 買うもの
+#DIM PREV_DAY
+IF FIRSTTIME("EirinDoctor", 0, [[永琳]])
+	LOCALS '= @"「Hmm? Hello again, %CALLNAME:MASTER%.」/「This must be your first time using my services, correct?」/「Let me introduce you to services that Eientei provides.」/「We offer various treatments and medicines that improve your quality of life and put you back on your feet.」/「Additionally, our fee is very affordable for most treatments,/　however we do not accept Charisma in this establishment as a method of payment.」/「If you ever feel sick, please don't hesitate to let me know.」"
+	CALL COM616_EIRINSPEAK, LOCALS
+	WAIT
+	LOCALS '= @"「Well then, how can I be of help?」"
+	CALL COM616_EIRINSPEAK, LOCALS, "smile"
+ELSE
+	LOCALS '= @"「%SPLIT_G("What brings you here today?:What's bothering you today?:How are we doing today?:What can I help you with today?")%」"
+	CALL COM616_EIRINSPEAK, LOCALS
+ENDIF
+gLineCount = LINECOUNT
+REDRAW 0
+DO
+	SIF LINECOUNT - gLineCount > 0
+		CLEARLINE LINECOUNT - gLineCount
+	DRAWLINE
+	PRINTFORML [ 0] My body feels so tired...
+	PRINTFORML [ 1] I feel mental fatigue...
+	SIF Add_Yagokoro_Drain == 0 && MAXBASE:MASTER:精力 - BASE:MASTER:精力 > 500 && HAS_PENIS(MASTER)
+		PRINTFORML [ 2] My girlfriend's been a little too intense with me...
+	SIF CFLAG:MASTER:眠気覚まし == 0 && CFLAG:MASTER:徹夜 == 0
+		PRINTFORML [ 3] \@ NEMUKE() >= 720 ? I'm feeling too sleepy... # I need a lot of energy to stay up all day! \@
+	SIF GETPERCENT(BASE:MASTER:TSP, MAXBASE:MASTER:TSP) <= 50
+		PRINTFORML [ 4] I feel powerless...
+	SIF TALENT:[[永琳]]:恋人
+		PRINTFORML [ 5] Hook me up with something special!
+	IF BUFF:MASTER:BASE_体力 < 0 || BUFF:MASTER:BASE_気力 < 0 || BUFF:MASTER:BASE_精力 < 0 || BUFF:MASTER:BASE_TSP < 0
+		PRINTFORML [ 6] I feel strangely weakened...
+	ELSEIF !(BUFF:MASTER:BASE_体力 > 0 || BUFF:MASTER:BASE_気力 > 0 || BUFF:MASTER:BASE_精力 > 0 || BUFF:MASTER:BASE_TSP > 0)
+		PRINTFORML [ 6] I need to go over my limits...!
+	ENDIF
+	SIF Add_Yagokoro_Drain > 0
+		PRINTFORML [ 7] \@ HAS_PENIS(MASTER) ? I can't get it up anymore since the last treatment... # I feel like I've entered menopause since the last treatment...\@
+
+	PRINTFORML [10] I've been stuck in a bit of a rut with my girlfriend lately...
+	SIF TALENT:MASTER:清掃中毒
+		PRINTFORML [11] Cleaning is too much fun and I can't stop anymore
+	SIF IS_FEMALE(MASTER)
+		PRINTFORML [12] I can't seem to get pregnant at all, doctor!
+	SIF HAS_PENIS(MASTER) && Add_Yagokoro_PregBonus == 0
+		PRINTFORML [13] I've been trying so hard for a baby with my girlfriend, but...
+		
+	SIF Add_Yagokoro_Drain == 0 && FLAG:デート相手 == 0
+		PRINTFORML [20] \@ HAS_PENIS(MASTER) ? I get a raging hard-on when I think of you, doctor # My crotch gets all tingly when I think of you, doctor\@
+	SIF Add_Yagokoro_Drain == 0 && MAXBASE:MASTER:精力 - BASE:MASTER:精力 < 500 && HAS_PENIS(MASTER)
+		PRINTFORML [21] I seek... quick relief... in, um... you know what way...
+		
+	SIF HAS_PENIS(MASTER)
+		PRINTFORML [30] I have a problem with my dick
+	SIF IS_FEMALE(MASTER)
+		PRINTFORML [31] My chest size worries me
+		
+	;todo
+	;vasectomy?
+	;boob size?
+	;make super sensitive (絶倫)/cure drunk/change chest size/penis size also for target/partner is too sensitive
+	;I don't usually offer care for drunkards, otherwise I'd have the entire place crawling with them.../But I'm willing to make an exception, seeing as you didn't drink yourself silly just yet.
+	;hymen reconstruction - who are you trying to fool here?
+	;sex change/futa pill/lactation
+	;body remodelling - size/weight/looks?
+	;attach lewd parts to yourself? though you can earn it right
+
+	DRAWLINE
+	PRINTFORML [100] Return
+	INPUT
+	SELECTCASE RESULT
+		CASE 100
+			IF TIME:2 == 5
+				LOCALS:1 = evening
+			ELSEIF TIME:2 >= 6
+				LOCALS:1 = night
+			ELSE
+				LOCALS:1 = day
+			ENDIF
+			LOCALS '= @"「I see. Have a good %LOCALS:1%.」/「Please come again next time.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			
+			RETURN -1
+		CASE 0 ;sta recovery
+			LOCALS '= @"「This is a sign of exhaustion.」/「Exhaustion is usually treated by good rest, but I don't suppose you have time for that, yes?」/「Well, how about this?」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			
+			CALL COM616_REMEDY(RAND:3 + TALENT:[[永琳]]:恋慕 * 1)
+			
+			LOCALS '= @"「Make sure you have a good rest and take care of your body.」/「A good meal or relaxation at the hot bath may give you exactly what you need.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			
+			CALL COM616_PAY(3000)
+			BREAK
+		CASE 1 ;ene recovery
+			LOCALS '= @"「Ah, a common occurrence. If it's fatigue that bothers you, then it's an easy task.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			;永琳の思慕恋慕で良化
+			CALL COM616_REMEDY(RAND(4, 6) + TALENT:[[永琳]]:恋慕 * 2 + TALENT:[[永琳]]:思慕)
+			
+			LOCALS '= @"「As always, resting also helps in this case.」/「To maintain your focus during strenuous mental activity,/　I recommend adding a little sugar into your diet in the future, but don't go overboard with it.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			
+			CALL COM616_PAY(3000)
+			BREAK
+		CASE 2 ;vig recovery
+			IF TALENT:[[永琳]]:恋人
+				LOCALS '= @"「Hmm, a girlfriend you say? Oh my.」"
+				CALL COM616_EIRINSPEAK, LOCALS, "anger"
+				WAIT
+				LOCALS '= @"「Well, we'll talk about that later.」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				WAIT
+			ELSEIF IS_DOUTEI(MASTER)
+				LOCALS '= @"「A girlfriend, is it? Hmmm...」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+				PRINTFORMDL Eirin looks at you suspiciously, but then sighs.
+				LOCALS '= @"「Oh well, whatever you say.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+			ELSE
+				LOCALS '= @"「I see. I suppose that can happen with you lovebirds.」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				WAIT
+			ENDIF
+			LOCALS '= @"「Anyhow, I have something that can help in your case.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			
+			CALL COM616_REMEDY(RAND(8, 10) + TALENT:[[永琳]]:恋慕 * 2 + TALENT:[[永琳]]:思慕)
+			
+			LOCALS '= @"「I recommend some rest and a lot of hydration in any case.」/「That is, drinking a lot of water. It contributes to sperm production quite a bit.」/「Also, certain dishes such as Hachinoko and Unajuu are known to help./　There are some other dishes of that nature, as well.」"
+			
+			CALL COM616_PAY(5000)
+			BREAK
+		CASE 3 ;sleepiness
+			SIF !(CFLAG:MASTER:眠気覚まし == 0 && CFLAG:MASTER:徹夜 == 0) ;if effect wasn't used before
+				CONTINUE
+			LOCALS '= @"「Huh, I see. Many people encounter this problem, there's still so much to do, but their bodies cannot keep up.」/「I have a solution just for you, but there are conditions for it.」/「The medicine I'm about to administer contains a lot of caffeine and/　other stimulants which have an adverse effect on your heart if consumed in quick succession.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			LOCALS '= @"「Therefore it's a one-time use solution, at least for today.」/「Are we clear? I will not prescribe it to you again until tomorrow, and even that's a stretch.」/「If you acknowledge these risks, then feel free.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+
+			CALL ASK_YN("Agree", "Cancel")
+			IF RESULT
+				CONTINUE
+			ELSE
+				CALL COM616_CHECK(10000)
+				SIF RESULT
+					CONTINUE
+			ENDIF
+				
+			PRINTFORMDL Eirin nods and gives you treatment.
+			
+			CALL COM616_REMEDY(12)
+			
+			LOCALS '= @"「Make sure you sleep this off well afterwards.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			
+			CALL COM616_PAY(10000)
+			BREAK
+		CASE 4 ;tsp
+			SIF !(GETPERCENT(BASE:MASTER:TSP, MAXBASE:MASTER:TSP) <= 50)
+				CONTINUE
+			LOCALS '= @"「You don't say... When you say *power*, what you really mean is your *ability*, correct?」/「Well, I will not pry into these matters.」/「Let's just say that I have a medicine just for you.」/「It should offer a full recovery of your powers, but in turn I will only treat you with it once for today.」/「Side effects may include, but not limited to: Diarrhea, heart attack, sudden blindness,/　involuntary ejaculation, spontaneous combustion, instant death, and so on.」/「Do you still wish to go with it?」"
+			CALL COM616_EIRINSPEAK, LOCALS
+
+			CALL ASK_YN("Agree", "Cancel")
+			IF RESULT
+				LOCALS '= @"「A wise choice. The risks are sometimes outweigh the benefits.」/「For now, I recommend you get a good night's sleep./　It's a good and natural way of recovering one's power, tried and tested by many.」/「Additionally, you may try to cook certain dishes with certain special ingredients./　Some may have interesting effects in terms of recovery.」/「I recommend food that was in some way enchanted spiritually or otherwise./　Perhaps you may get someone to help you cook something like that.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+				CONTINUE
+			ELSE
+				CALL COM616_CHECK(20000)
+				SIF RESULT
+					CONTINUE
+			
+				LOCALS '= @"「Well, if the patient says so. The consequences are yours to bear.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+			ENDIF
+			CALL COM616_REMEDY(13)
+			
+			LOCALS '= @"「I suppose this should do it.」/「Enjoy your newfound surge of power. Wield it responsibly, if you will.」"
+			CALL COM616_EIRINSPEAK, LOCALS, "smile"
+			WAIT
+		
+			CALL COM616_PAY(20000)
+			BREAK
+		CASE 5 ;elixir
+			SIF !(TALENT:[[永琳]]:恋人)
+				CONTINUE
+			LOCALS '= @"「Something special, is it, %CALLNAME:MASTER%?」/「Fufu, I can arrange that. Special treatment for a special patient...」/「But it will cost you quite a bit. Are you willing to take the risk?」"
+			CALL COM616_EIRINSPEAK, LOCALS, "smile"
+
+			CALL ASK_YN("Agree", "Cancel")
+			IF RESULT
+				LOCALS '= "「...Well, too bad.」/"
+				IF IS_MALE(MASTER)
+					LOCALS += "「Come back later when you grow some balls, perhaps?」"
+				ELSE
+					LOCALS += "「Come back later when you stop being such a scaredy-cat, perhaps?」"
+				ENDIF
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+				CONTINUE
+			ELSE
+				CALL COM616_CHECK(30000)
+				SIF RESULT
+					CONTINUE
+					
+				LOCALS '= @"「Excellent. Well, without any further ado, then...」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				WAIT
+			ENDIF
+			
+			CALL COM616_REMEDY(14)
+			
+			LOCALS '= @"「Puhaa...!」/「...」"
+			CALL COM616_EIRINSPEAK, LOCALS, "blush"
+			WAIT
+			LOCALS '= @"「This should make your day, I'm pretty sure.」/「Well, until next time!」"
+			CALL COM616_EIRINSPEAK, LOCALS, "smile"
+			WAIT
+			
+			CALL COM616_PAY(30000)
+			BREAK
+		CASE 6 ;buffs
+			IF BUFF:MASTER:BASE_体力 < 0 || BUFF:MASTER:BASE_気力 < 0 || BUFF:MASTER:BASE_精力 < 0 || BUFF:MASTER:BASE_TSP < 0
+				IF TCVAR:75:360 && TCVAR:75:360 > TCVAR:[[諏訪子]]:360;medicine
+					LOCALS '= "「Hmm... Nausea, paleness, diarrhea, weakness... These symptoms lead me to believe that you've been heavily poisoned.」/"
+					LOCALS += "「And it's a familiar poison, at that... Have you been interacting with Medicine lately?」/"
+					LOCALS += "「I suggest you stay away from her, she's not exactly on friendly terms with humans.」/"
+					LOCALS += "「But if you absolutely must communicate with her, keep your distance and don't come in contact with her skin.」/"
+					LOCALS += "「This may end up costing you your life if you're not careful.」/"
+					LOCALS += "「Luckily, I have an antidote right here. It's not easy to produce, however. Are you willing to pay up?」"
+					CALL COM616_EIRINSPEAK, LOCALS
+
+					CALL ASK_YN("Agree", "Cancel")
+					IF RESULT
+						CONTINUE
+					ELSE
+						CALL COM616_CHECK(20000)
+						SIF RESULT
+							CONTINUE
+						CALL COM616_REMEDY(18)
+						
+						CALL COM616_PAY(20000)
+					ENDIF
+					BREAK
+				ELSEIF TCVAR:[[諏訪子]]:360 && TCVAR:[[諏訪子]]:360 > TCVAR:75:360 ;suwako 33
+					LOCALS '= "「Hmm... It seems like there's an ominous presence looming over you at all times.」/"
+					LOCALS += "「Perhaps it's not my place to interfere with divine punishment.」/"
+					LOCALS += "「Maybe you deserve it? It was placed on you for a reason, after all.」/"
+					LOCALS += "「That is not to say that I am unable to do anything about it, of course.」/"
+					LOCALS += "「I can lift this curse off of you, for an extra.」"
+					CALL COM616_EIRINSPEAK, LOCALS
+					
+					CALL ASK_YN("Agree", "Cancel")
+					IF RESULT
+						CONTINUE
+					ELSE
+						CALL COM616_CHECK(20000)
+						SIF RESULT
+							CONTINUE
+						CALL COM616_REMEDY(17)
+						
+						CALL COM616_PAY(20000)
+					ENDIF
+					BREAK
+				ELSEIF BUFF:MASTER:BASE_気力 < 0 && FLAG:71 >= 5
+					LOCALS '= "「I can see the appeal of abstaining for prolonged period of time, however everything has its limits.」/"
+					LOCALS += "「You will experience stress and frustration first, and eventually your vigor will find its way out,/　perhaps in the most shameful way.」/"
+					LOCALS += @"「As a healthy male, \@ IS_HERM(MASTER) ? or a futanari in your case,%" "% #\@you must seek relief and release at least once a week.」"
+					CALL COM616_EIRINSPEAK, LOCALS
+					WAIT
+					LOCALS '= "「Well then, I can prescribe an antidepressant, however the rest is up to you.」"
+					CALL COM616_EIRINSPEAK, LOCALS, "smile"
+					WAIT
+					LOCALS '= "「Do it in any way you deem necessary and effective.」"
+					CALL COM616_EIRINSPEAK, LOCALS
+					WAIT
+					LOCALS '= "「But please do not go out of your way to assault girls just because you're backed up.」"
+					CALL COM616_EIRINSPEAK, LOCALS, "anger"
+					WAIT
+					LOCALS '= "「That's a sure way of making enemies here in Gensokyo.」"
+					CALL COM616_EIRINSPEAK, LOCALS, "smile"
+					WAIT
+					;todo other case when love
+					
+					CALL COM616_REMEDY(16)
+					
+					CALL COM616_PAY(3000)
+					BREAK
+				ELSEIF BUFF:MASTER:BASE_気力 < 0 && TFLAG:ChildFuckUp
+					LOCALS '= "「Perhaps this is a sign of ongoing depression or stress? Did something happen?」/"
+					LOCALS += "「I see. Your child had a problem in school. Dreadful indeed. Let me offer you an advice...」"
+					CALL COM616_EIRINSPEAK, LOCALS
+					WAIT
+					
+					CALL COM616_REMEDY(15)
+					
+					CALL COM616_PAY(3000)
+					BREAK
+				ELSE
+					LOCALS '= "「I see. This is certainly unusual.」/"
+					LOCALS += "「But luckily, I do have a way to cure it. Let's see here...」"
+					CALL COM616_EIRINSPEAK, LOCALS
+					WAIT
+					
+					CALL COM616_REMEDY(16)
+					
+					CALL COM616_PAY(5000)
+					BREAK
+				ENDIF
+			ELSE
+				SIF (BUFF:MASTER:BASE_体力 > 0 || BUFF:MASTER:BASE_気力 > 0 || BUFF:MASTER:BASE_精力 > 0 || BUFF:MASTER:BASE_TSP > 0)
+					CONTINUE
+				
+				LOCALS '= "「To go beyond your limits is no easy task.」/「But it is possible, so you may rejoice.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+					WAIT
+					
+				IF TALENT:[[永琳]]:恋人
+					LOCALS '= "「This is Yagokoro special-made tonic.」/"
+					LOCALS += "「It's powerful and is exactly what you need.」/"
+					LOCALS += "「However, once it wears off, you will feel quite tired as your energy will return back to its base.」/"
+					LOCALS += "「How about it? My special medicine for my special beloved.」"
+					CALL COM616_EIRINSPEAK, LOCALS, "smile"
+					
+					CALL ASK_YN("Agree", "Cancel")
+					IF RESULT
+						LOCALS '= "「Is... Is it not good enough for you?」/"
+						LOCALS += "「Or are there other reasons?」/"
+						LOCALS += "「Please let me know. This is of utmost importance.」"
+						CALL COM616_EIRINSPEAK, LOCALS
+						WAIT
+						CONTINUE
+					ELSE
+						CALL COM616_CHECK(30000)
+						SIF RESULT
+							CONTINUE
+						CALL COM616_REMEDY(20)
+						
+						CALL COM616_PAY(30000)
+						BREAK
+					ENDIF
+				ELSE
+					LOCALS '= "「This is something Udonge has made. Her former comrades used it to unlock their potential back on the Moon.」/"
+					LOCALS += "「It can't quite hold a candle to my special produce, but I suppose this will do just fine.」/"
+					LOCALS += "「Sometimes, we need to acknowledge her efforts, right?」/"
+					LOCALS += "「Well, what do you say?」"
+					CALL COM616_EIRINSPEAK, LOCALS, "smile"
+					CALL ASK_YN("Agree", "Cancel")
+					IF RESULT
+						LOCALS '= "「I will let her know.」/"
+						LOCALS += "「I hope you understand that you will make her cry by doing this.」"
+						CALL COM616_EIRINSPEAK, LOCALS
+						WAIT
+						CONTINUE
+					ELSE
+						CALL COM616_CHECK(20000)
+						SIF RESULT
+							CONTINUE
+						CALL COM616_REMEDY(19)
+						
+						PRINTFORMW You drink all of it, in fact Eirin urges you to drink 3 all at once for a better effect.
+						LOCALS '= "「I implore you not to drink any more of these for today however, or you may explode.」"
+						CALL COM616_EIRINSPEAK, LOCALS, "smile"
+						WAIT
+						
+						CALL COM616_PAY(20000)
+						BREAK
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 7 ;erectile dysfunction (vig 0)
+			SIF !Add_Yagokoro_Drain
+				CONTINUE
+			LOCALS '= "「Oh? Was my way of treating you last time a little too intense for you?」/"
+			LOCALS += "「Very well. Luckily for you, the recovery can be hastened as well.」/"
+			LOCALS += "「Please follow me. I assure you, the treatment won't be as traumatic as it was the last time.」"
+			CALL COM616_EIRINSPEAK, LOCALS, "smile"
+			CALL ASK_YN("Agree", "Cancel")
+			IF RESULT
+				LOCALS '= @"「Well, suit yourself, %CALLNAME:MASTER%.」/「Fufufu...」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				WAIT
+				CONTINUE
+			ELSE
+				CALL COM616_CHECK(10000)
+				SIF RESULT
+					CONTINUE
+				CALL COM616_REMEDY(92)
+				
+				LOCALS '= "「This should get you back on track.」"
+				SIF HAS_PENIS(MASTER)
+					LOCALS += "/「Expect to regain your erection by tomorrow, although you can start attempting to recover it now.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+				
+				CALL COM616_PAY(10000)
+				BREAK
+			ENDIF
+		CASE 10 ;shop
+			$SELL
+			;購入条件設定
+			FOR LOCAL, 0, 1000
+				CALL ITEMDATA(LOCAL, "SHOP:診察")
+				IF RESULT
+					CALL ITEMDATA(LOCAL, "SALES")
+					ITEMSALES:LOCAL = RESULT
+				ENDIF
+			NEXT
+			DRAWLINE
+			LOCALS '= @"「Hmph...」/「Well, if that's how you describe it, then perhaps you will need a little something/　in order to introduce excitement to your love life.」/「How about this then?」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			PRINTFORML Select an item to purchase（Money:\\%TOSTR(MONEY,"#,###")%）
+			DRAWLINE
+			CALL SHOW_SHOPPING("診察", "調教")
+			DRAWLINE
+			PRINTL [999] - Return
+			INPUT
+			IF RESULT == 999
+				LOCALS '= @"「Shame.」/「For what it's worth, I suggest giving her the reins for once.」/「It may pleasantly surprise you, fufufu...」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+				CONTINUE
+			ELSE
+				買うもの = RESULT
+				CALL ITEMDATA(買うもの, "SHOP:診察")
+				IF RESULT && ITEMSALES:買うもの >= 0 && ITEM:買うもの < 所持数制限
+					CALL ITEMDATA(買うもの, "購入")
+					SIF RESULT
+						GOTO SELL
+					LOCALS '= @"「A fine choice.」/「Let's hope this will be exactly what you two needed.」"
+					CALL COM616_EIRINSPEAK, LOCALS
+					WAIT
+					BREAK
+				ELSE
+					GOTO SELL
+				ENDIF
+			ENDIF
+		CASE 11 ;cleaning
+			SIF !TALENT:MASTER:清掃中毒
+				CONTINUE
+				
+			IF FLAG:掃除中毒 == 0
+				LOCALS '= "「So you're an avid housekeeper? Sounds like a good thing, if you ask me.」/"
+				LOCALS += "「It's not like that?」/"
+				LOCALS += "「You can't get anything else done? That would be a problem, yes.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				PRINTFORMW ...
+				LOCALS '= "「Hmm, well it is slightly abnormal.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				PRINTFORMW ......
+				LOCALS '= "「It turns you on?!」"
+				CALL COM616_EIRINSPEAK, LOCALS, "blush"
+				PRINTFORMW .........
+				
+				CALL COM616_REMEDY(21)
+				FLAG:掃除中毒 ++
+				BREAK
+			ELSE
+				LOCALS '= "「So you relapsed and caused your little problem to resurface again, I take it?」/"
+				LOCALS += "「Honestly... Were you even listening the last time?」"
+				CALL COM616_EIRINSPEAK, LOCALS, "anger"
+				WAIT
+				
+				LOCALS '= @"「It will cost you \\%DIGIT_GROUP(FLAG:850 * 10000)% this time.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+				
+				IF MONEY < FLAG:掃除中毒 * 10000
+					LOCALS '= "「Looks like you can't afford the treatment.」/"
+					LOCALS += "「It's not a life-threatening condition that needs urgency.」/"
+					LOCALS += "「Come back once you've saved up more money.」"
+					CALL COM616_EIRINSPEAK, LOCALS
+					WAIT
+					CONTINUE
+				ELSE
+					CALL COM616_REMEDY(21)
+					
+					CALL COM616_PAY(FLAG:掃除中毒 * 10000)
+					FLAG:掃除中毒 ++
+					BREAK
+				ENDIF
+			ENDIF
+		CASE 12 ;joke
+			SIF !IS_FEMALE(MASTER)
+				CONTINUE
+			;can't get pregnant as a female (gag)
+			LOCALS '= "「Oh, poor thing. Infertile, and at such young age no less? You have my condolences. But is it possible?」/"
+			LOCALS += "「Hmm, that's a tough question. My answer is yes. Wait, sorry, it's a no. Or maybe? What was the question again?」/"
+			LOCALS += "「Ah, yes yes. Pregnancy, for you. Sounds like a big deal. Tough stuff, huh?」/"
+			LOCALS += "「Maybe there will be a method, maybe not. Perhaps one day, perhaps not.」/"
+			LOCALS += "「I can certainly tell you, there's not a lot of movement going on towards it, from my side at least.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			LOCALS '= "「For now, why don't you try impregnating other girls with healthy wombs?/　We do have those in abundance in this land.」"
+			CALL COM616_EIRINSPEAK, LOCALS, "smile"
+			WAIT
+			PRINTFORMW No matter how long you question with Eirin, you're only given non-answers on this topic...
+			CONTINUE
+		CASE 13 ;preg
+			SIF !HAS_PENIS(MASTER) || Add_Yagokoro_PregBonus != 0
+				CONTINUE
+			LOCALS '= "「That's a rare occurrence. In case of human-on-human intercourse, it's practically a non-existent issue...」/"
+			LOCALS += "「I don't suppose you're trying to impregnate a youkai?」/"
+			LOCALS += "「Normally I'd tell you to give up, but... It is doable, with enough persistence and luck, that is.」/"
+			LOCALS += "「I can offer you a little help to even the playing field somewhat.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			LOCALS '= "「If you don't mind my methods, that is...」"
+			CALL COM616_EIRINSPEAK, LOCALS, "blush"
+			PRINTFORML Eirin says as she demonstratively puts on gloves before you...
+			CALL ASK_YN("Agree", "Cancel")
+			IF RESULT
+				LOCALS '= @"「Well, suit yourself, %CALLNAME:MASTER%.」/「Fufufu...」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				WAIT
+				CONTINUE
+			ELSE
+				CALL COM616_CHECK(15000)
+				SIF RESULT
+					CONTINUE
+				CALL COM616_REMEDY(22)
+				
+				LOCALS '= "「Well, happy childmaking. I recommend feeding your partner with meals that have [Blessing] property to increase your chances.」/"
+				LOCALS += "「One should be enough for that day. Perhaps the Shrine Maiden can teach you her secrets?」/"
+				LOCALS += "「Additionally, if you have a child at Eientei, we can decide its sex for you.」/"
+				LOCALS += "「We also offer plans including rabbit ears, cat ears, dog tails and so on.」/"
+				LOCALS += "「By all means, please swing by. Happy mothers all over Gensokyo can attest to our credibility.」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				PRINTFORMW You tell her that you will think about it...
+				
+				CALL COM616_PAY(15000)
+				BREAK
+			ENDIF
+		CASE 20 ;drain
+			CALL COM616_ANGER
+			SIF RESULT
+				RETURN -1
+				
+			LOCALS '= "「...」"
+			CALL COM616_EIRINSPEAK, LOCALS, "anger"
+			WAIT
+			LOCALS '= "「Have you ever heard of masturbation? Apparently you are able to do it now in the comfort of your own room./「Exciting, isn't it?」/"
+			LOCALS += "「Now, I don't particularly encourage such behavior, but that's the easiest way. However...」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			LOCALS '= "「If you still insist, I do have a more permanent solution to your problem.」"
+			CALL COM616_EIRINSPEAK, LOCALS, "smile"
+			PRINTFORMW Eirin produces \@ HAS_PENIS(MASTER) ? a pair of scissors and snaps them demonstratively # a scalpel and presses its cold surface against your cheek\@.
+			CALL ASK_YN("Stay", "Run!")
+			IF RESULT
+				LOCALS '= "「...」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				WAIT
+				CALL GETOUT(MASTER)
+				RETURN 1
+			ELSE
+				LOCALS '= "「I was certain you would hightail it out of here, but you seem to be more daring than you look.」/"
+				LOCALS += "「You weren't the first one, and you won't be the last who has approached me like this.」/"
+				LOCALS += "「I assure you, this won't be the heavenly experience that you were looking for.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				
+				CALL ASK_YN("Agree", "Cancel")
+				IF RESULT
+					LOCALS '= "「...Fufu.」"
+					CALL COM616_EIRINSPEAK, LOCALS, "smile"
+					RETURN 1
+				ELSE
+					PRINTFORMW Eirin looks at you like at a talking insect who crawled under the furniture.
+					LOCALS '= "「Very well. Follow me, please. This way.」/"
+					LOCALS += "「Don't worry. You will get exactly what you asked for, and more.」"
+					CALL COM616_EIRINSPEAK, LOCALS
+					
+					CALL COM616_REMEDY(90)
+					TALENT:[[永琳]]:機嫌 = 1
+					CFLAG:MASTER:現在位置 = CFLAG:MASTER:初期位置
+					;day ends here
+					BASE:MASTER:体力 = 0
+					;BEGIN AFTERTRAIN
+					RETURN 1
+				ENDIF
+			ENDIF
+		CASE 21 ;relief
+			SIF (MAXBASE:MASTER:精力 - BASE:MASTER:精力 > 500) || !HAS_PENIS(MASTER)
+				CONTINUE
+				
+			CALL COM616_ANGER
+			SIF RESULT
+				RETURN -1
+				
+			IF TALENT:[[永琳]]:恋人 || TALENT:[[永琳]]:恋慕
+				LOCALS '= "「...I see what you mean.」/"
+				LOCALS += "「Can't it wait until the end of my shift?」/"
+				LOCALS += "「Well, I suppose... Fine. Follow me and make it quick.」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+				CALL COM616_REMEDY(91)
+			ELSEIF GETBIT(CFLAG:[[永琳]]:既成事実,1) && EXP:[[永琳]]:口淫経験 > 10 && !TALENT:[[永琳]]:キス未経験
+				IF TALENT:[[永琳]]:機嫌 == -1
+					LOCALS '= ""
+					SIF PREV_DAY == DAY
+						LOCALS += "「Again...? You are very persistent, aren't you? Unhealthily so.」/"
+					LOCALS += "「Well, cry me a river and beg me on your knees, and maybe I will consider--」/"
+					LOCALS += "「Eh, you're actually doing it? Ugh... Okay, fine, no need to embarrass me any further.」/"
+					LOCALS += "「Let's just get this over with, for crying out loud...」"
+					CALL COM616_EIRINSPEAK, LOCALS, "anger"
+					WAIT
+					CALL COM616_REMEDY(91, 1)
+				ELSE
+					LOCALS '= "「Relief...? What do you mean, a massage, or... Oh.」/"
+					LOCALS += "「Absolutely not. That's a lame joke if I ever heard one.」/"
+					LOCALS += "「Please don't bother me, I'm very busy right now.」"
+					CALL COM616_EIRINSPEAK, LOCALS, "anger"
+					
+					PRINTFORMDW Eirin just brushes you off, saying she is busy and would deal with you later...
+					TALENT:[[永琳]]:機嫌 = -1
+					PREV_DAY = DAY
+				ENDIF
+			ELSE
+				LOCALS '= "「Huh...」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+				LOCALS '= "「Okay, then, I think I have just the treatment that will suit you perfectly.」/"
+				LOCALS += "「Follow me.」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				WAIT
+				CALL COM616_REMEDY(91, 2)
+			ENDIF
+			RETURN 1
+		CASE 30
+			SIF !HAS_PENIS(MASTER)
+				CONTINUE
+			CALL COM616_PENIS_CHANGE(MASTER)
+			SIF RESULT == 1
+				RETURN 1
+		CASE 31
+			;SIF !IS_FEMALE(MASTER)
+			;	CONTINUE
+			;CALL COM616_CHEST_CHANGE(MASTER)
+		; CASE 32
+			; SIF !HAS_PENIS(TARGET)
+				; CONTINUE
+			; CALL COM616_PENIS_CHANGE(TARGET)
+		; CASE 33
+			; SIF !IS_FEMALE(TARGET)
+				; CONTINUE
+			; CALL COM616_CHEST_CHANGE(TARGET)
+	ENDSELECT
+LOOP 1
+SETBIT TFLAG:一日一回, 3
+PRINTL
+CALL COM616_EIRINSPEAK, "「Take care.」", "smile"
+RETURN 1
+
+@COM616_REMEDY(ARG, ARG:1)
+PRINTFORML
+SELECTCASE ARG
+;sta
+CASE 0
+	LOCALS = a delicious meal
+	CALL RECOVER_PERMIL(MASTER,350,"体力")
+	TIME += 5
+CASE 1
+	LOCALS = a nutritional injection
+	CALL RECOVER_PERMIL(MASTER,500,"体力")
+	TIME += 5
+CASE 2
+	LOCALS = GinGin Z
+	CALL RECOVER_PERMIL(MASTER,750,"体力")
+	TIME += 5
+CASE 3
+	LOCALS = GinGin X
+	CALL RECOVER_PERMIL(MASTER,1000,"体力")
+	CFLAG:MASTER:眠気覚まし = 薬の知識(180)
+	TIME += 5
+	
+;ene
+CASE 4
+	LOCALS = seasonal power
+	CALL RECOVER_PERMIL(MASTER,350,"気力")
+	TIME += 5
+CASE 5
+	LOCALS = an energizer
+	CALL RECOVER_PERMIL(MASTER,500,"気力")
+	TIME += 5
+CASE 6
+	LOCALS = a forehead temperature measurement
+	CALL RECOVER_PERMIL(MASTER,750,"気力")
+	TIME += 5
+CASE 7
+	LOCALS = a cuddle
+	CALL RECOVER_PERMIL(MASTER,900,"気力")
+	TIME += 5
+	
+;vig
+CASE 8
+	LOCALS = Vigora
+	CALL RECOVER_PERMIL(MASTER,350,"精力")
+	TIME += 5
+CASE 9
+	LOCALS = Tengen Toppa
+	CALL RECOVER_PERMIL(MASTER,500,"精力")
+	TIME += 5
+CASE 10
+	LOCALS = a cocktail of L-Arginine, Zinc, Pygeum, Lecithin, and a lot of water
+	CALL RECOVER_PERMIL(MASTER,750,"精力")
+	TIME += 5
+CASE 11
+	CALL PRINT_FACE, [[永琳]], "オナニー", "裸", "", "吐息"
+	PRINTFORML Eirin takes you to the back room, and shows her massive bust in her sexy black bra.
+	PRINTFORML This sight alone can make any man lose his mind, but she goes further, revealing her puffy nipples to you.
+	PRINTFORML You quickly start feeling a sense of fullness in your loins, as though your balls are about to burst!
+	PRINTFORMW You feel your neurons activating and firing all at once...
+	PRINTFORMW You feel reenergized!
+	CALL RECOVER_PERMIL(MASTER,1000,"精力")
+	TIME += 5
+	RETURN 1
+	
+CASE 12 ;sleep
+	LOCALS = special No-Sleep potion
+	CFLAG:MASTER:眠気覚まし = 薬の知識(300)
+	CFLAG:MASTER:徹夜 = 1
+	TIME += 5
+CASE 13 ;power
+	LOCALS = special power potion
+	CALL RECOVER_PERMIL(MASTER,900,"TSP")
+	TIME += 5
+CASE 14
+	PRINTFORML Eirin presents a Yagokoro-made elixir.
+	PRINTFORMW She takes a mouthful before joining her lips with yours, making you drink all of it that way...
+	CALL RECOVER_PERMIL(MASTER,1000,"体力")
+	CALL RECOVER_PERMIL(MASTER,1000,"気力")
+	CALL RECOVER_PERMIL(MASTER,1000,"精力")
+	CALL RECOVER_PERMIL(MASTER,1000,"TSP")
+	CALL BUFF_BASE(MASTER, BASE_体力, MAX(MAXBASE:MASTER:体力 / 10, 500))
+	CALL BUFF_BASE(MASTER, BASE_気力, MAX(MAXBASE:MASTER:気力 / 10, 500))
+	CALL BUFF_BASE(MASTER, BASE_精力, MAX(MAXBASE:MASTER:精力 / 10, 500))
+	CALL BUFF_BASE(MASTER, BASE_TSP, MAX(MAXBASE:MASTER:TSP / 10, 500))
+	CFLAG:MASTER:眠気覚まし = 薬の知識(180)
+	CFLAG:MASTER:徹夜 = 1
+	TIME += 10
+	RETURN 1
+CASE 15 ;child messed up
+	PRINTFORML You speak with Eirin for a while and vent all of your frustrations...
+	PRINTFORMW Feeling like a mountain was lifted off your shoulders, you feel a lot better now!
+	FOR LOCAL:1, 0, 16
+		SIF GROUPMATCH(LOCAL:1, 2, 5) && Add_Yagokoro_Drain > 0 ;skip drain affected ones
+			CONTINUE
+		MAXBASE:MASTER:(LOCAL:1) -= BUFF:MASTER:(LOCAL:1)
+		BASE:MASTER:(LOCAL:1) -= BUFF:MASTER:(LOCAL:1)
+		BUFF:MASTER:(LOCAL:1) = 0
+	NEXT
+	TFLAG:ChildFuckUp = 0
+	TIME += 60
+	RETURN 1
+CASE 16 ;debuff cure
+	FOR LOCAL:1, 0, 16
+		SIF GROUPMATCH(LOCAL:1, 2, 5) && Add_Yagokoro_Drain > 0 ;skip drain affected ones
+			CONTINUE
+		MAXBASE:MASTER:(LOCAL:1) -= BUFF:MASTER:(LOCAL:1)
+		BASE:MASTER:(LOCAL:1) -= BUFF:MASTER:(LOCAL:1)
+		BUFF:MASTER:(LOCAL:1) = 0
+	NEXT
+	PRINTFORMW You're given potent antidepressants, a hot bath, an invigorating massage, and lastly a big tasty meal!
+	FLAG:71 = 0
+	TIME += 60
+	RETURN 1
+CASE 17 ;anticurse
+	PRINTFORML Eirin places charms and amulets all over you and mumbles some sort of spell, or a prayer...
+	PRINTFORMW While it doesn't look very scientific, the results are apparent as you start feeling a lot better!
+	FOR LOCAL:1, 0, 16
+		SIF GROUPMATCH(LOCAL:1, 2, 5) && Add_Yagokoro_Drain > 0 ;skip drain affected ones
+			CONTINUE
+		MAXBASE:MASTER:(LOCAL:1) -= BUFF:MASTER:(LOCAL:1)
+		BASE:MASTER:(LOCAL:1) -= BUFF:MASTER:(LOCAL:1)
+		BUFF:MASTER:(LOCAL:1) = 0
+	NEXT
+	TCVAR:[[諏訪子]]:360 = 0
+	TIME += 30
+	RETURN 1
+CASE 18 ;antidote
+	LOCALS = special anti-Medicine antidote
+	FOR LOCAL:1, 0, 16
+		SIF GROUPMATCH(LOCAL:1, 2, 5) && Add_Yagokoro_Drain > 0 ;skip drain affected ones
+			CONTINUE
+		MAXBASE:MASTER:(LOCAL:1) -= BUFF:MASTER:(LOCAL:1)
+		BASE:MASTER:(LOCAL:1) -= BUFF:MASTER:(LOCAL:1)
+		BUFF:MASTER:(LOCAL:1) = 0
+	NEXT
+	TCVAR:75:360 = 0
+	TIME += 5
+CASE 19 ;energizer peerless patriot
+	LOCALS = Udonge-made Peerless Patriot Elixir
+	FOR LOCAL, 0, 3
+		CALL BUFF_BASE(MASTER, BASE_体力, MAX(MAXBASE:MASTER:体力 / 15, 200))
+		CALL BUFF_BASE(MASTER, BASE_精力, MAX(MAXBASE:MASTER:精力 / 10, 200))
+	NEXT
+	TCVAR:MASTER:国士無双の薬 = 3
+	TIME += 15
+CASE 20 ;yagokoro tonic
+	LOCALS = Yagokoro Tonic
+	CALL BUFF_BASE(MASTER, BASE_体力, MAX(MAXBASE:MASTER:体力 / 5, 800))
+	CALL BUFF_BASE(MASTER, BASE_気力, MAX(MAXBASE:MASTER:気力 / 5, 800))
+	CALL BUFF_BASE(MASTER, BASE_精力, MAX(MAXBASE:MASTER:精力 / 5, 800))
+	CALL BUFF_BASE(MASTER, BASE_TSP, MAX(MAXBASE:MASTER:TSP / 10, 500))
+	TIME += 5
+CASE 21 ;clean
+	IF FLAG:掃除中毒 == 0
+		LOCALS '= "「How in the world did you wind up like this, I can't even tell...」/"
+		LOCALS += "「Since this is such a rare case, I'll treat it for free this time.」/"
+		LOCALS += "「No more weird cleaning in the future. Are we clear?」"
+		CALL COM616_EIRINSPEAK, LOCALS
+		WAIT
+		PRINTFORMW %PARSE("Your")% [Cleaning Addiction] is cured.
+		TALENT:MASTER:清掃中毒 = 0
+	ELSE
+		PRINTFORMW ...
+		PRINTFORMW ......
+		PRINTFORMW .........
+		LOCALS '= "「There, all done.」/"
+		LOCALS += "「If you ever let it happen again, I'll have you pay more.」"
+		CALL COM616_EIRINSPEAK, LOCALS, "smile"
+		WAIT
+		PRINTFORMW %PARSE("Your")% [Cleaning Addiction] is cured.
+		TALENT:MASTER:清掃中毒 = 0
+	ENDIF
+	TIME += 45
+	RETURN 1
+CASE 22 ;preg
+	LOCALS '= "「Very well. Now, please take off your pants. Yes, all of them please.」"
+	CALL COM616_EIRINSPEAK, LOCALS, "smile"
+	WAIT
+	PRINTFORML %BREAKENG(@"Eirin puts her thick latex gloves on and gives you a thorough testicle massage, while making you drink one bitter tincture after another...")%
+	LOCALS '= "「This should do it. It's not the matter of the sperm count, but its quality and *power*, if you will.」/"
+	LOCALS += "「However, the effect is short-lived and will be over by tomorrow. Make haste.」"
+	CALL COM616_EIRINSPEAK, LOCALS
+	WAIT
+	; originally wanted to give minimum 100-300 points, but that code conflicts with cheat branch, so instead it'll lower req points by 5-10% :pedysmile: much stronger this way
+	PRINTFORMW %PARSE("You have")% [Thick Semen] now!
+	TALENT:MASTER:濃厚精液 = 1
+	Add_Yagokoro_PregBonus = 1
+	TIME += 20
+	RETURN 1
+CASE 90 ;yagokoro drain
+	PRINTFORMW Being none the wiser, you cheerfully follow after Eirin deep inside Eientei until you arrive at... the basement?!
+	LOCALS '= @"「Hold %HIM_HER(MASTER,,1)%, Udongein.」"
+	CALL COM616_EIRINSPEAK, LOCALS
+	CALL SPTALK, [[鈴仙]], , 0, "「Leave it to me, Master!」", 1
+	PRINTFORMW Reisen seemed to have appeared out of nowhere!
+	
+	PRINTFORML Before you know it, you get stripped naked and strapped to a special table face down.
+	PRINTFORML There's a special hole at your crotch level, and overall it feels very chilly.
+	PRINTFORML
+	LOCALS '= "「Now then, let's get started, shall we?」"
+	CALL COM616_EIRINSPEAK, LOCALS, "smile"
+	WAIT
+	IF HAS_PENIS(MASTER)
+		PRINTFORML You feel something gripping your member with the force of a vice before it starts jerking you off mechanically.
+		PRINTFORML From here, you can't even tell if it's Eirin doing the work, or is it something else...
+		PRINTFORML All you can feel is the cold touch of rubbery gloves squeezing your member persistently for all you're worth.
+		PRINTFORMW Left with no options, you let your imagination run wild.
+		PRINTFORML Despite all the uncomfortable sensations, you quickly reach your first climax, then second, then third, then tenth...
+		PRINTFORMW Before you know it, you quickly lose count.
+		PRINTFORML After a while, you get thoroughly and mercilessly milked of every bit of semen you had with methodical and cold movements.
+		PRINTFORML Once your erection withers, you feel something cold again, this time something wet and slippery invading your... anus?!
+		PRINTFORMW You realize it's someone's finger, as it starts stimulating your prostate.
+		PRINTFORML
+		LOCALS '= "「Ointment application complete. Resuming palpation.」"
+		CALL COM616_EIRINSPEAK, LOCALS
+		WAIT
+		LOCALS '= @"「Endure it like a man, okay? You can do it, %CALLNAME:MASTER%.」"
+		CALL COM616_EIRINSPEAK, LOCALS, "smile"
+		WAIT
+		PRINTFORML
+		PRINTFORML You scream and groan, but the torturous experience never seems to end.
+		PRINTFORMW For what seemed like an unpleasant eternity, you get squeezed of even more semen you never knew you could produce at this point.
+		EXP:MASTER:Ｃ経験 += 30
+		EXP:MASTER:Ａ経験 += 10
+		EXP:MASTER:Ｃ絶頂経験 += 20
+		EXP:MASTER:射精経験 += 30
+		EXP:MASTER:絶頂経験 += 50
+	ELSE
+		PRINTFORML You feel something vibrating pressing against your slit, which turns out to be a rotor.
+		PRINTFORML %BREAKENG(@"In addition, you get attached with various toys all over your body, stimulating every part of you until they all get numb from excess of pleasure.")%
+		PRINTFORMW You climax so many times, it almost feels like your pleasure receptors got all fried.
+		PRINTFORML You scream and moan, but the torturous experience never seem to end.
+		PRINTFORMW For what seemed like an unpleasant eternity, you keep convulsing and shouting until you couldn't anymore.
+		EXP:MASTER:Ｃ経験 += 30
+		EXP:MASTER:Ｃ絶頂経験 += 50
+		EXP:MASTER:絶頂経験 += 50
+	ENDIF
+	PRINTFORML
+	PRINTFORML You get released afterwards and brought back to your room, where you plop down on the bed, lifeless.
+	PRINTFORML Reisen nurses you for a moment, but your knees buckle so much you can barely keep your balance.
+	PRINTFORMW You decide to simply fall asleep...
+	PRINTFORML
+	CALL COLORMESSAGE("For a while, you feel like... You're going to feel... A little numb...",C_YELLOW,2,1)
+	;Set all insensitive for three days, vig set to 0 / orgasm build up is 10 times slower
+	;wake up the next day
+	
+	VARSET Add_Yagokoro_Drain_Remember
+	FOR LOCAL, 0, 4
+		;insensitive areas
+		Add_Yagokoro_Drain_Remember:LOCAL = TALENT:MASTER:(101+LOCAL)
+		; 101,Ｃ感度,;-1=鈍感 1=敏感
+		; 102,Ｖ感度,;-1=鈍感 1=敏感
+		; 103,Ａ感度,;-1=鈍感 1=敏感
+		; 104,Ｂ感度,;-1=鈍感 1=敏感
+		; 106,Ｍ感度,;-1=鈍感 1=敏感
+		
+		TALENT:MASTER:(101+LOCAL) = -1
+	NEXT
+	Add_Yagokoro_Drain_Remember:4 = TALENT:MASTER:Ｍ感度
+	TALENT:MASTER:Ｍ感度 = -1
+	
+	;counter (4 because -1 will be applied immediately at the end of this day)
+	Add_Yagokoro_Drain = 4
+	IF HAS_PENIS(MASTER)
+		MAXBASE:MASTER:2 = 30000
+		MAXBASE:MASTER:5 = 3000
+	ENDIF
+	;get insensitive on all areas
+	;vig = 0
+	;erection is twice as hard to get
+	;ejac bar thrice bigger
+	;lasts three days
+	TIME += 120
+	RETURN 1
+CASE 91 ;yagokoro relief
+	IF ARG:1 == 1 ;set, grumpy bj relief
+		PRINTFORMDW Eirin sighs and leads you to the back in silence.
+		PRINTFORMDW Eirin brushes her hair out of her face grumpily before taking your %TINKO()% into her mouth and sucking on it.
+		PRINTFORMDW Moments later, you unload inside, as you enjoy the sight of her pleasing your member.
+		PRINTFORMDW She sucks it clean, wipes it with a tissue, then rinses her hands and gargles before returning back to work.
+		EXP:MASTER:射精経験 ++
+		BASE:MASTER:精力 = MAX(BASE:MASTER:精力 - 200, 0)
+		EXP:[[永琳]]:口淫経験 ++
+		EXP:[[永琳]]:精液経験 ++
+		; IF TALENT:MASTER:濃厚精液
+			; PRINTFORMW %CALLNAME:MASTER%の[濃厚精液]が治った
+			; TALENT:MASTER:濃厚精液 = 0
+		; ENDIF
+		;PRINTL 治療費として\10000請求されました
+		;MONEY -= 10000
+		TIME += 15
+		RETURN 1
+	ELSEIF ARG:1 == 2 ;bamboozle
+		PRINTFORMDW You thank Eirin, feeling deeply indebted to her as she leads you to the back.
+		PRINTFORMDW Eirin thanks you back, telling you that you're doing a great service to Eientei.
+		PRINTFORMDW Huh...?
+		PRINTFORMDW ...
+		PRINTFORMDW ......
+		PRINTFORMDW .........
+		PRINTFORMDW You ended up getting roped into being a blood donor...
+		BASE:MASTER:体力 = MIN(MAXBASE:MASTER:体力,BASE:MASTER:体力 - 400)
+		PRINTFORMDW Losing some blood, you find it hard maintaining your erection, too...
+		BASE:MASTER:精力 = MAX(BASE:MASTER:精力 - 50, 0)
+		TALENT:[[永琳]]:機嫌 = 1
+		TIME += 30
+		RETURN 1
+	ELSEIF TALENT:[[永琳]]:恋人 && TALENT:[[永琳]]:恋慕 ;lover + love
+		IF !IS_VIRGIN([[永琳]]) && !IS_DOUTEI(MASTER) ;non-virgin both
+			LOCALS '= @"「In here, come in. Lie down on your back.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			PRINTFORMDW Still wearing her white doctor attire, Eirin straddles you, her panties slid to the side down her thigh.
+			CALL PRINT_FACE, [[永琳]], "発情", "裸", "", "吐息"
+			CALL SET_KOJO_COLOR([[永琳]])
+			PRINTFORML 「Don't misunderstand me, %CALLNAME:MASTER%. I am by no means your personal call girl of some sort.」
+			PRINTFORML 「I'm simply doing my job, no more, no less. Even if it comes to taking care of your sexual urges.」
+			CALL PRINT_DIALOGUE, @"Of course I would rather prefer doing this in the comfort of our bedroom with an appropriate mood, and naturally, bareback. But we can't have everything, can we?"
+			PRINTFORMW 「It goes without saying that you're the only person who can ever hope to enjoy services of this sort from me.」
+			PRINTFORMDW Eirin deftly puts a condom on your engorging %TINKO()% and immediately guides it into her wet vagina.
+			PRINTFORMDW It feels just as you remember it, slick, warm and incredibly tight...
+			CALL PRINT_DIALOGUE, @"Just focus on ejaculating as much as you can to make it easier for both of us. No need to hold back. In fact, you're not allowed to.", "w"
+			PRINTFORMDW Eirin speaks with a certain gravitas in her voice, as you feel a firm grasp of her hand on your balls!
+			PRINTFORML 「Don't make me stick my finger inside your butt, okay? Well, then let's get this over with quickly.」
+			PRINTFORMDW You nod obediently and let her continue.
+			PRINTFORMDW She grabs your hands and holds them tightly as she lets her hips do the work.
+			PRINTFORMDW %BREAKENG(@"Her massive chest jiggles ever so slightly even under her tightly fitting gown, catching your attention as they always do.")%
+			PRINTFORML 「I can feel you twitching already. Are you coming so soon? Please, be my guest. That's why you're here for, after all.
+			PRINTFORMDW %BREAKENG(@"You oblige and shoot your first load into the condom. The ejaculation lasts for a while, and you have a feeling that the condom might break, but this wasn't just any condom that she was using.")%
+			PRINTFORML 「Hmm, you seem to be enjoying my vagina quite a bit. I can tell by the look of bliss on your face. Was it satisfiable?」
+			PRINTFORML 「Then, let's try something a little different this time...」
+			PRINTFORMDW Eirin reaches for a box filled with Yagokoro brand condoms, with various thickness, shapes and even stimulation levels.
+			PRINTFORMDW Even though she treated this as another day at her job, you enjoyed this experience to the fullest.
+			BASE:MASTER:精力 = MAX(BASE:MASTER:精力 - 800, 0)
+			RESETCOLOR
+			EXP:MASTER:射精経験 += 10
+			EXP:MASTER:挿入経験 += 10
+			EXP:[[永琳]]:精液経験 += 10
+			EXP:[[永琳]]:Ｖ性交経験 += 10
+			TIME += 60
+		ELSE ;onahole
+			PRINTFORMW Eirin takes you to the room inside Eientei and sits you on the bed.
+			PRINTFORMW She then takes a tube-shaped pinkish toy from the shelf, fills it with lube and sticks your member deep inside of it firmly.
+			PRINTFORMW It feels tight and even warm... The suction almost makes it feel like a real thing, or at least you imagine it to be so.
+			LOCALS '= "「Hmm... So this \"onahole\" toy seems to be hitting just the spot for you, doesn't it?」/"
+			LOCALS += "「That satisfied look on your face says it all.」/"
+			LOCALS += "「Are you okay with a toy, and not a real thing?」/"
+			LOCALS += "「One day we'll have to grow up, and start a new chapter in our life.」/"
+			LOCALS += "「When that day comes, I will be waiting. So let this be a taste of what's to come.」/"
+			LOCALS += "「Fufu...」"
+			CALL COM616_EIRINSPEAK, LOCALS, "blush"
+			WAIT
+			PRINTFORMDW %BREAKENG(@"Her skilled movements and the pressure she applies leave a great impression as you already find yourself losing to the toy and reaching climax.")%
+			LOCALS '= "「Oh my, looks like you're going to spurt your load inside. Go ahead, please.」/"
+			LOCALS += "「Well, that's one out. Let's do some more, shall we?」"
+			CALL COM616_EIRINSPEAK, LOCALS, "smile"
+			WAIT
+			PRINTFORMDW %BREAKENG(@"Eirin continues gleefully squeezing you dry until you run out of semen for the time being, at which point she finally lets go of you.")%
+			BASE:MASTER:精力 = MAX(BASE:MASTER:精力 - 500, 0)
+			RESETCOLOR
+			EXP:MASTER:射精経験 += 5
+			EXP:[[永琳]]:道具使用経験 += 10
+			EXP:[[永琳]]:手淫経験 += 10
+			TIME += 30
+		ENDIF
+	ELSEIF TALENT:[[永琳]]:恋慕 ;just for love, paizuri
+		;titjob at love
+		PRINTFORMDW After following Eirin through the door deeper through Eientei, she stops you and asks you to sit on the bed.
+		PRINTFORMDW She brings a chair and sits closer to you before revealing her naked breasts, without taking her doctor outfit off.
+		CALL PRINT_FACE, [[永琳]], "発情", "裸", "", "吐息"
+		CALL SET_KOJO_COLOR([[永琳]])
+		PRINTFORML 「Well then, I will be starting today's treatment.」
+		PRINTFORML 「As always, you're not allowed to endure if you feel like ejaculating.」
+		PRINTFORMW 「Please release it right away. Relieve yourself with my breasts to your satisfaction.」
+		PRINTFORML
+		PRINTFORMDW %BREAKENG(@"Sandwiched between Eirin's hefty breasts, she begins moving them rhythmically, pleasing you in ways you never thought a woman's cleavage could.")%
+		PRINTFORMDW The pressure, the sensation, the amount of stimulation - everything is calculated perfectly, specifically for your needs.
+		PRINTFORMDW Without being able to last for too long, you release, painting her innermost area with your sticky juice.
+		PRINTFORMDW %BREAKENG(@"But it doesn't stop there. She grins at you, almost like a predator, refusing to wait as she starts moving again, all in order to please your unabated member.")%
+		PRINTFORMDW %BREAKENG(@"It feels intense, after all, you just came a second ago. But she doesn't seem to care. You plead to Eirin, but her pace only gets more assertive.")%
+		PRINTFORML
+		CALL PRINT_FACE, [[永琳]], "笑顔", "裸", "", "吐息"
+		PRINTFORML 「It's no use fighting it, %CALLNAME:MASTER%. Didn't I tell you?」
+		PRINTFORML 「You asked me, and I obliged. Thus I will carry it out, no matter what. Even if you decide to change your mind.」
+		PRINTFORMW 「Fufufu...」
+		PRINTFORML
+		PRINTFORMDL You feel like you're starting to understand why this woman commands such respect in Gensokyo.
+		PRINTFORMDL Once she sets her sights on something, she will do whatever it takes to get it done.
+		PRINTFORMDW As expected of a person who created an elixir that grants immortality...
+		PRINTFORML
+		PRINTFORMDL %BREAKENG(@"At last, when it seemed like your testicles were about to fall off, Eirin lets go of you, declaring that all of this was free of charge.")%
+		PRINTFORMDL %BREAKENG(@"But such a good service requires a reward, so you decide to give her a passionate kiss.")%
+		CALL MUTUAL_KISS([[永琳]])
+		LOCALS '= @"「Ufufu... Thank you, %CALLNAME:MASTER%.」"
+		CALL COM616_EIRINSPEAK, LOCALS, "smile"
+		WAIT
+		EXP:MASTER:射精経験 += 5
+		EXP:[[永琳]]:精液経験 += 5
+		EXP:[[永琳]]:パイズリ経験 += 5
+		
+		BASE:MASTER:精力 = MAX(BASE:MASTER:精力 - 500, 0)
+		RESETCOLOR
+		TIME += 30
+		RETURN 1
+	ELSE
+		PRINTFORMDW Error, purease reporuto
+	ENDIF
+	RETURN 1
+CASE 92 ;heal drain
+	LOCALS '= @"「...All you need is a little comfort and warmth.」"
+	CALL COM616_EIRINSPEAK, LOCALS, "smile"
+	WAIT
+	PRINTFORMDW You spend an hour leisurely chatting with Eirin, drinking tea and listening to stories as she reads a book for children...
+	PRINTFORMDW Somehow you feel like as though you're totally recovered!
+	Add_Yagokoro_Drain = 0
+	FOR LOCAL, 0, 4
+		TALENT:MASTER:(101+LOCAL) = Add_Yagokoro_Drain_Remember:LOCAL
+		; 101,Ｃ感度,;-1=鈍感 1=敏感
+		; 102,Ｖ感度,;-1=鈍感 1=敏感
+		; 103,Ａ感度,;-1=鈍感 1=敏感
+		; 104,Ｂ感度,;-1=鈍感 1=敏感
+		; 106,Ｍ感度,;-1=鈍感 1=敏感
+	NEXT
+	TALENT:MASTER:Ｍ感度 = Add_Yagokoro_Drain_Remember:4
+	IF HAS_PENIS(MASTER)
+		MAXBASE:MASTER:2 = 10000
+		MAXBASE:MASTER:5 = 1500
+	ENDIF
+	TFLAG:EjacChange = 0
+	TIME += 60
+	RETURN 1
+ENDSELECT
+
+PRINTFORML Eirin treats %PARSE("you")% with %LOCALS%.
+SIF ARG == 2
+	PRINTFORML Do it in one shot, MANTAN！
+SIF ARG == 3
+	PRINTFORML I feel like I can take on the entire world...!
+SIF ARG == 9
+	PRINTFORML Your ××× will pierce the heavens!
+SIF ARG >= 0 && ARG <= 3
+	PRINTFORML Stamina has been recovered.
+SIF ARG >= 4 && ARG <= 7
+	PRINTFORML Energy has been recovered.
+SIF ARG >= 8 && ARG <= 11
+	PRINTFORML Vigor has been recovered.
+SIF ARG == 12
+	PRINTFORML Sleep Res acquired.
+SIF ARG == 13
+	PRINTFORML TSP has been recovered.
+PRINTFORMW
+
+@COM616_PENIS_CHANGE(ARG)
+#DIM nLineCount
+LOCALS '= "「Ah, yes, the question that every man asks himself at least once. \"Is this good enough size for her?\"」/"
+LOCALS += "「The answer is yes.」/"
+LOCALS += "「Size is irrelevant as long as it can stay properly erect. It's a matter of skill than anything else.」/"
+LOCALS += "「Then would I say that the outward appearance is purely cosmetic?」/"
+LOCALS += "「Not quite. It can have its effects, particularly if you're attempting to do it with someone smaller than the average.」/"
+LOCALS += "「I'm sure it can get quite frustrating without the appropriate knowledge and technique.」/"
+LOCALS += "「Therefore a diametrically opposite problem is born. Not as common, but a problem nonetheless.」/"
+LOCALS += "「Please state which size you are looking for. Make sure you choose responsibly, okay?」"
+CALL COM616_EIRINSPEAK, LOCALS
+WAIT
+
+nLineCount = LINECOUNT
+REDRAW 0
+DO
+	$START
+	SIF LINECOUNT - nLineCount > 0
+		CLEARLINE LINECOUNT - nLineCount
+	PRINTFORML [ 1] I want to go back to my childhood, so please make my penis like that of a child
+	PRINTFORML [ 2] Please make it harder for me to indulge in unnecessary debauchery
+	PRINTFORML [ 3] Please give me a normal penis
+	PRINTFORML [ 4] I'm scared when I walk down the road at night, so please make it glow in the dark
+	PRINTFORML [ 5] I want to make the girls squeal for their dear lives, so please pack it with pearls
+	PRINTFORML [ 6] Make it big enough for me to have confidence in it
+	;PRINTFORML [ 7] I have a thing for orcs, so make it look like a drill and I'll go hunt for some elves
+	;PRINTFORML [ 8] I don't want to be bothered with birth control, so please just give me a vasectomy
+	PRINTFORML [99] I changed my mind
+	INPUT
+	SIF RESULT == 99
+		RETURN 0
+		
+	IF TALENT:MASTER:形状 == RESULT
+		LOCALS '= "「I believe you already have this at the moment. Choose something else.」"
+		CALL COM616_EIRINSPEAK, LOCALS
+		WAIT
+		CONTINUE
+	ENDIF
+		
+	LOCAL = RESULT
+	SELECTCASE RESULT
+		CASE 1
+			IF GETBIT(CFLAG:[[永琳]]:既成事実,1) && CFLAG:[[永琳]]:2 >= 5000
+				LOCALS '= "「Hmm... I was wondering what you're going to possibly suggest, but I never expected it to be this.」/"
+				LOCALS += "「...I suppose you do have that in you. Plentifully so.」/"
+				LOCALS += "「Giving you the body matching your mind may be a good idea...」/"
+				LOCALS += "「Very well, I'll do it. And let's keep it that way for a while, okay? Fufufu...」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				WAIT
+				LOCALS =
+			ELSE
+				LOCALS '= "「...」"
+				CALL COM616_EIRINSPEAK, LOCALS, "anger"
+				WAIT
+				LOCALS '= @"「Are you serious, %CALLNAME:MASTER%?」/"
+				LOCALS += "「I'm sure you're just going to use it on little girls instead.」/"
+				LOCALS += "「Sigh... I'll do it, but if anything happens, you're on your own.」"
+			ENDIF
+			BREAK
+		CASE 2
+			IF GETBIT(CFLAG:[[永琳]]:既成事実,1) && CFLAG:[[永琳]]:2 >= 5000
+				LOCALS '= @"「...%CALLNAME:MASTER%.」"
+				CALL COM616_EIRINSPEAK, LOCALS, "anger"
+				WAIT
+				LOCALS '= @"「Please reconsider. I for one don't want to see you in this light.」/"
+				LOCALS += @"「Although I said that the size isn't everything, you will struggle a lot in pleasing your partner,/　and just make both you and her unhappy as a result.」/"
+				LOCALS += @"「...」/"
+				LOCALS += @"「...There's no changing your mind, is it? Fine.」/「But don't tell me I didn't warn you.」"
+			ELSE
+				LOCALS '= @"「I'm not sure what you're trying to mean by that, but if you're looking forward to/　being humiliated by girls, I'm afraid you're in for some serious disappointment.」/"
+				LOCALS += @"「You will find yourself struggling greatly to please anyone with this./　Or are you trying to stop involving yourself with them at all?」"
+				CALL COM616_EIRINSPEAK, LOCALS
+				WAIT
+				LOCALS '= @"「In that case, I can just snip your little problem at the bud entirely, if you wish.」"
+				CALL COM616_EIRINSPEAK, LOCALS, "smile"
+				WAIT
+				LOCALS '= @"「...No? Very well. Have it your way.」"
+			ENDIF
+			BREAK
+		CASE 3
+			LOCALS '= @"「That's an excellent choice, %CALLNAME:MASTER%. Just as the nature intended it.」/"
+			LOCALS += @"「I wholeheartedly encourage it, so let's get to it without any further delay...」"
+			BREAK
+		CASE 4
+			LOCALS '= @"「%CALLNAME:MASTER%...」/"
+			LOCALS += @"「Helloooo... Earth to Moon, do you copy?」/"
+			LOCALS += @"「Do you hear me...?」/"
+			LOCALS += @"「Are you here with me? Are you sure you did not hit your head?」/"
+			LOCALS += @"「There's no need for something like that at all. Even without a source of light, I'm sure you will do just fine...」/"
+			LOCALS += @"「It'll shine just like a firefly squid? That's it, I think it's time to lock you up in a mental ward.」/"
+			LOCALS += @"「You're not joking, are you? You still want it no matter what? Sigh...」/"
+			LOCALS += @"「Are you sure you're not from another planet? No, I'm simply wondering here...」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			LOCALS =
+			PRINTFORMW It takes a lot of convincing, but eventually you manage to convince Eirin to go with it.
+			BREAK
+		CASE 5
+			LOCALS '= @"「This kind of thing... This kind of thing is just going to tear apart anyone and everything!」/"
+			LOCALS += @"「If you put that inside of someone, you're not going to instantly make them orgasm,/　rather you will make them die on the spot!」/"
+			LOCALS += @"「There's no pleasure to be gained from this thing, it will simply hurt like all hell!」/"
+			LOCALS += @"「Is this just a self-satisfying power-fantasy for you? Have you forgotten how to feel compassion?」/"
+			LOCALS += @"「...You demon. I should just euthanise you right now to prevent any further casualties.」"
+			CALL COM616_EIRINSPEAK, LOCALS, "anger"
+			WAIT
+			LOCALS =
+			PRINTFORMW It takes a lot of convincing, but eventually you manage to convince Eirin to go with it.
+			BREAK
+		CASE 6
+			LOCALS '= @"「%CALLNAME:MASTER%, serious talk.」/"
+			LOCALS += @"「Do you think bigger is always better? Your heart can only pump so much blood - if it gets too big it'll get soft.」/"
+			LOCALS += @"「Besides, it's not the size that counts, it's the compatibility. If your sizes are incompatible it'll just hurt.」/"
+			LOCALS += @"「Most girls in Gensokyo are far too small to accept something this huge, no matter how hard you try.」"
+			CALL COM616_EIRINSPEAK, LOCALS
+			WAIT
+			LOCALS '= @"「Even mature women... like myself... will be appalled if they see something like this.」"
+			CALL COM616_EIRINSPEAK, LOCALS, "blush"
+			WAIT
+			LOCALS '= @"「This is seriously a health hazard for everyone involved, do you understand?」"
+			CALL COM616_EIRINSPEAK, LOCALS, "anger"
+			WAIT
+			LOCALS =
+			PRINTFORMW It takes a lot of convincing, but eventually you manage to convince Eirin to go with it.
+			BREAK
+			
+			; Sigh...
+			; You do realize there's an extremely low chance of me getting pregnant, right?
+			; Or is it just an excuse to go around the block shagging every girl you come across?
+			; Honestly, I would rather try to cure you from your promiscuous nature first.
+	ENDSELECT
+LOOP 1
+IF STRLENS(LOCALS)
+	CALL COM616_EIRINSPEAK, LOCALS
+	WAIT
+ENDIF
+
+LOCALS '= @"「The required treatment takes about 3 days. You will be staying here, at Eientei.」/"
+LOCALS += @"「We'll do everything we can to not leave any long lasting side effects or damage your health in any way.」/"
+LOCALS += @"「It goes without saying that all of this will cost you quite a bit. Are you ready?」"
+CALL COM616_EIRINSPEAK, LOCALS
+
+CALL ASK_YN
+SIF RESULT
+	GOTO START
+CALL COM616_CHECK(50000)
+SIF RESULT
+	GOTO START
+	
+CALL COM616_PAY(50000)
+
+
+PRINTFORMW The operation starts immediately after you say yes.
+PRINTFORMW You get discharged three days later from Eientei, at which point you return back home.
+PRINTFORMW You feel fine for the most part, and the sight of your new member fills you with thrill.
+PRINTFORMW You can't wait to use it soon...
+
+TALENT:MASTER:形状 = LOCAL
+FOR LOCAL, 0, 3
+	;PRINTFORMW DAY:3 - {DAY:3}
+	DAY ++
+	DAY:3 ++
+	CALL CHANGE_MONTH
+	;PRINTFORMW AFTER {DAY:3}
+NEXT
+CFLAG:MASTER:現在位置 = CFLAG:MASTER:初期位置
+CFLAG:MASTER:就寝時間 = DAY * 1440 + TIME
+;day ends here
+BASE:MASTER:体力 = 0
+RETURN 1
+
+
+@COM616_CHEST_CHANGE(ARG)
+
+@COM616_PAY(ARG)
+LOCALS '= @"「Well, if that's all, here's the fee.」"
+CALL COM616_EIRINSPEAK, LOCALS
+IF TALENT:[[永琳]]:恋人
+	WAIT
+	LOCALS '= @"「And... because it's you... I'm willing to make a little discount.」"
+	CALL COM616_EIRINSPEAK, LOCALS, "blush"
+	WAIT
+	LOCALS '= @"「Feels nice to receive special perks, doesn't it? Fufufu!」"
+	CALL COM616_EIRINSPEAK, LOCALS, "smile"
+	WAIT
+	ARG /= 2
+ENDIF
+PRINTFORML You get charged \\%DIGIT_GROUP(ARG)% for the treatment.
+SIF TALENT:[[永琳]]:恋人
+	PRINTFORML The treatment cost was cut in half thanks to Eirin's discount!
+IF MONEY < ARG
+	IF TALENT:[[永琳]]:恋人
+		LOCALS '= @"「...You may be under the impression that you can get away with it.」/「But as much as I love you %CALLNAME:MASTER%, I don't tolerate moochers.」/「Even Kaguya has to work sometimes. Are you worse than her?」/「If not, please prove it.」"
+		CALL COM616_EIRINSPEAK, LOCALS, "anger"
+	ELSE
+		LOCALS '= @"「...You don't have enough cash to afford it?」/「That's unfortunate, I understand. Help comes first before money.」/「But unfortunately we do not provide services for free.」/「I will have you do some minor work for Eientei for a little while.」"
+		CALL COM616_EIRINSPEAK, LOCALS
+	ENDIF
+	WAIT
+	LOCALS '= @"「Don't worry, it will only take a moment of your time...」"
+	CALL COM616_EIRINSPEAK, LOCALS, "smile"
+	PRINTFORML
+	PRINTFORML Because %PARSE("you don't")% have enough money, %PARSE("you are",1)% forced to go forage material for medicine-making...
+	CALL RECOVER(MASTER, -100, "体力", "Working at Eientei")
+	CALL RECOVER(MASTER, -200, "気力", "Working at Eientei")
+	;work an hour for every 1k, up to 12 hours
+	TIME += 60 * LIMIT(ARG / 1000, 1, 12)
+	TFLAG:193 = 1
+ELSE
+	MONEY -= ARG
+	PRINTFORML Remaining Cash: \\%DIGIT_GROUP(MONEY)%
+ENDIF
+
+@COM616_CHECK(ARG)
+SIF TALENT:[[永琳]]:恋人
+	ARG /= 2
+IF MONEY < ARG
+	IF TALENT:[[永琳]]:恋人
+		LOCALS '= @"「...I'm sorry, but even with all due consideration that I offer you,/　I still can't let you enjoy the services for completely free.」/「Please go out there and make some money. I'm sure you can do it, %CALLNAME:MASTER%.」"
+	ELSE
+		LOCALS '= @"「I don't believe you can afford this, %CALLNAME:MASTER%.」/「My apologies.」"
+	ENDIF
+	CALL COM616_EIRINSPEAK, LOCALS
+	PRINTFORMW (Treatment costs \\%DIGIT_GROUP(ARG)%, Money: \\%DIGIT_GROUP(MONEY)%)
+	RETURN 1
+ENDIF
+RETURN 0
+
+@COM616_ANGER()
+IF CFLAG:[[永琳]]:ブチギレ || MARK:[[永琳]]:反発刻印 > 0
+	PRINTFORMW Eirin stands up and slaps you on the cheek, hard. She glares at you...
+	LOCALS '= @"「...Get out of here, now.」"
+	CALL COM616_EIRINSPEAK, LOCALS, "anger"
+	WAIT
+	CALL GET_ANGRY([[永琳]],1)
+	RETURN 1
+ENDIF
+RETURN 0
+
+;note - needs WAIT for W effect
+@COM616_EIRINSPEAK(ARGS, ARGS:1 = "通常")
+SIF ARGS:1 == "smile"
+	ARGS:1 '= "笑顔"
+SIF ARGS:1 == "blush"
+	ARGS:1 '= "発情"
+SIF ARGS:1 == "anger"
+	ARGS:1 '= "怒り"
+CALL SPTALK, [[永琳]], ARGS:1, 0, ARGS, 1
+RESETCOLOR
+
+@COM616_PREGBONUS(妊娠必要値)
+#DIM REF 妊娠必要値
+SIF Add_Yagokoro_PregBonus <= 0
+	RETURN 0
+DEBUGPRINTFORML ----------------------------
+DEBUGPRINTFORML PREGBONUS   BEFORE : {妊娠必要値}
+;I buffed it from 5-10 percent to 10-20 and it's still might not be powerful enough :C
+妊娠必要値 = MULTIPLY(妊娠必要値, RAND(80, 91))
+DEBUGPRINTFORML PREGBONUS   AFTER : {妊娠必要値}
+DEBUGPRINTFORML ----------------------------
+PRINTFORMW Yagokoro's energizing massage makes your sperm penetrate the line of defense more efficiently!
+
+;------------------------------------------------------
+;process the extra flags
+;when starting the day
+@EVENTTRAIN
+#LATER
+;reapply drain effect
+IF Add_Yagokoro_Drain > 0 && HAS_PENIS(MASTER)
+	BASE:MASTER:精力 = 0
+	MAXBASE:MASTER:2 = 30000
+	MAXBASE:MASTER:5 = 3000
+	BASE:MASTER:5 = 0
+	TFLAG:EjacChange = 1
+ENDIF
+Add_Yagokoro_PregBonus = 0
+
+@EVENTCOMEND
+#LATER
+;reapply vig drain after every action
+SIF Add_Yagokoro_Drain > 0 && HAS_PENIS(MASTER)
+	BASE:MASTER:精力 = 0
+
+;reset special effects
+@EVENTEND
+#LATER
+;count down
+IF Add_Yagokoro_Drain > 0
+	Add_Yagokoro_Drain --
+	;when effect ends, return sensitivity, vig and debuffs should wear off on their own
+	IF Add_Yagokoro_Drain <= 0
+		CALL COLORMESSAGE("You feel like you're no longer numb.",C_GREEN,2,1)
+		FOR LOCAL, 0, 4
+			TALENT:MASTER:(101+LOCAL) = Add_Yagokoro_Drain_Remember:LOCAL
+			; 101,Ｃ感度,;-1=鈍感 1=敏感
+			; 102,Ｖ感度,;-1=鈍感 1=敏感
+			; 103,Ａ感度,;-1=鈍感 1=敏感
+			; 104,Ｂ感度,;-1=鈍感 1=敏感
+			; 106,Ｍ感度,;-1=鈍感 1=敏感
+		NEXT
+		TALENT:MASTER:Ｍ感度 = Add_Yagokoro_Drain_Remember:4
+		IF HAS_PENIS(MASTER)
+			MAXBASE:MASTER:2 = 10000
+			MAXBASE:MASTER:5 = 1500
+		ENDIF
+		TFLAG:EjacChange = 0
+	ENDIF
+ENDIF
+;failsafe
+SIF Add_Yagokoro_Drain < 0
+	Add_Yagokoro_Drain = 0
+	

@@ -1,0 +1,399 @@
+﻿;added, original content
+
+;==================================================
+;依頼口上・各依頼で共通の口上
+;==================================================
+@M_KOJO_IRAI_K1(ROLE, SCENE, IRAI_ID)
+#DIMS ROLE     ;キャラの立場、依頼者かそうでないか
+#DIMS SCENE    ;セリフの表示されるタイミング
+#DIM  IRAI_ID  ;依頼自体のID
+#DIM  CLIENT_ID;依頼者IDだけ抜き出したもの
+#DIM  CHK_ID   ;依頼IDだけ抜き出したもの
+#DIMS IRAI_NAME;依頼名
+CHK_ID    = IRAI_ID % 1000
+CLIENT_ID = IRAI_ID_TO_CLIENT(IRAI_ID)
+IRAI_NAME '= STR_DATA_IRAI(IRAI_ID, "依頼名", CLIENT_ID)
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K1
+RESULT = 0
+IF CHK_ID > 100
+	TRYCALLFORM M_KOJO_IRAI_%IRAI_NAME%_K1(ROLE, SCENE, CLIENT_ID)
+ELSE
+	TRYCALLFORM M_KOJO_IRAI_{CHK_ID}_K1(ROLE, SCENE, CLIENT_ID)
+ENDIF
+RESETCOLOR
+SIF RESULT
+	RETURN 1
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K1
+SELECTCASE ROLE
+CASE "CLIENT"
+	;一般依頼
+	IF IS_COMMON_IRAI(IRAI_ID)
+		;SELECTCASE STR_DATA_IRAI(IRAI_ID, "依頼名", CLIENT_ID)
+		;CASE "一般依頼名"
+			SELECTCASE SCENE
+			CASE "依頼提示時"
+			;依頼を持ちかけられる時
+				PRINTDATAL
+					DATAFORM 「Can I have you for a moment?」
+					DATAFORM 「Mind if I ask you something?」
+					DATAFORM 「Would you like to help me?」
+					DATAFORM 「You've been running around helping people out, haven't you?」
+					DATAFORM 「%CALLNAME:MASTER%, you have some time now, so how about taking care of my chores?」
+					DATAFORM 「%CALLNAME:MASTER%, can you please grant me this request?」
+				ENDDATA
+			CASE "依頼非受託時"
+			;内容だけ見て受託しなかった時
+				PRINTDATAL
+					DATAFORM 「Oh, so you don't want to hear my request? You'd get paid, you know.」
+					DATAFORM 「...That's disappointing.」
+					DATAFORM 「Why, it's just a normal request. You're so stubborn!」
+					DATAFORM 「Hmph... well, if you're gonna be like that...」
+					DATAFORM 「Hmm? Why'd you do that? I thought you were going to help.」
+				ENDDATA
+			CASE "依頼受託時"
+			;依頼を受託した時
+				PRINTDATAW
+					DATAFORM 「Thank you.」
+					DATAFORM 「I'm glad you're taking it seriously.」
+					DATAFORM 「I knew you will. I will be counting on you.」
+					DATAFORM 「If you're not up to the task, you should just turn back now.」
+					DATAFORM 「%CALLNAME:MASTER%, make sure you don't slack off. Don't just do whatever you want.」
+					DATAFORM 「I don't mind if you make it your top priority. Well, actually, you should.」
+				ENDDATA
+			CASE "依頼確認時"
+			;[366]で依頼内容を依頼人に確認した時
+				PRINTDATAL
+					DATAFORM 「The request is...」
+					DATAFORM 「What is the question you would like answered?」
+					DATAFORM 「Hmm, I thought I said it loud and clear last time. Okay, here we go again...」
+					DATAFORM 「You'll have to give it a shot though. You won't get anything if you just sit on your hands.」
+				ENDDATA
+			CASE "依頼破棄時"
+			;受託した依頼を破棄する時
+				PRINTDATAL LOCAL
+					DATAFORM 「I see... I guess there's no helping it then.」
+					DATAFORM 「No? Hmm. So, what kind of request would you like to get then?」
+					DATAFORM 「Hmm? What do you mean you canceled it? You must be kidding me!」
+					DATAFORM 「Fool me once for getting my hopes up...」
+					DATAFORM 「You took it, and now you turn it down? Unbelievable...」
+				ENDDATA
+				SIF GROUPMATCH(LOCAL, 2, 3, 4)
+					PRINTFORMDL Reimu complains, but she doesn't seem to be particularly upset... At least you hope so.
+			CASE "依頼実行直前"
+			;[367]で依頼を実行する時、実行処理の前に呼び出される
+			CASE "依頼実行直後"
+			;[367]で依頼を実行する時、実行処理の後に呼び出される
+			CASE "成功報告時"
+				;報告時（成功）
+				PRINTDATAL
+					DATAFORM 「You've been so helpful to me lately, it'd be nice to do something back.」
+					DATAFORM 「Good job, %CALLNAME:MASTER%! You've done well so far.」
+					DATAFORM 「You're always doing things like this for me, %CALLNAME:MASTER%. I knew I could rely on you.」
+					DATAFORM 「...That was quick. I don't think I even have your reward ready yet. Wait a moment... Yes, this will do.」
+					DATALIST
+						DATAFORM 「You're very punctual. Are you an alien? Oh, right, you're from Outside...」
+						DATAFORM 「I was wondering why you're so sensible unlike some other folk.」
+					ENDLIST
+					DATALIST
+						DATAFORM 「Good work. I knew you could do it. Here's a little something for your efforts.」
+						DATAFORM 「Let it be known that Shrine Maiden of Hakurei does return what she owes.」
+					ENDLIST
+				ENDDATA
+			CASE "失敗報告時"
+			;報告時（失敗）
+			;この他、報告忘れや期限切れで失敗扱いになり後日依頼人に遭遇した際にも表示
+				PRINTDATAL
+					DATALIST
+						DATAFORM 「%CALLNAME:MASTER%, you said you'd help me with a request... but you're late. What is taking you so long?」
+						DATAFORM 「Ah, I see. That's unfortunate...」
+					ENDLIST
+					DATAFORM 「Hmm, that's interesting. I didn't think it's possible to fail in such a spectacular way. Oh well...」
+					DATAFORM 「Did you really think you could handle that? Well, maybe you should think a little harder next time.」
+					DATALIST
+						DATAFORM 「%CALLNAME:MASTER%, what were you doing before you got here?」
+						DATAFORM 「Uh-huh... That's a lot of time you wasted there. It's no wonder then.」
+					ENDLIST
+				ENDDATA
+				PRINTFORMDL Reimu says in her usual deadpan manner. But knowing her, she is still probably upset about it...
+			ENDSELECT
+		;ENDSELECT
+		RETURN 1
+	ENDIF
+ENDSELECT
+RESETCOLOR
+
+;for massage request, rub reimu's shoulders
+@M_KOJO_IRAI_肩もみ_K1(ROLE, SCENE, CLIENT_ID)
+#DIMS ROLE     ;キャラの立場、依頼者かそうでないか
+#DIMS SCENE    ;セリフの表示されるタイミング
+#DIM  CLIENT_ID;依頼者IDだけ抜き出したもの
+;--------------------------------------------------
+;RETURN 0 の部分は共通の口上が表示されます
+;依頼ごとの口上を表示する部分は RETURN 0 を RETURN 1 にしてください
+;--------------------------------------------------
+SELECTCASE SCENE
+CASE "依頼提示時"
+	IF FIRSTTIME("Irai1", 0, 1)
+		PRINTFORML 「I've got a job for you. You know, this... You're always around, so...」
+		PRINTFORMDL Reimu says, shrugging her shoulders.
+		PRINTFORML 「If you do it, then I'll give you some tea.」
+		RETURN 1
+	ENDIF
+	SELECTCASE RAND:7
+		CASE 0
+			PRINTFORML 「You seem to be pretty good with your hands, right?」
+			PRINTFORML 「Could you do a little something for me?」
+		CASE 1
+			PRINTFORML 「I'm not keen on this, but... I don't seem to have any other choice.」
+		CASE 2
+			PRINTFORML 「I don't think I have any other person I can ask about this without becoming a laughingstock.」
+			PRINTFORML 「So, would you please?」
+		CASE 3
+			PRINTFORML 「Hey, %CALLNAME:MASTER%! Perfect, you're here.」
+			PRINTFORML 「I think you could use some practice in helping other people. Do you mind?」
+		CASE 4
+			PRINTFORML 「I have a job for you. My shoulders are kind of sore, so I was thinking of getting my shoulders rubbed.」
+		CASE 5
+			PRINTFORML 「You see, when it comes to a problem like this, there's no one better than you, %CALLNAME:MASTER%.」
+		CASE 6
+			PRINTFORML 「My shoulders have been really stiff lately... Could you lend me a hand, please?」
+	ENDSELECT
+	RETURN 1
+CASE "依頼非受託時"
+	PRINTDATAL
+		DATAFORM 「I have trouble sleeping when I'm all stiff like this, you know?」
+		DATAFORM 「Fine... I guess I'll have to ask Marisa again and endure her jokes about it for a week.」
+		DATAFORM 「Is that so? Are you that afraid of touching me?」
+		DATAFORM 「Huh. I thought it was easy enough. How could this be that much of a problem for you?」
+	ENDDATA
+	RETURN 1
+CASE "依頼受託時"
+	PRINTFORML 「Thank you. This will only take a moment of your time. You may need to do it a few times until I feel relieved though.」
+	PRINTFORMW 「Oh, and please refrain from touching me inappropriately. I'm not giving you a permission to fondle me, okay?」
+	RETURN 1
+CASE "依頼確認時"
+	PRINTFORML 「What's so hard about this? Just put your hands to good use!」
+	RETURN 1
+CASE "依頼破棄時"
+	PRINTFORML 「Ara... I'm afraid of entrusting you any more complex requests at this rate.」
+	RETURN 1
+CASE "依頼実行直前"
+	PRINTDATAL
+		DATAFORM 「Aahhh, yesss, this spot...」
+		DATAFORM 「Harder, please, yesss...」
+		DATAFORM 「Uhh, just because I'm not paying attention doesn't mean you can touch me wherever you want... Keep your hands on my back.」
+		DATAFORM 「Yes, don't be shy about it, rub it like you mean it...」
+		DATAFORM 「Go ahead, just like this... A little higher... Yes, that's perfect...」
+	ENDDATA
+	RETURN 1
+CASE "依頼実行直後"
+	RETURN 0
+CASE "成功報告時"
+;報酬：
+	PRINTFORML 「Thank you, that felt great. I feel a lot lighter now.」
+	PRINTFORML 「Here, have this. It's like tea, but better. It's something I drink every morning instead of coffee to get me going.」
+	PRINTFORML 「Actually, I hate coffee.」
+	IF TALENT:恋慕 && !(MARK:反発刻印 || CFLAG:ブチギレ)
+		PRINTFORML 「Oh, and here's a little something to sweeten the deal.」
+		CALL GetRandMaterial(1, 10000, 5000)
+		PRINTFORML 「I found it the other day, so I thought you could make use of it.」
+		PRINTFORML 「Oh, and, um... This, as well.」
+		PRINTFORMDL Reimu leans forward and places a gentle kiss on your cheek...
+	ENDIF
+	RETURN 1
+CASE "失敗報告時"
+	PRINTFORML 「Where did you run off to? I can't believe you sometimes...」
+	PRINTFORML 「If you manage to fail something like this, I think you may have a little problem.」
+	RETURN 1
+CASE "依頼報告不要"
+	RETURN 0
+ENDSELECT
+
+;help Marisa return her lost item
+@M_KOJO_IRAI_魔理沙の忘れ物_K1(ROLE, SCENE, CLIENT_ID)
+#DIMS ROLE     ;キャラの立場、依頼者かそうでないか
+#DIMS SCENE    ;セリフの表示されるタイミング
+#DIM  CLIENT_ID;依頼者IDだけ抜き出したもの
+;--------------------------------------------------
+;RETURN 0 の部分は共通の口上が表示されます
+;依頼ごとの口上を表示する部分は RETURN 0 を RETURN 1 にしてください
+;--------------------------------------------------
+SELECTCASE SCENE
+CASE "依頼提示時"
+	SELECTCASE DAY%3
+		CASE 1
+			PRINTFORML 「Ah, %CALLNAME:MASTER%. Just on time, really.」
+			PRINTFORML 「You see, Marisa forgot something she was looting-- Ahem, I mean, rummaging through my storage room. That scatterbrain...」
+			PRINTFORML 「I bet she wanted me to go out and meet her, but I have other plans today. Besides, I don't want to babysit her every time.」
+			PRINTFORML 「Could you do me a favor and just pass it over to her? I'm sure you could use some pocket change for your trouble.」
+			PRINTFORML 「I rarely get even that much in donations, you know.」
+		CASE 2
+			PRINTFORML 「%SPLIT_G("I'm once again asking you to help Marisa return a lost item to her.:Could you please help Marisa get back her lost item?")%」
+			PRINTFORML 「She keeps writing me these letters, saying that it's urgent and whatnot.」
+			PRINTFORML 「I have enough of them to fuel my fireplace already, if I had one in the first place.」
+			PRINTFORML 「I'll throw in some money to make it worth your while, as much as it pains me.」
+		CASE 3
+			PRINTFORML 「You know, I realized Marisa forgot her stuff here, so I'd like to give it back to her.」
+			PRINTFORML 「I'd return it back to her myself, but... I don't feel like going out today just for that.」
+			PRINTFORML 「Sure, she might come back to grab it, but she's usually stubborn about these things.」
+			PRINTFORML 「Can you do it for me, please? My shrine isn't some kind of lost and found, sheesh.」
+	CASEELSE
+			PRINTFORML 「You are someone who can handle anything, right? Looks like Marisa forgot something again.」
+			PRINTFORML 「It was my mistake for not realizing this sooner. Some things never change, huh?」
+			PRINTFORML 「I don't want to see her for now, but I feel like I have to help out somehow.」
+			PRINTFORML 「So, here. Can you just give it to her with my regards? If you come back, I'll give you something extra.」
+	ENDSELECT
+	IF CFLAG:現在位置 == CFLAG:11:現在位置
+		RESETCOLOR
+		CALL SET_KOJO_COLOR(11)
+		LOCAL:9 = GETCOLOR()
+		RESETCOLOR
+		CALL SET_KOJO_COLOR(1)
+		PRINTFORMDL Uhh, Reimu... Marisa is right here though?
+		PRINTFORML 「Do I look like I care? It's your job now. Go get it.」
+		CALL COLORMESSAGE("『...What the heck? What are you guys talking about?』",LOCAL:9,1,0)
+		PRINTFORMDL Instead of replying, Reimu simply winks at you and nods at Marisa. What is she trying to do...?
+	ENDIF
+	RETURN 1
+CASE "依頼非受託時"
+	PRINTDATAL
+		DATAFORM 「Sigh... I guess I'll just toss it away then.」
+		DATAFORM 「Well... I'll just wait for her to get her butt in here and take it herself.」
+		DATAFORM 「I ought to give her an earful for that...」
+	ENDDATA
+	RETURN 1
+CASE "依頼受託時"
+	PRINTDATAW
+		DATAFORM 「You will? Thanks. I'm sorry to bother you with this stuff.」
+		DATAFORM 「Thank you. I'm glad I can rely on you.」
+		DATAFORM 「Great. Oh, and tell Marisa that next time I'll throw it %SPLIT_G("all the way to the Underground so she'll have to convince local oni to part with it:in the pond so she'll have to dive for it:to the Moon. Good luck getting there.:at the Bamboo forest. If she gets lost there, it's none of my business:away like a junk it is")%.」
+		DATALIST
+			DATAFORM 「Uhh... Maybe I should've sold it or something. It seems sort of valuable.」
+			DATAFORM 「Oh well, off you go.」
+		ENDLIST
+	ENDDATA
+	PRINTFORML 「Marisa probably hangs out in her place at Forest of Magic. It's a long trip from here, so be careful.」
+	PRINTFORML 「Occasionaly, she might be visiting Scarlet Devil Mansion or Human Village, that can be a possibility too.」
+	PRINTFORML 「Oh, and if you still can't find her, you can just leave it at her doorsteps, it's no big deal.」
+	PRINTFORML 「Good luck.」
+	RETURN 1
+CASE "依頼確認時"
+	PRINTFORML 「Yes-yes, junk, Marisa, give it back, slug her for good measure.」
+	PRINTFORMDL You're not sure if you heard the last part correctly...
+	RETURN 1
+CASE "依頼破棄時"
+	PRINTFORML 「What, no good? It's too bothersome of a request, I suppose.」
+	PRINTFORML 「Well, I can't blame you.」
+	RETURN 1
+CASE "依頼実行直前"
+	
+	RETURN 0
+CASE "依頼実行直後"
+	
+	RETURN 0
+CASE "成功報告時"
+;報酬：
+	PRINTFORML 「...I was hoping you wouldn't come back for your reward.」
+	PRINTFORML 「Oh well, you did your end of the deal. I guess...」
+	PRINTFORML 「No, I will not let this tempt me. Here's... your... m-money...」
+	PRINTFORMDL You notice Reimu hesitating quite a bit as her shuddering hand clutches the 500 yen bill.
+	RETURN 1
+CASE "失敗報告時"
+	PRINTDATAL
+		DATAFORM 「Did you get lost? I find it hard to believe you couldn't handle this much.」
+		DATAFORM 「Was this request that insignificant that you decided to forget about it?」
+		DATAFORM 「Well... I guess I'll have to listen to Marisa complaining all day again.」
+		DATAFORM 「Maybe sending you off into unfamiliar territory was a mistake on my part.」
+	ENDDATA
+	RETURN 1
+	;IF !RESULT
+	;	PRINTFORML
+CASE "依頼報告不要"
+	
+	RETURN 0
+ENDSELECT
+
+;get 10 sake for a banquet
+@M_KOJO_IRAI_宴会用の酒_K1(ROLE, SCENE, CLIENT_ID)
+#DIMS ROLE     ;キャラの立場、依頼者かそうでないか
+#DIMS SCENE    ;セリフの表示されるタイミング
+#DIM  CLIENT_ID;依頼者IDだけ抜き出したもの
+;--------------------------------------------------
+;RETURN 0 の部分は共通の口上が表示されます
+;依頼ごとの口上を表示する部分は RETURN 0 を RETURN 1 にしてください
+;--------------------------------------------------
+SELECTCASE SCENE
+CASE "依頼提示時"
+	IF ONCE("Irai3Temp", 0, 1)
+		PRINTFORML 「Do you think you can deliver a number of bottles of sake to the upcoming banquet?」
+		PRINTFORML 「Unrefined sake, sake or strong Sake, any will do, but it needs to be sake specifically, the booze kind.」
+		PRINTFORML 「I know they're very expensive nowadays, but I'm not sure I can ask anybody else about this.」
+		PRINTFORML 「This will help make the banquet better, surely. And I will be very grateful for your kind contribution.」
+		PRINTFORML 「Will you get paid for this? I told you before, didn't I?」
+		PRINTFORML 「The shrine doesn't have much money, so we use our own funds for things like this.」
+	ELSE
+		IF RAND:2
+			PRINTFORML 「Please, could you deliver some sake bottles to the Hakurei Shrine?」
+			PRINTFORML 「Make sure to deliver them to me in one piece. You're my only deliveryman I can trust.」
+		ELSE
+			PRINTFORML 「Will you help me now? You're so good at running around, you know.」
+			PRINTFORML 「Any chance I could have extra drinks for the party?」
+		ENDIF
+	ENDIF
+	RETURN 1
+CASE "依頼非受託時"
+	PRINTDATAL
+		DATAFORM 「Hmph. I suppose it was a bit too naive of me.」
+		DATAFORM 「It's fine. It was starting to sound a bit unreasonable, I admit.」
+		DATAFORM 「Hmm... Okay, it's better that I know now that you can't do it than be disappointed later.」
+	ENDDATA
+	RETURN 1
+CASE "依頼受託時"
+	PRINTFORMDL Reimu smiles and says, 
+	PRINTFORMW 「Then I'm counting on you.」
+	RETURN 1
+CASE "依頼確認時"
+	PRINTFORML 「Once again, 10 bottles of sake of any kind.」
+	PRINTFORML 「Where can you get them? Well, buying for one could work. But that may get a bit too expensive, I wouldn't advise it.」
+	PRINTFORML 「You do have that Sake Bug though, right? You're very lucky. You can use it to churn out a ton of booze if you know how.」
+	PRINTFORML 「I suggest using Misty Lake water, or even Onsen's water, if you don't mind the quality of the output.」
+	RETURN 1
+CASE "依頼破棄時"
+	PRINTFORML 「Hmm... I see, that's tragic, really.」
+	PRINTFORML 「I'm not sure I have any contingency plans for this...」
+	PRINTFORML 「Perhaps we'll have to rely on our local drunkards bringing in their own stuff, and I'll be the one convincing them to share...」
+	PRINTFORMDL Reimu grips her gohei rod.
+	RETURN 1
+CASE "依頼実行直前"
+	
+	RETURN 0
+CASE "依頼実行直後"
+	
+	RETURN 0
+CASE "成功報告時"
+;報酬：
+	PRINTFORML 「Eight, nine, ten... Okay, that's all of them! All in excellent condition, no less.」
+	PRINTFORML 「Phew, you saved this party, really. I'm impressed. I didn't think you could do it.」
+	PRINTFORML 「Well, if everything goes as planned, you're always welcome to participate.」
+	PRINTFORML 「Just make sure you don't drink yourself silly while you're at it.」
+	IF TALENT:恋慕 && !(MARK:反発刻印 || CFLAG:ブチギレ)
+		PRINTFORML 「Oh, and here's a little something to sweeten the deal.」
+		CALL GetRandMaterial(1, 10000, 5000)
+		PRINTFORML 「I found it the other day, so I thought you could make use of it.」
+		PRINTFORML 「Oh, and, um... This, as well.」
+		PRINTFORMDL Reimu leans forward and places a gentle kiss on your cheek...
+	ENDIF
+	RETURN 1
+CASE "失敗報告時"
+	PRINTFORML 「...Hey, %CALLNAME:MASTER%. I still remember this little promise you've failed to fulfill.」
+	PRINTFORML 「Thanks to you, the guests were bored way too quickly, and I had to jump through hoops to keep everyone entertained.」
+	PRINTFORML 「Thankfully, when I told them that they ought to have fun, "or else", they seemed very enthusiastic about it, not sure why.」
+	PRINTFORML 「In any case, let me know in advance if you realize that you can't deliver your promise.」
+	PRINTFORML 「There's nothing worse than thinking I can still rely on you, while in reality you've already let me down.」
+	RETURN 1
+CASE "依頼報告不要"
+	
+	RETURN 0
+ENDSELECT

@@ -1,0 +1,43 @@
+﻿;easy way to add custom usable item
+@Add_UseItem(nItem, nTarget)
+#DIM nItem
+#DIM nTarget
+;return values: 3 - item use is cancelled, 1 - item is used, 2 - item is used and end of the day is triggered.
+SELECTCASE nItem
+	CASE 252 ;sleep pill
+		SIF nTarget != MASTER ;player only
+			RETURN 3
+		IF FLAG:70
+			PRINTFORMW Let's use it outside of Time Stop.
+			RETURN 3
+		ENDIF
+		IF CFLAG:MASTER:うふふ
+			PRINTFORMW Using this right now would be pretty bad...
+			RETURN 3
+		ENDIF
+		IF CFLAG:MASTER:現在位置 != CFLAG:MASTER:初期位置
+			PRINTFORMW Better drink this at your room.
+			RETURN 3
+		ENDIF
+		IF TALENT:MASTER:薬毒耐性 > 0 && ITEM:睡眠薬 < 3
+			PRINTFORMW You need more doses than this to have any effect on you... (3 pills minimum)
+			RETURN 3
+		ENDIF
+		PRINTFORMW You \@ TALENT:MASTER:薬毒耐性 ? gulp down a bunch of Sleep Pills # take some sleep medication\@ and quickly drift off into a deep slumber...
+		SIF TALENT:MASTER:薬毒耐性 ;one extra item is used when function ends
+			ITEM:睡眠薬 -= 2
+		RETURN 2
+ENDSELECT
+RETURN 0
+
+;set if item is enabled for use from item menu (com 490)
+;1 - player only, 2 - player&target, 0 - unavailable
+@Add_UsableItem(nItem)
+#FUNCTION
+#DIM nItem
+SELECTCASE nItem
+	CASE 252
+		RETURNF 1
+CASEELSE
+	RETURNF 0
+ENDSELECT

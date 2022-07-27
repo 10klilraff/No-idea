@@ -1,0 +1,1312 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;セクハラ系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;310,尻を撫でる
+;TFLAG:193(1=不快(TALENT:臆病なら涙目) 2&&3=恥ずかしがる(TALENT:男嫌い兼MASTERが男なら、身をすくめる) 4=されるがまま)
+;CFLAG:うふふ==2&&TCVAR:20(パンツ無し顔面騎乗(70=クンニ強制 71=フェラチオ強制 72=アナル奉仕) 35=スカート内見せつけ 52=素股)
+;CFLAG:うふふ==2&&TEQUIP:シックスナイン(パンツありTCVAR:20(70～72)はこちら)
+;PREVCOM(305=膝枕
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_310
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_310_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_310_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL Yuuka's plump butt feels heavenly to touch, a single stroke is enough to fill you with desire.
+		PRINTFORMDL Unable to control yourself any longer, you to fondle Yuuka's behind.
+		PRINTFORMDW Every time you do, Yuuka cannot even twitch let alone move her face, otherwise so \@TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲 || TALENT:68:思慕 ? blushing #contorted in discomfort\@, unable to resist...
+	ELSEIF CFLAG:睡眠
+		PRINTL
+		PRINTFORMDL You turn the sleeping Yuuka over, and caress her ass to your heart's content.
+		PRINTFORMW 「...Nnhu...?」
+		PRINTFORMDW The feeling of her soft and smooth skin never gets old...
+	ELSEIF CFLAG:うふふ == 2
+		SELECTCASE TCVAR:20
+			;アナル奉仕
+			CASE 72
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Haah, when you get so eager I...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORMW 「Do it gently, just like that...」
+				ENDSELECT
+			;スカートの中を見せる
+			CASE 35
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Ahhhn... You just want to touch it...?」
+					CASEELSE
+						PRINTFORM 「Fufu... What a naughty touch... I wonder if this is turning you on
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			;素股
+			CASE 52
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Anhh, it's difficult to move like this...」
+					CASEELSE
+						PRINTFORM 「Nnh, Ahhh... It can't be helped then...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			CASEELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Anhh, You're so rough...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORMW 「Nhhh... My ass, is it that fun to touch it...?」
+				ENDSELECT
+		ENDSELECT
+	ELSE
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲 || TALENT:68:思慕
+			SELECTCASE TFLAG:193
+				;不快
+				CASE 1
+					PRINTFORMW 「... Hey, stop that.」
+				;恥ずかしがる
+				CASE 2,3
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「W-Wait...! Don't touch me like that...」
+						CASEELSE
+							PRINTFORMW 「Hey... I'm only allowing this because it's you...」
+					ENDSELECT
+				;されるがまま
+				CASE 4
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「... Are you feeling horny...? There's no helping you...」
+						CASEELSE
+							PRINTFORM 「Haa... There's no point in doing something like t-..nhh
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+					ENDSELECT
+			ENDSELECT
+		ELSE
+			SELECTCASE TFLAG:193
+				;不快
+				CASE 1
+					PRINTFORML 「... What? You think I'd forgive you for doing something like this...?」
+					PRINTFORMDW Yuuka grabs ahold of your arm and glares at you...
+				;恥ずかしがる
+				CASE 2,3
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「Nhhh...! Hey stop it, you're making me angry...!」
+						CASEELSE
+							PRINTFORMW 「Haa, I never said you were allowed to get so over-familiar... What a pervert...」
+					ENDSELECT
+				;されるがまま
+				CASE 4
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「... Do you also do this to other girls...?」
+						CASEELSE
+							PRINTFORMW 「... I'll allow it this time... Nghh, Wait! The way you use your hands is so...」
+					ENDSELECT
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;311,抱き付く
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;CFLAG:うふふ==2&&TCVAR:20(32=前から抱きつく 60=ディープキス 73=ぱふぱふ 74=乳合わせ 77=乳を吸わせる ＶＡ性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ) 86=だいしゅきホールド)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_311
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_311_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_311_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL You hug Yuuka from the front, \@ TALENT:MASTER:性別 == 2 ? the softness and smell of her lewd body filling your entire body with lust. # enjoying her soft skin to your heart's content.\@
+		PRINTFORMDL Having such a beautiful face in front of you makes it impossible to control yourself.
+		PRINTFORMDW Yuuka doesn't look the least bit repulsed even though you're \@ BASE:MASTER:勃起 >= 1000 ? thrusting your erect cock against # fondling all of \@ her body while time is frozen...
+	ELSEIF CFLAG:睡眠
+		PRINTL 
+		PRINTFORMDL You hug the sleeping Yuuka and bury your face in her chest.
+		PRINTFORMDW Yuuka confuses your head with a pillow and hugs you back...
+	ELSEIF CFLAG:TARGET:添い寝中
+		PRINTFORMW 「Nnh... Shall we sleep like this...?」
+	ELSEIF CHK_DATENOW(CFLAG:MASTER:デート中)
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Hey... Just because no one is watching... How bold of you...」
+				CASEELSE
+					PRINTFORML 「Flirting like this, I really like it...」
+			ENDSELECT
+			PRINTFORMW 「Well, I...」
+		ELSEIF TALENT:68:思慕
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Unhh... You're getting too close...」
+				CASEELSE
+					PRINTFORMW （I wonder... I know this is a date but, how much can we do this before we've officially gone past the friend zone...?）
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Kyaaah!? Stop that...!」
+				CASEELSE
+					PRINTFORMW 「W-Wait a little, you're so sudden!」
+			ENDSELECT
+		ENDIF
+	ELSEIF CFLAG:うふふ == 2
+		SELECTCASE TCVAR:20
+			;前から抱きつく
+			CASE 32
+				IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲 || TALENT:68:思慕
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「... You are so affectionate...」
+						CASEELSE
+							PRINTFORMW 「Haaa... Whenever you do this, it helps me relax...」
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「Yaaah... We're not a couple so just... Nhh, don't hold me so tightly...」
+						CASEELSE
+							PRINTFORMW （... W-Why are you embracing me like this in the middle of sex...?）
+					ENDSELECT
+				ENDIF
+			;ディープキス
+			CASE 60
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Chuu, Nhh...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Haaa, Moreee, hug me more strongly...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM 「Chuu...nhaaa, Aaah...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Reroo, Juuphu, Chuu...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORML 」
+						PRINTFORM （Ahh, My head, I'm melting... Kiss me... Don't stop...
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORMW ）
+				ENDSELECT
+			;ぱふぱふ
+			CASE 73
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Haaah, Don't cling so tightly to me... Nhhh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM 「Nhh...～
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  You really seem to love my breasts...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			;乳合わせ
+			CASE 74
+				IF TALENT:MASTER:性別 == 2
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「\@ BASE:MASTER:勃起 >= 1000 ? Fufu, I'm touching your hard cock... I wonder, how long can you endure? # You seem to love this, being near my breasts gets you hard... Fufu \@」
+						CASEELSE
+							PRINTFORM 「What's wrong? It's just a hug... Fufu
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORM 「Nhh, does it feel good? This is the sort of thing only women can do...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+						CASEELSE
+							PRINTFORM 「Nhh, haa, ahh
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW Does it feel good?
+					ENDSELECT
+				ENDIF
+			;乳を吸わせる
+			CASE 77
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Ahaah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  You must be going crazy... You have such a silly expression
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM Nhaah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Ahhh, holding onto me in such a way, I wonder if you have any pride at all
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			;85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ
+			CASE 85,87,88,89
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Yaahhh, so hard
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Hyaaa, \@ NOWEX:68:Ｖ絶頂 || NOWEX:68:Ａ絶頂 ? I'm comiiing # W-Wait \@...～
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW !」
+					CASEELSE
+						PRINTFORM 「Nhh, ahh, haaah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM ! Khuu, moving as you like, how audacious...～
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORMW 」
+				ENDSELECT
+			;だいしゅきホールド
+			CASE 86
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Nhuu
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Darling, I love you, I love you so much
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORMW !」
+					CASEELSE
+						PRINTFORM 「Aaaaahh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM ! \@ TCVAR:PLAYER:コンドーム == 1 ? You're moving so deep inside me # T-Take it out, darling, pull out \@...～
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORMW !」
+				ENDSELECT
+			CASEELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Nhhh... What's the matter? Aroused? Fufu...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORMW 「Giving up already...?」
+				ENDSELECT
+		ENDSELECT
+	ELSE
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Fufu～ Embracing me so suddenly, what gives?」
+				CASEELSE
+					PRINTFORMW 「... It's gotten to the point where I yearn to feel your skin whenever I see you...」
+			ENDSELECT
+		ELSEIF TALENT:68:思慕
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Wait a second... Someone could see us...」
+				CASEELSE
+					PRINTFORMW （Ahh, this is embarrassing...! Being friends isn't an excuse to do something like this...!）
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Haah...\@ TALENT:MASTER:狐 || TALENT:MASTER:妖狐 || TALENT:MASTER:吸血鬼 ||TALENT:MASTER:動物耳 ? a person... # a human being... \@ What the? Why are you getting so close to me...?」
+				CASEELSE
+					PRINTFORMW 「\@ BASE:MASTER:勃起 >= 1000 ? W-Wai...t! I-Is that your penis touching me down there...!? # Uuugh, why do we have to do this?... It's so shameful... \@」
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;312,キスする
+;TFLAG:193(99=拒絶(キス不可) 1=大成功 0=成功 -1=失敗)
+;CFLAG:うふふ==2&&TCVAR:20(32=前から抱きつく 50=手淫 60=キス 性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ) 86=だいしゅきホールド)
+;PREVCOM(305=膝枕
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_312
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_312_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_312_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL Yuuka's lips are exceedingly soft, you lick them ceaselessly as you savor the texture.
+		PRINTFORMDW As you assault the lips of the great Youkai, you feel as if you have complete ownership over her lips...
+	ELSEIF CFLAG:睡眠
+		PRINTL 
+		PRINTFORMDL You lick the lips of the docile Yuuka as she sleeps.
+		PRINTFORMW 「...H...!? Haaa... Chuu...」
+		PRINTFORMDW In her current state, Yuuka isn't any different from a regular girl. You repeatedly kiss her, making loud noises in the process...
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTL 
+		PRINTFORMDL You press your lips against the drunk Yuuka's, she obediently submits to your tongue with a blushing face.
+		PRINTFORM 「Rero, jhuuh......
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  Eeroo, Reroo... Pwhaa
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORMW 」
+			PRINTFORML 「Such awful kisses... When I said kissing, I meant something like this.」
+			PRINTFORMDW The barely conscious Yuuka kisses you deeply not caring who you are...
+	;キス拒否
+	ELSEIF TFLAG:193 == 99
+		PRINTFORMW 「... Why are you approaching me so suddenly... I have a bad feeling about this.」
+	;初キス
+	ELSEIF EXP:68:キス経験 == 1
+		PRINTFORMW 「...Nhh!? ... \@ TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲 ? Slow down, idiot... # That was my first time, so I'll overlook it. \@」
+	ELSEIF CFLAG:TARGET:添い寝中
+		PRINTFORMW 「Chuu... Good night, darling...」
+	ELSEIF CHK_DATENOW(CFLAG:MASTER:デート中)
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Chuuu, Haa...unh...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW  Somehow, it feels like I'm in a dream whenever I'm with you...」
+				CASEELSE
+					PRINTFORM 「Haa... Move your tongue more, be rougher...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW  Nobody will come by...」
+			ENDSELECT
+		ELSEIF TALENT:68:思慕
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Nnh...!? Haah, Fuuu... Rerooo... Chu.」
+					PRINTFORMDW Yuuka seems somewhat surprised, but after seeing no one else is around, she begins moving her tongue more assertively...
+				CASEELSE
+					PRINTFORML 「Chuuu... Pwaaah, Nnhh...」
+					PRINTFORMW （Uuuhh... Since no one is watching us... Should I kiss \@ TALENT:MASTER:性別 == 2 ? him # her \@ deeper...?）
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Nnnh!? Chuuu... Haah, That was so sudden...! Seriously...」
+				CASEELSE
+					PRINTFORMW 「Nnha... Pwaah, don't kiss me like that, we're not a couple...!」
+			ENDSELECT
+		ENDIF
+	ELSEIF CFLAG:うふふ == 2
+		SELECTCASE TCVAR:20
+			;前から抱きつく
+			CASE 32
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Nhh...haa, When our faces are this close, I can't resist kissing you... Fufu～」
+					CASEELSE
+						PRINTFORM 「Chuuu... Kchiuuh, Chuu... Pwhaaa
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW  Doing this, \@ TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲 ? it shows we truly love each other # somehow, it feels as if we were lovers \@...」
+				ENDSELECT
+			;手淫
+			CASE 50
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「I wonder if this feels better while kissing? Fufu...」
+					CASEELSE
+						PRINTFORM 「Chuu, chu...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW  Ahha, I want all of you, I'm that greedy...」
+				ENDSELECT
+			;ディープキス
+			CASE 60
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Haa, Nchuu, Jiuuh～...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Hhaaah, Don't close your eyes...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM 「Haah... Chuu, Jhuphu, Chuuh, Rero, Ehro...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Pwaahh, nhh...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORML 」
+						PRINTFORM （It's just a kiss... Why am I getting so excited?...～
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW ）
+				ENDSELECT
+			;85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ
+			CASE 85,87,88,89
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Haa, I want to connect with you like this...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Chuu, nhhuh, nh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM 「I shall have you let me taste of your body...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Chuu, reroh...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			;だいしゅきホールド
+			CASE 86
+				IF TCVAR:PLAYER:12
+					PRINTFORM 「Nnh, Chuuph... Pwaah
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM  Ahhh, Your entire body, I will tease all of it...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+					PRINTFORM 「Very good... \@ TCVAR:PLAYER:コンドーム == 1 ? Let me see your face as you cum # Semennh, pour it all inside meeee \@...
+					CALL HEARTCB_K68(0xD02830,2)
+					PRINTFORMW !」
+				ELSE
+					PRINTFORM 「Chuupuh, Juuupuh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM  Haaah, haaaaah...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW  Want to do it more calmly...?」
+				ENDIF
+			CASEELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Chuu, nmu... Have you gotten a liking for this? Kchuu
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORMW 「Chuu... Fufu, it's important to kiss a lady gently～」
+				ENDSELECT
+		ENDSELECT
+	ELSE
+		;前回膝枕
+		IF PREVCOM == 305
+			IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+				PRINTFORMW 「Nmuuh!? ...Pwhaah, hey, you should act more submissively...」
+			ELSE
+				PRINTFORMW 「Nmuuh!? ...Pwhaah, wait! You are so sudden at times...」
+			ENDIF
+		ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Chuu... Nhh... Pwhaah, Your kisses are exceptionally sweet...」
+				CASEELSE
+					PRINTFORMW 「... Chuu, Reroh, Nhhh... Haa... Why does this arouse me so much...?」
+			ENDSELECT
+		ELSEIF TALENT:68:思慕
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Chuu... Nhaaah, Kchuu... Nhh...」
+					PRINTFORMW （Uuuhh... What a nice kiss, but still, \@ OUTROOF(CFLAG:68:現在位置) ? someone may have seen us # I can't forgive you so easily for that \@...!）
+				CASEELSE
+					PRINTFORML 「Nhh...! chuuph, rero... Ahh, Haah...」
+					PRINTFORMW 「We are kissing so lewdly, even though we aren't a couple...」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Nhh!? Chuu, H-Hey w-wait!! Nnhh... Yaah... Eeh...!」
+					PRINTFORMDW Despite angrily shouting at you for kissing her, she has a docile expression on her face.
+				CASEELSE
+					PRINTFORML 「Chuu, nnh...! Yahh, don't put your tongue inside my mouth...!」
+					PRINTFORMDW It seems she still can't fully agree to make out with you...
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;313,胸愛撫
+;CFLAG:うふふ==2&&TCVAR:20(27=谷間を見せる 33=胸を揉ませる 53=パイズリ(小分岐は地の文EVENT_MESSAGE_COM_セクハラ.ERB参照) 73=ぱふぱふ 77=乳を吸わせる 性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ) 86=だいしゅきホールド)
+;ABL:Ｂ感覚(2未満=性的には感じてない 5未満=多少感じてる 5以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;乳のサイズでも変わる場合があるので、地の文EVENT_MESSAGE_COM_セクハラ.ERB参照
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_313
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_313_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_313_1
+
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL You hold Yuuka huge tits with both hands and slowly massage them.
+		PRINTFORMDL The beautiful twin mounds in front of you are as soft as you imagined, and just touching them fills you with lust. 
+		PRINTFORMDW Yuuka stays completely still, even when you roughly squeeze her %OPPAI_DESCRIPTION_TR(TARGET)% and play with her nipples...
+	ELSEIF CFLAG:睡眠
+		PRINTL 
+		PRINTFORMDL You tightly grip the tits of the sleeping Yuuka, she's powerless and offers no resistance.
+		PRINTFORMW 「...Nhu...haaa...」
+		PRINTFORMDW When you grope her beautiful nipples with your finger, her body responds by contorting seductively in pleasure...
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL When you timidly reach for the chest of the dead drunk Yuuka, she opens one eye and stares right at you.
+		PRINTFORMW 「... Pervert.」
+		PRINTFORMDW Having said that, Yuuka closes her eye once more and falls asleep...
+	ELSEIF CFLAG:TARGET:添い寝中
+		PRINTFORMW 「Haa... You can't fall asleep unless you touch them...?」
+	ELSEIF CHK_DATENOW(CFLAG:MASTER:デート中)
+		;デート中は実行できません。残念
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Already?... You really love them.」
+				CASEELSE
+					PRINTFORMW 「Nhha... How about we do it after we finish this...?」
+			ENDSELECT
+		ELSEIF TALENT:68:思慕
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Nhaaanh...!? Haa, I really feel like slapping you whenever you grab me like this.」
+					PRINTFORMW 「Wait... Don't get carried away just because no one is watching...!」
+				CASEELSE
+					PRINTFORMW 「Haa... Did you think I would tolerate this type of behavior just because we are dating...?」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「W-What's wrong with you!?... Don't touch me so casually!」
+				CASEELSE
+					PRINTFORMW 「Nnh... Did you invite me all the way out here just to do this...?」
+			ENDSELECT
+		ENDIF
+	ELSEIF CFLAG:うふふ == 2
+		SELECTCASE TCVAR:20
+			;谷間を見せる
+			CASE 27
+				PRINTFORMW （Fufu, So easy to lure in...）
+			;胸を揉ませる
+			CASE 33
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Haaah...nn, That feels good...」
+					CASEELSE
+						PRINTFORMW 「Fufuh...anh, I wonder if this arouses you...」
+				ENDSELECT
+			;パイズリ
+			CASE 53
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Nhuuh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW  Haah, can't you resist my boobs...?」
+					CASEELSE
+						PRINTFORM 「Nh! Hey, don't obstruct me...! Nhuuh...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW !」
+				ENDSELECT
+			;ぱふぱふ
+			CASE 73
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Haaah...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Nhh, you really are obsessed with my breasts...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM 「Nnh...ahh. Hey, play with my nipples...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW !」
+				ENDSELECT
+			;乳合わせ
+			CASE 74
+				IF TALENT:MASTER:性別 == 2 
+					PRINTFORM 「Ufufu... Can't resist them any longer? You may touch them...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW 」
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORM 「Nhh, ahh, haah...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORML 」
+							PRINTFORM （That feels good, don't stop rubbing them...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW ）
+						CASEELSE
+							PRINTFORM 「Ahnn, ahh, haa, fuuuh
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORM  Haah, more, moreeeh...
+							CALL HEARTCB_K68(0xD02830)
+							PRINTFORMW 」
+					ENDSELECT
+				ENDIF
+			;乳を吸わせる
+			CASE 77
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Nhh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Haa, I really love the lewd way you suck them... Ahh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM 「Haah... My nipples, are they delicious? ...Nhh, Haah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Wait, you are sucking them too roughly...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			;85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ
+			CASE 85,87,88,89
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Haah, don't focus only on my breasts, move your waist more
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM 「Ahh, haaah, fuuh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  My breasts are irresistible after all 
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			;だいしゅきホールド
+			CASE 86
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM （Haa, seems you've finally learned your place... That feels good, keep it up
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW ）
+					CASEELSE
+						PRINTFORM 「Nhh...ahh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Yaahh, the way you are touching me, how naughty...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			CASEELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Nhh... How gentle... It feels so good...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM 「Haah, nhh...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW  So good, keep doing that...」
+				ENDSELECT
+		ENDSELECT
+	ELSE
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORM 「Nhh...uh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW  Fufu... Darling, I wonder if this excites you.」
+				CASE 1
+					PRINTFORMW 「Ahh... I really like this.」
+				CASEELSE
+					PRINTFORML 「Nnh... You're getting better at this...」
+					PRINTFORMW 「When you touch a lady's breasts, you do it gently...」
+			ENDSELECT
+		ELSEIF TALENT:68:思慕
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW 「Nnh...haa... If you were someone else, I'd have knocked you out already.」
+				CASE 1
+					PRINTFORMW 「Haa... You thought I would allow this behavior just because we've started dating...?」
+				CASEELSE
+					PRINTFORMW 「Yaaah...haa, doing something like this, are you having fun...?」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Nhhuh... You must have a death wish...」
+				CASE 1
+					PRINTFORMW 「W-What's wrong with you!?... Don't touch me so casually!」
+				CASEELSE
+					PRINTFORML 「Haah... Doing something like this, you truly are an idiot...」
+			ENDSELECT
+			PRINTFORMDW Despite resisting, some moans of pleasure bleeds into her complaints...
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;314,アナル愛撫
+;CFLAG:うふふ==2&&TCVAR:20(72=アナル奉仕
+;CFLAG:うふふ==2&&TEQUIP:シックスナイン(パンツありTCVAR:20(70～72)はこちら)
+;ABL:Ａ感覚(2未満=受け入れられない 4未満=異物感に翻弄 4以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_314
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_314_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_314_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL While time is stopped, Yuuka is completely unaware of the finger prodding her forbidden hole.
+		IF ABL:68:Ａ感覚 >= 3
+				PRINTFORMDW Her asshole has already become a weak point. You look forward to seeing how she will react once time resumes...
+			ELSE
+				PRINTFORMDW It would be amusing to train this part of her without her knowledge. You look forward to seeing how she will react once time resumes...
+		ENDIF
+	ELSEIF CFLAG:睡眠
+		PRINTL 
+		PRINTFORMDL Yuuka is completely defenseless as you toy with her butt.
+		PRINTFORMDW \@ ABL:68:Ａ感覚 >= 3 ? Thanks to her anal experience, it reacts to your fingers with delight. # She sleeps without noticing you developing her anus, offering no resistance as you move your fingers... \@
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL Yuuka is barely conscious as you move your finger back and forth inside her rectum.
+		IF ABL:68:Ａ感覚 >= 3
+			PRINTFORM 「Fwaa...ahh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORM  Nnhu...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW !?」
+			PRINTFORMDW Yuuka raises sweet moans, sensitively reacting to the fingers playing with her anus.
+		ELSE
+			PRINTFORMW 「Ahh...nhh!?」
+			PRINTFORMDW ... She'll likely get used to it sooner or later.
+		ENDIF
+	ELSEIF CFLAG:TARGET:添い寝中
+		
+	ELSEIF CFLAG:うふふ == 2
+		SELECTCASE TCVAR:20
+			;顔面騎乗アナル
+			CASE 72
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Hee, you're so rough... I wonder if you're enjoying this, Ksuuh.」
+					CASEELSE
+						PRINTFORMW 「Fufu... That's right, do it gently.」
+				ENDSELECT
+			CASEELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Nnh...uhh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW ! What the- that's too sudden...」
+					CASEELSE
+						PRINTFORM 「Hiyaaah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW  Nnhh, don't make me let out such strange sounds...」
+				ENDSELECT
+		ENDSELECT
+	ELSE
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Nhhah! No good, that place is...」
+				CASEELSE
+					PRINTFORM 「Hiyaaah
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW ! Yaaah, I can never fully suppress my voice...」
+			ENDSELECT
+		ELSEIF TALENT:68:思慕
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Nhhuh!? T-That is m-my, ahh...」
+				CASEELSE
+					PRINTFORML 「Hiiih! wait, stop th-haah...」
+			ENDSELECT
+			PRINTFORMDW Regardless of her protests, the anal pleasure causes Yuuka to lose strength, and eventually she leans on you.
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Kyaah!? D-Do not touch that place... Hiiih!」
+				CASEELSE
+					PRINTFORML 「Nooooo!? W-What are you doing!? ... You fool!」
+			ENDSELECT
+			PRINTFORMDW Despite blushing, Yuuka glares at you with an expression of disbelief.
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;315,クリ愛撫
+;CFLAG:うふふ==2&&TCVAR:20(35=スカートの中を見せる 70=クンニ強制 85=Ｖ挿入する 86=だいしゅきホールド 87=Ａ挿入する 88=腰振りＶ 89=腰振り
+;ABL:Ｃ感覚(4未満=くすぐったい 6未満=ちょっといいかも 6以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_315
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_315_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_315_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+		PRINTL 
+		IF TALENT:68:性別 == 1
+			PRINTFORMDL You reach out for Yuuka's crotch, and tease her lewd clit again and again.
+			PRINTFORMDW No matter how powerful a Youkai she is, while time is stopped, there's nothing she's able to do other than preparing her vagina for \@ TALENT:MASTER:性別 == 1 ? insertion #  your cock \@...
+		ELSE
+			PRINTFORMDL You reach out for Yuuka's crotch, and tease her obscene dick again and again.
+			PRINTFORMDW You can feel \@ BASE:68:勃起 >= 1000 ? her penis is completely erect, fully ready to ejaculate # how her penis gradually becomes harder as you touch it\@...
+		ENDIF
+	ELSEIF CFLAG:睡眠
+		PRINTL 
+		IF TALENT:68:性別 == 1
+			PRINTFORMDL You grab Yuuka's unprotected clitoris as she sleeps, teasing it thoroughly.
+			PRINTFORM 「...H...a...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDW Matching the rhythm of her breath, love juice slowly oozes from her pussy...
+		ELSE
+			PRINTFORMDL You grab Yuuka's unprotected penis as she sleeps, feeling it growing harder in your grip.
+			PRINTFORM 「...H...a...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDW Matching the rhythm of her breath, thin fluids ooze down her glans...
+		ENDIF
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL The raise the skirt of the wasted Yuuka that has fallen asleep and casually caress her \@ TALENT:68:性別 == 3 ? penis # clit \@.
+		PRINTFORM 「Nhh...? Ahh, fwaah...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORMW ?」
+		PRINTFORMDW She's completely unconscious, as pleasure starts boiling up between her legs...
+	ELSEIF CFLAG:TARGET:添い寝中
+		
+	ELSEIF CFLAG:うふふ == 2
+		SELECTCASE TCVAR:20
+			;スカートの中を見せる
+			CASE 35
+				PRINTFORM 「Nnh, haaa...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW  \@ PALAM:68:潤滑 >= PALAMLV:3 ? Your fingers are getting sullied by my love juice # Your fingers will get wet \@...」
+			;クンニ強制
+			CASE 70
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Anhh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW  I don't mind, please use your tongue as well...」
+					CASEELSE
+						PRINTFORMW 「Haah, what an excellent pet... Fufu, I should reward you.」
+				ENDSELECT
+			;85=Ｖ挿入する 86=だいしゅきホールド 87=Ａ挿入する 88=腰振りＶ 89=腰振り
+			CASE 85 TO 89
+				PRINTFORM 「Hiiyah, nhh
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM ! Haaah, touching there, simultaneously, it's not fair
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+			CASEELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Haaah... Nh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Stop it, don't get carried away... Innh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW !」
+					CASEELSE
+						PRINTFORM 「Nnn...ah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM ! Pinching my-...nhaah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+		ENDSELECT
+	ELSE
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Hiyaah, aah
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW  Hold on, my \@ TEQUIP:68:0 > 1 ? panties # legs \@ will get dirty...」
+				CASEELSE
+					PRINTFORM 「Nnhaa...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM  Uuuh, I feel so aroused...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW 」
+			ENDSELECT
+		ELSEIF TALENT:68:思慕
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Nnh! Hey, hold i-...iihhn! St-Stop i-ahhhhh...!」
+				CASEELSE
+					PRINTFORMW 「Hey! Hold it, seriously, \@ PALAM:68:潤滑 >= PALAMLV:3 ? If I get any more wet I'll # I'm getting completely soaked \@...!」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Hiih...nguuh, ahh!? You really are too insistent on caressing me...!」
+				CASEELSE
+					PRINTFORML 「Yaah...! To think someone like you, is making me feel... Nhuuu!」
+			ENDSELECT
+			PRINTFORMDW Yuuka makes interesting reactions whenever you \@ TALENT:68:性別 == 3 ? caress her penis # playfully pinch her clitoris \@. You play with it until she gets angry and shakes you off.
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;316,指挿入れ
+;CFLAG:うふふ==2&&TCVAR:20(35=スカートの中を見せる 70=クンニ強制 87=Ａ挿入する 89=腰振りＡ
+;TALENT:処女(指挿入れ連続時喪失注意、基本拒否ぎみ)
+;ABL:Ｖ感覚(1未満=違和感に戸惑う 5未満=ちょっと気持ちいい 5以上＝カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_316
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_316_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_316_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL Once Yuuka is wet enough, \@ PALAM:68:潤滑 >= PALAMLV:3 ? you insert your fingers inside her secret place, it accepts them without any difficulty. # you insert your fingers inside her secret place, it soon starts leaking love juices.\@
+		PRINTFORMDL Her beautiful body reacts to your movements, her warm pussy tightening around your fingers.
+		PRINTFORMDW \@ ABL:68:Ｖ感覚 >= 4 ?  You can't help but grin upon feeling her body surrendering to your fingers like a female animal. # Even such a dangerous Youkai is nothing more than a mere woman before your powers. \@
+	ELSEIF CFLAG:睡眠
+		PRINTL 
+		IF PALAM:68:潤滑 >= PALAMLV:3
+			PRINTFORMDL You insert your fingers inside Yuuka's wet pussy, sexual fluids ooze as it tightens around your fingers lasciviously.
+			PRINTFORM 「...Fwaa...nh...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDW Yuuka sleeps just like usual, not noticing your fingers inside her, or the sounds it produces...
+		ELSE
+			PRINTFORMDL You insert your fingers inside Yuuka's slit, and gradually, sexual fluids cover your fingers.
+			PRINTFORM 「...Fwaa...nh...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+			PRINTFORMDW Upon looking at your soaked fingers, the sticky sexual fluids give them a lewd luster....
+		ENDIF
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL When you inserted a finger inside the drunk Yuuka, her pussy strongly tightens around it.
+		PRINTFORMW 「...Guu...」
+		PRINTFORMDW Her body seems to unconsciously resist foreign objects... But it doesn't really work as intended...
+	ELSEIF CFLAG:TARGET:添い寝中
+		
+	ELSEIF CFLAG:うふふ == 2
+		SELECTCASE TCVAR:20
+			;スカートの中を見せる
+			CASE 35
+				PRINTFORM 「Nhaa...uhh
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM  Fuuu, haaa, haaa...～
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORMW 」
+			;クンニ強制
+			CASE 70
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Hiyaaah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW !? Haa, that surprised me... I never said you could touch there.」
+					CASEELSE
+						PRINTFORM 「Nh...uhh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM ! Hey, wait a moment...anh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			;87=Ａ挿入する 89=腰振りＡ
+			CASE 87,89
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Aah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM !? Wait, you finger, don't put it ins-...～
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW !」
+					CASEELSE
+						PRINTFORM 「Hiiih, ahhh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM ! Being touched in there... Haaah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+			CASEELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Kh... Huu
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  It's useless, I can't suppress my voice...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+					CASEELSE
+						PRINTFORM 「Haah... More, \@ PALAM:68:潤滑 >= PALAMLV:3 ? stir me up even more # my love juices are overflowing  \@...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW 」
+				ENDSELECT
+		ENDSELECT
+	ELSE
+		IF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「Nnh... Haa, As I thought, fingers aren't good enough...」
+				CASEELSE
+					PRINTFORMW 「Haah... What was I even expecting...?」
+			ENDSELECT
+		ELSEIF TALENT:68:思慕
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORMW 「W-Wait a moment...nh! Haah, don't put your fingers inside...!」
+				CASEELSE
+					PRINTFORML 「Yaah, ahhh...uhhh,uh～～h...!」
+					PRINTFORMDW Yuuka tries to suppress her lovely voice, \@ PALAM:68:潤滑 >= PALAMLV:3 ? your fingers fully soaked in love juices as you tease the insides of her vagina # love juices overflow from her vagina as you tease it \@.
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「What the!? What are you doing?... Hiih, don't insert your fingers...!」
+				CASEELSE
+					PRINTFORML 「Nhh, ughh... Haah、if you keep this up I'll get angry...!」
+			ENDSELECT
+			PRINTFORMDW Yuuka strongly grips your arm, but doesn't offer any resistance.
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;317,Ｖ腰を振る
+;ABL:Ｖ感覚(2未満=まだ気持ち良くない 5未満=ちょっと気持ちいい 5以上=カイカン
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_317
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_317_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_317_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	
+	ELSEIF CFLAG:睡眠
+	
+	ELSEIF CFLAG:TARGET:添い寝中
+		
+	ELSEIF CFLAG:うふふ == 2
+		SELECTCASE TFLAG:194
+			CASE 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Annh, Ah, Unhh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Haaah, More, Thrust harder
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORML 」
+					CASEELSE
+						PRINTFORM 「Ahh, Yaaanh, Fwaaah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  \@ TCVAR:PLAYER:12 ? Ahahah, I love your expression when you're about to cum, it's the best # More, move your hips as if your life depended on it... I want you to cum inside me \@
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORML 」
+				ENDSELECT
+				PRINTFORMDW Yuuka tightens her vagina so she can better taste your \@ TALENT:MASTER:形状 >= 5 ? large%" "% #  \@cock.
+			;激しく
+			CASE 1
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Yaah, Haaaaaaah
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORM ! So good. M-My head is feeling funny
+						CALL HEARTCB_K68(0xD02830,3)
+						PRINTFORML 」
+					CASEELSE
+						PRINTFORM 「Noooooooooo
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORM ! Wait, stop, heeey 
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORML !」
+				ENDSELECT
+				PRINTFORMDW \@ TALENT:MASTER:形状 >= 5 ? Yuuka's vagina is being gouged out by your large penis, it looks like she's about to lose consciousness # You violently thrust into Yuuka, her hair completely disheveled as she writes in pleasure. \@
+			;ねっとり
+			CASE 2
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Uuh...nh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Haaa...aanh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Ahhh, w-wait...ahh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORML !」
+					CASEELSE
+						PRINTFORM 「Haah
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM  Such weak waist movements, I can't afford to-...
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORML !」
+				ENDSELECT
+				PRINTFORMDW \@ TALENT:MASTER:形状 >= 5 ? Your long dick tortures Yuuka's uterus in short, tiny intervals # Yuuka releases a small moan every time your penis hits the entrance of her uterus. \@
+			;グラインド
+			CASE 3
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM 「Hiiih, iih
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM !? Wha-, this, is amazing
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORML !」
+					CASEELSE
+						PRINTFORM 「Ihh, Aahh
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORM ! M-My voice, I can't suppress it.
+						CALL HEARTCB_K68(0xD02830,2)
+						PRINTFORML 」
+				ENDSELECT
+				PRINTFORMDW \@ TALENT:MASTER:形状 >= 5 ? Yuuka is completely captivated by how you use your great cock. # The skillful movement of your waist completely dominates Yuuka. \@
+		ENDSELECT
+	ELSE
+	ENDIF
+ENDIF
+
+RETURN 1
+;==================================================
+;318,Ａ腰を振る（現状存在せず
+;==================================================
+;@M_KOJO_MESSAGE_COM_K68_318
+;CALL TRAIN_MESSAGE
+;CALL M_KOJO_MESSAGE_COM_K68_318_1
+;RETURN RESULT
+
+;@M_KOJO_MESSAGE_COM_K68_318_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+;LOCAL = 0
+;-------------------------------------------------
+;IF LOCAL
+
+;ENDIF
+;RETURN 1
+;==================================================
+;330,スカートめくり
+;TFLAG:193(-5=拒絶（ビンタ） -3=拒絶（つねり） -1=いやがる 0=いやがる（嬉しげ） 1=受け入れ)
+;TFLAG:193=1&&ABL:露出癖(5以上=人目のある場所で、自らスカートをまくり上げる 4以下=人目のある場所でめくられるさいに弱い抵抗 3以上=人目のない場所で自らスカートをまくり上げる 3未満=弱い抵抗)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;後ろからピラリ、ではなく、前からペラって感じ（そうじゃなかったら、めくり上げようとするのを止めて即座にビンタとか無理、めくり上げられた後にしかならないしその状況ならビンタ食らうより普通に弾幕で一発ＫＯにならないほうがおかしい
+;==================================================
+@M_KOJO_MESSAGE_COM_K68_330
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K68_330_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K68_330_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL Even though time is stopped, doing this to a Youkai makes you feel hesitant, or rather, it makes you feel fear.
+		PRINTFORMDL But at the same time, you think this a good chance to carefully observe her lower body, this isn't the body of an ordinary girl after all.
+		PRINTFORMDL Although her legs don't look particularly slender nor muscular, you feel certain toughness when you touch them.
+		PRINTFORMDW The absurd amount of strength such beautiful legs have... It makes you wonder. A kick from her would seriously hurt.
+	ELSE
+		SELECTCASE TFLAG:193
+			;ビンタ
+			CASE -5
+				PRINTFORMW 「... I am seriously considering killing you.」
+			;つねられる
+			CASE -3
+				PRINTFORMW 「... You're such a pervert.」
+			;嫌がる
+			CASE -1
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Doing this to me... Unbelievable.」
+					CASEELSE
+						PRINTFORMW 「Hey, don't get carried away!」
+				ENDSELECT
+			;嫌がる（嬉しげ）
+			CASE 0
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORMW 「Please, stop that already...」
+					CASEELSE
+						PRINTFORMW 「Uuuh, \@ TALENT:MASTER:体型 < 0 ? You are just the same as the obnoxious brats in the village # You're not a child \@...! Stop that already...」
+				ENDSELECT
+			;成功
+			CASE 1
+				IF GET_TARGETNUM() == 1 && !DATE_HITOGOMI(CFLAG:PLAYER:現在位置) && !WITH_MOB()
+					IF ABL:68:露出癖 > 3
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORM 「Haah, want to see? Fufu, if you'd really like to...
+								CALL HEARTCB_K68(0xD02830)
+								PRINTFORMW 」
+							CASEELSE
+								PRINTFORM 「Should I be feeling more ashamed? Maybe, but I'm doing this because of you...
+								CALL HEARTCB_K68(0xD02830)
+								PRINTFORMW 」 
+						ENDSELECT
+					ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「Kyaah!? Uuuuhn... Doing something like that...!」
+							CASEELSE
+								PRINTFORMW 「Ahh...! St-stop it p-please...」
+						ENDSELECT
+					ENDIF
+				ELSE
+					IF ABL:68:露出癖 > 5
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORM 「Darling look
+								CALL HEARTCB_K68(0xD02830)
+								PRINTFORM  Ufufu...
+								CALL HEARTCB_K68(0xD02830)
+								PRINTFORML 」
+							CASEELSE
+								PRINTFORM 「Shouldn't I feel ashamed? No, I'm doing this for you...
+								CALL HEARTCB_K68(0xD02830)
+								PRINTFORML 」
+						ENDSELECT
+						PRINTFORM （Ahhh, To do such naughty things in front of others, they must think I'm a perverted woman...
+						CALL HEARTCB_K68(0xD02830)
+						PRINTFORMW ）
+					ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMW 「What are you doing? You idiot! In such a place...!」
+							CASEELSE
+								PRINTFORMW 「Uuuuhh...! Wait, don't do that...!」
+						ENDSELECT
+					ENDIF
+				ENDIF
+		ENDSELECT
+	ENDIF
+ENDIF
+
+RETURN 1

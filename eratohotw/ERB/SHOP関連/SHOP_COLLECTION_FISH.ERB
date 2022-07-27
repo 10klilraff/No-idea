@@ -1,0 +1,189 @@
+﻿;-----------------------------------------------------------
+;釣った魚リストの表示
+;-----------------------------------------------------------
+@SHOW_COLLECTION_FISH
+#DIM 選んだ魚
+#DIM 全種数
+#DIM 釣った種数
+#DIM 釣った総数
+#DIM 最大サイズ
+#DIM 消去行数
+
+VARSET LOCAL
+全種数 = 0
+釣った種数 = 0
+釣った総数 = 0
+最大サイズ = 0
+消去行数 = 0
+
+CLEARLINE 1
+PRINTFORML List of fish caught so far.
+DRAWLINE
+FOR LOCAL, 1, 61
+	;魚が無名でない
+	IF FISH_NAME(LOCAL) != ""
+		全種数 ++
+		SIF LOCAL < 10
+			PRINTFORM  
+		IF FISH_EXP:(LOCAL)
+			釣った種数 ++
+			PRINTFORM [{LOCAL}] %CAPITALIZE(FISH_NAME_TR(LOCAL)), 28, LEFT%
+			SETCOLOR C_L_GRAY
+			PRINTFORM （Number of fish: 
+			SELECTCASE FISH_EXP:LOCAL
+				CASE IS < 10
+					PRINTFORM     
+				CASE IS < 100
+					PRINTFORM    
+				CASE IS < 1000
+					PRINTFORM   
+				CASE IS < 10000
+					PRINTFORM  
+			ENDSELECT
+			釣った総数 += FISH_EXP:LOCAL
+			PRINTFORM {FISH_EXP:LOCAL}／Largest fish: 
+			SELECTCASE FISHSIZE_RECORD:LOCAL
+				CASE IS < 10
+					PRINTFORM   
+				CASE IS < 100
+					PRINTFORM  
+			ENDSELECT
+			PRINTFORML {FISHSIZE_RECORD:LOCAL}cm ）
+			SIF FISHSIZE_RECORD:LOCAL > 最大サイズ
+				最大サイズ = FISHSIZE_RECORD:LOCAL
+		ELSE
+			PRINTFORML [{LOCAL}] ????????????
+		ENDIF
+	ENDIF
+	RESETCOLOR
+NEXT
+SETCOLOR 0x00FF00
+PRINTFORM Type of fish caught: {釣った種数}／{全種数}
+IF 釣った総数
+	PRINTFORML 　Total number of fish caught: {釣った総数}　Largest fish caught: {最大サイズ}cm
+ELSE
+	PRINTL 
+ENDIF
+RESETCOLOR
+DRAWLINE
+PRINT [0] - Return
+
+$LOOP
+INPUT
+
+選んだ魚 = RESULT
+SELECTCASE 選んだ魚
+	CASE 1 TO 60
+		IF FISH_NAME(選んだ魚) != ""
+			CLEARLINE 1
+			CALL PRINT_FISHINFO(選んだ魚)
+			IF FISH_EXP:選んだ魚
+				消去行数 = 9
+			ELSE
+				消去行数 = 2
+			ENDIF
+			CLEARLINE 消去行数
+			GOTO LOOP
+		ELSE
+			CLEARLINE 1
+			GOTO LOOP
+		ENDIF
+	CASE 0
+		RETURN
+	CASEELSE
+		CLEARLINE 1
+		GOTO LOOP
+ENDSELECT
+
+;-----------------------------------------------------------
+;選択した魚の説明／ヒント表記
+;ARG …選んだ魚番号
+;-----------------------------------------------------------
+@PRINT_FISHINFO(ARG)
+
+DRAWLINE
+IF FISH_EXP:ARG
+	PRINTPLAINFORM [{ARG}] %CAPITALIZE(FISH_NAME_TR(ARG))%
+	PRINTFORML （Number of fish: {FISH_EXP:ARG}／Largest size: {FISHSIZE_RECORD:ARG}cm ）
+	IF ABL:MASTER:教養 < 3
+		CALL COLORMESSAGE(@"　　（Increase Knowledge Lv to see fishing areas and seasons...）",C_L_GRAY,1)
+	ELSE
+		CALL FISHING_HINT(ARG)
+	ENDIF
+	CALL FISHING_EXPLANATION(ARG)
+ELSE
+	PRINTPLAINFORM [{ARG}] ?????????????
+	CALL FISHING_HINT(ARG)
+ENDIF
+WAIT
+
+;-----------------------------------------------------------
+;選択した魚のヒント文
+;ARG …選んだ魚番号
+;-----------------------------------------------------------
+@FISHING_HINT(ARG)
+
+SELECTCASE ARG
+	CASE 1 ;ウグイ
+		PRINTFORML 　　Genbu Ravine,  Waterfall of Nine Heavens,  Mountain Lake　Difficulty - ★
+	CASE 2 ;アマゴ
+		PRINTFORML 　　Genbu Ravine,  Waterfall of Nine Heavens　Difficulty - ★★
+	CASE 3 ;ヤマメちゃん
+		PRINTFORML 　　Genbu Ravine,  Waterfall of Nine Heavens　Difficulty - ★★★
+	CASE 4 ;イワナ
+		PRINTFORML 　　Genbu Ravine,  Waterfall of Nine Heavens　Difficulty - ★★★
+	CASE 5 ;アブラハヤ
+		PRINTFORML 　　Misty Lake,  Giant Toad's Pond　Difficulty - ★
+	CASE 6 ;オイカワ
+		PRINTFORML 　　Sanzu River,  Deep Road to Hell, Junko Residence Courtyard　Difficulty - ★
+	CASE 7 ;フナ
+		PRINTFORML 　　Sanzu River,  Mountain Lake　Difficulty - ★★
+	CASE 8 ;ピラニア
+		PRINTFORML 　　Deep Road to Hell, Junko Residence Courtyard　Difficulty - ★★
+	CASE 9 ;ガーパイク
+		PRINTFORML 　　Deep Road to Hell　Difficulty - ★★★
+	CASE 10 ;ブルーギル
+		PRINTFORML 　　Misty Lake,  Mountain Lake　Difficulty - ★★★
+	CASE 11 ;サケ
+		PRINTFORML 　　Genbu Ravine,  Waterfall of Nine Heavens　During Autumn　Difficulty - ★★★★
+	CASE 12 ;ワカサギ
+		PRINTFORML 　　Misty Lake,  Genbu Ravine,  Waterfall of Nine Heavens,  Giant Toad's Pond,  Mountain Lake　During Winter　Difficulty - ★★★★
+	CASE 13 ;ニジマス
+		PRINTFORML 　　Genbu Ravine,  Waterfall of Nine Heavens　During Spring and Summer　Difficulty - ★★★★
+	CASE 14 ;ヤツメウナギ
+		PRINTFORML 　　Genbu Ravine,  Waterfall of Nine Heavens　Difficulty - ★★★★
+	CASE 15 ;カムルチー
+		PRINTFORML 　　Genbu Ravine　Difficulty - ★★★★★
+	CASE 16 ;カジカ
+		PRINTFORML 　　Misty Lake,  Sanzu River,  Mountain Lake　Difficulty - ★★★
+	CASE 17 ;アユ
+		PRINTFORML 　　Sanzu River,  Deep Road to Hell, Junko Residence Courtyard　During Spring and Summer　Difficulty - ★★★
+	CASE 18 ;ナマズ
+		PRINTFORML 　　Misty Lake,  Mountain Lake　From Spring to Autumn　Difficulty - ★★★★
+	CASE 19 ;ウナギ
+		PRINTFORML 　　Sanzu River,  Deep Road to Hell, Junko Residence Courtyard　Difficulty - ★★★★
+	CASE 20 ;ヒメマス
+		PRINTFORML 　　Misty Lake　Difficulty - ★★★★
+	CASE 22 ;コイ
+		PRINTFORML 　　Sanzu River,  Giant Toad's Pond,  Mountain Lake, Junko Residence Courtyard　Difficulty - ★★★★
+	CASE 23 ;シーラカンス
+		PRINTFORML 　　Sanzu River　Difficulty - ★★★★★
+	CASE 24 ;チョウザメ
+		PRINTFORML 　　Deep Road to Hell　Difficulty - ★★★★
+	CASE 25 ;クニマス
+		PRINTFORML 　　Misty Lake　Difficulty - ★★★★★
+	CASE 26 ;ソウギョ
+		PRINTFORML 　　Sanzu River　Difficulty - ★★★★★
+	CASE 27 ;ヘラブナ
+		PRINTFORML 　　Giant Toad's Pond　Difficulty - ★★★★★
+	CASE 28 ;イトウ
+		PRINTFORML 　　Waterfall of Nine Heavens　Difficulty - ★★★★★
+	CASE 29 ;オオクチバス
+		PRINTFORML 　　Mountain Lake　Difficulty - ★★★★★
+	CASE 30 ;ピラルクー
+		PRINTFORML 　　Deep Road to Hell　Difficulty - ★★★★★
+	CASE 31; タキタロウ
+		PRINTFORML 　　Misty Lake　Rumored to only appear on nights under a new moon　Difficulty - EXTREAM!!
+	CASE 32;アオウオ
+		PRINTFORML 　　Junko Residence Courtyard　Difficulty - ★★★★★
+ENDSELECT

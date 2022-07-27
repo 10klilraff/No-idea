@@ -1,0 +1,62 @@
+﻿@DAILY_CONDITION_EV2
+;21/06/25,有意義な射し方した時夢精イベント起こらないように変更
+IF !RAND:10 && TALENT:MASTER:濃厚精液 && HAS_PENIS(MASTER) && BASE:MASTER:精力 == MAXBASE:MASTER:精力;←ここに発生条件を入れよう　例として30分の1にしてるけど適当に変えてね
+	CALL DAILY_EV2
+	RETURN 1
+ELSE
+	RETURN -1
+ENDIF
+
+@DAILY_EV2
+#DIM CHARA
+PRINTFORML %PARSE("You wake")% up in the middle of the night from a pleasurable feeling.
+PRINTFORMW %PARSE("Your",1)% crotch feels rather warm...
+PRINTFORML !!!! %PARSE("You",1)% had a wet dream!
+PRINTFORMW %PARSE("You")% deeply %PARSE("regret")% not spending it in a more meaningful way...
+PRINTL 
+FLAG:71 = 0
+TALENT:MASTER:120 = 0
+BASE:MASTER:精力 -= 500
+EXP:MASTER:射精経験 ++
+IF RAND:10 == 0 && ITEM:ミラダの石 == 0
+	PRINTFORML %BREAKENG(@"Because of the miraculous combination of temperature, wind direction, humidity, air pressure, day of the week, lunar days, planetary alignment etc. something impossible has occurred.")%
+	FONTBOLD
+	PRINTFORM %PARSE("Your")% semen crystallizes, and forms a 
+	CALL COLORMESSAGE("Stone of Mirada that Monopolizes Lust", C_D_PINK, 0, 1)
+	PRINTFORMW !
+	FONTREGULAR
+	CALL GET_ITEM("ミラダの石", 1, 1)
+	RETURN 1
+ENDIF
+CALL FISHER_YATES_SHAFFLE(CHARANUM)
+VARSET LOCAL
+FOR LOCAL, 1, CHARANUM
+	CHARA = SHAFFLE_ARRAY:LOCAL
+	;対象があなた
+	SIF CHARA == MASTER
+		CONTINUE
+	;でてこない
+	SIF CFLAG:CHARA:出禁
+		CONTINUE
+	;拠点キャラではない
+	SIF !CFLAG:CHARA:神社在住
+		CONTINUE
+	;同じエリア内に住んでいない
+	SIF MAP_AREASELECT(MAIN_MAP, CFLAG:MASTER:初期位置) != MAP_AREASELECT(MAIN_MAP, CFLAG:CHARA:初期位置)
+		CONTINUE
+	LOCAL:1 = CHARA
+	BREAK
+NEXT
+SIF LOCAL:1 <= 0
+	RETURN
+
+CALL KOJO_MESSAGE_SEND("DAILY", 2, LOCAL:1)
+
+@DAILY_MESSAGE_2(ARG, ARG:1, ARG:2, ARG:3, ARGS:1, ARGS:2, ARGS:3)
+PRINTFORMDL As %PARSE("you are")% washing %PARSE("your",1)% soiled underwear, %CALLNAME:ARG% comes flying by!
+PRINTFORMDW %HE_SHE(ARG,1)% protests against %PARSE("your")% underwear getting washed with the other laundry and snatches it from %PARSE("your",1)% hands...
+JUEL:ARG:11 += 1000
+PRINTFORMDW %CALLNAME:ARG%　Desire Gems＋1000
+PRINTL
+RETURN 1
+

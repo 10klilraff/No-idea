@@ -1,0 +1,345 @@
+﻿
+;FileName_SHOP.ERB -------------------------------- Rev1.00
+;RESULT_104(設定) 処理
+;CALL		SYSTEM
+;ARG		VOID
+;RETURN		VOID
+;COMMENT	
+;----------------------------------------------------------
+@SCHEDULE
+;custom code
+#DIM nLineCnt_Head
+nLineCnt_Head = LINECOUNT
+DO
+
+SIF LINECOUNT - nLineCnt_Head > 0
+	CLEARLINE LINECOUNT - nLineCnt_Head
+PRINTFORML [ 0] - Set wake up time (Currently: %時刻表示(TIME:3)%)
+PRINTFORML [ 1] - Change Sleeping Quarters (Currently: %NAME_FROM_PLACE(CFLAG:MASTER:初期位置)%\@ 拠点_大家 ? , Landlord: %CALLNAME:拠点_大家%#\@)
+;SIF FLAG:住み込みキャラ== 0
+;	PRINTL [2] - 住み込み
+PRINTFORML [ 4] - Side Job (Currently：\@ FLAG:内職 ? On # Off \@)
+PRINTFORML [ 5] - Change %CALLNAME:MASTER%'s name
+PRINTFORML [ 6] - Move the jar with the sake bug (Currently: \@ !MAIN_MAP ? %STR_TR(拠点_酒虫)% # %STR_TR(拠点_酒虫 + 8000)% \@)
+SIF ITEM:祭壇
+	PRINTFORML [ 7] - Automatic prayer for love (Current target: \@ FLAG:自動縁結び ? %CALLNAME:(FLAG:自動縁結び)%# N/A\@)
+;custom code (plus below)
+PRINTFORML [98] - Change【Follow】Target（Currently: \@ STALKED ? %CALLNAME:STALKED% # None\@）
+;#;PRINTFORML [-99] - Debug function for calling stuff
+PRINTL [100] - Return
+INPUT
+IF RESULT == 100
+	RETURN 0
+ELSEIF RESULT == 0
+	CALL 起床時間設定()
+ELSEIF RESULT == 1
+	CALL 恋慕ルーム
+ELSEIF RESULT == 4
+	FLAG:内職 = !FLAG:内職
+	IF FLAG:内職
+		PRINTFORMW After going to bed, remaining TSP will be spent on a side job.
+	ELSE
+		PRINTFORMW Side job has been turned off.
+	ENDIF
+ELSEIF RESULT == 5
+	CALL NAME_CUSTOM(MASTER)
+ELSEIF RESULT == 6
+	CALL 酒虫引っ越し
+ELSEIF RESULT == 7 && ITEM:祭壇
+	CALL AUTO_ENMUSUBI
+ELSEIF RESULT == 98 ;custom code
+	CALL STALKER_CHANGE
+ELSEIF RESULT == -99
+	;この項目ではなく
+	;@TEST_動作テスト用の中身をいじって下さいね
+	;#; CALL TEST_動作テスト用
+ENDIF
+
+LOOP 1
+
+[SKIPSTART]
+関数の動作テスト用
+PRINTFORMをコピペすれば口上表示時のウェイトの頻度調整程度の用途には使える
+注意点
+・使用できるタイミングが限られる（ので、判定内容によっては挙動が変わる）
+・CFLAGの操作などを行った場合にはセーブせずにそのままEmueraを終了したほうが無難
+・使い終わったら白紙に戻しておきましょう
+[SKIPEND]
+@TEST_動作テスト用
+;好きに書け
+
+[SKIPSTART]
+;さんぷる構文、夢精イベントの動作テスト
+DO
+	PRINTFORMW てすと待機中
+	CALL DAILY_EV2
+LOOP 1
+[SKIPEND]
+
+
+@酒虫引っ越し
+#DIMS 引っ越し先名称
+#DIM 引っ越し先地点
+PRINTFORML Please select a new location.
+
+FOR LOCAL,1,100
+	IF ROOMDATA:LOCAL & 場所_厨房
+		IF MAIN_MAP == 0
+			;Custom code
+			LOCALS = %STR_TR(LOCAL,1,1)%
+		ELSE
+			;Custom code
+			LOCALS = %STR_TR(LOCAL + 8000 + MAIN_MAP * 100,1,1)%
+		ENDIF
+		IF LOCAL == 拠点_酒虫 % 100
+			SETCOLOR C_AQUA
+		ELSEIF PRIVATEROOM:LOCAL && !TALENT:(PRIVATEROOM:LOCAL):恋慕
+			SETCOLOR 100, 100, 100
+		ENDIF
+		PRINTFORML [{LOCAL}] %LOCALS%
+		RESETCOLOR
+	ENDIF
+NEXT
+DRAWLINE
+PRINTFORML [100] Never mind
+INPUT
+IF INRANGE(RESULT,1,99) && ROOMDATA:RESULT & 場所_厨房
+	IF PRIVATEROOM:RESULT && !TALENT:(PRIVATEROOM:RESULT):恋慕
+		PRINTFORMW It will be a bit too awkward to put it there.
+		RESTART
+	ENDIF
+	引っ越し先地点 = RESULT
+	IF MAIN_MAP == 0
+		;Custom code
+		引っ越し先名称 = %STR_TR(引っ越し先地点,1)%
+	ELSE
+		;Custom code
+		引っ越し先名称 = %STR_TR(引っ越し先地点 + 8000 + MAIN_MAP * 100,1)%
+		引っ越し先地点 += MAIN_MAP * 100
+	ENDIF
+	
+	PRINTFORML %PARSE("You decide")% to carry the jar to %引っ越し先名称%.
+	PRINTFORML Carrying the jar is pretty hard work...
+	CALL COLORMESSAGE(@"The sake bug is moved to %引っ越し先名称%",C_YELLOW,2)
+	拠点_酒虫 = 引っ越し先地点
+ENDIF
+
+;時間(ARG)に起床する場合どれだけ睡眠するかを算出
+@睡眠時間予測(ARG)
+#FUNCTION
+LOCAL = CFLAG:MASTER:就寝時間 - DAY * 1440
+IF ARG >= LOCAL
+	RETURNF ARG - LOCAL
+ELSE
+	RETURNF 1440 + ARG - LOCAL
+ENDIF
+
+@AUTO_ENMUSUBI
+PRINTFORML With this, characters will be prayed for before going to bed unless they were prayed for during the day. 
+PRINTFORML Please select a target.
+FOR LOCAL,1,CHARANUM
+	SIF TALENT:LOCAL:行きずり
+		CONTINUE
+	SIF CFLAG:LOCAL:出禁
+		CONTINUE
+	SIF FLAG:自動縁結び == LOCAL
+		SETCOLOR C_YELLOW
+	PRINTFORMLC [{LOCAL}] %CALLNAME:LOCAL%
+	RESETCOLOR
+NEXT
+PRINTFORML 
+DRAWLINE
+PRINTFORML [999] Return
+INPUT
+IF RESULT == 999
+	FLAG:自動縁結び = 0
+ELSEIF INRANGE(RESULT,1,CHARANUM)
+	FLAG:自動縁結び = RESULT
+ENDIF
+
+@最低睡眠時間設定
+TIME:3 = (CFLAG:MASTER:就寝時間 - DAY * 1440) + 240
+SIF TIME:3 >= 1440
+	TIME:3 -= 1440
+SIF TIME:3 < 0
+	TIME:3 = 0
+
+@起床時間設定
+#DIM 同居人
+#DIM 前日就寝時間
+前日就寝時間 = CFLAG:MASTER:就寝時間 - DAY * 1440
+同居人 = 0
+FOR LOCAL,1,CHARANUM
+	IF CFLAG:LOCAL:初期位置 == CFLAG:MASTER:初期位置
+		同居人 = LOCAL
+		BREAK
+	ENDIF
+NEXT
+DO
+	PRINTFORML When should the alarm go off? (Went to bed at: %時刻表示(前日就寝時間)%) (Time slept: {睡眠時間予測(TIME:3) / 60}:{睡眠時間予測(TIME:3) % 60})
+	PRINTBUTTON "┏━ △ ", 60
+	PRINTBUTTON "━△", 10
+	PRINTBUTTON "△━┓", 1
+	PRINTL 
+	PRINT ┃　
+	SIF TIME:3 < 600
+		PRINT ０
+	PRINTFORM %TOFULL(TOSTR(TIME:3 / 60))%：
+	SIF TIME:3 % 60 < 10
+		PRINT ０
+	PRINTFORM %TOFULL(TOSTR(TIME:3 % 60))%　
+	PRINTBUTTON "□", 5555
+	PRINTL 
+	PRINTBUTTON "┗━ ▽ ", -60
+	PRINTBUTTON "━▽", -10
+	PRINTBUTTON "▽━┛", -1
+	PRINTL 
+	SIF 同居人 < CHARANUM && 同居人
+		PRINTFORM [2222] - Same as %CALLNAME:同居人%
+	PRINTL 
+	PRINT [3333] - Calendar
+	PRINT 　
+	PRINTL [4444] - Direct input
+	IF 睡眠時間予測(TIME:3) < 240
+		PRINTFORM [5555] - 
+		CALL COLORMESSAGE("At least 4 hours of sleep is needed", C_ORANGE, 1)
+	ELSE
+		PRINTFORML [{0,4}] - Done
+	ENDIF
+	INPUT
+	IF RESULT == 0 && 睡眠時間予測(TIME:3) >= 240
+		PRINTFORM The alarm is now set at 
+		CALL COLORMESSAGE(@"%時刻表示(TIME:3)%", C_YELLOW)
+		PRINTFORMW .
+		RETURN 1
+	ELSEIF RESULT == 2222 && 同居人 < CHARANUM && 同居人
+		TIME:3 = CFLAG:同居人:起床時間
+	ELSEIF RESULT == 3333
+		CALL カレンダー()
+	ELSEIF RESULT == 4444
+		CALL 起床時間入力()
+	ELSEIF RESULT == 5555
+		CALL 最低睡眠時間設定()
+	ELSEIF INRANGE(RESULT, -1360, 1360)
+		TIME:3 += RESULT
+		IF TIME:3 >= 1440
+			TIME:3 -= 1440
+		ELSEIF TIME:3 < 0
+			TIME:3 += 1440
+		ENDIF
+		CLEARLINE 8
+	ENDIF
+LOOP 1
+[SKIPSTART]
+	;前のがいいってなったらこっちを戻して
+	VARSET LOCAL
+	FOR LOCAL, 0, 24
+		IF 睡眠時間予測(LOCAL * 60) < 240
+			SETCOLOR 50, 50, 50
+			PRINTPLAINFORM [{LOCAL, 2}]
+		ELSE
+			SIF TIME:3 == LOCAL * 60
+				SETCOLOR C_AQUA
+			PRINTFORM [{LOCAL, 2}]
+		ENDIF
+		RESETCOLOR
+		SIF LOCAL % 12 == 11
+			PRINTL 
+	NEXT
+	IF 同居人 < CHARANUM && 同居人
+		LOCAL:1 = CFLAG:同居人:起床時間 / 60
+		DRAWLINE
+		PRINTFORML [{LOCAL:1, 2}] - 同居中の%CALLNAME:同居人%の起床時間
+	ENDIF
+	$INPUT_LOOP
+	INPUT
+	SIF RESULT < 0 || RESULT > 23 || 睡眠時間予測(RESULT * 60) < 240
+		GOTO INPUT_LOOP
+	TIME:3 = RESULT * 60
+	PRINTFORM 目覚ましを
+	CALL COLORMESSAGE(@"%時刻表示(TIME:3)%", C_YELLOW)
+	PRINTFORMW に設定しました。（{睡眠時間予測(TIME:3) / 60}時間{睡眠時間予測(TIME:3) % 60}分寝ます）
+[SKIPEND]
+;;------------------------------------------------------------
+;;案２　睡眠時間を直接指定する方法、起床時間を自動で設定してくれる
+;	$INPUT_LOOP_0
+;	PRINTL 最低でも4時間は寝る必要があり、12時間以上は自然に目が醒めてしまいます
+;	PRINTFORML 何時間寝ますか？(4~12を入力してください)(8時間が平均的な睡眠時間です)
+;	$INPUT_LOOP_1
+;	INPUT
+;	SIF RESULT < 4 || RESULT > 12
+;		GOTO INPUT_LOOP_1
+;	TIME:3 = ((LOCAL:1 / 60) + RESULT) * 60
+;	SIF (LOCAL:1 % 60)
+;		TIME:3 += 60
+;	SIF TIME:3 >= 1440
+;		TIME:3 -= 1440
+;	PRINTFORML 起床時間は（%時刻表示(TIME:3)%）になります
+;	PRINTL よろしいですか？
+;	PRINTL  [0] はい
+;	PRINTL  [1] いいえ
+;	$INPUT_LOOP_2
+;	INPUT
+;	IF RESULT == 0
+;		PRINTFORMW 起床時間を（%時刻表示(TIME:3)%）に設定しました
+;	ELSEIF RESULT == 1
+;		GOTO INPUT_LOOP_0
+;	ELSE
+;		GOTO INPUT_LOOP_2
+;	ENDIF
+
+@起床時間入力
+#DIM 時間
+#DIM 分数
+PRINTL Input when the alarm is supposed to go off in hhmm format (hh is 0-23, mm is 0-59, enter outside this range to cancel).
+PRINTL [2400] - Cancel
+INPUT
+時間 = RESULT / 100
+分数 = RESULT % 100
+IF 0 <= 時間 && 時間 < 24 && 0 <= 分数 && 分数 < 60
+	TIME:3 = 時間 * 60 + 分数
+	PRINT The alarm has now been set to go off at 
+	CALL COLORMESSAGE(@"%時刻表示(TIME:3)%", C_YELLOW)
+	PRINTFORMW .
+ENDIF
+
+@恋慕ルーム
+;qol custom code, replace with QoL_LiveIn.ERB
+CALL 恋慕ルーム_TR
+	RETURN RESULT
+DRAWLINE
+PRINTL Here it's possible to change one's quarters.
+SIF CFLAG:MASTER:初期位置 == デフォルト初期位置
+	SETCOLOR C_AQUA
+PRINTFORML [  0] - %NAME_FROM_PLACE(デフォルト初期位置)%（デフォルト）
+RESETCOLOR
+FOR LOCAL, 1, CHARANUM
+	SIF !CFLAG:LOCAL:神社在住
+		CONTINUE
+	SIF CFLAG:MASTER:初期位置 == CFLAG:LOCAL:初期位置
+		SETCOLOR C_AQUA
+	SIF IS_LOVER(LOCAL)
+		PRINTFORML [{LOCAL, 3}] - %NAME_FROM_PLACE(CFLAG:LOCAL:初期位置)%
+	RESETCOLOR
+NEXT
+DRAWLINE
+PRINTFORML [999] - Cancel
+INPUT
+IF RESULT == 999
+	RETURN
+ELSEIF RESULT == 0
+	;初期あなた私室
+	CFLAG:MASTER:初期位置 = デフォルト初期位置
+	PRINTFORML Set to %NAME_FROM_PLACE(CFLAG:MASTER:初期位置)%.
+	PRINTFORMW Changes will take effect tomorrow.
+	RETURN
+ELSEIF RESULT == [[針妙丸]] && TALENT:MASTER:体型 >= -4 && IS_LOVER(RESULT)
+	PRINTFORMW Impossible to live together since %PARSE("you are")% not an inchling.
+ELSEIF IS_LOVER(RESULT) && CFLAG:RESULT:神社在住
+	CFLAG:MASTER:初期位置 = CFLAG:RESULT:初期位置
+	CALL KOJO_MESSAGE_SEND("EVENT", 19, RESULT, 3, 0)
+	PRINTFORML Set to %NAME_FROM_PLACE(CFLAG:MASTER:初期位置)%.
+	PRINTFORMW Changes will take effect tomorrow.
+	RETURN
+ENDIF
+RESTART

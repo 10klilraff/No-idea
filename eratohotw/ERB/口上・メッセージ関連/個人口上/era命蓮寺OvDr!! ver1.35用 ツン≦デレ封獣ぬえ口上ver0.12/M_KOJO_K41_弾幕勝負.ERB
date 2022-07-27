@@ -1,0 +1,236 @@
+﻿;==================================================
+;弾幕勝負 added
+;==================================================
+;
+@M_KOJO_MESSAGE_COM_K41_DANMAKU(ARGS, 相手残機)
+#DIM 相手残機
+;全体の流れ
+;①【戦闘前】→②ダイスロールとプレイヤー選択肢、ハンデをつけた場合は【ハンデ口上】→③対応スキルが発動した場合【スキル口上】→④被弾判定、キャラが被弾したなら【被弾口上】→
+;どちらかの残機が0になっていなければ②に戻る→⑤【戦闘後口上】
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ハンデをつけることができ、数値が大きいほどあなたが不利になる　数値が負ならあなたが有利に
+	;キャラの能力に関わらずクッソ強くしたり弱くしたりできる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘前"
+		;戦闘前
+		HANDICAP_FIXED = 0
+		HANDICAP_RAND = 0
+		PRINTFORMW 「Ku-ku-ku... Challenge me to a duel, will you?」
+		PRINTFORMW 「This might be a bit more than you can chew though.」
+		PRINTFORMW 「Don't come crying after I mop the floor with you!」
+		PRINTFORMDW Nue smirks smugly as she flies high into the skies, twirling a trident in her hands!
+		PRINTL
+		IF RAND:3 == 0
+			PRINTFORMW 「You human who's forgotten the fear of night!」
+			PRINTFORMW 「Die from the terror of this unidentified flying object!!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMW 「You human who's given up imagination for knowledge!」
+			PRINTFORMW 「Die from the terror of this unidentified flying object!!」
+		ELSE
+			PRINTFORMW 「You youngster acting out of curiosity!」
+			PRINTFORMW 「This unidentified flying object will make you dance to your death!!」
+		ENDIF
+		PRINTDATADW
+			DATAFORM ――Ominous Clouds "Heian Dark Clouds"!!!
+			DATAFORM ――Unidentified "Red UFO Invasion of Rage"!!!
+			DATAFORM ――Nue Sign "Mysterious Snake Show"!!!
+			DATAFORM ――Unidentified "Blue UFO Invasion of Grief"!!!
+			DATAFORM ――Unidentified "Ms. Hanako of the Toilet"!!!
+			DATAFORM ――Unknown "Skyfish with Unknown Shape"!!!
+			DATAFORM ――Unknown "Youkai Orb of Unknown Mechanics"!!!
+		ENDDATA
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;ハンデ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "ハンデ"
+		;ハンデつけなかったら表示されないので無記入でよい
+		PRINTFORML 
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中TARGET被弾時口上
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" 
+		;別に一律で「やられたー」だけでもいいよ
+		SELECTCASE 相手残機
+			;残り残機3が表示されるのは【洽覧深識】持ちのみ
+			CASE 3
+				PRINTFORML 
+			CASE 2
+				IF RAND:3 == 0
+					PRINTFORMW 「Huh, it looks like you're not gonna be afraid.」
+					PRINTFORMW 「But if you're not afraid, my heart will go dry.」
+				ELSEIF RAND:2 == 0
+					PRINTFORMW 「Looks like you passed the starter round!」
+					PRINTFORMW 「Good going %MASTERNAME:41%, but this is just the beginning!」
+				ELSE
+					PRINTFORMW 「You're making me get serious... You might start regretting that later.」
+					PRINTFORMW 「It's all over for you right now, though!」
+				ENDIF
+				
+				PRINTDATADW
+					DATAFORM ――Nue Sign "Danmaku Chimera"!!!
+					DATAFORM ――Unidentified "Green UFO Invasion of Justice"!!!
+					DATAFORM ――Nue Sign "Undefined Darkness"!!!
+					DATAFORM ――Unidentified "Rainbow UFO Invasion of Terror"!!!
+					DATAFORM ――Unidentified "Purple Mirror"!!!
+					DATAFORM ――Unidentified "Red Cloak, Blue Cloak"!!!
+					DATAFORM ――"Danmaku X from a Wandering Star"!!!
+					DATAFORM ――Unknown "Will-o'-wisps in Unknown Orbit"!!!
+				ENDDATA
+			CASE 1
+				IF RAND:2 == 0
+					PRINTFORMW 「Aughh!!! Now you've done it!」
+					PRINTFORMW 「I wasn't an EX boss for nothing! Not once, but twice even!」
+					PRINTFORMW 「Although most claim I was the easiest...」
+					PRINTFORMW 「Lies! I just never got serious enough! But right now... I won't hold back!」
+					PRINTFORMW 「I will expose your weaknesses, uncover you true nature and make you submit...」
+					PRINTFORMW 「So submit to the terrifying void that is unknown and unidentifiable, and DIEEEEEEEEEEEEEEE!!!」
+					PRINTFORMDW ――Grudge Bow "The Bow of Genzanmi Yorimasa"!!!
+					PRINTL
+					PRINTFORMDW Suddenly, you see the UFOs quickly swarming you from all sides!
+					PRINTFORMDW Some of them hide the actual Danmaku bullets, some are just duds...
+					PRINTFORMDW But it does get confusing really quickly!
+					PRINTFORMDW Some of them even change their form into something completely different, throwing you off!
+					PRINTFORMDW Nue watches you struggle with the increasingly difficult pattern while cackling spitefully...
+				ELSE
+					PRINTFORMW 「Ow-ow-owww... Now you've done it, you human!!!」
+					PRINTFORMW 「You can't just go around and defeating ancient youkai like me left and right without repercussions!」
+					PRINTFORMW 「I will make you regret the day you ever crossed me... Not even death will be your salvation!」
+					PRINTFORMDW Huh, that line... I heard it somewhere.
+					PRINTFORMW 「Sh-Shut up!!! You've seen the true me, so I'll have to bury you!」
+					PRINTL
+					PRINTFORMW 「Guess I don't need to hold back then!」
+					PRINTFORMW 「Watch this, the unequivocally ULTIMATE UNKNOWN!」
+					PRINTFORMDW ――"Nightmare of Heiankyou"!!!
+					PRINTFORMDW Suddenly, the entire field is divided into squares, which then switch around with similarly square patterns like a go board!
+					PRINTFORMDW It's difficult, but it's not really deadly... Something about it just draws you in.
+				ENDIF
+				
+				LOCAL = 200
+				HANDICAP_FIXED += LOCAL
+				HANDICAP_RAND += LOCAL * ABL:戦闘能力
+			CASE 0
+				PRINTFORMDW Nue lets out a sharp cry as she collapses to the ground, defeated...
+				PRINTFORMW 「Nueeeeeeeeeeeeeeeeeeeeeee～eennnn...!!!」
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【残忍酷薄】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "残忍酷薄"
+		IF RAND:3 == 0
+			PRINTFORMW 「That's right, this will be the end of you very soon!」
+			PRINTFORMW 「Embrace the inevitable and dieeeeeeeee!!!」
+		ELSEIF RAND:2 == 0
+			PRINTFORMDW It may look like Nue is messing around and having fun, but... She's no pushover!
+			PRINTFORMW 「Kukuku! I was trained by the best, don't you know! Here, take this, and that!」
+		ELSE
+			PRINTFORMW 「You're rather eager to die, %MASTERNAME:41%...」
+			PRINTFORMW 「I thought you'd struggle a little harder than that!」
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【乾坤一擲】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "乾坤一擲"
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【怪力乱神】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "怪力乱神"
+		
+	ENDIF
+	
+	;-------------------------------------------------
+	;戦闘後
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" 
+		PRINTFORML 
+		;残り残機4が表示されうるのは【洽覧深識】持ちのみ
+		;残機が1以上ならあなたの負け、0の場合はあなたの勝利
+		SELECTCASE 相手残機
+			CASE 4
+				PRINTFORML 
+			CASE 1 TO 3
+				IF ABL:MASTER:戦闘能力 < 3
+					PRINTFORMW 「Kukuku... A predictable outcome!」
+					PRINTFORMW 「No matter how many times you try, you will never beat me like this, %MASTERNAME:41%!」
+				ELSE
+					PRINTFORMW 「...Phew! I'm surprised I won this one, honestly.」
+					PRINTFORMW 「Did my last trick shake you up a little bit there, hmm %MASTERNAME:41%?」
+				ENDIF
+				PRINTFORMW 「Well, this was fun. Hit me up again if you think you can challenge me...」
+				PRINTFORMW 「I'll make it worth your while♪」
+			CASE 0
+				IF !CFLAG:弾幕勝負勝利
+					PRINTFORMW 「Uuuhhh... I loooost...! I can't believe such a young human mopped the floor with me again!」
+					PRINTFORMW 「This brings back some painful memories...」
+					PRINTFORMW 「Getting defeated by humans... was never good...」
+					PRINTFORMDW The girl who likes playing tricks on people and messing with them, Houjuu Nue...
+					PRINTFORMDW Was thoroughly beat by you! Congratulations!
+					PRINTFORMW 「Uuu... Stooop it... Don't make me sound like some kind of villain... Uuuu...」
+				ELSE
+					IF ABL:MASTER:戦闘能力 < 3
+						PRINTFORMW 「T-This is just beginner's luck! I wasn't prepared today!」
+						PRINTFORMW 「I'm making e-excuses?! Oh, be quiet, you...!」
+						PRINTFORMW 「But... I'll give it to you, %MASTERNAME:41%. You won fair and square.」
+						PRINTFORMW 「You didn't cheat to get here, riiiight...?」
+						PRINTFORMDW You nod awkwardly.
+						PRINTFORMW 「Hmph, whatever. Well, just don't go bragging about it too much, or you'll ruin my reputation.」
+						PRINTFORMW 「If you do that, your life might be put at peril, ku-ku-ku...」
+					ELSE
+						PRINTFORMW 「Uuuh, you're sooo mean, %MASTERNAME:41%...」
+						PRINTFORMW 「At least let me win once in a while too!」
+						PRINTFORMW 「Oh, I know! I'll have you get me the change of clothes, since these are completely ruined now...」
+						PRINTFORMDW Uh oh...
+					ENDIF
+				ENDIF
+				IF TALENT:恋人
+					PRINTL
+					PRINTFORMDW You come closer and help Nue up as you pat her on the head, trying to calm her down.
+					PRINTFORMW 「I... I'll get better at this, eventually! I'll train a lot, and then...」
+					PRINTFORMW 「We'll settle this, %MASTERNAME:41%!」
+					PRINTFORMDW Suuuure...
+					PRINTFORMW 「...And no matter what happens, I will not lose to you in bed either! Look forward to that!!!」
+					PRINTFORMDW ...Gulp!
+				ENDIF
+		ENDSELECT
+	ENDIF
+RESETCOLOR
+ENDIF
+RETURN 1
+

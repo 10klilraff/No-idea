@@ -1,0 +1,21 @@
+﻿@DAIRY_CONDITION_EV1
+;永遠亭住まいなら1/10、それ以外で1/30で発生
+SIF MAIN_MAP == 4 && RAND:10 > 0
+	RETURN -1
+SIF MAIN_MAP != 4 && RAND:30 > 0
+	RETURN -1
+CALL DAIRY_EV1
+RETURN 1
+
+
+@DAIRY_EV1
+;ここにイベント内容を書こう　最後はRETURN 1してね
+IF MAIN_MAP != 4
+	PRINTFORML %PARSE("You receive")% a drug sample from Eientei.
+ELSE
+	PRINTFORML %PARSE("You receive")% a drug sample from Eirin.
+ENDIF
+CALL GET_ITEM("栄養ドリンク", 1, 2)
+;set wait to not skip the message
+WAIT
+RETURN 1

@@ -1,0 +1,1074 @@
+﻿
+@PRINT_STATE_JUEL(選択中キャラID)
+#DIM 選択中キャラID
+#DIM 表示項目数
+
+PRINTL
+CALL PRINTLINE, "Gems"
+表示項目数 = 0
+FOR LOCAL, 0, 22
+	;PALAM.CSVに名称が登録されていないとCONTINUE
+	SIF !STRLENS(PALAMNAME:LOCAL)
+		CONTINUE
+	;1000,1000000,単位で区切る
+	LOCALS = {JUEL:選択中キャラID:LOCAL}
+	SIF JUEL:選択中キャラID:LOCAL > 1000000
+		LOCALS = {JUEL:選択中キャラID:LOCAL / 1000}k
+	SIF JUEL:選択中キャラID:LOCAL > 1000000000
+		LOCALS = {JUEL:選択中キャラID:LOCAL / 1000000}m
+	PRINTFORM %PALAMNAME:LOCAL,6% Gems: %LOCALS,7,LEFT%
+	表示項目数 += 1
+	;改行or表示位置あけ
+	SIF 表示項目数 % 4 == 0
+		PRINTL 
+NEXT
+;否定の珠
+LOCALS = {JUEL:選択中キャラID:100}
+SIF JUEL:選択中キャラID:100 > 1000000
+	LOCALS = {JUEL:選択中キャラID:100 / 1000}k
+PRINTFORM %PALAMNAME:100,6% Gems: %LOCALS,7,LEFT%
+
+@PRINT_STATE_EX(選択中キャラID)
+#DIM 選択中キャラID
+#DIM 表示項目数
+
+SIF EX:選択中キャラID:Ｃ絶頂 + EX:選択中キャラID:Ｖ絶頂 + EX:選択中キャラID:Ａ絶頂 + EX:選択中キャラID:Ｂ絶頂 + EX:選択中キャラID:Ｍ絶頂 + EX:選択中キャラID:噴乳 + EX:選択中キャラID:射精 == 0
+	RETURN 0
+表示項目数 = 0
+PRINTL
+CALL PRINTLINE, "Climax Amounts"
+FOR LOCAL, 0, VARSIZE("EX")
+	SIF !EX:選択中キャラID:LOCAL
+		CONTINUE
+	SIF !GROUPMATCH(EXNAME:LOCAL, "Ｃ絶頂", "Ｖ絶頂", "Ａ絶頂", "Ｂ絶頂", "Ｍ絶頂", "噴乳", "射精", "放尿")
+		CONTINUE
+	PRINTFORM %EXNAME:LOCAL,12%:{EX:選択中キャラID:LOCAL,5,LEFT} 
+	表示項目数 ++
+	SIF 表示項目数 % 4 == 0
+		PRINTL
+NEXT
+
+
+@PRINT_STATE_PERSONAL(選択中キャラID)
+#DIM 選択中キャラID
+#DIMS KARADAMEATE
+CALL QoL_DetailedInfo(Qol_Info_Dates, 選択中キャラID) ;qol custom code
+PRINTL
+CALL PRINTBUTTON_EX("Personality",169,TFLAG:169, , , 1)
+PRINTL  
+IF !TFLAG:169
+	PRINTFORML Personality: %PERSONALITY_TYPE(選択中キャラID)%
+	IF 選択中キャラID == MASTER
+		CALL QoL_DetailedInfo(Qol_Info_House, MASTER) ;qol custom code, show master's home location
+		IF CFLAG:MASTER:睡眠
+			PRINTFORML Yesterday's Bedtime: %TWENTY_FOUR_TIME(CFLAG:MASTER:就寝時間 - DAY * 1440)%
+		ELSE
+			PRINTFORML Yesterday's Bedtime: %TWENTY_FOUR_TIME(CFLAG:MASTER:就寝時間 + 1440 - DAY * 1440)%
+		ENDIF
+		PRINTFORML Waking Time: %TWENTY_FOUR_TIME(TIME:3)%
+		IF FLAG:地主
+			PRINTFORML 
+			CALL SHOW_NOUMIN
+		ENDIF
+		IF TRAP_POINT:1 || TRAP_POINT:2 || TRAP_POINT:3
+			PRINTL 
+			PRINTFORML ◆Traps in place
+			FOR LOCAL, 1, 4
+				IF TRAP_POINT:LOCAL
+					PRINTFORML 　%@"Trap No.{LOCAL} location", 18, LEFT%: %猟場名(TRAP_POINT:LOCAL)%
+					PRINTFORML 　%@"Date set", 18, LEFT%: %PRINT_DATE_F(TRAP_SETUPDATA:LOCAL)%
+				ENDIF
+			NEXT
+		ENDIF
+		IF MUSHI_TRAP
+			PRINTFORML ◆Bug trap in place
+			PRINTFORML 　%@"Location", 18, LEFT%: %NAME_FROM_PLACE((GET_MUSHIDATA(MUSHI_TRAP, "場所")))%（%STR_TR((GET_MUSHIDATA(MUSHI_TRAP, "場所")) / 100 + 5000)%）
+		ENDIF
+	ELSE
+		;qol custom code
+		CALL QoL_DetailedInfo(Qol_Info_Hours, 選択中キャラID)
+		GOTO QoL_Hours
+		;-----------------
+		PRINT Active Hours: 
+		IF CFLAG:選択中キャラID:神社在住 || CFLAG:MASTER:現在位置 == OMANEKIBEYA()
+			CALL 起床時間表示(選択中キャラID)
+		ELSE
+			CALL 滞在時間表示(選択中キャラID)
+		ENDIF
+		$QoL_Hours ;qol custom code
+		IF CFLAG:選択中キャラID:よく行く地域 >= 0
+			PRINTFORML Frequently Visits: %GET_MAPNAME(CFLAG:選択中キャラID:よく行く地域)%
+		ENDIF
+		IF CFLAG:選択中キャラID:自宅位置 >= 10 && !CFLAG:選択中キャラID:神社在住
+			PRINT Home: 
+			LOCAL = CFLAG:選択中キャラID:自宅位置 / 100 + 5000
+			PRINTFORM %STR_TR(LOCAL)% 
+			LOCAL = CFLAG:選択中キャラID:自宅位置 / 10 + 6000
+			PRINTFORML 【 %STR_TR(LOCAL)% 】
+		ELSEIF CFLAG:選択中キャラID:神社在住
+			PRINT Home: 
+			LOCAL = CFLAG:選択中キャラID:自宅位置 / 100 + 5000
+			PRINTFORM %STR_TR(LOCAL)% 
+			LOCAL = CFLAG:選択中キャラID:初期位置 + 8000
+			PRINTFORML 【 %STR_TR(LOCAL)% 】
+		ELSE
+			PRINTL Home: ■■■■■ 【 ■■■■■ 】
+		ENDIF
+		PRINT Work info: 
+		;Bug-fix
+		PRINTFORML %WORK_INFO(選択中キャラID)%
+		PRINT Workplace: 
+		IF TALENT:選択中キャラID:風俗嬢
+			PRINTFORML Former Hell Onsen
+		ELSE
+			PRINTFORML %CSVCSTR(選択中キャラID, 2)%
+		ENDIF
+	ENDIF
+ENDIF
+PRINTL 　
+IF 選択中キャラID == RANDOM_CHARANUM
+	;現状、複雑な種族分岐などは無しで
+	CALL PRINTLINE, "Character Intro"
+	PRINTL 
+	;Custom code, fix race
+	PRINTFORML ～\@ TALENT:選択中キャラID:風俗嬢 ? # Mob%" "% \@%RACE_TR(CSTR:選択中キャラID:モブ子種族)%～　●Ability: %CSTR:RANDOM_CHARANUM:モブ子能力%
+	PRINTFORML %BREAKENG(@"%CSTR:RANDOM_CHARANUM:モブ子プロフィール１%")%
+	PRINTFORML %BREAKENG(@"%MOB_STATE_TR(CSTR:RANDOM_CHARANUM:モブ子プロフィール２)%")%
+ELSEIF CSVCSTR(選択中キャラID, 10) != ""
+	CALL PRINTLINE, "Character Intro"
+	PRINTL 
+	;キャラ紹介文を口上の展開によって改変したい場合「@CHARA_INFO_KOJO_KX」を使用する
+		RESULTS =
+	;口上の存在判定 and RESULTSに文字列代入
+	IF CFLAG:選択中キャラID:口上セレクタ
+		TRYCALLFORM M_KOJO_K{選択中キャラID}_{CFLAG:選択中キャラID:口上セレクタ}
+	ELSE
+		TRYCALLFORM M_KOJO_K{選択中キャラID}
+	ENDIF
+	RESULT = 0
+	TRYCALLFORM CHARA_INFO_KOJO%RESULTS%_K{選択中キャラID}
+	IF !RESULT
+		FOR LOCAL,10,20
+			SIF CSVCSTR(選択中キャラID, LOCAL) != ""
+				PRINTFORML %CSVCSTR(選択中キャラID, LOCAL,)%
+		NEXT
+	ENDIF
+ENDIF
+;custom code
+PRINTL
+LOCAL:99 = LINECOUNT
+;-----------
+SETCOLOR C_YELLOW
+IF 選択中キャラID == MASTER && FLAG:甲斐性無
+	PRINTFORML Is incompetent.
+	PRINTFORML 
+ENDIF
+SETCOLOR C_PINK
+IF CFLAG:選択中キャラID:引き継ぎ
+	SIF GETBIT (CFLAG:選択中キャラID:引き継ぎ, 0)
+		PRINTFORML Has a strong connection with %PARSE("you")%.
+	SIF GETBIT (CFLAG:選択中キャラID:引き継ぎ, 1)
+		PRINTFORML Has a very strong connection with %PARSE("you")%.
+ENDIF
+IF 選択中キャラID == MASTER
+	IF TALENT:選択中キャラID:恋人
+		LOCAL:3 = 1
+		;custom code, set up str var to store names because it gets too long
+		LOCALS =
+		FOR LOCAL:1 ,1 , CHARANUM
+			IF TALENT:(LOCAL:1):恋人
+				;custom code, commented out
+				;SIF !(LOCAL:3 % 15)
+				;	PRINTL 
+				LOCAL:3 ++
+				LOCALS = %LOCALS%［%CALLNAME:(LOCAL:1)%］
+			ENDIF
+		NEXT
+		;custom code
+		PRINTFORM %BREAKENG(LOCALS,,"］\n",MAXWIDTH() - 48,"］")%
+		;-----------
+		PRINTFORML \@ LOCAL:3 > 2 ? are # is \@ %PARSE("your")% \@ LOCAL:3 > 2 ? lovers. # lover. \@
+	ENDIF
+ENDIF
+SIF CFLAG:選択中キャラID:清い交際
+	PRINTFORML Fell in love with %PARSE("you")% through a pure relationship.
+SIF CFLAG:選択中キャラID:既成事実 & 合意_キス
+	PRINTFORML Has given %HIS_HER(選択中キャラID)% lips to %PARSE("you")%.
+IF CFLAG:選択中キャラID:既成事実 & 合意_うふふ
+	PRINTFORML Has given %HIS_HER(選択中キャラID)% body to %PARSE("you")%.
+ELSEIF CFLAG:選択中キャラID:ヤラせちゃった
+	PRINTFORML Despite doing lewd things with %PARSE("you")%, %HE_SHE(選択中キャラID)% isn't going to hand over her body.
+ENDIF
+SIF TALENT:選択中キャラID:処女 && TALENT:選択中キャラID:ヤリマン
+	PRINTFORML Although a virgin, they will spread their legs if asked.
+IF CFLAG:選択中キャラID:体目当て
+	IF TALENT:選択中キャラID:体型 == -2
+		KARADAMEATE '= @" childlike"
+	ELSEIF TALENT:選択中キャラID:バストサイズ > 0
+		KARADAMEATE '= @" plump"
+	ELSEIF TALENT:選択中キャラID:処女 > 0
+		KARADAMEATE '= @" unsoiled"
+	ELSE
+		KARADAMEATE =
+	ENDIF
+	PRINTFORML %PARSE("You are")% aiming at %HIS_HER(選択中キャラID)%%KARADAMEATE% body.
+ENDIF
+RESETCOLOR
+IF TALENT:選択中キャラID:恋慕
+	IF TALENT:選択中キャラID:無知
+		PRINTFORML %CALLNAME:選択中キャラID% has secretly decided to become %PARSE("your")% bride.
+	ELSEIF !CFLAG:選択中キャラID:既成事実 & 合意_うふふ
+		IF TALENT:選択中キャラID:貞操 > 0
+			PRINTFORML Despite believing that having a sexual relationship is immoral, deep inside %CALLNAME:選択中キャラID% wants to have sex with %PARSE("you")%.
+		ELSE
+			PRINTFORML %CALLNAME:選択中キャラID% feels irritated and a bit anxious that %HE_SHE(選択中キャラID)% still haven't had sex with %PARSE("you")%.
+		ENDIF
+	ENDIF
+ENDIF
+CALL Valentine_History(選択中キャラID)
+SIF LOCAL:99 != LINECOUNT ;custom code
+PRINTFORML 
+CALL PRINTLINE, "Danmaku Skill"
+PRINTL 
+CALL DANMAKU_OPPONENT_STATUS(選択中キャラID, 1)
+
+@滞在時間表示(選択中キャラID)
+#DIM 選択中キャラID
+
+IF CFLAG:選択中キャラID:来訪時間 < CFLAG:選択中キャラID:帰宅時間
+	PRINTFORML %TWENTY_FOUR_TIME(CFLAG:選択中キャラID:来訪時間)%～%TWENTY_FOUR_TIME(CFLAG:選択中キャラID:帰宅時間)%
+ELSE
+	PRINTFORML Between %TWENTY_FOUR_TIME(CFLAG:選択中キャラID:来訪時間)% and %TWENTY_FOUR_TIME(CFLAG:選択中キャラID:帰宅時間)% on the next day
+ENDIF
+
+
+
+@起床時間表示(選択中キャラID)
+#DIM 選択中キャラID
+
+IF CFLAG:選択中キャラID:起床時間 < CFLAG:選択中キャラID:就寝時間
+	PRINTFORML %TWENTY_FOUR_TIME(CFLAG:選択中キャラID:起床時間)%～%TWENTY_FOUR_TIME(CFLAG:選択中キャラID:就寝時間)%
+ELSE
+	PRINTFORML Between %TWENTY_FOUR_TIME(CFLAG:選択中キャラID:起床時間)% and %TWENTY_FOUR_TIME(CFLAG:選択中キャラID:就寝時間)% on the next day
+ENDIF
+
+
+
+@肉体情報(選択中キャラID)
+#DIM 選択中キャラID
+VARSET LOCALS
+VARSET LOCAL
+PRINTL
+CALL PRINTLINE, "Body Info"
+PRINTL 
+PRINTL 【Mouth】
+;custom, these are getting pretty long so we'll put them on a separate line with breaks applied
+LOCALS '= BREAKENG(CSTR:選択中キャラID:ファーストキス喪失履歴)
+;-----------
+PRINTFORML First kiss history: 
+;IF !EXP:選択中キャラID:キス経験
+IF TALENT:選択中キャラID:キス未経験
+	SELECTCASE CFLAG:選択中キャラID:ファーストキス喪失対象
+		CASE 0
+			CALL COLORMESSAGE(@"Hasn't let anyone touch %HIS_HER(選択中キャラID)% lips.",C_YELLOW,1)
+		CASE 1
+			CALL COLORMESSAGE(LOCALS,C_PINK,1)
+		CASE 2
+			CALL COLORMESSAGE(@"Hasn't let anyone touch %HIS_HER(選択中キャラID)% lips.",C_YELLOW,1)
+			PRINTFORML But that's just what %HE_SHE(選択中キャラID)% thinks.
+			CALL COLORMESSAGE(LOCALS,C_PINK,1)
+	ENDSELECT
+ELSEIF CFLAG:選択中キャラID:ファーストキス喪失記念日
+	IF STRFIND(CSTR:選択中キャラID:ファーストキス喪失履歴, "￥ＢＲ") > 0
+		LOCAL = RESULT
+		SPLIT CSTR:選択中キャラID:ファーストキス喪失履歴, "￥ＢＲ", LOCALS
+		;custom code
+		LOCALS '= BREAKENG(LOCALS)
+		;-----------
+		CALL COLORMESSAGE(@"%LOCALS:0%",C_PINK,1)
+		PRINTFORML But that's just what %HE_SHE(選択中キャラID)% thinks... The reality is:
+		;custom code
+		LOCALS:1 '= BREAKENG(LOCALS:1)
+		;-----------
+		CALL COLORMESSAGE(@"%LOCALS:1%",C_PINK,1)
+		RESULT = LOCAL
+		VARSET LOCALS
+	ELSE
+		CALL COLORMESSAGE(LOCALS,C_PINK,1)
+	ENDIF
+ELSEIF 選択中キャラID != MASTER
+	CALL COLORMESSAGE(@"Lost before %HE_SHE(選択中キャラID)% met %PARSE("you")%",C_AQUA,1)
+	;だと思うんだけど…
+ENDIF
+
+
+SIF EXP:選択中キャラID:キス経験
+	PRINTFORML So far %HE_SHE(選択中キャラID)% has kissed {EXP:選択中キャラID:キス経験} time\@EXP:選択中キャラID:キス経験>1?s#\@.
+SIF CFLAG:選択中キャラID:累計精飲
+	PRINTFORML So far %HE_SHE(選択中キャラID)% has swallowed %DIGIT_GROUP(CFLAG:選択中キャラID:累計精飲)%ml of cum.
+IF EXP:選択中キャラID:精飲経験 > 300 && ABL:選択中キャラID:精液中毒 >= 10
+	PRINTFORML Their body enters complete heat the moment it tastes semen.
+ELSEIF EXP:選択中キャラID:精飲経験 > 150 && ABL:選択中キャラID:精液中毒 >= 5
+	PRINTFORML Their body aches for the taste of semen.
+ELSEIF TALENT:選択中キャラID:精愛味覚
+	PRINTFORML They can't hold back their love for semen.
+ELSEIF ABL:選択中キャラID:精液中毒 >= 3
+	PRINTFORML They can drink semen without any difficulty.
+ENDIF
+SIF GETBIT (CFLAG:選択中キャラID:引き継ぎ, 6)
+	PRINTFORML For some reason it knows exactly how to please %PARSE("you")%.
+IF 選択中キャラID == MASTER
+	IF ABL:選択中キャラID:舌 >= 5
+			PRINTFORML These excellent tongue skills can captivate any girl.
+	ELSEIF ABL:選択中キャラID:舌 >= 3
+			PRINTFORML These skillful tongue skills can please many girls.
+	ENDIF
+ENDIF
+PRINTL 
+PRINTL 【Chest】
+SELECTCASE ABL:選択中キャラID:Ｂ感覚
+	CASE IS >= 10
+		PRINTFORML Excellent sensitivity.
+	CASE IS >= 5
+		PRINTFORML Good sensitivity.
+ENDSELECT
+IF TALENT:選択中キャラID:淫乳
+	PRINTFORML %HIS_HER(選択中キャラID,1)% 
+	IF TALENT:選択中キャラID:バストサイズ < 0
+		PRINT small breasts
+	ELSE
+		PRINT breasts
+	ENDIF
+	PRINTFORML  have been trained to the point where just brushing against them is enough to make %HIM_HER(選択中キャラID)% collapse.
+ENDIF
+
+SIF GETBIT (CFLAG:選択中キャラID:引き継ぎ, 5)
+	PRINTFORML For some reason they know exactly how to please %PARSE("you")%.
+SIF CFLAG:選択中キャラID:累計ぶっかけ
+	PRINTFORML So far they have been covered in %DIGIT_GROUP(CFLAG:選択中キャラID:累計ぶっかけ)%ml of semen.
+IF TALENT:選択中キャラID:母乳体質
+	;PRINTFORML \@ ABL:選択中キャラID:噴乳中毒 >= 3 ? 甘みのあるミルクがたっぷりと詰まっている# 刺激してやれば甘みのあるミルクが滲みだすだろう\@
+	PRINTFORML Lactates sweet milk when stimulated.
+ENDIF
+SELECTCASE ABL:選択中キャラID:胸
+	CASE IS >= 5
+	CASE IS >= 3
+ENDSELECT
+PRINTL
+
+PRINTL 【Hand】
+SELECTCASE ABL:選択中キャラID:指
+	CASE IS >= 5
+		PRINTFORML Lethal weapon.　
+	CASE IS >= 3
+		PRINTFORML Expert.　
+ENDSELECT
+IF 選択中キャラID == MASTER
+	IF ABL:選択中キャラID:指 >= 5
+		PRINTFORML A caress with these supple fingers can make any girl melt instantly.
+	ELSEIF ABL:選択中キャラID:指 >= 3
+		PRINTFORML These deftly fingers is sure to delight girls.
+	ENDIF
+ENDIF
+PRINTL
+PRINTL 【Anal】
+PRINTFORML Anal virginity loss history: 
+IF CSTR:選択中キャラID:アナル処女喪失履歴 != ""
+	;these are getting pretty long so we'll put them on a separate line with breaks applied
+	LOCALS '= BREAKENG(CSTR:選択中キャラID:アナル処女喪失履歴)
+	CALL COLORMESSAGE(LOCALS,C_PINK,1)
+ELSEIF !EXP:選択中キャラID:Ａ性交経験
+	CALL COLORMESSAGE(@"Still hasn't accepted anyone yet.",C_YELLOW,1)
+ELSE
+	PRINTFORML 
+ENDIF
+SELECTCASE ABL:選択中キャラID:Ａ感覚
+	CASE IS >= 10
+		PRINTFORML Excellent sensitivity.
+	CASE IS >= 5
+		PRINTFORML Good sensitivity.
+ENDSELECT
+SIF GETBIT (CFLAG:選択中キャラID:引き継ぎ, 4)
+	PRINTFORML For some reason it knows exactly how to please %PARSE("you")%.
+IF 選択中キャラID
+	SELECTCASE 挿入不可(選択中キャラID)
+		CASE 3
+			PRINTFORML Cannot handle \@HAS_PENIS()?the size of %PARSE("your")% penis#insertion\@ yet.
+			LOCAL:6 ++
+		CASE 2
+			IF EXP:選択中キャラID:Ａ経験 < 50 && TALENT:MASTER:禁断の知識
+				PRINTFORML It has to be loosened up more before \@HAS_PENIS()?%PARSE("your")% penis can go inside#insertion\@.
+				LOCAL:6 ++
+			ELSEIF !TALENT:MASTER:禁断の知識
+				PRINTFORML Forcing \@HAS_PENIS()?%PARSE("your")% penis inside#insertion\@ would just be cruel.
+				LOCAL:6 ++
+			ENDIF
+		CASE 1
+			IF EXP:選択中キャラID:Ａ経験 < 50 || !TALENT:MASTER:禁断の知識
+				PRINTFORML It has to be loosened up more before \@HAS_PENIS()?%PARSE("your")% penis can go inside#insertion\@.
+				LOCAL:6 ++
+			ENDIF
+		CASE -1
+			IF ABL:選択中キャラID:アナル < 2
+				PRINTFORML Still \@HAS_PENIS()?can't quite accommodate the size of %PARSE("your")% penis#not used to insertion\@.
+				LOCAL:6 ++
+			ENDIF
+		CASE -2
+			IF ABL:選択中キャラID:アナル < 3
+				PRINTFORML Even if it's big, pushing it inside is unlikely to be comfortable...
+				LOCAL:6 ++
+			ENDIF
+	ENDSELECT
+	SELECTCASE ABL:選択中キャラID:アナル
+		CASE IS >= 5
+			PRINTL First-rate quality.
+			PRINTFORML It can reshape around \@ CFLAG:選択中キャラID:既成事実 & 合意_うふふ ? %PARSE("your")% form # anything that enters it\@, and can wriggle around as if alive.
+		CASE IS >= 3
+		PRINTL High quality.
+		PRINTFORML The long attention has paid off and it has become a fine hole.
+		CASE 2
+		PRINTFORML Has gotten used to \@ CFLAG:選択中キャラID:既成事実 & 合意_うふふ ? accepting %PARSE("you")% # sex\@.
+		CASE 1
+		PRINTL Has started to loosen up just a bit.
+		CASE 0
+			IF !CFLAG:選択中キャラID:アナル処女喪失記念日
+				PRINTL Untamed.
+			ELSEIF EXP:選択中キャラID:Ａ経験 < 20
+					PRINTL Still not used to accepting foreign objects.
+			ENDIF
+	ENDSELECT
+ENDIF
+SIF CFLAG:選択中キャラID:累計アナル精液
+		PRINTFORML So far %DIGIT_GROUP(CFLAG:選択中キャラID:累計アナル精液)%ml of semen has been pumped into it.
+
+SELECTCASE ABL:選択中キャラID:肛射中毒
+	CASE IS >= 7
+	PRINTFORML Feels euphoria from anal creampies.
+	CASE IS >= 3
+	PRINTFORML It clenches and throbs every time it receives a creampie.
+ENDSELECT
+
+SIF ABL:選択中キャラID:Ａ感覚 >= 5 && CFLAG:選択中キャラID:溜まってる度 > 300 && 選択中キャラID
+	PRINTFORML It longs to have %PARSE("you")% inside it.
+
+IF 充填率(選択中キャラID,2) >= 100
+	PRINTFORML %HIS_HER(選択中キャラID),1% rectum is completely filled with semen and feels heavy.
+ELSEIF 充填率(選択中キャラID,2) >= 50
+	PRINTFORML A large amount of semen wriggle around in their rectum.
+ELSEIF 充填率(選択中キャラID,2) >= 20
+	PRINTFORML Sperm is swimming energetically in their rectum.
+ENDIF
+
+;custom code
+;PRINTL
+IF TALENT:選択中キャラID:2 & 1
+	PRINTL
+	PRINTL 【Vagina】
+	PRINTFORML Virginity loss history: 
+	IF CSTR:選択中キャラID:処女喪失履歴 != ""
+		LOCALS '= BREAKENG(CSTR:選択中キャラID:処女喪失履歴)
+		CALL COLORMESSAGE(LOCALS,C_PINK,1)
+	;Custom code, reacts if a non-virgin is a virgin vice versa
+	ELSEIF (  (!CSVTALENT(選択中キャラID, GETNUM(TALENT, "処女")) && TALENT:選択中キャラID:処女 == 1) || (CSVTALENT(選択中キャラID, GETNUM(TALENT, "処女")) && TALENT:選択中キャラID:処女 == 0)  ) && !TALENT:選択中キャラID:行きずり
+		CALL COLORMESSAGE(@"Reality is different, but no one acknowledges it.",C_YELLOW,1)
+	;Custom code, "Lost it before you met you" makes no sense
+	;Bugfix
+	ELSEIF !CSVTALENT(選択中キャラID, GETNUM(TALENT, "処女")) && TALENT:選択中キャラID:処女 == 0 && 選択中キャラID == MASTER
+		CALL COLORMESSAGE(@"Lost it before the game started.",C_YELLOW,1)
+	ELSEIF !CSVTALENT(選択中キャラID, GETNUM(TALENT, "処女")) && TALENT:選択中キャラID:処女 == 0
+		CALL COLORMESSAGE(@"Lost it before %HE_SHE(選択中キャラID)% met %PARSE("you")%.",C_AQUA,1)
+	ELSE
+		IF TALENT:選択中キャラID:処女 == 1
+			CALL COLORMESSAGE(@"Still hasn't accepted anyone yet% ABL:選択中キャラID:Ｖ感覚 >= 5 ? ", never the less, it's been developed to the point where any stimulus easily makes it orgasm"#""%.",C_YELLOW,1)
+		ELSEIF TALENT:選択中キャラID:処女 == -1
+			CALL COLORMESSAGE(@"Isn't aware %HIS_HER(選択中キャラID)% virginity has already been stolen.",C_PINK,1)
+		ENDIF
+	ENDIF
+	
+	SIF Str_Mob_Description:選択中キャラID:Mob_Desc_VLoss != "" ;addition custom code
+		PRINTFORML %BREAKENG(@"%Str_Mob_Description:選択中キャラID:Mob_Desc_VLoss%")%
+
+	SELECTCASE ABL:選択中キャラID:Ｖ感覚
+		CASE IS >= 10
+			PRINTFORML Excellent sensitivity.
+		CASE IS >= 5
+			PRINTFORML Good sensitivity.
+	ENDSELECT
+	SIF GETBIT (CFLAG:選択中キャラID:引き継ぎ, 3)
+		PRINTFORML For some reason it knows exactly how to please %PARSE("you")%.
+	IF 選択中キャラID
+		SELECTCASE 挿入不可(選択中キャラID)
+			CASE 3
+				PRINTFORML Cannot handle \@HAS_PENIS()?the size of %PARSE("your")% penis#insertion\@ yet.
+				LOCAL:5 ++
+			CASE 2
+				IF EXP:選択中キャラID:Ｖ経験 < 50 && TALENT:MASTER:禁断の知識
+					PRINTFORML It has to be loosened up more before \@HAS_PENIS()?%PARSE("your")% penis can go inside#insertion\@.
+					LOCAL:5 ++
+				ELSEIF !TALENT:MASTER:禁断の知識
+					PRINTFORML Forcing \@HAS_PENIS()?%PARSE("your")% penis inside#insertion\@ would just be cruel.
+					LOCAL:5 ++
+				ENDIF
+			CASE 1
+				IF EXP:選択中キャラID:Ｖ経験 < 50 || !TALENT:MASTER:禁断の知識
+					PRINTFORML It has to be loosened up more before \@HAS_PENIS()?%PARSE("your")% penis can go inside#insertion\@.
+					LOCAL:5 ++
+				ENDIF
+			CASE -1
+				IF ABL:選択中キャラID:膣 < 2
+					PRINTFORML Still \@HAS_PENIS()?can't quite accommodate the size of %PARSE("your")% penis#not used to insertion\@.
+					LOCAL:5 ++
+				ENDIF
+			CASE -2
+				IF ABL:選択中キャラID:膣 < 3
+					PRINTFORML Even if it's big, pushing it inside is unlikely to be comfortable...
+					LOCAL:5 ++
+				ENDIF
+		ENDSELECT
+		IF !LOCAL:5
+			SELECTCASE ABL:選択中キャラID:膣
+				CASE IS >= 5
+					PRINTL First-rate quality.
+					IF TALENT:選択中キャラID:処女 == -1
+						PRINTFORML Without her knowing, it has turned into a hole made to pleasure %PARSE("you")%.
+					ELSE
+						PRINTFORML It can reshape around \@ CFLAG:選択中キャラID:既成事実 & 合意_うふふ ? %PARSE("your")% form # anything that enters it\@, and wriggle around as if alive.
+					ENDIF
+				CASE IS >= 3
+					PRINTL High quality.
+					IF TALENT:選択中キャラID:処女 == -1
+						PRINTFORML  Unaware that it has changed to perfectly fit %PARSE("you")%.
+					ELSE
+						PRINTFORML The long attention has paid off and it has become a fine hole.
+					ENDIF
+				CASE 2
+					PRINTFORML Has gotten used to \@ CFLAG:選択中キャラID:既成事実 & 合意_うふふ ? accepting %PARSE("you")% # sex\@.
+				CASE 1
+					PRINTL Has started to loosen up just a bit.
+				CASE 0
+					;IF EXP:選択中キャラID:Ｖ経験
+					IF TALENT:選択中キャラID:処女 == 1
+						PRINTL Hasn't been used for sex.
+					ELSEIF EXP:選択中キャラID:Ｖ経験 < 10
+						PRINTL Inexperienced, but has started to discover adult pleasures.
+					ELSEIF EXP:選択中キャラID:Ｖ経験 < 20
+						PRINTL Almost brand-new and still feels a bit stiff.
+					ENDIF
+			ENDSELECT
+		ENDIF
+	ENDIF
+	
+	SIF CFLAG:選択中キャラID:累計膣内精液
+		PRINTFORML So far %DIGIT_GROUP(CFLAG:選択中キャラID:累計膣内精液)%ml of semen has been pumped into it.
+	SELECTCASE ABL:選択中キャラID:膣射中毒
+		CASE IS >= 7
+			PRINTFORML Feels euphoria from every creampie.
+		CASE IS >= 3
+			PRINTFORML The womb clenches and throbs every time it receives a creampie.
+	ENDSELECT
+	SIF ABL:選択中キャラID:Ｖ感覚 >= 5 && CFLAG:選択中キャラID:溜まってる度 > 300 && 選択中キャラID
+		PRINTFORML It longs to have %PARSE("you")% inside it.
+	SIF CFLAG:選択中キャラID:無理矢理膣射
+		PRINTFORML %PARSE("You")% came inside against %HIS_HER(選択中キャラID)% will.
+	SIF CFLAG:選択中キャラID:睡眠姦 == 1
+		PRINTFORML %PARSE("You")% molested %HIM_HER(選択中キャラID)% while %HE_SHE(選択中キャラID)% was sleeping.
+	SIF CFLAG:選択中キャラID:睡眠姦 == 2
+		PRINTFORML %PARSE("You")% raped %HIM_HER(選択中キャラID)% while %HE_SHE(選択中キャラID)% was sleeping.
+	IF CFLAG:選択中キャラID:泥酔姦 == 2
+		PRINTFORML %PARSE("You")% raped %HIM_HER(選択中キャラID)% while %HE_SHE(選択中キャラID)% was passed out from drinking too much.
+	ELSEIF CFLAG:選択中キャラID:泥酔姦 == 1
+		PRINTFORML Hasn't noticed that %PARSE("you")% raped %HIM_HER(選択中キャラID)% while %HE_SHE(選択中キャラID)% were passed out drunk.
+	ENDIF
+	
+	IF 充填率(選択中キャラID,1) >= 100
+		PRINTFORML The vagina is completely filled with %PARSE("your")% semen.
+	ELSEIF 充填率(選択中キャラID,1) >= 50
+		PRINTFORML A large amount of semen wiggle around in their vagina.
+	ELSEIF 充填率(選択中キャラID,1) >= 20
+		PRINTFORML Sperm is swimming around energetically in their vagina.
+	ELSEIF CFLAG:選択中キャラID:生理周期 == 7 && FLAG:生理周期可視化 && 妊娠可否(選択中キャラID)
+		PRINTFORML The young and lively eggs wait ready to be fertilized on this dangerous day.
+	ENDIF
+	IF 選択中キャラID == MASTER && EX:選択中キャラID:子宮内精液
+		PRINTFORML Insemination status:
+		FOR LOCAL,1,CHARANUM
+			SIF !TCVAR:LOCAL:種付け量
+				CONTINUE
+			SIF TCVAR:LOCAL:種付け量 > 100
+				SETCOLOR C_YELLOW
+			PRINTFORMLC %CALLNAME:LOCAL% {TCVAR:LOCAL:種付け量}
+			RESETCOLOR
+		NEXT
+		PRINTFORML 
+	ENDIF
+	;PRINTFORML {EX:選択中キャラID:子宮内精液}
+	IF TALENT:選択中キャラID:妊娠
+		IF CFLAG:選択中キャラID:妊娠経過日数 < 20
+			PRINTFORML Has stopped experiencing periods.
+		ELSE
+			PRINTFORML %PARSE("Your")% child is growing in %HIS_HER(選択中キャラID)% uterus.
+			PRINTFORML Currently on the %ORDINAL(CFLAG:選択中キャラID:妊娠経過日数)% day.
+			CALL LOOK_BELLY(選択中キャラID)
+			SIF INRANGE(CFLAG:選択中キャラID:妊娠経過日数,20,29)
+				PRINTL There's still no outward difference.
+			PRINTL
+		ENDIF
+	ENDIF
+ENDIF
+CALL Qol_Info_Body(選択中キャラID) ;qol custom code
+PRINTL
+CALL ちん遍歴(選択中キャラID)
+
+
+
+@ちん遍歴(選択中キャラID)
+#DIM 選択中キャラID
+#DIM 暫定一位の相手
+#DIM 暫定一位の量
+#DIM 暫定一位の種類
+SIF !GETBIT(TALENT:選択中キャラID:2, 1)
+	RETURN
+PRINTL 【Penis】
+
+;custom code
+PRINTFORML Penile virginity loss history: 
+IF TALENT:選択中キャラID:非童貞 && CSTR:選択中キャラID:童貞喪失履歴 != ""
+	LOCALS '= BREAKENG(CSTR:選択中キャラID:童貞喪失履歴)
+	CALL COLORMESSAGE(LOCALS,C_PINK,1)
+ELSEIF !TALENT:選択中キャラID:非童貞
+	CALL COLORMESSAGE("It hasn't seen any use yet.",C_YELLOW,1)
+ELSE
+	CALL COLORMESSAGE("Lost it in the past.",C_YELLOW,1)
+ENDIF
+
+SIF Str_Mob_Description:選択中キャラID:Mob_Desc_DTLoss != "" ;addition custom code
+	PRINTFORML %BREAKENG(@"%Str_Mob_Description:選択中キャラID:Mob_Desc_DTLoss%")%
+
+SELECTCASE TALENT:選択中キャラID:形状
+CASE 1
+	LOCALS = cute and childish
+CASE 2
+	LOCALS = small
+CASE 4
+	LOCALS = luminescent
+CASE 5
+	LOCALS = warty
+CASE 6
+	LOCALS = huge
+CASEELSE
+	LOCALS = average-looking
+ENDSELECT
+PRINTFORML %CALLNAME:選択中キャラID%'s penis is %LOCALS%.
+
+IF Str_Mob_Description:選択中キャラID:Mob_Desc_Dick != "" ;addition custom code
+	PRINTFORM %Str_Mob_Description:選択中キャラID:Mob_Desc_Dick%
+	CALL PRINT_BREAK
+ENDIF
+
+SIF 選択中キャラID != MASTER
+	RETURN
+IF TALENT:選択中キャラID:非童貞
+	LOCAL:1 = SUMCARRAY(CFLAG:LOCAL:累計精飲,       1, CHARANUM)
+	LOCAL:2 = SUMCARRAY(CFLAG:LOCAL:累計ぶっかけ,   1, CHARANUM)
+	LOCAL:3 = SUMCARRAY(CFLAG:LOCAL:累計膣内精液,   1, CHARANUM)
+	LOCAL:4 = SUMCARRAY(CFLAG:LOCAL:累計アナル精液, 1, CHARANUM)
+	SIF FLAG:処女喰い
+		PRINTFORML It has taken {FLAG:処女喰い} %PLURALIZER("virginity", FLAG:処女喰い)% so far.
+	PRINTFORML It has ejaculated %DIGIT_GROUP(LOCAL:1)%ml into mouths, %DIGIT_GROUP(LOCAL:2)%ml onto bodies, %DIGIT_GROUP(LOCAL:3)%ml in vaginas, and %DIGIT_GROUP(LOCAL:4)%ml into anuses.
+	;各射精シチュの最大値調査
+	;→もっとも大量に出したシチュの決定
+	;→もっとも大量に出した相手の決定
+	LOCAL:1 = MAXCARRAY(CFLAG:LOCAL:累計精飲,       1, CHARANUM)
+	LOCAL:2 = MAXCARRAY(CFLAG:LOCAL:累計ぶっかけ,   1, CHARANUM)
+	LOCAL:3 = MAXCARRAY(CFLAG:LOCAL:累計膣内精液,   1, CHARANUM)
+	LOCAL:4 = MAXCARRAY(CFLAG:LOCAL:累計アナル精液, 1, CHARANUM)
+	暫定一位の量 = 0
+	FOR LOCAL:0, 1, 5
+		SIF 暫定一位の量 > LOCAL:(LOCAL:0)
+			CONTINUE
+		暫定一位の種類 = LOCAL:0
+		暫定一位の量   = LOCAL:(LOCAL:0)
+	NEXT
+	SELECTCASE 暫定一位の種類
+	CASE 1
+		暫定一位の相手 = FINDCHARA(CFLAG:LOCAL:累計精飲,       LOCAL:1, 1, CHARANUM)
+		LOCALS = mouth
+	CASE 2
+		暫定一位の相手 = FINDCHARA(CFLAG:LOCAL:累計ぶっかけ,   LOCAL:2, 1, CHARANUM)
+		LOCALS = body
+	CASE 3
+		暫定一位の相手 = FINDCHARA(CFLAG:LOCAL:累計膣内精液,   LOCAL:3, 1, CHARANUM)
+		LOCALS = vagina
+	CASE 4
+		暫定一位の相手 = FINDCHARA(CFLAG:LOCAL:累計アナル精液, LOCAL:4, 1, CHARANUM)
+		LOCALS = anus
+	ENDSELECT
+	SIF 暫定一位の量 > 0
+		PRINTFORML %CALLNAME:暫定一位の相手%'s %LOCALS% is its favorite.
+ENDIF
+SIF CFLAG:MASTER:子供人数 ;custom code
+	PRINTFORML Children fathered: {CFLAG:MASTER:子供人数}
+SIF FLAG:行きずり孕ませ数
+	PRINTFORML Mob girls impregnated: {FLAG:行きずり孕ませ数}
+SIF TALENT:MASTER:巫女孕ませ
+	PRINTL It is a cursed penis that can impregnate Shrine Maidens.
+SIF TALENT:MASTER:妖精孕ませ
+	PRINTL It is a criminal penis that can impregnate Fairies.
+SIF TALENT:MASTER:妖怪孕ませ
+	PRINTL It is a fearless penis that can impregnate Youkai.
+SIF TALENT:MASTER:天狗孕ませ
+	PRINTL It is a high-speed penis that can impregnate Tengu.
+SIF TALENT:MASTER:鬼孕ませ
+	PRINTL It is a demon-killing penis that can impregnate Oni.
+SIF TALENT:MASTER:付喪神孕ませ
+	PRINTL It is an unprincipled penis that can impregnate Tsukumogami.
+SIF TALENT:MASTER:神霊孕ませ
+	PRINTL It is a non-god-fearing penis that can impregnate Divine Spirits.
+SIF TALENT:MASTER:蓬莱孕ませ
+	PRINTL It is a penis that can pierce time itself and impregnate Hourai individuals.
+SIF TALENT:MASTER:万能孕ませ
+	PRINTL It is a penis that goes beyond human understanding and can impregnate any girl, whether she's a robot or a ghost.
+SIF TALENT:MASTER:濃厚精液
+	PRINTL It has accumulated semen over several days, and bears the stench of a male.
+;MASTER決め打ちでいいんじゃない？ あと個人的趣味としてふたなりに玉はない
+SIF BASE:選択中キャラID:精力 >= 1500 && !GETBIT(TALENT:選択中キャラID:性別,0)
+	PRINTL Massive amount of sperm is stored in the heavy scrotum.
+
+
+
+
+@妊娠関連(ARG)
+PRINTL
+CALL PRINTLINE, "Pregnancy Related"
+; IF CFLAG:ARG:子供人数 >= 10 ;qol custom code
+	; PRINTBUTTON "[See Children List]", 9997
+	; PRINTFORML
+	; RETURN 0
+; ENDIF
+;PRINTL
+;PRINTFORM 前回体内射精量 : {EX:ARG:14}
+;PRINTL
+PRINTFORM 　・Pregnancy time: {CFLAG:ARG:903}
+;CFLAG:ARG:903 = 40
+;PRINTL
+;PRINTFORM 自覚 : {CFLAG:(ARG):910}
+;PRINTL
+;PRINTFORM 無自覚妊娠 : {CFLAG:ARG:無自覚妊娠}
+PRINTL
+PRINTFORM 　・Number of children currently taking care of: {CFLAG:ARG:育児人数}
+PRINTL
+PRINTFORM 　・Current time spent on childcare: {CFLAG:ARG:908}
+PRINTFORML 
+PRINTFORM 　・Number of children: {CFLAG:ARG:子供人数}
+PRINTFORML 
+IF CFLAG:ARG:子供人数
+	FOR LOCAL,1,11
+		IF CHILDNAME:ARG:LOCAL != ""
+			PRINTFORM 　%ORDINAL(LOCAL)% Child: %CHILDNAME:ARG:LOCAL, 15, LEFT%　\@ CHILD_SEX:ARG:LOCAL == 1 ? ♀ # ♂ \@ %PRINT_DATE_F(CHILD_BIRTHDAY:ARG:LOCAL, 1)%
+			PRINTFORM (Day {CHILD_BIRTHDAY:ARG:LOCAL}) 
+			SELECTCASE CHILD_WEATHER:ARG:LOCAL
+			;Custom code, uses LOCALS
+			CASE "Ｃ敏感"
+				LOCALS = on a day when everyone had sensitive clits
+			CASE "Ｖ敏感"
+				LOCALS = on a day when everyone had sensitive pussies
+			CASE "Ａ敏感"
+				LOCALS = on a day when everyone had sensitive butts
+			CASE "Ｂ敏感"
+				LOCALS = on a day when everyone had sensitive tits
+			CASE "Ｍ敏感"
+				LOCALS = on a day when everyone had sensitive lips
+			CASE "スカート"
+				LOCALS = on a day when skirt flipping was pleasurable
+			CASE "パンツ"
+				LOCALS = on a day when panties were flying about
+			CASEELSE
+				LOCALS '= @"on %CHILD_WEATHER(CHILD_WEATHER:ARG:LOCAL)%"
+			ENDSELECT
+			PRINTFORM Born %LOCALS%.　
+			;qol custom code
+			PRINTL
+			PRINTFORM %BL(33)%
+			CALL QoL_DetailedInfo(Qol_Info_Child, ARG, LOCAL)
+			GOTO Qol_Info_Child
+			;--------------------
+			IF DAY - CHILD_BIRTHDAY:ARG:LOCAL < 120
+				IF DAY - CHILD_BIRTHDAY:ARG:LOCAL < CHILD_語彙 ;bug fix
+					PRINTFORML Infant.
+				ELSEIF DAY - CHILD_BIRTHDAY:ARG:LOCAL < CHILD_自立前 ;bug fix
+					PRINTFORML Child.
+				ELSE
+					PRINTFORML Teen.
+				ENDIF
+			ELSE
+				PRINTFORML Currently {(DAY - CHILD_BIRTHDAY:ARG:LOCAL) / 124} years old.
+			ENDIF
+			$Qol_Info_Child ;qol custom code
+		ENDIF
+	NEXT
+ENDIF
+
+
+
+@予定
+#DIM 依頼番号
+
+;custom code, this can get very long
+CALL PRINTBUTTON_EX(@"Schedule", 904, TFLAG:ScheduleHide, , , 1)
+SIF TFLAG:ScheduleHide
+	RETURN
+PRINTL 
+SELECTCASE FLAG:抱負
+	CASE 1
+		LOCALS = Masturbation encouragement
+	CASE 2
+		LOCALS = Homosexuality promotion
+	CASE 3
+		LOCALS = Loosening up female holes
+	CASE 4
+		LOCALS = Asshole development
+	CASE 5
+		LOCALS = Pleasuring breasts
+	CASE 6
+		LOCALS = Having many kids
+	CASE 9
+		LOCALS = Having many kids
+ENDSELECT
+IF FLAG:抱負
+	PRINTFORML This year's resolutions: %LOCALS%
+	PRINTL
+ENDIF
+IF FLAG:宴会開催フラグ
+	IF FLAG:開始日 - DAY <= 0
+		PRINT Today, 
+	ELSEIF FLAG:開始日 - DAY == 1 ;custom code
+		PRINTFORM Tomorrow, 
+	ELSE
+		PRINTFORM In {FLAG:開始日 - DAY} %PLURALIZER("day", FLAG:開始日 - DAY)%, 
+	ENDIF
+	CALL 宴会予定表示
+	PRINTL 
+	PRINT Banquet Size: 
+		SELECTCASE FLAG:宴会規模
+			CASE IS >= 5000
+				PRINT Grand
+			CASE IS >= 2500
+				PRINT Big
+			CASE IS >= 1500
+				PRINT Medium
+			CASEELSE
+				PRINT Small
+		ENDSELECT
+
+	SIF FLAG:36 > 0
+		PRINTL 　Can Get Canceled Due To Rain
+ENDIF
+PRINTL
+IF FLAG:貸本返却期限 >= 2
+	FOR LOCAL, 1, BookTitles + 1
+		SIF ITEM:(100 + LOCAL)
+			PRINTFORML Rented book: %ITEMNAME_TR(100 + LOCAL)%
+	NEXT
+	;PRINTL 
+	IF  FLAG:貸本返却期限 == 2
+		PRINTFORML Book return date: Today
+	ELSE
+		PRINTFORML Book return date: in {FLAG:貸本返却期限 - 2} %PLURALIZER("day", FLAG:貸本返却期限 - 2)%
+	ENDIF
+PRINTL
+ENDIF
+
+CALL SHOW_ALL_IRAI_SLOT
+
+SELECTCASE CFLAG:MASTER:小槌
+	CASE 4
+		PRINTFORM %PARSE("Your")% current penis size 
+		IF CFLAG:MASTER:魔力回収 == 6
+			PRINTFORM is 
+		ELSE
+			PRINTFORM has been 
+		ENDIF
+		PRINTFORML significantly increased by the Miracle Mallet.
+	CASE 5
+		PRINTFORM %PARSE("Your")% penis 
+		IF CFLAG:MASTER:魔力回収 == 6
+			PRINTFORM is 
+		ELSE
+			PRINTFORM has been 
+		ENDIF
+		PRINTFORML turned into two by the Miracle Mallet.
+	CASE 6
+		PRINTFORM %PARSE("You")% 
+		IF CFLAG:MASTER:魔力回収 == 6
+			PRINTFORM %PARSE("are")% 
+		ELSE
+			PRINTFORM %PARSE("have")% been 
+		ENDIF
+		PRINTFORML shrunken down to the size of an Inchling by the Miracle Mallet.
+	CASE 7
+		PRINTFORML %PARSE("Your")% body has returned to the original state by the Miracle Mallet.
+ENDSELECT
+;Custom code, moved around
+SIF CFLAG:MASTER:小槌 && CFLAG:MASTER:魔力回収 < 6
+	PRINTFORML Miracle Mallet cooldown period: {CFLAG:MASTER:魔力回収} %PLURALIZER("day", CFLAG:MASTER:魔力回収)%
+SIF CFLAG:MASTER:小槌
+	PRINTL 
+
+
+
+@パンツ収集状況(選択中キャラID)
+#DIM 選択中キャラID
+CALL PRINTLINE, "Panties Collected"
+IF FLAG:パンツ収集状況タイプB == 0
+	CALL DISPLAY_COLLECTION(選択中キャラID)
+	PRINTFORML 　・Total: {RESULT:0,4}　　Unique types: {RESULT:1,2}　　Duplicates: {RESULT:0 - RESULT:1,4}
+ELSE
+	CALL DISPLAY_COLLECTION_B(選択中キャラID)
+	PRINTFORML 　・Total: {RESULT:0,4}　　Unique types: {RESULT:1,2}/{RESULT:2}　　Duplicates: {RESULT:0 - RESULT:1,4}
+ENDIF
+
+@浮気把握状況(C_ID)
+#DIM C_ID
+#DIM LINE_BREAK
+LINE_BREAK = 0
+;Custom code, prevents you from seeing your own knowledge of your relationships
+SIF C_ID == MASTER
+	RETURN
+CALL PRINTBUTTON_EX(@"%CALLNAME:C_ID%'s knowledge of %PARSE("your")% relationships （Yellow means allowed）", 168, TFLAG:168, , , 1)
+IF !TFLAG:浮気歴表示
+	PRINTFORML 
+	FOR LOCAL,1,CHARANUM
+		SIF LOCAL == C_ID
+			CONTINUE
+		IF GET_UWAKI_HISTORY(C_ID, LOCAL)
+			SIF GET_UWAKI_HISTORY(C_ID, LOCAL) == 2
+				SETCOLOR C_YELLOW
+			SIF LINEISEMPTY()
+				PRINT 　
+			PRINTFORMLC %CALLNAME:LOCAL%
+			LINE_BREAK ++
+			SIF LINE_BREAK % (PRINTCPERLINE() - 1) == 0
+				PRINTL 
+		ENDIF
+		RESETCOLOR
+	NEXT
+	SIF LINE_BREAK % (PRINTCPERLINE() - 1) != 0
+		PRINTL 
+ENDIF
+
+@PRINT_STATE_PREFERENCE(選択中キャラID)
+#DIM 選択中キャラID
+CALL PRINTLINE, "Preferences"
+PRINTL Like:
+CALL SHOW_TASTE(GET_STR(, "キャラデータ", 選択中キャラID, "感性：好き"), "POSITIVE", ABL:選択中キャラID:親密 < 5)
+PRINTFORML 
+PRINTL Hate:
+CALL SHOW_TASTE(GET_STR(, "キャラデータ", 選択中キャラID, "感性：嫌い"), "NEGATIVE", ABL:選択中キャラID:親密 < 5)
+DRAWLINE 
+PRINTL Favorite flavors: 
+CALL SHOW_TASTE(GET_STR(, "キャラデータ", 選択中キャラID, "料理：好きな味"), "POSITIVE", ABL:選択中キャラID:親密 < 3)
+PRINTL Disliked flavors: 
+CALL SHOW_TASTE(GET_STR(, "キャラデータ", 選択中キャラID, "料理：嫌いな味"), "NEGATIVE", ABL:選択中キャラID:親密 < 3)
+PRINTL Assistant bonus:
+CALL DISH_TASTE_FROM_CHARA(選択中キャラID, "OUTPUT")
+CALL SHOW_TASTE(RESULTS, "ASSIDATA")
+IF 選択中キャラID == MASTER && EX_DISH_NAME != ""
+	PRINTFORML ＜%DISHNAME_TR(EX_DISH_NAME)%＞
+	CALL SHOW_TASTE(DISH_TASTE, "DISH_DATA")
+ENDIF
+IF CFLAG:選択中キャラID:好きな体位
+	DRAWLINE
+	PRINT Weak Point: 
+	SELECTCASE CFLAG:選択中キャラID:好きな体位
+	CASE 1
+		PRINTL Missionary
+	CASE 2 
+		PRINTL Doggy Style
+	CASE 3 
+		PRINTL Cowgirl
+	CASE 4 
+		PRINTL Lotus Position 
+	CASE 5 
+		PRINTL Reverse Lotus
+	CASE 6
+		PRINTL Anal Missionary
+	CASE 7 
+		PRINTL Anal Doggy Style
+	CASE 8 
+		PRINTL Anal Cowgirl
+	CASE 9 
+		PRINTL Anal Lotus Position
+	CASE 10 
+		PRINTL Anal Reverse Lotus
+	ENDSELECT
+	PRINTL 　
+ENDIF
+
+@PRINT_STATE_GIFTDATA(選択中キャラID, 最大表示行数)
+#DIM 選択中キャラID
+#DIM 最大表示行数
+#DIM 表示開始
+
+SIF !GIFT_GOT:選択中キャラID:1
+	RETURN
+	
+;custom code, since there can be 100 gifts and bloat the fuck out
+CALL PRINTBUTTON_EX(@"Given Gifts", 900, TFLAG:GiftsHide, , , 1)
+SIF TFLAG:GiftsHide
+	RETURN
+
+SIF !最大表示行数
+	最大表示行数 = 100
+
+FOR LOCAL, 0, 100
+	;フラグ0番が100を兼ねているのでこの形に
+	IF !GIFT_GOT:選択中キャラID:((LOCAL + 1) % 100)
+		表示開始 = MAX(LOCAL + 1 - 最大表示行数, 1)
+		BREAK
+	ENDIF
+NEXT
+
+;CALL PRINTLINE, "Given Gifts"
+
+;お気に入りを先頭に持ってくる
+SIF CFLAG:選択中キャラID:貰った贈り物
+	CALL PRINT_GIFTDATA(CFLAG:選択中キャラID:貰った贈り物, 選択中キャラID, "キャラの")
+FOR LOCAL, 表示開始, 表示開始 + 最大表示行数 + 1
+	SIF GIFT_GOT:選択中キャラID:LOCAL && GIFT_GOT:選択中キャラID:LOCAL != CFLAG:選択中キャラID:貰った贈り物
+		CALL PRINT_GIFTDATA(GIFT_GOT:選択中キャラID:LOCAL, 選択中キャラID, "キャラの")
+NEXT
+
+@Valentine_History(ARG)
+IF CFLAG:ARG:バレンタイン
+	PRINTFORML %HE_SHE(ARG,1)% gave %PARSE("you")% %Valentine_Chocolate(ARG)% on Valentine's Day\@ CFLAG:ARG:バレンタイン > 100? (Compensated)# \@.
+ENDIF
+
+@Valentine_Chocolate(ARG)
+#FUNCTIONS
+SELECTCASE CFLAG:ARG:バレンタイン % 100
+	CASE 1
+		LOCALS = a Black Thunder
+	CASE 2
+		LOCALS = an ordinary chocolate
+	CASE 3
+		LOCALS = a premium chocolate
+	CASE 4
+		LOCALS = a handmade chocolate
+ENDSELECT
+RETURNF LOCALS
+
+
+@PERSONALITY_TYPE(ARG)
+#FUNCTIONS
+SELECTCASE CFLAG:ARG:性格傾向
+	CASE 1
+		RETURNF "Timid"
+	CASE 2
+		RETURNF "Confident"
+	CASE 3
+		RETURNF "Upfront"
+	CASE 4
+		RETURNF "Serious"
+	CASE 5
+		RETURNF "Other"
+ENDSELECT

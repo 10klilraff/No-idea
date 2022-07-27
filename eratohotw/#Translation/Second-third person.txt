@@ -1,0 +1,112 @@
+This file lists functions related to second-third person.
+The translation branch itself doesn't use these functions to make third-person possible. It's for use by other branches, primarily feature/third-person.
+The character's name will be "Anon" as an example.
+The following are parameters:
+WHO - Numerical ID for the character, the player as ID 0
+	MASTER and PLAYER are both variables that mean 0
+CAP - Capitalize, he/He, she/She etc.
+	CAP defaults to 0, meaning you just have to write YOU() to get YOU(0). When there are multiple arguments, you can simply skip writing one and it'll become default. I.e. YOU(0,"are") is the same as YOU(,"are")
+FORCE - Forces third person, in case it's a moment where someone's clearly talking about the player in third person.
+ARGS - Some manual string.
+
+YOU(CAP, ARGS)
+	Third person
+		Anon
+	Second person
+		You/you
+	You can add several things in place of ARGS, it expects second person.
+	YOU(,"are") becomes either "you are" or "Anon is".
+	Full list is "are" "aren't" "don't" "haven't" "have" "weren't" "were"
+YOU_GRAMMAR(ARGS)
+	Miscellaneous function for special verbs and other things.
+	"don't" -> "doesn't"
+	A special one is "r" -> "'s". It's for certain cases like the following:
+	"You"
+	if thing{
+		"r tongue travels across"
+	} else {
+		" lick"
+	}
+YOUR(CAP)
+	Third person
+		Anon's
+	Second person
+		Your/your
+YOURE(CAP)
+	Third person
+		Anon's
+	Second person
+		You're/you're
+YOURS(CAP)
+	Third person
+		Anon's
+	Second person
+		Yours/yours
+THEM_YOU(CAP)
+	Third person
+		Them/them
+	Second person
+		You/you
+THEIR_YOUR(CAP)
+	Third person
+		Their/their
+	Second person
+		Your/your
+THEY_YOU(CAP)
+	Third person
+		They/they
+	Second person
+		You/you
+THE_YOU(CAP)
+	Third person
+		The/the
+	Second person
+		You/you	
+THE_YOUR(CAP)
+	Third person
+		The/the
+	Second person
+		Your/your	
+HE_SHE(WHO, CAP, FORCE)
+	Third person or FORCE
+		He/She or he/she
+	Second person and WHO is 0
+		You/you
+HES_SHES(WHO, CAP, FORCE)
+	Third person or FORCE
+		He's/She's or he's/she's
+	Second person and WHO is 0
+		You're/you're
+HIS_HER(WHO, CAP, FORCE)
+	Third person or FORCE
+		His/Her or his/her
+	Second person and WHO is 0
+		Your/your
+HIS_HERS(WHO, CAP, FORCE)
+	Third person or FORCE
+		His/Hers or his/hers
+	Second person and WHO is 0
+		Your/your
+HIM_HER(WHO, CAP, FORCE)
+	Third person or FORCE
+		Him/Her or him/her
+	Second person and WHO is 0
+		Your/your
+HIMSELF_HERSELF(WHO, CAP, FORCE)
+	Third person or FORCE
+		Himself/Herself or himself/herself
+	Second person and WHO is 0
+		Yourself/yourself
+
+
+
+
+Now the functionality of CONJUGATOR will be described.
+It is a function that takes a verb and a tense and applies them if the game is in third person.
+CONJUGATOR("speak:s")
+	Third person
+		speaks
+	second person
+		speak
+etc. 
+It accepts ":ing", ":s", and ":ed" and applies ongoing- third person- or past tense respectively. There might be some verbs that go awry.

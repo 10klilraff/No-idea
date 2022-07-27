@@ -1,0 +1,114 @@
+﻿@CHARAMOVE_DATA_19(ARG, ARG:2)
+LOCAL = 19
+SELECTCASE ARG
+	;連動設定（RETURN=依存するキャラ, RESULT:1～3=対等に連動するキャラ）
+	CASE 1
+		;たまに連動
+		IF FLAG:日替わりイベント % 8 == 0
+			RESULT:1 = [[リリーＷ]]
+			RESULT:2 = [[リリーＢ]]
+		ENDIF
+	;特殊生活時間設定（CFLAG:LOCAL:生活時間補正を設定する）
+	CASE 3
+	;移動傾向（±～10=行きやすい/行きにくい, -100=行かない）
+	CASE 4
+		SELECTCASE ARG:2
+			;三妖精宅内に行きやすい
+			CASE P27三妖精の家・広間 TO P34スター私室
+				RETURN 5
+			;私室には入らない
+			CASE P704河童のアジト, P706厄神の家, P716秋姉妹の家・土間 TO P730仙人の屋敷・庭
+				RETURN -100
+			CASE P733正邪の隠れ家, P736山姥の家, P737招き猫の家, P740山童のアジト
+				RETURN -100
+		ENDSELECT
+	;出現場所
+	CASE 7
+		SELECTCASE ARG:2
+			CASE 広場, 商家町, 呑屋小道
+				RETURN 1
+			CASE 再思の道, 無縁塚
+				RETURN 1
+			CASE 中有の道, 三途の川, 彼岸
+				RETURN 1
+			CASE 麓の樹海, 玄武の沢, 大蝦蟇の池, 森の深奥
+				RETURN 1
+		ENDSELECT
+	;引力設定（CFLAG:LOCAL:引力点を設定する）
+	CASE 8
+ENDSELECT
+
+@EXIST_キャラデータ19
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+@キャラデータ19(ARG, O_DATA, V_NAME)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS O_DATA
+#DIMS V_NAME
+SELECTCASE O_DATA
+CASE "呼び名"
+	CALLF MAKE_STR(V_NAME, "リリーＢ")
+;こっから衣装設定
+CASE "今日のパジャマ"
+	CALLF MAKE_STR(V_NAME, "パジャマ（ズボン）セット")
+
+CASE "普段着：帽子"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("帽子", "帽子"))
+CASE "普段着：靴"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴", "靴"))
+CASE "普段着：靴下"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("靴下", "靴下"))
+CASE "普段着：ワンピース"
+	CALLF MAKE_INT(V_NAME, CLOTHES_ID("ワンピース", "ワンピース"))
+
+CASE "固有下着形容詞"
+	CALLF MAKE_STR(V_NAME, "ほんのり暖かい")
+CASE "固有下半身下着名"
+	CALLF MAKE_STR(V_NAME, "黒春告精のパンツ")
+CASE "固有上半身下着"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有上半身下着名"
+	CALLF MAKE_STR(V_NAME, "黒春告精のキャミソール")
+CASE "固有下着着用条件"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(前)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着透ける(後)"
+	CALLF MAKE_INT(V_NAME, 1)
+CASE "固有下着生地厚さ"
+	CALLF MAKE_INT(V_NAME, 2)
+
+;料理関連
+CASE "料理：好きな味"
+	CALLF MAKE_STR(V_NAME, "肉料理/スパイス/洋食/葉物/濃厚/温かい/質素/野趣/鮮やか/ふわふわ/冥界風/きらめき/辛い/辛い/辛い/春物/春物/春物/春物/春物/")
+CASE "料理：嫌いな味"
+	CALLF MAKE_STR(V_NAME, "和食/淡白/冷たい/甘い/甘い/しょっぱい/しょっぱい/ミルク/ミルク/ミルク/夏物/夏物/夏物/")
+CASE "料理：助手効果"
+	CALLF MAKE_STR(V_NAME, "得意料理＊春物＊/")
+;贈り物関連
+CASE "感性：好き"
+	CALLF MAKE_STR(V_NAME, "植物/かわいい/ロリータ/" + "黒/風/" * 3 + "サクラの/ユリの/春の/春風の/" * 5)
+CASE "感性：嫌い"
+	CALLF MAKE_STR(V_NAME, "氷/刃物/弾/小手/キセル/" * 3 +"白/夏の/カエデの/スイカの/紅葉の/" * 5 + "冬の/秋の/秋風の/" * 10)
+ENDSELECT
+
+;-------------------------------------------------
+;固有料理設定
+;DISH_NAME          料理名
+;RESULTS            料理の種類（軽食/主食/デザート）
+;CALL 材料設定("")  材料の指定。"汎用"を入れると自動で汎用食材になる
+;DISH_TASTE         味の設定
+;DISH_COMMENT       （任意）一行コメント
+;DISH_TIME          （任意）調理にかかる時間
+;DISH_MAXLIMIT      （任意）料理の持続時間
+;-------------------------------------------------
+@SPECIAL_MENU_19
+DISH_NAME = 春の鎮魂料理
+RESULTS = 主食
+CALL 材料設定("汎用")
+DISH_TASTE = 和食/煮物/野菜/すっぱい/ヘルシー/濃厚/温かい/春物/質素/野趣/上品/霊障/冥界風/
+DISH_COMMENT = 春野菜を使った故人を偲ぶ冥界発祥の料理。
+RETURN 1

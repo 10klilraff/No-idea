@@ -1,0 +1,122 @@
+﻿@仕事情景描写(ARG)
+;ARGはキャラ　キャラ別の情景描写にどうぞ。
+;Custom code, replaced function
+CALL JOB_DEPICTION(ARG)
+RETURN
+IF CFLAG:ARG:職種 == 48
+	PRINTFORMW %CALLNAME:ARG%は\@ TALENT:ARG:恋慕 ? %CALLNAME:MASTER%を気に掛けながら # 忙しそうに\@宴会の準備をしている。
+ELSEIF CFLAG:ARG:職種 == 50
+	PRINTFORMW %CALLNAME:ARG%は\@ TALENT:ARG:恋慕 ? %CALLNAME:MASTER%を気に掛けながら # 黙々と\@宴会の片づけをしている。
+ELSEIF CFLAG:ARG:職種 == 46
+	PRINTFORMW %CALLNAME:ARG%は\@ TALENT:ARG:恋慕 ? %CALLNAME:MASTER%に時折視線を向けながら # \@遊んでいる。
+ELSEIF CFLAG:ARG:職種 == 52
+	SELECTCASE ARG
+		;こっから女子会　※後々キャラ毎に個性持たせたいので分岐だけ作っておく
+		CASE 4
+			PRINTFORML %CALLNAME:ARG%は、女子たちと姦しく談笑している。
+		CASE 26
+			PRINTFORML %CALLNAME:ARG%は、女子たちと姦しく談笑している。
+		CASE 32
+			PRINTFORML %CALLNAME:ARG%は、女子たちと姦しく談笑している。
+		CASE 55
+			PRINTFORML %CALLNAME:ARG%は、女子たちと姦しく談笑している。
+		CASE 66
+			PRINTFORML %CALLNAME:ARG%は、女子たちと姦しく談笑している。
+		CASE 72
+			PRINTFORML %CALLNAME:ARG%は、女子たちと姦しく談笑している。
+		CASE 102
+			PRINTFORML %CALLNAME:ARG%は、女子たちと姦しく談笑している。
+		CASE 124
+			PRINTFORML %CALLNAME:ARG%は、女子たちと姦しく談笑している。
+	ENDSELECT
+		;女子会ここまで
+ELSE
+	SELECTCASE ARG
+		CASE 30
+			IF INRANGE(TIME, CLOCK_TO_TIME(9, 0), CLOCK_TO_TIME(11, 59))
+				PRINTFORML %CALLNAME:ARG%は粛々と%GET_JOBNAME(ARG)%を進めている。
+			ELSEIF INRANGE(TIME, CLOCK_TO_TIME(12, 0), CLOCK_TO_TIME(12, 59))
+				PRINTFORML %CALLNAME:ARG%は%GET_JOBNAME(ARG)%をとっている。
+			ELSE
+				PRINTFORML %CALLNAME:ARG%は淡々と%GET_JOBNAME(ARG)%を進めている。
+			ENDIF
+		CASE 54
+			PRINTFORMW %CALLNAME:ARG%は本から顔も上げない…
+		CASE 57
+			PRINTFORMW %CALLNAME:ARG%はのんびりと%GET_JOBNAME(ARG)%をしている。
+		CASE 67
+			IF TIME >= 720 && TIME <= 780
+				PRINTFORMW %CALLNAME:ARG%は\@ TALENT:ARG:恋慕 ? %CALLNAME:MASTER%を気に掛けながら # \@子供達と%GET_JOBNAME(ARG)%をとっている。
+			ELSE
+				PRINTFORMW %CALLNAME:ARG%は\@ TALENT:ARG:恋慕 ? %CALLNAME:MASTER%を気に掛けながら # \@%GET_JOBNAME(ARG)%をしている。
+			ENDIF
+		CASE 70
+			IF DAY % 7 == 3 || DAY % 7 == 4
+				PRINTFORML %CALLNAME:ARG%は本を読みながら%GET_JOBNAME(ARG)%をしている。
+			ELSE
+				PRINTFORML %CALLNAME:ARG%は中身を確認しながら丁寧に%GET_JOBNAME(ARG)%をしている。
+			ENDIF
+		CASEELSE
+			PRINTFORML %CALLNAME:ARG%は小気味良く%GET_JOBNAME(ARG)%をこなしている。
+	ENDSELECT
+ENDIF
+@宴会描写(ARG)
+;FLAG:宴会開催フラグを使って宴会種別で書き分けてもいいかも
+
+IF TCVAR:ARG:泥酔 == 0
+	IF CFLAG:ARG:職種 == 49 && TALENT:ARG:恋慕 == 1
+		PRINTFORMW %CALLNAME:ARG% enjoys the banquet while occasionally letting %HIS_HER(ARG)% eyes linger on %PARSE("you")%.
+	ELSE
+		PRINTFORML %CALLNAME:ARG% enjoys the banquet.
+	ENDIF
+ELSE
+	IF TALENT:ARG:恋慕 == 1
+		PRINTFORMW %CALLNAME:ARG% is completely wasted but gazes occasionally at %PARSE("you")%.
+	ELSE
+		PRINTFORML %CALLNAME:ARG% is completely wasted.
+	ENDIF
+ENDIF
+IF CFLAG:ARG:職種 == 51 && (BASE:ARG:酒気 > (MAXBASE:ARG:酒気 / 10) * 8)
+	PRINTW 　Seems they'll remain drunk for quite some time...
+ELSEIF CFLAG:ARG:職種 == 51 && (BASE:ARG:酒気 > (MAXBASE:ARG:酒気 / 10) * 6)
+	PRINTW 　It'll take some time for them to sober up...
+ELSEIF CFLAG:ARG:職種 == 51
+	PRINTW 　It seems they're about to sober up...
+ELSEIF CFLAG:ARG:職種 == 49 && (BASE:ARG:酒気 > (MAXBASE:ARG:酒気 / 10) * 6) 
+	IF TALENT:ARG:感情乏しい && RAND:4
+		ELSEIF !RAND:10
+			IF !RAND:2
+				PRINTFORMW 　%CALLNAME:ARG%'s eye have glazed over.
+				PRINTFORMW 　It seems the alcohol isn't agreeing with them.
+					TALENT:ARG:15 = -1
+			ELSE
+				PRINTFORMW 　%CALLNAME:ARG% seems to be having fun.
+				PRINTFORMW 　It seems the alcohol is working well.
+					TALENT:ARG:15 = 1
+			ENDIF
+		ELSE
+			IF TALENT:ARG:15 == -1
+				PRINTFORMW 　%CALLNAME:ARG% is sitting at the edge of the party...
+			ELSEIF TALENT:ARG:15 == 1
+				PRINTFORMW 　%CALLNAME:ARG% is laughing uncontrollably...
+			ELSE
+				PRINTW 　They're slowly getting more and more tipsy...
+			ENDIF
+	 	ENDIF
+ELSEIF CFLAG:ARG:職種 == 49 && (BASE:ARG:酒気 > (MAXBASE:ARG:酒気 / 10) * 4)
+	PRINTW 　They're starting to enjoy themselves more...
+ELSEIF TALENT:ARG:酒耐性 == -2 || CFLAG:ARG:妊娠自覚状態 == 1
+	IF BASE:ARG:仕事量 >= (MAXBASE:ARG:仕事量 / 3) * 2
+		PRINTW 　They chat without drinking...
+	ELSEIF BASE:ARG:仕事量 >= (MAXBASE:ARG:仕事量 / 3)
+		IF CFLAG:ARG:妊娠自覚状態 == 1
+			PRINTW 　They enjoy themselves without drinking...
+		ELSEIF TALENT:ARG:酒耐性 == -2
+			PRINTW 　As usual they don't drink anything...
+		ENDIF
+	ELSEIF TALENT:ARG:酒耐性 == -2 || CFLAG:ARG:妊娠自覚状態 == 1
+		PRINTW 　They stand firm against any alcohol...
+	ENDIF
+ELSEIF CFLAG:ARG:職種 == 49 
+	PRINTW 　It seems they can drink even more...
+ENDIF

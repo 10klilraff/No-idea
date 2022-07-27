@@ -1,0 +1,183 @@
+﻿;==================================================
+;弾幕勝負
+;==================================================
+;
+@M_KOJO_MESSAGE_COM_K64_DANMAKU(ARGS, 相手残機)
+#DIM 相手残機
+;全体の流れ
+;①【戦闘前】→②ダイスロールとプレイヤー選択肢、ハンデをつけた場合は【ハンデ口上】→③対応スキルが発動した場合【スキル口上】→④被弾判定、キャラが被弾したなら【被弾口上】→
+;どちらかの残機が0になっていなければ②に戻る→⑤【戦闘後口上】
+
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;戦闘前
+	HANDICAP_FIXED = 0
+	HANDICAP_RAND = 0
+	;ハンデをつけることができ、数値が大きいほどあなたが不利になる　数値が負ならあなたが有利に
+	;キャラの能力に関わらずクッソ強くしたり弱くしたりできる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘前"
+		;名乗り口上
+		IF !CFLAG:64:1002 && !CFLAG:64:弾幕勝負勝利
+			PRINTFORMW 「First, lemme reintroduce myself before we duke it out.」
+			PRINTFORMW 「It's a bit drawn out, but bear with me please.」
+			PRINTFORMDW Yuugi takes a deep breath and centers her gaze on you, sizing you up.
+			PRINTFORMW 「My name is Yuugi Hoshiguma. A fine oni specimen, as you can see!」
+			PRINTFORMW 「I was once known as one of the Big Four of the Mountain, but that was from times long past.」
+			PRINTFORMW 「Nowadays, I'm managing a resort district called Former Hell's hot spring town as its head honcho.」
+			PRINTFORMW 「That said, it doesn't mean I've lost touch with my oni instincts!」
+			PRINTFORMW 「I still wanna fight against someone strong! I wanna fight while putting my life on the line!」
+			PRINTFORMDW Yuugi thumped her chest, emboldened to go further by the passion flickering to life inside her.
+			PRINTFORMW 「――I've been hearing rumors about you for a while now. They say you're one of the best.」
+			PRINTFORMW 「So, hey, why don't we have a match? Those stories are true, I hope?」
+			PRINTFORMW 「I wanna see with my own eyes how strong you are. And if luck is on my side, then, well...」
+			PRINTFORMDW She chuckles, unable to contain herself.
+			PRINTFORMW 「――Fufu, enough mouthing off about this and that. Frankly, I've been itching for a nice good scuffle since the beginning!」
+			PRINTFORMW 「And that look in your eyes! That smirk! The way you look at me like I'm nothing!」
+			PRINTFORMW 「...Would you stop looking at me like that?」
+			PRINTFORMW 
+			PRINTFORMW 「――'Cause it makes me wanna... rock'n'roll till we turn to dust!!!」
+			CFLAG:64:1002 = 1
+		;通常
+		ELSE
+			SELECTCASE IFRAND("0TO2", 1, "D2", TALENT:妊娠 || TALENT:育児中)
+				CASE 0
+					PRINTFORML 「You wanna fight? Ooh, I'd love to!」
+					PRINTFORML 「Just the exercise I needed!」
+					PRINTFORMDW Yuugi rolls her shoulders and stretches. When finished, she gives you an eager look before nodding.
+				CASE 1
+					PRINTFORML 「No need to hold back this time, am I right?」
+					PRINTFORMW 「What'd you say? Eh, %MASTERNAME:64%?」
+				CASE 2
+					PRINTFORMDL Yuugi pours sake into her dish... before drinking it all down!
+					PRINTFORML 「"If you can get me to spill even a drop outta this"... Meh, that sounds sooo lame! Don't you think?」
+					PRINTFORML 「If you're up for something, you better believe I wanna see you put your heart and soul into it.」
+					PRINTFORML 「That's not a problem for you, is it?」
+					PRINTFORMDW She asks in a pert tone, raising an eyebrow.
+			ENDSELECT
+		ENDIF
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;ハンデ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "ハンデ"
+		;ハンデつけなかったら表示されないので無記入でよい
+		PRINTFORML 
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中TARGET被弾時口上
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" 
+		;別に一律で「やられたー」だけでもいいよ
+		SELECTCASE 相手残機
+			;残り残機3が表示されるのは【洽覧深識】持ちのみ
+			CASE 3
+				PRINTFORML 
+			CASE 2
+				PRINTFORML 「Whoa there! %SPLIT_G(@"You're one tough %PRINT_MALE("guy", MASTER)%, %MASTERNAME:64%! I like it!:You're pretty good, I gotta say!")%」
+				PRINTFORMW 「Now I'm finally up and awake! You have my thanks!」
+			CASE 1
+				PRINTFORML 「Let's end it with this one!」
+				PRINTFORMW 「Big Four Arcanum――"Knock Out In Three Steps"!!!」
+				;added by linguine
+				PRINTFORMDW %BREAKENG(@"Yuugi raises one leg high, her foot carving an arc through the air before smashing into the ground, %SPLIT_G("fracturing the surface with many lines tearing out from the center:fragmenting the surface underneath:rending the surface asunder")%.")%
+				PRINTFORMDW %BREAKENG(@"You stumble from her actions as she repeats the same move with the other foot, assuming a half crouched stance, arms raised on either side of her.")%
+				PRINTFORMDW Strange multicolored energies rise from the earth and swirl around her form.
+				PRINTFORMDW %BREAKENG(@"The area around you quakes when a tightly packed wall of frozen bullets materialize and surround Yuugi, then once more with a much looser formation, forcing you to freeze or get hit.")%
+				PRINTFORMDW %BREAKENG(@"Then the ground trembles a moment longer as Yuugi pulls more worldly power into herself before a final, impenetrable layer forms further behind you.")%
+				PRINTFORMDW Finally, with a snap of her fingers, it all begins to move, forcing you to weave around and thread in-between each projectile.
+				PRINTFORMDW She repeats the process over and over...
+				HANDICAP_RAND = 100
+			CASE 0
+				PRINTFORMW 「Splendid! You're everything I hoped you'd be!」
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【残忍酷薄】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "残忍酷薄"
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【乾坤一擲】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "乾坤一擲"
+		
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【怪力乱神】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "怪力乱神"
+		PRINTFORML 「――――――%SPLIT_G("AaaaaaaaaaaAAAAAAAAAAAAAHHHHHHHHHHHHHH:UuuuUUUUUUUUUUUHHHHHHHHHHHHH:RrrrrraaaaaaaaaAAAAAAAAAAAGHHHHHHHHHHHHHHH")%!!!!!!」
+		PRINTFORMDL The mighty roar of the oni almost ruptures your eardrums.
+		PRINTFORMDL The Danmaku you unleashed was all but obliterated, fizzling out midair or carried away into nothingness by the sound alone.
+		PRINTFORMW 「Haaahh! Now then, let's resume where we left off!」
+	ENDIF
+	
+	;-------------------------------------------------
+	;戦闘後
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" 
+		PRINTFORML 
+		;残り残機4が表示されうるのは【洽覧深識】持ちのみ
+		;残機が1以上ならあなたの負け、0の場合はあなたの勝利
+		SELECTCASE 相手残機
+			CASE 4
+				PRINTFORML 
+			CASE 3
+				PRINTFORML 「Aww maaaan, I really thought you'd be a little better than this...」
+				PRINTFORMDL For a moment, Yuugi rubs her chin with a thoughtful expression before looking at you.
+				PRINTFORMW 「%SPLIT_G("Wanna rematch sometime?:Wanna give it another shot?")% I'll pour you a cupful of my finest sake!」
+			CASE 2
+				PRINTFORML 「You ain't half bad, gotta give it to ya.」
+				PRINTFORMDL Yuugi says with a wink.
+				PRINTFORMW 「But the victory is mine. Come rematch me later!」
+			CASE 1
+				PRINTFORML 「That was a blast. I haven't been this pumped in a long time!」
+				PRINTFORMDL Yuugi crosses her arms with a cheery smile.
+				PRINTFORMW 「Now, let's go jump in the tub and freshen up! You're coming, right?」
+			CASE 0
+				PRINTFORML 「You win! I've been soundly defeated alright!」
+				PRINTFORML 「I'd give you my head right now, except... you said you don't want it, right?」
+				PRINTFORMW 「Fufu, in that case, have this. Here's to your well-deserved victory. Cheers!」
+				PRINTFORMDL Yuugi reaches behind herself and retrieves a sake bottle.
+				PRINTFORMDL Pouring the brewed contents into the red dish, she offers it, but you politely decline.
+				PRINTFORMDL She raises an eyebrow at that, but shrugs not long after\@ !(TALENT:妊娠 || TALENT:育児中) ? , downing the sake down in one continuous swig#\@.
+				SIF !(TALENT:妊娠 || TALENT:育児中)
+					CALL RECOVER(TARGET, 200, "酒気", " ")
+		ENDSELECT
+	ENDIF
+RESETCOLOR
+ENDIF
+RETURN 1
+

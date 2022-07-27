@@ -1,0 +1,94 @@
+﻿@GO_OUT_CONDITION_EV3
+IF !RAND:10 && (MAIN_MAP == 2 || CFLAG:MASTER:デート中 == 2)
+	CALL GO_OUT_EV3
+ELSE
+	RETURN 0
+ENDIF
+RETURN 1
+
+@GO_OUT_EV3
+#DIM PAIR
+PAIR = FLAG:デート相手
+SETCOLOR C_L_GRAY
+PRINTFORMDW On the way %PARSE("you get")% approached by a suspicious man...!
+PRINTFORML 
+IF PAIR
+	PRINTFORML 「You guys! Sorry to butt in, but can I talk to you for a second?」
+ELSE
+	PRINTFORML 「Hey, you! Yes, I'm talking to you! Can I talk to you for a second?」
+ENDIF
+PRINTFORMW 「Uh, it shouldn't take too much time. I just need you to listen...」
+PRINTFORMDL The guy looks unkempt, with his long, shaggy hair and a mustache.
+PRINTFORMDL His expression alone, with his eyes glazed over and darting about on his face, makes %PARSE("you")% feel quite uneasy...
+RESETCOLOR
+CALL ASK_M("Ignore him and move on", 1, "Hear him out", 1)
+SETCOLOR C_L_GRAY
+IF !RESULT
+	PRINTFORMDL Yeah, no, %PARSE("you don't")% want to be around no slob.
+	PRINTFORML 「Aahh! Wait, please! Don't just ignore me, help a man out～!」
+	PRINTFORMDL %PARSE("You")% \@ PAIR ? and %CALLNAME:PAIR% continue # %PARSE("continue")% \@  on %PARSE("your",2)% way without looking back.
+	PRINTFORMW
+	RESETCOLOR
+	RETURN 1
+ENDIF
+PRINTFORML 「Aww man! I knew you were a decent \@ PAIR ? folk # one\@! Thank you! Thank you so much!」
+PRINTFORML 「Now where to begin...」
+SELECTCASE DAY:2
+	CASE 1, 3
+		PRINTFORMDW The man begins to speak, breaking out in sweat for some reason despite the season...
+	CASE 2
+		PRINTFORMDW %BREAKENG(@"The man begins to speak, sweating profusely to the point that a puddle started to form under him, which seemed a little strange even with how hot it was...")%
+	CASE 4
+		PRINTFORMDW Despite the freezing cold, the man begins to speak with sweat pouring down his face...
+ENDSELECT
+PRINTDW .........
+PRINTDW ......
+PRINTDW ...
+IF CFLAG:MASTER:今日の運勢 / 100 + TFLAG:幸運補正 < 5
+	PRINTFORML 「You\@ PAIR ? %" "%guys # \@ have noticed it too, haven't you?　All the strange things that have been happening lately...」
+	PRINTFORML 「How is it that such incidents have been going on for so long?!」
+	PRINTFORML 「Well, I'll tell you why. It's a clear sign, you know?! One of these days the world is going to end, I'm telling you!」
+	PRINTFORML 「Once I found out about all this, I couldn't be more anxious... It's making me so restless!」
+	PRINTFORMW 「...! ......!!!」
+	PRINTFORMDL The man rambles on and on about his crazy delusions and paranoia...
+	PRINTFORMDL Having had enough, %PARSE("you")% \@ PAIR ? and %CALLNAME:PAIR% run # %PARSE("run")%\@ off elsewhere.
+	PRINTFORMW 
+	IF PAIR
+		PRINTFORMDL With %PARSE("your",1)% precious date thwarted, %PARSE("you head")% back home, feeling drained...
+		CALL RECOVER(MASTER, -300, "気力", "Depressing Story")
+		CALL RECOVER(PAIR, -300, "気力", "Depressing Story")
+		BASE:PAIR:ムード = BASE:PAIR:ムード / 3
+	ELSE
+		PRINTFORMDL After wasting %PARSE("your",1)% time and energy, %PARSE("you head")% home, sick of it all...
+		CALL RECOVER(MASTER, -300, "気力", "Depressing Story")
+	ENDIF
+	PRINTFORMDL +60 Minutes
+	TIME += 60
+ELSE
+	PRINTFORML 「You\@ PAIR ? %" "%guys # \@ must've heard the rumors that the end of the world is near, right?」
+	PRINTFORMW 「Yeah, those gossips did a number on me alright...」
+	PRINTFORML 「But you know, once I got this stuff I from a drug dealer I know well, they don't bother me no more!」
+	PRINTFORML 「I gotta give it the credit it deserves... 'cause all my worries are gone now!」
+	PRINTFORML 「Oh maaan, would you believe it?! With this, I won't be afraid of the end of the world for a second!」
+	PRINTFORMDW The man rambles on and on about the wonders of antidepressants...
+	PRINTFORML 
+	PRINTFORML 「I'm serious \@ PAIR ? you guys # %PRINT_MALE("lad", MASTER)% \@, this is the shit! It's a little pricey, but... it's a must in this day and age, I'm telling you!」
+	PRINTFORMW 「Well, thanks to all that, I got an extra dose of the stuff that you might find useful...」
+	PRINTFORMW 「All right, I think I know what to do now! I owe you one for taking the time to listen to me, after all! You can have all of this!」
+	PRINTFORMDL The man shoves a heaping pile of sleeping pills in %PARSE("your")% face and promptly leaves.
+	CALL GET_ITEM("睡眠薬", 9, 2)
+	IF PAIR
+		PRINTFORMDL ..,On closer inspection, there's also some different kind of medicine mixed in.
+		CALL GET_ITEM("媚薬", 2, 2)
+	ENDIF
+	PRINTFORML 
+	PRINTFORMDL With that out of the way, %PARSE("you continue")% on %PARSE("your",1)% way home, wondering if it's safe to use this at all...
+	CALL RECOVER(MASTER, -100, "気力", "Tiresome Story")
+	SIF PAIR
+		CALL RECOVER(PAIR, -100, "気力", "Tiresome Story")
+	PRINTFORMDL +30 Minutes
+	TIME += 30
+ENDIF
+PRINTFORMW 
+RESETCOLOR
+RETURN 1

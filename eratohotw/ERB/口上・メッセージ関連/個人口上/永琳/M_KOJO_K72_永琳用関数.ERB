@@ -1,0 +1,243 @@
+﻿;**** FlagManagement **********************************************************
+;本口上にて使用しているCFLAG・TCVAR等
+;CFLAG:72:1000 愛乳行為
+;CFLAG:72:1001 パンツ剥ぎ回数
+;CFLAG:72:1002 時姦疑惑
+;CFLAG:72:1003 時姦バレ
+;CFLAG:72:1004 謎の快感・絶頂回数
+;CFLAG:72:1005 時姦堕ち
+;CFLAG:72:1006 時姦カウンタ回数
+;CFLAG:72:1010 母乳フラグ
+;CFLAG:72:1011 蓬莱人フラグ
+;
+;
+;TCVAR:72:350 一日一回（会話）
+;TCVAR:72:351 一日一回（勃起）
+;TCVAR:72:352 一日一回（回復）
+;TCVAR:72:353 MASTER発情
+;
+;******************************************************************************
+
+;-----------------------------------------------------------------------------------------------
+;@CHARA_INFO_KOJO_K72()
+;個人情報の「キャラ紹介」の文章を書き換える
+;これがあれば「CSTR」の20番以降(20～39)に文字列を書き込むだけで書き換わるはず
+;輝夜口上、諏訪子口上、早苗口上を参照
+;-----------------------------------------------------------------------------------------------
+@CHARA_INFO_KOJO_K72()
+;===============================================================================================
+;記述例
+;このコメントアウトを外すと「CSTR」の20番以降に文字列を書き込むだけで書き換わるようになる
+;FOR LOCAL,20,40
+;	SIF CSTR:31:(LOCAL) != ""
+;		PRINTFORML %CSTR:31:(LOCAL)%
+;NEXT
+;RETURN 1
+;…とまあ、こんな感じでCSTR20番以降を使えばいいはず
+;===============================================================================================
+;本口上は、書き換わる文章が多いのでCSTRへの保存をせずに直接書き込む
+;現時点で下の2行が書き込まれている
+;PRINTL □ キャラ紹介 □---------------------------------------------------------------------
+;PRINTL 
+
+;##################################################################################
+;①「～月の頭脳～　●種族：月人　●能力：あらゆる薬を作る程度の能力。天才」をプリント
+;##################################################################################
+CALL M_KOJO_COLOR_K72
+PRINTFORML %CSVCSTR(72, 10)%
+RESETCOLOR
+PRINTL 
+
+;##################################################################################
+;②キャラ紹介文を書き込み
+;##################################################################################
+;custom code translation
+;共通部
+IF CFLAG:72:信頼度 >= 700
+	PRINTFORML Former Lunarian and a Sage of the Moon who effectively runs Eientei located at Bamboo Forest of the Lost.
+	PRINTFORML Born in the Age of Gods, she is among the oldest Lunarians to have lived and migrated from Earth to the Moon.
+	PRINTFORML 
+	PRINTFORML She used to serve as Kaguya's mentor, but upon her request she created the Hourai Elixir, resulting in Kaguya's exile from the Moon.
+	PRINTFORML As a person in charge of the Moon's emissaries to the Earth, when the time came to bring Kaguya back to the Moon after she has served her sentence,
+	PRINTFORML Eirin killed all the other emissaries who accompanied her when Kaguya refused to return to the Moon.
+	PRINTFORML They fled back to the Earth, choosing to continue the path of exile from the Moon together, and eventually ended up in Gensokyo.
+	PRINTFORML 
+	PRINTFORML Feeling guilt over Kaguya's exile after creating the Hourai Elixir,
+	PRINTFORML Eirin devotes herself to Kaguya as her loyal servant at Eientei, and although she has long been hiding in the depths of the bamboo forest,
+	PRINTFORML she has recently begun to get involved with her surroundings.
+	PRINTFORML A premier pharmacist, she sometimes even ventures to the Village to provide medical treatment when requested.
+	PRINTFORML She is generally mild-mannered and kind to all but those who would pose a threat to her people, especially to Kaguya.
+	PRINTFORML 
+ELSEIF CFLAG:72:信頼度 >= 250
+	PRINTFORML Former Lunarian and a Sage of the Moon who effectively runs Eientei located at Bamboo Forest of the Lost.
+	PRINTFORML Born in the Age of Gods, Eirin is among the oldest Lunarians to have lived and migrated from Earth to the Moon.
+	PRINTFORML 
+	PRINTFORML She used to serve as Kaguya's mentor, but upon her request she created the Hourai Elixir, resulting in Kaguya's exile from the Moon.
+	PRINTFORML They chose to continue the path of exile from the Moon together, and eventually ended up in Gensokyo.
+	PRINTFORML 
+	PRINTFORML Eirin devotes herself to Kaguya as her loyal servant at Eientei, and although she has long been hiding in the depths of the bamboo forest,
+	PRINTFORML she has recently begun to get involved with her surroundings.
+	PRINTFORML A premier pharmacist, Eirin sometimes even ventures to the Village to provide medical treatment when requested.
+	PRINTFORML She is generally mild-mannered and kind to all but those who would pose a threat to her people, especially to Kaguya.
+	PRINTFORML 
+ELSEIF CFLAG:72:信頼度 >= 100
+	PRINTFORML Former Lunarian and a Sage of the Moon who effectively runs Eientei located at Bamboo Forest of the Lost.
+	PRINTFORML Born in the Age of Gods, Eirin is among the oldest Lunarians to have lived and migrated from Earth to the Moon.
+	PRINTFORML 
+	PRINTFORML She used to serve as Kaguya's mentor, but for reasons unknown, the two of them chose the life of exile away from the Moon.
+	PRINTFORML A premier pharmacist, Eirin sometimes even ventures to the Village to provide medical treatment when requested.
+	PRINTFORML She is generally mild-mannered and kind to all but those who would pose a threat to her people, especially to Kaguya.
+	PRINTFORML 
+ELSE
+	PRINTFORML Former Lunarian who effectively runs Eientei located at Bamboo Forest of the Lost.
+	PRINTFORML A premier pharmacist, Eirin sometimes even ventures to the Village to provide medical treatment when requested.
+	PRINTFORML She is generally mild-mannered and kind to all but those who would pose a threat to her people.
+	PRINTFORML 
+ENDIF
+
+SIF TALENT:72:恋人 || TALENT:72:恋慕 || TALENT:72:思慕 || TALENT:72:愛欲 || TALENT:72:セフレ
+	PRINTFORMD She used to be wary of your visits to Eientei, 
+IF TALENT:72:恋人
+	PRINTFORMDL but in the end she has vowed to stay by your side for as long as you live.
+	PRINTFORML 
+ELSEIF TALENT:72:恋慕
+	PRINTFORMDL but eventually developed a deep affection for you.
+	PRINTFORML 
+ELSEIF TALENT:72:思慕
+	PRINTFORMDL but is gradually becoming attracted to your personality.
+	PRINTFORML 
+ELSEIF TALENT:72:愛欲
+	PRINTFORMDL but before long became a slave to your passions of love and lust.
+	PRINTFORML 
+ELSEIF TALENT:72:セフレ == 2 && TALENT:72:思慕 
+	PRINTFORMDL but now engrossed in a very depraved relationship with you against her better judgment.
+	PRINTFORML 
+ELSEIF TALENT:72:セフレ
+	PRINTFORMDL but currently engaged in a physical relationship with you.
+	PRINTFORML 
+ELSE
+	PRINTFORMDL She is wary of your visits to Eientei.
+	PRINTFORML 
+ENDIF
+
+;蓬莱人
+IF CFLAG:72:1011 == 1
+	PRINTFORMDL At the wish of Kaguya, she once again created the Hourai Elixir.
+	SIF TALENT:72:恋人 || TALENT:72:恋慕 || TALENT:72:思慕 || TALENT:72:愛欲 || TALENT:72:セフレ
+		PRINTFORMD Although she is deeply sorry that she has made you a Hourai immortal, at the same time she is also glad that you can 
+	IF TALENT:72:恋人 || TALENT:72:恋慕 || TALENT:72:思慕
+		PRINTFORMDL live together forever.
+	ELSEIF TALENT:72:愛欲 || (TALENT:72:セフレ == 2 && TALENT:72:思慕) || TALENT:72:セフレ
+		PRINTFORMDL share the pleasures together forever.
+	ELSE
+		PRINTFORMDL She feels incredibly distressed that she was involved in making you a Hourai immortal.
+	ENDIF
+ELSE
+ENDIF
+
+;時姦堕ち
+IF CFLAG:72:1005 == 1
+	PRINTFORMD She is aware of your ability to manipulate time
+	IF TALENT:72:恋人
+		PRINTFORMDL , and vows to embrace its crimes and receive its punishments, all of which she accepts.
+	ELSEIF TALENT:72:恋慕
+		PRINTFORMDL , and has forgiven you for many of your deeds because she is in love with you.
+	ELSEIF TALENT:72:思慕
+		PRINTFORMDL , and has forgiven you for many of your deeds because you are the one she admires.
+	; ELSEIF TALENT:72:愛欲 ;same cases
+		; PRINTFORMDL それによってもたらされる快楽の泥梨へと、自らその身を捧げている。
+	; ELSEIF TALENT:72:セフレ == 2 && TALENT:72:思慕 
+		; PRINTFORMDL それによってもたらされる快楽の泥梨へと、自らその身を捧げている。
+	; ELSEIF TALENT:72:セフレ
+		; PRINTFORMDL それによってもたらされる快楽の泥梨へと、自らその身を捧げている。
+	ELSEIF TALENT:72:愛欲 || TALENT:72:セフレ
+		PRINTFORMDL , and devotes herself to the delightful drudgery of the pleasure it brings.
+	ELSE
+		PRINTFORMDL .
+	ENDIF
+ELSE
+	;custom code, remove duplication
+	;時姦バレ
+	IF CFLAG:72:1003 == 1
+		PRINTFORMD She is aware of your ability to manipulate time, and 
+		;時姦カウンタ１回
+		IF CFLAG:72:1006 == 1
+			PRINTFORMDL at some point has punished you just like she promised to.
+		;時姦カウンタ２回以上
+		ELSEIF CFLAG:72:1006 >= 2
+			PRINTFORMDL has punished you several times.
+		;時姦カウンタ０回
+		ELSE
+			PRINTFORMDL has declared that she will respond with some form of punishment in the future.
+		ENDIF
+	ELSE
+		SIF CFLAG:72:1002
+			PRINTFORMD She has noticed inexplicable anomalies occurring around you, and 
+		;時姦疑惑確
+		IF CFLAG:72:1002 >= 30
+			PRINTFORMDL is convinced by observation, guesswork, and other means that the perpetrator is you.
+		;時姦疑惑高
+		ELSEIF CFLAG:72:1002 >= 20
+			PRINTFORMDL has come to a rough conclusion as to their relevance.
+		;時姦疑惑中
+		ELSEIF CFLAG:72:1002 >= 10
+			PRINTFORMDL has some strong suspicions about it.
+		;時姦疑惑低
+		ELSEIF CFLAG:72:1002 >= 1
+			PRINTFORMDL suspects a connection.
+		;時姦疑惑なし
+		ELSE
+			IF CFLAG:72:1001 >= 1
+				PRINTFORMDL She is aware of the anomaly from her experience of inexplicably losing her underwear, but does not consider it in relation to you.
+			ELSE
+				PRINTFORMDL She is unaware of the inexplicable events that occur around you, partly because she herself has not been explicitly affected by them.
+			ENDIF
+		ENDIF
+	ENDIF
+	;謎の快感・絶頂回数
+	IF CFLAG:72:1004 > 500
+		PRINTFORMDL However, within her body, the craving for time rape carved into her flesh is surging and eagerly awaiting the moment of release, now or never...
+	ELSEIF CFLAG:72:1004 > 400
+		PRINTFORMDL However, within her body, the craving for time rape carved into her flesh is surging and is about to devour her reason at any moment...
+	ELSEIF CFLAG:72:1004 > 300
+		PRINTFORMDL However, within her body, the craving for time rape carved into her flesh is surging and sharpening its fangs in an attempt to outstrip her will...
+	ELSEIF CFLAG:72:1004 > 200
+		PRINTFORMDL However, within her body, the pleasures of the time rape carved into her flesh are clearly beginning to impact her behavior...
+	ELSEIF CFLAG:72:1004 > 100
+		PRINTFORMDL However, within her body, the pleasures of the time rape carved into her flesh are gradually becoming more and more apparent...
+	ELSEIF CFLAG:72:1004 > 1
+		PRINTFORMDL Within her body, the pleasures of the time rape carved into her flesh are being used as an opening for doubts to break down her strong sense of reason...
+	ELSE
+	ENDIF
+ENDIF
+
+;母乳体質
+IF TALENT:72:母乳体質 == 2
+	PRINTFORMDL Her heavy sagging cow-like tits ooze nectary-sweet milk from their tips just for you.
+ELSE
+	IF CFLAG:72:1010 == 2
+		PRINTFORMDL Her heavy sagging cow-like tits have undergone a temporary lactation, and then the symptoms have been cured by medication.
+	ELSE
+		IF CFLAG:72:1000 >= 100
+			PRINTFORMDL This affection - or perhaps the obsession - invested into her heavy, sagging cow-like tits is about to produce a miracle...
+		ELSEIF CFLAG:72:1000 >= 50
+			PRINTFORMDL Her heavy sagging cow-like tits are a common target for persistent teasing.
+		ELSEIF CFLAG:72:1000 >= 2
+			PRINTFORMDL She often has her heavy sagging cow-like tits teased and played with.
+		ELSEIF CFLAG:72:1000 == 1
+			PRINTFORMDL She had her heavy sagging cow-like tits teased and played with.
+		ELSE
+		ENDIF
+	ENDIF
+ENDIF
+PRINTL 
+RETURN 1
+
+
+;-----------------------------------------------------------------------------------------------
+;噴乳絶頂
+
+
+
+
+

@@ -1,0 +1,546 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;奉仕系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;80,手淫
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_80
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("give")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_80_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_80_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(3)
+		RETURN 1
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:MASTER:射精
+			PRINTDATAW
+				DATAFORM 「Are you holdin' back? It's okay, %SPLIT_G("it's perfectly fine if you just cum:just give in and cum, I don't mind:I won't think any less of you if you just cum:I don't mind if you cum now:just go on and do it, cum")%～」
+				DATAFORM 「I can see you %FSYN("throb:ing")% there... Fufu, just let it %SPLIT_G("out:loose")%～!%UNICODE(0x2764)%」
+				DATAFORM 「%SPLIT_G("It's all soaked with yer precum now:Yer precum is all over the place")%... Lemme guess, yer about to cum?」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Hmm～? Does it feel good? Fufu～」
+				DATAFORM 「Fufu, look at you turnin' into a sorry mess, all of it just from my tiny hands strokin' ya a little%UNICODE(0x2764)%」
+				DATAFORM 「Do this and that... Aha, I knew it! It does feel great for ya after all♪」
+				;add
+				DATAFORM 「You like it when I whack you off with my tiny childish hands, don'tcha? You do, riiight?♪」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	ELSE ;fixed, forgotten else?
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「Are you holdin' back? It's okay, %SPLIT_G("it's perfectly fine if you just cum:just give in and cum, I don't mind:I won't think any less of you if you just cum:I don't mind if you cum now:just go on and do it, cum")%～」
+		ELSE
+			PRINTFORMW 「Hmm～? Does it feel good? Fufu～」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;81,フェラチオ
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_81
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("give")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_81_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_81_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(3)
+		RETURN 1
+	ELSEIF RAND:3 && SELECTCOM == PREVCOM && ONCE("SuwakoBJSuck") ;added, continuous
+		PRINTFORMW 「You want somethin' even better? 'kaaaay!」
+		PRINTFORMDL Suwako begins with wrapping her lips around the tip and gently slurping on it, as suddenly...
+		PRINTFORMDL Her long wet tongue starts winding around your length like a snake around its prey!
+		PRINTFORMDW The sensation becomes gradually more and more intense as she starts sucking harder...
+		PRINTFORMW 「Don't give up on me immediately though, a'ight? I know this can easily bring ya down to yer knees, but still...%UNICODE(0x2764)%」
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:MASTER:射精
+			PRINTDATAW
+				DATAFORM 「%FSYN("lips_muffle")%... Are you holdin' back? It's okay, %SPLIT_G("it's perfectly fine if you just cum:just give in and cum, I don't mind:I won't think any less of you if you just cum:I don't mind if you cum now:just go on and do it, cum")%～」
+				DATAFORM 「%RANDKISS()%... C'mooon, don't go all %SPLIT_G("fidgety:twitchy")% inside my mouth～%UNICODE(0x2764)%」
+				DATAFORM 「%FSYN("lips_muffle")%! %FSYN("lips_over")%... You're gettin' close? Mfufu～ %SPLIT_G("Time to finish you off:Now for the finisher:You're finished:It's curtains for you:Yer goin' down")%%UNICODE(0x2764)%」
+				DATAFORM 「Sheesh, look at yer face gettin' all sloppy. %SPLIT_G("Yer just too cute for yer own good:You really are a cutie")% sometimes...%UNICODE(0x2764)%」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「%RANDKISS()%... Does it feel good? Fufu～」
+				DATAFORM 「This taste of yers... it's gettin' stronger, y'know? %FSYN("lips_muffle")%...! %FSYN("lips_muffle")%...%UNICODE(0x2764)%」
+				DATAFORM 「%RANDLIPS(, "suck")%...!」
+				DATAFORM 「Fufu, I know %SPLIT_G("for a fact:full well")%... that %SPLIT_G("yer weak in here:this is a weak spot of yers")%... %RANDLIPS()%...%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「%RANDKISS()%... C'mooon, don't go all %SPLIT_G("fidgety:twitchy")% inside my mouth～%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「%RANDLIPS(, "suck")%...!」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;82,パイズリ
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_82
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("give")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_82_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_82_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(3)
+		RETURN 1
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:MASTER:射精 && NOWEX:TARGET:Ｂ絶頂
+			PRINTDATAW
+				DATAFORM 「No need to hold it now... It's okay, let's just cum... Together!%UNICODE(0x2764)%」
+				DATAFORM 「My %FSYN("chest:non",,TARGET)% are tinglin' all over...! And yer stuff feel sooo hot, it's burnin'...%UNICODE(0x2764)%」
+				DATAFORM 「Nghooo... youuu dhon't! I'm gonna... make ya cum first, you'll see...!%UNICODE(0x2764)%」
+			ENDDATA
+		ELSEIF NOWEX:TARGET:Ｂ絶頂
+			PRINTDATAW
+				DATAFORM 「I'm the one... who was supposed to... dom you right now, and yet...!%UNICODE(0x2764)%」
+				DATAFORM 「My %FSYN("chest:non",,TARGET)% are tinglin' all over...! And yer stuff feel sooo hot, it's burnin'...%UNICODE(0x2764)%」
+				DATAFORM 「Oh nooo, it's startin' to get a whole lot more sensitiveee...!%UNICODE(0x2764)%」
+			ENDDATA
+		ELSEIF NOWEX:MASTER:射精
+			PRINTDATAW
+				DATAFORM 「I can feel it gettin' wetter and slimier by the minute, see? Aha! Just go on and let it %SPLIT_G("out:loose")%～!♪」
+				DATAFORM 「Looks like it managed to please ya properly in the end... I'm kinda glad%UNICODE(0x2764)%」
+				DATAFORM 「There we... go! Mfufu～ %SPLIT_G("Time to finish you off:Now for the finisher:You're finished:It's curtains for you:Yer goin' down")%!%UNICODE(0x2764)%」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Well? Yer enjoyin' my %FSYN("chest",,TARGET)%? Fufu～」
+				DATAFORM 「Yer scent is sooo incredibly rich... Fufu～%UNICODE(0x2764)%」
+				DATAFORM 「Hnn...! This %SPLIT_G("is way harder than I thought:ain't as easy as it looks")%, by the way♪」
+				DATAFORM 「Yer stuff is sooo very hot...%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「I can feel it gettin' wetter and slimier by the minute, see? Aha! Just go on and let it %SPLIT_G("out:loose")%～!♪」
+		ELSE
+			PRINTFORMW 「Well? Yer enjoyin' my %FSYN("chest",,TARGET)%? Fufu～」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;83,素股
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_83
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("give")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_83_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_83_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(3)
+		RETURN 1
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:MASTER:射精 && NOWEX:TARGET:Ｃ絶頂
+			PRINTDATAW
+				DATAFORM 「No need to hold it now... It's okay, let's just cum... Together!%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN("m")%... %CAPITALIZE(FSYN("geez"))%, I can't even tell who's responsible for making it so %FSYN("wet")% anymore... %K33_MOAN("m")%%UNICODE(0x2764)%」
+				DATAFORM 「Imma give ya some more rubby-scrubbies%UNICODE(0x2764)% %K33_MOAN()%, thaaat's the stuff♪」
+			ENDDATA
+		ELSEIF NOWEX:TARGET:Ｃ絶頂
+			PRINTDATAW
+				DATAFORM 「I'm the one... who was supposed to... dom you right now, and yet...!%UNICODE(0x2764)%」
+				DATAFORM 「%K33_MOAN()%%UNICODE(0x2764)% On no nooo, don't rub that hot stuff on meee!%UNICODE(0x2764)%」
+				DATAFORM 「No waaaay, not like thiiiis... I'm about to cum already, even without puttin' it in yeeet...!%UNICODE(0x2764)%」
+			ENDDATA
+		ELSEIF NOWEX:MASTER:射精
+			PRINTDATAW
+				DATAFORM 「My my, yer gonna cum so soon? You sure? You really wanna just let it out like this...?%UNICODE(0x2764)%」
+				DATAFORM 「It's gettin' really wet and foamy with our stuff combined... Amazing%UNICODE(0x2764)%」
+				DATAFORM 「Yer gettin' close? Fufu, %SPLIT_G("guess it's inevitable:what am I gonna do with ya:that's as far as you go then")%～%UNICODE(0x2764)%」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Fufu～ Want me to let it slide inside? Or do you wanna keep goin' just like that?」
+				DATAFORM 「%SPLIT_G("This stuff made you incredibly hard, didn't it?:Yer totally hard and ready to go, eh?")%%UNICODE(0x2764)%」
+				DATAFORM 「There it goes...! It feels so good rubbin' our sensitive bits together%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「Yer gettin' close? Fufu, %SPLIT_G("guess it's inevitable:what am I gonna do with ya:that's as far as you go then")%～%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「There it goes...! It feels so good rubbin' our sensitive bits together%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;84,泡踊り
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_84
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("give")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_84_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_84_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	IF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:MASTER:射精
+			PRINTDATAW
+				DATAFORM 「My my, yer gonna cum so soon? You sure? You really wanna just let it out like this...?%UNICODE(0x2764)%」
+				DATAFORM 「Look at you %FSYN("tremble:ing")% all over... Just go on and let it %SPLIT_G("out:loose")% if it feels good, don't be shy%UNICODE(0x2764)%」
+				DATAFORM 「Eehhh～ And just when I thought I was done washin' ya... Nah, just kidding. Just go on and cum!%UNICODE(0x2764)%」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Gettin' a God do this sort of thing, yer really quite something%UNICODE(0x2764)%」
+				DATAFORM 「How's that? I'm talkin' about being able to feel my entire body at once%UNICODE(0x2764)%」
+				DATAFORM 「Oopsie daisy... It feels so good rubbin' our sensitive bits together%UNICODE(0x2764)%」
+				DATAFORM 「Fufu～ Scrub-scrub, rub-rub it goes～♪」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「Look at you %FSYN("tremble:ing")% all over... Just go on and let it %SPLIT_G("out:loose")% if it feels good, don't be shy%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「Fufu～ Scrub-scrub, rub-rub it goes～♪」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;85,足扱き
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_85
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("give")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_85_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_85_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(3)
+		RETURN 1
+	ELSEIF RAND:3 && SELECTCOM == PREVCOM && ONCE("SuwakoFeet") ;added, continuous
+		PRINTFORML 「Wowee, yer moaning!%UNICODE(0x2764)%」
+		PRINTFORMW 「Ooho, I see, I see... Yer sensitive here, ain'tcha? Then, I guess I'll stop...」
+		PRINTFORMW 「Noooot～!%UNICODE(0x2764)%」
+		PRINTFORML 「Hehe, it's not just yer dick, but all of yer reactions are all cute as well%UNICODE(0x2764)%」
+		PRINTFORMDW Suwako grins and licks her lips, as if savoring the expression on your face.
+		PRINTFORMW 「Yer glans... The tip has a nice shape to it%UNICODE(0x2764)%」
+		PRINTFORMW 「I can't wait for what'll be comin' out of this lil' hole in the middle of it soon%UNICODE(0x2764)%」
+		PRINTFORMDW She giggles, poking at your urethra with her toe, causing you to wince and shudder.
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:MASTER:射精
+			PRINTDATAW
+				DATAFORM 「Ya feel like cummin' on my soles now? If gettin' stepped on doesn't bother you, then by all means, go ahead%UNICODE(0x2764)%」
+				DATAFORM 「It's gotten all wet'n'slimy now, y'know? I do wonder if yer in ecstasy over this stuff%UNICODE(0x2764)%」
+				DATAFORM 「Yer about to let it out? Fufu, well theeen... %SPLIT_G("Time to finish you off:Now for the finisher:You're finished:It's curtains for you:Yer goin' down")%!%UNICODE(0x2764)%」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Theeere, rub-rub, step-step... Fufu, you may as well agonize in every sense of the word♪」
+				DATAFORM 「Fufu! It might just turn into one of yer bad habits, ya know? Weeell, it's fine by me though%UNICODE(0x2764)%」
+				DATAFORM 「I can't believe you enjoy even somethin' like this... Ya really are one piece of work of a human%UNICODE(0x2764)%」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「Ya feel like cummin' on my soles now? If gettin' stepped on doesn't bother you, then by all means, go ahead%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「Theeere, rub-rub, step-step... Fufu, you may as well agonize in every sense of the word♪」
+		ENDIF
+		RETURN 1
+	ENDIF
+	
+ENDIF
+RETURN 1
+;==================================================
+;88,バキュームフェラ
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_88
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("give")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_88_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_88_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(3)
+		RETURN 1
+	ELSEIF RAND:3 && SELECTCOM == PREVCOM && ONCE("SuwakoSuuuuck") ;added, continuous
+		PRINTFORMW 「'Kaaay, then lemme use my mouth to make ya feel good%UNICODE(0x2764)%」
+		PRINTFORMW 「Do try yer best to endure it even for a minute, a'ight?」
+		PRINTFORMDW ...A minute? That doesn't sound too hard...
+		PRINTFORMW 「%RANDLIPS()%... %RANDLIPS()%...!!!%UNICODE(0x2764)%」
+		PRINTFORMDW But that immediately changes as Suwako begins sucking extremely hard!
+		PRINTFORMDW This vacuum suction is so great, you feel like even your soul is about to get sucked out as well...
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:MASTER:射精
+			PRINTDATAL LOCAL:99
+				DATAFORM 「%FSYN("lips_muffle")%, %TOLOWER(FSYN("lips_muffle"))%... %SLUR(RANDKISS("suck"))%～!!!%UNICODE(0x2764)%」
+				DATAFORM 「Khaa... %RANDLIPS(, "suck")%...!%UNICODE(0x2764)%」
+				DATAFORM （Heh, %HE_SHE(MASTER)%'s %FSYN("grind:ing")% those hips %SPLIT_G(@"like crazy:like %his_her(MASTER)% life depends on it:so desperately:with all %his_her(MASTER)% might")%... %SPLIT_G(@"What a cutie %HE_SHE(MASTER)% is:Such an adorable fella:%HE_SHE(MASTER, 1)%'s just too cute sometimes")%%UNICODE(0x2764)%）
+			ENDDATA
+		ELSE
+			PRINTDATAL LOCAL:99
+				DATAFORM 「%RANDLIPS(, "suck")%...♪」
+				DATAFORM 「%RANDLIPS()%...%UNICODE(0x2764)%」
+				DATAFORM （You don't even have to force me so much, I'd make sure to pleasure you myself just alright%UNICODE(0x2764)%）
+			ENDDATA
+		ENDIF
+		SELECTCASE LOCAL:99
+			CASE 0
+				PRINTFORMDW With a composed leer, Suwako easily handles the savage thrusting deep down her throat that you're giving her...
+			CASE 1
+				PRINTFORMDW As Suwako looks up at you, you can clearly see the sense of smug pride and joy reflected in her eyes...
+			CASE 2
+				PRINTFORMDW Suwako is trying to please you with every part of her throat...
+		ENDSELECT
+		RETURN 1
+	;それ以外
+	ELSE
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「%FSYN("lips_muffle")%, %TOLOWER(FSYN("lips_muffle"))%... %SLUR(RANDKISS("suck"))%～!!!%UNICODE(0x2764)%」
+		ELSE
+			PRINTFORMW 「%RANDLIPS()%...%UNICODE(0x2764)%」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;99,Modded Onaholejob
+;==================================================
+@M_KOJO_MESSAGE_COM_K33_99
+IF TCVAR:抱き寄せ初回 == 10
+	CALL K33_TRAIN_HATESEX("give")
+ELSE
+	CALL TRAIN_MESSAGE
+	CALL M_KOJO_MESSAGE_COM_K33_99_1
+ENDIF
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K33_99_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		CALL K33_TATARI_COUNTER(3)
+		RETURN 1
+	ELSEIF TALENT:恋慕 || TALENT:愛欲 || TALENT:セフレ
+		IF NOWEX:MASTER:射精
+			PRINTDATAW
+				DATAFORM 「Are you holdin' back? It's okay, %SPLIT_G("it's perfectly fine if you just cum:just give in and cum, I don't mind:I won't think any less of you if you just cum:I don't mind if you cum now:just go on and do it, cum")%～」
+				DATAFORM 「I can see you %FSYN("throb:ing")% there... Fufu, just let it %SPLIT_G("out:loose")%～!%UNICODE(0x2764)%」
+				DATAFORM 「%SPLIT_G("It's all soaked with yer precum now:Yer precum is all over the place")%... Lemme guess, yer about to cum?」
+			ENDDATA
+		ELSE
+			PRINTDATAW
+				DATAFORM 「Hmm～? Does it feel good? Fufu～」
+				DATAFORM 「Fufu, look at you turnin' into a sorry mess, all of it just from my tiny hands strokin' ya a little%UNICODE(0x2764)%」
+				DATAFORM 「Do this and that... Aha, I knew it! It does feel great for ya after all♪」
+				;add
+				DATAFORM 「Ya really just had to make me use somethin' like that, huuuh? Fufu♪」
+			ENDDATA
+		ENDIF
+		RETURN 1
+	ELSE ;fixed, forgotten else?
+		IF NOWEX:MASTER:射精
+			PRINTFORMW 「Are you holdin' back? It's okay, %SPLIT_G("it's perfectly fine if you just cum:just give in and cum, I don't mind:I won't think any less of you if you just cum:I don't mind if you cum now:just go on and do it, cum")%～」
+		ELSE
+			PRINTFORMW 「Hmm～? Does it feel good? Fufu～」
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

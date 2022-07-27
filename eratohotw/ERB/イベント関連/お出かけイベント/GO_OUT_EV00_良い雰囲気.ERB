@@ -1,0 +1,41 @@
+﻿@GO_OUT_CONDITION_EV0
+#DIM PAIR
+PAIR = FLAG:デート相手
+SIF RAND:10 || GROUPMATCH(PAIR, 0, RANDOM_CHARANUM) 
+	RETURN 0
+SIF !TALENT:PAIR:思慕 && !TALENT:PAIR:恋慕
+	RETURN 0
+SIF MARK:PAIR :反発刻印 || TALENT:PAIR :機嫌 < 0
+	RETURN 0
+CALL GO_OUT_EV0(PAIR)
+
+@GO_OUT_EV0(ARG)
+#DIM MULTIPLE
+
+IF TALENT:ARG:幼稚
+	PRINTFORMW %PARSE("You")% %SPLIT_G(@"%PARSE("play")% tag with:%PARSE("race")%:%PARSE("give")% a piggyback ride to")% %CALLNAME:ARG% as %PARSE("you",2)% head back home.
+	CALL PRINT_FACE, ARG, "笑顔" ,,, "照れ"
+	PRINTFORML %HE_SHE(TARGET,1)% seems to be enjoying %HIMSELF_HERSELF(TARGET)% quite a bit...
+	MULTIPLE = 12
+ELSEIF TALENT:ARG:恋人
+	PRINTFORMW %PARSE("You continue")% on back home, arm in arm with %CALLNAME:ARG%.
+	CALL PRINT_FACE, ARG, "笑顔",,, "照れ"
+	PRINTFORML It makes the whole date seem that much happier...
+	MULTIPLE = 13
+ELSEIF TALENT:ARG:恋慕
+	PRINTFORMW %PARSE("You decide")% to hold hands with %CALLNAME:ARG% on %PARSE("your",2)% way home.
+	CALL PRINT_FACE, ARG, "笑顔",,, "照れ"
+	PRINTFORML %HE_SHE(TARGET,1)% seems very happy about it...
+	MULTIPLE = 12
+ELSE
+	PRINTFORMW %PARSE("You make your")% way home while holding hands with %CALLNAME:ARG%.
+	CALL PRINT_FACE, ARG, "通常",,, "照れ"
+	PRINTFORML %PARSE("You feel")% like %PARSE("you",2)% have grown closer to %HIM_HER(TARGET)% somehow...
+	MULTIPLE = 11
+ENDIF
+
+PRINTFORMW 
+BASE:ARG:ムード = MIN(BASE:ARG:ムード / 10 * MULTIPLE, MAXBASE:ARG:ムード)
+SIF !TALENT:ARG:幼稚
+	BASE:ARG:理性 = MAX(BASE:ARG:理性 - MULTIPLE * 5, 0)
+RETURN 1

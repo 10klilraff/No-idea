@@ -1,0 +1,280 @@
+﻿;-------------------------------------------------
+;特殊地域間移動
+;日常系コマンド、レベル1
+;-------------------------------------------------
+@COM464
+#DIM FEE
+VARSET LOCAL
+FEE = 0
+FOR LOCAL,1,CHARANUM
+	IF CFLAG:(LOCAL):同行
+		LOCAL:1 ++
+		SIF CFLAG:LOCAL:衰弱 || BASE:LOCAL:気力 == 0
+			LOCAL:2 ++
+		SIF !CHARA_HOLIDAY(LOCAL) && BASE:LOCAL:仕事量
+			LOCAL:3 ++
+	ENDIF
+NEXT
+IF NEMUKE() >= 720
+	PRINTFORML %PARSE("You feel")% too sleepy, and %PARSE("decide")% not to go out.
+	RETURN -1
+ELSEIF LOCAL:1 > 1
+	PRINTL Can't take more than one other person.
+	RETURN -1
+ELSEIF LOCAL:2 || BASE:MASTER:気力 == 0
+	PRINTFORML Tired people shouldn't attend\@ BASE:MASTER:気力 == 0 ? （0 ENE） # （Partner is too tired）\@
+	RETURN -1
+ELSEIF LOCAL:3 && FESTIVAL() == ""
+	PRINTFORML Partner can't come along because it's their workday.
+	RETURN -1
+ELSEIF TIME:5 == 9 || TIME:5 == 5
+	PRINTFORML Can't go out because of the bad weather.
+	RETURN -1
+ELSEIF TALENT:MASTER:100 < -4 
+	PRINTFORML It's too dangerous to go out with that tiny body.
+	RETURN -1
+ENDIF
+SELECTCASE CFLAG:MASTER:現在位置
+	CASE 205, 210, 803, 820
+		IF !INRANGE(TIME, 540, 1260) ;qol custom code, allow cableway to work up to 21:00 instead of 17:00 at a higher fee
+			PRINTFORML Outside of business hours
+			RETURN -1
+		ENDIF
+		;守矢キャラたちと同行時は敷設者割引運賃
+		IF (CFLAG:31:同行 || CFLAG:32:同行 || CFLAG:33:同行) || GROUPMATCH(FLAG:デート相手, 31, 32, 33) ;bug fix, correct check for dating moriya
+			FEE = 1
+		ELSEIF CFLAG:MASTER:同行 || FLAG:デート相手 ;bug fix
+			FEE = 10
+		ELSE
+			FEE = 5
+		ENDIF
+		;qol custom code
+		SIF TIME >= 1020 && FEE != 1
+			FEE += 5
+		;相手が鬼か天狗だと愛想笑い／敷設者にも敬意を払う
+		IF GROUPMATCH(TARGET, 10, 29, 31, 32, 33, 42, 64, 65)
+			;ガワを山の河童(16)or里の人間(12)に決める
+			LOCAL = 12 + ((CFLAG:MASTER:現在位置 / 100 == 8) * 4)
+			CALL SPTALK, 0, "笑顔", LOCAL, @"「Well if it isn't %CALLNAME:TARGET%-san, are you using it too?」",1
+			PRINTFORM As soon as the 
+			;人里側に河童が常駐してるのもアレかなと
+			IF CFLAG:MASTER:現在位置 / 100 == 2
+				PRINTFORM Kappa
+			ELSE
+				PRINTFORM receptionist
+			ENDIF
+			PRINTFORML  sees %CALLNAME:TARGET%, %HE_SHE(TARGET)% puts on a forced smile.
+		ELSE
+			;人里側では一応丁寧対応に
+			IF CFLAG:MASTER:現在位置 / 100 == 2
+				CALL SPTALK, 0, "通常", 12, @"「Using the cableway?」/「That'll be \\{FEE * 200}. {FEE} Charisma works as well.」",1
+			ELSE
+				CALL SPTALK, 0, "通常", 16, @"「... Huh? Want to ride on the cableway?」/「{FEE} Charisma. \\{FEE * 200} works as well.」",1
+			ENDIF
+			;qol custom code
+			SIF TIME >= 1020 && FEE != 1
+				CALL SPTALK, 0, "笑顔", CFLAG:MASTER:現在位置 / 100 == 2 ? 12 # 16, @"「Yaawn... Working this late makes me want to charge you more.」",1
+		ENDIF
+		CALL PAY_YEN_OR_CM(FEE * 200, FEE)
+		SELECTCASE RESULT
+			CASE 0
+				RETURN -1
+			CASE 1
+				IF (CFLAG:31:同行 || CFLAG:32:同行 || CFLAG:33:同行) || GROUPMATCH(FLAG:デート相手, 31, 32, 33) ;bug fix
+					PRINTFORML 「I'll always make it cheap for you～」
+				ELSE
+					PRINTFORML 「Come again.」
+				ENDIF
+			CASE 2
+				;custom code
+				IF (CFLAG:31:同行 || CFLAG:32:同行 || CFLAG:33:同行) || GROUPMATCH(FLAG:デート相手, 31, 32, 33) ;bug fix
+					PRINTFORML 「I'll always make it cheap for you～」
+				ELSEIF CFLAG:MASTER:現在位置 / 100 == 2
+					PRINTFORML 「Paying with Charisma is fine... Alright, come on.」
+				ELSE
+					PRINTFORML 「Heeー? The customer is human but still has Charisma?」
+				ENDIF
+		ENDSELECT
+ENDSELECT
+;住み込み先からの特殊移動 or 住み込み先でない場所への特殊移動はデート扱い
+IF AT_HOME(MASTER) || MAIN_MAP != SPECIAL_AREAMOVE() / 100
+	;bug fix: move time here so that it can proper add before position changes
+	TIME += SPECIAL_AREAMOVE_TIME()
+	LOCAL:2 = 0
+	LOCALS = %STR_TR(6000 + SPECIAL_AREAMOVE() / 10)%
+	FOR LOCAL,1,CHARANUM
+		IF CFLAG:(LOCAL):同行
+			CFLAG:LOCAL:デート中 = SPECIAL_AREAMOVE() / 100
+			CFLAG:LOCAL:現在位置 = SPECIAL_AREAMOVE()
+			LOCAL:2 = LOCAL
+			FLAG:デート相手 = LOCAL
+		ENDIF
+	NEXT
+	CFLAG:MASTER:デート中 = SPECIAL_AREAMOVE() / 100
+	CFLAG:MASTER:現在位置 = SPECIAL_AREAMOVE()
+
+	IF CFLAG:MASTER:デート中 == 2
+		CALL EX_COSTUME(FLAG:デート相手, "人里デート")
+		SIF RESULT
+			PRINTFORMW %CALLNAME:(FLAG:デート相手)% changed into clothes more suitable to wear in the Human Village.
+	;addition custom code, change to date clothes for some chara
+	ELSE
+		CALL EX_COSTUME(FLAG:デート相手, "デート")
+		SIF RESULT
+			PRINTFORMW %CALLNAME:(FLAG:デート相手)% changed %HIS_HER(FLAG:デート相手)% clothes to %HIS_HER(FLAG:デート相手)% dating attire.
+	ENDIF
+	PRINTFORML %PARSE("You leave")% for %LOCALS%.
+
+;住み込み先でないところから住み込み先への移動はデート終了扱い
+ELSEIF !AT_HOME(MASTER) && MAIN_MAP == SPECIAL_AREAMOVE() / 100
+	;bug fix: move time here so that it can proper add before position changes
+	TIME += SPECIAL_AREAMOVE_TIME()
+	IF CFLAG:負け犬 && TALENT:行きずり == 1
+		PRINTFORML %PARSE("You take")% %CALLNAME:TARGET% home with %PARSE("you",5)%.
+	ELSE
+		PRINTFORMW %PARSE("You return")% from the \@ CFLAG:MASTER:デート中 != CFLAG:TARGET:デート中 || TARGET == MASTER ? trip # date \@.
+	ENDIF
+	CFLAG:MASTER:現在位置 = SPECIAL_AREAMOVE()
+
+	CALL 守矢くじデート相手のリセット()
+	FOR LOCAL,1,CHARANUM
+		IF CHK_DATENOW(CFLAG:LOCAL:デート中)
+			CALL DATE_EVENT(LOCAL)
+			CFLAG:LOCAL:現在位置 = SPECIAL_AREAMOVE()
+			CALL SET_DATE(99,LOCAL)
+		ENDIF
+	NEXT
+	SIF CHK_DATENOW(CFLAG:MASTER:デート中)
+		CALL SET_DATE(99,MASTER)
+ENDIF
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE464
+;停止中は不可
+SIF FLAG:70
+	RETURN 0
+SIF !TFLAG:100
+	RETURN 0
+SIF TFLAG:デート道中
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(464)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;添い寝中
+SIF CFLAG:添い寝中
+	RETURN 0
+SIF !SPECIAL_AREAMOVE()
+	RETURN 0
+SIF CFLAG:うふふ
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+@SPECIAL_AREAMOVE()
+#FUNCTION
+SELECTCASE CFLAG:MASTER:現在位置
+;博麗神社守矢分社
+	CASE 21
+	;守矢キャラと同行中
+		SIF (CFLAG:31:同行 || CFLAG:32:同行 || CFLAG:33:同行) || GROUPMATCH(FLAG:デート相手, 31, 32, 33) ;bug fix
+			RETURNF 840
+;人里北通り
+	CASE 205
+		RETURNF 820
+;広場（ミニマップ）
+	CASE 210
+		IF MAIN_MAP != 2
+			IF MAIN_MAP == 8
+				RETURNF 803
+			ELSE
+				RETURNF 820
+			ENDIF
+		ENDIF
+;無縁塚（魔法の森がメインマップ）
+	CASE 506
+		RETURNF 610
+;無縁塚（外出先から）
+	CASE 570
+		;メインマップが三途の川～冥界のときは中有の道へ
+		SIF MAIN_MAP == 6
+			RETURNF 601
+		;今後のことを考えて弾いておく 中有の道(外出)へ
+		SIF MAIN_MAP != 5
+			RETURNF 610
+;間欠泉地下センター(7がメインマップ)
+	CASE 712
+		RETURNF 970
+;間欠泉地下センター(外出先から)
+	CASE 760
+		;メインマップが地底のときは灼熱地獄跡へ
+		SIF MAIN_MAP == 9
+			RETURNF 928
+		;今後のことを考えて弾いておく 灼熱地獄跡(外出)へ
+		SIF MAIN_MAP != 7
+			RETURNF 970
+;山頂への道
+	CASE 732
+		RETURNF 810
+;索道駅
+	CASE 803
+		RETURNF 210
+;絶景の丘
+	CASE 820
+		;メインマップが人里のときは人里北通りへ
+		SIF MAIN_MAP == 2
+			RETURNF 205
+		;守矢神社・早苗私室(820)を弾き広場へ
+		SIF MAIN_MAP != 8
+			RETURNF 210
+;灼熱地獄跡（9がメインマップ）
+	CASE 928
+		RETURNF 760
+;灼熱地獄跡（外出先から）
+	CASE 970
+		;メインマップが妖怪の山（山麓）のときは間欠泉地下センターへ
+		SIF MAIN_MAP == 7
+			RETURNF 712
+		;今後のことを考えて弾いておく 灼熱地獄跡(外出)へ
+		SIF MAIN_MAP != 9
+			RETURNF 760
+ENDSELECT
+RETURNF 0
+;-------------------------------------------------
+@SPECIAL_AREAMOVE_TIME()
+#FUNCTION
+SELECTCASE CFLAG:MASTER:現在位置
+;博麗神社守矢分社
+	CASE 21
+		RETURNF 1
+;人里北通り
+	CASE 205
+		RETURNF 15
+;広場
+	CASE 210
+		RETURNF 15
+;無縁塚
+	CASE 506, 570
+		SIF SHORTCUT(3)
+			RETURNF 3
+		RETURNF 5
+;間欠泉地下センター
+	CASE 712, 760
+		RETURNF 10
+;山頂への道
+	CASE 732
+		RETURNF 5
+;索道駅
+	CASE 803
+		RETURNF 15
+;絶景の丘
+	CASE 820
+		RETURNF 15
+;灼熱地獄跡
+	CASE 928, 970
+		RETURNF 5
+ENDSELECT

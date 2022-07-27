@@ -1,0 +1,1235 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;愛撫系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;0,愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_0
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_0_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_0_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;挿入中
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	;V挿入
+	IF LOCAL:1 && TEQUIP:50 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	;A挿入
+	ELSEIF LOCAL:1 && TEQUIP:51 == PLAYER
+		;射精した
+		IF NOWEX:PLAYER:11
+			PRINTFORMW 
+			RETURN 1
+		ELSE
+			PRINTFORMW 
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;ふたなり
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && (TALENT:2 & 3) == 3
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;1,クンニ
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_1
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_1_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_1_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORML 「Eh...? Y-You want to, ummm...lick me...th-there?」
+		PRINTFORMDW You nod your head.
+		PRINTFORML 「W-Wait a second! I'm not ready――Fuaaa!?」
+		PRINTFORMDW Ignoring Yumemi's indecisiveness, you connect your mouth to Yumemi's vagina.
+		PRINTFORML 「Nnaah, I s-said %UNICODE(0x2764)% to w-wait!」
+		PRINTFORMDW While feeling Yumemi's pubic hair brushing against your face, you move your tongue over her clitoris and lick her %FSYN("labia")%.
+		PRINTFORMDW Yumemi's resistance slowly fades away, and she begins to moan sweetly.
+		PRINTFORML 「Aahhnn, Ah, Ahh...%UNICODE(0x2764)% Wh-What is...this feeling...」
+		PRINTFORML （Is this...pleasure...?）
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;膣内射精直後
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TCVAR:100 == PLAYER
+		IF TCVAR:102
+			IF TALENT:3 || TALENT:184
+				PRINTFORML 「Aaah...%UNICODE(0x2764)% If you lick me there now... Haa, it'll leak back out...」
+				PRINTFORML 「Such a waste... And on top of that, Nnaaah, do you really want, Nnn, to taste, your own semen...? %UNICODE(0x2764)%」
+				PRINTFORML 「Aah, it feels so good... In that case, lick it, more, yes, there, Ahii %UNICODE(0x2764)%」
+			ELSE
+				PRINTFORML 「Nnn, Ah, if you, lick me there now...\/\/\/」
+				PRINTFORML 「It'll, leak, back out... Ahaa \/\/\/」
+			ENDIF
+			RETURN 1
+		ENDIF
+	ENDIF
+	;-------------------------------------------------
+	;絶頂した
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && NOWEX:0
+		IF ABL:0 > 5
+			IF TALENT:73 == 1
+				PRINTFORML 「Ahaa %UNICODE(0x2764)% Yes %UNICODE(0x2764)% I'm about, to cum %UNICODE(0x2764)%」
+				PRINTFORML 「Yes, more, lick it, more %UNICODE(0x2764)% Ah, Ah, Aa, Ah...」
+				PRINTFORML 「I'm cumming, cumming, Ah, cummingcumming, Ah, Aaa～～～～%UNICODE(0x2764)%」
+			ELSE
+				PRINTFORML 「Haa, so good %UNICODE(0x2764)% %CALLNAME:MASTER%, Aah %UNICODE(0x2764)%」
+				PRINTFORML 「I'm gonna, cum, soon %UNICODE(0x2764)%」
+				PRINTFORML 「So, Haaa, more, lick me more %UNICODE(0x2764)%」
+			ENDIF
+		ELSE
+			PRINTFORML 「Ah, Ah, no, stop, if you, keep licking me! I'll cum, I'll cum!」
+			PRINTFORML 「Ah, no, I'm cumming, cum, Ah, Aa, cum, cumming!」
+		ENDIF
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMDW With time stopped, you press your mouth to Yumemi's %FSYN("vagina")%.
+		PRINTFORMDW Yumemi's pubic hair tickles your face, and she overflows with love juice, but she doesn't move in the slightest.
+		PRINTFORMDW You continue licking her vagina, looking forward to her reaction once time begins moving again.
+		RETURN 1
+	ELSE
+		SELECTCASE RAND:5
+			CASE 0
+				PRINTFORML 「Ahii, Ahh, don't... You don't have to make so much noise...\/\/\/」
+				PRINTFORMDW %BREAKENG(@"Seeing the mismatch between her words and the love juice overflowing from Yumemi's %FSYN("vagina")%, you begin slurping even louder as you keep servicing her.")%
+				PRINTFORML 「Hyaa, no, I said, less noise %UNICODE(0x2764)%」
+			CASE 1
+				PRINTFORMDW You intentionally make a loud slurping sound as you lick up her love juices.
+				PRINTFORML 「Fuaaa, Ahh, it feels good, but...don't make so much noise...\/\/\/」
+				PRINTFORML （It's so embarrassing... But my pussy, it's twitching even more...）
+			CASE 2
+				PRINTFORMDW You spread apart Yumemi's %FSYN("labia")%, and begin invading it with your tongue.
+				PRINTFORML 「Yaaah, Ahaa! If you, open it like that...\/\/\/」
+				PRINTFORMDW Yumemi's %FSYN("labia")% twist around your tongue as you continue to service her.
+				PRINTFORMDW As you twist your tongue back in rhythm, Yumemi's body convulses and shudders.
+				PRINTFORML 「AaaAAaahh! Yes, there! Don't, aah, rub it so much %UNICODE(0x2764)%」
+			CASE 3
+				PRINTFORMDW You intentionally avoid licking Yumemi's %FSYN("vagina")%, and instead press your mouth to her pubic hair.
+				PRINTFORML 「Wha... Why are you licking me there...」
+				PRINTFORMDW Her %FSYN("vagina")% having been denied the pleasure it was anticipating, Yumemi starts impatiently twisting her hips.
+				PRINTFORMDW After savoring the taste of her pubic hair for a while, you begin greedily devouring her %FSYN("wet")% %FSYN("vagina")%.
+				PRINTFORML 「Ah?! Aaahーーーー%UNICODE(0x2764)%」
+			CASEELSE
+				PRINTFORML 「Aah, no, you can't, lick my clit, so much...\/\/\/」
+				PRINTFORMDW Despite her refusal, her body shudders and gushes love juice as you stimulate her clitoris.
+				PRINTFORML 「Hyaaaa %UNICODE(0x2764)% Don't, pull it, open...! It's, sensitive inside, Ah...」
+		ENDSELECT 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+;あとは適当な分岐を追加してください
+;==================================================
+;2,フェラする
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_2
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_2_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_2_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;3,指挿入れ
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_3
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_3_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_3_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;4,アナル舐め
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_4
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_4_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_4_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;5,アナル愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_5
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_5_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_5_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;6,胸愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_6
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_6_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_6_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;7,乳首責め
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_7
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_7_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_7_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;8,秘貝開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_8
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_8_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_8_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;========================================================
+;9,自慰
+; 我が実装に、一片の悔い無しィ……ッ!!ぬわーーっっ！！
+;========================================================
+@M_KOJO_MESSAGE_COM_K9_9
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_9_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_9_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		; オナニーを覗いたことがあったらちょっとMSG変わるよ
+		IF CFLAG:11 == 1
+			PRINTFORML 「Wha... Eh, y-you want to watch... Didn't you already, watch me before...? Was that not enough...?」
+			PRINTFORML 「Besides, uh, it's not really something you should be watching... Let's rethink this, ok? \/\/\/」
+			PRINTFORML 「Eh, that's specifically why you want to watch?」
+			PRINTFORML 「Something I really think you've got a few screws loose...」
+			PRINTFORML 「Haa... I guess it's fine...」
+			PRINTFORMDW Yumemi sighs in frustration, reluctantly moves her fingers to her breasts and %FSYN("vagina")%, and slowly begins caressing them.
+			PRINTFORML 「Uuu... Nnn... Haa...\/\/\/」
+			PRINTFORMDW As she slowly starts to get into it, her movements become more intense, as if seeking pleasure.
+			PRINTFORML （%CALLNAME:MASTER% is watching... Does he really have to look so closely...?）
+			PRINTFORMDW But it seems like Yumemi is considerably aroused by you watching.
+			PRINTFORML 「Ah, Nnn, Afuu... Why, why is it so much better... Don't, look so closely...\/\/\/」
+		ELSE
+			PRINTFORML 「Hii!? Wha, are you serious?!」
+			PRINTFORMDW "I'm・Always・Serious!"
+			PRINTFORML 「B-B-B-B-B-B-B-B-But it's m-masturbation...? It's, not something, others should watch...\/\/\/」
+			PRINTFORMDW You ask if she's never actually done it before.
+			PRINTFORML 「Wha...! Of course I have! I've masturbated a few times before! ...Ah...\/\/\/」
+			PRINTFORML 「Ah, Aaーー... I have, I have! But! I said it's not something others should watch! \/\/\/」
+			PRINTFORMDW You tell her that's specifically why you want to watch.
+			PRINTFORML 「～～～... I really don't get it...\/\/\/」
+			PRINTFORML 「F-Fine, I'll do it...!\/\/\/」
+			PRINTFORMDW Blushing furiously, Yumemi begins to masturbate with awkward movements.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;通常の処理
+	;ここには各ステータスの状態に応じた口上を表示
+	IF TALENT:73 == 1
+		;[自慰狂い]を持っている場合(TALENT:73 == 1)
+		PRINTFORML 「Eh? Y-You want me...to finger myself? %UNICODE(0x2764)%%UNICODE(0x2764)%」
+		PRINTFORMDW With a lustful look in her eyes, Yumemi begins to play with her own body.
+		PRINTFORMDW Her %FSYN("vagina")% makes an obscene splashing sound.
+		PRINTFORML 「Aaah, amazing %UNICODE(0x2764)% It feels good %UNICODE(0x2764)% I love fingering myself %UNICODE(0x2764)%」
+		PRINTFORML 「I do this, every day, until I'm soaked %UNICODE(0x2764)% I can't stop, doing this %UNICODE(0x2764)%」
+		PRINTFORML 「So, watch me finger myself...all the way until I cum %UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+		CALL M_KOJO_MESSAGE_MASTERBATION_K9
+	ELSEIF ABL:14 >= 6 && ABL:30 >= 4
+		;露出癖と自慰中毒が高い(Lv>=6 & Lv>=4)場合
+		PRINTFORMDW Positioning herself so you have a clear view of her actions, Yumemi begins to lose herself in masturbation.
+		PRINTFORMDW The sensation of being watched on top of her ministrations causes her to melt in pleasure.
+		PRINTFORML 「Haaa %UNICODE(0x2764)% Yes, yes, it's amazing, %CALLNAME:MASTER%! %UNICODE(0x2764)%」
+		PRINTFORML 「Are, Aah, are you, Nnn, watching? Can you see it? What do you think, of this %UNICODE(0x2764)%」
+		PRINTFORML 「Aah, no, it's too good, I can't stop my fingers %UNICODE(0x2764)%%CALLNAME:MASTER%っ%UNICODE(0x2764)%」
+		CALL M_KOJO_MESSAGE_MASTERBATION_K9
+	ELSEIF ABL:30 >= 4
+		;自慰中毒のみ高めの(Lv>=4)場合
+		PRINTFORML 「Haa, yes, it feels good! Even though, I'm being watched %UNICODE(0x2764)%」
+		PRINTFORMDW Despite being seen by you, Yumemi is losing herself in pleasure.
+		PRINTFORMDW She services herself intensely with both hands.
+		PRINTFORMDW Her love juices spray about, and her %FSYN("vagina")% makes an obscene splashing sound.
+		PRINTFORML 「Ahaaa, Aah, Ah, I can't, it's too good, I can't hold it in %UNICODE(0x2764)%」
+		CALL M_KOJO_MESSAGE_MASTERBATION_K9
+	ELSE
+		;その他
+		PRINTFORML 「A-Again...? I can't believe you... Nnah...\/\/\/」
+		PRINTFORMDW Yumemi looks embarrassed, but begins masturbating anyway. Before long, she begins to moan sweetly.
+		PRINTFORML 「Ah, Ahh, Ahnn, Uu... Afuu... Why...」
+		PRINTFORML （Even though I'm being watched... doing something so embarrassing... It's better than usual \/\/\/）
+		PRINTFORMDW Yumemi subconsciously begins to move her hands more intensely.
+		CALL M_KOJO_MESSAGE_MASTERBATION_K9
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+; 自慰口上関数(自慰コマンドサブ関数:その1)
+; ここには各プレイ別の口上を表示,キス有無はとりあえず無視
+;==================================================
+@M_KOJO_MESSAGE_MASTERBATION_K9
+IF TEQUIP:32
+	;シャワー使用時分岐
+	IF TEQUIP:13 && TEQUIP:14
+		;シャワー2穴バイブオナニー
+		PRINTFORML 「Guu, Hii, Uwaa, yes, yes %UNICODE(0x2764)% It's amazing～!! %UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+		PRINTFORMDW There are vibrators inserted into Yumemi's %FSYN("vagina")% and anus.
+		PRINTFORMDW As the shower sprays over her breasts and clitoris, Yumemi thrusts the vibrators in and out, her face drunk with pleasure.
+		CALL M_KOJO_MESSAGE_ORGAZM_ONA_K9
+	ELSEIF TEQUIP:13
+		;シャワー1穴(V)オナニー
+		PRINTFORML 「Ahaa, yes, the shower, and the rubbing in my pussy %UNICODE(0x2764)%」
+		PRINTFORMDW As the shower pelts her nipples and clitoris, Yumemi thrusts the vibrator in and out of her %FSYN("vagina")%, indulging in pleasure.
+		CALL M_KOJO_MESSAGE_ORGAZM_ONA_K9
+	ELSEIF TEQUIP:14
+		;シャワー1穴(A)オナニー
+		PRINTFORML 「――Aah, Uwaa, yes, yes, showering, while I play, with my ass, feels good %UNICODE(0x2764)%」
+		PRINTFORMDW As the shower water runs over her breasts and %FSYN("vagina")%, Yumemi thrusts the vibrator in and out of her anus.
+		CALL M_KOJO_MESSAGE_ORGAZM_ONA_K9
+	ELSE
+		;シャワーオナニー
+		PRINTFORML 「Ah... Nhyaa, Ahh, This, feels good... Kyaa %UNICODE(0x2764)%」
+		PRINTFORMDW As Yumemi spreads her %FSYN("vagina")% wide open and pressed the shower head against it, her body twitches in pleasure.
+		CALL M_KOJO_MESSAGE_ORGAZM_ONA_K9
+	ENDIF
+ELSEIF TEQUIP:13 && TEQUIP:14
+	;2穴バイブオナニー
+	PRINTFORML 「Ahii, Amazing %UNICODE(0x2764)% Shoving them, into my pussy and ass at the same time %UNICODE(0x2764)%」
+	PRINTFORMDW Yumemi thrusts vibrators in and out of her vagina and anus, greedily indulging in pleasure.
+	CALL M_KOJO_MESSAGE_ORGAZM_ONA_K9
+ELSEIF TEQUIP:13
+	;1穴バイブ(V)オナニー
+	PRINTFORML 「Yes, amazing %UNICODE(0x2764)% Shoving it into my pussy %UNICODE(0x2764)%」
+	PRINTFORMDW Yumemi caresses her breasts and clitoris as she thrusts a vibrator in and out of her %FSYN("vagina")%.
+	CALL M_KOJO_MESSAGE_ORGAZM_ONA_K9
+ELSEIF TEQUIP:14
+	;1穴バイブ(A)オナニー
+	PRINTFORML 「Ahh, it feels good, even though, it's my ass %UNICODE(0x2764)% Shoving it into my ass is amazing %UNICODE(0x2764)%」
+	PRINTFORMDW Yumemi caresses her breasts and clitoris as she thrusts a vibrator in and out of her anus, and loses herself in the pleasure.
+	CALL M_KOJO_MESSAGE_ORGAZM_ONA_K9
+ELSE
+	;通常のオナニー
+	PRINTFORML 「Nnah, my breasts, and my clit, feel good...」
+	PRINTFORMDW With practiced motions, Yumemi slides her fingers over the breasts and %FSYN("vagina")% and savors the pleasure.
+	CALL M_KOJO_MESSAGE_ORGAZM_ONA_K9
+ENDIF
+
+;==========================================================
+; 自慰絶頂口上関数(自慰コマンドサブ関数:その2)
+; 絶頂部分を更に切り出し、絶頂口上とそれなりにつながりが整合するように
+; (間に計算結果とかが出るけども)
+;==========================================================
+@M_KOJO_MESSAGE_ORGAZM_ONA_K9
+
+;-----------
+;五重絶頂
+;-----------
+IF NOWEX:9
+	PRINTFORMDW You seal Yumemi's lips with a kiss while she loses herself in masturbation, and her body writhes and shudders in pleasure.
+	PRINTFORML 「%FSYN("lips_over")%! I can't, take it anymore! I'm cumming, too much, I'm breaking %UNICODE(0x2764)%」
+	PRINTFORMDW As her body rushes towards climax, you once again cover her lips with yours.
+	PRINTFORML 「Nnfu, Nnn, Nn %UNICODE(0x2764)% Nn %UNICODE(0x2764)% Nnn～～～ー%UNICODE(0x2764)%%UNICODE(0x2764)%%UNICODE(0x2764)%」
+ELSEIF NOWEX:8
+	;----------
+	;四重絶頂
+	;----------
+	SELECTCASE NOWEX:8
+		CASE 1
+			;CVAB
+			CALL PRINT_DIALOGUE, @"Uwaa! No, too much %UNICODE(0x2764)% This is, too amazing...%UNICODE(0x2764)% I'm going crazy %UNICODE(0x2764)% I'm losing my mind! %UNICODE(0x2764)%"
+			PRINTFORMDW As she pleasures herself with wild abandon, Yumemi braces herself for an intense climax.
+		CASE 2
+			;CVAM
+			PRINTFORML 「Nmuu, Uuu %UNICODE(0x2764)% Cum, cumming %UNICODE(0x2764)% My clit, and assh %UNICODE(0x2764)% And pusshy %UNICODE(0x2764)%」
+			PRINTFORMDW As her sensitive vagina and anus are impaled repeatedly, Yumemi intertwines her tongue with yours. Her clit also approaches climax.
+		CASE 3
+			;CVBM
+			PRINTFORML 「%RANDLIPS(,"kiss")% %UNICODE(0x2764)% Feelsh good %UNICODE(0x2764)% My pusshy, and boobsh %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi sighs sweetly in between kisses as she masturbates. Her breathing is ragged, and face is drunk with pleasure.
+		CASE 4
+			;CABM
+			PRINTFORML 「%RANDLIPS(,"kiss")% %UNICODE(0x2764)% My assh, feelsh good %UNICODE(0x2764)% I can't %UNICODE(0x2764)% My boobsh %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi is slurring her speech in an obscene voice. The pleasure from masturbation seems to be overpowering her thoughts.
+		CASEELSE
+			;VABM
+			PRINTFORML 「%RANDLIPS(,"kiss")% %UNICODE(0x2764)% I can't %UNICODE(0x2764)% My pusshy, and assh, together %UNICODE(0x2764)%」
+			PRINTFORMDW Her lustful panting completely devoid of her usual grace, she greedily devours your lips as she loses herself in masturbation.
+	ENDSELECT
+ELSEIF NOWEX:7
+	;---------------
+	;三重絶頂(5C3)
+	;---------------
+	SELECTCASE NOWEX:7
+		CASE 1
+			;CVA
+			PRINTFORML 「Ahh, Hii, Amazhing %UNICODE(0x2764)% My entire lower body is cumming %UNICODE(0x2764)%」
+			PRINTFORMDW About to climax from her clitoris, vagina, and anus, Yumemi is absorbed in playing with herself.
+		CASE 2
+			;VAB
+			PRINTFORML 「Uwaa, Hii, cumming, from my boobs %UNICODE(0x2764)% My pussy, and ass, too %UNICODE(0x2764)%」
+			PRINTFORMDW As she ravages both of her holes and caresses her nipples, Yumemi rapidly approaches climax.
+		CASE 3
+			;CAB
+			PRINTFORML 「Ahaa %UNICODE(0x2764)% Cumming, I'm cumming, from my breasts, and clit, and ass %UNICODE(0x2764)%」
+			PRINTFORMDW Kneading her erect nipples with her fingers as she stimulates her %FSYN("vagina")% and anus, Yumemi approaches climax.
+		CASE 4
+			;CVB
+			PRINTFORML 「My pussy %UNICODE(0x2764)% Is cumming %UNICODE(0x2764)% And my boobs and clit %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi moans sweetly as she penetrates her vagina and plays with her breasts and clitoris, and she rapidly approaches climax.
+		CASE 5
+			;CVM
+			PRINTFORML 「Mmph, my pusshy %UNICODE(0x2764)% And clit %UNICODE(0x2764)% %FSYN("lips_over")%, Ahh cumminggg!」
+			PRINTFORMDW Yumemi quickly climaxes from the twin pleasures of kissing you and fingering her crotch.
+		CASE 6
+			;VBM
+			PRINTFORML 「Nnn, My boobsh %UNICODE(0x2764)% %FSYN("lips_over")%... More, cumming from my pusshy %UNICODE(0x2764)%」
+			PRINTFORMDW Slurring her speech, Yumemi climaxes from kissing you as she fondles her own breasts and pussy.
+		CASE 7
+			;VAM
+			PRINTFORML 「%RANDLIPS(,"kiss")%... My pussy, and ass, and kissing, AaaAAaah %UNICODE(0x2764)%」
+			PRINTFORMDW As she exchanges a deep kiss with you while digging out both of her holes, Yumemi drowns in pleasure.
+		CASE 8
+			;CBM
+			PRINTFORML 「Nnnnnn, %FSYN("lips_over")%, no, cumming, even while I'm kissing you %UNICODE(0x2764)%」
+			PRINTFORML 「Can't stop cumming, from touching, my boobs and clit %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi quickly approaches a powerful climax as she vigorously masturbates while kissing you, and begins to move her hands more quickly.
+		CASE 9
+			;ABM
+			PRINTFORML 「Nnnmu, Nnn, no, my assh %UNICODE(0x2764)% My assh, lovesh it %UNICODE(0x2764)%」
+			PRINTFORMDW As she digs out her own anus and fondles her nipples, Yumemi climaxes while exchanging a kiss with you.
+		CASEELSE
+			;CAM
+			PRINTFORML 「%FSYN("lips_over")% %UNICODE(0x2764)% %CALLNAME:MASTER%, kiss me more %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi kisses you greedily as she plays with her clitoris and penetrates her anus, and her whole body shudders uncontrollably.
+	ENDSELECT
+ELSEIF NOWEX:6
+	;---------------
+	;二重絶頂(5C2)
+	;---------------
+	SELECTCASE NOWEX:6
+		CASE 1
+			;CV
+			PRINTFORML 「Haa, Ah, yes %UNICODE(0x2764)% My clit and pussy, are cumming, together, I'm cumming %UNICODE(0x2764)%」
+			PRINTFORMDW As Yumemi fingers her %FSYN("vagina")% and clitoris together, she releases sweet cries as she climaxes.
+		CASE 2
+			;CA
+			PRINTFORML 「Ahaa, yes, there %UNICODE(0x2764)% My ass, dig it out more! I'm gonna cum %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi fingers her anus and clitoris, and her body shudders as she approaches climax.
+		CASE 3
+			;VA
+			PRINTFORML 「Hi, Hyaa, %CALLNAME:MASTER%, look, I'm cumming from my ass and pussy together %UNICODE(0x2764)%」
+			PRINTFORMDW Playing with both of her holes, Yumemi is drunk with pleasure from the impending climax.
+		CASE 4
+			;CB
+			PRINTFORML 「Ah, Ahh, I'm cumming, even though you're watching, I'm cumming from touching myself %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi climaxes from her %FSYN("vagina")% and breasts simultaneously as you watch.
+		CASE 5
+			;VB
+			PRINTFORML 「Ahh, Haa, cumming, Ahh, Ah... My boobs, and pussy %UNICODE(0x2764)%」
+			PRINTFORMDW Stuffing her fingers into her %FSYN("vagina")% while fondling her breasts, Yumemi shudders as she climaxes.
+		CASE 6
+			;AB
+			PRINTFORML 「Guh, Ah, no, my breasts and ass, are cumming, I'm cumming %UNICODE(0x2764)%」
+			PRINTFORMDW Shoving her fingers into her ass while fondling her breasts, Yumemi quickly reaches climax.
+		CASE 7
+			;AM
+			PRINTFORML 「Mmmph, Aah, cumming, my assh is cumming, harder %UNICODE(0x2764)%」
+			PRINTFORMDW As she exchanges a deep kiss with you while fingering her own anus, Yumemi reaches a powerful climax.
+		CASE 8
+			;VM
+			PRINTFORML 「Yes, I'm cumming from fingering my pussy %UNICODE(0x2764)% Kiss me more %UNICODE(0x2764)%」
+			PRINTFORMDW You exchange a deep kiss with Yumemi as she fingers her innermost depths, and she reaches a powerful climax.
+		CASE 9
+			;CM
+			PRINTFORML 「%RANDLIPS(,"kiss")%, I'm cumming from my clit %UNICODE(0x2764)% While I'm kissing %CALLNAME:MASTER% %UNICODE(0x2764)%」
+			PRINTFORMDW Yumemi wildly rubs her clit as she exchanges a passionate kiss with you, and climaxes as saliva drips from the corners of her mouth.
+		CASEELSE
+			;BM
+			PRINTFORML 「Haa, Ahh, Nnn, Nnmu, %FSYN("lips_over")%, I can't take it %UNICODE(0x2764)% My breasts, and kissing %UNICODE(0x2764)%」
+			PRINTFORMDW As she exchanges a deep kiss with you while fondling her breasts, Yumemi reaches her climax.
+	ENDSELECT
+;---------
+;単絶頂
+;---------
+ELSEIF NOWEX:0
+	;C
+	PRINTFORML 「Ahh, Ah, cumming, I'm cumming, my clit is cumming～!」
+	PRINTFORMDW Yumemi fully absorbs herself in rubbing her highly sensitive clitoris, and gasps sweetly as she climaxes.
+ELSEIF NOWEX:1
+	;V
+	PRINTFORML 「Uwaa, Haa, cumming %UNICODE(0x2764)% My pussy, is cumming!」
+	PRINTFORMDW Pushing herself to climax, Yumemi twists her hips obscenely into her fingers.
+ELSEIF NOWEX:2
+	;A
+	PRINTFORML 「Nnnah, Aah, Haa, no, I'm cumming, I'm cumming from fingering my ass...%UNICODE(0x2764)%」
+	PRINTFORMDW Yumemi grinds her hips into her fingers, digging them further into her anus, and reaches climax.
+ELSEIF NOWEX:3
+	;B
+	PRINTFORML 「Haa, Haa, Ah, gonna cum, I'm cumming, from my boobs...!」
+	PRINTFORMDW Yumemi reaches climax as she fondles her breasts and teases her nipples.
+ELSEIF NOWEX:4
+	;M
+	PRINTFORML 「%RANDLIPS(,"kiss")%, %FSYN("lips_over")%... Ah, just from kissing, cumming... Fuu %UNICODE(0x2764)%」
+	PRINTFORMDW You invade her mouth with your tongue, and as if she is masturbating to the deep kiss, Yumemi reaches orgasm.
+ELSE
+	;イかない
+	PRINTFORML 「Ahh, Ah, Haa... Nnah... Ah, Ah...!」
+	PRINTFORMDW As Yumemi gradually approaches climax, her expression begins to melt from pleasure.
+ENDIF
+
+;==================================================
+;11,乳首吸い
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_11
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_11_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_11_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;12,胸もみ
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_12
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_12_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_12_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;13,アナル開帳
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_13
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_13_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_13_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;15,クリ愛撫
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_15
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_15_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_15_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;ソフト系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;19,キスする(継続)
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_19
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_19_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_19_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;20,キスする
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_20
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_20_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_20_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+
+;==================================================
+;21,何もしない
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_21
+;CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_21_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_21_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;22,誘い受ける
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_22
+;CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_22_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_22_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;基本セット
+	;時姦中
+	IF FLAG:70
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;屈服3
+	ELSEIF MARK:不埒刻印 == 3
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1
+
+;==================================================
+;23,ピロートーク
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_23
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_23_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_23_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;初めて
+	;記入チェック
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && FIRSTTIME(SELECTCOM)
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;失敗
+	IF TFLAG:193
+		PRINTFORMW 
+		RETURN 1
+	;恋慕
+	ELSEIF TALENT:恋慕
+		PRINTFORMW 
+		RETURN 1
+	;思慕
+	ELSEIF TALENT:思慕
+		PRINTFORMW 
+		RETURN 1
+	;それ以外
+	ELSE
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 1

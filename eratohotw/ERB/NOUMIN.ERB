@@ -1,0 +1,759 @@
+﻿[SKIPSTART]
+小作人用各種設定関数
+
+カネはくれるが拘束時間で割ればすこぶる薄給、つまりフレーバーです（でも貰えると嬉しいよね）
+標準の報酬係数を400として格差あり、東方くわしくないので違和感あったら変えてくらさい
+450は商売やってるようなひとびと
+
+思いつきをありったけ積んだ
+よくわかんなかった人々は実装してない
+追加・訂正求む
+
+ボツネタ
+・華扇の屋敷の裏山に果樹（栗、柿、梅など）
+なんとなくイメージでありそう
+いろいろ曖昧すぎるのでとりあえず保留
+・ドレミーさんが砂糖を生産
+とにかくスイートなものをと思った
+サトウキビかテンサイだがなんだかシュールなので保留
+養蜂農家で蜂蜜を作る手もあるか
+後にテンサイはチルノの作物となった
+・妹紅or輝夜で竹林でタケノコ農家
+タケノコは採れそうだがこの２人が作物を徴収しに来るイメージがしない
+地主という形で他人と関わり合いになるだろうか？？？と思ってやめ
+・蓮子の蓮根畑、鈴湖の林檎園
+メリーとせーらんの作物を思いつかなかった
+かたっぽだけ地主設定してると違和感
+・正邪でミラクルフルーツ畑
+苦味＆酸味を甘いと感じさせる＝ひっくり返す
+大量生産するようなもんでもないようなと思ってやめ
+・純狐さんの生姜畑
+すごい形相で叫びながら齧ったりするの？あまりにも一発ネタすぎるので却下
+・魅魔様の牧場
+でも（ｒｙ
+
+
+果樹では柿や蜜柑なんかがあると和風感が増すが任せられる人が思いつかなかった
+このほか繊維系で綿花、麻、染料系で茜などを挙げてみる
+
+
+2018/05/19
+・各種拠点マップの実装に伴ってバグってた番号を修正
+・農民系のデータの記述は各地主のキャラデータ関数側に移動させました
+　小作人パッチの構想段階でキャラデータ関数的な技術は考えてましたが
+　関数群が中々に巨大なので小作人パッチだけのために実装するのはなぁと思ってやめてました
+　作っちゃったからキャラデータ関数側に移動
+・@STR_NOUMIN()の仕様変更
+　１．STR_NOUMIN/INT_NOUMINの二種類に分けてTOINTの必要を無くした
+　２．キャラデータ関数で管理するようになったので第一引数で渡す内容をCALLNAMEから登録番号に変更
+　３．STR/INT_NOUMINの第二引数は従来通り、STR_NOUMIN(1, "説明")等で動きます
+　４．キャラデータ関数側の記述で使ってる"農民："の部分はSTR/INT_NOUMINで勝手に付与します
+
+[SKIPEND]
+@INT_NOUMIN(C_ID, TYPE)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIM  C_ID;地主の登録番号
+#DIMS TYPE;取得情報の種類
+RETURNF GET_INT(, "キャラデータ", C_ID, "農民：" + TYPE)
+
+@STR_NOUMIN(C_ID, TYPE)
+#FUNCTIONS
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIM  C_ID;地主の登録番号
+#DIMS TYPE;取得情報の種類
+RETURNF GET_STR(, "キャラデータ", C_ID, "農民：" + TYPE)
+
+
+
+;農民初期設定関数
+@SET_NOUMIN
+#LOCALSIZE 1000
+#LOCALSSIZE 1
+#DIM LCOUNT
+#DIM C_ID
+#DIM LIST_ID
+#DIM CHARA_COUNT
+#DIM LIST_COUNT
+#DIM PAGE
+#DIMS NAME_地主
+PRINTFORML Wanna be a peasant?
+;Custom code
+PRINTFORML [2] - What's a peasant?
+PRINTFORML [1] - Yes
+PRINTFORML [0] - No
+DO
+	INPUT
+	SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1
+	CASE 2
+		PRINTFORML It means working more or less every day forever.
+		PRINTFORML Be a peasant?
+		CALL ASK_YN()
+		SIF RESULT
+			RETURN
+	CASEELSE
+		REUSELASTLINE Invalid Input
+		CONTINUE
+	ENDSELECT
+	BREAK
+LOOP 1
+
+PAGE = 0
+CHARA_COUNT = 0
+;地主一覧の取得
+FOR C_ID, 1, CHARANUM
+	SIF C_ID == FLAG:なりきり
+		CONTINUE
+	SIF !STRLENS(STR_NOUMIN(C_ID, "説明"))
+		CONTINUE
+	LOCAL:CHARA_COUNT = C_ID
+	CHARA_COUNT ++
+NEXT
+
+FLAG:地主 = 0
+FLAG:畑仕事の成果 = 0
+FLAG:返済延滞回数 = 0
+FLAG:収穫納入回数 = 0
+FLAG:累積収穫評価 = 0
+FLAG:前回収穫評価 = 0
+
+
+DO
+	LIST_COUNT = 0
+	PRINTFORML Please select a landlord.
+	PRINTFORML 
+	FOR LIST_ID, (PAGE * 20), CHARA_COUNT
+		C_ID = LOCAL:LIST_ID
+		PRINTFORM [{C_ID ,3}] - Landlord: %CALLNAME:C_ID, 14, LEFT%
+		;Custom code for translating
+		PRINTFORM %FARMING_DESCRIPTION_TR(STR_NOUMIN(C_ID, "説明")), 26, LEFT%
+		PRINTFORML A%AN(FARM_FIELD_TR(STR_NOUMIN(C_ID, "畑の種類")))% %FARM_FIELD_TR(STR_NOUMIN(C_ID, "畑の種類"))% located near %FARM_LOCATION_TR(STR_NOUMIN(C_ID, "畑のマップ"))%.
+		LIST_COUNT ++
+		SIF LIST_COUNT > 19
+			BREAK
+	NEXT
+	PRINTFORML 
+	PRINTFORML [901] - Previous page
+	PRINTFORML [902] - Next page
+	PRINTFORML [  0] - Quit
+	DO
+		INPUT
+		SELECTCASE RESULT
+		CASE 0
+			RETURN
+		CASE 901
+			SIF PAGE > 0
+				PAGE --
+		CASE 902
+			SIF (PAGE + 1) * 20 < CHARA_COUNT
+				PAGE ++
+		CASE 1 TO CHARANUM - 1
+			SIF !STRLENS(STR_NOUMIN(RESULT, "説明"))
+				GOTO RETRY
+			FLAG:地主 = RESULT
+		CASEELSE
+			$RETRY
+			REUSELASTLINE Invalid Input
+			CONTINUE
+		ENDSELECT
+		BREAK
+	LOOP 1
+LOOP !(FLAG:地主)
+
+NAME_地主 = %CALLNAME:(FLAG:地主)%
+PRINTFORML 
+PRINTFORML %PARSE("You")% became a tenant farmer under the employ of %NAME_地主%, tasked with growing %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))%.
+PRINTFORML %PARSE("You")% rented a%AN(FARM_FIELD_TR(STR_NOUMIN(FLAG:地主, "畑の種類")))% %FARM_FIELD_TR(STR_NOUMIN(FLAG:地主, "畑の種類"))% near %FARM_LOCATION_TR(STR_NOUMIN(FLAG:地主, "畑のマップ"))%.
+PRINTFORMW Make sure to look after it every day.
+
+CALL MODE_NOUMIN
+CALL LOAN_NOUMIN
+
+[IF_DEBUG]
+;挙動、れいあうとの確認用
+;MONEY = 100000
+;DO
+;	SIF FLAG:農民難易度
+;		CALL COST_NOUMIN
+;	CALL REPAY_NOUMIN
+;	WAIT
+;LOOP 1
+[ENDIF]
+
+@MODE_NOUMIN
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS NAME_地主
+NAME_地主 = %CALLNAME:(FLAG:地主)%
+PRINTFORML Please select the difficulty of the peasant life.
+PRINTFORML (One's image of the character may break depending on the chosen option)
+PRINTFORML 
+PRINTFORML [1] - Normal Peasant　　　　　%NAME_地主% is a very kind landlord.
+PRINTFORML [2] - Hardcore Peasant　　　　%NAME_地主% is a strict and greedy landlord.
+PRINTFORML [3] - Extreme Peasant     　　%NAME_地主% is a violent and tyrannical landlord.
+DO
+	INPUT
+	IF INRANGE(RESULT, 1, 3)
+		FLAG:農民難易度 = RESULT
+		BREAK
+	ELSE
+		REUSELASTLINE Invalid Input
+		CONTINUE
+	ENDIF
+LOOP 1
+SELECTCASE FLAG:農民難易度
+CASE 1
+	PRINTFORML The landlord is a very kind and good person.
+	FLAG:畑拡張 = 1
+CASE 2
+	PRINTFORML The landlord is rather oppressive.
+	FLAG:畑拡張 = 2
+CASE 3
+	PRINTFORML The landlord is a despot that exploits peasants.
+	FLAG:畑拡張 = 3
+ENDSELECT
+PRINTFORMW (Peasant difficulty can be changed later in the options menu)
+SETBIT FLAG:1000, 2
+
+
+
+;%TOSTR(LOCAL, "#,###")%
+;報酬400 * 1000 = 40万円（標準金額）
+@LOAN_NOUMIN
+#DIMS NAME_地主
+NAME_地主 = %CALLNAME:(FLAG:地主)%
+LOCAL = INT_NOUMIN(FLAG:地主, "報酬") * 1000
+PRINTFORML %PARSE("You")% borrowed %金額表示(LOCAL)% as initial investment to start farming.
+FLAG:地主貸付金 = LOCAL
+FLAG:年始貸付金 = LOCAL
+SELECTCASE FLAG:農民難易度
+CASE 1
+	PRINTFORML %NAME_地主% offered the loan without interest, saying it's fine to pay back whenever.
+	IF !ITEM:園芸用品一式
+		PRINTFORML %NAME_地主% gave the advice to buy gardening supplies at the flower shop in the Human Village.
+		PRINTFORML It seems %HE_SHE(FLAG:地主)% won't cover the cost for the tools.
+	ENDIF
+CASE 2, 3
+	PRINTFORML The loan has a {INT_NOUMIN(FLAG:地主, "金利")}％ interest rate.
+	PRINTFORML %NAME_地主% has proposed to lend some gardening tools.
+	PRINTFORML ... It seems %PARSE("you are")%n't allowed to say no.
+	;たぶんこの他に現地に無駄に色々な道具が山ほどある
+ENDSELECT
+WAIT
+
+@RESET_NOUMIN
+FLAG:地主 = 0
+FLAG:畑仕事の成果 = 0
+FLAG:返済延滞回数 = 0
+FLAG:収穫納入回数 = 0
+FLAG:累積収穫評価 = 0
+FLAG:前回収穫評価 = 0
+FLAG:農民難易度 = 0
+FLAG:畑拡張 = 0
+FLAG:地主貸付金 = 0
+FLAG:年始貸付金 = 0
+
+@SET_APPLY_NOUMIN
+SIF FLAG:農民難易度 >= 2 && !ITEM:園芸用品一式
+	ITEM:園芸用品一式 ++
+
+;農民情報表示関数
+@SHOW_NOUMIN
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIMS NAME_地主
+#DIM HATAKE
+NAME_地主 = %CALLNAME:(FLAG:地主)%
+HATAKE = INT_NOUMIN(FLAG:地主, "場所ID")
+SIF GET_MAPID(HATAKE) != MAIN_MAP
+	HATAKE = 6000 + (GET_MAP_REPLACEMENT(HATAKE) / 10)
+
+PRINTFORML %NAME_地主%'s peasant (%FARMING_DESCRIPTION_TR(STR_NOUMIN(FLAG:地主, "説明"))% making %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))%).
+PRINTFORML Works at a%AN(FARM_FIELD_TR(STR_NOUMIN(FLAG:地主, "畑の種類")))% %FARM_FIELD_TR(STR_NOUMIN(FLAG:地主, "畑の種類"))% at %FARM_LOCATION_TR(STR_NOUMIN(FLAG:地主, "畑のマップ"))% near %NAME_FROM_PLACE(HATAKE)%.
+;いいひとでも作物は全部もらいます
+SELECTCASE FLAG:農民難易度
+CASE 1
+	PRINTFORML The landlord is a very kind and nice person.
+	SIF FLAG:地主貸付金
+		PRINTFORML The loan is at %金額表示(FLAG:地主貸付金)% with no interest.
+CASE 2
+	PRINTFORML The landlord is tyrannical.
+	SIF FLAG:地主貸付金
+		PRINTFORML The loan is at %金額表示(FLAG:地主貸付金)% with {INT_NOUMIN(FLAG:地主, "金利")}％ annual interest.
+CASE 3
+	PRINTFORML The landlord is completely exploitative.
+	SIF FLAG:地主貸付金
+		PRINTFORML The loan is at %金額表示(FLAG:地主貸付金)% with {INT_NOUMIN(FLAG:地主, "金利")}％ annual interest.
+ENDSELECT
+PRINTFORML 
+
+
+;取り立て関数
+;本当は年貢でもなんでもないけどわかりやすさ優先
+;口上対応とかご褒美えっちとかは仕様がわからなくて実装できない
+@NENGU_NOUMIN
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIM 年貢の評価
+PRINTFORML %CALLNAME:(FLAG:地主)% came to collect this month's harvest.
+PRINTFORMW (This month's harvest: {FLAG:畑仕事の成果})
+年貢の評価 = FLAG:畑仕事の成果 / 20
+LOCAL = (年貢の評価 - 3) * 5
+SIF LOCAL < 0
+	LOCAL = LOCAL - SQRT(MAX(1, CFLAG:(FLAG:地主):信頼度))
+SELECTCASE 年貢の評価
+CASE IS <= 0
+	PRINTFORML This month's %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))% harvest was practically nothing.
+	PRINTFORML %CALLNAME:(FLAG:地主)% is staring at %PARSE("you")% with a grim look on %HIS_HER(FLAG:地主)% face.
+CASE 1
+	PRINTFORML This month's %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))% harvest was pretty small.
+	PRINTFORML %CALLNAME:(FLAG:地主)% expresses open disappointment at the low yield.
+CASE 2
+	PRINTFORML This month's %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))% harvest was below average.
+	PRINTFORML %CALLNAME:(FLAG:地主)% seems a bit disappointed with the low yield.
+CASE 3
+	PRINTFORML This month's %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))% harvest is a bit below average.
+	PRINTFORML %CALLNAME:(FLAG:地主)% seems unsatisfied with the yield.
+CASE 4
+	PRINTFORML This month's %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))% harvest is average.
+	PRINTFORML %CALLNAME:(FLAG:地主)% seems satisfied with the yield.
+CASE 5
+	PRINTFORML This month's %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))% harvest is a bit above average.
+	PRINTFORML %CALLNAME:(FLAG:地主)% is in high spirits over the yield.
+CASE 6
+	PRINTFORML This month's %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))% harvest is quite a lot.
+	PRINTFORML %CALLNAME:(FLAG:地主)% is smiling at the yield being far more than expected.
+CASEELSE
+	PRINTFORML This month's %CROP_NAME_TR(STR_NOUMIN(FLAG:地主, "作物"))% harvest can only be described as bountiful!
+	PRINTFORML %CALLNAME:(FLAG:地主)% is overwhelmed by the unimaginable yield!
+ENDSELECT
+WAIT
+
+IF LOCAL < 0
+	PRINTFORMW %CALLNAME:(FLAG:地主)% has gotten suspicious of %PARSE("you")%.
+	CFLAG:(FLAG:地主):信頼度 = MAX(0, CFLAG:(FLAG:地主):信頼度 + LOCAL)
+	IF 年貢の評価 <= 0
+		PRINTFORMW ... It seems %CALLNAME:(FLAG:地主)% has gotten pretty angry.
+		CFLAG:(FLAG:地主):不機嫌 = 1
+		CFLAG:(FLAG:地主):ブチギレ = 1
+		SIF MARK:(FLAG:地主):反発刻印 < 3
+			MARK:(FLAG:地主):反発刻印 ++
+	ENDIF
+ELSEIF LOCAL > 0
+	PRINTFORMW %CALLNAME:(FLAG:地主)%'s reliability goes up.
+	CFLAG:(FLAG:地主):信頼度 += LOCAL
+	IF !MARK:(FLAG:地主):反発刻印
+		LOCAL = 年貢の評価 * INT_NOUMIN(FLAG:地主, "報酬")
+		PRINTFORMW %CALLNAME:(FLAG:地主)% gives you %金額表示(LOCAL)% in allowance.
+		MONEY += LOCAL
+	ENDIF
+ENDIF
+FLAG:畑仕事の成果 = 0
+FLAG:年貢 = 0
+FLAG:収穫納入回数 ++
+FLAG:累積収穫評価 += 年貢の評価
+FLAG:前回収穫評価 = 年貢の評価
+SIF FLAG:野菜娘デイリー == 2
+	FLAG:野菜娘デイリー = 1
+CALL REPAY_NOUMIN
+SIF FLAG:農民難易度 > 1
+	CALL COST_NOUMIN
+
+
+
+@REPAY_NOUMIN
+#DIM HENSAI
+#DIM MIN_HENSAI
+#DIMS NAME_地主
+NAME_地主 = %CALLNAME:(FLAG:地主)%
+SIF !FLAG:地主貸付金
+	GOTO KANRYOU
+SELECTCASE FLAG:農民難易度
+CASE 1
+	MIN_HENSAI = 100
+CASE 2
+	MIN_HENSAI = INT_NOUMIN(FLAG:地主, "報酬") * 5
+CASE 3
+	MIN_HENSAI = INT_NOUMIN(FLAG:地主, "報酬") * (10 + FLAG:返済延滞回数)
+ENDSELECT
+MIN_HENSAI = MIN(MIN_HENSAI, FLAG:地主貸付金)
+
+PRINTFORML %NAME_地主% demanded the debt to be repaid.
+PRINTFORML How much should be repaid? (Capital on hand: \\{MONEY}  Minimum amount without consequence:\\{MIN_HENSAI})
+PRINTFORM How much should be repaid?（Loaned: 
+PRINTBUTTON 金額表示(FLAG:地主貸付金), FLAG:地主貸付金
+PRINTFORM , Money: 
+PRINTBUTTON 金額表示(MONEY), MONEY
+PRINTFORM , If less than 
+PRINTBUTTON 金額表示(MIN_HENSAI), MIN_HENSAI
+PRINTFORML  is paid back, it'll count as a missing payment.）
+DO
+	INPUT
+	HENSAI = MIN(RESULT, FLAG:地主貸付金)
+	SELECTCASE HENSAI
+	CASE IS < MIN_HENSAI
+		PRINTFORML %PARSE("You ask")% %NAME_地主% to wait a bit for repayment.
+		IF FLAG:農民難易度 == 1
+			IF MONEY < MIN_HENSAI
+			;本気で金が無い時
+				PRINTDATAL
+					DATAFORM %NAME_地主% is seriously worried about %PARSE("your")% living conditions.
+					DATAFORM %NAME_地主% is seriously worried about %PARSE("your")% living conditions.
+					DATAFORM %NAME_地主% cheers %PARSE("you")% on.
+					DATAFORM %NAME_地主% consoles %PARSE("you")%.
+					DATAFORM %NAME_地主% can't find anything to say.
+					DATAFORM %NAME_地主%'s look of pity pierces %PARSE("you")%.
+					DATAFORM %NAME_地主%'s face became gloomy.
+					DATAFORM %NAME_地主% is troubled.
+				ENDDATA
+			ELSE
+			;ちょっとまって！
+				PRINTDATAL
+					DATAFORM %NAME_地主% sighs deeply.
+					DATAFORM %NAME_地主% rubs %HIS_HER(FLAG:地主)% temples.
+					DATAFORM %NAME_地主% stares at %PARSE("you")% with scornful eyes.
+					DATAFORM %NAME_地主% crosses %HIS_HER(FLAG:地主)% arms and frowns.
+					DATAFORM %NAME_地主%'s look of pity pierces %PARSE("you")%.
+					DATAFORM %NAME_地主%'s face stiffens.
+					DATAFORM %NAME_地主%'s eyebrows wrinkle.
+					DATAFORM %NAME_地主%'s face becomes gloomy.
+					DATAFORM %NAME_地主% is troubled.
+				ENDDATA
+				PRINTFORML 
+				PRINTFORML ... But it seems %HE_SHE(FLAG:地主)% was convinced.
+			ENDIF
+			FLAG:返済延滞回数 ++
+		ELSEIF MONEY >= MIN_HENSAI
+			PRINTFORML %NAME_地主% ignores %PARSE("your")% words and forcibly takes %金額表示(MIN_HENSAI)% from %PARSE("your",1)% wallet.
+			MONEY -= MIN_HENSAI
+		ELSE
+			PRINTFORML %NAME_地主% clicks %HIS_HER(FLAG:地主)% tongue and stares at %PARSE("you")% with cold eyes.
+			FLAG:返済延滞回数 ++
+		ENDIF
+	CASE IS > MONEY
+		$RETRY
+		REUSELASTLINE Invalid Input
+		CONTINUE
+	CASEELSE
+		PRINTFORML %PARSE("You pay")% %金額表示(HENSAI)% of the debt.
+		MONEY -= HENSAI
+		FLAG:返済延滞回数 = 0
+		FLAG:地主貸付金 -= HENSAI
+		IF !FLAG:地主貸付金
+			IF FLAG:農民難易度 == 1
+				PRINTFORML %PARSE("You have")% finally repaid the loan.
+				PRINTFORML %NAME_地主% is delighted.
+			ELSE
+				PRINTFORML %PARSE("You")% paid off %PARSE("your",1)% debt.
+				PRINTFORML ... But %NAME_地主% immediately gives another reason to rip %PARSE("you",5)% off.
+			ENDIF
+		ELSE
+			PRINTFORML The remaining debt is %金額表示(FLAG:地主貸付金)%...
+		ENDIF
+		$KANRYOU
+		PRINTFORML 
+		IF FLAG:農民難易度 == 1
+			PRINTDATAL
+				DATAFORM %NAME_地主% reminisces about the past.
+				DATAFORM %NAME_地主% listens to the report with interest.
+				DATAFORM %NAME_地主% is worried whether anything's wrong.
+				DATAFORM %NAME_地主% eats some sweets %HE_SHE(FLAG:地主)% brought with %PARSE("you")% while %PARSE("you",2)% chat.
+				DATAFORM %NAME_地主% asks if there are any requests for the farmland to be improved.
+				DATAFORM %NAME_地主% stares at %PARSE("you")% with a gentle gaze.
+				DATAFORM %NAME_地主% bears a radiant smile.
+			ENDDATA
+		ELSE
+			PRINTDATAL
+				DATAFORM %NAME_地主% takes the opportunity and tries to sell stuff to %PARSE("you")%.
+				DATAFORM %NAME_地主% ignores %PARSE("your",3)% reports of progress.
+				DATAFORM %NAME_地主% tries to find out if %PARSE("you are")% having money issues.
+				DATAFORM %NAME_地主% proposes an agricultural plan and asks for investment... But without dividends.
+				DATAFORM %NAME_地主%'s gaze flashes with signs of evil for a moment.
+				DATAFORM %NAME_地主%'s smile seems to have something wicked behind it.
+				DATAFORM %NAME_地主%'s smile doesn't put %PARSE("your")% heart at ease.
+			ENDDATA
+		ENDIF
+	ENDSELECT
+	BREAK
+LOOP 1
+
+IF FLAG:返済延滞回数
+	LOCAL = POWER(FLAG:返済延滞回数, FLAG:農民難易度 + 1)
+	LOCAL = MIN(LOCAL, CFLAG:(FLAG:地主):信頼度)
+	IF LOCAL
+		PRINTFORMW %CALLNAME:(FLAG:地主)% grows suspicious of %PARSE("you")%.
+		CFLAG:(FLAG:地主):信頼度 -= LOCAL
+	ENDIF
+ENDIF
+
+
+
+;なんだかんだ理由つけて差っ引かれる
+;標準レート400で金利・返済延滞によるペナルティを除くと
+;ハードコアで1万、エクストリームで3万の経費が毎月発生する
+@COST_NOUMIN
+#LOCALSIZE 9
+#LOCALSSIZE 9
+#DIMS NAME_地主
+#DIMS PREV_地主
+#DIM COST_RATE
+#DIM LCOUNT
+NAME_地主 = %CALLNAME:(FLAG:地主)%
+COST_RATE = INT_NOUMIN(FLAG:地主, "報酬")
+LOCAL:0 = 0
+LOCAL:8 = 0
+PRINTFORML A fee was added to the debt for various expenses during the month.
+
+
+;金利計算
+;ハードコアなら年始借入金準拠で年利計算
+;エクストリームだと年始借入金・今月借入金のうち大きい方で月利計算
+IF FLAG:地主貸付金 < 10000000
+	SELECTCASE FLAG:農民難易度
+	CASE 2
+		LOCAL:1 = FLAG:年始貸付金 * INT_NOUMIN(FLAG:地主, "金利") / 1200
+	CASE 3
+		LOCAL:1 = MAX(FLAG:地主貸付金, FLAG:年始貸付金) * INT_NOUMIN(FLAG:地主, "金利") / 100
+	ENDSELECT
+ENDIF
+
+SELECTCASE FLAG:農民難易度
+CASE 2
+	LOCAL:2 = FLAG:返済延滞回数 * COST_RATE
+CASE 3
+	LOCAL:2 = FLAG:返済延滞回数 * COST_RATE * 10
+ENDSELECT
+
+;固定値が大半なんで毎回再計算する必要はあまりない
+;地主の切り替わり（と、再起動）のタイミングで判定するように
+IF NAME_地主 != PREV_地主
+	LOCALS:0 = Total
+	LOCALS:1 = Interest
+	LOCALS:2 = Overdue fee
+	LOCALS:3 = Tool usage
+	LOCALS:8 = Total loan
+	SELECTCASE FLAG:農民難易度
+	CASE 2
+		LOCAL:3 = COST_RATE * 5
+	CASE 3
+		LOCAL:3 = COST_RATE * 10
+	ENDSELECT
+
+	LOCALS:4 = 肥料購入費
+	SELECTCASE FLAG:農民難易度
+	CASE 2
+		LOCAL:4 = COST_RATE * 5
+	CASE 3
+		LOCAL:4 = COST_RATE * 10
+	ENDSELECT
+
+	LOCALS:5 = 作物出荷費
+	SELECTCASE FLAG:農民難易度
+	CASE 2
+		LOCAL:5 = COST_RATE * 5
+	CASE 3
+		LOCAL:5 = COST_RATE * 15
+	ENDSELECT
+
+	LOCALS:6 = 水場利用費
+	SELECTCASE FLAG:農民難易度
+	CASE 2
+		LOCAL:6 = COST_RATE * 5
+	CASE 3
+		LOCAL:6 = COST_RATE * 20
+	ENDSELECT
+
+	IF STR_NOUMIN(FLAG:地主, "作物") == "生糸"
+		LOCALS:7 = Silkworm Eggs
+	ELSE
+		LOCALS:7 = Seeds
+	ENDIF
+	
+	SELECTCASE FLAG:農民難易度
+	CASE 2
+		LOCAL:7 = COST_RATE * 5
+	CASE 3
+		LOCAL:7 = COST_RATE * 20
+	ENDSELECT
+	PREV_地主 = %NAME_地主%
+ENDIF
+
+LOCAL:0 = SUMARRAY(LOCAL)
+LOCAL:8 = LIMIT(FLAG:地主貸付金 + LOCAL:0,  0, 10000000)
+FLAG:地主貸付金 = LOCAL:8
+PRINTFORML ――――――――――――――――――――――――――――――――
+PRINTFORML 　Sundry expenses
+PRINTFORML ――――――――――――――――――――――――――――――――
+FOR LCOUNT, 1, 8
+	SIF LOCAL:LCOUNT
+		PRINTFORML 　　%LOCALS:LCOUNT, 13,LEFT%｜　　　\\%三桁区切(LOCAL:LCOUNT),20%
+NEXT
+PRINTFORML ――――――――｜―――――――――――――――――――――――
+PRINTFORML 　　%LOCALS:0, 13,LEFT%｜　　　\\%三桁区切(LOCAL:0),20%
+PRINTFORML ――――――――｜―――――――――――――――――――――――
+PRINTFORM 　　%LOCALS:8, 13,LEFT%｜　　　\\%三桁区切(LOCAL:8),20%
+IF FLAG:地主貸付金 == 10000000
+	PRINTFORML 　！　Upper limit　！
+ELSE
+	PRINTFORML 
+ENDIF
+PRINTFORMW ――――――――――――――――――――――――――――――――
+
+
+;CONFIGからの農民再設定（試作）
+@RESTART_NOUMIN
+#DIM LOCAL_地主
+#DIM LOCAL_畑仕事の成果
+#DIM LOCAL_返済延滞回数
+#DIM LOCAL_収穫納入回数
+#DIM LOCAL_累積収穫評価
+#DIM LOCAL_前回収穫評価
+#DIM LOCAL_農民難易度
+#DIM LOCAL_畑拡張
+#DIM LOCAL_地主貸付金
+#DIM LOCAL_年始貸付金
+#DIMS LOCALS_元地主
+#DIMS LOCALS_新地主
+#DIMS LOCALS_元難易度
+#DIMS LOCALS_新難易度
+
+LOCAL_地主 = FLAG:地主
+LOCAL_畑仕事の成果 = FLAG:畑仕事の成果
+LOCAL_返済延滞回数 = FLAG:返済延滞回数
+LOCAL_収穫納入回数 = FLAG:収穫納入回数
+LOCAL_累積収穫評価 = FLAG:累積収穫評価
+LOCAL_前回収穫評価 = FLAG:前回収穫評価
+LOCAL_農民難易度 = FLAG:農民難易度
+LOCAL_畑拡張 = FLAG:畑拡張
+LOCAL_地主貸付金 = FLAG:地主貸付金
+LOCAL_年始貸付金 = FLAG:年始貸付金
+LOCALS_元地主 = %CALLNAME:(FLAG:地主)%
+
+IF FLAG:地主
+	PRINTFORML You are now a peasant under %LOCALS_元地主%.
+	SIF FLAG:地主貸付金 > 0
+		PRINTFORML Remaining debt: \\{FLAG:地主貸付金}
+	SELECTCASE FLAG:農民難易度
+	CASE 1
+		LOCALS_元難易度 = Normal
+	CASE 2
+		LOCALS_元難易度 = Hardcore
+	CASE 3
+		LOCALS_元難易度 = Extreme
+	ENDSELECT
+ELSE
+	;A woman can be a free man, deal with it
+	PRINTFORML You are free man.
+ENDIF
+
+PRINTFORML Change farm settings?
+PRINTFORML [1] - Yes
+PRINTFORML [0] - No
+DO
+	INPUT
+	SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 
+		RETURN
+	CASE 1
+	CASEELSE
+		REUSELASTLINE Invalid input
+		CONTINUE
+	ENDSELECT
+	BREAK
+LOOP 1
+
+DO
+	CALL RESET_NOUMIN
+	CALL SET_NOUMIN
+	PRINTFORML 
+
+	LOCALS_新地主 = %CALLNAME:(FLAG:地主)%
+	IF LOCAL_地主 && FLAG:地主 && LOCAL_地主 != FLAG:地主
+		PRINTFORML You have left %LOCALS_元地主%, and will now work for %LOCALS_新地主%.
+		IF LOCAL_地主貸付金 > 0
+			PRINTFORML The debt of \\{LOCAL_地主貸付金} to %LOCALS_元地主% has been taken over by %LOCALS_新地主%.
+			FLAG:地主貸付金 += LOCAL_地主貸付金
+		ENDIF
+		PRINTFORML You now owe %LOCALS_新地主% \\{FLAG:地主貸付金}.
+
+	ELSEIF LOCAL_地主 && FLAG:地主 && LOCAL_地主 == FLAG:地主
+		; 雇い主の変更がないので元に戻す
+		SETCOLOR C_YELLOW
+		PRINTFORML No change in landlord, the above loan will not be applied.
+		SIF LOCAL_地主貸付金 > 0
+			PRINTFORML The loan to %LOCALS_新地主% will be \\{LOCAL_地主貸付金}
+		RESETCOLOR
+		FLAG:畑仕事の成果 = LOCAL_畑仕事の成果
+		FLAG:返済延滞回数 = LOCAL_返済延滞回数
+		FLAG:収穫納入回数 = LOCAL_収穫納入回数
+		FLAG:累積収穫評価 = LOCAL_累積収穫評価
+		FLAG:前回収穫評価 = LOCAL_前回収穫評価
+		FLAG:地主貸付金 = LOCAL_地主貸付金
+		FLAG:年始貸付金 = LOCAL_年始貸付金
+
+		; 難易度が変更されたか
+		IF LOCAL_農民難易度 != FLAG:農民難易度
+			SELECTCASE FLAG:農民難易度
+			CASE 1
+				LOCALS_新難易度 = Normal
+			CASE 2
+				LOCALS_新難易度 = Hardcore
+			CASE 3
+				LOCALS_新難易度 = Extreme
+			ENDSELECT
+			PRINTFORML Difficulty changed from [%LOCALS_元難易度%] to [%LOCALS_新難易度%].
+		ELSE
+			PRINTFORML No change in difficulty level.
+		ENDIF
+
+	ELSEIF !LOCAL_地主 && !FLAG:地主
+		PRINTFORML No change in settings.
+	ELSEIF LOCAL_地主 && !FLAG:地主
+		IF LOCAL_地主貸付金 > 0
+			PRINTFORML Cannot quit being a peasant while in debt.
+			CONTINUE
+		ENDIF
+		PRINTFORML Time to become a free man.
+	ENDIF
+
+	PRINTFORML 
+	PRINTFORML Change settings?
+	PRINTFORML [1] - Yes
+	PRINTFORML [2] - Go over choices again
+	PRINTFORML [0] - Cancel all changes
+	DO
+		INPUT
+		SELECTCASE RESULT
+		CASE 0
+			FLAG:地主 = LOCAL_地主
+			FLAG:畑仕事の成果 = LOCAL_畑仕事の成果
+			FLAG:返済延滞回数 = LOCAL_返済延滞回数
+			FLAG:収穫納入回数 = LOCAL_収穫納入回数
+			FLAG:累積収穫評価 = LOCAL_累積収穫評価
+			FLAG:前回収穫評価 = LOCAL_前回収穫評価
+			FLAG:農民難易度 = LOCAL_農民難易度
+			FLAG:畑拡張 = LOCAL_畑拡張
+			FLAG:地主貸付金 = LOCAL_地主貸付金
+			FLAG:年始貸付金 = LOCAL_年始貸付金
+			PRINTFORML Settings canceled.
+			PRINTFORML 
+			RETURN
+		CASE 1
+			PRINTFORML Settings changed.
+			PRINTFORML 
+			RETURN
+		CASE 2
+		CASEELSE
+			REUSELASTLINE Invalid input
+			CONTINUE
+		ENDSELECT
+		BREAK
+	LOOP 1
+LOOP 1
+

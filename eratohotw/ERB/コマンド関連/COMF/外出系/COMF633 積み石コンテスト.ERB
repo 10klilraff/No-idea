@@ -1,0 +1,271 @@
+﻿;**************************************************************
+;積み石コンテストver0.1です
+;受付台詞は瓔花にするか名無しの水子にするか迷って微妙な感じになりました
+;色々ミスがあったりバランス調整も適当で構文も変…と酷い出来なので直してくださるとうれしいです
+;作者が書いてる分は改変自由で作者への連絡も不要です
+;作者:Cineraria
+;**************************************************************
+@COM633
+#DIM WIN_P
+PRINTL 「Welcome to the Stone-stacking contest! Which grade do you want to try? The entrance fee is ￥3000.」
+$LOOP
+DRAWLINE
+{
+CALL ASK_M("EASY - Toy Block-tier - (Very simple to stack)",1,"NORMAL - Jenga-tier - (Will collapse if you're careless)", 1,
+"HARD - Tower of Cards-tier - (Building the first one is tense)",TALENT:MASTER:石積みランカー >= 1,
+"LUNATIC - Pyramid-tier - (Try not to throw any in frustration)", TALENT:MASTER:石積みランカー >= 2,
+"PHANTASM - Tower of Babel-tier - (Stones thrown won't even hit it)", TALENT:MASTER:石積みランカー >= 3,
+"EXTRA - Human Pyramid-tier - (Can't be done alone)", CHK_DATENOW(CFLAG:12),
+"HELP",1, "Return",1)
+}
+IF RESULT == 0
+	PRINTFORMW 「Toy Block-tier challenge! Succeed twice to win!」
+	CALL Stone_Entry(0, 2, 5000)
+ELSEIF RESULT == 1
+	PRINTFORMW 「Jenga-tier challenge! Have you done any masonry before? Succeed thrice to win!」
+	CALL Stone_Entry(1, 3, 7000)
+ELSEIF RESULT == 2
+	PRINTFORMW 「Tower of Cards-tier challenge! You've got everyone's attention! Succeed four times to win!」
+	CALL Stone_Entry(2, 4, 10000)
+ELSEIF RESULT == 3
+	PRINTFORMW 「Pyramid-tier challenge! You've finally made it here! Succeed five times to win!」
+	CALL Stone_Entry_EX(3, 5, 15000)
+ELSEIF RESULT == 4
+	PRINTFORMW 「Tower of Babel-tier challenge!? This is the most difficult one in Gensokyo! Good luck! Succeed five times to win!」
+	CALL Stone_Entry_EX(4, 5, 30000)
+ELSEIF RESULT == 5
+	MONEY -= 3000
+	TIME += 60
+	WIN_P = 0
+	PRINTFORMW 「Human Pyramid-tier challenge! It's not fully implemented but that's okay!」
+	PRINTFORMW 「So... The opponent is...」
+	CALL TAGMATCH
+	IF RESULT == 0
+		WIN_P = 1
+	ELSE
+		WIN_P = 0
+	ENDIF
+	IF WIN_P == 1
+		PRINTFORMW
+		PRINTFORMW 「Congratulations! Here is your ￥5000 prize money!」
+		PRINTFORMW 「Please come and visit again!」
+		MONEY += 5000
+		RETURN 0
+	ELSE
+		PRINTFORMW
+		PRINTFORMW 「You lost, so it ends here... Otsukaresama. Come try again some time!」
+		RETURN 0
+	ENDIF
+	RETURN 0
+ELSEIF RESULT == 6
+	CALL Stone_Help
+	GOTO LOOP
+ELSEIF RESULT == 7
+	RETURN -1
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;実行可能判定
+;-------------------------------------------------
+;石積みコンテスト
+@COM_ABLE633
+;一括管理
+SIF GLOBAL_COMABLE(633)
+	RETURN RESULT
+SIF !INRANGE(TIME, 540, 1020)
+	RETURN 0
+
+IF !AT_HOME(MASTER)
+	SIF CFLAG:MASTER:現在位置 != 三途の川
+		RETURN 0
+ELSE
+	;冥界が拠点の場合は、賽の河原
+	SIF CFLAG:MASTER:現在位置 != 602
+		RETURN 0
+ENDIF
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;時間停止中
+SIF FLAG:70
+	RETURN 0
+RETURN 1
+
+@Stone_Help
+{
+CALL ASK_M("What is the Stone-stacking contest?",1,"About difficulty: １",1,"About difficulty: ２",1,"Winning prize",1,
+"Can't win. How do I become better?",1, "When does this contest occur?",1, "Return",1)
+}
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 【What is the Stone-stacking contest?】
+		PRINTFORML Ebisu Eika sponsors contests revolving around stacking certain objects.
+		PRINTFORML There are several divisions, you can only participate in the fast-stacking division.
+		PRINTFORML The fast-stacking division competes to see who has the most stones stacked at the end of the time limit. Good luck.
+		PRINTFORMW In addition, rules state that personal abilities may not be used.
+		PRINTFORMW
+	CASE 1
+		PRINTFORML 【About difficulty: １】
+		PRINTFORML There are many participants in the fast-stacking division, and ranks are assigned according to their skill.
+		PRINTFORML At first, you can only play on EASY, but if you win, you can challenge the next difficulty level.
+		PRINTFORML Prizes also become more luxurious as the difficulty increases.
+		PRINTFORMW The participation fee is ￥3000. Please come and join us!
+		PRINTFORMW
+	;Custom code switching 2 and 3
+	CASE 3
+		PRINTFORML 【Winning prize】
+		PRINTFORML EASY - ￥5000
+		PRINTFORML NORMAL - ￥7000
+		PRINTFORML HARD - ￥10000
+		PRINTFORML LUNATIC - ￥15000
+		PRINTFORMW ????? - ￥30000
+		PRINTFORMW
+	CASE 2
+		PRINTFORML 【About difficulty: ２】
+		PRINTFORML Depending on the difficulty, the number of successes needed will increase.
+		PRINTFORML On EASY you need to win twice, thrice on NORMAL, 4 times on HARD, and so on.
+		PRINTFORML Date competitions haven't been fully implemented and thus only needs one victory.
+		PRINTFORMW Aim to Be a Stone-stacking Master!
+		PRINTFORMW
+	CASE 4
+		PRINTFORML 【Can't win. How do I become better?】
+		PRINTFORML The more dextrous you are the more you can stack.
+		PRINTFORML Finger technique and skill increases by doing finger-related skills such as mixing.
+		PRINTFORML There are also some Abilities that help out.
+		PRINTFORMW By the way, the higher your lust is the, the harder it is to stack. You don't need lust to stack stones.
+		PRINTFORMW
+	CASE 5
+		PRINTFORML 【When does this contest occur?】
+		PRINTFORML It runs 09:00～17:00
+		PRINTFORML There are some who participate despite there being work to do...
+		PRINTFORML Well, don't worry about it.
+		PRINTFORMW Maybe in the future it'll be limited to one day of the week or once per day?
+		PRINTFORMW
+	CASE 6
+		RETURN 0
+ENDSELECT
+RESTART
+
+@Stone_Entry(Rank, MaxBattle, Prize)
+#DIM Rank
+#DIM MaxBattle
+#DIM Prize
+#DIM WIN_P
+#DIM difficulty
+
+WIN_P = 0
+difficulty = Rank
+MONEY -= 3000
+TIME += 60
+FOR WIN_P, 0, MaxBattle
+	IF WIN_P > 0
+		PRINTFORMW
+		PRINTFORMW 「Congratulations on victory {WIN_P}! If you stop here you will get back the entry fee. What will you do?」
+		CALL ASK_YN("Continue","Stop")
+		IF RESULT
+			PRINTFORMW 「I see... Please come again.」
+			MONEY += 3000
+			RETURN -1
+		ELSE
+			PRINTFORMW 「That's the spirit!」
+		ENDIF
+	ENDIF
+	PRINTFORMW 「Uhh... The opponent of round {WIN_P + 1} is...」
+	CALL STONELEVEL(difficulty)
+	IF RESULT == 1
+		PRINTFORMW 「You lost, so it ends here... Otsukaresama. Come play again!」
+		RETURN 0
+	ELSE
+		difficulty ++
+	ENDIF
+NEXT
+PRINTFORMW 「Congratulations on your victory! The prize money of ￥{Prize} for you to take!」
+IF TALENT:MASTER:石積みランカー > Rank
+	PRINTFORML 「Shouldn't you be striving to beat higher grades?」
+ELSE
+	PRINTFORML 「For you who won the Jenga challenge for the first time... A new title!」
+	TALENT:MASTER:石積みランカー = Rank + 1
+ENDIF
+PRINTFORMW 「Come play again.」
+MONEY += Prize
+RETURN 0
+
+@Stone_Entry_EX(Rank, MaxBattle, Prize)
+#DIM Rank
+#DIM MaxBattle
+#DIM Prize
+#DIM WIN_P
+#DIM difficulty
+TIME += 60
+WIN_P = 0
+MONEY -= 3000
+IF Rank == 3
+	difficulty = 5
+ELSEIF Rank == 4
+	difficulty = 6
+ENDIF
+
+FOR WIN_P, 0, MaxBattle
+	IF WIN_P > 0
+		PRINTFORMW
+		;決勝前
+		IF WIN_P == MaxBattle - 1
+			PRINTFORMW 「Congratulations on your fourth win! The next opponent is the strongest, so brace yourself! 」
+			PRINTFORMW 「If you instead stop here you will get back the entry fee. What will you do?」
+		ELSE
+			PRINTFORMW 「Congratulations on victory {WIN_P}! If you instead stop here you will get back the entry fee. What will you do?」
+		ENDIF
+		CALL ASK_YN("Continue","Stop")
+		IF RESULT
+			PRINTFORMW 「I see... Please come again.」
+			MONEY += 3000
+			RETURN -1
+		ELSE
+			PRINTFORMW 「That's the spirit!」
+		ENDIF
+	ENDIF
+	IF WIN_P == MaxBattle - 1
+		PRINTFORMW 「Are you ready? Your final opponent is...」
+		CALL STONELEVEL(Rank + 4)
+	ELSE
+		PRINTFORMW 「Uhh... The opponent of round {WIN_P + 1} is...」
+		CALL STONELEVEL(difficulty)
+	ENDIF
+	IF RESULT == 1
+		IF WIN_P == MaxBattle - 1
+			PRINTFORMW 「You were amazing enough to push me this far! It was really close... Give it another shot some time!」
+		ELSE
+			PRINTFORMW 「You lost, so it ends here... Otsukaresama. Come play again!」
+		ENDIF
+		RETURN 0
+	ELSE
+		difficulty = MIN(difficulty + 1, 6)
+	ENDIF
+NEXT
+PRINTFORMW 「Congratulations on your victory! The prize money of ￥{Prize} for you to take!」
+;ピラミッド
+IF Rank == 3
+	IF TALENT:MASTER:石積みランカー > Rank
+		PRINTFORML 「Shouldn't you be striving to beat higher grades?」
+	ELSE
+		PRINTFORMW 「And for you who beat the Pyramid challenge for the first time... I present the title of Stacking Veteran!」
+		PRINTFORMW 「By the way...」
+		PRINTFORMW 「You thought that was the end?」
+		PRINTFORMW 「... Actually, there is one higher level, where you fight a super serious Eika according to some Youkai. It's super hard so try your hardest!」
+		TALENT:MASTER:石積みランカー = Rank + 1
+	ENDIF
+;バベル
+ELSEIF Rank == 4
+	IF TALENT:MASTER:石積みランカー >= 5
+		PRINTFORML 「You really beat a serious Eika... Amazing!」
+	ELSE
+		PRINTFORML 「To you who has beaten the Tower of Babel for the first time...」
+		PRINTFORML 「Even if Eika has already said it... You now have the title of Stacking Master! Amaazing!」
+		TALENT:MASTER:石積みランカー = 5
+	ENDIF
+ENDIF
+
+PRINTFORMW 「Come play again.」
+MONEY += Prize
+RETURN 0

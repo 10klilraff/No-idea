@@ -1,0 +1,523 @@
+﻿;original code as of now
+;==================================================
+;弾幕勝負
+;==================================================
+@M_KOJO_MESSAGE_COM_K52_DANMAKU(ARGS, 相手残機)
+#DIM 相手残機
+#DIM NUM_TARGET
+;these variables will be cleaned, can't use dynamic because this function is re-called over and over again
+#DIM nReisenPissedOff
+#DIM nGoneMad
+#DIM nPower
+;for assembling characters who'd like to come and watch
+;tewi, eirin, junko, kaguya, watatsuki sisters, youmu, sagume, seiran, ringo
+#DIM nEligibleWatchers = [[てゐ]], [[永琳]], [[純狐]], [[輝夜]], [[依姫]], [[豊姫]], [[妖夢]], [[サグメ]], [[清蘭]], [[鈴瑚]]
+#DIM nTargetPresent, 10
+
+;全体の流れ
+;①【戦闘前】→②ダイスロールとプレイヤー選択肢、ハンデをつけた場合は【ハンデ口上】→③対応スキルが発動した場合【スキル口上】→④被弾判定、キャラが被弾したなら【被弾口上】→
+;どちらかの残機が0になっていなければ②に戻る→⑤【戦闘後口上】
+;--------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------
+IF LOCAL
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K{NO:TARGET}
+	;-------------------------------------------------
+	;小分岐
+	;-------------------------------------------------
+	;ハンデをつけることができ、数値が大きいほどあなたが不利になる　数値が負ならあなたが有利に
+	;キャラの能力に関わらずクッソ強くしたり弱くしたりできる
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘前"
+		nPower = ABL:MASTER:戦闘能力 * 10
+		
+		CALL K52_WATCHFIGHT, nEligibleWatchers
+		NUM_TARGET = GET_TARGETNUM()
+		[IF_DEBUG]
+			;debug
+			PRINTFORML NUM_TARGET - {NUM_TARGET}, TARGET - %CALLNAME:TARGET%, watch: {VARSIZE("nEligibleWatchers")}
+			FOR LOCAL, 0, VARSIZE("nEligibleWatchers")
+				PRINTFORML nEligibleWatchers - {nEligibleWatchers:LOCAL}
+			NEXT
+		[ENDIF]
+		
+		;check who's around for additional lines
+		LOCAL:1 = 0
+		FOR LOCAL, 0, NUM_TARGET+1
+			SIF TARGET:LOCAL <= 0
+				CONTINUE
+			SIF FINDELEMENT(nEligibleWatchers, TARGET:LOCAL) == -1
+				CONTINUE
+			SIF LOCAL:1 >= VARSIZE("nTargetPresent") ;failsafe
+				BREAK
+			IF CFLAG:(TARGET:LOCAL):現在位置 == CFLAG:MASTER:現在位置
+				SELECTCASE TARGET:LOCAL
+					CASE [[てゐ]]
+						PRINTFORMDW 『Yo, Udonge! Don't be getting too cocky there, Usa!』
+						PRINTFORMDW Tewi sticks out her tongue at Reisen, showing thumbs down and booing.
+						PRINTFORMW 「Tch, you're with %HIM_HER(MASTER,,1)% too, huh... I'm not surprised in the slightest.」
+						PRINTFORMDW 『Nah, I just wanted for you to fall so I could see you all flustered and defeated, Usa! Haha!』
+						PRINTFORMW 「Auuu...」
+						nPower -= 10
+					CASE [[永琳]]
+						PRINTFORMDW 『Fufu...』
+						PRINTFORMW 「M-Master?! ...All right! I'll give it my best! I can't embarrass myself in front of my Master!」
+						nPower += 10
+					CASE [[純狐]]
+						PRINTFORMDW 『...』
+						PRINTFORMDW Junko waves at Reisen slightly and covers her mouth, spreading in a smile.
+						PRINTFORMW 「J-Junko-san?!」
+						PRINTFORMW 「Auuuuuu...」
+						PRINTFORMDW It was highly effective!
+						nPower -= 10
+					CASE [[輝夜]]
+						PRINTFORMDW Kaguya waves flags with Reisen's full name on them and cheers %HIM_HER(TARGET)% on like a fan girl.
+						PRINTFORMDW 『Inaba-chaaaaan! Fight oooooon～! You can do iiiiit～!』
+						PRINTFORMW 「Princess... Yes! I will not let you down!」
+						nPower += 10
+					CASE [[依姫]], [[豊姫]]
+						PRINTFORMDW One of Lunar princesses grace the place with their presence.
+						PRINTFORMDW 『Make us proud, Reisen!』
+						PRINTFORMDW %HIS_HER(TARGET,1)% eyes glitter as Reisen looks forward with a newfound resolve.
+						nPower += 5
+					CASE [[妖夢]]
+						PRINTFORMDW Youmu appears out of nowhere, cheering.
+						PRINTFORMDW 『Reisen-san... Good luck!』
+						PRINTFORMW 「Yeah... It's about time they stopped making fun of us, servants!」
+						nPower += 10
+					CASE [[サグメ]]
+						PRINTFORMDW 『"That one who fell..."』
+						PRINTFORMDW Sagume smiles at Reisen with a silent gesture to win this.
+						PRINTFORMW 「Sagume-sama...」
+						PRINTFORMW 「Yes! Of course! Leave it to me! I will not be defeated!」
+						nPower += 10
+					CASE [[鈴瑚]], [[清蘭]]
+						PRINTFORMDW %HIS_HER(TARGET,1)% fellow bunnies came to watch Reisen fight it seems.
+						PRINTFORMDW 『Earth seems like a fun place... And we'd like to see you succeed here!』
+						PRINTFORMDW Their presence inspire Reisen to fight harder!
+						nPower += 5
+				ENDSELECT
+				nTargetPresent:(LOCAL:1++) = TARGET:LOCAL
+			ENDIF
+			PRINTFORML
+		NEXT
+		;debug
+		;#;PRINTFORML Eirin - {FINDELEMENT(nTargetPresent, [[永琳]])}, LOCAL:1 - {LOCAL:1}, LOCAL - {LOCAL}
+		
+		HANDICAP_FIXED = nPower
+		HANDICAP_RAND = nPower * ABL:MASTER:戦闘能力
+		
+		IF FIRSTTIME("ReisenDanmaku")
+			PRINTFORMDW You approach Reisen minding %HIS_HER(TARGET)% business and challenge %HIM_HER(TARGET)% to a Danmaku match.
+			PRINTFORMW 「Y-You want to practice Danmaku with me?」
+			PRINTFORMW 「Well, I can help you out a bit if you wa--」
+			PRINTFORMDW No, not practice, a fight.
+			PRINTFORMW 「Ah, uuuhh... eh?!」
+			PRINTFORMW 「An actual match?!」
+			PRINTFORMW 「Uuummm... It's been a while since I did this seriously, soooo... Mm, yeah, I might be a bit rusty.」
+			PRINTFORMW 「Because when it comes to combat and Danmaku... I don't play around, you see...」
+			PRINTFORMDW In an instant, the atmosphere around Reisen changed completely.
+			PRINTFORMDW %HE_SHE(TARGET,1)% produces %HIS_HER(TARGET)% old blazer out of nowhere and straightens %HIMSELF_HERSELF(TARGET)%, resolve sobering %HIS_HER(TARGET)% features.
+			PRINTFORMDW This way %HE_SHE(TARGET)% seemed more composed than ever, like a completely different person, like a... soldier.
+			PRINTFORML
+			PRINTFORMW 「Don't mistake me for a mere moon rabbit, please.」
+			PRINTFORMDW Reisen pulls down %HIS_HER(TARGET)% lower eyelid as %HIS_HER(TARGET)% eyes flash red, %HIS_HER(TARGET)% voice quieting down to a menacing whisper.
+			PRINTFORMW 「I will not be holding back though, just so you know.」
+			PRINTFORMW 「After all, fighting was my specialty... at some point. Let me demonstrate you.」
+			PRINTFORMDW An incredible fast projectile comes flying right at your neck as you barely dodge it.
+			SIF ABL:MASTER:戦闘能力 < ABL:戦闘能力
+				PRINTFORMDW It was so fast you couldn't even see it and just collapse on the ground.
+			PRINTFORMDW Was that... a bullet?
+			PRINTFORMDW You see Reisen pointing %HIS_HER(TARGET)% finger like a pistol. Yes, that must've been it...
+			IF ABL:MASTER:戦闘能力 < ABL:戦闘能力
+				PRINTFORMW 「And I even slowed it down...」
+				PRINTFORMW 「What insolence...」
+				PRINTFORMW 「Why did you challenge me if you're so weak?」
+				PRINTFORMW 「Humph, don't worry. I will make it quick.」
+			ENDIF
+			PRINTFORML
+			IF MARK:反発取得履歴
+				PRINTFORMW 「Know that I remember *everything*... Your past misdoings, too.」
+				PRINTFORMW 「Every time you wronged me, every time you hurt me, every time you scared me, every time you pushed me...」
+				PRINTFORMW 「Now is the time to make us even.」
+				IF (MARK:反発刻印 || CFLAG:ブチギレ)
+					PRINTFORMDW Reisen must have been incredibly angry with you this entire time.
+					PRINTFORMDW %HE_SHE(TARGET,1)% glares at you, her sharp, cold gaze mentally subduing you already.
+				ENDIF
+				PRINTFORMW 「This is your last chance to turn back... what shall it be?」
+				PRINTFORMDW There's no way you can back down now!
+				PRINTFORMW 「Fufu... You continue marching straight towards your doom. I like it.」
+				PRINTFORMW 「Then let us begin!」
+			ELSE
+				PRINTFORMW 「Things might take... quite a dire turn if you continue pushing it.」
+				PRINTFORMW 「Still, you wish to fight me on despite everything? ...Very well.」
+				PRINTFORMW 「I will crush you. Just as you wanted.」
+			ENDIF
+			PRINTFORML
+		ELSE
+			PRINTFORMW 「...Here we go again.」
+			PRINTFORMDW In an instant, the atmosphere around Reisen changed completely.
+			PRINTFORMDW %HE_SHE(TARGET,1)% produces %HIS_HER(TARGET)% old blazer out of nowhere and straightens %HIMSELF_HERSELF(TARGET)%, resolve sobering %HIS_HER(TARGET)% features.
+			PRINTFORMDW This way %HE_SHE(TARGET)% seemed more composed than ever, like a completely different person, like a... soldier.
+			PRINTFORMDW An endless corridor surrounds you from all directions as you begin the match with Reisen!
+			PRINTFORMW 「You see?」
+			PRINTFORMW 「This hypnotic corridor is one of my traps.」
+			PRINTFORML
+			PRINTFORMW 「Since you can't fly straight, you'll be completely wiped away by my power!」
+			PRINTFORMW 「...Haah, this brings me back.」
+			PRINTFORML
+		ENDIF
+		
+		IF (MARK:反発刻印 || CFLAG:ブチギレ)
+			HANDICAP_FIXED *= 2
+			nReisenPissedOff = 1
+			PRINTFORMDL Reisen seems really pissed off at the moment however...
+			PRINTFORMDL You shouldn't expect %HIM_HER(TARGET)% holding back at all.
+			PRINTFORMW
+		ENDIF
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;ハンデ
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "ハンデ"
+		;ハンデつけなかったら表示されないので無記入でよい
+		IF !RAND:( 10 * MAX(1, ABL:MASTER:戦闘能力 - ABL:戦闘能力) ) && !nGoneMad
+			PRINTFORMDL You feel yourself succumbing to the influence of Reisen's lunatic gaze...
+			PRINTFORML 「*You've Already Gone Mad!*」
+			HANDICAP_FIXED *= 2
+			nGoneMad = 1
+		ELSE
+			;怒り
+			IF nReisenPissedOff
+				PRINTDATAL
+					DATAFORM 「This shall be your punishment on behalf of the Moon! ...What?」
+					DATAFORM 「Well, are you feeling sorry yet? There's no mercy for you though!」
+					DATAFORM 「Just give in and lose yourself to madness!」
+					DATAFORM 「Stay still and I'll make it quick!」
+					DATAFORM 「Just behave yourself and get beaten here, okay?」
+				ENDDATA
+			ELSEIF ABL:MASTER:戦闘能力 < ABL:戦闘能力
+				PRINTDATAL
+					DATAFORM 「Try to last a bit longer!」
+					DATAFORM 「You have to keep up, or else you'll die, you know?」
+					DATAFORM 「You shouldn't be playing around with people like me at your level.」
+					DATAFORM 「Yahoo, over here! Where are you looking? I was here all along!」
+				ENDDATA
+			ELSE
+				PRINTDATAL
+					DATAFORM 「I trust you can at least avoid these, right?」
+					DATAFORM 「Well then, let's see what you've got.」
+					DATAFORM 「More are coming your way! There, there!」
+					DATAFORM 「This is not over yet!」
+					DATAFORM 「Here I cooome!～ Bang-bang!」
+					DATAFORM 「There-there, keep moving! Stay on your toes and dodge it all!」
+					DATAFORM 「Don't get captivated by it! ...There, there!」
+				ENDDATA
+			ENDIF
+			
+			PRINTDATAL
+				DATAFORM 「Wave Sign! Red-Eyed Hypnosis (Mind Shaker)!」
+				DATAFORM 「Illusion Wave! Red-Eyed Hypnosis (Mind Blowing)!」
+				DATAFORM 「Lunatic Sign! Hallucinogenic Tuning (Visionary Tuning)!」
+				DATAFORM 「Lunatic Gaze! Lunatic Stare Tuning (Illusion Seeker)!」
+				DATAFORM 「Loafing Sign! Life and Spirit Stopping (Idling Wave)!」
+				DATAFORM 「Indolence! Life and Spirit Stopping (Mind Stopper)!」
+				DATAFORM 「Spread Sign! Moon of Truth (Invisible Full Moon)!」
+				DATAFORM 「Lunar Eyes! Lunar Rabbit's Remote Mesmerism (Tele-Mesmerism)!」
+			ENDDATA
+		ENDIF 
+		RETURN 0
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中TARGET被弾時口上
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "被弾" 
+		;別に一律で「やられたー」だけでもいいよ
+		SELECTCASE 相手残機
+			;残り残機3が表示されるのは【洽覧深識】持ちのみ
+			CASE 3
+				PRINTFORML 
+			CASE 2
+				;#; PRINTFORML FINDELEMENT(nTargetPresent, [[永琳]]) - {FINDELEMENT(nTargetPresent, [[永琳]])}
+				;怒り
+				IF nReisenPissedOff
+					PRINTFORMW 「I see...」
+					PRINTFORMW 「Well, at least you're not a complete push over...」
+					PRINTFORMW 「Now I have a good excuse to get serious at last!」
+					PRINTFORMW 「Stare of the Hazy Phantom Moon (Lunatic Red Eyes)!」
+					PRINTFORML
+					PRINTFORMW 「I see it all, I hear them all! Opening after opening! Weakness after weakness!」
+					PRINTFORMW 「Fufufu... Come now. Entertain me if you will.」
+					PRINTFORML
+					PRINTFORMW 「I wonder if you can remain in your right mind while gazing into the eyes of this rabbit?」
+					HANDICAP_FIXED *= 2
+				ELSEIF FINDELEMENT(nTargetPresent, [[永琳]]) != -1
+					PRINTFORMW 「This much is... nothing, compared to when my Master does it!」
+					PRINTFORMDW You notice Eirin smiling awkwardly.
+				ELSE
+					PRINTDATAL
+						DATAFORM 「Just a scratch... I'm still full of energy!」
+						DATAFORM 「It's going to get way harder from here, get ready!」
+						DATAFORM 「That's enough for a warm-up. Well then, let me show you what I can really do!」
+						DATAFORM 「Fufu, have you grown up a little?」
+						DATAFORM 「Uhhn～, I suppose I'll have to start moving a bit faster.」
+					ENDDATA
+				ENDIF
+			CASE 1
+				;怒り
+				IF nReisenPissedOff
+					PRINTFORML 「Gahhh...! Not yet! I will *not* lose to a human again!」
+					PRINTFORML 「This is the final stand! It's all or nothing! You and me, bring it on!」
+				ELSE
+					PRINTDATAL
+						DATAFORM 「Ouch...! Ow-ow-ow, now you've done it!」
+						DATAFORM 「I thought I was getting serious enough! What's going on...」
+						DATAFORM 「One more and I'll be another notch on your belt! That won't do!」
+						DATAFORM 「This is not over! Not yet! I can still... move!」
+					ENDDATA
+				ENDIF
+				;reinforcements
+				IF !RAND:10
+					PRINTFORML
+					PRINTFORMD All of a sudden, 
+					SELECTCASE RAND:11
+						CASE 0 TO 5
+							PRINTFORMDW Shinmyoumaru appears near Reisen, lending %HIM_HER(TARGET)% a hand!
+							PRINTFORMDW 『Cease this bullying at once! I'll offer you my support!』
+							PRINTFORMDW 『Together, we can make it waaaay bigger!』
+							PRINTFORMW 「Whoa! Yes, let's do this!」
+							PRINTFORMW 『Mad Mallet Sign! Lunatic Stare Illusions (Disorder Eyes) Grow Bigger, Too!』
+						CASE 6 TO 9
+							PRINTFORMDW Mokou appears near Reisen, lending %HIM_HER(TARGET)% a hand!
+							PRINTFORMDW 『I couldn't help but notice you struggle somewhat...』
+							PRINTFORMDW 『How about we give it some crisp and temperature?』
+							PRINTFORMW 「Fire and lunacy... That sounds like fun!」
+							PRINTFORMW 『Fire Madness Sign! Human Combustion Concealment Danmaku (Burning Hidden Bullet)!』
+						CASE 10
+							PRINTFORMDW Eirin appears near Reisen, lending %HIM_HER(TARGET)% a hand!
+							PRINTFORMDW 『Reisen.』
+							PRINTFORMW 「Master?」
+							PRINTFORMDW 『Show %HIM_HER(MASTER,,1)%.』
+							PRINTFORMW 「Wha-- Can I?」
+							PRINTFORMDW 『Yes. I'll allow it, just this time.』
+							PRINTFORMW 「Oh... Ha, haha... Yes, of course! It's been a while, but I think I can still do this!」
+							PRINTFORMDW Reisen produces a giant gatling gun and points it at you...
+							PRINTFORMDW Wait, what?!
+							PRINTFORMW 「This one is... under development, so it doesn't have a proper name yet.」
+							PRINTFORMW 「So for now I'll just call it... Barrage SMG!」
+							PRINTFORMDW Brrrrrrt!
+							PRINTFORMDW An insane barrage of projectiles covers the entire area! They fly all over the place in a very chaotic manner!
+							PRINTFORMDW SMG...? More like minigun.
+					ENDSELECT
+					HANDICAP_FIXED *= 2
+				ENDIF
+			CASE 0
+				;怒り
+				IF nReisenPissedOff
+					PRINTFORML 「Haah, haah... What a shame... I can't beat you, even like this...」
+					PRINTFORML 「I knew it... I'm just a useless little bunny... and you know the rest.」
+				ELSE
+					PRINTDATAL
+						DATAFORM 「Ahh... So this is the taste of defeat? It's surprisingly not so bad.」
+						DATAFORM 「Is it over already? Haa...」
+						DATAFORM 「What...? I lost? Humm... Well done.」
+						DATAFORM 「All my moves and techniques... Weren't good enough it seems.」
+					ENDDATA
+				ENDIF
+		ENDSELECT
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【残忍酷薄】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "残忍酷薄"
+	
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【乾坤一擲】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "乾坤一擲"
+		PRINTFORML 「You seem to be running out of tricks, eh? What's the matter? Nervous much?」
+		PRINTFORML 「Fufu... No longer shall I tolerate abuse from you! It's time to settle this!」
+		PRINTFORML 「Get ready, because... it will not be pretty. For you.」
+	ENDIF
+	;-------------------------------------------------
+	;戦闘中
+	;TARGETの【怪力乱神】発動時
+	;ARGはTARGETの残機
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "怪力乱神"
+		
+	ENDIF
+	
+	;-------------------------------------------------
+	;戦闘後
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ARGS == "戦闘後" 
+		PRINTFORML 
+		;残り残機4が表示されうるのは【洽覧深識】持ちのみ
+		;残機が1以上ならあなたの負け、0の場合はあなたの勝利
+		SELECTCASE 相手残機
+			CASE 4
+				PRINTFORML 
+			CASE 3
+				;怒り
+				IF nReisenPissedOff
+					PRINTFORMW 「Not even a scratch... it feels like taking a candy from a child.」
+					SIF (TALENT:MASTER:年齢 == -1 || TALENT:MASTER:幼稚) && (TALENT:MASTER:体型 == -2 || TALENT:MASTER:体型 == -1)
+						PRINTFORMW 「...Well, you are a child after all. Now I feel bad for bullying you like that.」
+				ELSE
+					PRINTDATAL
+						DATAFORM 「You are... surprisingly weak today. Come drop by Eientei sometime, we'll fix you right up.」
+						DATAFORM 「Looks like madness has consumed you... Not an unlikely outcome.」
+						DATAFORM 「All you had to do is move and do it fast... I must be out of your league by a long shot.」
+					ENDDATA
+				ENDIF
+			CASE 2
+				;怒り
+				IF nReisenPissedOff
+					PRINTFORMW 「Let it be a reminder that not everything must go your way.」
+					PRINTFORMW 「Know your place, for I shall be your teacher... when it comes to humiliation.」
+					SIF FINDELEMENT(nTargetPresent, [[永琳]]) != -1
+						PRINTFORMDW You see Eirin blush for some reason. Did she... teach Reisen that line?
+				ELSE
+					PRINTDATAL
+						DATAFORM 「You still have a long way to go... Maybe next time.」
+						DATAFORM 「You didn't go all out there, did you? Please don't hold back next time.」
+						DATAFORM 「Half-assing will get you nowhere, you know? It's my win right now, but you could do better.」
+					ENDDATA
+				ENDIF
+			CASE 1
+				;怒り
+				IF nReisenPissedOff
+					PRINTFORMW 「Hah! Serves you right!」
+					CALL PRINT_DIALOGUE, @"Though for some reason... I just can't bring myself to gloat over your defeated figure, even though it's a victory well deserved...", "w"
+					PRINTFORMW 「C'mon now, get up. You've done well.」
+					PRINTFORMDW Reisen gives you a hand and helps you stand.
+					PRINTFORMW 「It's good to have such a good work-out sometimes.」
+					PRINTFORMDW %HE_SHE(TARGET,1)% says, smiling.
+					
+					IF MARK:反発刻印 >= 1
+						PRINTFORMW 「As for my beef with you... Well, consider it rescinded. Just a little though. Try to behave next time, okay?」
+						PRINTFORMW 「I don't wish to hold petty grudges for long... It's bad for your mind.」
+						CALL COLORMESSAGE("Reisen's Hate Mark has been reduced!",C_YELLOW,2,1)
+						CALL COLORMESSAGE("...But you feel completely beat up. (-1000 STA, -1000 ENE)",C_YELLOW,2,1)
+						MARK:反発刻印 --
+						BASE:MASTER:体力 -= 1000
+						BASE:MASTER:気力 -= 1000
+					ELSE
+						PRINTFORMW 「That felt surprisingly refreshing... I feel much better now.」
+					ENDIF
+					CFLAG:ブチギレ = 0
+					TALENT:機嫌 = 1
+				ELSE
+					IF RAND:2
+						PRINTFORMW 「Whoa there...!」
+						PRINTFORMW 「Haah, I'll admit, you're not bad, not bad at all.」
+						PRINTFORMW 「You just needed *thiiis* much and I would've been done for.」
+					ELSE
+						PRINTDATAL
+							DATAFORM 「Phew, I managed to pull it off in the end... That was very close, well done.」
+							DATAFORM 「Haah, haah... Humans do pack a punch nowadays, don't they?」
+							DATAFORM 「I blame my lack of exercise as of late...」
+						ENDDATA
+					ENDIF
+				ENDIF
+			CASE 0
+				;怒り
+				IF nReisenPissedOff
+					PRINTFORMW 「I can't believe it...! How did I lose to you?! Haaah...」
+					PRINTFORMW 「I'm an utter failure! No wonder why I ended up here, it's because I'm irredeemable!」
+				ELSE
+					PRINTDATAL
+						DATAFORM 「Guh, that hurt... But still, you were holding back there, weren't you? You're amazing!」
+						DATAFORM 「That was a lot of fun... I'll need to work on my skills more it seems.」
+						DATAFORM 「I hope you didn't cheat there... Well, even if you did, good job.」
+						DATAFORM 「Losing to humans feels kinda... humiliating. Congratulations.」
+					ENDDATA
+				ENDIF
+				
+				IF HANDICAP_FIXED >= 10
+					PRINTFORML
+					PRINTFORMDW Reisen proved to be surprisingly tough...
+					PRINTFORMDW You feel like you have learned quite a lot of useful techniques for the future encounters.
+					LOCAL = LIMIT((HANDICAP_FIXED / 10) * 3, 1, 50)
+					CALL COLORMESSAGE(@"Combat Exp+{LOCAL}",C_YELLOW,2,1)
+					EXP:MASTER:戦闘経験 += LOCAL
+					PRINTFORMDW Reisen, too, seemed to have learned quite a bit.
+					EXP:戦闘経験 += LOCAL*2
+				ENDIF
+		ENDSELECT
+		PRINTFORML
+		PRINTFORMDW You sure are completely different when it comes to fighting, eh Reisen?
+		PRINTFORMDW Reisen stands still with a blank look on %HIS_HER(TARGET)% face.
+		PRINTFORMDW Reisen? Reisen...?
+		PRINTFORMDW After you repeatedly call %HIM_HER(TARGET)%, %HE_SHE(TARGET)% suddenly snaps back to her former self.
+		PRINTFORMW 「Oh, umm, what?」
+		PRINTFORMW 「Ah, sorry... I must've overstepped by boundaries a little there... ehehe.」
+		PRINTFORMDW Reisen blushes, scratching %HIS_HER(TARGET)% cheek.
+		PRINTFORMDW And %HE_SHE(TARGET)%'s back again... It's hard to believe that this adorable rabbit was tearing you a new one just a moment ago.
+		
+		;clear variables
+		nPower = 0
+		nGoneMad = 0
+		nReisenPissedOff = 0
+		VARSET nTargetPresent
+	ENDIF
+RESETCOLOR
+ENDIF
+RETURN 1
+
+;based on @AssembleForMeal
+@K52_WATCHFIGHT, nEligibleWatchers
+#DIM 集合, キャラクタ数上限, 3 ;集合:X:Y
+#DIM 人数                      ;同一マップにいる人数、移動できないキャラも表示され、人数に加算されている
+#DIM 入力値                    ;RESULT取得用
+#DIM C_ID
+#DIM REF nEligibleWatchers
+SIF CFLAG:MASTER:現在位置 == OMANEKIBEYA()
+	RETURN
+SIF !AT_HOME(MASTER)
+	RETURN
+SIF CFLAG:MASTER:現在位置 == CFLAG:MASTER:初期位置
+	RETURN
+SIF PRIVATEROOM:(CFLAG:MASTER:現在位置 % 100)
+	RETURN
+CALL SYUGOS_GETDATA(人数, 集合)
+CALL SYUGOS_COST(人数, 集合)
+FOR LOCAL, 0, 人数
+	C_ID = 集合:LOCAL:0
+	SIF GETBIT(集合:LOCAL:1, 0)
+		CONTINUE
+	;移動回数が多いと除外
+	SIF 集合:LOCAL:2 > 6
+		CONTINUE
+	SIF CFLAG:C_ID:ブチギレ
+		CONTINUE
+	SIF FINDELEMENT(nEligibleWatchers, C_ID) == -1
+		CONTINUE 
+	CFLAG:C_ID:現在位置 = CFLAG:MASTER:現在位置
+	PRINTFORMDL %CALLNAME:C_ID% comes, interested to see Reisen fight.
+NEXT
+CALL TARGETSET_CHACK
+PRINTFORMW 

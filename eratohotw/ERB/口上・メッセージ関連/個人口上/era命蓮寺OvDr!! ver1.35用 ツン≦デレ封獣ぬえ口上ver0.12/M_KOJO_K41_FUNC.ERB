@@ -1,0 +1,1469 @@
+﻿;activate the event for morning/night subevents
+;original functions are not implemented in TW
+;conditions and descriptions are ported from the original game era命蓮寺OvDr!!Ver1.4 + modifications to apply exp and sex effects from nasikuzusi.erb (onabare event)
+
+;todo - this function can be potentially reused for other characters from that game who have had their dialogues ported, needs further editing for that
+;another point is that looping is inefficient and it'll run into same variants couple times, creating a bit of lag, but it's not super impactful
+@K41_DAYEVENT(ARGS, ARG)
+#DIM DYNAMIC nEventCheck
+#DIM DYNAMIC nExp,58
+#DIM DYNAMIC nSexCount
+#DIM nTarg
+
+nTarg = TARGET
+TARGET = ARG
+
+;SIF TARGET != 41 ;must be nue
+;	RETURN
+
+RESULT = 0
+TRYCALLFORM K{NO:TARGET}_DAYEVENT_COND(0) ;cond
+SIF RESULT
+	GOTO END
+	
+SIF CFLAG:MASTER:初期位置 != CFLAG:MASTER:現在位置 ;if not sleeping at your original spot
+	GOTO END
+	
+VARSET LOCAL
+
+CALL SET_KOJO_COLOR(NO:TARGET)
+DEBUGPRINTFORML ------------------
+SELECTCASE ARGS
+	CASE "day"
+		;original code checks for morning wood to activate lewd portion, but I don't think you can wake up in tw with erection
+		
+		;lewd event
+		IF !RAND:2 && CFLAG:溜まってる度 > 300 && GET_TARGETNUM() > 1 ;can't do lewd if there's someone else in the room
+			DO
+				;failsafe to break the loop if all cases were denied
+				SIF nEventCheck >= 7
+					BREAK
+				SELECTCASE RAND:3
+					;フェラ、クンニで起こされる
+					CASE 0
+						DEBUGPRINTFORML Running DAYEVENT: Day: Lewd: Oral Caress
+						SIF GETBIT(nEventCheck,0)
+							CONTINUE
+							
+						SETBIT nEventCheck,0
+						
+						TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(1) ;cond
+							IF RESULT
+								DEBUGPRINTFORML Oral Caress Disallowed
+								CONTINUE
+							ENDIF
+						CATCH
+							IF !( ABL:欲望 >= 3 && ABL:技巧 >= 3 && EXP:奉仕快楽経験 >= 50 && EXP:口淫経験 >= 20 )
+								DEBUGPRINTFORML Oral Caress Fail
+								CONTINUE
+							ENDIF
+						ENDCATCH
+							
+						PALAM:欲情 += 1000
+						PALAM:恭順 += 500
+						PALAM:優越 += 300
+						IF GETBIT(TALENT:MASTER:2,0)
+							STAIN:0 = 1
+							STAIN:1 = 1
+							STAIN:MASTER:0 = 1
+						ELSE
+							STAIN:0 = 6
+							STAIN:1 = 2
+							STAIN:MASTER:2 = 6
+						ENDIF
+						
+						CALL PRINT_FACE, TARGET, "発情", "服", "", "吐息"
+						PRINTFORMD As soon as you wake up, you see %CALLNAME:TARGET%'s head lodged between your legs as she gives you a 
+						IF GETBIT(TALENT:MASTER:2,0)
+							PRINTFORMDL cunnilingus.
+							PRINTFORMDW As you lick away your own juices clinging to her face, she shivers somewhat ticklishly, looking embarrassed.
+						ELSE
+							PRINTFORMDL blowjob.
+							PRINTFORMDW After she slurps and swallows your %SEMEN(MASTER,1)%, she casually greets you good morning.
+						ENDIF
+						
+						TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_4(1)
+						
+						nExp:4 += 3 + ABL:Ｍ感覚 * 2 ;m exp
+						nExp:25 = nExp:4 ;bj exp
+						nExp:14 = 1 ;swallow
+						LOCAL = (ABL:舌 + 1) * 20 + BASE:MASTER:精力 /25
+
+						CALL JUEL_UP_SPECIAL(TARGET,"快Ｍ","Ｍ感覚",20,1)
+						CALL JUEL_UP_SPECIAL(MASTER,"快Ｃ","Ｃ感覚",10,1)
+						RESULT = 1
+					;パイズリで起こされる
+					CASE 1
+						DEBUGPRINTFORML Running DAYEVENT: Day: Lewd: Paizuri
+						SIF GETBIT(nEventCheck,1)
+							CONTINUE
+							
+						SETBIT nEventCheck,1
+							
+						TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(2) ;cond
+							IF RESULT
+								DEBUGPRINTFORML Paizuri Disallowed
+								CONTINUE
+							ENDIF
+						CATCH
+							IF !( ABL:欲望 >= 3 && ABL:技巧 >= 5 && EXP:奉仕快楽経験 >= 50 && EXP:パイズリ経験 >= 10 && GETBIT(TALENT:MASTER:2,1) )
+								DEBUGPRINTFORML Paizuri Fail
+								CONTINUE
+							ENDIF
+						ENDCATCH
+							
+						PALAM:恭順 += 1000
+						PALAM:快Ｂ += 500
+						PALAM:潤滑 += 500
+						PALAM:欲情 += 300
+						STAIN:0 = 6
+						STAIN:5 = 6
+						STAIN:MASTER:2 = 6
+						
+						CALL PRINT_FACE, TARGET, "発情", "裸", "", "吐息"
+						PRINTFORMDL You wake up from feeling a strange sensation in your lower abdomen.
+						;貧乳の場合
+						IF TALENT:バストサイズ < 0
+							PRINTFORMDL As you take a sneak peek, you notice %CALLNAME:TARGET% toying with your %TINKO(MASTER)% with her %OPPAI_DESCRIPTION_TR(TARGET)%.
+							PRINTFORMDW Apparently she's trying to practice her paizuri skills...
+						;巨乳の場合	
+						ELSEIF TALENT:バストサイズ > 0
+							PRINTFORMDW %BREAKENG(@"You look over to see %CALLNAME:TARGET% sandwiching your %TINKO()% between her %OPPAI_DESCRIPTION_TR(TARGET)% and rubbing it up and down.")%
+						;それ以外
+						ELSE
+							PRINTFORMDW %BREAKENG(@"You look over to see %CALLNAME:TARGET% rubbing your %TINKO()% with her %OPPAI_DESCRIPTION_TR(TARGET)% and swallowing the %SEMEN(MASTER,1)% that's coming out.")%
+						ENDIF
+						
+						TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_4(2)
+						
+						nExp:3 += 3 + ABL:Ｂ感覚 * 2 ;b exp
+						nExp:26 = nExp:4 ;paizuri exp
+						nExp:8 += nExp:3 / 2 ;b orgasm
+						nExp:10 += nExp:3 / 2 ;orgasm
+						SIF EXP:精飲経験
+							nExp:14 = 1 ;swallow
+						LOCAL = (ABL:胸 + 1) * 20 + BASE:MASTER:精力 /25
+
+						CALL JUEL_UP_SPECIAL(TARGET,"快Ｂ","Ｂ感覚",20,1)
+						CALL JUEL_UP_SPECIAL(MASTER,"快Ｃ","Ｃ感覚",10,1)
+						RESULT = 1
+					;騎乗位、貝合わせ
+					CASE 2
+						DEBUGPRINTFORML Running DAYEVENT: Day: Lewd: Cowgirl
+						SIF GETBIT(nEventCheck,2)
+							CONTINUE
+							
+						SETBIT nEventCheck,2
+						
+						TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(3) ;cond
+							IF RESULT
+								DEBUGPRINTFORML Cowgirl Disallowed
+								CONTINUE
+							ENDIF
+						CATCH
+							IF !(ABL:欲望 >= 5 && EXP:奉仕快楽経験 >= 50)
+								DEBUGPRINTFORML Cowgirl Fail
+								CONTINUE
+							ENDIF
+								
+							IF HAS_PENIS(MASTER) && !(!TALENT:処女 && !IS_DOUTEI(MASTER) && EXP:Ｖ性交経験 >= 50) ;for non-les scenario
+								DEBUGPRINTFORML Cowgirl Fail
+								CONTINUE
+							ENDIF
+						ENDCATCH
+						
+						PALAM:潤滑 += 2300
+						PALAM:快Ｖ += 800
+						PALAM:欲情 += 700
+						PALAM:恭順 += 500
+						
+						CALL PRINT_FACE, TARGET, "オナニー", "裸", "", "吐息"
+						IF HAS_PENIS(MASTER)
+							PRINTFORMDL %BREAKENG(@"As you wake up, you feel a sense of supple weight around your waist, and something warm and tight around your %TINKO()%.")%
+							PRINTFORMDW You look over to see %CALLNAME:TARGET% riding you on top while panting...
+						ELSE
+							PRINTFORMDL As you wake up, you find yourself lying in a weird position.
+							PRINTFORMDW %BREAKENG(@"You look over to see %CALLNAME:TARGET% lifting one of your legs and pushing her body in between, rubbing your vaginas together as she keeps moaning...")%
+						ENDIF
+						
+						TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_4(3, 0)
+						nSexCount = MAX(RESULT-1, 0) ;get additional sex count from returning result from the event
+						IF HAS_PENIS(MASTER)
+							PRINTFORMDL With a sudden stop, %CALLNAME:TARGET% sits down and relinquishes your load from you with a smirk on her face.
+							PRINTFORMDL %BREAKENG(@"She then stands up, pulling out your spent member with a wet pop as your semen trickles down from her slit...")%
+						ENDIF
+						;have sex once + sex count above
+						nExp:10 += 2 + nSexCount ;orgasm
+						nExp:6 += 2 + nSexCount ;v orgasm
+						nExp:1 += 6 + nSexCount ;v exp
+						
+						DOWNBASE:体力 = 100
+						DOWNBASE:気力 = 150
+						
+						IF HAS_PENIS(MASTER)
+							LOCAL = MAX((ABL:膣 + 1) * 20 + BASE:MASTER:精力 / 25, 1)
+							nExp:20 += 3 + nSexCount ;v sex exp
+							nExp:16 += 1 + nSexCount ;v creampie
+							EXP:MASTER:挿入経験 += 3 + nSexCount
+							EXP:MASTER:射精経験 += 1 + nSexCount
+							IF nSexCount > 0
+								FOR LOCAL:1,1,nSexCount
+									LOCAL:2 += LOCAL + RAND:(LOCAL)
+								NEXT
+							ELSE
+								LOCAL:2 = LOCAL
+							ENDIF
+							CALL ADD_SAMEN_V(TARGET, LOCAL:2)
+							BASE:MASTER:勃起 = 0
+						ENDIF
+						CALL JUEL_UP_SPECIAL(TARGET,"快Ｖ","Ｖ感覚",15,1)
+						CALL JUEL_UP_SPECIAL(MASTER,"快Ｃ","Ｃ感覚",10,1)
+						
+						PRINTL
+						PRINTFORMDL Your next move is to...
+						CALL ASK_YN("Fix your clothes and get up from the bed", "Demand more and push her down!")
+						
+						IF RESULT ;activate sex
+							TFLAG:193 = 1
+							;騎乗位のままウフフモード化
+							IF HETEROSEX(MASTER,TARGET) == 0
+								STAIN:3 = 6
+								STAIN:6 = 6
+								STAIN:MASTER:2 = 6
+							ENDIF
+							CFLAG:うふふ = 1
+							CFLAG:MASTER:うふふ = 1
+							CFLAG:前ターン位置 = CFLAG:現在位置
+							CALL DATUI_BOTTOM(MASTER,0)
+							CALL DATUI_BOTTOM_T(TARGET,1)
+							TCVAR:23 = 0
+							TCVAR:MASTER:22 = 0
+						ELSE
+							PRINTFORMDL Phew...
+							PRINTFORMDL Looks like you both need some shower after this.
+						ENDIF
+						TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_4(3, 1)
+						LOCAL:9 = 1
+						RESULT = 1
+				ENDSELECT
+			LOOP RESULT == 0 && nEventCheck < 7
+			;we should get result from successful kojo call and break the loop (went ahead and put result everywhere at the end anyway just to make sure)
+			;process lewd section if it was activated
+			IF RESULT
+				BASE:ムード = 700 ;mood up
+				BASE:理性 = 0 ;reason down
+				CFLAG:ディレイ = 30 ;set delay so you don't get pushed down immediately
+				CFLAG:溜まってる度 /= 2 ;halve the horny
+					
+				DOWNBASE:MASTER:体力 = 100
+				DOWNBASE:MASTER:気力 = 150
+				
+				IF HAS_PENIS(MASTER) && !LOCAL:9 ;ignore sex event since it's already handled there
+					EXP:MASTER:射精経験 ++
+					DOWNBASE:MASTER:精力 = LOCAL
+					BASE:MASTER:勃起 = 0
+				ENDIF
+				EXP:MASTER:絶頂経験 ++
+				
+				CALL JUEL_UP_SPECIAL(TARGET,"欲情","欲望",20,1)
+				CALL ADD_EXP_LESNIAN(5, TARGET, "PRINT")
+					
+				SETCOLOR C_YELLOW
+				FOR LOCAL,0,58
+					IF nExp:LOCAL
+						PRINTFORML %EXPNAME:LOCAL% ＋{nExp:LOCAL}
+						EXP:LOCAL += nExp:LOCAL
+					ENDIF
+				NEXT
+				RESETCOLOR
+				
+				CALL CHANGE_CFLAG(2,TARGET,ABL:親密 * 3)
+				GOTO END
+			ENDIF
+		ENDIF
+		
+		;if no lewd event, or all of them failed, go for a normal event instead
+		nEventCheck = 0
+		DO
+			SIF nEventCheck >= 31
+				BREAK
+			SELECTCASE RAND:5
+				;キスで起こされる
+				CASE 0
+					DEBUGPRINTFORML Running DAYEVENT: Day: Normal: Kiss
+					SIF GETBIT(nEventCheck,0)
+						CONTINUE
+						
+					SETBIT nEventCheck,0
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(4) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Kiss Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( !TALENT:キス未経験 && !TALENT:MASTER:キス未経験 && ABL:親密 >= 10 && EXP:キス経験 >= 50 )
+							DEBUGPRINTFORML Kiss Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+						
+					CALL PRINT_FACE, TARGET, "発情", "服", "", "吐息"
+					PRINTFORMDL You wake up feeling a sweet and soft sensation on your mouth.
+					PRINTFORMDL As you open your eyes, you see %CALLNAME:TARGET% locking her lips with yours.
+					PRINTFORMDW Parting your lips reluctantly, she pulls away and greets you good morning with vermilion in her cheeks.
+					
+					BASE:ムード = 500
+					BASE:理性 = 700
+					PALAM:好意 += 3000
+					PALAM:恥情 += 1000
+					PALAM:優越 += 700
+					PALAM:恭順 += 500
+
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_5(1)
+					
+					CALL MUTUAL_KISS
+					CALL ADD_EXP_LESNIAN(5, TARGET, "PRINT")
+					RESULT = 1
+				;揺さぶり起こされる
+				CASE 1
+					DEBUGPRINTFORML Running DAYEVENT: Day: Normal: Wake Up
+					SIF GETBIT(nEventCheck,1)
+						CONTINUE
+
+					SETBIT nEventCheck,1
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(5) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Wake Up Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( ABL:親密 >= 7 && ABL:奉仕精神 >= 3 )
+							DEBUGPRINTFORML Wake Up Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+
+					CALL PRINT_FACE, TARGET, "笑顔", "服"
+					PRINTFORMDL You wake up from a sudden impact.
+					PRINTFORMDW As you get up, you see %CALLNAME:TARGET% \@ CHARA_DISPOS(TARGET) >= 3 ? smirking # grinning\@ at you as she greets you good morning.
+						
+					BASE:ムード = 300
+					BASE:理性 = 900
+					PALAM:好意 += 1000
+					PALAM:優越 += 1300
+					PALAM:恭順 += 700
+					
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_5(2)
+					RESULT = 1
+				;起こしに来たけど寝てる
+				CASE 2
+					DEBUGPRINTFORML Running DAYEVENT: Day: Normal: Sleeping Together
+					SIF GETBIT(nEventCheck,2)
+						CONTINUE
+
+					SETBIT nEventCheck,2
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(6) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Sleeping Together Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( ABL:親密 >= 10 && ABL:欲望 >= 3 && EXP:愛情経験 >= 50 )
+							DEBUGPRINTFORML Sleeping Together Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+						
+					CALL PRINT_FACE, TARGET, "通常", "服"
+					PRINTFORMDL You wake up to see %CALLNAME:TARGET% sleeping right next to you.
+					PRINTFORMDW You gently shake her awake as she gives you a hug, still looking a bit sleepy.
+						
+					BASE:ムード = 100
+					BASE:理性 = 300
+					PALAM:好意 += 4000
+					PALAM:恥情 += 2000
+					PALAM:恭順 += 1400
+					
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_5(3)
+					RESULT = 1
+				;起きるまでじっと見てる
+				CASE 3
+					DEBUGPRINTFORML Running DAYEVENT: Day: Normal: Stare
+					SIF GETBIT(nEventCheck,3)
+						CONTINUE
+
+					SETBIT nEventCheck,3
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(7) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Stare Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( ABL:親密 >= 10 && ABL:従順 >= 7 && EXP:愛情経験 >= 50 )
+							DEBUGPRINTFORML Stare Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+						
+					CALL PRINT_FACE, TARGET, "発情", "服"
+					PRINTFORMDL As you wake up, you meet your gaze with %CALLNAME:TARGET%'s who is looking at you from above.
+					PRINTFORMDW She hurriedly pulls her face back and greets you good morning, her cheeks flushed red.
+						
+					BASE:ムード = 800
+					BASE:理性 = 900
+					PALAM:好意 += 2700
+					PALAM:恥情 += 3000
+					PALAM:優越 += 700
+					
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_5(4)
+					RESULT = 1
+				;イタズラで起こされる
+				CASE 4
+					DEBUGPRINTFORML Running DAYEVENT: Day: Normal: Prank
+					SIF GETBIT(nEventCheck,4)
+						CONTINUE
+
+					SETBIT nEventCheck,4
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(8) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Prank Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( ABL:親密 >= 5 && ABL:欲望 >= 5 && (MARK:反発刻印 || CFLAG:10 || RAND:3) )
+							DEBUGPRINTFORML Prank Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+					
+					;skip description for one special case (todo some kind of precall if we need more of these)
+					IF TARGET == 41 && CFLAG:好感度 >= 1500 && HAS_PENIS(MASTER) && FIRSTTIME("NuePrank", 1)
+					ELSE
+						CALL PRINT_FACE, TARGET, "笑顔", "服"
+						PRINTFORMDL You wake up up with a strange feeling of discomfort, noticing %CALLNAME:TARGET% playing a prank on you while you were asleep.
+						PRINTFORMDW She hurriedly withdraws from you and greets you good morning with a smirk on her face.
+					ENDIF
+					
+					BASE:ムード = 100
+					BASE:理性 = 300
+					PALAM:好意 += 1700
+					PALAM:恥情 += 1500
+					PALAM:優越 += 3000
+					
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_5(5)
+					RESULT = 1
+			ENDSELECT
+		LOOP RESULT == 0 && nEventCheck < 31
+		IF RESULT
+			CALL CHANGE_CFLAG(2,TARGET,ABL:親密 * 5)
+			GOTO END1
+		ENDIF
+	CASE "night"
+		DEBUGPRINTFORML Running DAYEVENT: Night
+		;target must not be exhausted
+		IF BASE:0 < 1000 || BASE:1 <= 0 || CFLAG:衰弱
+			DEBUGPRINTFORML Fail: Too exhausted
+			GOTO END
+		ENDIF
+		;I FUCKING HATE THIS SHIT AAAAAAAAAA FUCK OFF I'M SLEEPING WITH SOMEONE ELSE ALREADY AAAAAAAAAA REEEEEEEEEEEE
+		;sleep together flag check is busted, it's reset at the end of the day, check current location instead
+		
+		;if not sleeping with you, can do house invasion once per three days
+		IF CFLAG:現在位置 != CFLAG:MASTER:現在位置 && DAY - K41_LastHomeVisit < 3
+			DEBUGPRINTFORML Fail: Visiting Too Soon: {DAY - K41_LastHomeVisit} < 3
+			GOTO END
+		ENDIF
+		;PRINTFORMW CFLAG:MASTER:添い寝中 - {CFLAG:MASTER:添い寝中}, TARGET - {TARGET}, CFLAG:添い寝中 - {CFLAG:添い寝中}
+		;if master already sleeps with someone (and it's not nue), nue won't disturb you
+		IF GET_TARGETNUM() >= 1 && CFLAG:現在位置 != CFLAG:MASTER:現在位置
+			DEBUGPRINTFORML Fail: Already Sleeping Together With Someone
+			GOTO END
+		ENDIF
+		;20:00 - 6:00 (moon viewing up to 4 am) (unless you got knocked out previously)
+		IF !(TIME:0 >= 1200 || TIME:0 <= 360)
+			IF CFLAG:MASTER:衰弱
+			ELSE
+				DEBUGPRINTFORML Fail: Time Incorrect (Must Be Between 20:00 - 6:00 (>=1200 or <= 360), Current: {TIME})
+				GOTO END
+			ENDIF
+		ENDIF
+
+		; IF !CFLAG:添い寝中
+			; PRINTFORMDW A few moments after you had gone to bed... there's a weird commotion at your room.
+			; PRINTFORMDW Looks like someone just sneaked into your room!
+			; PRINTL
+		; ENDIF
+		
+		;lewd event
+		IF PALAM:潤滑 > PALAMLV:2
+			DO
+				SIF nEventCheck >= 3
+					BREAK
+				SELECTCASE RAND:3
+				;夜這いキス
+				CASE 0
+					DEBUGPRINTFORML Running DAYEVENT: Night: Lewd: Kiss
+					SIF GETBIT(nEventCheck,0)
+						CONTINUE
+
+					SETBIT nEventCheck,0
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(9) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Kiss Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( !TALENT:キス未経験 && !TALENT:MASTER:キス未経験 && ABL:親密 >= 10 && EXP:キス経験 >= 30 )
+							DEBUGPRINTFORML Kiss Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+				
+					CALL PRINT_FACE, TARGET, "発情", "服", "", "吐息"
+					PRINTFORMDW A few moments after you had gone to bed... %CALLNAME:TARGET% \@ CFLAG:現在位置 != CFLAG:MASTER:現在位置 ? sneaks into your room # turns around and gazes at you\@.
+					PRINTFORMDW As she watches you sleep, she finds herself unable to contain her feelings and steals a kiss from your lips.
+					PRINTDL ...
+					PRINTFORMDL After a while, %CALLNAME:TARGET% parts your lips reluctantly, still reminiscing the lingering sensation.
+					PRINTFORMDW Then, she \@ CFLAG:現在位置 != CFLAG:MASTER:現在位置 ? quietly sneaks out # snuggles up to you carefully\@, making sure not to disturb your sleep.
+					
+					CALL MUTUAL_KISS
+					
+					CALL ADD_EXP_LESNIAN(5, TARGET, "PRINT")
+					
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_6(1)
+					RESULT = 1
+				;夜這い
+				CASE 1
+					DEBUGPRINTFORML Running DAYEVENT: Night: Lewd: Yobai
+					SIF GETBIT(nEventCheck,1)
+						CONTINUE
+
+					SETBIT nEventCheck,1
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(10) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Yobai Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( ABL:欲望 >= 5 )
+							DEBUGPRINTFORML Yobai Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+					
+					IF ( HAS_VAGINA(TARGET) && !HAS_VAGINA(MASTER) ) 
+						SIF !( !TALENT:処女 && !IS_DOUTEI(MASTER) && EXP:Ｖ性交経験 >= 50 )
+							CONTINUE
+					ENDIF
+					IF ( HAS_PENIS(TARGET) && HAS_VAGINA(MASTER) )
+						SIF !( !TALENT:MASTER:処女 && !IS_DOUTEI(TARGET) && EXP:MASTER:Ｖ性交経験 >= 50 && EXP:挿入経験 >= 10 )
+							CONTINUE
+					ENDIF
+
+					nSexCount = MAX(MIN(ABL:欲望 / 2, 5) + CFLAG:溜まってる度 / 200,1)
+						
+					CALL PRINT_FACE, TARGET, "発情", "裸", "", "吐息"
+					PRINTFORMDL While you were \@ CFLAG:現在位置 != CFLAG:MASTER:現在位置 ? getting ready for bed, %CALLNAME:TARGET% pays a sudden visit to your room # about to fall asleep, %CALLNAME:TARGET% suddenly starts caressing you\@.
+					PRINTFORMD With her cheeks deeply flushed, she pushes you down and 
+					IF ( HAS_VAGINA(TARGET) && !HAS_VAGINA(MASTER) ) || ( HAS_PENIS(TARGET) && HAS_VAGINA(MASTER) )
+						IF !HAS_VAGINA(MASTER) && HAS_PENIS(MASTER) ;male only master, so nue would fuck female/futa master
+							PRINTFORM eagerly welcomes your %TINKO()% inside her %FSYN("vagina")%, slamming her hips hard.
+						ELSE
+							PRINTFORM presses her raging hard %TINKO(TARGET)% against your %FSYN("slit")% before penetrating it in one go.
+						ENDIF
+						CALL PRINT_BREAK,,"dc"
+					ELSE
+						PRINTFORMDL locks her lips with yours while playing with your body.
+					ENDIF
+					IF ( HAS_VAGINA(TARGET) && !HAS_VAGINA(MASTER) ) || ( HAS_PENIS(TARGET) && HAS_VAGINA(MASTER) )
+						IF !HAS_VAGINA(MASTER) && HAS_PENIS(MASTER)
+							PRINTFORMDL %BREAKENG(@"Drooling at her mouth akin to starving beast, she thoroughly enjoys herself with your manhood, quenching the thirst of her womb...")%
+						ELSE
+							PRINTFORMDL %BREAKENG(@"%CAPITALIZE(FSYN("thrust:ing"))% herself deep inside your womb with her unabated erection, she thoroughly enjoys herself with your vagina...")%
+						ENDIF
+					ELSE
+						PRINTFORMDL %BREAKENG(@"Exploring your body while teasing it relentlessly, %CALLNAME:TARGET% slides her fingers inside her slit as well, trying to soothe the tingling sensation taking over her...")%
+					ENDIF
+					PRINTDW ...
+					PRINTFORMDL After reaching a number of climaxes, you both feel like achieving your desire.
+					PRINTFORMD You embrace each other fondly and fall into a deep slumber together 
+					IF ( HAS_VAGINA(TARGET) && !HAS_VAGINA(MASTER) ) || ( HAS_PENIS(TARGET) && HAS_VAGINA(MASTER) )
+						PRINTFORMDW while still being connected together...
+					ELSE
+						PRINTFORMDW with your bodies still entwined...
+					ENDIF
+					
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_6(2)
+					
+					IF ( HAS_VAGINA(TARGET) && !HAS_VAGINA(MASTER) && HAS_PENIS(MASTER) ) ;player fucks nue
+						nExp:10 += 2 * nSexCount ;orgasm
+						nExp:6 += 2 * nSexCount ;v orgasm
+						nExp:1 += 2 * nSexCount ;v exp
+						
+						LOCAL = MAX((ABL:膣 + 1) * 20 + BASE:MASTER:精力 / 25, 1)
+						nExp:20 += nSexCount ;v sex exp
+						nExp:16 += nSexCount ;v creampie
+						FOR LOCAL:1,1,nSexCount
+							LOCAL:2 += LOCAL + RAND:(LOCAL)
+						NEXT
+
+						LOCAL:2 = MIN(LOCAL:2, BASE:MASTER:精力)
+						
+						EXP:MASTER:挿入経験 += nSexCount
+						EXP:MASTER:射精経験 += nSexCount
+						EXP:MASTER:絶頂経験 += nSexCount
+						
+						CALL ADD_SAMEN_V(TARGET, LOCAL:2)
+						;DOWNBASE:MASTER:精力 = LOCAL:2 (already included in the above function)
+
+						CALL JUEL_UP_SPECIAL(TARGET,"快Ｖ","Ｖ感覚",15,1)
+						CALL JUEL_UP_SPECIAL(MASTER,"快Ｃ","Ｃ感覚",10,1)
+						
+						BASE:MASTER:勃起 = 0
+					ELSEIF ( HAS_PENIS(TARGET) && HAS_VAGINA(MASTER) ) ;nue fucks player
+						nExp:10 += 2 * nSexCount ;orgasm
+						nExp:29 += 2 * nSexCount ;insertion
+						nExp:11 += 2 * nSexCount ;ejaculation
+						
+						LOCAL = MAX((ABL:MASTER:膣 + 1) * 20 + BASE:精力 / 25, 1)
+						EXP:MASTER:Ｖ経験 += nSexCount
+						EXP:MASTER:Ｖ絶頂経験 += nSexCount
+						EXP:MASTER:Ｖ性交経験 += nSexCount
+						EXP:MASTER:膣射経験 += nSexCount
+						EXP:MASTER:絶頂経験 += nSexCount
+						FOR LOCAL:1,1,nSexCount
+							LOCAL:2 += LOCAL + RAND:(LOCAL)
+						NEXT
+
+						LOCAL:2 = MIN(LOCAL:2, BASE:精力)
+						
+						CALL SAMEN_SHOOT3(LOCAL:2, TARGET, MASTER)
+						BASE:精力 -= LOCAL:2
+						EX:MASTER:膣内精液 += LOCAL:2
+						CFLAG:MASTER:累計膣内精液 += LOCAL:2
+
+						STAIN:MASTER:Ｖ |= 4
+						STAIN:MASTER:膣内 |= 4
+
+						STAIN:Ｐ |= 1
+						STAIN:Ｐ |= 4
+						
+						CALL JUEL_UP_SPECIAL(MASTER,"快Ｖ","Ｖ感覚",15,1)
+						CALL JUEL_UP_SPECIAL(TARGET,"快Ｃ","Ｃ感覚",10,1)
+						
+						BASE:勃起 = 0
+					ELSE ;lez
+						nExp:10 += 2 * nSexCount ;orgasm
+						nExp:5 += 2 * nSexCount ;c orgasm
+						nExp:0 += 2 * nSexCount ;c exp
+						
+						EXP:MASTER:絶頂経験 += nSexCount
+						EXP:MASTER:Ｃ絶頂経験 += nSexCount
+						EXP:MASTER:Ｃ経験 += nSexCount
+						
+						SIF HAS_PENIS(MASTER)
+							EXP:MASTER:射精経験 += nSexCount
+						SIF HAS_PENIS(TARGET)
+							nExp:11 += nSexCount
+					
+						CALL MUTUAL_KISS(TARGET, nSexCount)
+						
+						CALL JUEL_UP_SPECIAL(TARGET,"快Ｃ","Ｃ感覚",15,1)
+						CALL JUEL_UP_SPECIAL(MASTER,"快Ｃ","Ｃ感覚",15,1)
+					ENDIF
+					
+					CALL JUEL_UP_SPECIAL(TARGET,"欲情","欲望",20,1)
+					CALL ADD_EXP_LESNIAN(5, TARGET, "PRINT")
+
+					DOWNBASE:MASTER:体力 = 100
+					DOWNBASE:MASTER:気力 = 150
+					
+					DOWNBASE:体力 = 100
+					DOWNBASE:気力 = 150
+					
+					CFLAG:溜まってる度 = 0 ;nullify horny
+					
+					SETCOLOR C_YELLOW
+					FOR LOCAL,0,58
+						IF nExp:LOCAL
+							PRINTFORML %EXPNAME:LOCAL% ＋{nExp:LOCAL}
+							EXP:LOCAL += nExp:LOCAL
+						ENDIF
+					NEXT
+					RESETCOLOR
+					;hopefully won't glitch
+					;this just plain doesn't work as intended, disabled
+					; IF !CFLAG:添い寝中 && !FLAG:一時滞在 && !CFLAG:神社在住
+						; FLAG:一時滞在 = TARGET
+						; CFLAG:本来の初期位置 = CFLAG:初期位置
+						; CFLAG:初期位置 = CFLAG:MASTER:初期位置
+						; CFLAG:神社在住 = CFLAG:初期位置
+						; PRINTFORMW %CALLNAME:TARGET% will sleep over %AT_IN_ON(CFLAG:MASTER:初期位置)%.
+						; ;CALL TARGETSET_CHACK
+						; CFLAG:TARGET:同室 = 1
+						; ;添い寝フラグON
+						; CFLAG:添い寝中 = 1
+						; CFLAG:MASTER:添い寝中 = 1
+					; ELSEIF CFLAG:添い寝中
+						; CFLAG:TARGET:現在位置 = CFLAG:MASTER:現在位置
+						; ;CALL TARGETSET_CHACK
+						; CFLAG:TARGET:同室 = 1
+						; ;添い寝フラグON
+						; CFLAG:添い寝中 = 1
+						; CFLAG:MASTER:添い寝中 = 1
+					; ELSE
+					;	PRINTFORMW Later, %CALLNAME:TARGET% decided to leave...
+					;ENDIF
+					RESULT = 1
+				ENDSELECT
+			LOOP RESULT == 0 && nEventCheck < 3
+		ENDIF
+		IF RESULT
+			K41_LastHomeVisit = DAY
+			TCVAR:今日会ったか = DAY
+			CALL CHANGE_CFLAG(2,TARGET,ABL:親密 * 3)
+			GOTO END1
+		ENDIF
+			
+		nEventCheck = 0
+		DO
+			SIF nEventCheck >= 7
+				BREAK
+			SELECTCASE RAND:3
+				;晩酌
+				CASE 0
+					DEBUGPRINTFORML Running DAYEVENT: Night: Normal: Drink
+					SIF GETBIT(nEventCheck,0)
+						CONTINUE
+
+					SETBIT nEventCheck,0
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(11) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Drink Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( ABL:奉仕精神 >= 3 && EXP:奉仕快楽経験 >= 50 )
+							DEBUGPRINTFORML Drink Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+					
+					IF (TALENT:妊娠 || TALENT:育児中)
+						DEBUGPRINTFORML Drink Pregnancy Fail
+						CONTINUE
+					ENDIF
+						
+					BASE:酒気 += 500
+					BASE:MASTER:酒気 += 500
+						
+					CALL PRINT_FACE, TARGET, "笑顔", "服"
+					PRINTFORMDL %BREAKENG(@"\@ CFLAG:現在位置 != CFLAG:MASTER:現在位置 ? While you were getting ready for bed, %CALLNAME:TARGET% comes over to invite # While you were about to fall asleep, %CALLNAME:TARGET% suddenly invites\@ you to have a dinner-time drink with her.")%
+					PRINTFORMDW For the next few moments, you and %CALLNAME:TARGET% have a good time drinking together...
+					
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_7(1)
+					RESULT = 1
+				;夜風に当たる、お月見
+				CASE 1
+					DEBUGPRINTFORML Running DAYEVENT: Night: Normal: Moon Viewing
+					SIF GETBIT(nEventCheck,1)
+						CONTINUE
+
+					SETBIT nEventCheck,1
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(12) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Moon Viewing Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( ABL:親密 >= 10 && (TIME:5 <= 4 || TIME:5 == 8) )
+							DEBUGPRINTFORML Moon Viewing Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+						
+					CALL PRINT_FACE, TARGET, "笑顔", "服"
+					IF MOON_WATCH(DAY:3) == 9
+						;お月見（満月）
+						PRINTFORMDL %BREAKENG(@"\@CFLAG:現在位置 != CFLAG:MASTER:現在位置 ? While you were getting ready for bed, %CALLNAME:TARGET% comes over to invite # While you were about to fall asleep, %CALLNAME:TARGET% suddenly invites\@ you to a moon viewing with a \@ (TALENT:妊娠 + TALENT:育児中) ? cup of tea # drink \@ in her hand.")%
+						PRINTFORMDW %BREAKENG(@"Going outside to an appropriate spot, You and %CALLNAME:TARGET% then enjoy watching the beautiful full moon together until very late in the night...")%
+					ELSEIF TIME:5 <= 3
+						;夜風に当たる（夜散歩）
+						PRINTFORMDL %BREAKENG(@"\@CFLAG:現在位置 != CFLAG:MASTER:現在位置 ? While you were getting ready for bed, %CALLNAME:TARGET% comes over to invite # While you were about to fall asleep, %CALLNAME:TARGET% suddenly invites\@ you for a night walk.")%
+						PRINTFORMDW You enjoy the night stroll while chatting together...
+					ELSE
+						;夜風に当たる（縁側で）
+						PRINTFORMDL %BREAKENG(@"\@CFLAG:現在位置 != CFLAG:MASTER:現在位置 ? While you were getting ready for bed, %CALLNAME:TARGET% comes over to have a chat with you # While you were about to fall asleep, %CALLNAME:TARGET% suddenly begins chatting with you\@.")%
+						IF TIME:5 == 4
+							LOCALS = gentle rain
+						ELSEIF TIME:5 == 8
+							LOCALS = dancing snow
+						ELSE
+							LOCALS = night breeze
+						ENDIF
+						PRINTFORMDW %BREAKENG(@"As you both come out to the veranda, for the next few moments you and %CALLNAME:TARGET% have a friendly conversation while enjoying the %LOCALS%...")%
+					ENDIF
+					
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_7(2)
+					RESULT = 1
+				;添い寝
+				CASE 2
+					DEBUGPRINTFORML Running DAYEVENT: Night: Normal: Sleepover
+					SIF GETBIT(nEventCheck,2)
+						CONTINUE
+
+					SETBIT nEventCheck,2
+					
+					;if already sleeping with nue
+					IF CFLAG:現在位置 == CFLAG:MASTER:現在位置
+						DEBUGPRINTFORML Sleepover Fail - Already sleeping
+						CONTINUE
+					ENDIF
+					
+					TRYCCALLFORM K{NO:TARGET}_DAYEVENT_COND(13) ;cond
+						IF RESULT
+							DEBUGPRINTFORML Sleepover Disallowed
+							CONTINUE
+						ENDIF
+					CATCH
+						IF !( ABL:親密 >= 10 && ABL:欲望 >= 3 && EXP:愛情経験 >= 10 )
+							DEBUGPRINTFORML Sleepover Fail
+							CONTINUE
+						ENDIF
+					ENDCATCH
+						
+					CALL PRINT_FACE, TARGET, "笑顔", "服"
+					IF TALENT:恋人
+						PRINTFORMDW As you go to bed, %CALLNAME:TARGET% shows up and snuggles down next to you.
+						PRINTFORMDW Cuddling together, she beams a happy smile.
+						PRINTDL ...
+						PRINTFORMDL %CALLNAME:TARGET% grins as she watches you sleep after you have succumbed to drowsiness.
+						PRINTFORMDL Just as she was about to go to sleep as well, she suddenly gets covered by you as you turn over in your sleep!
+						PRINTFORMDL Hearing her giggle at you, you ease back into a comfortable position and embrace each other before falling asleep together...
+					ELSE
+						PRINTFORMDW A few moments after you had gone to bed... %CALLNAME:TARGET% sneaks into your room.
+						PRINTFORMDW As she watches you sleep, she stares at your sleeping face for a while and blushes profusely.
+						PRINTFORMDW But in the end, she couldn't bring herself to do anything and quietly slipped into your futon.
+						PRINTFORMDW It makes her feel extremely feverish as she keeps glancing towards you all the while...
+						PRINTDL ...
+						PRINTFORMDL %BREAKENG(@"{(RAND:3+1) * 10} minutes later, when %CALLNAME:TARGET% was all but about to give up and get up, she suddenly gets covered by you as you turn over in your sleep!")%
+						PRINTFORMDL She freezes up on the spot with an even redder face, remaining at the mercy of the situation.
+						PRINTFORMDL Looks like her sleepless nights are far from being over...
+					ENDIF
+						
+					TRYCALLFORM M_KOJO_SPEVENT_K{NO:TARGET}_7(3)
+					;this might be glitchy
+					;this just plain doesn't work as intended, disabled
+					; CFLAG:TARGET:現在位置 = CFLAG:MASTER:現在位置
+					; ;CALL TARGETSET_CHACK
+					; CFLAG:TARGET:同室 = 1
+					; ;添い寝フラグON
+					; CFLAG:添い寝中 = 1
+					; CFLAG:MASTER:添い寝中 = 1
+					RESULT = 1
+			ENDSELECT
+		LOOP RESULT == 0 && nEventCheck < 7
+		IF RESULT
+			K41_LastHomeVisit = DAY
+			TCVAR:今日会ったか = DAY
+			CALL CHANGE_CFLAG(2,TARGET,ABL:親密 * 5)
+			GOTO END1
+		ENDIF
+CASEELSE
+	THROW @"WRONG EVENT TYPE DUMBASS - %ARGS%"
+ENDSELECT
+
+$END
+TARGET = nTarg
+RETURN 0
+$END1
+TARGET = nTarg
+RETURN 1
+
+;condition check per each event, returning result means disallowed
+@K41_DAYEVENT_COND(ARG)
+SELECTCASE ARG
+	CASE 0 ;initial, if the function is allowed to run at all
+		SIF !TALENT:恋慕 ;if no love
+			RETURN 1
+		SIF (MARK:反発刻印 || CFLAG:ブチギレ)
+			RETURN 1
+	;per event
+ENDSELECT
+RETURN 0
+
+;added, modified og
+@K41_VIRGIN(ARGS)
+;innocent maiden nue-chan becomes an adult here, kyaaaahhh!!! >__<
+SELECTCASE ARGS
+	CASE "missionary", "lotus", "revlotus", "cow"
+		;og case with edits
+		PRINTFORMW 「Okay... I'm ready, let's do this.」
+		PRINTFORMW 「I will take care of all of your desires, %MASTERNAME:41%...」
+		IF ARGS == "revlotus"
+			PRINTFORMDW Nue turns her face around with a fearless grin, though you can still see her being pretty anxious about it.
+		ELSEIF ARGS == "cow"
+			PRINTFORMDW Though it looks as though Nue is in control while she straddles you, you can her her voice shaking.
+			PRINTFORMDW You hold her hands to let her calm down a little bit.
+		ELSE
+			PRINTFORMDW Nue opens her arms and invites you to join her.
+		ENDIF
+		PRINTFORMDW You press your tip against her honeypot \@ GROUPMATCH(ARGS, "lotus", "revlotus", "cow") ? as Nue slowly lowers her hips # and slowly push it inside\@...
+		PRINTFORMW 「Hnghhh, gaahhh...! Khaa, guhhh, aAAaaaAAaaAAghhh―――!!!」
+		PRINTFORMDW Nue lets out an agonizing groan as the pain of her innocence being violated spreads throughout her body.
+		PRINTFORMW 「Haha, what do you know... This is pretty painful, it turns out... I'm gonna have to endure this...」
+		PRINTFORMW 「Nghh... Yeah, I'm fine, you can start moving.」
+		PRINTFORMW 「But in return I'll ask you... to give me a big hug...」
+	;added after this
+	CASE "doggy"
+		PRINTFORMW 「Okay... I'm ready, let's do this.」
+		PRINTFORMW 「I will take care of all of your desires, %MASTERNAME:41%...」
+		PRINTFORMDW As Nue positions herself on all fours, she spreads her buttcheeks for you and invites you to join her.
+		PRINTFORMDW You press your tip against her honeypot and slowly push it inside...
+		PRINTFORMW 「Hnghhh, gaahhh...! Khaa, guhhh, aAAaaaAAaaAAghhh―――!!!」
+		PRINTFORMDW Nue lets out an agonizing groan as the pain of her innocence being violated spreads throughout her body.
+		PRINTFORMW 「Haha, what do you know... This is pretty painful, it turns out... I'm gonna have to endure this...」
+		PRINTFORMW 「Nghh... Yeah, I'm fine, you can start moving.」
+		PRINTFORMW 「But in return I'll ask you... to hold me tight...」
+	CASE "standing"
+		PRINTFORMW 「Uhh... L-Like this? You mean, right now?!」
+		PRINTFORMW 「W-Wait, %MASTERNAME:41%, seriously, I... I need to prepare first...!」
+		PRINTFORMDW Nue looks troubled as your genitals start already coming into contact with each other.
+		PRINTFORMW 「It's my first time doing this, and, well... Doing this while standing, I didn't imagine it being like this!」
+		PRINTFORMDW She sounds surprisingly vulnerable, scared even, unlike her usual self.
+		PRINTFORMW 「But if you really want to... If you're really that impatient, then...」
+		PRINTFORMW 「Aaagh, fine! Let's just get it over with! I'm done pussyfooting around!」
+		PRINTFORMDW Nue nods, giving you the permission as you hold her steady.
+		PRINTL ...
+		PRINTFORMDW You press your tip against her honeypot and slowly push it inside...
+		PRINTFORMW 「Hnghhh, gaahhh...! Khaa, guhhh, aAAaaaAAaaAAghhh―――!!!」
+		PRINTFORMDW Nue lets out an agonizing groan as the pain of her innocence being violated spreads throughout her body.
+		PRINTFORMW 「Haha, what do you know... This is pretty painful, it turns out... I'm gonna have to endure this...」
+		PRINTFORMW 「Nghh... Yeah, I'm fine, you can start moving.」
+		PRINTFORMW 「But in return I'll ask you... to give me lots of love...」
+ENDSELECT
+
+;added, from ym
+@K41_A_VIRGIN(ARGS)
+SELECTCASE ARGS
+	CASE "Acow"
+		IF TALENT:恋慕
+			PRINTFORMW 「So we're gonna have sex... but it's anal?」
+			IF IS_VIRGIN(TARGET)
+				CALL PRINT_DIALOGUE, @"Siiiigh... I wonder if I'll ever get to give you my actual innocence in a pose like this too... You're such a perv, %MASTERNAME:41%.", "w"
+				CALL PRINT_DIALOGUE, @"Oh no, I'm not really angry. If I was, I'd pretend it was an accident and make it slide into my virgin pussy instead.", "w"
+				PRINTFORMDW %BREAKENG(@"After blurting out something incredibly threatening, Nue smiles at you wryly as you start rubbing your %TINKO()% against her tightly shut anus...")%
+				PRINTFORMW 「C'mon now, don't rush. I'll let you put it in there just as you want, I'm not gonna trick ya...」
+			ELSE
+				PRINTFORMW 「I see... So I'll be giving my last remaining virginity to you too, huh... Ehehe♪」
+				PRINTFORMW 「?! N-No, I didn't say anything, it was nothing!!! C-Come on now, I'm all ready so hurry up and come at me!」
+				PRINTFORMDW You wonder why Nue started spouting nonsense all of a sudden as you slowly sink your %TINKO()% into her tightly shut butthole...
+			ENDIF
+			PRINTFORMW 「Aaghh?! Kuhh...! W-Wai-- This is, a bit too tight... Ugh, nghhh?! I-It's gonna teaaaarrr...!!!」
+		ELSE
+			;added, og content
+			PRINTFORMW 「Asking me to put it inside my ass myself, you seriously gonna...」
+			PRINTFORMW 「You're so uncomplicated, only thinking about sticking your dick into a girl's hole, even if it's her ass.」
+			PRINTFORMW 「You've got a lot of nerve there, %MASTERNAME:41%! I should honestly just... Ahem.」
+			PRINTFORMW 「Well, don't blame me if any incidents happen, so... Whatever, here goes!」
+			PRINTFORMW 「Ughhh... Ack, gaahhhh?! W-Wait, no, I don't think this is gonna happen after all, it's too much--」
+			PRINTFORMW 「Aghiiiiiiiiii?!?! Noooo, don't shove it inside, stop pulling me-- Ughyaaaaaaaaaaa!!!」
+		ENDIF
+CASEELSE
+	IF TALENT:恋慕
+		PRINTFORMW 「Huh, what? You want that... into my ass?」
+		IF IS_VIRGIN(TARGET)
+			PRINTFORMW 「Uuu... I-I don't really mind, it's just... I'm wondering why there first... It's like on purpose...」
+			CALL PRINT_DIALOGUE, @"W-Whatever, don't worry about it! C'mon then, just hurry up and fuck me in the ass if that's what you want, I'm fine with that! Hmph!!!", "w"
+			PRINTFORMDW You wonder why Nue started pouting all of a sudden as you slowly sink your %TINKO()% into her tightly shut butthole...
+		ELSE
+			PRINTFORMW 「Oh, I-I see... Looks like I'm about to give my other virginity to you right now... Ehehe♪」
+			PRINTFORMW 「?! N-No, I didn't say anything, it was nothing!!! C-Come on now, I'm all ready so hurry up and come at me!」
+			PRINTFORMDW You wonder why Nue started spouting nonsense all of a sudden as you slowly sink your %TINKO()% into her tightly shut butthole...
+		ENDIF
+		PRINTFORMW 「Aaghh?! Kuhh...! W-Wai-- This is, a bit too tight... Ugh, nghhh?! I-It's gonna teaaaarrr...!!!」
+	ELSE
+		;added, og content
+		PRINTFORMW 「W-Wait, are you actually... Don't tell me, in my ass? %MASTERNAME:41%...」
+		PRINTFORMW 「I don't know if you noticed, but I'm a girl, you know? Girls have a special hole just for this purpose.」
+		PRINTFORMW 「C'mon now, it's obviously not gonna go in there, it just won't fit-- Ughhiiii?! Gaahhh, hiiiggghh?!」
+		PRINTFORMW 「W-Wait, not so rough, you're gonna tear it apart!!! Aghyaaaaahhh!!!」
+	ENDIF
+ENDSELECT
+
+;added, first kiss
+@K41_KISS
+PRINTFORMDW As you true to kiss Nue, she suddenly opens her mouth wide, revealing two rows of very sharp teeth.
+PRINTFORMW 「Kuku... I see what you're trying to do. Well, c'mere!」
+PRINTFORMDW %BREAKENG(@"She leans in and kisses you deeply on the lips. Her tentacle-like tongue slips inside and begins to massage your mouth, swirling inside.")%
+PRINTFORMDW She does it with a surprising amount of skill for someone who's supposedly never kissed anyone before.
+PRINTFORMDW It feels and tastes so sweet, it's quickly making your head numb.
+PRINTFORMDW %BREAKENG(@"Your lips are locked together for a while before she breaks the kiss, the threads of sticky saliva still dancing on her tongue...")%
+PRINTFORMW 「Puhaaaa... Weeeell, how's that for a first kiss, %MASTERNAME:41%? Impressed?」
+SIF TALENT:MASTER:キス未経験
+	CALL PRINT_DIALOGUE, @"Oh, so it was your first kiss too, huh? Kuku, now you will always remember this Nue-sama as the one who gave you this wonderful sensation...", "w"
+PRINTFORMW 「The Unidentified taste of kiss... It's pretty nice, I gotta say. We should do that more from now on♪」
+PRINTFORMDW Nue grins, still maintaining her composure, though you can see a slight blush covering her cheeks...
+
+@EVENTCOM
+IF TARGET == 41 && HAS_PENIS(MASTER) && CFLAG:うふふ && SHIRAHU(TARGET) && CFLAG:生解禁 < 2 && MARK:反発刻印 == 0 && !TCVAR:無理矢理 ;added, allows nue to take it raw right away
+	CALL M_KOJO_COLOR_K41
+	PRINTFORML
+	PRINTFORMW 「Hey, umm, %MASTERNAME:41%... Before we get started, I just wanted to say one thing.」
+	CALL PRINT_DIALOGUE, @"I don't really believe in contraception. To me it's all just sciency mumbo-jumbo designed to make the experience less pleasurable.", "w"
+	PRINTFORMW 「Besides, I won't be able to feast on you properly with some stupid rubber on your dick, right?」
+	CALL PRINT_DIALOGUE, @"So yeah, feel free to do it raw with me, I don't mind. It's not like your puny human semen will ever get me pregnant, kuku...", "w"
+	SIF TALENT:恋慕
+		PRINTFORMW 「Although I'd like that to happen... I wanna bear your babies after all♪」
+	PRINTFORMW 「Well, there you go. Try your best, %MASTERNAME:41%～」
+	CALL COLORMESSAGE("Nue allowed you to have [Raw Sex] with her on any day!",C_YELLOW,2,1)
+	CFLAG:生解禁 = 2
+	PRINTFORML
+	RESETCOLOR
+ENDIF
+
+;start nue's cherry popping sequence for player if she's non-virgin
+SIF TARGET == 41 && IS_DOUTEI(MASTER) && !IS_VIRGIN(TARGET) && EXP:Ｖ性交経験 >= 10 && GROUPMATCH(TFLAG:3, 60, 61, 65, 67, 68) && SHIRAHU(TARGET) && !TCVAR:無理矢理 && MARK:反発刻印 == 0
+	CALL K41_DOUTEI("intro")
+	
+;push player down
+@K41_PUSHDOWN
+;挿入中は駄目
+TEQUIP:50 = 0
+TEQUIP:51 = 0
+;シャワー中はダメ
+TEQUIP:32 = 0
+;乳首吸い中はダメ
+TEQUIP:41 = 0
+;乳揉み中はダメ
+TEQUIP:42 = 0
+;継続キス
+TEQUIP:継続キス = 0
+CFLAG:MASTER:うふふ = 2
+TFLAG:COMABLE管理 = 3
+FOR LOCAL,1,CHARANUM
+	IF CFLAG:MASTER:現在位置 == CFLAG:LOCAL:現在位置
+		CFLAG:LOCAL:うふふ = 2
+	ENDIF
+NEXT
+TIME += 5
+
+@K41_FIRSTKISS(ARGS, ARG = -1)
+SIF ARG == -1
+	ARG = TARGET
+CALL MUTUAL_KISS(ARG)
+CALL SET_FIRSTKISS(MASTER, ARG, LOCAL)
+IF TALENT:ARG:キス未経験
+	CALL SET_FIRSTKISS(ARG, MASTER, LOCAL)
+	IF !IN_HOME(CFLAG:ARG:現在位置) && CFLAG:ARG:現在位置 != OMANEKIBEYA()
+		LOCALS = %DATENAME_SPOT_TR()%
+	ELSE
+		LOCALS = %AT_IN_ON(CFLAG:ARG:現在位置)%
+	ENDIF
+	SIF !(FLAG:デート相手 && CFLAG:(FLAG:デート相手):現在位置 == OMANEKIBEYA())
+		LOCALS += " at the " + GET_MAPNAME(GET_MAPID(CFLAG:ARG:現在位置))
+	CSTR:ARG:ファーストキス喪失履歴 = %ARGS%%LOCALS%.
+ENDIF
+
+;some sections from ym
+@K41_SEX(ARGS)
+IF TCVAR:破瓜
+	CALL K41_VIRGIN(TFLAG:193 ? "standing" # ARGS)
+	RETURN 1
+ELSEIF TCVAR:Ａ破瓜
+	CALL K41_A_VIRGIN(ARGS)
+	RETURN 1
+ELSEIF TCVAR:MASTER:筆下ろし && !IS_VIRGIN(TARGET) && EXP:Ｖ性交経験 >= 10 && IS_COM_VAGINA(TFLAG:3) && SHIRAHU(TARGET) && !TCVAR:無理矢理 && MARK:反発刻印 == 0
+	CALL K41_DOUTEI("sex")
+	RETURN 1
+ELSE
+	IF ARGS == "cow" && FIRSTTIME("NueCow")
+		PRINTFORMW 「Kuku, you sure it's such a good idea to let me do all the work?」
+		PRINTFORMDW Nue is apparently so incredibly pleased with the idea of being on the active side, she's barely able to contain it.
+		PRINTFORMW 「Fufu, I'll make ya squeal for your dear life alright, so better get strapped in!」
+		PRINTFORMDW Licking her lips as if enjoying a treat, Nue then begins shaking her hips wildly...
+		RETURN 1
+	ENDIF
+ENDIF
+
+;added
+IF NOWEX:MASTER:射精
+	SIF TFLAG:193
+		PRINTFORMDW Feeling yourself getting close, you press Nue against the nearest wall, bucking your hips wildly...
+	SELECTCASE RAND:3
+		CASE 0
+			PRINTFORMW 「What's wrong...? You barely even moved, and you're already getting close?」
+			CALL HPH_PRINT(@"「...You really wanted to do it with me so badly, huhHPH Hmmm～HPH」", "W")
+			PRINTFORMW 「In that case, just keep moving as much as you want, but make sure...」
+			CALL HPH_PRINT(@"「You pour all of that %SEMEN()% inside my pussy, got it?HPH Good luck～...♪」", "W")
+		CASE 1
+			CALL HPH_PRINT(@"「Ahaa!HPH Shaking your hips sooo desperately there... Is it that good to be inside of me, hmm?」", "W")
+			PRINTFORMW 「You wanna cum? You wanna cum, don'tcha? Hmmm～」
+			CALL HPH_PRINT(@"「I guess I have no choice～ So be it, I'll let you do itHPH」", "W")
+		CASE 2
+			PRINTFORMW 「We just barely started, and you're already such a mess, %MASTERNAME:41%...」
+			PRINTFORMW 「I'm starting to think that you might not deserve me, maybe...」
+			PRINTFORMW 「Naah, just kidding♪」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;replaced default conditions with random since all lines pretty much fit the usual nue regardless
+SELECTCASE ARGS
+	CASE "missionary"
+		IF TFLAG:193 && RAND:2 ;standing, added from ym
+			IF RAND:2
+				PRINTFORMW 「Doing it like this is a bit scary, but... When I feel you supporting me, I kinda start liking it more and more.」
+				PRINTFORMW 「%RANDKISS("kiss")%... Ehehe, we're always in close reach for a kiss like this too after all-- %MOAN("m")%?!!!」
+				PRINTFORMW 「W-Wait, no, don't start thrusting so deeply all of a sudden... %MOAN()%!」
+			ELSE
+				PRINTFORMW 「Ah, wait, I'm scared... Let go!!! Aaaahhhh?! No, stop, I changed my mind, keep holding me!!!」
+				CALL PRINT_DIALOGUE, @"That was a close call...! %FSYN("hii")%?! Nooo, you bully, I'm gonna fall! And don't thrust it into me while doing that!", "w"
+				PRINTFORMW 「I'm gonna fall, I'm gonna drop on the floor... Aaaahhhh!!!」
+			ENDIF
+			RETURN 1
+		ENDIF
+		
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORMW 「%MOAN()%...! Fufu, look at you thoroughly enjoying this experience... What a cute fella you are♪」
+				PRINTFORMDW Nue smirks at the sight of you chasing after pleasure...
+			CASE 1
+				PRINTFORMW 「%MOAN("m")%...! %MOAN("m")%, wait, don't... Not so deep!」
+				PRINTFORMW 「%MOAN("m")%, th-this is baaaad...! If you're gonna move so wildly, I'll...!!!」
+			CASE 2
+				PRINTFORMW 「A-Awesome...! Your thing, it's going... so deep...!」
+				PRINTFORMDW A glazed look comes over Nue's eyes as she tries to withstand the pleasure...
+			CASE 3 ;added from ym
+				PRINTFORMW 「%MOAN()%, %MOAN("m")%...! M-my belly feels sooo full... every time your thing enters inside me...!♪」
+				PRINTFORMW 「Keep fucking me more... Keep nourishing me more... With every bit of youuuu♪ %MOAN("m")%!!!」
+		ENDSELECT
+	CASE "doggy"
+		IF TFLAG:193 && RAND:2 ;standing, added from ym
+			PRINTFORMW 「Aaahhh...! P-Please, whatever you do, hold me close... And don't let go!」
+			PRINTFORMDW Following her wishes, you embrace Nue's body tightly as her wings begin winding and wiggling, as if trying to wrap around you.
+			CALL PRINT_DIALOGUE, @"Ufufu, gotcha♪ I'm not gonna let go till you creampie me, y'hear?――%MOAN("m")%!♪ Moooore, give me moooore of that!♪", "w"
+			RETURN 1
+		ENDIF
+		
+		SELECTCASE RAND:4 ;added from ym
+			CASE 0
+				PRINTFORMW 「Oh dear, I can feel it...! I'm just like... an animal right now...! %MOAN()%!」
+				PRINTFORMW 「I'm getting fucked so deeply like an animal...! I'm gonna turn into a lewd beast... an injuu!」
+				PRINTFORMW 「%MOAN("m")%, a beastly sex like this is just too goooood♪」
+			CASE 1
+				PRINTFORMW 「%MOAN(,,3)%, %MASTERNAME:41%...! You're soooo rough...!♪」
+				CALL HPH_PRINT(@"「Let's enjoy ourselves as much as we caaaanHPH Keep fucking me like an animalHPH」", "W")
+				PRINTFORMW 「And then... give lots of your warm stuff, shoot it deep inside me...!!!」
+			CASE 2
+				PRINTFORMW 「%MOAN(,,2)%!!! %GROAN()%! I can feel it... poking inside me!!!」
+				PRINTFORMW 「I'm getting... so dizzy... I can't even keep my thoughts straight... %MOAN("m")%...!!!」
+			CASE 3
+				PRINTFORMW 「Having sex like this... Why does it feel so good?! %MOAN()%!!!」
+				PRINTFORMW 「It's unfair... I'm getting fucked like an animal... %MOAN("m")%!!!」
+		ENDSELECT
+	CASE "lotus"
+		SELECTCASE RAND:4 ;added from ym
+			CASE 0
+				PRINTFORMW 「%RANDLIPS(,"kiss")%!!!」
+				PRINTFORMW 「So deep, it's hitting me soooo deeeeeep!♪ My pussy, it's getting stirred into mush right now!!!」
+				PRINTFORMW 「%MOAN(,,2)%...! Ah, and kisses, they're so tasty... And my clit keeps getting rubbed... This is the beeeest!」
+			CASE 1
+				PRINTFORMW 「%MOAN(,,2)%!♪ %RANDLIPS(,"kiss")%! %MOAN(,,2)%!」
+				PRINTFORMW 「Noo, wait, if you thrust so deeply, we won't be able to kiss anymoreeee♪」
+				PRINTFORMW 「I wanna make out a bit more... So no need to go at it like no tomorrow... %MOAN()%!」
+				PRINTFORMW 「C'moon, I'm telling you to stop thaaaat...!♪」
+			CASE 2
+				PRINTFORMW 「Oh dear... When you thrust inside me while looking at me so close, I...」
+				CALL HPH_PRINT(@"「I get so embarrassed, my pussy starts clenching on its ownHPH」", "W")
+				PRINTFORMW 「%RANDKISS("kiss")%?! %RANDLIPS(,"kiss")%...!♪」
+				PRINTFORMW 「This is unfaiiiiir...! If you start kissing me while you're at it, it'll go to my head too...!♪」
+			CASE 3
+				PRINTFORMW 「Your face is so close... %RANDKISS("kiss")%!」
+				PRINTFORMW 「%FSYN("lips_muffle")%... %FSYN("lips_over")%! If you'll kiss me and rub my sensitive spots like that, I'll...」
+				PRINTFORMW 「%MOAN(,,3)%...!!!」
+		ENDSELECT
+	CASE "revlotus"
+		SELECTCASE RAND:4 ;added from ym
+			CASE 0
+				CALL HPH_PRINT(@"「%MOAN()%...!!!♪ If you're gonna jam it in all at once like that, I'm gonna break...! I'm gonna break, I'm tellin' youuuuHPH」", "W")
+				PRINTFORMW 「%MOAN("m")%! My pussy, it feels soooo good right now, it's the best feeling ever...!♪」
+				PRINTFORMW 「Deeper, stronger, %MASTERNAME:41%! Keep teasing me while you thrust into my pussyyyy!」
+			CASE 1
+				PRINTFORMW 「%MOAN("m",,2)%?! This is nuts... It's already scary enough that I don't get to see your face, but also...」
+				PRINTFORMW 「Also it feels so good, I gotta say...! Mooore, make me feel even betteeeerrr!」
+			CASE 2
+				PRINTFORMW 「%MOAN(,,2)%?! If you're gonna fondle me while banging me like this... %MOAN("m")%!!!」
+				PRINTFORMW 「%MOAN("m")%!!! Make it stooop, I'm gonna break, I'm breakiiiing...! Smashing my entire body like this... %MOAN()%!!!」
+			CASE 3
+				CALL PRINT_DIALOGUE, @"Aahh, you rascal, I felt that! You're using this chance to run your hands all over my wings, aren't you?! Ya peeerv!♪", "w"
+				PRINTFORMW 「Oh no, wait, don't...! %MOAN("m")%!!! Not the base, it's very sensitive...! It's my weak spot...!!!」
+		ENDSELECT
+	CASE "cow"
+		IF NOWEX:MASTER:射精 ;added
+			PRINTFORMDW Feeling how you throb inside her harder and harder, Nue suddenly picks up the pace.
+			PRINTFORMDW Moving her hips up and down, she's grinding you into the mattress.
+			PRINTFORMDW Her walls undulate around your shaft, wrapping around it and conforming to its shape.
+			PRINTFORMW 「Yes... Cum for me... Don't hold back...♪」
+			PRINTFORMDW Nue whispers, wiggling her butt on top of you.
+			CALL HPH_PRINT(@"「I'm gonna give you the best orgasm ever...HPH」", "W")
+			PRINTFORMDW She then hugs your head as she rides you desperately, slamming her hips with all her might...
+			RETURN 1
+		ENDIF
+		
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTFORMW 「%MOAN(,,2,"dot")%...! Amazi...ng...! It's %SPLIT_G("hitting me... all the way:reaching my... deepest parts")%...!」
+				PRINTFORMW 「Nghoo, stop...! Don't just start thrusting from below...!」
+			CASE 1
+				PRINTFORMW 「Kuku...! Pray tell, how does it feel to be inside my vagina?」
+				PRINTFORMW 「That has gotta feel good, obviously. Your %FSYN("penis")% is going absolutely crazy right now after all!」
+			CASE 2
+				PRINTFORMW 「C'mon, hurry up and empty your balls inside me!」
+				PRINTFORMW 「I want you to pour all of your %SEMEN(MASTER,1)% straight into my womb!」
+			CASE 3 ;added
+				PRINTFORMW 「Mmm... Thank you for the meaaaaal, ehehe～ %MOAN()%, %MOAN("m", 1)%!!!」
+				PRINTFORMW 「It's so nice and firm, I loooove it... It's so delicious, so yummy...! I can't stop moving my hips♪」
+		ENDSELECT
+	;added anal from ym
+	CASE "Amissionary", "Adoggy", "Alotus", "Arevlotus", "Acow"
+		IF PALAM:潤滑 < PALAMLV:3
+			IF RAND:2
+				PRINTFORMW 「%GROAN()%...! W-Wait, not yet, I can't...! %GROAN(,,2)%...?!!!」
+				PRINTFORMW 「%GROAN()%...! S-Sorry about that... This must be... hurting you too...」
+				PRINTFORMW 「I-I'll try to get it wet soon, so... I promise you, it's gonna feel better, so... Don't pull out yet!」
+			ELSE
+				PRINTFORMW 「%GROAN(,,2)%! Wait, no, don't shove, it hurts...! Owwww...!!!」
+				PRINTFORMW 「I'll... do it on my own, so... don't be so impatient...! %GROAN()%!!!」
+			ENDIF
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					CALL PRINT_DIALOGUE, @"%MOAN("m")%!!! Oh nooo... This is supposed to be the wrong hole, the hole that's not for making babies, and yet...!!!", "w"
+					CALL PRINT_DIALOGUE, @"Why... Why does it feel so good... No, I'm scared! If my butt starts feeling this good, then my pussy will... it will become useless... %MOAN("m")%...!!!", "w"
+				CASE 1
+					PRINTFORMW 「%MOAN("m")%!♪ No, I... I...! I'm so ashamed to admit, but this... really feels good... %MOAN("m")%♪」
+					CALL PRINT_DIALOGUE, @"Oh no, I can't keep my voice down anymore...! Nooo, shtooooop♪ Don't thrust in there anymoooore! You'll mess up my heaaaad♪", "w"
+				 CASE 2
+					;mine
+					PRINTFORMDW You keep slamming against Nue's soft butt with every thrust.
+					PRINTFORMW 「Ahaha～ You really are in love with my butt, aren't you %MASTERNAME:41%?」
+					PRINTFORMW 「Specially for you, I'll let you enjoy it as much as you want! Be thankful♪」
+					PRINTFORMW 「%MOAN(,,3,"dot")%...! I don't want to like it, but... It feels so good too...!」
+			ENDSELECT
+		ENDIF
+ENDSELECT
+
+RETURN 1
+
+;based on 69535256 pixiv gallery
+;K41_FudeOroshi flag: 1 intro before action starts, 2 description after the action, 3 cum
+@K41_DOUTEI(ARGS)
+PRINTFORML
+CALL M_KOJO_COLOR_K41
+SELECTCASE ARGS
+	CASE "intro"
+		GOTO INTRO
+	CASE "sex"
+		GOTO SEX
+	CASE "cum"
+		GOTO CUM
+	CASE "end"
+		GOTO END
+ENDSELECT
+RETURN 0
+
+; IF CFLAG:生解禁 < 2
+	; K41_TempPerm = CFLAG:生解禁
+	; CFLAG:生解禁 = 2
+; ENDIF
+$INTRO
+SELECTCOM = TFLAG:3
+PRINTFORMDW Upon hearing your request, Nue suddenly flashes a predatory grin.
+PRINTFORMW 「Heh... So this is it, eh? You finally found the courage to ask me to have sex with you?」
+PRINTFORMDW She chuckles, watching your reaction.
+PRINTFORMW 「Very well, I don't mind... Relax, I won't bite ya. That part comes later, kukuku...」
+;SIF K41_TempPerm
+;	PRINTFORMW 「Specially for you, I'll let you do me raw today all you want. Well, aren't you glad?」
+PRINTFORML
+IF IS_SELECTCOM("後背位")
+	PRINTFORMDW %BREAKENG(@"Nue gets on all fours and spreads her buttcheeks a bit. She then looks back at you with a grin and wiggles her butt, taunting you.")%
+ELSEIF IS_SELECTCOM("対面座位/背面座位")
+	PRINTFORMDW %BREAKENG(@"Nue sits on your lap as she hugs you by the neck\@ IS_SELECTCOM("背面座位") ? %" "%while leaning back #\@. You can feel her warmth and her breathing brushing up against your skin, while your naughty bits are already touching a little.")%
+ELSEIF IS_SELECTCOM("騎乗位")
+	PRINTFORMDW %BREAKENG(@"Nue gets on top of you, looking very satisfied of herself as she lets your member brush against her thighs and her slit, eliciting a soft gasp from you.")%
+ELSE
+	;missionary etc
+	PRINTFORMDW %BREAKENG(@"Nue lies on her back and spreads her legs before you, with a look of smugness all over her face. You grab her by the ankles and position yourself in front of her, ready to penetrate.")%
+ENDIF
+PRINTFORMW 「Ku-ku-ku...♪ C'mon, no need to get that nervous, I'm gonna be gentle with ya♪」
+;lover
+IF TALENT:恋人
+	CALL HPH_PRINT(@"「I'm your girlfriend, remember? This is what lovers do. They have lots of wild, unrestrained sex...HPH」", "W")
+	PRINTFORMW 「I was patiently waiting for you to prepare yourself, and now that you're ready to consummate our relationship...」
+	PRINTFORMW 「It makes me sooo happy! It's a new chapter for us, and I hope it'll go well...♪」
+ELSEIF TALENT:恋慕
+	;love
+	PRINTFORMW 「Though I might be rushing things a bit. But you were the one who asked for this, so it should be okay, right?」
+	PRINTFORMW 「Ah, I'm glad... As long as you don't get mad at me, I'll accept whatever happens next.」
+ELSE
+	PRINTFORMW 「Say, you really wanted to have sex with me this entire time, right %MASTERNAME:41%?」
+	PRINTFORMW 「I saw you always staring at my thighs and trying to catch a glimpse under my skirt after all.」
+	PRINTFORMDW Seeing you getting flustered again, Nue lets out a chuckle.
+	CALL PRINT_DIALOGUE, @"Heh, it's fine, I don't mind. I was interested in you as well after all. Who knew we'd get so close this quickly...", "w"
+ENDIF
+CALL HPH_PRINT(@"「Specially for you, I'll show you now... what my true form is when I'm having sex...HPH」", "W")
+PRINTFORMDW Seeing your member spring into action at her words, Nue giggles again.
+PRINTFORMW 「Aha♪ Looks like you're already finding it unbearable, with that raging hard-on going and all...」
+PRINTFORML
+PRINTFORMW 「Hey, %MASTERNAME:41%... You're a virgin, aren't you?」
+CALL PRINT_DIALOGUE, @"There's no shame in that, it's fine! \@ MAIN_MAP == 1 ? You're a monk at our temple after all, and I'm gonna corrupt you alright... # Being a great youkai that I am, Nue-sama can see through it all!\@", "w"
+PRINTFORMW 「Starting right now, I'll be giving you a once in a lifetime experience that is still unknown to you...」
+CALL HPH_PRINT(@"「C'mere now, %MASTERNAME:41%...HPH」", "W")
+;missionary, doggy
+IF IS_SELECTCOM("正常位/後背位")
+	PRINTFORMDW Giving you a nod, you prepare to push yourself inside Nue... Though you find yourself struggling a little bit.
+	PRINTFORMW 「A little bit lower... Aahn! Patience, you're gonna make it...」
+ELSE
+	PRINTFORMDW Carefully gripping your %TINKO()%, Nue gently rubs it against her slit as more and more of your tip gradually disappears inside her.
+	PRINTFORMW 「Mmm... Even rubbing it a little like that is already starting to feel good...」
+ENDIF
+CALL HPH_PRINT(@"「Just thinking about how I'm gonna break in a fresh virgin dick in a moment is getting me all wet...HPH」", "W")
+PALAM:潤滑 += 3000
+PRINTFORML
+PRINTFORMDW With the set up out of the way, Nue stops just before one last remaining push.
+CALL HPH_PRINT(@"「Ah, t-there... That's the spot... I'll give you the honors, %MASTERNAME:41%HPH」", "W")
+CALL HPH_PRINT(@"「Go ahead, and... jam it in, all the way...HPH」", "W")
+K41_FudeOroshi = 1
+RESETCOLOR
+RETURN 1
+
+;sex part
+$SEX
+CALL HPH_PRINT(@"「Aaahnnn!HPH」", "W")
+PRINTFORMW 「Yay, I did it♪」
+CALL HPH_PRINT(@"「I got %MASTERNAME:41%'s virginityHPH」", "W")
+PRINTFORML
+CALL HPH_PRINT(@"「Kudos on having your cherry popped, %MASTERNAME:41%♪ This is your big momentHPH」", "W")
+CALL HPH_PRINT(@"「Well, how's it? It feels all warm and tight inside me, right?HPH」", "W")
+PRINTFORMW 「How does it feel, having your virginity stolen by an unidentified youkai?♪」
+PRINTFORMDW The unknown sensation overcoming you is making you shudder, as you stay still for a bit, lodged deep inside her.
+PRINTFORMDW Every single inch of you is bathed in warmth and pleasure, and you barely even started yet.
+PRINTFORML
+CALL HPH_PRINT(@"「As for graduation present, I'm gonna tell you something nice...HPH」", "W")
+CALL HPH_PRINT(@"「I'll let you cum inside me all you want! Who knows, you might even knock me up with this...HPH」", "W")
+PRINTFORMW 「Well, how about it? Would you like to pack my pussy with your sperm?」
+PRINTFORML
+PRINTFORMDW Hearing that, you pull away a bit before slamming your member back in.
+PRINTFORML
+CALL HPH_PRINT(@"「Aah, that's the spiritHPH It's only fair, right?」", "W")
+PRINTFORMW 「You'd like to pump your virgin sperm inside of a girl for your first time, right?」
+PRINTFORMW 「Fufu... The thrill of knowing that I might as well be inseminated and bear
+CALL HPH_PRINT(@"　an unidentified child after this is making my pussy overflow nonstopHPH」", "W")
+CALL HPH_PRINT(@"「That's why I thought it'd be great to have your raw dick inside me without any contraception, you knowHPH」", "W")
+PRINTFORML
+PRINTFORMDW %BREAKENG(@"As you get used to the sensation, you gradually pick up the pace and find the comfortable rhythm, bucking your hips back and forth.")%
+PRINTFORML
+CALL HPH_PRINT(@"「Aah, aahnnHPH See, I knew itHPH」", "W")
+CALL HPH_PRINT(@"「You're getting aaaall eager because your dick is dying to ejaculate inside of meHPH」", "W")
+CALL HPH_PRINT(@"「My tight pussy's gonna get carved after your shape at this rate...HPH」", "W")
+
+;set up orgasm for both right away
+CALLF IKISOU() ;for master
+PALAM:快Ｖ += 9999 ;for nue
+K41_FudeOroshi = 2
+RETURN 1
+
+;orgasm
+$CUM
+PRINTFORMDW Feeling yourself getting closer, you get hilted inside of Nue and press against her cervix.
+CALL HPH_PRINT(@"「T-There it isssHPH」", "W")
+CALL HPH_PRINT(@"「Your glans is making out with the entrance to my womb right nowHPH」", "W")
+CALL HPH_PRINT(@"「Can you feel it? This firm sensation you get at the end of your tip is my womb right now...HPH」", "W")
+CALL HPH_PRINT(@"「This is where you're gonna be spurting all of your baby batter shortly, inside of my baby roomHPH」", "W")
+PRINTFORML
+PRINTFORMDW Getting impatient, you grab Nue by her hips and shove yourself even deeper, feeling her cervix spread under the pressure.
+PRINTFORML
+PRINTFORMW 「Hnghh... Ahh! You're stretching out... my cervix...!」
+PRINTFORMW 「F-Fine then... Bring it on!」
+PRINTFORMW 「Don't even think about pulling out, just dump all of your semen deep inside of me!」
+PRINTFORMW 「Let all of your pent up emotions pour out and spray all over my womb!」
+PRINTFORML
+PRINTFORMW 「It's fine... even if I get pregnant! I'll bear this kid for you, I'll make sure of it...!」
+PRINTFORMW 「So go ahead and inseminate me... with your unidentified sperm!!!」
+PRINTFORML
+PRINTFORMDW %BREAKENG(@"Hearing Nue squeal like that flips the switch inside of you as you begin to unleash your semen inside of her, ensuring that every drop finds its way inside her womb...")%
+PRINTFORMW 「Aahnnn, thereeee, it's coming, it's pouring insiiiiide...!!! I'm... I'm cumming!!!」
+PRINTFORMDW You can feel Nue's vagina wrap around your entire length, almost squeezing you dry in the middle of your ejaculation.
+CALL HPH_PRINT(@"「I can feel it! Your virgin sperm, so desperate to impregnate a girl, is filling me up right now!!!HPH」", "W")
+CALL HPH_PRINT(@"「This thick, hot, dangerous seed... Is quenching my womb, splashing inside!HPH」", "W")
+PRINTFORML
+PRINTFORMDW %BREAKENG(@"Overcome with pleasure, it doesn't take long for the second one to come pounding through before your first ejaculation was finished.")%
+PRINTFORML
+CALL HPH_PRINT(@"「Aahh... AahhHPH You're... ejaculating againHPH Amazing...HPH」", "W")
+CALL HPH_PRINT(@"「My womb is overflowing with your stuff now for sureHPH」", "W")
+PRINTFORMW 「Your dick keeps throbbing so wildly with every spurt...」
+CALL HPH_PRINT(@"「As if saying just how much it wants to fertilize me, how much it wants to get me pregnant...HPH」", "W")
+PRINTFORML
+PRINTFORMDW %BREAKENG(@"Feeling content, you slowly start to pull out, though the temptation of staying inside her a little bit longer makes it a lot harder.")%
+PRINTFORML
+CALL HPH_PRINT(@"「Aahn...HPH You came so fast, didn't you... And there's so much of it...」", "W")
+CALL HPH_PRINT(@"「Still, I never thought you'd slam your tip against my cervix and ejaculate directly inside, you're nuts...HPH」", "W")
+PRINTFORMW 「And then, I never expected that sex from a virgin would make me cum like that...」
+CALL HPH_PRINT(@"「Even though it was a long time since I've got to feel this good...HPH」", "W")
+PRINTFORML
+PRINTFORMDW You both wheeze, looking at each other.
+PRINTFORML
+PRINTFORMW 「You've got some serious firepower hidden under that unassuming appearance, %MASTERNAME:41%...」
+PRINTFORMW 「It was your first time, yet not only you made this Nue-sama orgasm, you also probably knocked me up with this...」
+PRINTFORMW 「Having such a dangerous, impregnating and sure-shot technique like that under your belt...
+CALL HPH_PRINT(@"　Is simply cheatiiiingHPH」", "W")
+PRINTFORML
+PRINTFORMDW About to pull out, Nue notices just how hard you are after all this.
+PRINTFORML
+PRINTFORMW 「Mm...! Wow, even after that insane performance, you're not a little bit spent there, %MASTERNAME:41%...」
+PRINTFORMW 「That's right... Pull it out slowly... Let my folds congratulate you on your way out...」
+PRINTFORMW 「And let this wonderful first experience... be forever ingrained into your dick...」
+CALL PRINT_DIALOGUE, @"After all, I ought to have my pussy forever remember the dick that most likely made me a mother and made a father out of you too...", "w"
+PRINTFORML
+PRINTFORMDW %BREAKENG(@"You finally pull out, your dick is throbbing and full of excitement, still wet with the mix of Nue's hot pussy juices and your sperm that you relentlessly filled her with.")%
+PRINTFORML
+CALL HPH_PRINT(@"「Nhaaa...HPH Heh, look at you filling me up to the brim there...」", "W")
+CALL HPH_PRINT(@"「It's leaking out of my womb with such a lewd sound right nowHPH」", "W")
+
+K41_FudeOroshi = 3
+RETURN 1
+
+$END
+PRINTFORMW 「Haaa... This place is full of your manly scent right now...」
+CALL HPH_PRINT(@"「I can't believe that all of it came from the sperm you pumped inside me, turns out it was just that thickHPH」", "W")
+PRINTFORML
+PRINTFORMDW You hug Nue and pat her on the head.
+CALL HPH_PRINT(@"「Yeah... I enjoyed popping your cherry...HPH」", "W")
+PRINTFORMW 「A freshly broken in dick... it doesn't get any better than this!」
+PRINTFORMW 「How about you? Did you enjoy my pussy? It felt good, yeah?」
+PRINTFORMW 「Fufu, I'm glad... Come see me time to time after this, alright?♪」
+CALL HPH_PRINT(@"「You're always welcome, %MASTERNAME:41%...HPH I will make sure you won't regret choosing me as your firstHPH」", "W")
+
+K41_FudeOroshi = 4
+CALLF FIRSTTIME("NueFudeOroshi", , 41)
+RETURN 1
+
+;clear trailing flags/etc
+@EVENTEND
+#LATER
+; IF K41_TempPerm
+	; CFLAG:41:生解禁 = K41_TempPerm
+	; K41_TempPerm = 0
+; ENDIF
+
+K41_FudeOroshi = 0

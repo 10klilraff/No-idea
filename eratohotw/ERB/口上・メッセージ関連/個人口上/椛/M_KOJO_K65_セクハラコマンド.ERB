@@ -1,0 +1,1088 @@
+﻿;
+;セクハラ系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;310,尻を撫でる
+;TFLAG:193(1=不快(TALENT:臆病なら涙目) 2&&3=恥ずかしがる(TALENT:男嫌い兼MASTERが男なら、身をすくめる) 4=されるがまま)
+;CFLAG:うふふ==2&&TCVAR:20(パンツ無し顔面騎乗(70=クンニ強制 71=フェラチオ強制 72=アナル奉仕) 35=スカート内見せつけ 52=素股)
+;CFLAG:うふふ==2&&TEQUIP:シックスナイン(パンツありTCVAR:20(70～72)はこちら)
+;PREVCOM(305=膝枕
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_310
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_310_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_310_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSEIF CFLAG:睡眠
+	ELSE
+		IF TCVAR:発情
+			IF CFLAG:既成事実 & 合意_うふふ
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Ahn～, Sheesh...」
+						PRINTFORMDW Momiji stares at you while her eyes darken with lust...
+					CASE 1
+						PRINTFORML 「Ha, Fuu～, Mnn...」
+						PRINTFORMDW Momiji lets out a hot sigh as you caress her petite ass.
+					CASE 2
+						CALL HPH_PRINT,@"「Kuu～, Nn... %CALLNAME:MASTER%-san...HPH」","L"
+						PRINTFORMDW Momiji leans against you, grinding her body into yours as you grope her.
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「No, Stop that...」
+						PRINTFORMDW Momiji's eyes fill with tears as she endures your groping fingers on her backside...
+					CASE 1
+						PRINTFORML 「FuaaAAa...!」
+						PRINTFORMDW Deep in her heat, Momiji can't stand the creepy pleasure crawling around her ass, and she lets out a screech...
+				ENDSELECT
+			ENDIF
+		;膝枕直後
+		ELSEIF PREVCOM == 305
+			PRINTFORMW 「Hiya...! Could you please stop doing stuff like that...?」
+		ELSEIF TALENT:恋慕 && RAND:4 > 0
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Kyu～! You want to do that all of a sudden?」
+					PRINTFORML 「Eh... I don't hate it, I guess... Wah...%FSYN("lips_muffle")%, Mnn... Sheesh, I swear...」
+					PRINTFORMDW You thoroughly enjoy fondling Momiji's pert asscheeks to your heart's content.
+				CASE 1
+					PRINTFORML 「Haa～, %FSYN("lips_muffle")%, Mnnn...」
+					PRINTFORMDW Momiji lets out a hot sigh as you caress her petite ass.
+				CASE 2
+					PRINTFORML 「Please cut out that kind of mischief.」
+					PRINTFORMDW Momiji shyly glances around, but she never pulls away from your caress...
+			ENDSELECT
+		ELSE
+			SELECTCASE TFLAG:193
+				;不快
+				CASE 1
+					PRINTFORML 「Please stop that!」
+					PRINTFORMDW Momiji slaps away your hand.
+				;恥ずかしがる
+				CASE 2,3
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「Uhh... Just...」
+						CASE 1
+							PRINTFORMW 「Th-This is embarrassing, so...」
+					ENDSELECT
+				;されるがまま
+				CASE 4
+					PRINTFORML 「Ku, %FSYN("lips_muffle")%...」
+					PRINTFORMDW Momiji twists around slightly and stares at you, as if waiting for you to apologize.
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;311,抱き付く
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;CFLAG:うふふ==2&&TCVAR:20(32=前から抱きつく 60=ディープキス 73=ぱふぱふ 74=乳合わせ 77=乳を吸わせる ＶＡ性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ) 86=だいしゅきホールド)
+;
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_311
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_311_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_311_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSEIF CHK_DATENOW(CFLAG:LOCAL:デート中)
+	ELSEIF CFLAG:睡眠
+	ELSE
+		IF CFLAG:うふふ == 2
+			SELECTCASE TCVAR:20
+				;ディープキス
+				CASE 60
+					PRINTFORMDL You hug Momiji tightly while the two of you sloppily make out, and she returns your hug happily... 
+					CALL HPH_PRINT,@"「Nfu, %RANDLIPS(,"kiss")%, Puaa～... Umm, One more time... Mmmn, Chuu～...HPH」","W"
+				;だいしゅきホールド
+				CASE 86
+					CALL HPH_PRINT,@"「Nn! HPH Ah! HPH More! HPH More～! HPH」","L"
+					PRINTFORMDW As you hug her tightly to you and slam into her tight pussy, Momiji screams excitedly and works her own hips in time with your rhythm.
+				CASEELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「Haa... %CALLNAME:MASTER%-san is warm...」
+						CASE 1
+							PRINTFORMW 「Hold me tight, even harder please...」
+					ENDSELECT
+					
+			ENDSELECT
+		ELSEIF TALENT:恋人 && RAND:2
+			IF TCVAR:発情
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「%MOAN()%, %FSYN("lips_muffle")%HPH %FSYN("lips_muffle")%HPH... Um, %CALLNAME:MASTER%-san...HPH」","L"
+						PRINTFORMDW While you're hugging her Momiji squirms in your grasp, rubbing her thighs together needily...
+					CASE 1
+						CALL HPH_PRINT,@"「%MOAN()%...%FSYN("lips_muffle")%HPH %FSYN("lips_muffle")%HPH... Haa～...HPH」","L"
+						PRINTFORMDW While you hug, Momiji strokes your back with her soft hands...
+						SIF RAND:3 == 0
+							PRINTFORMDW Momiji grinds herself against you, as if she's trying to mark you with her scent...
+				ENDSELECT
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Nn...HPH」","L"
+						PRINTFORMW 「I want to do this all the time...」
+					CASE 1
+						PRINTFORML 「Un～♪」
+						CALL HPH_PRINT,@"「Please hug me... More and more...HPH」","W"
+				ENDSELECT
+			ENDIF
+		ELSEIF TALENT:恋慕
+			IF TCVAR:発情
+				IF BASE:MASTER:勃起 > 999 && CFLAG:既成事実 > 0 && RAND:2 == 0
+					PRINTFORML 「Aha, %CALLNAME:MASTER%-san, your little guy got like this...」
+					PRINTFORML %CALLNAME:MASTER%の勃起に気づいた椛は、嬉しそうに身体を寄せ付けてきた。
+					CALL HPH_PRINT,@"「Hey, would you like to go somewhere a bit more...private...?HPH」","W"
+				ELSE
+					PRINTFORML （Just being hugged like this makes my stomach do backflips...）
+					PRINTFORMW （...%CALLNAME:MASTER%-san wants it, and my whole body is aching...）
+				ENDIF
+			ELSE
+				IF BASE:MASTER:勃起 > 999 && CFLAG:既成事実 > 0 && RAND:2 == 0
+					PRINTFORMW 「Umm, %CALLNAME:MASTER%-san... There's something hard poking me...」
+					PRINTFORMDW Momiji fidgets as she senses your erect penis, starting to tent your clothes...
+					SIF PALAM:欲情 >= PALAMLV:4
+						PRINTFORMW （Uuu... I'm feeling weird too...）
+				ELSE
+					SELECTCASE RAND:3
+						CASE 0
+							CALL HPH_PRINT,@"「Nn... HPH」","L"
+							PRINTFORMW 「%CALLNAME:MASTER%-san, you smell good...」
+						CASE 1
+							PRINTFORMW 「Ehehe, %CALLNAME:MASTER%-san, you're warm...」
+						CASE 2
+							PRINTFORML 「%CALLNAME:MASTER%-san...」
+							PRINTFORMDW Momiji buries her head in your chest...
+					ENDSELECT
+				ENDIF
+
+			ENDIF
+		ELSEIF TALENT:思慕
+			IF TCVAR:発情
+				PRINTFORML 「Uh, Umm...」
+				PRINTFORMDW Momiji rubs her thighs together, squirming...
+			ELSE
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Uu...」
+						PRINTFORMDW Momiji blushes, but doesn't make a move.
+					CASE 1
+						PRINTFORMDW Momiji slowly puts an arm around you and lightly returns your hug...
+				ENDSELECT
+			ENDIF
+		;・非陥落時
+		;親密>5 突然の事に驚いたのかじたばたと身体を揺らしている…
+		ELSEIF ABL:親密 > 5
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Wh-What are you doing all of a sudden...?」
+					PRINTFORMDW Momiji is confused by your hug from out of the blue.
+				CASE 1
+					PRINTFORML 「Uu...」
+					PRINTFORMDW Momiji seems to be having trouble figuring out how to react, but she's not running away.
+			ENDSELECT
+		;親密<=5 大声を上げて%CALLNAME:MASTER%を突き飛ばした
+		ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 「Kyaa!? P-Please don't surprise me like that!」
+			CASE 1
+				PRINTFORML 「Kyaa!?」
+				PRINTFORMDL Surprised from suddenly being hugged from behind, Momiji elbows you right in the stomach with a clean hit...
+				PRINTFORMW 「A-Are you okay!?」
+		ENDSELECT
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;312,キスする
+;TFLAG:193(99=拒絶(キス不可) 1=大成功 0=成功 -1=失敗)
+;CFLAG:うふふ==2&&TCVAR:20(32=前から抱きつく 50=手淫 60=キス 性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ) 86=だいしゅきホールド)
+;PREVCOM(305=膝枕
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_312
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_312_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_312_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70	
+	ELSEIF CFLAG:睡眠
+	ELSEIF CFLAG:TARGET:添い寝中
+		PRINTFORML 「Nn...」
+		CALL HPH_PRINT,@"「Ehehe...HPH」","W"
+	;拒絶
+	ELSEIF TFLAG:193 == 99
+		PRINTFORML 「A-Aren't you getting a bit too close?」
+		PRINTFORMDW Momiji takes a step back and stares doubtfully at you...
+	ELSE
+		;初めて
+		IF FIRSTTIME(SELECTCOM)
+			;デートキスイベント済み
+			IF EXP:TARGET:キス経験 > 1
+				PRINTFORML 「Nn...」
+				PRINTFORML 「...This is my first kiss with %CALLNAME:MASTER%-san...」
+				PRINTFORMW 「Ehehe, it makes me happy!」
+			ELSE
+				PRINTFORML 「Nn..!?」
+				PRINTFORML 「T-To suddenly just...!?」
+				PRINTFORML （Ah, was that my first kiss...?）
+				PRINTFORMDW Momiji sits with a dazed expression as she touches her lips.
+			ENDIF
+		ELSEIF CFLAG:うふふ == 2
+			SELECTCASE TCVAR:20
+				;だいしゅきホールド
+				CASE 86
+					CALL HPH_PRINT,@"「Hmn!? %RANDKISS("kiss")%... %RANDKISS("kiss")%, Chuuu～HPH」","L"
+					PRINTFORMDL When you kiss her in response to her forceful hug, 
+					PRINTFORMDW Momiji holds her breath and glues her lips to yours, eagerly exploring the inside of your mouth...
+				;キス
+				CASE 60
+					CALL HPH_PRINT,@"「Nnn, Nmom, Fufu... Chuu, %RANDKISS("kiss")%HPH %RANDKISS("kiss")%, Lick lick...HPH」","L"
+					PRINTFORMDW When you respond to the kiss, Momiji pushes her tongue inside your mouth...
+				CASEELSE
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORML 「%RANDKISS("kiss")%, Kiss, %RANDKISS("kiss")%...」
+							PRINTFORMDW Momiji is enraptured in kissing you.
+						CASE 1
+							CALL HPH_PRINT,@"「Nnn, Fuah... Kissing feels so good...HPH %RANDKISS("kiss")%, %RANDKISS("kiss")%...」","W"
+					ENDSELECT
+			ENDSELECT
+		ELSEIF TCVAR:発情
+			SELECTCASE RAND:2
+				CASE 0
+					CALL HPH_PRINT,@"「Haah, %CALLNAME:MASTER%-san, %RANDKISS("kiss")%, %RANDKISS("kiss")%...HPH」","L"
+					PRINTFORMDW Momiji pushes her tongue inside your mouth, savoring the kiss as she coils around your tongue...
+				CASE 1
+					CALL HPH_PRINT,@"「Chuu, %RANDKISS("kiss")%, %RANDKISS("kiss")%...HPH」","L"
+					PRINTFORMW （%CALLNAME:MASTER%-san's kisses feel so good...）
+					SIF CFLAG:既成事実 & 合意_うふふ
+						PRINTFORMW （But, I can't endure much more...）
+			ENDSELECT
+		ELSEIF ABL:親密 >= 5
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Nnn, Chuu...」
+					PRINTFORMD Momiji 
+					SIF TALENT:MASTER:体型 > TALENT:65:体型
+						PRINTFORMD stands on her tiptoes as she 
+					PRINTFORMDW enjoys kissing you...
+				CASE 1
+					PRINTFORML 「Chuu... Ehehe...」
+					PRINTFORMDW Momiji blushes a bit as she smiles.
+			ENDSELECT
+		ELSE
+			PRINTFORMW 「Nnmu...!? ...Puah」
+			PRINTFORMW 「Umm, Just what was that...」
+		ENDIF
+	ENDIF
+
+ENDIF
+RETURN 1
+;==================================================
+;313,胸愛撫
+;CFLAG:うふふ==2&&TCVAR:20(27=谷間を見せる 33=胸を揉ませる 53=パイズリ(小分岐は地の文EVENT_MESSAGE_COM_セクハラ.ERB参照) 73=ぱふぱふ 77=乳を吸わせる 性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ) 86=だいしゅきホールド)
+;ABL:Ｂ感覚(2未満=性的には感じてない 5未満=多少感じてる 5以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;乳のサイズでも変わる場合があるので、地の文EVENT_MESSAGE_COM_セクハラ.ERB参照
+;台詞＋胸サイズごとのフレーバーテキストって形式が無難かしらね
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_313
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_313_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_313_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	
+	ELSEIF CFLAG:睡眠
+	
+	ELSEIF CFLAG:うふふ == 2
+		IF TCVAR:発情
+			SELECTCASE TCVAR:20
+				;胸を揉ませる
+				CASE 33
+				SELECTCASE RAND:3
+					CASE 0
+						CALL HPH_PRINT,@"「Fua, Ah... Ahhh～ HPH」","L"
+						PRINTFORMDW With eyes sparkling, Momiji presses your hands harder against her breasts...
+					CASE 1
+					;きょにゅー以上
+						IF TALENT:バストサイズ > 0
+							PRINTFORML 「Ehe, I'm pretty confident in my chest...」
+							PRINTFORMDL Momiji guides your hands, helping you knead her massive, pillowy mounds...
+							PRINTFORMDW She drools a little, with a blissful expression on her face...
+						;ひんにゅー以下
+						ELSEIF TALENT:バストサイズ < 0
+							CALL HPH_PRINT,@"「Haah...HPH M-My boobs, they feel so good...HPH」","L"
+							PRINTFORMDW Crushing her erotically erect nipples, Momiji presses your palms against her chest...
+						;ふにゅー
+						ELSE
+							CALL HPH_PRINT,@"「%CALLNAME:MASTER%-san, do it more and more...HPHHPH」","L"
+							PRINTFORMDW As you massage her petite breasts harder at her insistence, Momiji trembles with pleasure.
+						ENDIF
+					CASE 3
+						CALL HPH_PRINT,@"「HaahHPH My nipples, my nippless～! HPH」","L"
+						PRINTFORMDW You gently scratch Momiji's rock-hard nipples with a fingernail, and she screams in pleasure...
+				ENDSELECT
+				;パイズリ
+				CASE 53
+					SELECTCASE RAND:3
+						CASE 0
+							CALL HPH_PRINT,@"「Hyaun！ Hhaa～, More...HPH」","L"
+							PRINTFORMDW You bounce Momiji's breasts with your thrusting, and she keeps the pressure up while letting out squeals.
+						CASE 1
+							CALL HPH_PRINT,@"「Ahn～ HPH %CALLNAME:MASTER%-san, please cover my boobs with your scent...HPH」","W"
+						CASE 2
+							PRINTFORML 「Ahn～, I swear! I'm blaming you for whatever happens now, %CALLNAME:MASTER%-san...」
+							CALL HPH_PRINT,@"「Don't let it get out of hand, misterHPH」","W"
+					ENDSELECT
+				;乳を吸わせる
+				CASE 77
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「Fuaa～HPH If you suck my milk so much, you'll get an upset stomach...HPH」","W"
+						CASE 1
+							CALL HPH_PRINT,@"「Kya～HPH Ah, Fuaa～HPH HaahHPH MnnーHPH %CALLNAME:MASTER%-san...」","L"
+							PRINTFORMDL As you lick and roll her stiff nipples in your mouth, Momiji hugs your head and hangs on for dear life.
+							PRINTFORMDW She lets out all kinds of lewd noises, her body shaking in the throes of estrus while you suck out her milk.
+					ENDSELECT
+				;だいしゅきホールド
+				CASE 86
+					SELECTCASE BASE:PLAYER:2
+						CASE 0 TO 2999
+							PRINTFORMDL You hug Momiji tightly while deeply connected with her, and exchange a hot, messy kiss.
+							PRINTFORMDW Seemingly wanting to prolong the moment, she moves her hips slowly, gently...
+						CASE 3000 TO 9999
+							PRINTFORMDL You hug Momiji tightly while deeply connected with her, and exchange a hot, messy kiss.
+							PRINTFORMDL Momiji can't hold herself back any longer, and she begins to violently pound her crotch into yours.
+							PRINTFORMDW Love juices splatter from where the two of you connect, and obscene noises threaten to wake the neighbors...
+						CASEELSE
+							SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDL While rushing towards your climax, you clutch Momiji's tits and squeeze with all your might.
+								CALL HPH_PRINT,@"「Haa～HPH %CALLNAME:MASTER%-san...HPH %CALLNAME:MASTER%-san... HPH」","L"
+								PRINTFORMDW Her estrus converts even her pain into pleasure, and she reaches new heights of ecstasy...
+							CASE 1
+								CALL HPH_PRINT,@"「Cum!HPH Cum～!HPHHPH %CALLNAME:MASTER%-san, fill me up～!HPH」","L"
+								PRINTFORMDL Lost in pleasure, Momiji locks her legs around you and thrusts her hips all the way down.
+								PRINTFORMDW Her cervix greedily sucks on your glans, in search of your seed...
+						ENDSELECT
+					ENDSELECT
+				;その他
+				CASEELSE
+					SELECTCASE RAND:3
+						CASE 0
+							CALL HPH_PRINT,@"「Yaa～, Awoo... HPH Your way of touching me is super lewd, %CALLNAME:MASTER%-san...HPH」","L"
+							PRINTFORMDW Momiji sighs hotly every time you caress her.
+						CASE 1
+						;そういえばこの子[痛みに強い]ついてるのよね
+							CALL HPH_PRINT,@"「Ehe... It's okay if you pull them and crush them even harder...HPH」","L"
+							CALL HPH_PRINT,@"「Yank them more, squeeze them more, more, more...!HPH」","W"
+						CASE 2
+							CALL HPH_PRINT,@"「Fuaan～HPH When you lick my nipples like that, it makes my stomach churn...HPH」","W"
+					ENDSELECT
+			ENDSELECT
+		;うふふ(not発情)
+		ELSE
+			SELECTCASE TCVAR:20
+				;胸を揉ませる
+				CASE 33
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「Ya～... Pinch my nipples... Hwaa～HPH」","W"
+						CASE 1
+						;きょにゅー以上
+							IF TALENT:バストサイズ > 0
+								CALL HPH_PRINT,@"「Fufu... Please mess up my big boobies as much as you like～...HPH」","W"
+							;ひんにゅー以下
+							ELSEIF TALENT:バストサイズ < 0
+								PRINTFORML 「Nn... Can you even get excited by my little boobs...?」
+								PRINTFORMDW When you nod, Momiji bursts into tears and hugs you tightly.
+							;ふにゅー
+							ELSE
+								CALL HPH_PRINT,@"「Fufu... Please molest my titties as much as you like～...HPH」","W"
+							ENDIF
+					ENDSELECT
+				;パイズリ
+				CASE 53
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「Hiuun!? ...I swear, you're such a scampHPH」","W"
+						CASE 1
+							PRINTFORML 「Hnnn...!!」
+							PRINTFORML 「...It's okay... Please do whatever feels good, %CALLNAME:MASTER%-san...」
+							PRINTFORMW 「It only hurts a little, I'm fine...」
+					ENDSELECT
+				;だいしゅきホールド
+				CASE 86
+					SELECTCASE BASE:PLAYER:2
+						CASE 0 TO 2999
+							PRINTFORMDL You hug Momiji tightly while deeply connected with her, and exchange a hot, messy kiss.
+							PRINTFORMDW Seemingly wanting to prolong the moment, she moves her hips slowly, gently...
+						CASE 3000 TO 9999
+							PRINTFORMDL You hug Momiji tightly while deeply connected with her, and exchange a hot, messy kiss.
+							PRINTFORMDL Momiji can't hold herself back any longer, and she begins to violently pound her crotch into yours.
+							PRINTFORMDW Love juices splatter from where the two of you connect, and obscene noises threaten to wake the neighbors...
+						CASEELSE
+							SELECTCASE RAND:2
+							CASE 0
+								CALL HPH_PRINT,@"「...Ah!! If you mess with my boobs too while you're digging around inside me like this...HPH」","L"
+								IF NOWEX:TARGET:Ｖ絶頂 || NOWEX:TARGET:Ｂ絶頂
+									PRINTFORML
+									CALL HPH_PRINT,@"「You'll... Make me go %SLUR("crazy")%～...HPH」","W"
+								ELSE
+									PRINTFORMW
+								ENDIF
+							CASE 1
+									CALL HPH_PRINT,@"「～～～～Ah!! %CALLNAME:MASTER%-sanHPH %CALLNAME:MASTER%-san...HPH」","L"
+									PRINTFORMDL While rushing towards your climax, you clutch Momiji's tits and grope them roughly.
+									PRINTFORMDW Momiji lets out a sensational squeal and sinks her waist down as far as it will go...
+						ENDSELECT
+					ENDSELECT
+				;その他
+				CASEELSE
+					SELECTCASE RAND:3
+						CASE 0
+							CALL HPH_PRINT,@"「Ha, Ahh...HPH」","L"
+							PRINTFORMDW Momiji lets out a moan every time you touch her.
+						CASE 1
+							CALL HPH_PRINT,@"「Ehe, touch me more pleaseHPH」","W"
+						CASE 2
+							CALL HPH_PRINT,@"「My nipples... AhHPH」","W"
+					ENDSELECT
+			ENDSELECT
+		ENDIF
+	;うふふ中でない
+	ELSE
+		;ABL:Ｂ感覚(2未満=性的には感じてない 5未満=多少感じてる 5以上=カイカン)
+		IF TCVAR:発情
+			;「%CALLNAME:TARGET%はくすぐったそうにしている…」
+			IF ABL:Ｂ感覚 < 2
+				;きょにゅー以上
+				IF TALENT:バストサイズ > 0
+					PRINTFORMDL Your palms dig into Momiji's mommy milkers, exploring their plush depth...
+					PRINTFORMW 「Mnnn... For some reason, my boobs feel kind of itchy...」
+				;ひんにゅー以下
+				ELSEIF TALENT:バストサイズ < 0
+					PRINTFORMW 「...Fuu, Nn... Ya... They're feeling itchy...」
+				;ふにゅー
+				ELSE
+					PRINTFORMW 「Uu.... My titties feel kind of itchy...」
+				ENDIF
+			;「%CALLNAME:TARGET%は愛撫に熱い吐息を漏らし始めている…」
+			ELSEIF ABL:Ｂ感覚 < 5
+				;台詞部分　後にフレーバーテキストが続く
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Ahh～.... You have such a nice touch...HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Ahn...HPH」","L"
+						PRINTFORML 「Recently, it's been feeling even nicer when you play with my boobs...」
+						CALL HPH_PRINT,@"「It's all %CALLNAME:MASTER%-san's fault...HPH」","W"
+				ENDSELECT
+				;1/2で胸サイズに合わせたフレーバーテキスト
+				;だってロリ巨乳用のOPPAI_DESCRIPTIONがないっぽいんだもの！
+				IF RAND:2 == 0
+					PRINTFORML
+					;きょにゅー以上
+					IF TALENT:バストサイズ > 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDW Your fingertips reshape the petite wolfgirl's plump breasts according to your whims...
+							CASE 1
+								PRINTFORMDW While you play with her huge knockers, Momiji stares at you with a feverish gaze and squirms in place...
+						ENDSELECT
+					;ひんにゅー以下
+					ELSEIF TALENT:バストサイズ < 0
+						PRINTFORMDW When you place your fingertips on the points of her cute protrusions, Momiji's moans become even lustier... 
+					;ふにゅー
+					ELSE
+						PRINTFORMDW Momiji trembles as you tamper with her well-shaped breasts...
+					ENDIF
+				ELSE
+					PRINTFORMW
+				ENDIF
+			;「%CALLNAME:TARGET%はトロンとした表情になってされるがままになっている…」
+			ELSE
+				;台詞部分　後にフレーバーテキストが続く
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「Ahn～... N-No, not there, you're driving me crazy!」
+						CALL HPH_PRINT,@"「I can't stand it... Hah～, Fuu, Kuu～ HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Yah～, Haa... AhnHPH Ahh, The way you touch them is the best...HPH」","W"
+					CASE 2
+						;袖なし上着って字面を見た瞬間から隙間に手を突っ込んでもみもみしてえって思い続けてたんだよォ！
+						IF EQUIP:上半身上着１ == 1
+							PRINTFORMDL You insert your hands through the sides of Momiji's sleeveless jacket and molest her tits.
+							PRINTFORML 「Wa... You're not supposed to put your fingers through there, %CALLNAME:MASTER%-san you perv♪」
+							CALL HPH_PRINT,@"「Ah, Nha, Such a lewd touchHPH Nhu, Aah～...HPH」","W"
+						ELSE
+							CALL HPH_PRINT,@"「Fuaa～... My boobies, they feel good...HPH」","W"
+						ENDIF
+					CASE 3
+						IF CFLAG:既成事実 & 合意_うふふ
+							PRINTFORML 「Nmm... You touched me a whole lot, %CALLNAME:MASTER%-san, so I became completely sensitive...」
+							CALL HPH_PRINT,@"「Please, take responsibility...HPH」","W"
+						ELSE
+							CALL HPH_PRINT,@"「Mmn... I wouldn't mind if you grope them harder...HPH」","W"
+						ENDIF
+				ENDSELECT
+				;1/2で胸サイズに合わせたフレーバーテキスト
+				IF RAND:2 == 0
+					PRINTFORML
+					;きょにゅー以上
+					IF TALENT:バストサイズ > 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDW Entrusting her petite body to %CALLNAME:MASTER%, Momiji immerses herself in the pleasure of your ministrations...
+							CASE 1
+								PRINTFORMDW Momiji rubs her small body against you as you knead and stroke her fluffy, over-sized milk tanks...
+							CASE 2
+								PRINTFORMDW Momiji moans and sighs as you play with her overdeveloped breasts...
+						ENDSELECT
+					;ひんにゅー以下
+					ELSEIF TALENT:バストサイズ < 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDW Entrusting her petite body to %CALLNAME:MASTER%, Momiji immerses herself in the pleasure of your ministrations...
+							CASE 1
+								PRINTFORMDW When you place your fingertips on the points of her cute protrusions, Momiji jumps and squeaks cutely...
+						ENDSELECT
+					;ふにゅー
+					ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDW Entrusting her petite body to %CALLNAME:MASTER%, Momiji immerses herself in the pleasure of your ministrations...
+							CASE 1
+								PRINTFORMDW Momiji moans and sighs as you play with her perfectly sized breasts...
+						ENDSELECT
+					ENDIF
+				ELSE
+					PRINTFORMW
+				ENDIF
+			ENDIF
+		;非うふふ中かつ非発情
+		ELSE
+			;「%CALLNAME:TARGET%はくすぐったそうにしている…」
+			IF ABL:Ｂ感覚 < 2
+				;きょにゅー以上
+				IF TALENT:バストサイズ > 0
+					PRINTFORMDL Your palms dig into Momiji's mommy milkers, exploring their plush depth...
+					PRINTFORMW 「Ah, Ow... It hurts a little when you squeeze too hard...」
+				;ひんにゅー以下
+				ELSEIF TALENT:バストサイズ < 0
+					PRINTFORMW 「Iya, It can't be fun to grope such small ones...」
+				;ふにゅー
+				ELSE
+					PRINTFORMW 「Uu... They're feeling kind of itchy...」
+				ENDIF
+			;「%CALLNAME:TARGET%は愛撫に熱い吐息を漏らし始めている…」
+			ELSEIF ABL:Ｂ感覚 < 5
+				;台詞部分　後にフレーバーテキストが続く
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Fuu, Nn... W-Well... I don't like it when you touch them...」
+					CASE 1
+						PRINTFORML 「Ahn...」
+						PRINTFORML 「Eh, You made me make a strange voice...」
+				ENDSELECT
+				;1/2で胸サイズに合わせたフレーバーテキスト
+				IF RAND:2 == 0
+					PRINTFORML
+					;きょにゅー以上
+					IF TALENT:バストサイズ > 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDW Your fingertips reshape the petite wolfgirl's plump breasts according to your whims...
+							CASE 1
+								PRINTFORMDW Momiji quietly lets you fondle her over-sized milkers, sometimes writhing.
+						ENDSELECT
+					;ひんにゅー以下
+					ELSEIF TALENT:バストサイズ < 0
+						PRINTFORMDW When you place your fingertips on the points of her cute protrusions, Momiji's sighs become even rougher...
+					;ふにゅー
+					ELSE
+						PRINTFORMDW Momiji shivers as you tamper with her comely breasts...
+					ENDIF
+				ELSE
+					PRINTFORMW
+				ENDIF
+			;「%CALLNAME:TARGET%はトロンとした表情になってされるがままになっている…」
+			ELSE
+				;台詞部分　後にフレーバーテキストが続く
+				;replaced the PRINTFORMs in this section with PRINTFORML
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「Ahn～... N-No, not there, you're driving me crazy!」
+						PRINTFORML 「I...feel amazingly good right now... Hyafu, Mn, Fuu～!」
+					CASE 1
+						PRINTFORML 「Ehehe, Please love me a whole lot...」
+					CASE 2
+						;袖なし上着ってのを見た瞬間から隙間に手を突っ込んでもみもみしてえって思い続けてたんだよォ！
+						IF EQUIP:上半身上着１ == 1
+							PRINTFORMDL You insert your hands through the sides of Momiji's sleeveless jacket and molest her tits.
+							PRINTFORML 「Wa... You're not supposed to put your hand through the gap! FuaAah...!」
+						ELSE
+							PRINTFORML 「Fuaa～... My boobs feel really good...」
+						ENDIF
+					CASE 3
+						IF CFLAG:既成事実 & 合意_うふふ
+							PRINTFORML 「Nmm... You touched me a whole lot, %CALLNAME:MASTER%-san, so I became completely sensitive...」
+							CALL HPH_PRINT,@"「Please, take responsibility...HPH」","W"
+						ELSE
+							PRINTFORML 「Mmn... I wouldn't mind if you grope them harder...」
+						ENDIF
+				ENDSELECT
+				;1/2で胸サイズに合わせたフレーバーテキスト
+				IF RAND:2 == 0
+					PRINTFORML
+					;きょにゅー以上
+					IF TALENT:バストサイズ > 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDW Entrusting her petite body to you, Momiji immerses herself in the pleasure of your ministrations...
+							CASE 1
+								PRINTFORMDW Momiji rubs her small body against you as you knead and stroke her fluffy, over-sized milk tanks...
+							CASE 2
+								PRINTFORMDW Momiji moans and sighs as you play with her overdeveloped breasts...
+						ENDSELECT
+					;ひんにゅー以下
+					ELSEIF TALENT:バストサイズ < 0
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDW Entrusting her petite body to you, Momiji immerses herself in the pleasure of your ministrations...
+							CASE 1
+								PRINTFORMDW When you place your fingertips on the points of her cute protrusions, Momiji jumps and squeaks cutely...
+						ENDSELECT
+					;ふにゅー
+					ELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORMDW Entrusting her petite body to you, Momiji immerses herself in the pleasure of your ministrations...
+							CASE 1
+								PRINTFORMDW Momiji moans and sighs as you play with her perfectly sized breasts...
+						ENDSELECT
+					ENDIF
+				ELSE
+					PRINTFORMW
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;314,アナル愛撫
+;CFLAG:うふふ==2&&TCVAR:20(72=アナル奉仕
+;CFLAG:うふふ==2&&TEQUIP:シックスナイン(パンツありTCVAR:20(70～72)はこちら)
+;ABL:Ａ感覚(2未満=受け入れられない 4未満=異物感に翻弄 4以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_314
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_314_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_314_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;315,クリ愛撫
+;CFLAG:うふふ==2&&TCVAR:20(35=スカートの中を見せる 70=クンニ強制 85=Ｖ挿入する 86=だいしゅきホールド 87=Ａ挿入する 88=腰振りＶ 89=腰振り
+;ABL:Ｃ感覚(4未満=くすぐったい 6未満=ちょっといいかも 6以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;椛はＣ敏感！感覚が低くてもすぐイッちゃうんだ！
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_315
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_315_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_315_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSEIF CFLAG:睡眠
+	ELSE
+		IF CFLAG:うふふ == 2
+			;うふふ中かつ発情
+			IF TCVAR:発情
+				SELECTCASE TCVAR:20
+					;70=クンニ強制
+					CASE 70
+						CALL HPH_PRINT,@"「Afuu～, Hhaa...HPH %CALLNAME:MASTER%-san's tongue feels so good...HPH」","L"
+						PRINTFORMDW When you tongue lash her most sensitive part, Momiji convulses and presses her crotch against your face, trying to get even more...
+					CASEELSE
+						SELECTCASE RAND:2
+							CASE 0
+								CALL HPH_PRINT,@"「Kyafu, Uun, Yaa～ HPH%CALLNAME:MASTER%-sanHPH It's so goodHPH」","L"
+								PRINTFORMDW You tickle Momiji's clitty with your tongue, and she writhes happily as her weak point is stimulated...
+							CASE 1
+								CALL HPH_PRINT,@"「～～～HPH Right there!HPH I love itHPH」","W"
+						ENDSELECT
+				ENDSELECT
+			;うふふ中かつ非発情
+			ELSE
+				SELECTCASE TCVAR:20
+					;70=クンニ強制
+					CASE 70
+						PRINTFORML 「Afuu～, Mnnn...! %CALLNAME:MASTER%'s tongue, Gyaa～...!」
+						PRINTFORMDW As her sensitive pleasure bud is devoured, Momiji's tail beats the air desperately...
+					CASEELSE
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTFORML 「Hia! I'm very sensitive there...」
+								CALL HPH_PRINT,@"「Kyu, Haa, Nnn! No, don't! Don't tease me so muchHPH!」","W"
+							CASE 1
+								PRINTFORMW 「～～～A! Wai-! If you touch me there, I'll...!」
+						ENDSELECT
+				ENDSELECT
+			ENDIF
+		;うふふ中でない
+		ELSE
+			;非うふふ・発情
+			IF TCVAR:発情
+				;ABL:Ｃ感覚(4未満=くすぐったい 6未満=ちょっといいかも 6以上=カイカン)
+				IF ABL:Ｃ感覚 < 4
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「Ah, Haah～! That's sensitive! Do it more gently...」
+						CASE 1
+							CALL HPH_PRINT,@"「Kya, Uya...Ah! I can't hold on...HPH」","W"
+					ENDSELECT
+				ELSEIF ABL:Ｃ感覚 < 6
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「Kyaaun...! Oh, it's driving me crazy～!HPH」","W"
+						CASE 1
+							CALL HPH_PRINT,@"「Ha～ahn! Yaa～! If you keep messing me up like that, I'm gonna cum right awayHPH」","W"
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「Kyaaun...! It feels so good!HPH More, more～HPH」","W"
+						CASE 1
+							CALL HPH_PRINT,@"「Huuu...! This feels too good!HPH I feel like I'm flying...HPH」","L"
+							PRINTFORMDW Letting her estrus take control, Momiji grinds her pussy against your hand as you fiddle with her clit.
+					ENDSELECT
+				ENDIF
+			ELSE
+				;非うふふ・非発情
+				;ABL:Ｃ感覚(4未満=くすぐったい 6未満=ちょっといいかも 6以上=カイカン)
+				IF ABL:Ｃ感覚 < 4
+					SELECTCASE RAND:2
+						CASE 0
+							PRINTFORMW 「N-No, quit... Fah, Hnnn...!」
+						CASE 1
+							PRINTFORMW 「S-Stop messing with that spot...! Ya, Haah... Ahn～」
+					ENDSELECT
+				ELSEIF ABL:Ｃ感覚 < 6
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「N-No, not there...! If you touch there, I'm gonna...HPH」","W"
+						CASE 1
+							CALL HPH_PRINT,@"「Th-That spot, it's sensitive! ！Ahh, Kun...Higu, Uun～HPH」","W"
+					ENDSELECT
+				ELSE
+					SELECTCASE RAND:2
+						CASE 0
+							CALL HPH_PRINT,@"「No, I'm gonna...HPH Ahn...Haa, Kufuu～HPH」","L"
+							PRINTFORMDW Every time your fingers stroke her swollen button, Momiji's whole body shakes with intense pleasure...
+						CASE 1
+							CALL HPH_PRINT,@"「W-When you play with that spot! Ah...Mnnn, I feel like... I'm gonna...!HPH」","W"
+					ENDSELECT
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;316,指挿入れ
+;CFLAG:うふふ==2&&TCVAR:20(35=スカートの中を見せる 70=クンニ強制 87=Ａ挿入する 89=腰振りＡ
+;TALENT:処女(指挿入れ連続時喪失注意、基本拒否ぎみ)
+;ABL:Ｖ感覚(1未満=違和感に戸惑う 5未満=ちょっと気持ちいい 5以上＝カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_316
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_316_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_316_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF TCVAR:破瓜
+		PRINTFORML 「Uuu, Ah...」
+		PRINTFORMDL Momiji lets out a stifled moan as a thin trickle of blood flows down her thigh.
+		PRINTFORML 「......You're horrible, %CALLNAME:MASTER%-san...」
+		PRINTFORMDW Her voice quivers, and tears begin to overflow from the corners of her eyes.
+		SIF TALENT:恋慕
+			PRINTFORMW （My first time... I wanted to give it to %CALLNAME:MASTER%-san properly...）
+	ELSEIF TALENT:処女
+		PRINTFORML 「Iyaa... Stop!!」
+		PRINTFORMDL The moment your fingertips push into her entrance, Momiji screams.
+		PRINTFORM 「That is... It's my first time... So...」
+		IF TALENT:恋慕
+			PRINTFORML
+			PRINTFORMD Momiji blushes anxiously and clings to you, while staring into your eyes...
+		ENDIF
+		PRINTFORMW
+	ELSEIF CFLAG:うふふ
+		IF TCVAR:発情
+			;カイカン
+			IF ABL:Ｖ感覚 >4 && RAND:2
+				SELECTCASE RAND:2
+					CASE 0
+						IF PALAM:潤滑 >= PALAMLV:3 && RAND:3 > 0
+							CALL HPH_PRINT,@"「%MOAN(,,2,"dot")%, %FSYN("lips_muffle")%ー... %MOAN()%HPH... Awa, My belly, it's already so slimy...」","L"
+							CALL HPH_PRINT,@"「If you put your dick in me now... Mnn♪ I'm sure it'll feel good...HPH」","W"
+						ELSE
+							CALL HPH_PRINT,@"「Kyaun, Auuu～... When you rub right there, it feels amazing...HPH」","L"
+							CALL HPH_PRINT,@"「Once you're ready, please put it in and do me properly～HPH」","W"
+						ENDIF
+					CASE 1
+						CALL HPH_PRINT,@"「HaahHPH Niii～! Ah～HPH Aaaah!～～～～HPHHPH」","L"
+						PRINTFORMDW To make it easier for you to play with her secret place, Momiji spreads her legs and thrusts out her hips...
+						PRINTFORML
+						CALL HPH_PRINT,@"「%MOAN("l:m")%HPH %MOAN("l:m",,2)%HPH... No, it's no good!HPH I'm feeling it too much～!HPH」","L"
+						PRINTFORMDW ...Though she doesn't seem to be aware she's the one begging for more.
+				ENDSELECT
+			;ちょっと気持ちいい
+			ELSEIF ABL:Ｖ感覚 > 1
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Ahaa～... Your finger, feels so good... %MOAN()%, %FSYN("lips_muffle")%HPH %FSYN("lips_muffle")%...%MOAN()%HPH」","L"
+						CALL HPH_PRINT,@"「Please stir me up, loosen my hole...HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Ahh, Mn...HPH I love your fingers... Exploring the shape of my belly...HPH」","L"
+						CALL HPH_PRINT,@"「%MOAN("l:m",,2,"dot")%, %FSYN("lips_muffle")%ー... %MOAN("l:m")%HPH... Slow down, or I'm going to get addicted to this...HPH」","W"
+				ENDSELECT
+			;こなれてない
+			ELSE
+				PRINTFORML 「Ku, Nnn...」
+				PRINTFORMDW Though Momiji sighs through her nose, it seems that she's still not enjoying it as much as you'd hoped...
+			ENDIF
+		ELSE
+			;カイカン
+			IF ABL:Ｖ感覚 > 4 && RAND:2
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「NnHPH FuuーHPH Mn! Mmmmm～～～～～HPH」","L"
+						PRINTFORMDL Momiji bites her finger, trying to endure the pleasure you're fingerbanging into her...
+						CALL HPH_PRINT,@"（No～... Your finger just hit my good place... %CALLNAME:MASTER%-san...HPH）","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Ahh, Right there, that feels amazing～...HPH %MOAN("l:m")%HPH %MOAN("l:m",,2)%HPH」","L"
+						PRINTFORMDL As you plunge your fingers in and out, Momiji's hips pop up off the floor, trying to get you even deeper...
+						PRINTFORMDW Her steaming puppy-pussy secretes a waterfall of slimy juices as it squishes and squelches under your skillful strokes...
+						PRINTFORML 
+						PRINTFORML 「Hafuu～, Aah... I think I'm gonna lose to my hips...」
+						PRINTFORML 「Maybe you know my body even better than I do, %CALLNAME:MASTER%-san...」
+						CALL HPH_PRINT,@"「Hahaa!? Ah～HPH Ah～HPH Th-There, it's good...!HPH」","W"
+				ENDSELECT
+			;ちょっと気持ちいい
+			ELSEIF ABL:Ｖ感覚 > 1
+				SELECTCASE RAND:2
+					CASE 0
+						PRINTFORML 「Wa, Fuu... It feels good...」
+						PRINTFORMDW Momiji trembles slightly in response to your fingers playing with her lower lips.
+					CASE 1
+						CALL HPH_PRINT,@"「%MOAN(,,3,"dot")%HPH... %CALLNAME:MASTER%-san, wait... Ahhh～HPH」","L"
+						PRINTFORMDL As you stroke your hand through her vaginal folds, Momiji twitches and looks away shyly.
+				ENDSELECT
+			;こなれてない
+			ELSE
+				PRINTFORML 「Ku, Mnn...」
+				PRINTFORMDW Though Momiji sighs through her nose, it seems that she's still not enjoying it as much as you'd hoped...
+			ENDIF
+		ENDIF
+	;うふふ中でない
+	ELSE
+		IF TCVAR:発情
+			;カイカン
+			IF ABL:Ｖ感覚 > 4 && RAND:2
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「%MOAN("l:m",,2,"dot")%HPH %FSYN("lips_muffle")%...HPH」","L"
+						PRINTFORMDL Momiji snuggles up to you, clinging to you tightly and rubbing her body against you...
+						PRINTFORMDW She reaches down and strokes your stiffening member \@ EQUIP:MASTER:下半身下着１||EQUIP:MASTER:下半身下着２ ? through your clothes # up and down your shaft \@...
+						PRINTFORML
+						CALL HPH_PRINT,@"「Nn...HPH We're doing something so dirty...HPH」","L"
+						CALL HPH_PRINT,@"「But, it's getting me really excited...HPH %MOAN()%...%FSYN("lips_muffle")%, %FSYN("lips_muffle")%HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「%MOAN(,,2)%... AhHPH It's good... It's so good...HPH」","L"
+						CALL HPH_PRINT,@"「More, give me more...HPH」","L"
+						PRINTFORMDW Momiji grabs your arm and grinds herself into your hand to get even more pleasure...
+				ENDSELECT
+			;ちょっと気持ちいい
+			ELSEIF ABL:Ｖ感覚 > 1
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「%MOAN()%, %FSYN("lips_muffle")%HPH %MOAN("l:m")%...HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Ahn～...HPH It feels so good, it's making me want to howl...」","L"
+						CALL HPH_PRINT,@"「Hey, %CALLNAME:MASTER%-san... Can you cover my mouth with a kiss...?HPH」","W"
+				ENDSELECT
+			;こなれてない
+			ELSE
+				PRINTFORML 「Ku, Mnn...」
+				PRINTFORMDW Though Momiji sighs through her nose, it seems that she's still not enjoying it as much as you'd hoped...
+			ENDIF
+		ELSE
+			;カイカン
+			IF ABL:Ｖ感覚 >4 && RAND:2
+				SELECTCASE RAND:2
+					CASE 0
+						CALL HPH_PRINT,@"「Ah- AaaAhh～...HPH」","L"
+						PRINTFORMDL Desperately trying to suppress her leaking moans, Momiji clings to your arm and shivers...
+						;人目がある
+						IF EYEWITNESS()
+							CALL HPH_PRINT,@" 「This is... This is no good... Someone can see...HPH」","L"
+							PRINTFORMDW Momiji closes her legs tightly, trying to hide your fingertips as you overrun her secret place.
+							PRINTFORML
+							CALL HPH_PRINT,@"「%MOAN()%...%FSYN("lips_muffle")%HPH %MOAN()%, %FSYN("lips_muffle")%...HPH」","L"
+							PRINTFORMDL However, it seems that she has no intention of actually stopping you.
+							PRINTFORMDW You dig out her slippery pussy while just enjoying the soft warmth of her thighs...
+						ELSE
+							PRINTFORMDL %BREAKENG(@"Every time you squeeze her supple folds between the pads of your fingers, Momiji's body bounces and her lips leak out heated moans.")%
+							CALL HPH_PRINT,@"「Stop itt～... You'll make me want to do it even more...HPH」","W"
+						ENDIF
+					CASE 1
+						CALL HPH_PRINT,@"「%MOAN(,,2)%...AhHPH No, s-stop it nowmmMm...HPH」","L"
+						CALL HPH_PRINT,@"「...My hips, I can't control them...HPH %MOAN("m:h",,2,"dot")%HPH %MOAN("m:h")%HPH」","W"
+				ENDSELECT
+			;ちょっと気持ちいい
+			ELSEIF ABL:Ｖ感覚 > 1
+				SELECTCASE RAND:3
+					CASE 0
+						CALL HPH_PRINT,@"「%MOAN("l:m")%HPH %MOAN("l:m",,2)%HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Ahh, Mn...HPH It's no good, it's making that schlick-schlick noise... Ahhn～HPH」","L"
+						PRINTFORMDW Momiji accepts your fingers while twisting and writhing, lewd noises echoing from her crotch...
+					CASE 2
+						CALL HPH_PRINT,@"「%MOAN()%, %FSYN("lips_muffle")%HPH %FSYN("lips_muffle")%...HPH」","L"
+						;人目がある
+						IF EYEWITNESS()
+							PRINTFORMDL Momiji looks around nervously while her wolf ears rotate all around like little radar dishes...
+							PRINTFORMW 「It's terrible... Wa! Auu... If someone notices... Nn! What are we going to do...」
+						ELSE
+							PRINTFORMDL Momiji closes her eyes tightly and concentrates on the pleasure being lavished on her secret place...
+							PRINTFORMW 「You're stirring me up like a typhoon, %CALLNAME:MASTER%-san... Haa～... It feels... Amazing...」
+						ENDIF
+				ENDSELECT
+			;こなれてない
+			ELSE
+				PRINTFORML 「Ku, Mnn...」
+				PRINTFORMDW Though Momiji sighs through her nose, it seems that she's still not enjoying it as much as you'd hoped...
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;317,Ｖ腰を振る
+;ABL:Ｖ感覚(2未満=まだ気持ち良くない 5未満=ちょっと気持ちいい 5以上=カイカン
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_317
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_317_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_317_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+
+ENDIF
+RETURN 1
+;==================================================
+;318,Ａ腰を振る（現状存在せず
+;==================================================
+;@M_KOJO_MESSAGE_COM_K65_318
+;CALL TRAIN_MESSAGE
+;CALL M_KOJO_MESSAGE_COM_K65_318_1
+;RETURN RESULT
+
+;@M_KOJO_MESSAGE_COM_K65_318_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+;LOCAL = 0
+;-------------------------------------------------
+;IF LOCAL
+
+;ENDIF
+;RETURN 1
+;==================================================
+;330,スカートめくり
+;TFLAG:193(-5=拒絶（ビンタ） -3=拒絶（つねり） -1=いやがる 0=いやがる（嬉しげ） 1=受け入れ)
+;TFLAG:193=1&&ABL:露出癖(5以上=人目のある場所で、自らスカートをまくり上げる 4以下=人目のある場所でめくられるさいに弱い抵抗 3以上=人目のない場所で自らスカートをまくり上げる 3未満=弱い抵抗)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;後ろからピラリ、ではなく、前からペラって感じ（そうじゃなかったら、めくり上げようとするのを止めて即座にビンタとか無理、めくり上げられた後にしかならないしその状況ならビンタ食らうより普通に弾幕で一発ＫＯにならないほうがおかしい
+;==================================================
+@M_KOJO_MESSAGE_COM_K65_330
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K65_330_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K65_330_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1

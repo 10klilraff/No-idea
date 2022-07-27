@@ -1,0 +1,20 @@
+﻿@DAILY_CONDITION_EV16
+SIF !TFLAG:スカートめくりすぎ
+	RETURN -1
+SIF RAND:(TFLAG:スカートめくりすぎ) < RAND:300
+	RETURN -1
+;addition custom code
+SIF TALENT:[[文]]:恋人 ;don't punish the player if in love with aya, she wouldn't publish this, right?
+	RETURN -1
+;---------------------
+CALL DAILY_EV16
+RETURN 1
+
+@DAILY_EV16
+PRINTFORML Extra from Bunbunmaru! 
+PRINTFORMW An article about %CALLNAME:MASTER% flipping skirts!
+FOR LOCAL,1,CHARANUM
+	CFLAG:LOCAL:好感度 = MAX(CFLAG:LOCAL:好感度 - 100, 0)
+	CFLAG:LOCAL:信頼度 = MAX(CFLAG:LOCAL:信頼度 - 50, 0)
+NEXT
+CALL COLORMESSAGE("Everyone's favorability and reliability has decreased by 100 and 50 respectively...",C_YELLOW,2,1)

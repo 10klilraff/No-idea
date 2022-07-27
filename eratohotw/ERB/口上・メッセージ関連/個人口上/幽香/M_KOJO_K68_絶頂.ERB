@@ -1,0 +1,1484 @@
+﻿;-------------------------------------------------
+;奴隷の絶頂時の口上
+;NOWEX:0～4 CVABM絶頂
+;NOWEX:6 二重絶頂
+;NOWEX:7 三重絶頂
+;NOWEX:8 四重絶頂
+;NOWEX:9 五重絶頂
+;NOWEX:10 噴乳
+;NOWEX:11 射精
+;NOWEX:12 放尿
+;適当に組み合わせて使ってください
+;-------------------------------------------------
+@M_KOJO_MESSAGE_PALAMCNG_B_K68
+CALL PALAM_MESSAGE_B
+;-------------------------------------------------
+;噴乳
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && NOWEX:噴乳
+	;時姦中
+	IF FLAG:70
+		
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		
+	ELSEIF TCVAR:68:泥酔 == 1
+		
+	;それ以外
+	ELSE
+		PRINTFORM 「Ahh, My breasts... They're gonna burst...～～～
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML !」
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;射精
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && NOWEX:射精
+	;時姦中
+	IF FLAG:70
+	
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		
+	ELSEIF TCVAR:68:泥酔 == 1
+	
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORM 「Cummiinngh...
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM ! Haa, %MOAN( NOWEX:射精 > 1 ? "h" # "m")%
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML !」
+			CASEELSE
+				PRINTFORM 「Fuuaah, %MOAN( NOWEX:射精 > 1 ? "h" # "m" )%
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORM ! Aaa, %SPLIT_G("Thish feels sho goood:Sho goood:Thish is amashing")%
+				CALL HEARTCB_K68(0xD02830)
+				PRINTFORML 」
+		ENDSELECT
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;放尿
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL && NOWEX:放尿
+	;時姦中
+	IF FLAG:70
+		
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		
+	ELSEIF TCVAR:68:泥酔 == 1
+	
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML 「H-Hold on! My bladder, I'm gonna... Aahh～～～!!!」
+			CASEELSE
+				PRINTFORML 「Haa, Ha...uh?! Aahh, My pee...is coming out...」
+		ENDSELECT
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;絶頂
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		
+		;絶頂回数カウント
+		TCVAR:68:357 ++
+		;20回以上で強い絶頂
+		IF TCVAR:68:357 >= 20
+			TCVAR:68:352 = 1
+			TCVAR:68:357 = 0
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;五重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF NOWEX:五重絶頂 && LOCAL:1
+		IF TCVAR:68:泥酔 == 1
+			
+		;睡姦中
+		ELSEIF CFLAG:MASTER:イタズラ == 2
+			
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「～～～～～
+					CALL HEARTCB_K68(0xD02830,3)
+					PRINTFORML 」
+				CASEELSE
+					PRINTFORM 「Ahh..hhaaaaAAA
+					CALL HEARTCB_K68(0xD02830,3)
+					PRINTFORML ?!」
+			ENDSELECT
+			PRINTFORMDL Yuuka's entire body relishes the orgasm as tears well up in %HIS_HER(TARGET)% eyes from the barrage of overwhelming pleasure.
+		ENDIF
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;四重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF NOWEX:四重絶頂 && LOCAL:1
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		IF TCVAR:68:泥酔 == 1
+			
+		;睡姦中
+		ELSEIF CFLAG:MASTER:イタズラ == 2
+			
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Wa-... This is too much, HhaaaaAA
+					CALL HEARTCB_K68(0xD02830,3)
+					PRINTFORML ?!」
+				CASEELSE
+					PRINTFORM 「HiIii, Haa, Haaa...aaahhhHHH
+					CALL HEARTCB_K68(0xD02830,3)
+					PRINTFORML ?!」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+		
+		[SKIPSTART]
+		SELECTCASE NOWEX:四重絶頂
+			;Ｃ＆Ｖ＆Ａ＆Ｂ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ａ＆Ｍ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｂ＆Ｍ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ＆Ｂ＆Ｍ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ａ＆Ｂ＆Ｍ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		[SKIPEND]
+	ENDIF
+	;-------------------------------------------------
+	;三重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF NOWEX:三重絶頂 && LOCAL:1
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		IF TCVAR:68:泥酔 == 1
+			
+		;睡姦中
+		ELSEIF CFLAG:MASTER:イタズラ == 2
+			
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Nhoo, hold on a sec...oonndd
+					CALL HEARTCB_K68(0xD02830,2)
+					PRINTFORML !?」
+				CASEELSE
+					PRINTFORM 「Ahhh, I'm cumm...iinng
+					CALL HEARTCB_K68(0xD02830,2)
+					PRINTFORML !」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+		
+		[SKIPSTART]
+		SELECTCASE NOWEX:三重絶頂
+			;Ｃ＆Ｖ＆Ａ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｖ＆Ａ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ＆Ａ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｂ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｍ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｖ＆Ｍ絶頂
+			CASE 6
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｖ＆Ｍ絶頂
+			CASE 7
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ＆Ｍ絶頂
+			CASE 8
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｂ＆Ｍ絶頂
+			CASE 9
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ＆Ｍ絶頂
+			CASE 10
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		[SKIPEND]
+	ENDIF
+	;-------------------------------------------------
+	;二重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF NOWEX:二重絶頂 && LOCAL:1
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		IF TCVAR:68:泥酔 == 1
+			PRINTFORM 「...Hic...kh, Aahh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML  Mmm...mmh?」
+		;睡姦中
+		ELSEIF CFLAG:MASTER:イタズラ == 2
+			PRINTFORM 「...Mmm～～～
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORML  ...Zzzz...」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Hiyaaa, Fuaaaa
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML !」
+					PRINTFORML 「Haah, Haah... \@ TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲 ? You are amazing, darling # I'm so embarrassed, don't look at meee \@...」
+				CASEELSE
+					PRINTFORM 「Yaa, Aaahhnn
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML ! Haah, \@ TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲 ? It feels amazing when you do this to me # I hate to admit it but...this feels amazing \@...」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+		
+		[SKIPSTART]
+		SELECTCASE NOWEX:二重絶頂
+			;Ｃ＆Ｖ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ａ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ｂ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｂ絶頂
+			CASE 6
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｍ絶頂
+			CASE 7
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ｍ絶頂
+			CASE 8
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｍ絶頂
+			CASE 9
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｍ絶頂
+			CASE 10
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		[SKIPEND]
+	ENDIF
+	IF NOWEX:Ｃ絶頂
+		IF TCVAR:68:泥酔 == 1
+			PRINTFORM 「...Hic...kh, Aahh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML  Mmm...mmh?」
+		;睡姦中
+		ELSEIF CFLAG:MASTER:イタズラ == 2
+			PRINTFORM 「...Mmmm～～～
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORML  ...Zzzz...」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Haaa, I'm cummiiing...～～～
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML !」
+				CASEELSE
+					PRINTFORM 「Aaahhh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML ! Haah, I came...」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｖ絶頂
+		IF TCVAR:68:泥酔 == 1
+			PRINTFORM 「...Hic...kh, Aahh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML  Mmm...mmh?」
+		;睡姦中
+		ELSEIF CFLAG:MASTER:イタズラ == 2
+			PRINTFORM 「...Mmmm～～～
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORML  ...Zzzz...」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Yaa, Fuaaa
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM  Haa, More, moreee...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+				CASEELSE
+					PRINTFORM 「Aahh, It's coming...～～～
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML !」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	IF NOWEX:Ａ絶頂
+		IF TCVAR:68:泥酔 == 1
+			PRINTFORM 「...Hic...kh, Aahh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML  Mmm...mmh?」
+		;睡姦中
+		ELSEIF CFLAG:MASTER:イタズラ == 2
+			PRINTFORM 「...Mmmm～～～
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORML  ...Zzzz...」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「\@ ABL:68:Ａ感覚 >= 3 || EXP:68:Ａ経験 >= 100 ? Haaah, thish is sho gooood # No way, I came from my butt \@... Kuh...uuu
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML !」
+				CASEELSE
+					PRINTFORM 「\@ ABL:68:Ａ感覚 >= 3 || EXP:68:Ａ経験 >= 100 ? Hahh, I'm cumming from my butt # Ugh, I don't want to cum from this \@... Ahhh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML !」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｂ絶頂
+		IF TCVAR:68:泥酔 == 1
+			PRINTFORM 「...Hic...kh, Aahh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML  Mmm...mmh?」
+		;睡姦中
+		ELSEIF CFLAG:MASTER:イタズラ == 2
+			PRINTFORM 「...Mmmm～～～
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORML  ...Zzzz...」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Fuuahh, Haa...aahhh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML !」
+				CASEELSE
+					PRINTFORM 「Aahh, No more... Ngghh, Aahh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+			ENDSELECT
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｍ絶頂
+		IF TCVAR:68:泥酔 == 1
+			PRINTFORM 「...Hic...kh, Aahh
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML  Mmm...mmh?」
+		;睡姦中
+		ELSEIF CFLAG:MASTER:イタズラ == 2
+			PRINTFORM 「...Mmmm～～～
+			CALL HEARTCB_K68(0xD02830,2)
+			PRINTFORML  ...Zzzz...」
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Hiaa, Haaa... Ghaa
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML !」
+				CASEELSE
+					PRINTFORM 「Mmfua...aahh...～～～
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML !」
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+;-------------------------------------------------
+;奴隷の睡眠絶頂時の口上
+;-------------------------------------------------
+@M_KOJO_MESSAGE_PALAMCNG_B2_K68
+CALL PALAM_MESSAGE_B
+;-------------------------------------------------
+;噴乳
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && NOWEX:噴乳
+	PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;射精
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && NOWEX:射精
+	PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;放尿
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL && NOWEX:放尿
+	PRINTFORMW 
+ENDIF
+;-------------------------------------------------
+;絶頂
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;五重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:五重絶頂
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	;-------------------------------------------------
+	;四重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:四重絶頂
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		;[SKIPSTART]
+		SELECTCASE NOWEX:四重絶頂
+			;Ｃ＆Ｖ＆Ａ＆Ｂ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ａ＆Ｍ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｂ＆Ｍ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ＆Ｂ＆Ｍ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ａ＆Ｂ＆Ｍ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		;[SKIPEND]
+	ENDIF
+	;-------------------------------------------------
+	;三重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:三重絶頂
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		;[SKIPSTART]
+		SELECTCASE NOWEX:三重絶頂
+			;Ｃ＆Ｖ＆Ａ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｖ＆Ａ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ＆Ａ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｂ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｖ＆Ｍ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｖ＆Ｍ絶頂
+			CASE 6
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｖ＆Ｍ絶頂
+			CASE 7
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ＆Ｍ絶頂
+			CASE 8
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｂ＆Ｍ絶頂
+			CASE 9
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ＆Ｍ絶頂
+			CASE 10
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		;[SKIPEND]
+	ENDIF
+	;-------------------------------------------------
+	;二重絶頂
+	;記入チェック（=0, 非表示、1, 表示）
+	LOCAL:1 = 0
+	;-------------------------------------------------
+	IF NOWEX:二重絶頂
+		;部位を指定せず簡易的に書く場合、[SKIPSTART]&[SKIPEND]のコメントアウトを外して、[SKIPSTART]とこのコメントの間に書いてください
+		;[SKIPSTART]
+		SELECTCASE NOWEX:二重絶頂
+			;Ｃ＆Ｖ絶頂
+			CASE 1
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ａ絶頂
+			CASE 2
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ａ絶頂
+			CASE 3
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｂ絶頂
+			CASE 4
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ｂ絶頂
+			CASE 5
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｂ絶頂
+			CASE 6
+				PRINTFORMW 
+				RETURN 1
+			;Ａ＆Ｍ絶頂
+			CASE 7
+				PRINTFORMW 
+				RETURN 1
+			;Ｖ＆Ｍ絶頂
+			CASE 8
+				PRINTFORMW 
+				RETURN 1
+			;Ｃ＆Ｍ絶頂
+			CASE 9
+				PRINTFORMW 
+				RETURN 1
+			;Ｂ＆Ｍ絶頂
+			CASE 10
+				PRINTFORMW 
+				RETURN 1
+		ENDSELECT
+		;[SKIPEND]
+	ENDIF
+	IF NOWEX:Ｃ絶頂
+		;超強絶頂Ｃ
+		IF NOWEX:Ｃ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ｃ
+		ELSEIF NOWEX:Ｃ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ｃ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｖ絶頂
+		;超強絶頂Ｖ
+		IF NOWEX:Ｖ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ｖ
+		ELSEIF NOWEX:Ｖ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ｖ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+	IF NOWEX:Ａ絶頂
+		;超強絶頂Ａ
+		IF NOWEX:Ａ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ａ
+		ELSEIF NOWEX:Ａ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ａ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｂ絶頂
+		;強絶頂Ｂ
+		IF NOWEX:Ｂ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ｂ
+		ELSEIF NOWEX:Ｂ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ｂ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+	IF NOWEX:Ｍ絶頂
+		;超強絶頂Ｍ
+		IF NOWEX:Ｍ絶頂 == 3
+			PRINTFORMW 
+		;強絶頂Ｍ
+		ELSEIF NOWEX:Ｍ絶頂 == 2
+			PRINTFORMW 
+		;絶頂Ｍ
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+ENDIF
+
+
+;-------------------------------------------------
+;射精に関する口上の表示
+;一時的にTARGETを口上主に設定している
+;-------------------------------------------------
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_00(ARG)
+;CALL PALAM_MESSAGE_A
+;modded, show condom message during counter mode
+CALL M_KOJO_MESSAGE_PALAMCNG_A_K68_0
+;-------------------------------------------------
+;TARGETの手による射精で、射精対象が非TARGET
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_0(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;コンドーム
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		
+	ELSEIF TCVAR:68:泥酔 == 1
+		
+	;それ以外
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORML （It's so hot, even through the condom...）
+			CASEELSE
+				PRINTFORML 「Uuuhh... Haa, \@ TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲 ? This might be not enough after all... I think # It's coming... Right into the rubber as it should \@...」
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_23(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;イラマチオ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL Yuuka's eyes glaze over as you thrust into %HIS_HER(TARGET)% throat and begin \@ NOWEX:MASTER:射精 > 1 ? flooding it with load after load of # firing your\@ \@ TALENT:MASTER:濃厚精液 ? rich # viscous \@ semen\@NOWEX:MASTER:射精 > 1 ?#%" "%into it\@.
+		PRINTFORM 「...Nnggh! Mmph, Gokku, Gokku...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORMW 」
+		PRINTFORMDL %HE_SHE(TARGET,1)% gulps down your semen unconsciously.
+		PRINTFORM 「Keho... Haa...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  What is this... \@ TALENT:MASTER:濃厚精液 ? It's so thick # It smells weird \@...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORMW 」
+	;それ以外
+	ELSE
+		PRINTFORML 「Nha, Mnnnph～～～～?!」
+		PRINTFORMDW You pour \@ NOWEX:MASTER:射精 >1 ? a massive amount of # your \@ \@ TALENT:MASTER:濃厚精液 ? rich # viscous \@ semen right into Yuuka's innards, enraptured by the ecstasy of ejaculation.
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_22(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;シックスナイン
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		
+	ELSEIF TCVAR:68:泥酔 == 1
+		
+	;その他
+	ELSE
+		IF NOWEX:68:射精
+			PRINTFORM 「Mmmm, Nnnnhh... Aahhh, %SPLIT_G("I'm gonna let it out:It's coming out:I'm cumming")%... Nhaaaa
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML 」
+		ELSE
+			PRINTFORM 「Nhhh, Mmhh?! Mnnnnmphhh～～～
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML !」
+			PRINTFORMDL On the verge of orgasm, you grab Yuuka's head and forcibly pour \@ NOWEX:MASTER:射精 >1 ? a massive amount of # your \@ \@ TALENT:MASTER:濃厚精液 ? rich # viscous \@ semen into %HIS_HER(TARGET)% mouth.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_21(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;パイズリフェラ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		;不可
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		;不可
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL You sandwich your penis between Yuuka's breasts and force %HIM_HER(TARGET)% to suck it.
+		PRINTFORMDL The lips of the drunken Youkai quickly push you over your limit.
+		PRINTFORM 「Mnhh, Ngu... Puhaaa, Aah...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML 」
+		PRINTFORMDL Already exhausted, Yuuka doesn't have the strength to hold it in %HIS_HER(TARGET)% mouth.
+		PRINTFORMDL It almost immediately overflows with your \@ TALENT:MASTER:濃厚精液 ? viscous semen, forming globules as it trails down %HIS_HER(TARGET)% cheek #  semen\@.
+		PRINTFORMDW The liquid oozes down %HIS_HER(TARGET)% breasts, staining them..
+	ELSEIF CFLAG:うふふ == 2
+		
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF ABL:68:胸 < 2
+			PRINTFORMW 「Mmph, Mmmhh! ... Puah, Making you cum like this is quite difficult...」
+		ELSE
+			PRINTFORML 「Mmnnnnph... Chyu, Haah... Fufu, That was quick...\@ NOWEX:MASTER:射精 >1 ? %" "%There's so much of it... # \@」
+			PRINTFORMDW Yuuka spits out the \@ NOWEX:MASTER:射精 >1 ? massive amount of%" "% # \@\@ TALENT:MASTER:濃厚精液 ? incredibly rich and glutinous # freshly fired \@ semen into %HIS_HER(TARGET)% palm and shows it off proudly.
+		ENDIF
+	;それ以外
+	ELSE
+		IF ABL:68:胸 < 2
+			PRINTFORMW 「Mnnn?! ... D-Don't just let it out all of a sudden, will you!?」
+		ELSE
+			PRINTFORML 「Mnnn, Chyuuu～～～... Puah, Was it that good...? \@ NOWEX:MASTER:射精 >1 ? You let out so much # You should've heard your miserable cry \@...」
+			PRINTFORMDL You bite your lip as you reach one of the greatest orgasms you have ever experienced.
+			PRINTFORMDW Meanwhile Yuuka continues milking you dry of every single drop of semen with %HIS_HER(TARGET)% breasts and tongue.
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_20(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;手淫フェラ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		;不可
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		;不可
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL You wrap Yuuka's hand around your penis, using %HIS_HER(TARGET)% palm to stroke your length as you thrust into %HIS_HER(TARGET)% mouth.
+		PRINTFORMDL The hand and lips of the drunken Youkai quickly push you over your limit.
+		PRINTFORM 「Nnnhh... Bueeh...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML 」
+		PRINTFORMDW You continue rubbing against Yuuka's tongue until you're completely spent, savoring the one-sided pleasure selfishly.
+	ELSEIF CFLAG:うふふ == 2
+		
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		PRINTFORM 「Chyu, Chyupa, Chyuu～～～u
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  ...Puah, Thank you for the meal
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML 」
+		PRINTFORMDW Yuuka \@ TALENT:MASTER:濃厚精液 ? is enraptured as %HE_SHE(TARGET)% savors your abnormally thick # smiles at you as %HE_SHE(TARGET)% savors your \@ semen, relishing the taste.
+	;それ以外
+	ELSE
+		PRINTFORMW 「Mnnn?! ...Chyuu, Haah... \@ NOWEX:MASTER:射精 >1 ? Keho, Hold on, isn't this way too much...? # Uuuugh, My mouth, it's... Keho... \@」
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_12(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;A責め
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+;表示されん
+	;時姦中
+	IF FLAG:70
+		
+	ELSEIF TCVAR:68:泥酔 == 1
+		
+	ELSE
+		PRINTFORML 「Ahaha, Your white pee just keeps on coming doesn't it? Go ahead and relish this long orgasm, it's okay～」
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_9(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;アナル奉仕
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		
+	ELSEIF TCVAR:68:泥酔 == 1
+		
+	ELSE
+		PRINTFORM 「Hee～ So I just tease your butt a bit and you begin letting it out... Ufufu, \@ TALENT:MASTER:性別 == 2 ? What an utterly pathetic man you are # How utterly pathetic \@...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML 」
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_8(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;泡踊り
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	;同時射精
+	IF NOWEX:射精 && NOWEX:MASTER:射精
+		PRINTFORMW
+		RETURN 1
+	;TARGETだけ射精
+	ELSEIF NOWEX:射精
+		;PLAYERについてる
+		IF GETBIT(TALENT:PLAYER:性別,1)
+			PRINTFORMW
+			RETURN 1
+		;付いてない
+		ELSE
+			PRINTFORMW
+			RETURN 1
+		ENDIF
+	;PLAYERだけ射精
+	ELSE
+		;TARGETについてる
+		IF GETBIT(TALENT:性別,1)
+			PRINTFORMW
+			RETURN 1
+		;付いてない
+		ELSE
+			PRINTFORMW
+			RETURN 1
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_7(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;足コキ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL You shoot out\@ NOWEX:MASTER:射精 >1 ? %" "%a large amount of # \@\@ TALENT:MASTER:濃厚精液 ? %" "%thick, # \@ sticky semen on Yuuka's smooth and pure feet.
+		PRINTFORMDW You picture the proud Yuuka's bewilderment and embarrassment once %HE_SHE(TARGET)% finds the insides of %HIS_HER(TARGET)% socks to be soggy and sticky.
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL Your semen lands on the senseless Yuuka's silky feet.
+		PRINTFORMDW Dead drunk, %HE_SHE(TARGET)% remains totally unresponsive even as you soil %HIS_HER(TARGET)% feet...
+	ELSEIF CFLAG:うふふ == 2
+		
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		PRINTFORMW 「Here it goes, spurt, spuuuu～～rt... Ahaha, Anything goes as long as it's a hole?」
+	;それ以外
+	ELSE
+		PRINTFORML 「Haa... My feet are a mess because of you, you realize that? Naturally, you'll be licking them clean for me, right?」
+		PRINTFORMDW Yuuka smiles as %HE_SHE(TARGET)% extends %HIS_HER(TARGET)% foot towards you, it is \@ NOWEX:MASTER:射精 >1 ? drenched # covered \@ in \@ TALENT:MASTER:濃厚精液 ? viscous semen # semen\@...
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_6(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;素股
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		;不可
+		PRINTL 
+		PRINTFORMDL You press against Yuuka's genitals and gasp into %HIS_HER(TARGET)% ear from behind as you start ejaculating.
+		PRINTFORMDL Just using %HIS_HER(TARGET)% thighs alone is enough to give you an incredible orgasm.
+		PRINTFORMDW You smear your semen \@ TALENT:68:性別 == 2 ? into his groin, imagining his possible reaction with a smile # against her pussy lips, imagining what will be happening inside with a smile\@.
+	;睡姦中
+	ELSEIF CFLAG:MASTER:イタズラ == 2
+		;不可
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL You use Yuuka's thighs to bring yourself to orgasm\@ TALENT:68:性別 == 2 ? # , pressing against her pussy as you begin ejaculating \@.
+		PRINTFORM 「...Kuh... Uuuuh...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML 」
+		PRINTFORMDW As you rub your penis against Yuuka's genitals while cumming, %HE_SHE(TARGET)% lets out a lust-filled moan of desire.
+	ELSEIF CFLAG:うふふ == 2
+		;Custom code, original content
+		PRINTFORM 「You probably wanted to do it inside, right? Too bad, it will all be wasted...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML  And all because you couldn't last a little longer, Hehe.」
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		PRINTFORM 「Haa, So warm...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML 」
+	;それ以外
+	ELSE
+		PRINTFORML 「Haa, Haa... Really now...」
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_5(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;パイズリ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL Feeling your limit approaching, you start thrusting even faster longing for release.
+		PRINTFORMDL It doesn't take long before you start bathing Yuuka's sublime chest-onahole with your desire in the form of cloudy white liquid.
+		IF NOWEX:MASTER:射精 > 1
+			PRINTFORMDW The massive amounts make already Yuuka's pale skin even paler, and imprints it with a peculiar odor.
+		ELSE
+			PRINTFORMDL The sticky stuff clinging to %HIS_HER(TARGET)% skin is proof of your one-sided lust for this % TALENT:68:性別 == 2 ? "" # "fe"%male Youkai.
+			PRINTFORMDW It almost feels like you're marking Yuuka as your own property.
+		ENDIF
+		;時姦されたフラグをここに記述
+		TCVAR:68:352 = 3
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL Being brought to your limit by Yuuka's breasts, you continue thrusting your hips as you cum.
+		PRINTFORML 「...Mnnn...」
+		PRINTFORMDW Your semen stains Yuuka's face as it spurts out vigorously, %HE_SHE(TARGET)% doesn't respond at all, continuing to space out...
+	ELSEIF CFLAG:うふふ == 2
+		
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF ABL:68:胸 >= 2
+			PRINTFORM 「Hora, Cum for me...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML  Ahn, All the way here... That's pretty far...」
+		ELSE
+			PRINTFORML 「Mmhh... Kyah?! Hey, how far are you planning to shoot this stuff...?!」
+		ENDIF
+		PRINTFORMDW \@ NOWEX:MASTER:射精 >1 ? A massive amount of %TALENT:MASTER:濃厚精液?"rich and thick semen"#"semen"%#%TALENT:MASTER:濃厚精液?"Rich and thick semen"#"Semen"%\@ lands all over Yuuka's breasts and even reaches all the way to %HIS_HER(TARGET)% face, making it a sticky mess.
+	;それ以外
+	ELSE
+		IF ABL:68:胸 >= 2
+			PRINTFORML 「Mmnn! Haah, you're just letting it out as you please at this point... You're the worst.」
+		ELSE
+			PRINTFORML 「Mmhh... Kyah?! Hey, how far are you planning to shoot this stuff...?!」
+		ENDIF
+		PRINTFORMDW \@ NOWEX:MASTER:射精 >1 ? A massive amount of %TALENT:MASTER:濃厚精液?"rich and thick semen"#"semen"%#%TALENT:MASTER:濃厚精液?"Rich and thick semen"#"Semen"%\@ lands all over Yuuka's breasts and even reaches all the way to %HIS_HER(TARGET)% face, making it a sticky mess.
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_4(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;フェラチオ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL You grab Yuuka by the hair and thrust forward, before filling %HIS_HER(TARGET)% mouth with \@ NOWEX:MASTER:射精 >1 ? a massive amount of # your\@ \@ TALENT:MASTER:濃厚精液 ? unnaturally thick# warm \@ semen.
+		PRINTFORMDW Finished, you slowly pull out your penis, parting Yuuka's lips just enough for semen and saliva to leak out and stain %HIS_HER(TARGET)% lips.
+		;時姦されたフラグをここに記述
+		TCVAR:68:352 = 3
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL Yuuka's eyes glaze over as you thrust into %HIS_HER(TARGET)% throat and begin \@ NOWEX:MASTER:射精 > 1 ? flooding it with load after load of # firing your\@ \@ TALENT:MASTER:濃厚精液 ? rich # viscous \@ semen\@NOWEX:MASTER:射精 > 1 ?#%" "%into it\@.
+		PRINTFORM 「...Nnggh! Mmph, Gokku, Gokku...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORMW 」
+		PRINTFORMDL %HE_SHE(TARGET,1)% gulps down your semen unconsciously.
+		PRINTFORM 「Keho... Haa...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  What is this... \@ TALENT:MASTER:濃厚精液 ? It's so thick # It smells weird \@...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORMW 」
+	ELSEIF CFLAG:うふふ == 2
+		
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF ABL:68:舌 > 2
+			PRINTFORM 「Mnnph～～～
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORM  Puha... \@ NOWEX:MASTER:射精 >1 ? That's quite the load, darling # Fufu, It's so sticky, and incredibly warm \@...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORMW 」
+		ELSE
+			PRINTFORMW 「Mmmh! ...Haa, Puha... Keho, \@ NOWEX:MASTER:射精 >1 ? Letting out so much, satisfied # Satisfied\@ now...?」
+		ENDIF
+	;それ以外
+	ELSE
+		PRINTFORMW 「Mmmh! ...Puha, \@ NOWEX:MASTER:射精 >1 ? You're overdoing it, idiot! # No need to make a point of cumming in my mouth you know... \@」
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_3(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;手淫
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL Reaching your limit, you grab Yuuka's other hand and rub it against the tip of your penis to add stimulation as you cum.
+		IF NOWEX:MASTER:射精 >1
+			PRINTFORMDL %HIS_HER(TARGET,1)% dainty hand is unable to withstand the volume and force of your ejaculation and gets completely covered in \@ TALENT:MASTER:濃厚精液 ? thick and viscous # sticky \@ semen.
+		ELSE
+			PRINTFORMDL %HE_SHE(TARGET,1)% remains unaware and is unable to resist as you coat %HIS_HER(TARGET)% hand in \@ TALENT:MASTER:濃厚精液 ? thick and viscous # sticky \@ semen.
+		ENDIF
+		;時姦されたフラグをここに記述
+		TCVAR:68:352 = 3
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL The dead drunk Yuuka simply stares as you reach your limit right before %HIS_HER(TARGET)% eyes.
+		PRINTFORMDW Load after load of semen mars Yuuka's hands as %HE_SHE(TARGET)% lies there dead drunk unable to resist...
+	ELSEIF CFLAG:うふふ == 2
+		
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF ABL:68:技巧 > 3
+			PRINTFORM 「Aha, Here it comes...
+			CALL HEARTCB_K68(0xD02830)
+			PRINTFORML  Oh my, \@ NOWEX:MASTER:射精 >1 ? Haah, There's so much of it... I wonder if it felt that good... # Nnhh, How about you show some restraint next time? \@」
+		ELSE
+			PRINTFORML 「Hiiyah?! \@ NOWEX:MASTER:射精 >1 ? Wha- It just keeps coming, when will it end...!? # Ah, It flew so far up... \@」
+		ENDIF
+	;それ以外
+	ELSE
+		PRINTFORML 「Huh?! \@ NOWEX:MASTER:射精 >1 ? No, w-wait, what's up with this amount...!? # Haah, Now I'm all sticky... \@」
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_2(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;アナル
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL Feeling your limit approaching, you thrust your hips furiously and begin \@ NOWEX:MASTER:射精 >1 ? filling # cumming inside \@ Yuuka's anus without hesitation.
+		PRINTFORMDL You slowly pull out your penis after finishing, \@ ABL:68:Ａ感覚 > 2 ? the flower Youkai's well-developed hole wriggling obscenely as if savoring the semen # semen gushing out and staining the flower Youkai's legs. \@ 
+		;時姦されたフラグをここに記述
+		TCVAR:68:352 = 4
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL You thrust into Yuuka's anus while savoring the sensation, the Youkai lying limp as you pick up the pace before cumming.
+		PRINTFORML 「Uuu... Ghu, Ugheeeeeh...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  Ah
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  Haaa...
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORML 」
+		PRINTFORMDL Yuuka's blushes as %HE_SHE(TARGET)% takes your semen into %HIS_HER(TARGET)% anus.
+		PRINTFORMDW %HE_SHE(TARGET, 1)% grimaces, suppressing nausea as %HE_SHE(TARGET)% stares at you as if %HE_SHE(TARGET)% wants to say something...
+	ELSEIF CFLAG:うふふ == 2
+		
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF TCVAR:PLAYER:コンドーム == 1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Nnhh, Ahh...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM  Even through the condom, it's so warm...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+				CASEELSE
+					PRINTFORM 「Fuuhh, Haa...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML  Haa, Did you enjoy it...?」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Haah, It's so warm inside...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+				CASEELSE
+					PRINTFORM 「Haa, Nnhh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM ! You finished inside my butt...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+			ENDSELECT
+		ENDIF
+	;それ以外
+	ELSE
+		IF TCVAR:PLAYER:コンドーム == 1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Uuu... I'm glad we put on a rubber...」
+				CASEELSE
+					PRINTFORML 「Haa, Make sure to throw that condom away...」
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Ya, Ahhh!? Hold on...!」
+				CASEELSE
+					PRINTFORML 「Fuaahh! The insides of my butt feel so warm...!」
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A_K68_1(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;膣内
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;時姦中
+	IF FLAG:70
+		PRINTL 
+		PRINTFORMDL Feeling your limit approaching, you thrust your hips violently in order to inseminate the female Youkai.
+		PRINTFORMDL You reach your limit, and begin pouring the proof of your one-sided affection deep inside her.
+		IF NOWEX:MASTER:射精 >1
+			PRINTFORMDL The intense pleasure and arousal prolongs your ejaculation, and you fire load after load into her.
+		ELSE
+			PRINTFORMDL Her lewd female hole swallows it eagerly and holds on, not wanting to let go.
+		ENDIF
+		PRINTFORMDL Your \@ TALENT:MASTER:濃厚精液 ? rich and thick # warm \@ semen permeates \@ ESTRUS_CYCLE(TARGET) >= 100 ? ovulating womb # womb \@, ravaging the insides.		
+		PRINTFORMDW You stay inside Yuuka's first-rate female hole for a while, savoring the most sublime ejaculation.
+		;時姦されたフラグをここに記述
+		TCVAR:68:352 = 5
+		;膣内射精フラグ
+		TCVAR:68:358 = 1
+	ELSEIF TCVAR:68:泥酔 == 1
+		PRINTFORMDL Savoring the drunk Yuuka's limp body, you start thrusting with wild abandon as you feel yourself about to cum.
+		PRINTFORMDL Your movements get more intense as you strike against the innermost part of Yuuka and \@ NOWEX:MASTER:射精 >1 ? unload inside, flooding her womb # cum inside \@.
+		PRINTFORM 「Ugh, Ghu
+		CALL HEARTCB_K68(0xD02830)
+		PRINTFORM  Ahh, Uuuuugh
+		CALL HEARTCB_K68(0xD02830,2)
+		PRINTFORML 」	
+		PRINTFORMDL Yuuka struggles desperately to contain the growing nausea, clueless to the fact that her \@ ESTRUS_CYCLE(TARGET) >= 100 ? ovulating womb # womb \@ is getting filled with \@ TALENT:MASTER:濃厚精液 ? thick semen # semen \@...
+	ELSEIF CFLAG:うふふ == 2
+		
+	;恋慕or恋人
+	ELSEIF TALENT:68:恋人 || TALENT:68:恋慕 || TALENT:68:愛欲
+		IF TCVAR:PLAYER:コンドーム == 1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Uunngh
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORMW  Haa, Did you enjoy it...?」
+				CASEELSE
+					PRINTFORM 「Haa, Aahh...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+					PRINTFORMW （Uuu～ %SPLIT_G("I'm still not satisfied:That piece of rubber")%... \@ CFLAG:68:生解禁 == 2 ? %HE_SHE(MASTER,1)% even convinced me raw was better...! # But I have to endure it... \@）
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「Haa, Aahh...
+					CALL HEARTCB_K68(0xD02830,2)
+					PRINTFORM  I might actually get pregnant if you keep \@ NOWEX:MASTER:射精 >1 ? unloading that much # cumming \@ inside... 
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+				CASEELSE
+					PRINTFORM 「Nnhh, Haaa...
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORM  Thank you for the meal, darling...\@ TALENT:MASTER:濃厚精液 ? %" "%This thick semen is truly a rare feast for me # \@
+					CALL HEARTCB_K68(0xD02830)
+					PRINTFORML 」
+			ENDSELECT
+		ENDIF
+	;それ以外
+	ELSE
+		IF TCVAR:PLAYER:コンドーム == 1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Mnnh! Haah, You wore the condom, right...?」
+				CASEELSE
+					PRINTFORML 「Haa... I thought it would be more convenient with the condom, but it's just embarrassing instead...」 
+			ENDSELECT
+		ELSE
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTFORML 「Yaaaa!? You're letting it out inside me\@ EX:68:子宮内精液 > 0 ? %" "%again # \@ you...!」
+				CASEELSE
+					PRINTFORML 「\@ NOWEX:MASTER:射精 >1 ? How long are you going to keep shooting you idiot!? Seriously, you're acting like a child...! # Haah, What's so good about doing it inside... Idiot... \@」
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;-------------------------------------------------
+;眠姦射精に関する口上の表示
+;一時的にTARGETを口上主に設定している
+;-------------------------------------------------
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K68_0(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;コンドーム
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K68_23(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;イラマチオ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTL 
+	PRINTFORMDL You reach your limit in Yuuka's throat, thrusting deep inside before \@ NOWEX:MASTER:射精 >1 ? unloading # firing \@ \@ TALENT:MASTER:濃厚精液 ? thick semen # semen \@ into %HIS_HER(TARGET)% gullet.
+	PRINTFORMDW You pull out, the \@ TALENT:MASTER:濃厚精液 ? viscous # sticky \@ semen on Yuuka's lips remaining the only proof of %HIM_HER(TARGET)% being defiled as %HE_SHE(TARGET)% sleeps carelessly...
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K68_7(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;足コキ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTL 
+	PRINTFORMDL You rub your hard penis against Yuuka's silky smooth feet as you begin ejaculating.
+	PRINTFORMDW Sound asleep, Yuuka remains unaware of the lump of malice clinging to %HIS_HER(TARGET)% feet, turning them into a sticky mess...
+ENDIF
+RETURN 1
+
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K68_5(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;パイズリ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTL 
+	PRINTFORMDL Enjoying the pressure of Yuuka's huge breasts, you reach your limit and ejaculate without hesitating.
+	PRINTFORML 「...Mmm... Hmmm...?」
+	PRINTFORMDL The semen reaches Yuuka's face coats it and %HIS_HER(TARGET)% cleavage.
+	PRINTFORMDW It remains as evidence that they were used as a sexual organ for release, unbeknownst to %HIM_HER(TARGET)%...
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K68_4(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;フェラチオ
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTL 
+	PRINTFORMDL You reach your limit in Yuuka's mouth, rubbing against %HIS_HER(TARGET)% tongue before \@ NOWEX:MASTER:射精 >1 ? unloading # firing \@ \@ TALENT:MASTER:濃厚精液 ? thick semen # semen \@ into %HIS_HER(TARGET)% mouth.
+	PRINTFORMDW You pull out, the \@ TALENT:MASTER:濃厚精液 ? viscous # sticky \@ semen on Yuuka's lips remaining the only proof of %HIM_HER(TARGET)% being defiled as %HE_SHE(TARGET)% sleeps carelessly...
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K68_3(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;手淫
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTL 
+	PRINTFORMDL You reach your limit while rubbing against Yuuka's dainty palm and begin \@ NOWEX:MASTER:射精 >1 ? unloading # ejaculating \@ onto it vigorously.
+	PRINTFORMDW After your ejaculation finishes, you use Yuuka's hands like a tissue to wipe your penis clean.
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K68_2(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;アナル
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTL 
+	PRINTFORMDL Just before reaching your limit, you thrust even deeper inside.
+	PRINTFORMDL As you go past the point of no return, you have already pushed into the deepest parts of Yuuka's anus.
+	PRINTFORM 「...Ghu... Aaah... Uuuu
+	CALL HEARTCB_K68(0xD02830)
+	PRINTFORML 」
+	PRINTFORMDL You pump every last drop of semen inside %HIM_HER(TARGET)% before pulling out your still hard cock.
+	PRINTFORMDL A sticky white trail follows it from Yuuka's anus.
+	PRINTFORMDW Completely oblivious to the fact that %HE_SHE(TARGET)% has been just creampied, Yuuka continues on with %HIS_HER(TARGET)% sleep merrily with a blush...
+ENDIF
+RETURN 1
+
+@M_KOJO_MESSAGE_PALAMCNG_A2_K68_1(ARG)
+CALL PALAM_MESSAGE_A
+;-------------------------------------------------
+;膣内
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	PRINTL 
+	PRINTFORMDL Edging on the limit as much as possible, you thrust all the way inside before ejaculating.
+	IF NOWEX:MASTER:射精 >1
+		PRINTFORMDL Perhaps excited by the abnormal situation, your semen flows out ceaselessly and begins ravaging the woman's womb.
+	ELSE
+		PRINTFORMDL Despite being the result of half-masturbatory one-sided intercourse, your semen rushes forth and begins ravaging the woman's womb.
+	ENDIF
+	;Cusom code, added line
+	PRINTFORMDL With no way to block it, Yuuka's \@ ESTRUS_CYCLE(TARGET) >= 100 ? ovulating womb # womb \@ gets permeated with load after load of \@ TALENT:MASTER:濃厚精液 ? rich semen # semen\@.
+	PRINTFORM 「Nnhhh... Aahhh
+	CALL HEARTCB_K68(0xD02830)
+	PRINTFORM  Aah, Haaa... Uuuu
+	CALL HEARTCB_K68(0xD02830,2)
+	PRINTFORML 」
+	PRINTFORMDL \@TALENT:MASTER:濃厚精液?After you finish pouring the load you have saved up to inseminate Yuuka#After you finish pouring your load inside\@, you finally pull your penis out satisfied.
+	PRINTFORMDL The semen left inside starts gushing out, revealing that even this mighty Youkai can be inseminated without putting up any resistance...
+ENDIF
+RETURN 1
+
+
+@M_KOJO_MESSAGE_PALAMCNG_F_K68(ARG)
+CALL PALAM_MESSAGE_F
+;-------------------------------------------------
+;焦らし
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	PRINTFORMW 
+	RETURN 1
+ENDIF
+RETURN 1

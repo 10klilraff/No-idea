@@ -1,0 +1,62 @@
+﻿@JOB_DEPICTION(ARG)
+IF CFLAG:ARG:職種 == 48
+	PRINTFORMW %CALLNAME:ARG% \@ TALENT:ARG:恋慕 ? thinks about %PARSE("you")% while # is busily \@ preparing for the banquet.
+ELSEIF CFLAG:ARG:職種 == 50
+	PRINTFORMW %CALLNAME:ARG% \@ TALENT:ARG:恋慕 ? thinks about %PARSE("you")% while # is silently \@ cleaning up after the banquet.
+ELSEIF CFLAG:ARG:職種 == 46
+	PRINTFORMW %CALLNAME:ARG% plays\@ TALENT:ARG:恋慕 ?, occasionally glancing at %PARSE("you")% # \@.
+ELSEIF CFLAG:ARG:職種 == 52
+	SELECTCASE ARG
+		;こっから女子会　※後々キャラ毎に個性持たせたいので分岐だけ作っておく
+		CASE 4
+			PRINTFORML %CALLNAME:ARG% is chatting loudly with the other girls.
+		CASE 26
+			PRINTFORML %CALLNAME:ARG% is chatting loudly with the other girls.
+		CASE 32
+			PRINTFORML %CALLNAME:ARG% is chatting loudly with the other girls.
+		CASE 55
+			PRINTFORML %CALLNAME:ARG% is chatting loudly with the other girls.
+		CASE 66
+			PRINTFORML %CALLNAME:ARG% is chatting loudly with the other girls.
+		CASE 72
+			PRINTFORML %CALLNAME:ARG% is chatting loudly with the other girls.
+		CASE 102
+			PRINTFORML %CALLNAME:ARG% is chatting loudly with the other girls.
+		CASE 124
+			PRINTFORML %CALLNAME:ARG% is chatting loudly with the other girls.
+	ENDSELECT
+		;女子会ここまで
+ELSE
+	SELECTCASE ARG
+		CASE 30
+			IF INRANGE(TIME, CLOCK_TO_TIME(9, 0), CLOCK_TO_TIME(11, 59))
+				PRINTFORML %CALLNAME:ARG% is %GET_JOBNAME_TR(ARG)% quietly.
+			ELSEIF INRANGE(TIME, CLOCK_TO_TIME(12, 0), CLOCK_TO_TIME(12, 59))
+				PRINTFORML %CALLNAME:ARG% is %GET_JOBNAME_TR(ARG)%.
+			ELSE
+				PRINTFORML %CALLNAME:ARG% is %GET_JOBNAME_TR(ARG)% indifferently.
+			ENDIF
+		CASE 54
+			PRINTFORMW %CALLNAME:ARG% doesn't look up from %HIS_HER(ARG)% book...
+		CASE 57
+			PRINTFORMW %CALLNAME:ARG% is %GET_JOBNAME_TR(ARG)% leisurely.
+		CASE 67
+			IF TIME >= 720 && TIME <= 780
+				PRINTFORMW %CALLNAME:ARG% \@ TALENT:ARG:恋慕 ? is thinking about %PARSE("you")% while # is \@ %GET_JOBNAME_TR(ARG)% with the children.
+			ELSE
+				PRINTFORMW %CALLNAME:ARG% \@ TALENT:ARG:恋慕 ? is thinking about %PARSE("you")% while # is \@ %GET_JOBNAME_TR(ARG)%.
+			ENDIF
+		CASE 70
+			IF DAY % 7 == 3 || DAY % 7 == 4
+				PRINTFORML %CALLNAME:ARG% is reading a book while %GET_JOBNAME_TR(ARG)%.
+			ELSE
+				PRINTFORML %CALLNAME:ARG% is %GET_JOBNAME_TR(ARG)% while checking the contents carefully.
+			ENDIF
+		CASEELSE
+			IF CFLAG:MASTER:現在位置 != CFLAG:ARG:現在位置
+				PRINTFORML %PARSE("You")% can see %CALLNAME:ARG% %GET_JOBNAME_TR(ARG)% %AT_IN_ON(CFLAG:ARG:現在位置 > 100 ? CFLAG:ARG:現在位置 + 8000 # CFLAG:ARG:現在位置)%.
+			ELSE
+				PRINTFORML %CALLNAME:ARG% is here %GET_JOBNAME_TR(ARG)%.
+			ENDIF
+	ENDSELECT
+ENDIF

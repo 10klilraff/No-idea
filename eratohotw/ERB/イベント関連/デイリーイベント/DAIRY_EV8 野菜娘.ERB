@@ -1,0 +1,64 @@
+﻿@DAILY_CONDITION_EV8
+
+IF FLAG:畑仕事の成果 > 60 && TALENT:MASTER:2 & 2 && FLAG:野菜娘デイリー != 2 && !RAND:20
+	CALL DAILY_EV8
+	RETURN 1
+ELSE
+	RETURN -1
+ENDIF
+
+@DAILY_EV8
+
+PRINTFORML As %PARSE("you are")% about to go to sleep, a strange girl comes by.
+PRINTFORML She %PARSE("thanks you",1)% for always taking care of her.
+IF !FLAG:野菜娘デイリー
+	PRINTFORML But %PARSE("you have",1)% no idea who she is...
+ELSE
+	PRINTFORML She resembles someone %PARSE("you've")% met before...
+ENDIF
+CALL ASK_YN("Wrong person","Invite her in")
+IF !RESULT
+	IF !FLAG:野菜娘デイリー
+		PRINTFORML This might be a trick, if %PARSE("you aren't",1)% careful %PARSE("you",1)% might get caught in a Youkai's trap.
+		PRINTFORML Thinking that, %PARSE("you send")% her away.
+		PRINTFORML The girls looks distraught as she leaves...
+	ELSE
+		PRINTFORML It's a bit scary so %PARSE("you decide")% to stop.
+		PRINTFORML The girls looks distraught as she leaves...
+	ENDIF
+ELSEIF BASE:MASTER:気力 < 500 || BASE:MASTER:体力 < 750 || BASE:MASTER:精力 < 300
+	PRINTFORML However %PARSE("you are")% too tired to do anything.
+	PRINTFORML The girls looks distraught as she leaves...
+ELSE
+	IF !FLAG:野菜娘デイリー
+		PRINTFORML %PARSE("You stare")% closely at the girl.
+		PRINTFORML She's a bit plump here and there, but overall pretty cute.
+		PRINTFORML %PARSE("You don't")% know the circumstances, but coming over here this late talking about repaying a favor can only mean one thing.
+	ELSE
+		PRINTFORML Spending some time with the crops one has raised is always fun.
+	ENDIF
+	PRINTFORML %PARSE("You invite")% her inside.
+	PRINTFORMW As %PARSE("you ask",1)% her what type of thanks she wants to give, she begins removing her clothes as expected...
+	PRINTFORMW ...
+	PRINTFORMW ......
+	IF !FLAG:野菜娘デイリー
+		PRINTFORML Dawn comes, and she leaves before %PARSE("you wake")% up.
+		PRINTFORML Wonder what favor she was trying to repay.
+		PRINTFORMW It feels like she said something like「make lots of children」before leaving, a discomforting thought...
+		PRINTFORMW ...
+		PRINTFORMW ......
+		PRINTFORMW As %PARSE("you go",1)% out to tend the field, %PARSE("you",1)% suddenly %PARSE("feel")% uneasy.
+		PRINTFORMW It seems a ton has grown overnight...
+		PRINTFORML ... Is it... Is it okay to actually eat this?
+	ELSE
+		PRINTFORML As expected, the fields show great progress next morning.
+		PRINTFORML The semen she took with such care yesterday, resulting in this crop, will it be harvested and shipped...?
+		PRINTFORML %PARSE("You are")% filled with conflicting emotions.
+	ENDIF
+	BASE:MASTER:精力 -= 300
+	BASE:MASTER:体力 -= 200
+	FLAG:畑仕事の成果 += 20
+	FLAG:野菜娘デイリー = 2
+ENDIF
+PRINTW 
+RETURN 1

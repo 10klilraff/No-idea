@@ -1,0 +1,149 @@
+﻿;FileName_APPEND_SYS.ERB --------------------------- Rev1.00
+;era命蓮寺_システム変更系イベント統括
+;CALL		USER
+;ARG		VOID
+;RETURN		VOID
+;COMMENT	
+;-----------------------------------------------------------
+;EVENT_NO_LIST ============================== FLAG:1
+;FLAG:1=1 霊廟メンバー出現イベント
+;FLAG:1=2 マミゾウ来訪イベント
+;FLAG:1=3 命蓮寺メンバー追加イベント
+;FLAG:1=4 
+;FLAG:1=5 
+
+@SYS_EVENT
+;--- イベント自己定義ブロック ---
+
+;--- イベント実行ブロック ---
+
+;	;自宅にSUMIKOMI_ROOMが設定されている
+	IF FLAG:住み込みキャラ== 0 && !FLAG:住み込みイベント && SUMIKOMI_ROOM && CFLAG:MASTER:現在位置 != OMANEKIBEYA()
+		CALL NEWMEMBER_ADD
+	ENDIF
+;ENDIF
+
+
+
+;以下、各イベント関数 ===============================
+
+;住み込みEXキャラ決定イベント
+@NEWMEMBER_ADD
+#DIM 人数
+#DIM ROOM_N
+#DIM C_ID
+VARSET LOCAL
+人数 = 0
+FOR LOCAL,1,CHARANUM
+	;既に住んでいるメンバーは除く
+	SIF CFLAG:LOCAL:神社在住 > 0
+		CONTINUE
+	SIF TALENT:LOCAL:行きずり
+		CONTINUE
+	IF TALENT:LOCAL:恋慕 && EXP:LOCAL:愛情経験 >= 200 
+		人数 ++
+		LOCAL:LOCAL = 1
+		LOCALS = %CALLNAME:LOCAL%
+	ENDIF
+NEXT
+SIF !人数 || (DAY:3 != 1)
+	RETURN
+PRINTL
+DRAWLINE
+PRINTFORML In the morning, someone comes to visit.
+
+PRINTFORML %LOCALS% \@ 人数 > 1 ? and the others say # says \@ they want to live at %GET_MAPNAME(MAIN_MAP)% with %PARSE("you")%.
+PRINTL
+IF MAIN_MAP == 2
+	PRINTFORML There's a spare room in the tenement, so it would be easy to move in.
+	IF TALENT:NameToID(LOCALS):人間
+		PRINTFORMW %CALLNAME:拠点_大家% doesn't have any particular reason to say no.
+	ELSE
+		PRINTFORMW %LOCALS% says %PARSE("you")% should probably hide their true identity from %CALLNAME:拠点_大家%.
+	ENDIF
+ELSE
+	PRINTFORML If %NAME_FROM_PLACE(SUMIKOMI_ROOM)% is redecorated, others can live there too.
+	PRINTFORMW %CALLNAME:拠点_大家% would probably be okay with it with a proper explanation.
+ENDIF
+PRINTFORML %PARSE("You decide")% to...
+C_ID = 1
+;qol custom code, skip to replacement function (moved $INPUT_LOOP here too)
+$INPUT_LOOP
+GOTO QOL
+FOR LOCAL,1,CHARANUM
+	;既に住んでいるメンバーは除く
+	SIF CFLAG:LOCAL:神社在住 > 0
+		CONTINUE
+	IF TALENT:LOCAL:恋慕 && EXP:LOCAL:愛情経験 >= 200
+		C_ID = LOCAL
+		PRINTFORML [{LOCAL}] - Allow %CALLNAME:LOCAL% to move in
+	ENDIF
+NEXT
+PRINTFORML [999] - Accept no applicants
+INPUT
+;qol custom code
+$QOL
+CALL NEWMEMBER_PAGING
+SIF RESULT:1 > 0
+	C_ID = RESULT:1
+;---------------
+IF RESULT == 999
+	PRINTFORMW When %PARSE("you turn")% down the request\@人数?s#\@, %LOCALS% \@ 人数 > 1 ? and the others look # looks \@ disappointed and leave\@人数?#s\@ %PARSE("your",1)% room.
+	;このやり方だと一人しか口上を呼べないんだが良い方法はないものか
+	;とりあえず多数の場合にそれぞれのキャラの口上を呼び出せるようにしてみる、ただし実際に出来るかどうかはテスト出来てないので自信は無い
+	IF 人数 > 1
+		FOR LOCAL,1,CHARANUM
+			;既に住んでいるメンバーは除く
+			SIF CFLAG:LOCAL:神社在住 > 0
+				CONTINUE
+			IF TALENT:LOCAL:恋慕 && EXP:LOCAL:愛情経験 >= 200
+				LOCAL:1 = LINECOUNT
+				CALL KOJO_MESSAGE_SEND("EVENT",19,LOCAL,2,0)
+				;qol custom code to discern the speaker (LINECOUNT is also custom)
+				SIF LINECOUNT != LOCAL:1
+					PRINTFORMW %CALLNAME:LOCAL% says before bidding you farewell...
+				PRINTL 
+			ENDIF
+		NEXT
+	ELSE
+		CALL KOJO_MESSAGE_SEND("EVENT",19,C_ID,2,0)
+	ENDIF
+	RETURN 0
+ELSEIF RESULT >= CHARANUM
+	CLEARLINE 1
+	GOTO INPUT_LOOP
+ELSEIF !LOCAL:RESULT
+	CLEARLINE 1
+	GOTO INPUT_LOOP
+ENDIF
+PRINTFORML %CALLNAME:RESULT% smiles warmly as %PARSE("you take")% %HIS_HER(RESULT)% hand and %PARSE("say")% %PARSE("you're",1)% going to try talking with %CALLNAME:拠点_大家%.
+PRINTFORMW %CALLNAME:拠点_大家% agrees after some pleading.
+PRINTL
+PRINTFORMW - %CALLNAME:RESULT% will now live at the %GET_MAPNAME(MAIN_MAP)% -
+PRINTL
+FLAG:住み込みキャラ= RESULT
+CFLAG:(FLAG:住み込みキャラ):311 = SUMIKOMI_ROOM
+CFLAG:(FLAG:住み込みキャラ):神社在住 = SUMIKOMI_ROOM
+
+LOCAL:2 = RESULT ;addition custom code
+CALL KOJO_MESSAGE_SEND("EVENT",19,RESULT,1,0)
+
+;addition custom code
+IF 人数 > 1
+	PRINTFORML The rest, however, turn back dejectedly...
+	FOR LOCAL,1,CHARANUM
+		;既に住んでいるメンバーは除く
+		SIF CFLAG:LOCAL:神社在住 > 0
+			CONTINUE
+		IF TALENT:LOCAL:恋慕 && EXP:LOCAL:愛情経験 >= 200
+			LOCAL:1 = LINECOUNT
+			CALL KOJO_MESSAGE_SEND("EVENT",19,LOCAL,2,0)
+			;qol custom code to discern the speaker (LINECOUNT is also custom)
+			SIF LINECOUNT != LOCAL:1
+				PRINTFORMW %CALLNAME:LOCAL% says before bidding you farewell...
+			PRINTL 
+		ENDIF
+	NEXT
+ENDIF
+
+CALL ROOMSETTING

@@ -1,0 +1,99 @@
+﻿;added, this file only has og case for one action, the rest can be replaced in case of merging
+
+@M_KOJO_IRAIEXIST_K33(IRAI_NO)
+#DIM  IRAI_NO   ;抑制させる一般依頼ナンバー
+;動きを抑制させたい場合は、”RETURN 0”に変更すること
+SELECTCASE IRAI_NO
+	CASE 15
+		RETURN 1
+ENDSELECT
+
+
+;==================================================
+;依頼口上・各依頼で共通の口上
+;==================================================
+@M_KOJO_IRAI_K33(ROLE, SCENE, IRAI_ID)
+#DIMS ROLE     ;キャラの立場、依頼者かそうでないか
+#DIMS SCENE    ;セリフの表示されるタイミング
+#DIM  IRAI_ID  ;依頼自体のID
+#DIM  CLIENT_ID;依頼者IDだけ抜き出したもの
+#DIM  CHK_ID   ;依頼IDだけ抜き出したもの
+#DIMS IRAI_NAME;依頼名
+CHK_ID    = IRAI_ID % 1000
+CLIENT_ID = IRAI_ID_TO_CLIENT(IRAI_ID)
+IRAI_NAME = %STR_DATA_IRAI(IRAI_ID, "依頼名", CLIENT_ID)%
+RESULT = 0
+IF CHK_ID > 100
+	TRYCALLFORM M_KOJO_IRAI_%IRAI_NAME%_K33(ROLE, SCENE, CLIENT_ID)
+ELSE
+	TRYCALLFORM M_KOJO_IRAI_{CHK_ID}_K33(ROLE, SCENE, CLIENT_ID)
+ENDIF
+SIF RESULT
+	RETURN 1
+
+;==================================================
+;依頼口上・一般依頼15_あなたに抱かれたい
+;==================================================
+@M_KOJO_IRAI_15_K33(ROLE, SCENE, CLIENT_ID)
+#DIMS ROLE     ;キャラの立場、依頼者かそうでないか
+#DIMS SCENE    ;セリフの表示されるタイミング
+#DIM  CLIENT_ID;依頼者IDだけ抜き出したもの
+;--------------------------------------------------
+;RETURN 0 の部分は共通の口上が表示されます
+;依頼ごとの口上を表示する部分は RETURN 0 を RETURN 1 にしてください
+;--------------------------------------------------
+SIF FLAG:口上色
+	TRYCALLFORM M_KOJO_COLOR_K33
+
+SELECTCASE SCENE
+CASE "依頼提示時"
+	PRINTFORMW 「Hey, umm, %K33_BOY()%... I've got an offer you can't possibly refuse... C'mere～」
+	PRINTFORMDW Looking quite suspicious, Suwako beckons you as you lean closer. She then proceeds whispering on your ear--
+	PRINTFORMDW A bunch of obscenities, as it turned out!!!
+	PRINTFORMW 「C'moooon now, shh...! Be quiet... Can't you help out this good old Suwako once? Please?」
+	PRINTFORMW 「I'll pay you good, so...%UNICODE(0x2764)%」
+CASE "依頼非受託時"
+	PRINTFORMW 「H-Huh? Oh... Yeah, you're right, I shouldn't have asked that...」
+	PRINTFORMW 「Sorry, I'll just... deal with it on my own somehow.」
+	PRINTFORMW 「Tsk...」
+	PRINTFORMDW You wonder if Suwako clicking her tongue was just your imagination...
+CASE "依頼受託時"
+	PRINTFORMW 「Oooh, really?! You'll help?! Great!」
+	PRINTFORMW 「Thank you so much... Yer doin' me a huge favor here. Now, without further ado, let's get started...%UNICODE(0x2764)%」
+CASE "依頼確認時"
+	PRINTFORML 「Soooo yeah... This is what we gotta do here. It's as simple as it gets.」
+	PRINTFORML 「What? Gods have their needs too! C'mon, I'll be doin' most of the work anyways.」
+CASE "依頼破棄時"
+	PRINTFORMW 「Eeeh?! You changed your mind?! Auuuu...」
+	PRINTFORMW 「This was... unexpected... I'm shocked...」
+	PRINTFORMDW Suwako looks like she's about to cry...
+CASE "依頼実行直前"
+	LOCAL:99 = IS_DOUTEI(MASTER)
+
+CASE "依頼実行直後"
+;○この依頼は必ず実行後達成します
+;【▲上の口上から続き】
+;【◆口上】
+;【▼そのまま下の口上へ】
+	
+	RETURN 0
+CASE "成功報告時"
+;報酬：低級素材
+;【▲上の口上から続き】
+;【◆口上】
+;【報酬獲得】
+	IF LOCAL:99
+		PRINTFORML
+		CFLAG:[[諏訪子]]:1900 = 1
+		CALL K33_CHERRYPOPCONCLUSION, 2
+	ELSE
+		PRINTFORMW 「Ohhh yeah, this was great! Thanks for goin' along with my whims, %K33_BOY()%%UNICODE(0x2764)%」
+		PRINTFORMW 「I'll be relying on you in the future as well... For now, please have this as your reward!」
+	ENDIF
+CASE "失敗報告時"
+	PRINTFORMW 「Boo...」
+	PRINTFORMDW Suwako seems quite sullen...
+;CASE "依頼報告不要"
+;＜この依頼にはありません＞
+;	RETURN 0
+ENDSELECT

@@ -1,0 +1,143 @@
+﻿@外出先から帰宅
+#DIM DIST_TO_HOME
+#DIM ReqTSP
+
+CALL QoL_DateEndConfirm ;qol custom code
+SIF RESULT == -1
+	RETURN -1
+
+ReqTSP = TIME_REQUIRED(MAIN_MAP,CFLAG:MASTER:デート中) * 3
+IF !FLAG:デート相手 && !FLAG:70 && BASE:MASTER:TSP >= ReqTSP
+	PRINTL If TSP is used, it's possible to return home without spending time
+	PRINTL Use TSP?
+	CALL ASK_YN
+	IF !RESULT
+		IF BASE:MASTER:TSP < ReqTSP
+			PRINTW Not enough TSP
+		ELSE
+			BASE:MASTER:TSP -= ReqTSP
+			GOTO WARP
+		ENDIF
+	ENDIF
+ENDIF
+IF !FLAG:70
+	CALL お出かけイベント
+	CALL 帰宅の時間経過
+ELSEIF BASE:MASTER:TSP < ReqTSP
+	PRINTW Not enough TSP to go back home.
+	RETURN -1
+ELSE
+	BASE:MASTER:TSP -= ReqTSP
+ENDIF
+
+$WARP
+IF CFLAG:負け犬 && TALENT:行きずり == 1
+	PRINTFORML %PARSE("You bring")% %CALLNAME:TARGET% home with %PARSE("you",5)%.
+ELSEIF BASE:MASTER:体力 <= 0
+	PRINTFORML %PARSE("You use")% the last of %PARSE("your",1)% strength to return to %GET_MAPNAME(MAIN_MAP)%...
+	PRINTFORML But when %PARSE("you get")% back to %NAME_FROM_PLACE(ENTRANCE)%, %PARSE("you",1)% %PARSE("collapse")% and %PARSE("lose")% consciousness...
+	PRINTFORMW 
+ELSE
+	PRINTFORMW %PARSE("You return")% home\@ CFLAG:MASTER:デート中 != CFLAG:TARGET:デート中 || TARGET == MASTER ?# %" "%from the date \@.
+ENDIF
+CALL 守矢くじデート相手のリセット()
+FOR LOCAL,1,CHARANUM
+	IF CHK_DATENOW(CFLAG:LOCAL:デート中)
+		CALL DATE_EVENT(LOCAL)
+		CALL SET_DATE(99,LOCAL)
+	ENDIF
+NEXT
+SIF CHK_DATENOW(CFLAG:MASTER:デート中)
+	CALL SET_DATE(99,MASTER)
+
+CFLAG:MASTER:現在位置 = GET_ENTRANCE(MAIN_MAP)
+
+@帰宅の時間経過
+;残り時間算出
+IF TFLAG:デート道中
+	;道中の場合
+	TIME = TIME + TIME_REQUIRED(MAIN_MAP, CFLAG:MASTER:デート中) - TFLAG:デート道中
+ELSE
+	;デート先到着済みの場合
+	TIME = TIME + TIME_REQUIRED(MAIN_MAP, CFLAG:MASTER:デート中)
+ENDIF
+CALL 守矢くじデート相手のリセット()
+
+@外出先から誘えるか(ARG)
+LOCAL = FLAG:デート相手
+IF CFLAG:ARG:行動 == 5
+	PRINTFORMW %CALLNAME:ARG% is working right now.
+	RETURN 0
+ENDIF
+IF LOCAL != ARG && LOCAL != MASTER
+	PRINTFORM %CALLNAME:LOCAL% 
+	;気弱系
+	IF CFLAG:LOCAL:性格傾向 == 1
+		PRINTFORML grabs the hem of %PARSE("your")% shirt and shakes %HIS_HER(TARGET)% head.
+	;強気系
+	ELSEIF CFLAG:LOCAL:性格傾向 == 2
+		PRINTFORML stares at %PARSE("you")%.
+	;素直系
+	ELSEIF CFLAG:LOCAL:性格傾向 == 3
+		PRINTFORML stares at %PARSE("you")% and says that %HE_SHE(TARGET)% just wants %PARSE("you",5)% to look at %HIM_HER(TARGET)%.
+	;真面目系
+	ELSEIF CFLAG:LOCAL:性格傾向 == 4
+		PRINTFORML interrupts %PARSE("you")% with a simple no.
+	;その他
+	ELSEIF CFLAG:LOCAL:性格傾向 == 5
+		PRINTFORML sighs and shakes %HIS_HER(TARGET)% head.
+	ENDIF
+	PRINTFORMW %PARSE("You give")% up on asking %CALLNAME:ARG% out on a date.
+	RETURN 0
+ENDIF
+IF !VISIT(ARG)
+	;qol custom code
+	PRINTFORML %PARSE("You are")% told this isn't a good time.
+	PRINTFORM Time: %時刻表示(TIME)%, Active Hours: 
+	CALL 滞在時間表示(TARGET)
+	WAIT
+	;---------------------------------------------------------
+	RETURN 0
+ENDIF
+IF ARG == 93 && !ITEM:簡易プール
+	PRINTFORMW %PARSE("You")% can't take %CALLNAME:ARG% along...
+	RETURN 0
+ELSEIF BASE:ARG:気力 < 500
+	PRINTFORMW %CALLNAME:ARG% is too tired to go out...
+	RETURN 0
+ELSEIF !CHARA_HOLIDAY(ARG) && BASE:ARG:仕事量 && TCVAR:ARG:仕事開始 < TIME + 180
+	PRINTFORMW %CALLNAME:ARG% has work to do.
+	RETURN 0
+ELSE
+	CFLAG:ARG:拠点来訪 = 1
+	RETURN 1
+ENDIF
+
+
+;FileName_DATE_CMN.ERB ------------------------------- Rev1.00
+;デートに誘えるか
+;-----------------------------------------------------------
+@CAN_DATE(ARG)
+#FUNCTION
+
+SIF !CHK_DATENOW(CFLAG:MASTER:デート中)
+	RETURNF 0
+SIF !SHIRAHU(ARG)
+	RETURNF 0
+SIF CFLAG:MASTER:現在位置 == OMANEKIBEYA()
+	RETURNF 0
+IF !CFLAG:ARG:負け犬
+	SIF !CFLAG:ARG:態度 && TARGET != RANDOM_CHARANUM
+		RETURNF 0
+	SIF CFLAG:ARG:ブチギレ
+		RETURNF 0
+ENDIF
+;潜伏モード中は不可
+SIF GETBIT(FLAG:潜伏,0)
+	RETURNF 0
+SIF CHK_DATENOW(CFLAG:ARG:デート中)
+	RETURNF 0
+SIF (!TALENT:TARGET:思慕 && !TALENT:TARGET:恋慕 && !TALENT:TARGET:愛欲 && TARGET != RANDOM_CHARANUM)
+	RETURNF 0
+RETURNF 1
+

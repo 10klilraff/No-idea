@@ -1,0 +1,309 @@
+﻿;-------------------------------------------
+;刻印取得時のテキスト
+;-------------------------------------------
+@MARK_MESSAGE
+M:1 = 0
+SETCOLOR 247,171,166
+SIF (TFLAG:苦痛刻印取得 || TFLAG:時姦刻印取得 || TFLAG:23 || TFLAG:24 || TFLAG:反発刻印取得) && MESSKIP() ;addition custom code, forcewait on acquisition
+	FORCEWAIT
+CALL MARK_MESSAGE_A
+CALL MARK_MESSAGE_P
+CALL MARK_MESSAGE_S
+SIF SHIRAHU(TARGET)
+	CALL MARK_MESSAGE_R
+CALL MARK_MESSAGE_T
+RESETCOLOR
+CALL SET_KOJO_COLOR() ;custom code
+@MARK_MESSAGE_A
+;苦痛刻印
+IF FLAG:70 == 1
+	IF TFLAG:苦痛刻印取得 == 1
+		PRINTFORML Pain is carved into %CALLNAME:TARGET%'s body while time is stopped...
+		PRINTFORMW %CALLNAME:TARGET% got Pain Mark LV1!
+	ELSEIF TFLAG:苦痛刻印取得 == 2
+		PRINTFORML Strong pain is carved into %CALLNAME:TARGET%'s body while time is stopped...
+		PRINTFORMW %CALLNAME:TARGET% got Pain Mark LV2!
+	ELSEIF TFLAG:苦痛刻印取得 == 3
+		PRINTFORML Intense pain is carved into %CALLNAME:TARGET%'s body while time is stopped...
+		PRINTFORMW %CALLNAME:TARGET% got Pain Mark LV3!
+		IF TALENT:PLAYER:サド
+			PRINTFORML 【%PARSE("You have")% Sadist】
+			PRINTL Abnormal Exp＋２
+		ELSEIF TALENT:PLAYER:針さばき && SELECTCOM == 104
+			PRINTFORML 【%PARSE("You have")% Needle Skill】
+			PRINTL Abnormal Exp＋２
+		ELSE
+			PRINTL Abnormal Exp＋１
+		ENDIF
+	ENDIF
+ELSEIF CFLAG:MASTER:イタズラ == 2
+	IF TFLAG:苦痛刻印取得 == 1
+		PRINTFORML Pain is carved into %CALLNAME:TARGET%'s body as %HE_SHE(TARGET)%'s endures the nightmare...
+		PRINTFORMW %CALLNAME:TARGET% got Pain Mark LV1!
+	ELSEIF TFLAG:苦痛刻印取得 == 2
+		PRINTFORML Strong pain is carved into %CALLNAME:TARGET%'s body as %HE_SHE(TARGET)%'s endures the nightmare...
+		PRINTFORMW %CALLNAME:TARGET% got Pain Mark LV2!
+	ELSEIF TFLAG:苦痛刻印取得 == 3
+		PRINTFORML Intense pain is carved into %CALLNAME:TARGET%'s body as %HE_SHE(TARGET)%'s endures the nightmare...
+		PRINTFORMW %CALLNAME:TARGET% got Pain Mark LV3!
+		IF TALENT:PLAYER:サド
+			PRINTFORML 【%PARSE("You have")% Sadist】
+			PRINTL Abnormal Exp＋２
+		ELSEIF TALENT:PLAYER:針さばき && SELECTCOM == 104
+			PRINTFORML 【%PARSE("You have")% Needle Skill】
+			PRINTL Abnormal Exp＋２
+		ELSE
+			PRINTL Abnormal Exp＋１
+		ENDIF
+	ENDIF
+ELSE
+	IF TFLAG:苦痛刻印取得 == 1
+		PRINTFORM 
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM An Oba and Saru mask float around %CALLNAME:TARGET%
+		ELSE
+			PRINTFORM %CALLNAME:TARGET%'s face is distorted in pain
+		ENDIF
+		PRINTFORML , but %HE_SHE(TARGET)% endures it...
+		PRINTFORMW %CALLNAME:TARGET% got Pain Mark LV1!
+	ELSEIF TFLAG:苦痛刻印取得 == 2
+		PRINTFORML %CALLNAME:TARGET% cries in pain for a while...
+		PRINTFORMW %CALLNAME:TARGET% got Pain Mark LV2!
+		IF TFLAG:刻印従順変化 == 1 && M:1 == 0
+			PRINTFORML And %HIS_HER(TARGET)% Obedience has increased to LV1!
+			M:1 = 1
+		ENDIF
+	ELSEIF TFLAG:苦痛刻印取得 == 3
+		PRINTFORM %CALLNAME:TARGET% cries and screams 
+		IF TARGET == 57 && !TALENT:恋慕
+			PRINTFORM but remains expressionless 
+		ENDIF
+		PRINTFORML in pain...
+		PRINTFORMW %CALLNAME:TARGET% got Pain Mark LV3!
+		IF TFLAG:刻印従順変化 == 1 && M:1 == 0
+			PRINTFORML And %HIS_HER(TARGET)% Obedience has increased to LV1!
+			M:1 = 1
+		ENDIF
+		IF TALENT:PLAYER:サド
+			PRINTFORML 【%PARSE("You have")% Sadist】
+			PRINTL Abnormal Exp＋２
+		ELSEIF TALENT:PLAYER:針さばき && SELECTCOM == 104
+			PRINTFORML 【%PARSE("You have")% Needle Skill】
+			PRINTL Abnormal Exp＋２
+		ELSE
+			PRINTL Abnormal Exp＋１
+		ENDIF
+	ENDIF
+ENDIF
+
+@MARK_MESSAGE_T
+;時姦刻印
+IF TFLAG:時姦刻印取得 == 1
+	PRINTFORML %CALLNAME:TARGET%'s body learns sexual pleasure while time is frozen...
+	PRINTFORMW %CALLNAME:TARGET% got Time Stop Rape Mark LV1!
+ELSEIF TFLAG:時姦刻印取得 == 2
+	PRINTFORML Unforgettable pleasure is etched into %CALLNAME:TARGET%'s body while time is frozen...
+	PRINTFORMW %CALLNAME:TARGET% got Time Stop Rape Mark LV2!
+ELSEIF TFLAG:時姦刻印取得 == 3
+	PRINTFORML %CALLNAME:TARGET%'s body completely succumbs to the pleasure that %PARSE("you")% can bring while time is frozen...
+	PRINTFORMW %CALLNAME:TARGET% got Time Stop Rape Mark LV3!
+ENDIF
+@MARK_MESSAGE_P
+;快楽刻印
+IF !FLAG:70
+	IF CFLAG:MASTER:イタズラ == 2
+		IF TFLAG:23 == 1
+			PRINTFORML %CALLNAME:TARGET%'s sleeping body is inscribed with pleasure...
+			PRINTFORMW %CALLNAME:TARGET% got Pleasure Mark Lv1!
+		ELSEIF TFLAG:23 == 2
+			PRINTFORML %CALLNAME:TARGET%'s sleeping body begins turning lewd...
+			PRINTFORMW %CALLNAME:TARGET% got Pleasure Mark Lv2!
+		ELSEIF TFLAG:23 == 3
+			PRINTFORML %CALLNAME:TARGET%'s sleeping body completely yields to obscene desires...
+			PRINTFORMW %CALLNAME:TARGET% got Pleasure Mark Lv3!
+;		ELSEIF TFLAG:23 == 4
+;			PRINTFORML 幼い身体が知るには早すぎた快楽が、%CALLNAME:TARGET%を「女」へと変えていく……
+;			PRINTFORMW %CALLNAME:TARGET%は初潮を迎えてしまった
+		ENDIF
+	ELSE
+		IF TFLAG:23 == 1
+			PRINTFORML %CALLNAME:TARGET%'s body trembles from the intense amount of pleasure it just experienced...
+			PRINTFORMW %CALLNAME:TARGET% got Pleasure Mark Lv1!
+		ELSEIF TFLAG:23 == 2
+			IF TARGET == 57 && !TALENT:恋慕
+				PRINTFORM An Okina mask floats lazily around %CALLNAME:TARGET%
+			ELSE
+				PRINTFORM %CALLNAME:TARGET%'s face melts in the afterglow
+			ENDIF
+			PRINTFORML ...
+			PRINTFORMW %CALLNAME:TARGET% got Pleasure Mark Lv2!
+		ELSEIF TFLAG:23 == 3
+			PRINTFORML An extreme amount of pleasure has been permanently engraved in both %CALLNAME:TARGET%'s mind and body...
+			PRINTFORMW %CALLNAME:TARGET% got Pleasure Mark Lv3!
+			IF TFLAG:刻印従順変化 == 1 && M:1 == 0
+			PRINTFORML And %HIS_HER(TARGET)% Obedience has increased to LV1!
+				M:1 = 1
+			ENDIF
+;		ELSEIF TFLAG:23 == 4
+;			PRINTFORML 幼い身体が知るには早すぎた快楽が、%CALLNAME:TARGET%を「女」へと変えていく……
+;			PRINTFORMW %CALLNAME:TARGET%は初潮を迎えてしまった
+		ENDIF
+	ENDIF
+ENDIF
+
+@MARK_MESSAGE_S
+;不埒刻印
+;快楽による刻印
+IF TFLAG:24 == 11
+	PRINTFORM %CALLNAME:TARGET% lets out a sweet moan despite themselves, but quickly falls silent and turns away while 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM a Saru mask floats around %HIM_HER(TARGET)%
+	ELSE
+		PRINTFORM blushing profusely
+	ENDIF
+	PRINTFORML ...
+	PRINTFORMW %CALLNAME:TARGET% got Lewdness Mark LV1!
+ELSEIF TFLAG:24 == 12
+PRINTFORML Trembling in pleasure, %CALLNAME:TARGET% looks at %PARSE("you")% with hunger in %HIS_HER(TARGET)% eyes...
+	PRINTFORMW %CALLNAME:TARGET% got Lewdness Mark LV2!
+	IF TFLAG:刻印従順変化 == 1 && M:1 == 0
+		PRINTFORML And %HIS_HER(TARGET)% Obedience has increased to LV1!
+		M:1 = 1
+	ENDIF
+ELSEIF TFLAG:24 == 13
+	PRINTFORML Though already absorbed in pleasure, %CALLNAME:TARGET% begs for more...
+	PRINTFORMW %CALLNAME:TARGET% got Lewdness mark LV3!
+	IF TFLAG:刻印従順変化 == 1 && M:1 == 0
+		PRINTFORML And %HIS_HER(TARGET)% Obedience has increased to LV2!
+		M:1 = 1
+	ENDIF
+;屈服、恭順による刻印
+ELSEIF TFLAG:24 == 31
+	PRINTFORML %CALLNAME:TARGET% looks at %PARSE("you")% with a flirtatious gaze...
+	PRINTFORMW %CALLNAME:TARGET% got Lewdness Mark LV1!
+ELSEIF TFLAG:24 == 32
+	PRINTFORML %CALLNAME:TARGET% wants %PARSE("you")% even more now...
+	PRINTFORMW %CALLNAME:TARGET% got Lewdness Mark LV2!
+	IF TFLAG:刻印従順変化 == 1 && M:1 == 0
+		PRINTFORML And %HIS_HER(TARGET)% Obedience has increased to LV1!
+		M:1 = 1
+	ENDIF
+ELSEIF TFLAG:24 == 33
+	PRINTFORM %CALLNAME:TARGET% stares at %PARSE("you")% 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM while a Hyotto and an Okina mask alternate with floating around %HIM_HER(TARGET)%
+	ELSE
+		PRINTFORM with eyes drunk on lust
+	ENDIF
+	PRINTFORML ...
+	PRINTFORMW %CALLNAME:TARGET% got Lewdness mark LV3!
+	IF TFLAG:刻印従順変化 == 1 && M:1 == 0
+		PRINTFORML And %HIS_HER(TARGET)% Obedience has increased to LV2!
+		M:1 = 1
+	ENDIF
+ENDIF
+
+
+@MARK_MESSAGE_R
+;反発刻印
+IF TFLAG:反発刻印取得 == 1
+	PRINTFORM %CALLNAME:TARGET% stares at %PARSE("you")% 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM while a Kitsune mask floats around %HIM_HER(TARGET)%
+	ELSE
+		PRINTFORM with a razor-sharp gaze
+	ENDIF
+	PRINTFORML ...
+	PRINTFORMW %CALLNAME:TARGET% got Hate Mark Lv1
+ELSEIF TFLAG:反発刻印取得 == 2
+	PRINTFORM 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORML A Hannya mask floats around %CALLNAME:TARGET%...
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%'s face is twisted with rage...
+	ENDIF
+	PRINTFORMW %CALLNAME:TARGET% got Hate Mark Lv2
+	IF TFLAG:刻印従順変化 == 1
+		PRINTFORMW Obedience decreased to LV{ABL:従順}...
+		PRINTFORMW Intimacy decreased to LV{ABL:親密}...
+		M:1 = 1
+	ELSEIF TFLAG:刻印従順変化 == 2 && M:1 == 0
+		PRINTFORMW Obedience decreased to LV{ABL:従順}...
+		M:1 = 1
+	ENDIF
+ELSEIF TFLAG:反発刻印取得 == 3
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORM A Hannya and Kitsune mask float around %CALLNAME:TARGET%
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%'s face distorts in rage
+	ENDIF
+	PRINTFORML  as %HE_SHE(TARGET)% mutters a curse...
+	PRINTFORMW %CALLNAME:TARGET% got Hate Mark Lv3
+	IF TFLAG:刻印従順変化 == 1 && M:1 == 0
+		PRINTFORMW Obedience decreased to LV{ABL:従順}...
+		PRINTFORMW Intimacy decreased to LV{ABL:親密}...
+		M:1 = 1
+	ELSEIF TFLAG:刻印従順変化 == 2 && M:1 == 0
+		PRINTFORMW Obedience decreased to LV{ABL:従順}...
+		PRINTFORMW Intimacy decreased to LV{ABL:親密}...
+		M:1 = 1
+	ENDIF
+ENDIF
+
+;-------------------------------------------
+;SPイベント口上テキスト
+;-------------------------------------------
+;デートキス共通テキスト
+@SPEVENT_MESSAGE_1(ARG,ARG:1)
+;二重表示抑制
+SIF LOCAL == FLAG:デート相手
+	RETURN
+PRINTL
+PRINTFORMDW ... On the way home from the date, %CALLNAME:TARGET% suddenly stops.
+PRINTFORMDW %HE_SHE(TARGET,1)% then turns around and kisses %PARSE("you")% on the lips...
+PRINTL
+LOCAL = FLAG:デート相手
+
+;デート告白共通テキスト
+@SPEVENT_MESSAGE_2(ARG,ARG:1)
+IF ARG == 0
+	PRINTL
+	PRINTFORMDL On the way home from the date, %CALLNAME:TARGET% stops %PARSE("you")%.
+	PRINTFORMDW With a quaking voice, %CALLNAME:TARGET% expresses %HIS_HER(TARGET)% feelings %PARSE("towards you",1)%...
+	PRINTL
+ELSEIF ARG == 1
+	PRINTFORMD %PARSE("You accept")% %CALLNAME:TARGET%'s feelings, 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORMDW and an Okina mask dances around %HIM_HER(TARGET)% in response...
+	ELSE
+		PRINTFORMDW and %HIS_HER(TARGET)% face breaks into a smile...
+	ENDIF
+	PRINTL
+ELSEIF ARG == 2
+	PRINTFORMD %CALLNAME:TARGET% is disheartened by %PARSE("your")% words 
+	IF TARGET == 57 && !TALENT:恋慕
+		PRINTFORMDW and covers %HIS_HER(TARGET)% face with an Oba mask...
+	ELSE
+		PRINTFORMDW and stares down at the ground...
+	ENDIF
+	PRINTL
+ENDIF
+
+;デート反発刻印消去共通イベント
+@SPEVENT_MESSAGE_3(ARG,ARG:1)
+;反発刻印LV1消去時
+IF ARG == 1
+	PRINTL
+	PRINTFORMDL ... After the date, some of the ill feelings seems to have disappeared between %PARSE("you",3)% two.
+	PRINTFORMDW %CALLNAME:TARGET% has started to see %PARSE("you")% in a new light...
+;反発刻印LV2消去時
+ELSEIF ARG == 2
+	PRINTL
+	PRINTFORMDL ... After the date, the distance between %PARSE("you",3)% two seems to have shrunk a bit.
+	PRINTFORMDW %CALLNAME:TARGET% has gotten a better opinion of %PARSE("you")%...
+;反発刻印LV3消去時
+ELSEIF ARG == 3
+	PRINTL
+	PRINTFORMDL ... %CALLNAME:TARGET% mutters something while walking behind %PARSE("you")%.
+	PRINTFORMDW %CALLNAME:TARGET% seems to have slightly reconsidered %HIS_HER(TARGET)% opinion of %PARSE("you")%...
+ENDIF

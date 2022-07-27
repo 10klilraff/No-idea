@@ -1,0 +1,671 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;セクハラ系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;310,尻を撫でる
+;TFLAG:193(
+;	1=不快(TALENT:臆病なら涙目)
+;	2&&3=恥ずかしがる(TALENT:男嫌い兼MASTERが男なら、身をすくめる)
+;	4=されるがまま
+;)
+;CFLAG:317==2 && TCVAR:20(
+;	パンツ無し顔面騎乗(70=クンニ強制 71=フェラチオ強制 72=アナル奉仕)
+;	35=スカート内見せつけ
+;	52=素股
+;)
+;CFLAG:317==2&&TEQUIP:シックスナイン(パンツありTCVAR:20(70～72)はこちら)
+;PREVCOM(305=膝枕
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_310
+;標準の口上を表示
+CALL TRAIN_MESSAGE
+;キャラ固有口上処理を実行
+CALL M_KOJO_MESSAGE_COM_K9_310_1
+;処理結果を返却
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_310_1
+;-------------------------------------------------
+;キャラ固有口上処理部分
+;記入チェック（=0, 非表示、1, 表示）
+;-------------------------------------------------
+LOCAL = 1
+
+IF LOCAL
+	IF FLAG:70
+		;時間停止中
+		PRINTFORMDW With time stopped, you rub your hands all over Yumemi's ass to your heart's content.
+		PRINTFORMDW What a truly wonderful texture. You just can't get enough of it.
+		PRINTFORMDW But of course, in stopped time, Yumemi shows no hint of a response.
+		PRINTFORMDW You feel that such things have meaning that can only be experienced in normal time.
+	ELSEIF CFLAG:313
+		;睡眠中
+		PRINTFORML 「Nnaah... Who turned on the ass massager...」
+		PRINTFORMDW Yumemi mutters in her sleep as you caress her ass... Wait, ass massager?
+	ELSEIF CFLAG:317 == 2
+		;うふふ中のおしりなでなで
+		SELECTCASE TCVAR:20
+			CASE 35
+				;スカート内アッピル
+				PRINTFORML 「Nnn %UNICODE(0x2764)% What, there...? Shouldn't you be focusing on other places...?」
+				PRINTFORMDW Of course, you're enjoying the full view, you just want to enjoy her ass at the same time.
+				PRINTFORMDW You think this to yourself as you rub your hands over her ass.
+			CASE 52
+				;素股
+				PRINTFORML 「Aannn, is that really where you should be touching right now...%UNICODE(0x2764)%」
+				PRINTFORMDW Yumemi trembles slightly as your %FSYN("penis")% stimulates her %FSYN("labia")%.
+				PRINTFORML 「Ah, but this different sensation from my butt...%UNICODE(0x2764)%」
+				PRINTFORML 「This isn't too bad, either...\/\/\/」
+			CASE 70
+				;まんこなめさせ
+				PRINTFORML 「Ahhh, yes, so good...lick it more, Ah, Ahh, do you really have to, touch my butt right now...%UNICODE(0x2764)%」
+				PRINTFORMDW As you savor her love juices, your face pressed against her %FSYN("crotch")%, you reach your hand to her ass.
+				PRINTFORML 「Aann, hey, don't ignore my pussy...ok? %UNICODE(0x2764)% Ahh %UNICODE(0x2764)%」
+				PRINTFORMDL As if that were even possible.
+			CASE 72
+				;ケツ舐めさせ
+				PRINTFORMDW As you explore her highly sensitive %FSYN("anus")%, you slide her hand along the surrounding cheeks.
+				PRINTFORML 「Ahnn, hey... Nn... It's starting to feel good so don't worry about that part...」
+				PRINTFORMDW "With all of this amazing ass before me, there's no way I could be satisfied with just the hole."
+				PRINTFORML 「Haa, silly... Then, at least... Ahhnnn %UNICODE(0x2764)%... Keep, keep moving your tongue...%UNICODE(0x2764)%」
+		ENDSELECT
+	ELSE
+		;通常のおしりなでなで
+		SELECTCASE TFLAG:193
+			CASE 1
+			;拒絶
+				PRINTFORML 「Hii!? Where do you think you're touching, you pervert!」
+			CASE 4
+			;されるがまま
+				IF TALENT:3
+					PRINTFORML 「Nn... Ahh... No, wait...\/\/\/\/」
+					PRINTFORML 「I'd have never guessed, I'd fall in love with someone who loves asses so much...\/\/\/」
+					PRINTFORMDW Yumemi looks at you with a blushed face as she trembles slightly.
+				ELSEIF TALENT:184 || TALENT:185
+					PRINTFORML 「Aannn... If you touch me like that... I'm going to get horny...%UNICODE(0x2764)%」
+					PRINTFORML 「If you're okay with that... Enjoy it as much as you like...」
+					PRINTFORMDW "That's the idea", you say as you caress her ass with renewed vigor.
+				ELSEIF TALENT:8
+					PRINTFORML 「What, %CALLNAME:MASTER%... P-Pervert \/\/\/」
+					PRINTFORMDW Yumemi fidgets back and forth as you caress her ass.
+				ELSE
+					PRINTFORML 「Wh-Where do you think you're touching... You...\/\/\/」
+				ENDIF
+			CASEELSE
+			;恥ずかしがる
+				IF TALENT:3
+					PRINTFORML 「Ahnn... Hey %CALLNAME:MASTER%... Here is a little...」
+					PRINTFORMDW "You don't look very upset."
+					PRINTFORML 「Yaann, that's beside...the point...\/\/\/\/」
+					PRINTFORML 「Dummy...\/\/\/」
+				ELSEIF TALENT:184 || TALENT:185
+					PRINTFORML 「Nn...%UNICODE(0x2764)% What are you doing, touching my butt in a place like this...%UNICODE(0x2764)%」
+					PRINTFORMDW Yumemi acts embarrassed as she laughs playfully.
+					PRINTFORML 「If I get turned on, you'll take responsibility, won't you...? %UNICODE(0x2764)%」
+					PRINTFORMDW Yumemi's smile is suddenly filled with obscenity.
+				ELSEIF TALENT:8
+					PRINTFORML 「Hey, stop that... S-Suddenly touching my butt in a place like this...\/\/\/」
+					PRINTFORMDW Yumemi looks embarrassed as she glances around.
+				ELSE
+					PRINTFORML 「Wha, stop that... Dummy... Th-Think about where we are...\/\/\/」
+					PRINTFORMDW Yumemi looks embarrassed as she glances around.
+				ENDIF
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;311,抱き付く
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;CFLAG:317==2&&TCVAR:20(
+;	32=前から抱きつく
+;	60=ディープキス
+;	73=ぱふぱふ
+;	74=乳合わせ
+;	77=乳を吸わせる
+;	ＶＡ性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ)
+;	86=だいしゅきホールド
+;)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_311
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_311_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_311_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+;-------------------------------------------------
+LOCAL = 1
+
+IF LOCAL
+	IF FLAG:70
+	;時間停止中
+		PRINTFORMDW You embrace Yumemi with time stopped.
+		PRINTFORMDW The lack of response makes it somewhat like clinging onto a warm mannequin.
+		PRINTFORMDW It's also a bit like a hug pillow, but you don't have any intention of sleeping right now.
+		PRINTFORMDW You feel like you've wasted a bit of your precious stopped time...
+	;デート中
+	ELSEIF CHK_DATENOW(CFLAG:LOCAL:デート中)
+		IF TALENT:恋慕
+			SELECTCASE RAND:2
+				CASE 1
+					PRINTFORML 「%CALLNAME:MASTER%... Fufu, looks like I've been caught.」
+					PRINTFORML 「Nn... Can we be like this...just a little longer...」
+					PRINTFORMDW You begin caressing her as you embrace her again.
+					PRINTFORML 「Nn, hey... Where are you touching, dummy... I love you...%CALLNAME:MASTER% %UNICODE(0x2764)%」
+				CASE 2
+					PRINTFORML 「Fufu, I guess this kind of thing is nice during a date.」
+					PRINTFORML 「Eii, Gyuu～ %UNICODE(0x2764)%」
+					PRINTFORMDW Yumemi suddenly turns the tables and begins embracing you instead.
+					PRINTFORML 「I love you, %CALLNAME:MASTER% %UNICODE(0x2764)%」
+			ENDSELECT
+		ELSEIF TALENT:思慕
+			PRINTFORML 「W-Well, I guess we're on a date, after all... Yeah, umm...\/\/\/\/」
+			PRINTFORMDW Unaccustomed to the circumstances, Yumemi blushes and mutters as you embrace her...
+			PRINTFORML （W-W-W-W-Why am I getting so worked up about this!?）
+		ELSE
+			PRINTFORML 「%FSYN("hii")%?! W-Wait a minute, just because we're out together...」
+			PRINTFORML 「D-Don't just do this so suddenly...\/\/\/」
+		ENDIF
+	;睡眠中
+	ELSEIF CFLAG:313
+		PRINTFORML 「Nn, Nnn...?」
+		PRINTFORMDW As you embrace the sleeping Yumemi, she has a slightly uncomfortable look on her face.
+	;押し倒されてる
+	ELSEIF CFLAG:317 == 2
+		SELECTCASE CFLAG:317
+			CASE 32
+				;前から抱きつかれ
+				PRINTFORML 「%CALLNAME:MASTER%, let me replenish some ingredients.」
+				PRINTFORML 「Nnn～ %UNICODE(0x2764)% Haah, all full～」
+				PRINTFORMDW "What kind of ingredient is that! You're supposed to be a researcher!"
+				PRINTFORML 「Mmm... That's a separate matter, you know?」
+			CASE 60
+				;ディープキスされた
+				PRINTFORML 「%RANDLIPS(0,"kiss")%... %CALLNAME:MASTER%... %KISS("kiss")%...」
+			CASE 73
+				;ぱふぱふ
+				PRINTFORML 「Here... Let me put your face in my boobs... How do they feel...?」
+				IF TALENT:バストサイズ < 0
+					PRINTFORMDW Although you can sense her body heat, there's unfortunately not much softness to enjoy.
+					PRINTFORML 「I guess they're not big enough, after all...」
+				ELSEIF TALENT:バストサイズ >= 1
+					PRINTFORMDW You savor the soft sensation as you blissfully entrust yourself to Yumemi's voluptuous %FSYN("chest")%...
+					PRINTFORML 「Fufu... You look so happy...」
+				ELSE
+					PRINTFORMDW You lean into her well-shaped %FSYN("chest")% as you savor the sensation...
+					PRINTFORML 「Does it feel nice...?」
+				ENDIF
+			CASE 74
+				;乳合わせされた
+				PRINTFORML 「Nnn... Yes, press your breasts into mine... Like this... Ah %UNICODE(0x2764)%」
+				PRINTFORML 「Aaah %UNICODE(0x2764)%, yes... Nn... Just like that, %CALLNAME:MASTER%... Rub the nipples together...%UNICODE(0x2764)%」
+			CASE 77
+				;乳を吸わされてる
+				PRINTFORML 「Here, %CALLNAME:MASTER%, can you suck on my nipples...? %UNICODE(0x2764)% Nnn %UNICODE(0x2764)%」
+				PRINTFORML 「Yes, just like that...%UNICODE(0x2764)% Aah... More, make me feel it more...%UNICODE(0x2764)%」
+				PRINTFORML 「Some milk might just come out...%UNICODE(0x2764)%」
+			CASE 85
+				;INSERT V
+				PRINTFORML 「Ufufu... Not this time, %CALLNAME:MASTER%... This time I'll put it in...%UNICODE(0x2764)%」
+				PRINTFORMDW Saying this, Yumemi places her entrance over your %FSYN("penis")% without hesitation, and lowers her hips in one smooth motion.
+				PRINTFORML 「Nnnn %UNICODE(0x2764)% It's...inside %UNICODE(0x2764)%」
+			CASE 87
+				;INSERT A
+				PRINTFORML 「Ufufu... %CALLNAME:MASTER%... This time, let's use this hole over here %UNICODE(0x2764)%」
+				PRINTFORMDW Saying this, Yumemi places her anus over your %FSYN("penis")% without hesitation, and lowers her hips in one smooth motion.
+				PRINTFORML 「Nnuuunnnn %UNICODE(0x2764)% It's inside...%UNICODE(0x2764)% It's in my ass %UNICODE(0x2764)%」
+			CASE 88
+				;腰ふりV
+				PRINTFORML 「Aaaah, yes, %CALLNAME:MASTER% %UNICODE(0x2764)% Harder, thrust harder %UNICODE(0x2764)%」
+				PRINTFORML 「My pussy feels so good, it's so good %UNICODE(0x2764)% I can't, stop my hips %UNICODE(0x2764)%」
+				PRINTFORML 「Fuaaah, yes, deeper! It's so gooood %UNICODE(0x2764)%」
+			CASE 89
+				;腰ふりA
+				PRINTFORML 「Nnaaaaah, deeper, scrape out my insides %UNICODE(0x2764)% Oh, oh yes, Aahh Iiii %UNICODE(0x2764)%」
+			CASE 86
+				;らいひゅき
+				PRINTFORML 「Ah, Ah %UNICODE(0x2764)% %CALLNAME:MASTER%, are you...about to cum?」
+				PRINTFORML 「Cum inside, like this %UNICODE(0x2764)% Let it all out inside %UNICODE(0x2764)%」
+		ENDSELECT
+	;通常時
+	ELSE
+		IF TALENT:3
+			SELECTCASE TFLAG:193
+				CASE 1
+					PRINTFORML 「Nn... I, I really love it, when we're like this.」
+					PRINTFORML 「It's so warm, and soothing...」
+				CASE 0
+					PRINTFORML 「Wha, %CALLNAME:MASTER%～ \/\/\/」
+					PRINTFORML 「I'm really happy you feel this way... But think a little about where we are, ok?」
+				CASEELSE
+					;恋慕ついて抱きつけないってのは、まあなさそうだけど……
+					PRINTFORML 「Hey, wait, here and now is a little...」
+			ENDSELECT
+		ELSEIF TALENT:184 || TALENT:185 || TALENT:142
+			SELECTCASE TFLAG:193
+				CASE 1
+					PRINTFORML 「Fufu... %CALLNAME:MASTER%... Hug me tighter, ok...?」
+					PRINTFORML 「So you can feel the heat from my body...」
+				CASE 0
+					PRINTFORML 「Ahnn... What's the matter? Were you suddenly entranced by my body?」
+				CASEELSE
+					PRINTFORML 「Sorry, can we not do this right now?」
+			ENDSELECT
+		ELSEIF TALENT:8
+			SELECTCASE TFLAG:193
+				CASE 1
+					PRINTFORML 「Just a little longer... Can we be like this...just a little longer? %CALLNAME:MASTER%...\/\/\/」
+					PRINTFORML （I wonder why...I feel so happy...）
+				CASE 0
+					PRINTFORML 「%CALLNAME:MASTER%, would you do this with just anyone...?」
+					PRINTFORML （If so, I'd be a little upset... Just a little.）
+				CASEELSE
+					PRINTFORML 「Sorry...let's not right now.」
+			ENDSELECT
+		ELSE
+			SELECTCASE TFLAG:193
+				CASE 1
+					PRINTFORML 「Ahnn, %CALLNAME:MASTER%～...\/\/\/」
+				CASE 0
+					PRINTFORML 「Isn't this kind of an intimate thing to do...? Not that I mind, I guess...」
+				CASEELSE
+					PRINTFORML 「Hey, stop that, you're getting over-familiar.」
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;312,キスする
+;TFLAG:193(99=拒絶(キス不可) 1=大成功 0=成功 -1=失敗)
+;CFLAG:317==2&&TCVAR:20(
+;	32=前から抱きつく
+;	50=手淫
+;	60=キス
+;	性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ)
+;	86=だいしゅきホールド)
+;PREVCOM(305=膝枕
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_312
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_312_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_312_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+;-------------------------------------------------
+LOCAL = 1
+
+IF LOCAL
+	IF FLAG:70
+	ELSEIF CFLAG:313
+		;ねてる
+		IF TALENT:恋慕
+			PRINTFORML 「Nnn... %CALLNAME:MASTER%... Nfuu... Hey...」
+			PRINTFORMDW Yumemi mutters your name in her sleep. She looks a little happy...
+			PRINTFORMDW You hope she doesn't wake up...
+		ELSEIF TALENT:思慕
+			PRINTFORML 「Nn... Zzz... Hey, Chiyuri... Don't go blaming %CALLNAME:MASTER%...」
+			PRINTFORMDW Just what is she dreaming about...
+		ELSE
+			PRINTFORML 「Nnn...? Nn... Zzz...」
+			PRINTFORMDW You somehow avoided waking her up...
+		ENDIF
+	ELSEIF CFLAG:317 == 2
+		;ンフフ、今後追加予定(2020/05/13)
+		;SELECTCASE CFLAG:317
+			;CASE 32
+				;抱きつきちゅっちゅ
+
+			;CASE 50
+				;手コキ
+
+			;CASE 60
+				;ちゅっちゅ
+
+			;CASE 86
+				;らいしゅき
+
+			;CASEELSE
+				;INSERT INTO V or A
+
+		;ENDSELECT
+	ELSE
+		SELECTCASE TFLAG:193
+			CASE 1
+				IF TALENT:3 || TALENT:8
+					PRINTFORML 「%KISS("kiss")%... Nnn... Nn... %CALLNAME:MASTER%...」
+					PRINTFORML 「Nnn... %FSYN("lips_over")%... More...」
+					PRINTFORMDW Yumemi pleads for more with slight tears in her eyes.
+				ELSEIF TALENT:184 || TALENT:185 || TALENT:142
+					PRINTFORML 「Haa... %KISS("kiss")%... Nfuu... Nnn... Yes... More... Nn...%UNICODE(0x2764)%」
+					PRINTFORMDW Yumemi assertively wraps her tongue around yours with a lewd smile.
+					PRINTFORML 「Ufufu... I think I might get addicted to this. Kissing, with you...」
+				ELSE
+					PRINTFORML 「Nmuu... Nnn... %KISS("kiss")%...」
+					PRINTFORML （%CALLNAME:MASTER%...）
+				ENDIF
+			CASE 0
+				PRINTFORML 「Fuu...!? Nnn... So pushy～....」
+			CASEELSE
+				PRINTFORML 「Hey, stop that. We're not in that kind of relationship.」
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;313,胸愛撫
+;CFLAG:317==2&&TCVAR:20(
+;	27=谷間を見せる
+;	33=胸を揉ませる
+;	53=パイズリ(小分岐は地の文EVENT_MESSAGE_COM_セクハラ.ERB参照)
+;	73=ぱふぱふ
+;	77=乳を吸わせる
+;	性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ)
+;	86=だいしゅきホールド
+;)
+;ABL:Ｂ感覚(2未満=性的には感じてない 5未満=多少感じてる 5以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;乳のサイズでも変わる場合があるので、地の文EVENT_MESSAGE_COM_セクハラ.ERB参照
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_313
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_313_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_313_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSEIF CFLAG:313
+	ELSEIF CFLAG:317 == 2
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;314,アナル愛撫
+;CFLAG:317==2&&TCVAR:20(72=アナル奉仕
+;CFLAG:317==2&&TEQUIP:シックスナイン(パンツありTCVAR:20(70～72)はこちら)
+;ABL:Ａ感覚(2未満=受け入れられない 4未満=異物感に翻弄 4以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_314
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_314_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_314_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSEIF CFLAG:313
+	ELSEIF CFLAG:317 == 2
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;315,クリ愛撫
+;CFLAG:317==2 && TCVAR:20(
+;	35=スカートの中を見せる
+;	70=クンニ強制
+;	85=Ｖ挿入する
+;	86=だいしゅきホールド
+;	87=Ａ挿入する
+;	88=腰振りＶ
+;	89=腰振り
+;)
+;ABL:Ｃ感覚(4未満=くすぐったい 6未満=ちょっといいかも 6以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_315
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_315_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_315_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+	ELSEIF CFLAG:313
+	ELSEIF CFLAG:317 == 2
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;316,指挿入れ
+;CFLAG:317==2&&TCVAR:20(35=スカートの中を見せる 70=クンニ強制 87=Ａ挿入する 89=腰振りＡ
+;TALENT:処女(指挿入れ連続時喪失注意、基本拒否ぎみ)
+;ABL:Ｖ感覚(1未満=違和感に戸惑う 5未満=ちょっと気持ちいい 5以上＝カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_316
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_316_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_316_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF CFLAG:70
+	ELSEIF CFLAG:313
+	ELSEIF CFLAG:317 == 2
+	ELSE
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;317,腰を動かす
+;ABL:Ｖ感覚(2未満=まだ気持ち良くない 5未満=ちょっと気持ちいい 5以上=カイカン
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_317
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_317_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_317_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;V感覚のLvにより分岐
+	IF ABL:1 >= 5
+		PRINTFORML 「Ah, Haa, Yes %UNICODE(0x2764)% %CALLNAME:MASTER%'s %FSYN("penis")% feels so good %UNICODE(0x2764)%」
+		PRINTFORML 「Aah %UNICODE(0x2764)% It's so good, %CALLNAME:MASTER% %UNICODE(0x2764)% Harder!」
+	ELSEIF ABL:1 < 2
+		PRINTFORML 「%GROAN("ngh",,3)%...%GROAN("ngh:guh",,3)%」
+		PRINTFORMDL Yumemi doesn't seem to be enjoying the sensation of your thrusting...
+		PRINTFORMDW It seems like she needs to get more accustomed to this first.
+	ELSE
+		PRINTFORML 「Haa, Aah, No, Nnn %UNICODE(0x2764)% No way, it's feeling different %UNICODE(0x2764)%」
+		PRINTFORML 「Aah, it's, starting to feel good...Nn, Kuh... Nnn %UNICODE(0x2764)%」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;318,腰を動かす（Ａ）
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_318
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_318_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_318_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;A感覚のLvにより分岐
+	IF ABL:2 >= 5
+		PRINTFORML 「Aah, Fuaa, Aa, Aa, yes %UNICODE(0x2674)% My ass feels good %UNICODE(0x2764)%」
+		PRINTFORML 「Push it deeper, churn up my insides...%UNICODE(0x2764)%」
+		PRINTFORML 「Harder, ravage my ass %UNICODE(0x2764)%」
+	ELSEIF ABL:2 < 2
+		PRINTFORML 「%GROAN("ngh:guh",,3)%...%GROAN("ngh:guh",,3)%」
+		PRINTFORMDW Yumemi's face twists in pain as you thrust into her anus.
+		PRINTFORMDW Looks like it'll be a little longer before she starts feeling it here.
+	ELSE
+		PRINTFORML 「No way, Ahh, Ah, no, even though it's my ass %UNICODE(0x2764)%... How... Aahh, no...」
+		PRINTFORML 「I'm feeling, Ahh, how, noo, Nnaah... Aah %UNICODE(0x2764)%」
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;330,スカートめくり
+;TFLAG:193(
+;	-5=拒絶（ビンタ）
+;	-3=拒絶（つねり）
+;	-1=いやがる
+;	0 =いやがる（嬉しげ）
+;	1 =受け入れ
+;)
+;### TFLAG:193 = 1 のとき、更に下記のように分岐 ###
+;TFLAG:193 = 1 && ABL:露出癖(
+;	6以上 = 人目のある場所で自らスカートをまくり上げる 
+;	5以下 = 人目のある場所でめくられるさいに弱い抵抗
+;	3以上 = 人目のない場所で自らスカートをまくり上げる
+;	3未満 = 弱い抵抗
+;)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_MESSAGE_COM_K9_330
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K9_330_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K9_330_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:70
+		;時間停止時
+		PRINTFORMDW With time stopped, you reach your hand towards Yumemi's %SHOW_BOTTOM(TARGET,1)%.
+		PRINTFORMDW Naturally, there's no resistance as you easily peek inside.
+		PRINTFORMDW But with no reaction, this one-sided interaction leaves you feeling a little empty.
+	ELSE
+		SELECTCASE TFLAG:193
+			CASE 1
+				;めくれますが夢美ちゃん、はいてます？
+				IF CFLAG:291
+					;はいてないよ
+					IF ABL:14 >= 8
+						;露出癖Lv8以上の夢美ちゃんはノーパンでお出かけも出来ちゃうえっちな大学教授です
+						IF PALAM:9 >= 5000
+							;びちょびちょじゃないかよオイ
+							PRINTFORML 「Look %CALLNAME:MASTER%, my %FSYN("vagina")%'s become like this...%UNICODE(0x2764)%」
+							PRINTFORMDW Yumemi flips up her own %SHOW_BOTTOM(TARGET,1)%, revealing her soaking wet hairy %FSYN("vagina")%.
+							PRINTFORMDW Your nose is assailed by the powerful feminine scent suddenly released from under her clothes.
+							PRINTFORML 「Hey, don't just look at it...ok?」
+							PRINTFORMDW With a wicked look on her face, Yumemi whispers into your ear.
+							PRINTFORML 「... Fuck・me %UNICODE(0x2764)%」
+						ELSE
+							PRINTFORML 「Ufufu... Look %CALLNAME:MASTER% I'm not wearing any panties %UNICODE(0x2764)%」
+							PRINTFORMDW With a wicked look on her face, Yumemi flips up her own %SHOW_BOTTOM(TARGET,1)% and exposes her hairy vagina.
+							PRINTFORMDW You unconsciously suck in your breath as you gaze upon the scene before your eyes.
+							PRINTFORML 「Oh no %UNICODE(0x2764)% I'm starting to get wet, with you staring %UNICODE(0x2764)%」
+							PRINTFORMDW True to her word, an obscene heat radiates from her %FSYN("vagina")% as it begins leaking %FSYN("juice")%.
+							PALAM:9 += 500
+						ENDIF
+					ELSEIF ABL:14 < 8 && ABL:14 >= 6
+						;露出癖Lv6以上、どこでもまくってくれる
+						IF PALAM:9 >= 5000
+							;びちょびちょじゃないか
+							PRINTFORML 「Fufu... Do you want to see my %FSYN("wet")% perverted %FSYN("vagina")%...? %UNICODE(0x2764)%」
+							PRINTFORML 「It's okay, I'll show you...%UNICODE(0x2764)% Nfuu, what do you think...?」
+							PRINTFORMDW With a seductive look, Yumemi flips up her own %SHOW_BOTTOM(TARGET,1)%, revealing her %FSYN("wet")% hairy %FSYN("vagina")%.
+							PRINTFORMDW The powerful feminine scent released from under her clothes fills your nose...
+						ELSE
+							PRINTFORML 「Hey, stop that... %CALLNAME:MASTER%, I'm not wearing anything down there today...%UNICODE(0x2764)%」
+							PRINTFORMDW Saying this, Yumemi flips up her own %SHOW_BOTTOM(TARGET,1)% and exposes her hairy %FSYN("vagina")%.
+							PRINTFORML 「You sure do have some perverted tastes...%UNICODE(0x2764)%」
+						ENDIF
+					ELSEIF ABL:14 < 6 && ABL:14 >= 3
+						;露出癖Lv3以上6未満
+						IF GET_TARGETNUM() >= 2
+							;他に誰か居る
+							PRINTFORML 「Hey, %CALLNAME:MASTER%, not here...」
+							PRINTFORML 「Maybe...if we go somewhere private...」
+							PRINTFORML 「I'll...show you... Okay?」
+						ELSE
+							PRINTFORML 「What, do you really want to see it that bad? You sure have some weird hobbies.」
+							PRINTFORML 「After all... Today... Well...」
+							PRINTFORML 「I'm not...wearing any panties... Hey, don't look at it so closely...\/\/\/\/」
+						ENDIF
+					ELSE
+						;露出癖Lv3未満
+						PRINTFORML 「Wha, hey, stop that... R-Right now is, uh...!」
+						PRINTFORML （I'm not wearing any panties! \/\/\/\/\/）
+					ENDIF
+				;はいてるよ
+				ELSE 
+					IF ABL:14 >= 6
+						;露出癖Lv6以上、どこでもまくってくれる
+						PRINTFORML 「Fufu... Do you want to see...? Go ahead...%UNICODE(0x2764)%」
+						PRINTFORMDW Saying this, Yumemi flips up her own %SHOW_BOTTOM(TARGET,1)% without any hesitation and exposes her panties.
+						PRINTFORML 「Today I'm wearing %PANTSNAME(EQUIP:TARGET:下半身下着２, TARGET)%, what do you think %UNICODE(0x2764)%」
+						PRINTFORML 「Hey, are you really okay just looking...?」
+					ELSEIF ABL:14 < 3
+						;露出癖Lv3未満
+						PRINTFORML 「Stop, hey, I said stop! You'll see my panties \/\/\/」
+					ELSE
+						;露出癖Lv3以上6未満
+						IF GET_TARGETNUM() >= 2
+							;人が居る
+							PRINTFORML 「Hey, here is kind of... What'll we do if others see...\/\/\/」
+							PRINTFORML 「I'll let you look as much as you want in private... Okay?」
+							PRINTFORML 「Ah, hey, I said you'll be able to see if you do that here...\/\/\/」
+							PRINTFORMDW Isn't that the point?
+							PRINTFORML 「A, argh! Dummy...\/\/\/」
+						ELSE
+							;人が居ない
+							PRINTFORML 「What, do you really want to see them that bad? You sure have some weird hobbies.」
+							PRINTFORMDW With an embarrassed look on her face, Yumemi flips up her %SHOW_BOTTOM(TARGET,1)% and exposes her panties.
+							PRINTFORML 「Look... Today I tried wearing %PANTSNAME(EQUIP:TARGET:下半身下着２, TARGET)%... What do you think? \/\/\/」
+						ENDIF
+					ENDIF
+				ENDIF
+			CASE 0
+				;やだもー(嬉しげ)
+				PRINTFORML 「Hey, %CALLNAME:MASTER%, stop that...\/\/\/\/」
+			CASE -1
+				;やだもー(嫌)
+				PRINTFORML 「Hey, stop being stupid.」
+			CASE -3
+				;つねるぞ痴漢痴女たち
+				PRINTFORML 「Where do you think you're reaching for all of a sudden, pervert.」
+				PRINTFORMDW "Ow ow ow ow ow! You're gonna rip off my skin! Stop!"
+				PRINTFORML 「Hah? Just be grateful I didn't beat you senseless.」
+			CASE -5
+				;最大の怒りと嫌悪を込めたボカッ！ボカッ！
+				PRINTFORML 「Hii!? What do you think you're doing all of a sudden, you pervert!!」
+				PRINTFORMDW Whack! Pow!
+				PRINTFORMDW After slapping you, she wallops you on the head with her fist! It's going to leave lumps!
+				PRINTFORML 「Be grateful I'm letting you off with just that.」
+		ENDSELECT
+	ENDIF
+ENDIF
+RETURN 1

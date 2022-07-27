@@ -1,0 +1,171 @@
+﻿;-------------------------------------------------
+;守矢くじ
+;日常系コマンド、レベル1
+;-------------------------------------------------
+;守矢ガｔ……くじ
+;LOCAL
+@COM435
+#DIM ガチャ回数
+#DIM カリスマ払い
+#DIMS 台詞
+#DIMS 表情
+VARSET LOCAL
+ガチャ回数 = 0
+IF !BETWEENTIME(600,1200)
+	PRINTFORML It's closed...
+	PRINTFORMW Seems to be outside business hours.
+	RETURN -1
+ENDIF
+IF !GETBIT(FLAG:999, 2)
+	PRINTFORMW There's a poster at the edge of the temple grounds.
+	PRINTFORML ┌─────────────┐
+	PRINTFORML ｜　　　　　　　　　　　　　｜
+	PRINTFORML ｜　　Moriya Lottery　　　　｜
+	PRINTFORML ｜　　　Acclaimed sale! 　　｜
+	PRINTFORML ｜　　　　　　　　　　　　　｜
+	PRINTFORML ｜　　　　　　　　　　　　　｜
+	PRINTFORML ｜　　　　Divine favor　　　｜
+	PRINTFORML ｜　　　is  guaranteed　　　｜
+	PRINTFORML ｜　　　　　　　　　　　　　｜
+	PRINTFORML ｜　　　　　　Moriya shrine ｜
+	PRINTFORML └─────────────┘
+	PRINTFORMW 
+	PRINTFORML An assistant wearing a miko outfit (Hakama green, naturally) comes over and smiles at %PARSE("you")%.
+	PRINTFORMW Next to her is a box labeled「offertory Box」
+	PRINTFORML ...
+	PRINTFORML ......
+	PRINTFORMW This feels incredibly suspicious...
+
+	SETBIT FLAG:999, 2
+	;最初のくじのセットを作成
+	CALL FISHER_YATES_SHAFFLE(300)
+	ARRAYCOPY "SHAFFLE_ARRAY", "MORIYA_BOX"
+ENDIF
+
+IF FLAG:守矢くじデート相手
+	CALL SPTALK, 0, @"通常", 15, @"「Now is not the time to draw lotteries.」/「You're dating a god, don't waste even a tenth of a second!」", 1
+	RETURN -1
+ENDIF
+IF FLAG:守矢デート権 && !FLAG:デート相手
+	CALL ASK_YN(@"Use a pass to date %CALLNAME:(FLAG:守矢デート権)%", "Draw lottery")
+	IF !RESULT
+		CALL DATE_RIGHT
+		TIME += 3
+		RETURN 1
+	ENDIF
+ENDIF
+IF MONEY < 3000 && MONEY:2 < 20
+	PRINTFORMW After checking %PARSE("your",1)% wallet, %PARSE("you don't")% seem to have enough money.
+	PRINTFORMW Time to go collect money for donations.
+	RETURN -1
+ENDIF
+CALL SPTALK, 0, @"笑顔", 15, @"「One ticket is \3000, 20 Charisma, or 5 Moriya Charms.」", 1
+PRINTL Buy one?
+CALL ASK_M("Dangerous things are dangerous so let's stop",1,"Draw with \\3000", MONEY >= 3000, "Draw with 20CM", MONEY:2 >= 20, "Draw with 5 Moriya Charms", ITEM:131>= 5, "Pull 10 with \\27000", MONEY >= 27000, "Pull 10 with 180CM", MONEY:2 >= 180, "Pull 10 with 50 Moriya Charms", ITEM:131 >= 50)
+SELECTCASE RESULT
+	CASE 0
+		IF 顔絵付きメッセージ
+			IF !RAND:8
+				台詞 = 「Eehー Are you messing with me?」/「... Wanna be haunted?」
+				表情 = 怒り
+			ELSE
+				台詞 = 「%TEXTR("...... It is not dangerous though?/No divine blessingー?/Well, maybe next time then?")%」
+				表情 = 通常
+			ENDIF
+			CALL SPTALK, 0, @"%表情%", 15, @"%台詞%", 1
+		ENDIF
+		RETURN -1
+	CASE 1
+		MONEY -= 3000
+	CASE 2
+		MONEY:2 -= 20
+	CASE 3
+		ITEM:131 -= 5
+	CASE 4
+		ガチャ回数 = 9
+		MONEY -= 27000
+	CASE 5
+		ガチャ回数 = 9
+		MONEY:2 -= 180
+	CASE 6
+		ガチャ回数 = 9
+		ITEM:131 -= 50
+ENDSELECT
+
+IF (RESULT == 1 || RESULT == 2) && ITEM:兎符「開運大紋」
+	PRINTFORML Use Rabbit Sign「Great Fortune Crest」?
+	CALL ASK_YN
+	IF !RESULT
+		ITEM:兎符「開運大紋」 --
+		TFLAG:194 = 5
+	ENDIF
+ENDIF
+
+$RENZOKU
+
+IF GETBIT(FLAG:999, 3)
+	IF MORIYA_BOX:0 == -1
+		PRINTFORMW The box has been emptied, so a new one is prepared.
+		CALL FISHER_YATES_SHAFFLE(300)
+		ARRAYCOPY "SHAFFLE_ARRAY", "MORIYA_BOX"
+	ELSE
+		PRINTFORML A special prize has already been gotten from this box.
+		PRINTFORML Ask them to dispose of this box and prepare a new one?
+		PRINTFORML [1] Prepare a new box
+		PRINTFORML [0] Keep going with this one
+		$LOOP_INPUT_2
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				PRINTFORMW %PARSE("You continue")% pulling from that box.
+			CASE 1
+				PRINTW The box is replaced.
+				CLEARBIT FLAG:999, 3
+				CALL FISHER_YATES_SHAFFLE(300)
+				ARRAYCOPY "SHAFFLE_ARRAY", "MORIYA_BOX"
+			CASEELSE
+				GOTO LOOP_INPUT_2
+		ENDSELECT
+	ENDIF
+ENDIF
+
+PRINTFORML %PARSE("You donate")% a sufficient amount.
+PRINTFORML %PARSE("You draw",1)% a lottery ticket from the box.
+PRINTFORMW And %PARSE("hand")% it to the receptionist.
+PRINTL ......
+PRINTL ...
+CALL FOTUNE_MORIYA
+TIME += 2
+IF ガチャ回数 > 0
+	PRINTFORMW 
+	ガチャ回数 --
+	GOTO RENZOKU
+ENDIF
+
+SIF 顔絵付きメッセージ
+	CALL SPTALK, 0, @"笑顔", 15, @"「Thank you very muchー」", 1
+RETURN 1
+
+;守谷くじ
+@COM_ABLE435
+;一括管理
+SIF GLOBAL_COMABLE(435)
+	RETURN RESULT
+SIF !TFLAG:100
+	RETURN 0
+;停止中は不可
+SIF FLAG:70 == 1
+	RETURN 0
+;気力0では不可
+SIF BASE:MASTER:気力 <= 0
+	RETURN 0
+SIF !MORIYA_OMIKUJI(CFLAG:MASTER:現在位置)
+	RETURN 0
+RETURN 1
+
+@MORIYA_OMIKUJI(ARG)
+#FUNCTION
+;守矢神社の社務所
+SIF ARG == GET_MAP_REPLACEMENT(813)
+	RETURNF 1
+RETURNF 0

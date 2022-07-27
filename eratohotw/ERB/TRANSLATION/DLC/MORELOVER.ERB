@@ -1,0 +1,73 @@
+﻿@MORELOVERDLC
+#DIM TMP
+#DIM DYNAMIC LOVERPEP
+#DIM nLineCnt_Head 
+
+IF MORELOVER == 0
+	IF GETBIT(CFLAG:MASTER:既成事実 , 2)
+		CLEARBIT CFLAG:MASTER:既成事実, 2
+	ENDIF
+	FLAG:追加恋人枠 = 150
+	MORELOVER = 1
+ELSE
+	FOR TMP,1,CHARANUM
+		IF TALENT:TMP:7 > 0
+			LOVERPEP ++
+		ENDIF
+	NEXT
+	PRINTFORML Multiple lovers detected.
+	PRINTFORML Please select the unwanted lover.
+	DRAWLINE
+	nLineCnt_Head = LINECOUNT
+	REDRAW 0
+	WHILE LOVERPEP > 1
+		SIF LINECOUNT - nLineCnt_Head > 0
+			CLEARLINE LINECOUNT - nLineCnt_Head
+		FOR TMP,1,CHARANUM
+			IF TALENT:TMP:7 > 0
+				PRINTFORMLC [{TMP, 3}] %CALLNAME:TMP%
+			ENDIF
+		NEXT
+		PRINTFORML
+		DRAWLINE
+		PRINTFORML [999] Remove all lovers
+		INPUT
+		TMP = RESULT
+		
+		SELECTCASE TMP
+			CASE 999
+				FOR TMP,1,CHARANUM
+					IF TALENT:TMP:7 > 0
+						TALENT:TMP:7 = 0
+						LOVERPEP --
+					ENDIF
+				NEXT
+				PRINTFORMW All lovers were removed.
+				BREAK
+			CASE 1 TO CHARANUM
+				IF TALENT:TMP:7 > 0
+					TALENT:TMP:7 = 0
+					PRINTFORMW %CALLNAME:TMP% is no longer your lover.
+					LOVERPEP --
+				ENDIF
+		CASEELSE
+		ENDSELECT
+	WEND
+	IF LOVERPEP == 1
+		SETBIT CFLAG:MASTER:既成事実, 2
+	ELSE
+		TALENT:0:7 = 0
+		CLEARBIT CFLAG:MASTER:既成事実, 2
+	ENDIF
+	FLAG:追加恋人枠 = 0
+	MORELOVER = 0
+ENDIF
+	
+;-------------------------------
+;Custom config section
+;-------------------------------
+@CUSTOM_OPTION_1
+PRINTFORML [  1] - More lovers：\@ MORELOVER ? Yes # No \@
+
+@CUSTOM_OPTION_RESULT_1
+CALL MORELOVERDLC

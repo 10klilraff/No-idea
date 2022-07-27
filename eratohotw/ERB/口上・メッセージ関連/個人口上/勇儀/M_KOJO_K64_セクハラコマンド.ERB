@@ -1,0 +1,1552 @@
+﻿;※※※※※※※※※※※※※※※※※※※※※※※※※
+;セクハラ系コマンド
+;※※※※※※※※※※※※※※※※※※※※※※※※※
+;==================================================
+;310,尻を撫でる
+;TFLAG:193(1=不快(TALENT:臆病なら涙目) 2&&3=恥ずかしがる(TALENT:男嫌い兼MASTERが男なら、身をすくめる) 4=されるがまま)
+;CFLAG:うふふ==2&&TCVAR:20(パンツ無し顔面騎乗(70=クンニ強制 71=フェラチオ強制 72=アナル奉仕) 35=スカート内見せつけ 52=素股)
+;CFLAG:うふふ==2&&TEQUIP:シックスナイン(パンツありTCVAR:20(70～72)はこちら)
+;PREVCOM(305=膝枕
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_SUCCESS_COM_K64_310
+;成否判定
+;TFLAG:192(-2=コマンド終了、-1＝強制失敗、0=COM依存、1=強制成功or大成功
+TFLAG:192 = BASE:ムード >= 500 ? 1 # 0 ;original always made it succeed, but we have fail lines so keep it neutral until the mood is maxed
+
+@M_KOJO_MESSAGE_COM_K64_310
+;CALL TRAIN_MESSAGE
+RESETCOLOR
+DRAWLINE
+CALL SET_KOJO_COLOR
+CALL M_KOJO_MESSAGE_COM_K64_310_1
+RETURN RESULT
+
+@M_KOJO_EXTRASOURCE_COM_K64_310
+;ムードが高まってる時は反感ゼロ
+IF BASE:ムード >= 1000
+	SOURCE:反感 = 0
+;条件を満たさない場合でも大幅減
+ELSE
+	SOURCE:反感 = SOURCE:反感 / 10
+ENDIF
+
+@M_KOJO_MESSAGE_COM_K64_310_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You reach for Yuugi's %HIP_TR(TARGET)% from behind.
+		PRINTFORMDW You squeeze and fondle her %FSYN("ass")% with impunity, as she's left defenseless in stopped time...
+		RETURN 1
+	ELSEIF CFLAG:睡眠
+		PRINTFORMDL You reach for Yuugi's %HIP_TR(TARGET)% while she was sleeping on her side.
+		IF TALENT:恋慕
+			PRINTFORMDW A slight blush washes over her cheeks as she's left at your mercy...
+		ELSE
+			PRINTFORMDW She twists around and unconsciously brushes your hand away...
+		ENDIF
+		RETURN 1
+	;押し倒され
+	ELSEIF CFLAG:うふふ == 2
+		CALL AUTO_AEGI
+		RETURN 1
+	;合意が無い場合は強制失敗
+	ELSEIF TFLAG:193 < 0 ;kept as is, repurposed case 1,2
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORMDL You try to reach out to fondle Yuugi's %FSYN("ass")%, but...
+				PRINTFORMDL She's got no openings! Not even a tiny crack in her defense!
+				PRINTFORMW 「What's the matter? Acting weird and stuff.」
+			CASE 1
+				PRINTFORML 「Aahn? %SPLIT_G("What are you reaching your hand there for?:What are you trying to do with your hand there?")%」
+				PRINTFORMDL You try to %SPLIT_G(@"%FSYN("rub")%:squeeze")% Yuugi's ass, but... you get caught before the act almost immediately!
+				PRINTFORML 「You wanna shake my hand? Man, if that's what you wanted, you could've just said so!」
+				PRINTFORMDW You exchange a firm handshake with Yuugi, her grip nearly crushing your hand...
+				CALL CHANGE_CFLAG(2, 64, 10) ;left as is
+			CASE 2
+				PRINTFORML 「Get this, I was drinking at a bar the other day when some drunk twerp %SPLIT_G("tried to give me an enema:tried to stick his fingers into my asshole:grabbed my ass")%!」
+				PRINTFORML 「What happened to him? Oh, I just smashed his guts in until they were empty!」
+				PRINTFORMDW ...Maybe you should refrain from following his example then...
+		ENDSELECT
+	;通常
+	ELSE
+		IF TALENT:恋慕
+			IF BASE:ムード >= 1000
+				PRINTFORMDL You give Yuugi's buttocks a hard squeeze as if you owned her %FSYN("ass")%.
+				PRINTFORMDL She seems thrilled by such attitude...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「I'll %SPLIT_G("polish you off:give you a hand")% alright if you feel like letting loose!」
+						PRINTFORML 「――If anything, I don't think I can take it myself no more!」
+						PRINTFORMW 「What say you? Wanna just get down to business, hmm...?」
+					CASE 1
+						CALL HPH_PRINT,@"「――%MOAN()%HPH Oh yeah, right there, that's how I like it...HPH」","L"
+						PRINTFORMDL You keep squeezing and groping her rear with impunity, as if you own it.
+						PRINTFORMDW It is said that oni become highly aroused by being beaten or brought to their knees by force...
+					CASE 2
+						PRINTFORML 「If you're tryin' to put me into the mood, then...」
+						PRINTFORMDL Yuugi takes your hand and places it on her crotch.
+						PRINTFORMDL ――It was already so sopping wet there that there was no need for any foreplay.
+						CALL HPH_PRINT,@"「I want you to fondle me there some more. C'moooon...HPH」","W"
+						PALAM:潤滑 += 3000
+				ENDSELECT
+			ELSE
+				PRINTFORMDL You %FSYN("grope")% Yuugi's %FSYN("ass")%.
+				PRINTFORMDL She simply lets it happen...
+				PRINTFORMDW 
+				SELECTCASE IFRAND("0TO3", 1, "D2", TALENT:妊娠 || TALENT:育児中)
+					CASE 0
+						PRINTFORML 「――Oh, what, you %SPLIT_G("bored:done")% already?」
+						PRINTFORML 「You can fondle me way more than that if you wanna, y'hear?」
+						PRINTFORMDW A grimace tugs at the corners of her mouth as she crooks an eyebrow at you, looking somewhat unsatisfied.
+					CASE 1
+						PRINTFORML 「So you want me to freak out and squeal for my dear life once in a while, is that it?」
+						PRINTFORML 「Sounds cool, but don't blame me if I rupture your eardrums, a'ight?」
+						PRINTFORMDW You hurry to stop Yuugi as she begins to take in a deep breath.
+					CASE 2
+						PRINTFORML 「You don't have to ask permission every time you want to do something, just sayin'.」
+						PRINTFORML 「If you wanna grope me, then just go for it!」
+						PRINTFORMDW Yuugi remarks while enjoying her drink nonchalantly...
+						CALL RECOVER(TARGET, 20, "酒気", " ")
+					CASE 3 ;repurposed
+						PRINTFORML 「Hmm... Why don't you just gimme a massage if you're gonna stroke me anyway?」
+						PRINTFORML 「My bottom kinda feels sore when I sit on a hard chair these days...」
+						PRINTFORMDW At Yuugi's request, you get to fondle her ass all you want under the pretense of a "massage"...
+				ENDSELECT
+			ENDIF
+		ELSEIF TALENT:思慕 || TALENT:セフレ || TALENT:愛欲 ;added fuck-buddy
+			IF BASE:ムード >= 1000
+				PRINTFORMDL You fondle Yuugi's %FSYN("ass")% all over.
+				PRINTFORMDL She pushes into your touch, seeming to really enjoy your molestation...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Ohooo～ That's a pretty nice ass you got there, eh?」
+						PRINTFORML 「I mean damn, with a dumptruck like that you might wanna watch out for this one...」
+						PRINTFORMDL Yuugi goes ahead and gives your cheeks a firm squeeze in return for your tomfoolery.
+						PRINTFORMDW With a nasty smirk on her face, she does indeed look the part of a pervy old man.
+					CASE 1
+						PRINTFORML 「%SPLIT_G("That penchant of yours for getting handsy is one hell of a head scratcher sometimes:Your constant fiddling is starting to get to me, I feel")%.」
+						PRINTFORMDL That's what Yuugi says, but she doesn't look too upset about it.
+						PRINTFORMDW %BREAKENG(@"If anything she seems to be enjoying it, a smirk on her lips as she tilts her head ever so slightly to one side, %SPLIT_G("eyeing you:glancing at you with an eye")%...")%
+					CASE 2
+						PRINTFORML 「C'mon, quit groping me so gingerly like a pussy!」
+						PRINTFORMDL %SPLIT_G(@"Yuugi grips your hand and crams your hand against her buttocks, the soft flesh rising in between your fingers:Yuugi grabs your %SPLIT_G("wrist:hand")% and presses your fingers into her rear.")%
+						PRINTFORMW 「Grab it like you mean it, just like that! %PRINT_MALE("That's what a man is supposed to do:You're no coward when it comes to this", MASTER)%, am I right?」
+				ENDSELECT
+			ELSE
+				PRINTFORMDL You briefly stroke Yuugi's %FSYN("ass")%.
+				PRINTFORMDL She twists and turns ticklishly from time to time...
+				PRINTFORMDW 
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「This whole butt stuff kinda reminded me. Careful not to drop the soap in the hot springs, y'hear?」
+						PRINTFORML 「Especially when it comes to a %PRINT_MALE("lady-killer:smoking hot babe", MASTER)% like you! A-ha-ha-ha!」
+						PRINTFORMDW You're not sure why, but you decide to take her advice to heart next time you visit the Underground's hot spring town...
+					CASE 1 ;reworded old case
+						CALL PRINT_DIALOGUE, @"If you're so %PRINT_MALE("pent up:thirsty for action", MASTER)%, %SPLIT_G(@"go seek out a %PRINT_MALE("pretty lady:nice guy", MASTER)% for the night in the Underground:how about I introduce you to %PRINT_MALE("some pretty lady:some nice guy", MASTER)% who can take care of you?")%"
+						CALL PRINT_DIALOGUE, @"Those %PRINT_MALE("broads:lads", MASTER)% living underground are all happy to provide as long as they get to have a drink out of it..."
+						PRINTFORMW 「%SPLIT_G(@"Many of 'em are starving for a good %PRINT_MALE("man", MASTER)% than you might think!:There are lots of 'em starving for a good %PRINT_MALE("man", MASTER)%, to the surprise of no one!")%」
+					CASE 2
+						PRINTFORML 「Are you still after my rump? You sure ain't getting tired of it!」
+						PRINTFORML 「If you keep on pestering me, I'm gonna %SPLIT_G("have to teach ya a lesson:touch yours, too")%!」
+						PRINTFORMDW Yuugi says with a playful smirk, squeezing her hand as if itching to grab something...
+					CASE 3 ;repurposed
+						PRINTFORML 「You like my ass that much, huh?」
+						PRINTFORMDL Your response causes the oni to snort.
+						PRINTFORMW 「You sure have a way with words there! Hahaha! You're a gift that just always keeps on giving, %MASTERNAME:64%!」
+				ENDSELECT
+			ENDIF
+		ELSE
+			IF BASE:ムード >= 1000
+				PRINTFORMDL You gently %SPLIT_G("tap:pat")% Yuugi's buttocks.
+				PRINTFORMDL She seems completely unfazed by the fact that she is being molested...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Go ahead, touch me some more. I ain't gonna get pissed, promise!」
+						PRINTFORML 「Not many people today have balls to lust after an oni.」
+						PRINTFORMW 「That's why it makes me almost happy to see a daredevil like you!」
+					CASE 1
+						PRINTFORML 「――%SPLIT_G("Am I not ashamed of it:Do I ever get embarrassed over this")%?」
+						PRINTFORML 「Huh, why would I? I'm just having my ass rubbed, is all.」
+						PRINTFORMDW You're having a hard time trying to grasp what an oni would consider shameful exactly...
+					CASE 2
+						PRINTFORML 「Just so you know, even drunken oni wouldn't do something like this.」
+						PRINTFORML 「――Fufun, I mean it as a compliment though. I admire you for having the guts to do it!」
+						PRINTFORMDW Yuugi looks sort of happy, even if she's being groped right now...
+				ENDSELECT
+			ELSE
+				PRINTFORMDL You reach your hand for Yuugi's %FSYN("ass")%...
+				PRINTFORMDW 
+				SELECTCASE IFRAND("0TO3", 1, "D0", TALENT:妊娠 || TALENT:育児中)
+					CASE 0
+						PRINTFORML 「Whoa there, don't just fondle me out of the blue!」
+						PRINTFORML 「I've spilled my drink thanks to you... Gah, what a waste!」
+						PRINTFORMDW Yuugi fumes, casting a glare your way after you catch her off guard with a butt rub.
+					CASE 1 ;left as is
+						PRINTFORML 「Good grief, you really act like you got a death wish!」
+						PRINTFORML 「But I admire that courage of yours. For that, I'll let you touch me as much as you want!」
+						PRINTFORMDW In this moment, your advances finally meet Yuugi's approval.
+					CASE 2 ;left as is
+						PRINTFORML 「I don't mind you fondling my ass, but y'know...」
+						PRINTFORML 「What's so fun about rubbing my ass anyway?」
+						PRINTFORMDW Yuugi doesn't seem to realize how irresistible her ass is.
+					CASE 3 ;repurposed
+						PRINTFORML 「Aagh, this is so annoying!」
+						PRINTFORML 「If you're gonna fondle me, you better do so like you mean it!」
+						PRINTFORMDW Yuugi grips your wrist, nearly turning it to dust as she shoves your hand against her buttocks.
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;311,抱き付く
+;TFLAG:193(1=大成功 0=成功 -1=失敗)
+;CFLAG:うふふ==2&&TCVAR:20(32=前から抱きつく 60=ディープキス 73=ぱふぱふ 74=乳合わせ 77=乳を吸わせる ＶＡ性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ) 86=だいしゅきホールド)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_SUCCESS_COM_K64_311
+;成否判定
+;TFLAG:192(-2=コマンド終了、-1＝強制失敗、0=COM依存、1=強制成功or大成功
+TFLAG:192 = BASE:ムード >= 1000 ? 1 # 0 ;original always made it succeed, but we have fail lines so keep it neutral until the mood is maxed
+
+@M_KOJO_MESSAGE_COM_K64_311
+;CALL TRAIN_MESSAGE
+RESETCOLOR
+DRAWLINE
+CALL SET_KOJO_COLOR
+CALL M_KOJO_MESSAGE_COM_K64_311_1
+RETURN RESULT
+
+@M_KOJO_EXTRASOURCE_COM_K64_311
+;ムードが高まってる時は反感ゼロ
+IF BASE:ムード >= 1000
+	SOURCE:反感 = 0
+;条件を満たさない場合でも大幅減
+ELSE
+	SOURCE:反感 = SOURCE:反感 / 10
+ENDIF
+
+@M_KOJO_MESSAGE_COM_K64_311_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You wrap your arms around Yuugi in a tight embrace.
+		PRINTFORMDW You hug her with impunity, as she's left defenseless in stopped time...
+	;押し倒され
+	ELSEIF CFLAG:うふふ == 2
+		CALL AUTO_AEGI
+		RETURN 1
+	;通常
+	ELSE
+		IF TFLAG:193 == -1 ;repurposed, bad reaction
+			PRINTFORMDL You try hugging Yuugi, but...
+			IF RAND:2
+				PRINTFORML 「Whoa there, you want to wrestle?」
+				PRINTFORML 「I love a good contest of strength, especially against humans! Here we go!!!」
+			ELSE
+				PRINTFORML 「Oh, that stance is... sumo, ain't it?」
+				PRINTFORML 「Then I accept your challenge! Orrahhh!!!」
+			ENDIF
+			PRINTFORMDW Yuugi settles the match with one good throw.
+			CALL RECOVER(MASTER, -100, "体力")
+			RETURN 1
+		ENDIF
+		
+		IF MARK:反発刻印 && BASE:ムード < 1000 ;repurposed
+			PRINTFORML 「Oi, how long are you gonna be holdin' on to me?」
+			PRINTFORML 「Keep %SPLIT_G("acting weird:treating me like a fool:pushing me like that")% and I'll kick your ass, y'hear?」
+			PRINTFORMDW You don't really want to have your ass kicked, so you decide to let go of Yuugi.
+			RETURN 1
+		ENDIF
+		
+		IF FIRSTTIME("YuugiEmbrace") ;repurposed
+			PRINTFORML 「Ooh? What's gotten into you out of the blue?」
+			PRINTFORMDL You close your eyes and hold the oni close, arms wrapping taut around her torso.
+			PRINTFORMDW %BREAKENG(@"Her heartbeat is normal at first, but begins to beat faster and faster the longer you remain locked in this intimate position.")%
+			PRINTFORML 「I'm kinda not used to this kind of thing...」
+			PRINTFORML 「Just lemme go when you're done, alright?」
+			PRINTFORMDL Yuugi doesn't try to shake you off, staying put.
+			PRINTFORMDW %BREAKENG(@"She attempts to look at the ground, above her, to the side of her——anywhere else besides you; her cheeks gain a faint blush after a moment.")%
+			RETURN 1
+		ENDIF
+		
+		IF TALENT:恋慕
+			PRINTFORMDL You pull Yuugi into a tight embrace\@ CFLAG:TARGET:添い寝中 ? %" "%while she's asleep # \@.
+			IF BASE:ムード >= 1000
+				PRINTFORMDL She rests her cheek on your chest with a happy murmur...
+				PRINTFORMDW 
+				SELECTCASE IFRAND("0TO1", 1, "2", !TALENT:キス未経験 && !TALENT:MASTER:キス未経験)
+					CASE 0
+						PRINTFORMDL Satisfied, you turn to leave, but Yuugi loops her arms around your shoulders from behind.
+						PRINTFORML 「Let's keep this going for a little longer... you okay with that, right?」
+						PRINTFORMDW She squeezes you for emphasis, a smirk on her lips.
+						PRINTFORML 「I feel more comfortable when we're close together like that...」
+						PRINTFORMDW She closes her eyes, relaxing as she feels the warmth of your body radiating into hers...
+					CASE 1
+						PRINTFORML 「You're the only one... the only one who won't ever ridicule me for this.」
+						PRINTFORMDW You indulge and coddle Yuugi, treating her not as a dreaded member of the Big Four, but as a simple woman...
+					CASE 2
+						PRINTFORML 「...%MASTERNAME:64%.」
+						PRINTFORML 「――%FSYN("lips_muffle")%!」
+						PRINTFORMDW %BREAKENG(@"Embracing one another, her gaze meets yours, and then... both of you close the distance and press your lips against each other in a kiss.")%
+						CALL MUTUAL_KISS
+				ENDSELECT
+			ELSE
+				PRINTFORMDL She gladly hugs you back...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「We've known each other for a long time now. Goes without saying, I know exactly how much force I need to apply.」
+						PRINTFORML 「But y'know, personally, I wish I could hug you as hard as I can!」
+						PRINTFORMDW %BREAKENG(@"With that, Yuugi gently holds you in her arms. You feel a certain resentment at your body for not being able to receive her full-scale caress.")%
+					CASE 1
+						PRINTFORMDL You feel Yuugi's big breasts being %SPLIT_G("squished:pressed")% against you.
+						PRINTFORML 「――Whazzat? They're touching you? Fufun!」
+						PRINTFORMW 「'COURSE THEY ARE♪」
+					CASE 2
+						PRINTFORML 「――Oh, I'm hurting you? Haha, my bad!」
+						PRINTFORML 「I didn't mean to, it's just that when I'm careless, I tend to put a lot of force into it!」
+						PRINTFORMDW Every bone in your body cries out for help. But Yuugi seems to be enjoying herself, so you relent.
+				ENDSELECT
+			ENDIF
+		ELSEIF TALENT:思慕 || TALENT:セフレ || TALENT:愛欲 ;added fuck-buddy
+			PRINTFORMDL You embrace Yuugi.
+			IF BASE:ムード >= 1000
+				PRINTFORMDL She hugs you back, but only to return the gesture...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMDL %BREAKENG(@"The moment she wraps her arms around you, you feel your bones creak under the pressure of such a powerful squeeze, beginning to crack.")%
+						PRINTFORMDW Yuugi immediately lets you go when a pained groan leaves your mouth.
+						PRINTFORML 「Whoa, hey, I'm sorry! I put too much force into it!」
+						PRINTFORMW 「I ain't very good at this whole holding back thing, y'know...」
+					CASE 1
+						PRINTFORML 「If it's that comfortable as you make it out to be, I might give it a try too!」
+						PRINTFORM 「――Hnngh!
+						CALL COLORMESSAGE(@"（Gah! Agh! Ack! Oof!!!）",C_RED,0,1)
+						PRINTFORML 」
+						PRINTFORMDW You're squeezing the life out of me, Yuugi...
+					CASE 2
+						PRINTFORML 「%SPLIT_G("Maybe you gotta hit the gym more:You gotta work out more I feel")%, %MASTERNAME:64%.」
+						PRINTFORML 「To a point where you wouldn't get crushed even if I hug you full force!」
+						PRINTFORMDW You would love for Yuugi to learn how to keep her strength in check instead...
+				ENDSELECT
+			ELSE
+				PRINTFORMDL She looks rather nonplussed...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Yeah-yeah, I know we're not wrestling, you don't need to tell me twice!」
+						PRINTFORML 「.........」
+						PRINTFORML 「I'm gettin' kinda restless here. C'mon, talk to me at least!」
+						PRINTFORMDW You try to whisper sweet nothings to Yuugi, only for her to go completely silent.
+					CASE 1
+						PRINTFORML 「It's too dang hot and uncomfortable when you cling to me like that!」
+						PRINTFORML 「...Siiigh, right, I forgot. You're one of those who never listens even if I tell you to stop.」
+						PRINTFORMDW You hold Yuugi close until you are satisfied.
+					CASE 2
+						PRINTFORML 「Is it so much fun being all over me, and getting pampered by someone like me?」
+						PRINTFORML 「――You enjoy it? Hmmm, dunno about that...」
+						PRINTFORMW 「But if you say it's fun, well, I guess I can't feel bad about it either.」
+				ENDSELECT
+			ENDIF
+		ELSE
+			PRINTFORMD You wrap your arms around Yuugi
+			IF BASE:ムード >= 1000
+				PRINTFORMDL .
+				PRINTFORMDL She simply lets it happen...
+				PRINTFORMDW 
+				SELECTCASE IFRAND("0TO2", 1, "D0", TALENT:妊娠 || TALENT:育児中)
+					CASE 0
+						PRINTFORML 「I'd like to have a drink soon, y'know...」
+						PRINTFORMDL But you hug her tighter instead, telling her that you didn't want to let go yet.
+						PRINTFORMW 「Oh, okay, okay. Guess you win!」
+					CASE 1
+						PRINTFORML 「If you're just dying for some warm cuddles, I think you're hugging the wrong gal.」
+						PRINTFORML 「――You don't mind me? Heh, well, be my guest then.」
+						PRINTFORMDL You close your eyes and hold the oni close, arms wrapping taut around her torso. You begin to listen carefully.
+						PRINTFORMDW Her heartbeat is normal at first, but begins to beat faster and faster the longer you remain locked in this intimate position.
+					CASE 2
+						PRINTFORML 「Whazzat, are you drunk?」
+						PRINTFORMDL With your hands holding Yuugi's body, you pull her into a tight embrace.
+						PRINTFORMDW She was about to say something, but then she let out a shallow sigh as if she had given up.
+				ENDSELECT
+			ELSE
+				PRINTFORMDL ...
+				PRINTFORMDW 
+				SELECTCASE IFRAND("0TO2", 1, "D0", TALENT:妊娠 || TALENT:育児中)
+					CASE 0
+						PRINTFORML 「Maaan, I can't drink when you're hugging me like that!」
+						PRINTFORML 「Once you're done, get the hell off my case!」
+						PRINTFORMDW You expected a cute reaction, but looks like she was not the type for that.
+					CASE 1
+						PRINTFORML 「So? What kind of mockery is this?」
+						PRINTFORML 「――You're just trying to hug me? Yeah %SPLIT_G("I can tell, thank you very much:I know a hug when I see one")%.」
+						PRINTFORML 「All I'm asking is a reason. I won't get mad at you, just tell me!」
+						PRINTFORMDW "Uhh, %SPLIT_G("head-to-head training:battering practice:I just tripped:my body acted on its own")%?", you try to mislead her with whatever you just came up on the spot.
+					CASE 2 ;repurposed
+						PRINTFORML 「%SPLIT_G("Same old nonsense:Still acting like a dork I see:Always the same old antics:As always, you're doing the most ridiculous things")%.」
+						PRINTFORML 「%SPLIT_G("Is it so much fun, embracing an oni:What's so great about hugging an oni anyway")%?」
+						PRINTFORMDW It's okay because it's Yuugi... you think, tightening your embrace.
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;312,キスする
+;TFLAG:193(99=拒絶(キス不可) 1=大成功 0=成功 -1=失敗)
+;CFLAG:うふふ==2&&TCVAR:20(32=前から抱きつく 50=手淫 60=キス 性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ) 86=だいしゅきホールド)
+;PREVCOM(305=膝枕
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_SUCCESS_COM_K64_312
+;成否判定
+;TFLAG:192(-2=コマンド終了、-1＝強制失敗、0=COM依存、1=強制成功or大成功
+TFLAG:192 =0
+
+@M_KOJO_MESSAGE_COM_K64_312
+;CALL TRAIN_MESSAGE
+RESETCOLOR
+DRAWLINE
+CALL SET_KOJO_COLOR
+CALL M_KOJO_MESSAGE_COM_K64_312_1
+RETURN RESULT
+
+@M_KOJO_EXTRASOURCE_COM_K64_312
+;ムードが高まってる時は反感ゼロ
+IF BASE:ムード >= 1000
+	SOURCE:反感 = 0
+;条件を満たさない場合でも大幅減
+ELSEIF CFLAG:2 >= 1000 ;added condition
+	SOURCE:反感 = SOURCE:反感 / 10
+ENDIF
+
+@M_KOJO_MESSAGE_COM_K64_312_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You kiss Yuugi on the mouth.
+		PRINTFORMDW You join your lips together and twine your tongues with impunity, as she's left defenseless in stopped time...
+		RETURN 1
+	ELSEIF CFLAG:睡眠
+		PRINTFORMDL You press your lips together with Yuugi's while she's asleep.
+		PRINTFORMDW She frowns and subconsciously tries to turn her face away, feeling suffocated...
+		RETURN 1
+	;押し倒され
+	ELSEIF CFLAG:うふふ == 2
+		;added - show first kiss anyway
+		SIF FIRSTTIME("YuugiFirstKiss")
+			GOTO FIRST
+		CALL AUTO_AEGI
+		RETURN 1
+	;嫌そうに身を引く
+	ELSEIF TFLAG:193 == 99
+		PRINTFORMDL Locking eyes with Yuugi, you slowly move your face towards her, before...
+		PRINTFORML 「Hey, who said it was okay to go that far?」
+		PRINTFORMDW You end up engaging in a very intimate session with the %PRINT_OUTSIDE("floor")% after taking a spectacular leg sweep!
+	;ファーストキス
+	ELSEIF FIRSTTIME("YuugiFirstKiss") ;EXP:キス経験 == 1 changed to always show this as a first kiss from Yuugi's perspective (first time check by exp is cringe and has many flaws)
+		$FIRST
+		PRINTFORMW 「Mm...!」
+		PRINTFORMDL For just a few seconds, your lips touch each other.
+		PRINTFORMDW Your first kiss with Yuugi tastes slightly of alcohol.
+		PRINTFORML 「So this is a kiss, huh... Doesn't feel like anything special now that I've done it.」
+		PRINTFORML 「Though I say that, it makes me wonder... What's this sensation that I'm feeling...?」
+		PRINTFORMDW Yuugi scratches her cheek, tinged with embarrassment like a virgin. The look on her face... almost seems touching, really.
+		;added
+		IF EXP:キス経験 > 1
+			PRINTFORMDW Truth be told, this isn't Yuugi's first time kissing at all, even though she thinks it is.
+			PRINTFORMDW You think about this fact with a grin on your face.
+			PRINTFORML 「Huh, what's so funny? Did I say something strange?」
+			PRINTFORMW 「Hmmm?」
+		ENDIF
+	;通常
+	ELSE
+		IF TALENT:恋慕
+			;前回酒を呑ませてる
+			IF PREVCOM == 332 ;pretty sure it can't trigger when pregnant because you can't use that com, so
+				PRINTFORMDL Yuugi takes a sip of her drink before mouth-feeding it to you...
+				PRINTFORMDW 
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「Speaking of booze, 'tis a great one, we really ought to enjoy it together...」
+						PRINTFORML 「%RANDLIPS()%...!」
+						PRINTFORMDL Sake mixed with Yuugi's saliva gets poured into your mouth.
+						PRINTFORMDW Not only your throat, but also your face is getting hot. Your head is about to go round...
+					CASE 1
+						PRINTFORML 「Haah... Haah...」
+						PRINTFORML 「How's that? Bet it hit the spot, right?」
+						PRINTFORMDW You nod in response, and Yuugi leans in to kiss you once more...
+					CASE 2
+						PRINTFORML 「%RANDLIPS()%... Gulp... %FSYN("lips_over")%!」
+						PRINTFORML 「%SPLIT_G("It ain't over yet:Not yet")%...! %RANDLIPS()%...!」
+						PRINTFORMDW Even with the liquor gone, your lips remain locked together...
+					CASE 3 ;repurposed
+						PRINTFORML 「By the way, there's this thing called kuchikamizake.」
+						PRINTFORMDL [kuchikamizake (lit. mouth-bite-sake): sake made from rice or other cereal which is chewed before fermentation]
+						PRINTFORML 「Why don't we try it now? ...Eh? It ain't what I think it is?」
+						PRINTFORMDW Yuugi seems to be let down by the fact that it's not what she imagined.
+				ENDSELECT
+				CALL RECOVER(TARGET, 20, "酒気", " ")
+				CALL RECOVER(MASTER, 20, "酒気", " ")
+			ELSEIF BASE:ムード >= 1000
+				PRINTFORMDL You and Yuugi kiss each other intensely, as if you were hungry for each other...
+				PRINTFORMDW 
+				SELECTCASE RAND:4
+					CASE 0
+						CALL HPH_PRINT,@"「%FSYN("lips_muffle")%... %RANDKISS("kiss")%...!HPH」","L"
+						PRINTFORMDL %BREAKENG(@"You run your hands through Yuugi's yellow mane, feeling the soft hairs in between your fingers as your lips pepper each other in a series of passionate kisses.")%
+						CALL HPH_PRINT,@"「%FSYN("lips_over")%...HPH Heey, let's do %SPLIT_G("this again:one more")%...HPH」","L"
+						PRINTFORMDL Feeling insatiable, Yuugi hungers for more and more kisses from you.
+						PRINTFORMDW Obliging her request, you continue until she feels satisfied...
+					CASE 1
+						CALL HPH_PRINT,@"「%RANDLIPS()%...!HPH」","L"
+						CALL HPH_PRINT,@"「%RANDKISS()%... %FSYN("lips_muffle")%...HPH %FSYN("lips_muffle")%...! %RANDKISS()%...!HPH」","L"
+						PRINTFORMDW You lose yourselves in the kiss, your tongues brushing cautiously against on another...
+					CASE 2
+						CALL HPH_PRINT,@"「%RANDLIPS()%...!HPH」","L"
+						CALL HPH_PRINT,@"「%FSYN("lips_over")%... If you keep doing that to me, I'm gonna start lusting for you before long...HPH」","L"
+						PRINTFORMDW Yuugi stares at you, entranced and not wiping her saliva from around her mouth...
+					CASE 3 ;repurposed
+						CALL HPH_PRINT,@"「%RANDLIPS(, "kiss")%...!HPH」","L"
+						PRINTFORMDL Your lips lock together in a slow, sensuous union, your tongues entwining as you explore each other's mouths.
+						CALL HPH_PRINT,@"「%RANDKISS("kiss")%... %FSYN("lips_muffle")%...!HPH %RANDKISS()%...!HPH」","L"
+						PRINTFORMDW You and Yuugi immerse yourselves with each other, kissing and lapping at one another incessantly.
+				ENDSELECT
+			ELSE
+				PRINTFORMDL You join your lips together with Yuugi's.
+				PRINTFORMDL She responds eagerly, wrapping her arms around your back...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「%FSYN("lips_muffle")%... %RANDKISS()%...」
+						PRINTFORML 「Fufu, wanna go one more time?」
+						PRINTFORMDW Yuugi says, flashing you a grin...
+					CASE 1
+						PRINTFORML 「When I do this with you, I get all blushy and fired up inside.」
+						PRINTFORML 「We're just %SPLIT_G("sharing a kiss:pressing our lips together:pecking at each other's lips")%, but it feels like I'm getting drunk...」
+						PRINTFORMDW Yuugi breathes a deep sigh of relief, as if she just drank a fine drink.
+					CASE 2
+						PRINTFORML 「C'mon, come at me!」
+						PRINTFORML 「――%FSYN("lips_muffle")%!」
+						PRINTFORMDW You and Yuugi peck each other on the lips as you %SPLIT_G("hold each other close:cuddle together")%...
+				ENDSELECT
+			ENDIF
+		ELSEIF TALENT:思慕 || TALENT:セフレ || TALENT:愛欲 ;added fuck-buddy
+			PRINTFORMD You bring your face close to Yuugi's, leaning in for a kiss
+			IF BASE:ムード >= 1000
+				PRINTFORMDL .
+				PRINTFORMDL Yuugi beats you to the punch and presses her lips against yours first...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「%RANDKISS("kiss")%... %RANDKISS("kiss")%...!」
+						PRINTFORMDL Not satisfied with just one or two times, you proceed to pepper each other with heated kisses.
+						PRINTFORMDW As you try to slightly push your tongue inside her mouth, Yuugi gladly accepts it.
+					CASE 1
+						PRINTFORML 「Fufu, what's the matter? You look like you just saw a ghost!」
+						PRINTFORML 「Ain't that what we've always done?」
+						PRINTFORMDW Yuugi gives you a smug grin...
+					CASE 2
+						PRINTFORML 「%FSYN("lips_muffle")%... %FSYN("lips_over")%...」
+						PRINTFORML 「%SPLIT_G("Maybe this was a little too assertive for ya:Talk about overdoing it")%, eh?」
+						PRINTFORMDW Yuugi lets out a slight giggle as you part your lips.
+				ENDSELECT
+			ELSE
+				PRINTFORMDL ...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「What's up? Ain't you gonna make a move?」
+						PRINTFORML 「Guess I'll take it from here, then!」
+						PRINTFORMDW Yuugi jerks your face toward her and locks lips with you.
+					CASE 1
+						PRINTFORML 「%FSYN("lips_muffle")%, %TOLOWER(RANDKISS("kiss"))%...」
+						PRINTFORMDL A kiss akin to a brief greeting, your lips brush slightly in passing.
+						PRINTFORMDW You would've liked to get hands-on with Yuugi more, but you had to settle for this for now.
+					CASE 2
+						PRINTFORML 「You and I are good friends through and through.」
+						PRINTFORML 「So that's why I think it's pretty normal for us to do!」
+						PRINTFORMDW Then there's no need to hesitate. You take Yuugi in your arms and deepen your kiss.
+				ENDSELECT
+			ENDIF
+		ELSEIF CFLAG:2 >= 1000 ;added condition
+			PRINTFORMD You press your lips against Yuugi's
+			IF BASE:ムード >= 1000
+				PRINTFORMDL .
+				PRINTFORMDL She smiles broadly, accepting your advances...
+				PRINTFORMDW 
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「%FSYN("lips_muffle")%... %FSYN("lips_muffle")%...!」
+						PRINTFORMDL %BREAKENG(@"At first, you press your lips against hers in a light, tender manner, keeping track of Yuugi's reaction as your kisses grow more and more intense.")%
+						PRINTFORMDL When you push your tongue in-between her lips, Yuugi gingerly meets it with her own.
+						PRINTFORMDW Her lush lips still had the taste of fine liquor, filling your palate with so much deliciousness.
+					CASE 1
+						PRINTFORML 「...You want me to respond in kind? Heh, ain't you the needy customer!」
+						PRINTFORML 「――%FSYN("lips_muffle")%...! That should do it, right?」
+						PRINTFORMDL One kiss from you, one from Yuugi.
+						PRINTFORMDW Instead of a handshake to deepen your friendship, you share kisses.
+					CASE 2
+						PRINTFORML 「%FSYN("lips_muffle")%... Hmm, not sure why I'm still so embarrassed about it...」
+						PRINTFORMDL Yuugi scratches her cheek anxiously.
+						PRINTFORMDW You want to believe you're the only one who's ever seen this cute look on her face.
+					CASE 3 ;repurposed
+						PRINTFORML 「...%FSYN("lips_muffle")%.」
+						PRINTFORMDL Your arms coil around Yuugi's waist in a close embrace, and you push your lips flush against hers.
+						PRINTFORMW 「...Aw man, this is making me blush so hard right now...」
+				ENDSELECT
+			ELSE
+				PRINTFORMDL ...
+				PRINTFORMDW 
+				SELECTCASE IFRAND("0TO2", 1, "D1, D2", TALENT:妊娠 || TALENT:育児中)
+					CASE 0
+						PRINTFORML 「%FSYN("lips_gulp")%... %FSYN("lips_muffle")%... %FSYN("lips_muffle")%...!」
+						PRINTFORML 「%FSYN("lips_over")%...! %SPLIT_G("Stop with all the surprise stuff:Stop taking me by surprise")%, c'mon...!」
+						PRINTFORMDW Yuugi %SPLIT_G("smacks:swipes")% your shoulder.
+					CASE 1
+						PRINTFORML 「%FSYN("lips_muffle")%...」
+						PRINTFORMDL The sake in Yuugi's dish rippled ever so slightly as you steal a kiss.
+						PRINTFORMDW Asking questions would seem rude, but you have to wonder if she got shaken by it...
+					CASE 2
+						PRINTFORML 「...Are you enjoying my lips that much?」
+						PRINTFORML 「――You can taste booze on 'em? Yeaaah, I bet you do!」
+						PRINTFORMDW Yuugi pours sake into her dish and downs it in one gulp to refresh her palate.
+						CALL RECOVER(TARGET, 20, "酒気", " ")
+				ENDSELECT
+			ENDIF
+		ELSE ;repurposed
+			CALL TRAIN_MESSAGE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「%FSYN("lips_muffle")%...!」
+					PRINTFORMDL You hold Yuugi's shoulders and press your lips against hers...
+					PRINTFORML 「I can't help but feel a little... bothered by this.」
+					PRINTFORMW 「I don't think I'm gonna get used to this anytime soon.」
+				CASE 1
+					PRINTFORML 「It ain't my first time by any means, but I'm still embarrassed by the whole thing somehow...」
+					PRINTFORML 「You don't look like that to me though. Are you used to this kind of thing already?」
+					PRINTFORMDW You decide to leave it at that, neither confirming nor denying.
+				CASE 2
+					PRINTFORML 「Even if you say that it's just to deepen our friendship, I kinda wonder...」
+					PRINTFORML 「How many times do we have to press our lips together like this anyway--... %FSYN("lips_muffle")%!」
+					PRINTFORMDW As you hug and kiss Yuugi, she immediately settles down.
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;313,胸愛撫
+;CFLAG:うふふ==2&&TCVAR:20(27=谷間を見せる 33=胸を揉ませる 53=パイズリ(小分岐は地の文EVENT_MESSAGE_COM_セクハラ.ERB参照) 73=ぱふぱふ 77=乳を吸わせる 性交(85=Ｖ挿入する 87=Ａ挿入する 88=腰振りＶ 89=腰振りＡ) 86=だいしゅきホールド)
+;ABL:Ｂ感覚(2未満=性的には感じてない 5未満=多少感じてる 5以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;乳のサイズでも変わる場合があるので、地の文EVENT_MESSAGE_COM_セクハラ.ERB参照
+;==================================================
+@M_KOJO_SUCCESS_COM_K64_313
+;成否判定
+;TFLAG:192(-1＝強制失敗
+TFLAG:192 =0
+
+@M_KOJO_MESSAGE_COM_K64_313
+;CALL TRAIN_MESSAGE
+RESETCOLOR
+DRAWLINE
+CALL SET_KOJO_COLOR
+CALL M_KOJO_MESSAGE_COM_K64_313_1
+RETURN RESULT
+
+@M_KOJO_EXTRASOURCE_COM_K64_313
+;ムードが高まってる時は反感ゼロ
+IF BASE:ムード >= 1000
+	SOURCE:反感 = 0
+;条件を満たさない場合でも大幅減
+ELSE
+	SOURCE:反感 = SOURCE:反感 / 10
+ENDIF
+
+@M_KOJO_MESSAGE_COM_K64_313_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You %SPLIT_G(@"knead:massage:grope:%FSYN("rub")%")% Yuugi's %OPPAI_DESCRIPTION_TR(TARGET,1)%.
+		PRINTFORMDW You play with her %FSYN("chest")% with impunity, as she's left defenseless in stopped time...
+		RETURN 1
+	ELSEIF CFLAG:睡眠
+		PRINTFORMDL %BREAKENG(@"You take your time %SPLIT_G(@"knead:massaging:groping:%FSYN("rub:ing")%")% Yuugi's %OPPAI_DESCRIPTION_TR(TARGET)% through her %SHOW_TOP(TARGET)% while she's asleep.")%
+		PRINTFORMDW A slight blush washes over her cheeks as she's left at your mercy...
+		RETURN 1
+	;押し倒され
+	ELSEIF CFLAG:うふふ == 2
+		CALL AUTO_AEGI
+		RETURN 1
+	;通常
+	ELSE
+		IF FIRSTTIME("YuugiChestCaress") ;repurposed
+			PRINTFORML 「Oi, watch it! Don't just toy with my tits!」
+			PRINTFORMDL Even with your unexpected advances, Yuugi still accepts it with a smile.
+			PRINTFORMDW Her heavy %FSYN("chest:non",,TARGET)% were so squishy and soft, you feel like rubbing them forever.
+			
+			PRINTFORML 「Y'know, there were a few guys who would touch my tits as a way of saying hello...」
+			PRINTFORML 「But I didn't expect you to fondle 'em so brazenly...」
+			PRINTFORMDW Perhaps thanks to the fact that you did it so boldly, you manage not to offend Yuugi too much.
+			
+			CALL PRINT_DIALOGUE, @"After all, there's nothing more disgusting than guys sneaking a peek at my tits just to ogle at 'em with that perverted look on their faces."
+			PRINTFORML 「That's why I like your approach much more in that regard, 'cause you do it so confidently, upfront!」
+			PRINTFORMDW Oni's standards sure are convoluted... You think to yourself, still squeezing Yuugi's %OPPAI_DESCRIPTION_TR(TARGET)%.
+			RETURN 1
+		ENDIF
+	
+		IF TALENT:恋慕
+			IF BASE:ムード >= 1000
+				PRINTFORMDL You %SPLIT_G(@"knead:massage:grope:%FSYN("rub")%")% Yuugi's %OPPAI_DESCRIPTION_TR(TARGET,1)% in a lustful manner.
+				PRINTFORMDL She seems utterly entranced, letting you manhandle her as you like...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						CALL HPH_PRINT,@"「I want you to touch me some more...HPH」","L"
+						CALL HPH_PRINT,@"「See, like, right here... %MOAN(,,2)%!HPH」","L"
+						PRINTFORMDL Yuugi seems to like having her nipples played with.
+						PRINTFORMDW A pleasant moan escapes her lips as you keep caressing her.
+					CASE 1
+						CALL HPH_PRINT,@"「%MOAN()%...!HPH Look at what you've done, my nipples got all pointy with your constant fondling...HPH」","L"
+						PRINTFORMDL Yuugi's big erect nipples push up her clothing, asserting their presence against your palms.
+						CALL HPH_PRINT,@"「Surely you'll take responsibility for this... Riiiight?HPH」","W"
+					CASE 2
+						CALL HPH_PRINT,@"「I'll definitely give you a good time in return later, so...HPH」","L"
+						CALL HPH_PRINT,@"「Mooore, pinch my nipples harderrr...! Kuhhh, %MOAN(,1)%!HPH」","L"
+						PRINTFORMDW Ceasing your teasing, you give Yuugi's nipples a hard pinch, making her knees shake and go weak, her body jerking with a sharp movement.
+				ENDSELECT
+			ELSE
+				PRINTFORMDL You reach for Yuugi's %OPPAI_DESCRIPTION_TR(TARGET,1)%...
+				PRINTFORMDW 
+				SELECTCASE IFRAND("0TO3", 1, "D2", TALENT:妊娠 || TALENT:育児中)
+					CASE 0
+						PRINTFORML 「Here you go. That's what you love doing the most, yeah?」
+						PRINTFORML 「Feel free to fondle me all ya want, fufu!」
+						PRINTFORMDW Yuugi gleefully watches you rub her breasts...
+					CASE 1
+						PRINTFORML 「――Hmm? Did they grow even bigger than before?」
+						PRINTFORML 「Nah, can't really tell for myself. How about you take a look at it?」
+						PRINTFORMDL With an appropriate excuse, you start fondling her %FSYN("chest")% just to make sure.
+						PRINTFORMDW ...You couldn't really tell either, to be frank, but it was so soft and pleasant to the touch that it was still worth it.
+					CASE 2
+						PRINTFORML 「Good call, just in time. Give 'em the support they desperately need!」
+						PRINTFORMDL You prop her heavy breasts up from below as she starts guzzling her drink.
+						PRINTFORMDW Despite their hefty bulk, Yuugi's breasts don't sag almost at all, being perfectly ripe for the picking.
+						CALL RECOVER(TARGET, 20, "酒気", " ")
+					CASE 3 ;repurposed
+						PRINTFORML 「Sigh... Would somebody please take half the size of these tits?」
+						PRINTFORML 「With how huge they are right now, they jiggle every time I move and get in the way!」
+						PRINTFORMDL Don't even think about abandoning your boobs!
+						PRINTFORMW 「Relax, I'm gonna keep 'em the way you want, even if I have to face some difficulties. These tits are rightfully yours now!」
+				ENDSELECT
+			ENDIF
+		ELSEIF TALENT:思慕 || TALENT:セフレ || TALENT:愛欲 ;added fuck-buddy
+			IF BASE:ムード >= 1000
+				PRINTFORMDL You take your time %SPLIT_G(@"kneading:massaging:groping:%FSYN("rub:ing")%")% Yuugi's %OPPAI_DESCRIPTION_TR(TARGET)%.
+				PRINTFORMDL She steadily lets out %SPLIT_G("hot:passionate")% gasps in response to your caress...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「――Fuhh...!」
+						PRINTFORMDL Yuugi lets out a small gasp as you amuse yourself with squeezing her nipples.
+						PRINTFORMDW They grow harder and harder as you continue to rub them between your fingers...
+					CASE 1
+						PRINTFORML 「%MOAN(,,2,"dot")%...!」
+						PRINTFORMDL Seemingly having %SPLIT_G("plenty of composure to spare:boundless composure at first")%, Yuugi is much less talkative now.
+						PRINTFORMDW %BREAKENG(@"After enduring the relentless caress on her breasts, which are far more sensitive than most people's, she seems to be getting %SPLIT_G("positively:steadily")% rattled...")%
+					CASE 2
+						PRINTFORML 「Yup, that's it right there. My weak spot...」
+						PRINTFORML 「%MOAN(,,2,"dot")%... Maaan, you're hella good at this, I gotta say...!」
+						PRINTFORMDL You caress her firm nipples as they emerge from her areolas, kneading them with the tips of your fingers.
+						PRINTFORMDW Her raspy, amorous gnarls that escaped her lips arouse you to no end.
+				ENDSELECT
+			ELSE
+				PRINTFORMDL You reach for Yuugi's %OPPAI_DESCRIPTION_TR(TARGET,1)%...
+				PRINTFORMDW 
+				SELECTCASE RAND:4
+					CASE 0
+						PRINTFORML 「Better tell me, how's it? Do you like the way it feels?」
+						PRINTFORMDL You respond by placing your hands on her breasts and giving them the hardest squeeze you can muster.
+						PRINTFORMDW And it feels incredibly... soft indeed.
+					CASE 1
+						PRINTFORML 「As for me, weeeell... I think the ideal would be something like Suika, actually.」
+						PRINTFORML 「I mean, when they're this big, these giant meatbags just keep shaking and getting in the way every time I fight, it's driving me crazy!」
+						PRINTFORMDW As if confirming it, Yuugi's other breast (the one you're not touching) %FSYN("bounce:s")% and jiggles in tact to her words.
+					CASE 2
+						PRINTFORMDL In search of relief, you fondle Yuugi's chest...
+						PRINTFORML 「Gotta say, you sure do love them boobs though, eh %MASTERNAME:64%?」
+						PRINTFORML 「――Did you just say "yes"? A-ha-ha! That's why I love honest %PRINT_MALE("guys:girls", MASTER)% like you!」
+					CASE 3 ;repurposed
+						PRINTFORML 「You might as well rub my back if you're in the mood for squeezing my tits.」
+						PRINTFORML 「I didn't use to be that way, but lately I've been feeling a little stiff in my shoulders, y'see...」
+						PRINTFORMDW When Yuugi rotates her shoulders, the heavy dangling weight of her breasts starts swaying vigorously.
+				ENDSELECT
+			ENDIF
+		ELSE
+			IF BASE:ムード >= 1000
+				PRINTFORMDL You grab hold of Yuugi's %OPPAI_DESCRIPTION_TR(TARGET,1)% and %SPLIT_G("knead:squeeze")% them in your hands.
+				PRINTFORMDL Yuugi lets you do as you please, her expression calm, almost curious as she stares at you...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Ha-ha-ha!!! Oi, that tickles, you!」
+						PRINTFORMDL %BREAKENG(@"While rubbing Yuugi's %FSYN("chest:non")% as if you were massaging them, you decide to seize the opportunity to rub the area around her hardening nipples, circling the areola.")%
+						PRINTFORMDW However Yuugi just seems ticklish and doesn't seem to find it much arousing...
+					CASE 1
+						PRINTFORML 「I have a soft spot for confident people like you.」
+						PRINTFORML 「I'm gettin' a real good vibe now... So I'll let you touch my ass, my tits, whatever you want!」
+						PRINTFORMDW It's great to receive her explicit permission, but... can't she appear at least a little bit embarrassed for a change?
+					CASE 2
+						PRINTFORMDL Before long, you lift up Yuugi's tits from below and let them drop at once.
+						PRINTFORMDL Her weighty bosom sways dramatically under the pull of gravity.
+						PRINTFORMW 「I see you're having a lot of fun there. Now this, I find most pleasing!」
+				ENDSELECT
+			ELSE
+				PRINTFORMDL You reach for Yuugi's %OPPAI_DESCRIPTION_TR(TARGET,1)%...
+				PRINTFORMDW 
+				SELECTCASE IFRAND("0TO3", 1, "D2", TALENT:妊娠 || TALENT:育児中)
+					CASE 0
+						PRINTFORML 「Why don't you ask me if you can squeeze my tits first? That's basic manners, right?」
+						PRINTFORMDL May I squeeze your tits please, ma'am?
+						PRINTFORML 「Yup, go ahead! Bring it!」
+						PRINTFORMDW You take your time, kneading Yuugi's heavy breasts as she sticks out her chest, a proud smile on her face.
+					CASE 1
+						PRINTFORML 「Uhh, I mean, sure, I said you could touch 'em, but y'know...」
+						PRINTFORML 「Maybe you're taking it a little too far?」
+						PRINTFORMDW Even Yuugi didn't %SPLIT_G("anticipate you to rub her:expect to be rubbed")% for this long it seems...
+					CASE 2
+						PRINTFORML 「It's fine by me, but make sure you're careful when dealing with other girls.」
+						PRINTFORML 「That hand of yours prolly ain't gonna be the only thing that'll get lopped off, just sayin'.」
+						PRINTFORMDW Yuugi casually sips her drink without batting an eye, even as you fondle her chest for all it's worth.
+						CALL RECOVER(TARGET, 20, "酒気", " ")
+					CASE 3 ;repurposed
+						PRINTFORMDL You gently cup Yuugi's %FSYN("chest:non")% as if you were massaging them.
+						PRINTFORML 「Squeeze them if you want, but don't get too greedy, okay?」
+						PRINTFORMW 「I'll be damned if I'd let 'em get any bigger than this!」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;314,アナル愛撫
+;CFLAG:うふふ==2&&TCVAR:20(72=アナル奉仕
+;CFLAG:うふふ==2&&TEQUIP:シックスナイン(パンツありTCVAR:20(70～72)はこちら)
+;ABL:Ａ感覚(2未満=受け入れられない 4未満=異物感に翻弄 4以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_SUCCESS_COM_K64_314
+;成否判定
+;TFLAG:192(-1＝強制失敗
+TFLAG:192 =0
+
+@M_KOJO_MESSAGE_COM_K64_314
+;CALL TRAIN_MESSAGE
+RESETCOLOR
+DRAWLINE
+CALL SET_KOJO_COLOR
+CALL M_KOJO_MESSAGE_COM_K64_314_1
+RETURN RESULT
+
+@M_KOJO_EXTRASOURCE_COM_K64_314
+;恋慕が無くムードが低い時は反感激増
+SIF !TALENT:恋慕 && BASE:ムード < 1000
+	SOURCE:反感 = SOURCE:反感 * 2
+
+@M_KOJO_MESSAGE_COM_K64_314_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You stick your fingers inside Yuugi's %FSYN("ass")%, caressing her insides as you twist and curl your digits.
+		PRINTFORMDW You explore and tease her anus with impunity, as she's left defenseless in stopped time...
+		RETURN 1
+	;押し倒され
+	ELSEIF CFLAG:うふふ == 2
+		CALL AUTO_AEGI
+		RETURN 1
+	;通常
+	ELSE
+		IF MARK:反発刻印 && BASE:ムード < 1000 ;repurposed for "bad" reactions
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Hey, what are you--... %GROAN(,,2)%?!」
+					PRINTFORMDL Even though Yuugi is quite proud of her might, she doesn't seem to have trained her asshole.
+				CASE 1
+					CALL PRINT_DIALOGUE, @"Look here, if you get too carried away with me... I'll shove an entire bottle up your ass and make you drink from there, got that?"
+					PRINTFORMDL Dying of acute alcohol poisoning doesn't sound too appealing, so you put a stop to your shenanigans.
+				CASE 2
+					PRINTFORML 「Uoooghhh?!」
+					PRINTFORMDL %BREAKENG(@"Yuugi lets out a mighty roar, spilling her drink all over the place from her dish the moment you touch her asshole just a little bit.")%
+			ENDSELECT
+			PRINTFORMDW Something tells you she won't be too amused by this...
+			RETURN 1
+		ENDIF
+		
+		IF FIRSTTIME("YuugiAnalCaress") ;repurposed
+			PRINTFORML 「Why you little, %SPLIT_G("not there:that's not the right hole")%--! %GROAN()%?!」
+			PRINTFORMDL Your fingers invade Yuugi's anus as you stick them in.
+			PRINTFORMDW Yuugi frantically tightens it over and over at the feeling of something foreign, but in the end it was already too late.
+			RETURN 1
+		ENDIF
+		
+		PRINTFORMDL You %FSYN("insert:g")% your fingers into Yuugi's %FSYN("anus")%.
+		IF TALENT:恋慕 && ABL:Ａ感覚 > 3
+			IF BASE:ムード >= 1000
+				PRINTFORMDL She seems utterly entranced, letting you manhandle her as you like...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						CALL HPH_PRINT,@"「Sure, you can touch me there, that's fine by me... Khh!HPH In moderation, that is...HPH」","L"
+						CALL HPH_PRINT,@"「%SPLIT_G(@"Number two's gonna come out otherwise I feel:But it's gonna be messy if I %SPLIT_G("soil myself:break wind by accident")%")%, so...!HPH」","L"
+						PRINTFORMDW We'll worry about it when the time comes. Meantime, you continue to relentlessly stimulate Yuugi's anus...
+					CASE 1
+						CALL HPH_PRINT,@"「Uuhh, %MOAN(,,2)%...!HPH I've become a total pervert at this point, just like you...HPH」","L"
+						PRINTFORMDL Every time your finger goes in and out of her anus, Yuugi gasps in pleasure.
+						CALL HPH_PRINT,@"「But it's you who made me this way... Ain't that what you're after...?HPH」","W"
+					CASE 2
+						CALL HPH_PRINT,@"「%MOAN(,,2)%...!HPH %MOAN("l:m",,2)%...!HPH」","L"
+						PRINTFORMDL The sensation of your finger going back and forth inside her ass is making Yuugi shudder all over.
+						PRINTFORMDW Your repeated probing and stirring cause her intestinal juices to overflow, steadily staining her clothes...
+				ENDSELECT
+			ELSE
+				PRINTFORMDL Shivers creep up Yuugi's body as she trembles...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Quit it, %MASTERNAME:64%... Don't touch me there...」
+						;漏れちまう usually used for liquid, but can be applied to voice too, right?
+						PRINTFORML 「I can't keep... my voice downnnn...!」
+						PRINTFORMDL Yuugi's developed and pliant anus happily accepts the entry of your finger.
+						PRINTFORMDW Her shameful moaning was so amusing that you couldn't resist bullying her.
+					CASE 1
+						PRINTFORML 「Seriously, you're such a naughty little shit...! ...Urk, fuhhh...!」
+						PRINTFORMDL Your finger steadily sinks inside, tip at first, then halfway in.
+						PRINTFORMDW When your digit finally enters her to the base, a deep sigh falls from Yuugi's mouth.
+					CASE 2
+						PRINTFORML 「%SPLIT_G("Hurry up and get it over with already, I'm begging you:Please just make this quick and easy")%...」
+						;力が抜けてくる this is literally about "losing strength" instead of relaxing this time
+						PRINTFORML 「It's sapping my strength fast...! ...Khaaahhh, %MOAN("m",1)%!」
+						PRINTFORMDW As soon as you stink a second finger in, Yuugi lets out a high-pitched squeal of %SPLIT_G("surprise:delight")%.
+				ENDSELECT
+			ENDIF
+		ELSE
+			IF BASE:ムード >= 1000
+				PRINTFORMDL Yuugi is in a state of turmoil over the strange unfamiliar sensation...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「――Does it feel good for me?」
+						PRINTFORML 「Who knows, I can't really tell... It feels hella weird though, that's for certain.」
+						PRINTFORMDW Yuugi looks uncomfortable, as if she's still accustoming herself to it...
+					CASE 1
+						PRINTFORML 「I might as well scoop your ass too, %SPLIT_G("just for the heck of it:for all the aggravation I'm feeling")%.」
+						PRINTFORML 「Ha-ha-ha! You think I'm joking? How naive. Don't knock it till you try it, right? Let's start with two fingers!」
+						PRINTFORMDW Please don't...
+					CASE 2
+						PRINTFORML 「%FSYN("hii")%?! %GROAN()%, stop it already!」
+						PRINTFORML 「You're making me sound funny... Nghuuuh?!」
+						PRINTFORMDL Probing her slightly at first, your finger is now inserted all the way to the base to see how it feels.
+						PRINTFORMDW %BREAKENG(@"Her %SPLIT_G("ass:anus:insides:colon:ring of muscle")% squeezes with tremendous pressure, enveloping your digit. %PRINT_HASPENIS("If you ever stick your penis in there by accident:If you had a penis to stick it in there", MASTER)%, she might just end up ripping it off clean...")%
+				ENDSELECT
+			ELSE
+				PRINTFORMDL Yuugi brushes your hand away...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「I have a fine hole right here in the front, so there's no need to bother with my backdoor, sheesh...」
+						PRINTFORML 「Oh, but don't even think about shoving it in with the same hand that touched my asshole.」
+						PRINTFORMDW Yuugi says, tightening her %SPLIT_G("entrance:womanhood:vaginal muscles:opening")% to deny your fingers access.
+					CASE 1
+						PRINTFORML 「%SPLIT_G("Oi, quit touching me there, I'm warning ya...!:Oi, where the hell you think you're touching me...?!:Oi, didn't I tell you to stop touching me there?")%」
+						PRINTFORMDL Yuugi's anus clenches tightly, trying to prevent you from fingering her.
+						PRINTFORMDL Still, she could have punched you or pushed you away if she really wasn't into it.
+						PRINTFORMDW Yet, Yuugi did not.
+					CASE 2
+						PRINTFORML 「What's the matter with you? Lemme guess, you're into that kind of thing, eh?」
+						IF IS_MALE(MASTER)
+							PRINTFORML 「In that case, I can introduce you to a good man I have in mind. He's a huge flaming homo, just like you!」
+						ELSE ;original case, left as a variant
+							PRINTFORML 「I have a drinking buddy among the oni who's into butt stuff, I can introduce you to him if you like.」
+						ENDIF
+						PRINTFORML 「You look not all that bad either. I bet he'll dig you, for sure!」
+						PRINTFORMDW You're interested in women's butts, not some random dude's...
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;315,クリ愛撫
+;CFLAG:うふふ==2&&TCVAR:20(35=スカートの中を見せる 70=クンニ強制 85=Ｖ挿入する 86=だいしゅきホールド 87=Ａ挿入する 88=腰振りＶ 89=腰振り
+;ABL:Ｃ感覚(4未満=くすぐったい 6未満=ちょっといいかも 6以上=カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_SUCCESS_COM_K64_315
+;成否判定
+;TFLAG:192(-1＝強制失敗
+TFLAG:192 =0
+
+@M_KOJO_MESSAGE_COM_K64_315
+;CALL TRAIN_MESSAGE
+RESETCOLOR
+DRAWLINE
+CALL SET_KOJO_COLOR
+CALL M_KOJO_MESSAGE_COM_K64_315_1
+RETURN RESULT
+
+@M_KOJO_EXTRASOURCE_COM_K64_315
+;ムードが高まってる時は反感ゼロ
+IF BASE:ムード >= 1000
+	SOURCE:反感 = 0
+;条件を満たさない場合でも大幅減
+ELSE
+	SOURCE:反感 = SOURCE:反感 / 10
+ENDIF
+;added, to stay true to the dialogue
+SIF !TALENT:恋慕 && BASE:ムード < 1000
+	SOURCE:快Ｃ = SOURCE:快Ｃ/10
+
+@M_KOJO_MESSAGE_COM_K64_315_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You press your fingers against Yuugi's groin in stopped time, teasing her privates.
+		PRINTFORMDW You explore and tease her %PRINT_HASPENIS(@"%TINKO(TARGET)%:clit", TARGET)% with impunity, as she's left defenseless...
+		RETURN 1
+	ELSEIF CFLAG:睡眠
+		PRINTFORMDL You rub Yuugi's genitals in circular motions while she sleeps soundly, being none the wiser.
+		PRINTFORMDW A blush works up from her jaw to warm up her cheeks, as she bucks and presses her waist against your hand...
+		RETURN 1
+	;押し倒され
+	ELSEIF CFLAG:うふふ == 2
+		CALL AUTO_AEGI
+		RETURN 1
+	;通常
+	ELSE
+		;removed case, repurposed
+		IF FIRSTTIME("YuugiClitCaress")
+			PRINTFORML 「I figured you'd be one gutsy human, but I never thought you'd go this far...」
+			PRINTFORML 「Let's see, what I should've done in a situation like this... Shall I scream, maybe?」
+			PRINTFORMDW It would be nice to see Yuugi %SPLIT_G("yelp like any other woman would:let out a feminine squeal")%, you think.
+			RETURN 1
+		ENDIF
+		
+		IF TALENT:恋慕
+			;ムードが高まってる時
+			IF BASE:ムード >= 1000
+				PRINTFORMDL You slide your hand towards Yuugi's crotch, rubbing and grinding the spot where her %PRINT_HASPENIS(@"%TINKO(TARGET)%:clit", TARGET)% is.
+				PRINTFORMDL She seems utterly entranced, letting you manhandle her as you like...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						CALL HPH_PRINT,@"「%MOAN("m")%...!HPH Are you trying to %SPLIT_G("put me in a certain mood:seduce me:push my buttons")%?HPH」","L"
+						CALL HPH_PRINT,@"「You know full well I'll let you fuck me anytime you want without going through all this trouble...HPH」","L"
+						;this line was simplified, left as is
+						PRINTFORMDW %BREAKENG(@"The warmth from Yuugi's nethers and the stiffness of her %PRINT_HASPENIS(@"%TINKO(TARGET)%:clit", TARGET)% already tells you enough about her current arousal. She bucks her hips in response to your touch.")%
+					CASE 1
+						CALL HPH_PRINT,@"「Hey c'mon, not there...HPH %MOAN(,,2)%!HPH」","L"
+						CALL HPH_PRINT,@"「Let's... Let's get down and dirty, shall we?HPH」","L"
+						PRINTFORMDW %BREAKENG(@"Every stroke of your thumb against her %PRINT_HASPENIS(@"shaft:button", TARGET)% seems to have enraptured her at this point, her eyes closed as she basks in the sensation.")%
+					CASE 2
+						CALL HPH_PRINT,@"「H-Hey... That's enough already, right...?HPH」","L"
+						CALL HPH_PRINT,@"「I don't like being teased by foreplay too much...HPH」","L"
+						PRINTFORMDW Yuugi grinds her hips against your hand, trying to get your fingers to slip into her slit.
+				ENDSELECT
+			ELSE
+				PRINTFORMDL You slide your hand towards Yuugi's crotch, focusing your stimulation on the upper part of her slit.
+				PRINTFORMDL She steadily lets out passionate gasps...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Oh yeah, right there... %PRINT_HASPENIS(@"faster... rub it faster:pinch it... squeeze it harder", TARGET)%...!」
+						PRINTFORML 「Heh... Ya really can step up when ya want to, eh?」
+						PRINTFORMDL Yuugi's copiously secreting juices cling to your fingers.
+						PRINTFORMDW As you coat her %PRINT_HASPENIS(@"shaft:clit", TARGET)% with it, you notice her hips jolt sharply.
+					CASE 1
+						PRINTFORML 「Heey... Quit beating 'round the bush and just jam your fingers in...」
+						PRINTFORML 「%MOAN()%...! Are you deaf...?」
+						PRINTFORMDW %BREAKENG(@"Yuugi's pleas do nothing to dissuade your actions, and you continue caressing her %PRINT_HASPENIS(@"shaft:clit", TARGET)% in a slow, even manner, teasing her as much as possible.")%
+					CASE 2
+						PRINTFORML 「Can't you put more force into it...?」
+						PRINTFORML 「Khaahhh, hnghhhh――Urk, fuhhhh...!」
+						IF HAS_PENIS(TARGET)
+							PRINTFORMDL You wrap your fingers around Yuugi's bulging erection, its intense heat sinking into your hand.
+							PRINTFORMDL %BREAKENG(@"You tease the sensitive backside of her glans with your thumb as you start working her shaft up and down, faster and faster, while giving her balls a firm squeeze with your other hand.")%
+						ELSE
+							PRINTFORMDL You brush your fingertips around the firm nub of Yuugi's %SPLIT_G("hardened:bulging:stiff")% %SPLIT_G("clit:clitoris")%.
+							PRINTFORMDL %BREAKENG(@"Pinched hard between your thumb and middle finger, you peel back its loose hood; with your index finger, you begin to flick the stiff protrusion.")%
+						ENDIF
+						PRINTFORMDL Thighs stiffening, Yuugi sucks in a sudden breath through gritted teeth in response to the sensations.
+						PRINTFORMDW The way Yuugi's guise of composure gradually crumbled before your eyes seemed particularly poignant.
+				ENDSELECT
+			ENDIF
+		ELSE
+			IF BASE:ムード >= 1000
+				PRINTFORMDL You slide your hand towards Yuugi's crotch, rubbing and grinding the spot where her %PRINT_HASPENIS(@"%TINKO(TARGET)%:clit", TARGET)% is.
+				PRINTFORMDL She steadily lets out passionate gasps...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「%MOAN(,,2)%...! It sure feels nice, but being on the receiving side all the time is kinda, y'know...」
+						PRINTFORML 「How about this? You lemme touch yours too. Then we'll be on equal footing!」
+						PRINTFORMDW As soon as she says it, Yuugi grabs a tight hold of your %PRINT_HASPENIS(@"%TINKO(TARGET)%:clit", MASTER)%!
+					CASE 1
+						PRINTFORML 「%MOAN(,,5,"dot")%...!」
+						PRINTFORML 「Go on, keep it coming, hang in there... You might even be able to make... an oni like me cum...!」
+						PRINTFORMDW Yuugi bucks her hips, eager to grind her %PRINT_HASPENIS(@"shaft:clit", TARGET)% against your digits.
+					CASE 2
+						PRINTFORML 「If you really get me into it, don't blame me when I reduce you to tears later, y'hear?」
+						PRINTFORMDL It sure would sound more convincing if it wasn't for Yuugi being on the verge of tears already.
+						PRINTFORMDW You quickly swallow these words, for they could easily provoke her into serious action.
+				ENDSELECT
+			ELSE
+				PRINTFORMDL You slide your hand towards Yuugi's crotch, focusing your stimulation on the upper part of her slit.
+				PRINTFORMDL It doesn't seem to be affecting her much...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「%SPLIT_G("Ohoo:Oh really")%, you're thinking of making me cum?」
+						PRINTFORML 「How curious. Let's see you try!」
+						PRINTFORMDW Yuugi %SPLIT_G("tries her best:is determined")% not to show any signs of pleasure. You wonder how long it will last...
+					CASE 1
+						PRINTFORML 「What's the matter, weren't you supposed to make me cum?」
+						PRINTFORM 「At this rate, 
+						SELECTCASE TIME:2
+							;日中
+							CASE 1,2,3,4
+								PRINTFORML we're gonna be here for the rest of the day!」
+							;夜
+							CASE 5,6,7
+								PRINTFORML we're gonna be here all night!」
+						ENDSELECT
+						PRINTFORMDW Despite Yuugi's posturing, you %SPLIT_G("didn't overlook:take note of")% the occasional flinch from her body.
+					CASE 2
+						PRINTFORML 「Fufu, you're getting a little rough, ain'tcha?」
+						PRINTFORML 「I love it when you're violent. Let's see how good you are!」
+						PRINTFORMDW Yuugi seems to be taking a bit of pleasure in accepting your caresses.
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;316,指挿入れ
+;CFLAG:うふふ==2&&TCVAR:20(35=スカートの中を見せる 70=クンニ強制 87=Ａ挿入する 89=腰振りＡ
+;TALENT:処女(指挿入れ連続時喪失注意、基本拒否ぎみ)
+;ABL:Ｖ感覚(1未満=違和感に戸惑う 5未満=ちょっと気持ちいい 5以上＝カイカン)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;==================================================
+@M_KOJO_SUCCESS_COM_K64_316
+;成否判定
+;TFLAG:192(-1＝強制失敗
+TFLAG:192 =0
+
+@M_KOJO_MESSAGE_COM_K64_316
+;CALL TRAIN_MESSAGE
+RESETCOLOR
+DRAWLINE
+CALL SET_KOJO_COLOR
+CALL M_KOJO_MESSAGE_COM_K64_316_1
+RETURN RESULT
+
+@M_KOJO_EXTRASOURCE_COM_K64_316
+;ムードが高まってる時は反感ゼロ
+IF BASE:ムード >= 1000
+	SOURCE:反感 = 0
+;条件を満たさない場合でも大幅減
+ELSE
+	SOURCE:反感 = SOURCE:反感 / 10
+ENDIF
+
+@M_KOJO_MESSAGE_COM_K64_316_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	IF FLAG:時間停止
+		PRINTFORMDL You reach for Yuugi's crotch and slowly %FSYN("insert:g")% your finger in her slit.
+		PRINTFORMDW You explore and tease her %SPLIT_G(@"%FSYN("vagina")%:insides")% with impunity, as she's left defenseless in stopped time...
+		RETURN 1
+	;added
+	ELSEIF IS_VIRGIN(TARGET) && FIRSTTIME("YuugiFingerPop")
+		PRINTFORMDW %BREAKENG(@"As you try to slip a finger into Yuugi's warmth, you press into an unexpected obstacle. It feels velvety and warm against your fingertip.")%
+		PRINTFORMDW Could it be her...?
+		PRINTFORMW 「Ah, yeah, about that... It's kinda embarrassing to admit, but I'm still a virgin.」
+		PRINTFORMW 「I just haven't got around to it yet after all this time. Crazy talk, I know.」
+		PRINTFORMW 「Haha, though I can't even really call myself pure or anything like that as an oni! Surprises happen sometimes, eh?」
+		PRINTFORMW 「It's been ages, and I don't really care, but... Now that it's in the way, might as well deal with it real quick.」
+		PRINTFORMW 「I'd rather let someone courageous like you do it, than some lame twerp I won't bother speaking with again.」
+		PRINTFORMW 「I think I'll be down with that. Well, what do you say?」
+		PRINTFORMDL Having received permission to deflower her, you gulp down...
+		PRINTFORMDL
+		CALL ASK_YN("Deflower her!", "Don't!")
+		IF !RESULT
+			PRINTFORMW 「Yup, I'm ready any time. Bring it!」
+			PRINTFORMDW Yuugi braces herself, and you line up your fingers with her slit and pierce her membrane.
+			;set temporarily for a correct description
+			LOCAL = CFLAG:うふふ
+			CFLAG:うふふ = 2
+			CALL COLORMESSAGE(@"Virginity Loss (勇儀)", 0xF7ABA6, 2)
+			CALL SET_HISTORY_LOST_V(TARGET, MASTER, "指")
+			STAIN:Ｖ |= 64
+			STAIN:MASTER:手 |= 64
+			PALAM:苦痛 += 500
+			CFLAG:うふふ = LOCAL
+			PRINTFORMW 「Urk...! Kha-haha, so this is the pain of losing one's virginity, eh? It's not that big of a deal, but it sure is unusual.」
+			PRINTFORMW 「Phew, well that's a load off my shoulders for sure. I guess I'm a real woman now! Shall we keep going?」
+			PRINTFORMDW Yuugi asks nonchalantly while your fingers get covered with a little bit of red, a proof of her lost innocence...
+		ELSE
+			PRINTFORMW 「Huh, well, suit yourself I guess.」
+			PRINTFORMW 「Or do you wanna wait until the real deal? That's fine by me, I can wait!」
+			PRINTFORMDW Yuugi seems unbothered by your decision to save her virginity for later...
+		ENDIF
+	;押し倒され
+	ELSEIF CFLAG:うふふ == 2
+		CALL AUTO_AEGI
+		RETURN 1
+	;通常
+	ELSE
+		IF TALENT:恋慕
+			PRINTFORMDL You reach for Yuugi's privates and slowly %FSYN("insert:g")% your finger in her slit.
+			;ムードが高まってる時
+			IF BASE:ムード >= 1000
+				PRINTFORMDL Drool escapes her lips as she %SPLIT_G(@"%FSYN("grind:s")%:rolls")% her hips against your hand, %PLEASURE(TARGET, @"indulge", "ing")%...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						CALL HPH_PRINT,@"「Look... Enough of your games, just go ahead and shove it...!HPH」","L"
+						;yuugi says mara here to mean your dick, which is pretty cute (was removed in the update)
+						CALL HPH_PRINT,@"「Shove what? C'mon, ain't it obvious... I'm talking about your prick of course!HPH」","L"
+						SIF !HAS_PENIS(MASTER) ;added
+							PRINTFORML 「Ah, right, you don't have one... But still, even your fingers... or your fist will do just fine...」
+						CALL HPH_PRINT,@"「I see where you're going with this... You were gonna do it all along, right...?HPH」","W"
+					CASE 1
+						CALL HPH_PRINT,@"「Shove it a little deeper... %MOAN()%, you got it, that's the spot!HPH」","L"
+						CALL HPH_PRINT,@"「Oh yeah, keep rubbing me there...!HPH %MOAN(,,2)%!HPH」","L"
+						PRINTFORMDW %BREAKENG(@"You feel Yuugi's warm insides clamping down on your fingers, almost crushing them in her vice-like grip as you tickle the sensitive spot on her upper wall at her request...")%
+					CASE 2
+						CALL HPH_PRINT,@"「One finger ain't nearly enough for this...HPH」","L"
+						CALL HPH_PRINT,@"「I want you to stick two or three of 'em in at least... And make sure I'm satisfied...!HPH」","L"
+						PRINTFORMDW True to her wish, you penetrate Yuugi's slick sex with most of your fingers...
+				ENDSELECT
+			ELSE
+				PRINTFORMDL Your caress is clearly starting to get to her, as she lets out passionate gasps...
+				PRINTFORMDW 
+				SELECTCASE IFRAND("0TO2", 1, "D1", !HAS_PENIS(MASTER))
+					CASE 0
+						PRINTFORML 「...Fufu, it's real hot, ain't it?」
+						PRINTFORML 「Aa-ah, I bet it'd feel even better if you'd stick %PRINT_HASPENIS("your dick:something thicker", MASTER)% in there...」
+						PRINTFORMDL %SPLIT_G(@"Yuugi whispers with a flirty tone, as you feel her velvety insides %FSYN("squeeze")% around your digit:Yuugi whispers coyly, as you feel her vaginal muscles clamping down hard on your fingers")%.
+						PRINTFORMDW %SPLIT_G("If she tried hard enough, you feel like she could potentially break your finger:You try to shift your finger, but her grip didn't allow for any movement")%...
+					CASE 1
+						PRINTFORML 「Can you feel me undulating down there?」
+						PRINTFORML 「I want your dick so bad... it starts doing it on its own...!」
+						PRINTFORMDL You can feel her walls tighten around your fingers, rubbing them as though she was caressing a real penis.
+						PRINTFORMDW %BREAKENG(@"Just imagining the pleasure of sticking it inside her right now %SPLIT_G(@"makes your erection throb with need:is enough to make you %SPLIT_G("painfully stiff:ejaculate")%")%!")%
+						BASE:MASTER:勃起 += 500
+					CASE 2
+						PRINTFORML 「Jamming a booze-soaked finger in there is a very pleasant way to get drunk, actually.」
+						PRINTFORML 「See, just like this... Ulp, %MOAN()%!」
+						PRINTFORMDL Yuugi tips the sake cup and spills some of it, soaking your hands.
+						PRINTFORMDW %BREAKENG(@"Her body shivers all over with a sharp, jittery energy as your alcohol drenched fingers make their way past her lips and into her pussy.")%
+				ENDSELECT
+			ENDIF
+		ELSE
+			PRINTFORMDL You reach for Yuugi's privates and slowly %FSYN("insert:g")% your finger in her slit.
+			IF BASE:ムード >= 1000
+				PRINTFORMDL The sensation is making her shudder sharply once in a while...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「I figured one measly finger ain't gonna be enough for me...」
+						PRINTFORMDL %BREAKENG(@"If that's what she desires, you decide to join your middle and ring fingers together, thrusting it into her womanhood for all it's worth.")%
+						PRINTFORMDW Hot and needy, it readily accepts your digits...
+					CASE 1
+						PRINTFORML 「...Kh! C'mon now, are you even trying to make me feel good?」
+						PRINTFORML 「You'll never %SPLIT_G("have a chance to make me feel good with that kind of touch:be able to impress me with your half-assed moves like that")%, y'know!」
+						PRINTFORMDW It's clear that Yuugi is feeling it, despite %SPLIT_G("all her posturing to the bitter end:her very obvious bluffing")%...
+					CASE 2
+						PRINTFORML 「My turn. I might as well touch yours too while I'm at it.」
+						PRINTFORML 「This kind of thing is only worth it if we both... feel good about it!」
+						PRINTFORMDW Yuugi reveals your %PRINT_HASPENIS(@"%TINKO()% and gently works it up and down:slit and gently caresses it")%...
+						;あなたがあまり勃起していない場合に勃起させる
+						SIF HAS_PENIS(MASTER) && BASE:MASTER:勃起 <= 500
+							BASE:MASTER:勃起 += 500
+				ENDSELECT
+			ELSE
+				PRINTFORMDL Yuugi flutters her eyes at you enticingly...
+				PRINTFORMDW 
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORML 「Fufun! Brute forcing it, I see.」
+						PRINTFORML 「Say, is that how you %SPLIT_G("usually please your women:always get your women hot and bothered")%?」
+						PRINTFORMDW Despite the fact that you are fingerbanging her right now, Yuugi is keeping a cool face.
+					CASE 1
+						PRINTFORML 「If you're gonna make me feel good, I don't see why I should turn you down.」
+						PRINTFORML 「Go ahead, %SPLIT_G("get to work:do your thing")%. %SPLIT_G("I wonder if you can satisfy me:I doubt you'll ever be able to satisfy me:I wanna see if you're up to the task")%!」
+						PRINTFORMDW Yuugi pulls down her underwear and reveals her slit in a very provocative manner.
+					CASE 2
+						PRINTFORML 「You really are a daredevil to go this far with me, an oni.」
+						PRINTFORMDL You boldly declare that this is an oni extermination as you keep fingering Yuugi.
+						PRINTFORML 「Hooo, that so? So you're trying to subdue me with your sexual skills!」
+						PRINTFORMW 「If you insist, I'll play along for a little bit!」
+				ENDSELECT
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+RETURN 1
+;==================================================
+;317,腰を動かす
+;ABL:Ｖ感覚(2未満=まだ気持ち良くない 5未満=ちょっと気持ちいい 5以上=カイカン
+;==================================================
+@M_KOJO_MESSAGE_COM_K64_317
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K64_317_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K64_317_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	CALL AUTO_AEGI
+ENDIF
+RETURN 1
+;==================================================
+;318,腰を動かす（Ａ）
+;==================================================
+@M_KOJO_MESSAGE_COM_K64_318
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K64_318_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K64_318_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	CALL AUTO_AEGI
+ENDIF
+RETURN 1
+
+;====================================================================================================
+;320,相手主導正常位
+;====================================================================================================
+@M_KOJO_MESSAGE_COM_K64_320
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K64_320_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K64_320_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	CALL AUTO_AEGI
+ENDIF
+RETURN 1
+;====================================================================================================
+;322,相手主導後背位
+;====================================================================================================
+@M_KOJO_MESSAGE_COM_K64_322
+CALL TRAIN_MESSAGE
+CALL M_KOJO_MESSAGE_COM_K64_322_1
+RETURN RESULT
+
+@M_KOJO_MESSAGE_COM_K64_322_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 0
+;-------------------------------------------------
+IF LOCAL
+	CALL AUTO_AEGI
+ENDIF
+RETURN 1
+;==================================================
+;330,スカートめくり
+;TFLAG:193(-5=拒絶（ビンタ） -3=拒絶（つねり） -1=いやがる 0=いやがる（嬉しげ） 1=受け入れ)
+;TFLAG:193=1&&ABL:露出癖(5以上=人目のある場所で、自らスカートをまくり上げる 4以下=人目のある場所でめくられるさいに弱い抵抗 3以上=人目のない場所で自らスカートをまくり上げる 3未満=弱い抵抗)
+;TFLAG:400(1=デート先or地底のモブが反応する)
+;後ろからピラリ、ではなく、前からペラって感じ（そうじゃなかったら、めくり上げようとするのを止めて即座にビンタとか無理、めくり上げられた後にしかならないしその状況ならビンタ食らうより普通に弾幕で一発ＫＯにならないほうがおかしい
+;==================================================
+@M_KOJO_MESSAGE_COM_K64_330
+;CALL TRAIN_MESSAGE
+RESETCOLOR
+DRAWLINE
+CALL SET_KOJO_COLOR
+CALL M_KOJO_MESSAGE_COM_K64_330_1
+RETURN RESULT
+
+;立ち絵リソースに合わせてスカートの下にブルマを穿いている解釈にしました
+;なのでパンツじゃないから恥ずかしくないもん
+@M_KOJO_EXTRASOURCE_COM_K64_330
+SOURCE:反感 = 0
+
+@M_KOJO_MESSAGE_COM_K64_330_1
+;-------------------------------------------------
+;記入チェック（=0, 非表示、1, 表示）
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+CALL M_KOJO_COLOR_K64
+	IF FLAG:時間停止
+		PRINTFORML 
+		RETURN 1
+	;押し倒され
+	ELSEIF CFLAG:うふふ == 2
+		CALL TRAIN_MESSAGE
+		RETURN 1
+	ELSEIF OBJNAME_TO_ID(TARGET, "GET", "衣装セット", "鬼セット") ;added, wearing kimono
+		IF TCVAR:64:357 == 1 || !EQUIP:下半身下着２
+			GOTO NOPANTY
+		ELSEIF FIRSTTIME("KimonoFlip")
+			PRINTFORMDL You flip Yuugi's kimono and gaze inside, only to find out that she's wearing her underwear proper as she should.
+			PRINTFORML 「Hmm? What's the matter, you look surprised. Oh, don't tell me, you thought I'm prancing around without my panties or something?」
+			CALL PRINT_DIALOGUE, @"Haha, that's just a silly myth, a myth I say! At least I think so, I ain't eccentric enough to go around sneaking a peek under other people's kimono, just so you know.", "w"
+		ELSEIF TALENT:恋慕
+			GOTO LOVE
+		ELSE
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Hmm? Just 'cause my kimono is unbuttoned doesn't mean you get to do this willy-nilly, y'know?」
+					PRINTFORMW 「C'mon, knock that off, will ya? You're acting like some sort of kid.」
+				CASE 1
+					PRINTFORML 「What, you really wanted to see what's underneath that badly?」
+					PRINTFORMW 「Sorry to disappoint, but I ain't prancing around commando or something, nope!」
+				CASE 2
+					PRINTFORML 「If you keep doing that, then there's nothing gonna be left to the imagination, y'know?」
+					PRINTFORMW 「C'mon, don't embarrass the lady. I'm trying to look presentable for once, after all.」
+			ENDSELECT
+		ENDIF
+	;added, warning about a certain event
+	ELSEIF FIRSTTIME("YuugiSkirtFlip")
+		PRINTFORMDL You flip Yuugi's skirt, expecting to catch her by surprise.
+		PRINTFORMDL But instead of a typical girly reaction, she just stares at you with a grin.
+		PRINTFORMDL
+		PRINTFORMDL
+		PRINTFORML 「Heh, what, surprised? Yeah, I don't find this to be that big of a deal, so...」
+		PRINTFORMW 「If you find this entertaining, then be my guest! Though others might think you're a weirdo... Speaking of which!」
+		PRINTFORML 「Just between you and me, a certain Tengu likes to poke her nose into this sort of stuff. Nasty business, I know.」
+		CALL PRINT_DIALOGUE, @"Make sure you ain't overdoing it just cuz I'm letting you to, or things might turn ugly! I'd hate for you to get in trouble 'cause of me."
+		PRINTFORMDW You didn't get to examine her crotch this time, but you take note of her advice.
+	;時間停止状態でパンツを剥ぎ取り済
+	ELSEIF TCVAR:64:357 == 1 || !EQUIP:下半身下着２
+		$NOPANTY
+		PRINTFORMDL When you flip Yuugi's \@ OBJNAME_TO_ID(TARGET, "GET", "衣装セット", "鬼セット") ? kimono # skirt\@, it was no surprise that she was not wearing any panties.
+		PRINTFORMDL With no underwear in sight after you pilfered them, naturally her private parts were in full view.
+		IF OBJNAME_TO_ID(TARGET, "GET", "衣装セット", "鬼セット")
+			PRINTFORML 「Come on, put the kimono down, it's making me chilly down there.」
+			PRINTFORMDL A gust of wind flows in between her thighs, making her visibly tense.
+		ENDIF
+		PRINTFORMDL
+		PRINTFORMDL
+		SELECTCASE RAND:3
+			CASE 0
+				PRINTFORML 「I'm sure I wore them in the morning though... Am I going senile or what?」
+				PRINTFORMW 「But better tell me, how long are you gonna keep staring?」
+			CASE 1
+				PRINTFORML 「Mhmm, I guess I took 'em off after I got drunk and forgot about it...」
+				PRINTFORML 「Or maybe someone just stole 'em from me...」
+				PRINTFORMW 「Oh well, whatever the case, if there's a perp, I'll have to give him the payback he deserves!」
+			CASE 2
+				PRINTFORML 「My crotch sure gets all drafty if I don't have my underwear on... Oh, I know what to do!」
+				PRINTFORML 「%MASTERNAME:64%, can I borrow yours for now? I'll give 'em back later, promise!」
+				PRINTFORMW 「It's better than nothing I guess... Huh? You won't? C'mon, don't be such a stinker!」
+		ENDSELECT
+	;通常
+	ELSE
+		IF TALENT:恋慕
+			$LOVE
+			PRINTFORMDL %BREAKENG(@"When you try to lift up Yuugi's \@ OBJNAME_TO_ID(TARGET, "GET", "衣装セット", "鬼セット") ? kimono # skirt\@, she does so herself and shows you what's underneath...")%
+			PRINTFORMDW
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Fufufu, you wanna see it so badly, don'tcha? Here it is...」
+					PRINTFORMDL She puts her fingers around her \@ OBJNAME_TO_ID(TARGET, "GET", "衣装セット", "鬼セット") ? fundoshi # bloomers\@ and slowly slides them down.
+					PRINTFORMW 「I might as well just stop wearing 'em altogether if you like... What say you?」
+				CASE 1
+					CALL HPH_PRINT,@"「You can bring your face closer to see it if ya want...HPH」","L"
+					CALL HPH_PRINT,@"「Oh man, I gotta admit... Being seen like this kinda gets me going...HPH」","W"
+					PALAM:潤滑 += 1000
+				CASE 2
+					CALL HPH_PRINT,@"「Here... You see it, right?HPH」","L"
+					CALL HPH_PRINT,@"「I got this wet just from you looking at my pussy...HPH」","L"
+					CALL HPH_PRINT,@"「Aahh, I can hardly wait to have your stuff shoved in there...!HPH」","W"
+					PALAM:潤滑 += 2000
+			ENDSELECT
+		ELSEIF TALENT:思慕 || TALENT:セフレ || TALENT:愛欲 ;added fuck-buddy
+			PRINTFORMDL You roll up Yuugi's skirt from the front.
+			PRINTFORMDL She crosses her arms and stands tall and proud...
+			PRINTFORMDW
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「Still, what's so fun about lifting up a skirt? I don't get it.」
+					PRINTFORMW 「I think you got the wrong person if you expect me to start squealing my lungs out, y'know?」
+				CASE 1
+					PRINTFORML 「Why is my skirt transparent anyway?」
+					PRINTFORML 「Y'see, this is my one and only decent skirt I have, so...」
+					PRINTFORML 「That's what happens when you wash your clothes over and over again, I guess...」
+					PRINTFORMDW Yuugi casually shares her sentiment about her clothes even as you keep lifting up her skirt.
+				CASE 2
+					PRINTFORML 「Well, it's not like I'm gonna lose anything, so go ahead and stare all you want!」
+					PRINTFORMDL %SPLIT_G("Sweet:Lovely:Thank you very much")%! You reach out and start touching Yuugi's bloomers.
+					PRINTFORMW 「Oi, now you're seriously %SPLIT_G("asking for it:overstepping your damn boundaries")%!」
+			ENDSELECT
+		ELSE
+			PRINTFORMDL You flip Yuugi's skirt.
+			PRINTFORMDL To your surprise, you find that Yuugi is actually wearing some kind of bloomers or gym shorts underneath!
+			PRINTFORMDW
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORML 「They say those come from the Outside World, and it's very easy to move in 'em!」
+					PRINTFORML 「I love it so much now, I can't go a day without wearing 'em anymore!」
+					PRINTFORMDW Is that so...
+				CASE 1
+					PRINTFORML 「I had a feeling you were up to something, but I didn't expect you to flip up my skirt of all things!」
+					PRINTFORML 「\@ IS_MALE(MASTER) && RAND:2 ? You're one ballsy son of a bitch, hahaha! # %SPLIT_G("Well, ain't you a ballsy one, huh?:That takes some serious guts!")% You're a real piece of work, you know that?\@」
+					PRINTFORMDW You didn't get to see what you were after, but at least you get praised by Yuugi.
+				CASE 2
+					PRINTFORML 「Ha-ha-ha! Can't you already tell without doing that?」
+					PRINTFORMDL %BREAKENG(@"It's true that Yuugi's skirt is somewhat transparent, so it's obvious that she's not wearing actual underwear.")%
+					PRINTFORMDW %BREAKENG(@"Still, you might see a different world if you flip it up anyway. It's this spirit of exploration that was driving you.")%
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+RESETCOLOR
+RETURN 1

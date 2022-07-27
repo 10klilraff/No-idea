@@ -1,0 +1,19 @@
+﻿@DAILY_CONDITION_EV27
+
+IF !FLAG:土産屋大安売り && !RAND:30
+	CALL DAILY_EV27
+	RETURN 1
+ELSE
+	RETURN -1
+ENDIF
+
+@DAILY_EV27
+;この後にフラグリセットが入るので目印として+1100しておく
+FLAG:土産屋大安売り = RAND:11 + 1100
+SIF FLAG:土産屋大安売り % 100 == MAIN_MAP
+	RESTART
+IF FLAG:新聞購読
+	PRINTFORML According to Bunbunmaru, souvenir shops near %STR_TR(5000 + (FLAG:土産屋大安売り % 100) )% have started selling at a great discount, apparently.
+	PRINTFORMW Seems like all items are half off.
+ENDIF
+RETURN 1

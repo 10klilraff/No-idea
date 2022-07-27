@@ -1,0 +1,426 @@
+﻿;NOTE
+;The original function this _TR variant was based on has been changed.
+;This _TR variant will be disabled until the changes have been reflected.
+;-------------------------------------------------
+;家庭菜園
+;日常系コマンド、レベル1
+;custom qol
+;-------------------------------------------------
+@COM418_TR
+#DIM DYNAMIC nTimeInit ;for time taken calculation during your work in the garden
+#DIM DYNAMIC nTimeTaken
+#DIM DYNAMIC nWitheredCount ;amount of withered plants
+#DIM DYNAMIC nDryCount ;amount of dry plants for water all
+#DIM DYNAMIC nSprinkle ;check whether sprinkler is available or not
+#DIM DYNAMIC nHarvest ;amount of ripe plants for harvest all
+
+nSprinkle = ITEM:簡易プール && GETBIT (FLAG:プール, 2)
+
+DRAWLINE
+gLineCount = LINECOUNT
+nTimeInit = TIME
+REDRAW 0
+;main menu
+DO
+	SIF LINECOUNT - gLineCount > 0
+		CLEARLINE LINECOUNT - gLineCount
+	nTimeTaken = TIME - nTimeInit
+	
+	;reset flags
+	nWitheredCount = 0
+	nHarvest = 0
+	nDryCount = 0
+	
+	SIF FLAG:水やり代行
+		CALL COLORMESSAGE("Watering Service",C_YELLOW,1,1)
+	SIF FLAG:天滴坤神
+		CALL COLORMESSAGE("Earth God's Blessing",C_YELLOW,1,1)
+	CALL COLORMESSAGE(@"Fertilizer: x{ITEM:こやし}",C_YELLOW,1,1)
+	SIF nTimeTaken
+		PRINTFORML Time Taken: {nTimeTaken}
+		
+	PRINTFORML
+	LOCAL:1 = 1 + FLAG:畑拡張
+	FOR LOCAL,0, LOCAL:1
+		CALL SHOW_PLANT_TR(LOCAL)
+		PRINTFORML
+		SIF PLANT_WITHERED(LOCAL)
+			nWitheredCount ++
+		SIF PLANT_DRY:LOCAL > 0
+			nDryCount ++
+		SIF PLANT_GROW:LOCAL == 10
+			nHarvest ++
+	NEXT
+	DRAWLINE
+	IF !FLAG:70
+		SIF nWitheredCount
+			PRINTFORML [996] Remove Withered
+		SIF nHarvest
+			PRINTFORML [997] Harvest All (Ripe Only)
+		SIF (nSprinkle || TFLAG:水汲み) && nDryCount
+			PRINTFORML [998] Water All\@ nSprinkle ? %" "%With Sprinkler #\@
+	ENDIF
+	PRINTFORML [999] \@ nTimeTaken ? Apply # Cancel\@
+	INPUT
+	IF FLAG:70
+		;don't allow to operate the garden during time stop
+		RETURN 0
+	ELSE
+		IF INRANGE(RESULT / 100, 0, LOCAL:1)
+			CALL FARMING_TR(RESULT / 100, RESULT % 100)
+		ELSEIF RESULT == 996 && nWitheredCount
+			FOR LOCAL, 0, LOCAL:1
+				SIF PLANT_WITHERED(LOCAL)
+					CALL PLANT_REMOVE(LOCAL)
+			NEXT
+		ELSEIF RESULT == 997 && nHarvest
+			FOR LOCAL, 0, LOCAL:1
+				SIF PLANT_GROW:LOCAL == 10
+					CALL PLANT_HARVEST(LOCAL)
+			NEXT
+		ELSEIF RESULT == 998 && (nSprinkle || TFLAG:水汲み) && nDryCount
+			FOR LOCAL, 0, LOCAL:1
+				SIF PLANT_DRY:LOCAL > 0 && !PLANT_WITHERED(LOCAL)
+					CALL PLANT_WATER(LOCAL, nSprinkle ? "sprinkler" # "")
+			NEXT
+		ELSE
+			RETURN nTimeTaken ? 0 # -1
+		ENDIF
+	ENDIF
+	
+	SIF MESSKIP()
+		FORCEWAIT
+LOOP 1
+
+;processing controls
+@FARMING_TR(ARG, 行動番号)
+#DIM 行動番号
+
+LOCALS '= PLANT_TR(HATAKE_NAME:ARG)
+IF 行動番号 == 0
+	IF PLANT_TYPE:ARG > 0
+		PRINTFORMW The %PLURALIZER(LOCALS, 2)% have already been planted.
+	ELSE
+		PRINTL Please select what to plant. 
+		CALL INPLANT_TR(ARG)
+		SIF RESULT
+			TIME += 10
+	ENDIF
+ELSEIF 行動番号 == 1
+	CALL PLANT_WATER(ARG)
+ELSEIF 行動番号 == 2
+	CALL PLANT_HARVEST(ARG)
+ELSEIF 行動番号 == 3
+	IF PLANT_DRY:ARG <= 4 && PLANT_GROW:ARG <= 10
+		IF 収穫可能(ARG)
+			PRINTFORML Would you like to harvest %LOCALS% instead? 
+			CALL ASK_YN
+			IF !RESULT
+				CALL PLANT_HARVEST(ARG)
+				RETURN 1
+			ENDIF
+		ENDIF
+		PRINTFORML Do you really want to remove %LOCALS%?
+ 		CALL ASK_YN
+ 		SIF RESULT
+			RETURN 0
+	ENDIF
+	CALL PLANT_REMOVE(ARG)
+	
+;畑が拡張されたら全体にします
+ELSEIF 行動番号 == 4 && ITEM:簡易プール && GETBIT (FLAG:プール, 2)
+	CALL PLANT_WATER(ARG, "sprinkler")
+ELSEIF 行動番号 == 5 && ITEM:こやし
+	CALL PLANT_FERTILIZE(ARG)
+ELSE
+	RETURN 0
+ENDIF
+
+@INPLANT_TR(ARG)
+#DIM 苗番号開始
+#DIM 苗番号終了
+CALL QoL_Function_GardenOverhaul_Extra("veggies")
+
+FOR LOCAL, 0, 1000
+	;苗以外をを除外
+	SIF ITEM:LOCAL && STRCOUNT(ITEMNAME:LOCAL, "の苗")
+		PRINTFORMLC 　[{LOCAL}] %ITEMNAME_TR(LOCAL), 21, LEFT%× {ITEM:(LOCAL), 2, RIGHT}
+NEXT
+PRINTL
+DRAWLINE
+PRINTL [999] Return
+$INPUT_LOOP
+INPUT
+IF ITEM:RESULT && STRCOUNT(ITEMNAME:RESULT, "の苗")
+	PRINTFORMW %ITEMNAME_TR(RESULT)% has been planted in field No.{ARG}!
+	ITEM:RESULT -= 1
+	PLANT_TYPE:ARG = RESULT
+	PLANT_DRY:ARG = 1
+	;三粒の天滴を持っている場合、植えてすぐに施肥、水撒き完了状態に
+	IF ITEM:三粒の天滴
+		PLANT_DRY:ARG = 0
+		PLANT_FOOD:ARG = 1
+		FLAG:天滴坤神 = 1
+	ENDIF
+	HATAKE_NAME:ARG = %ITEMNAME_TR(苗対応作物番号取得(PLANT_TYPE:ARG))%
+	RETURN 1
+ELSE
+	RETURN 0
+ENDIF
+
+@SHOW_PLANT_TR(ARG)
+PRINTFORM Field No.{ARG}：
+IF PLANT_TYPE:ARG > 0
+	SETCOLOR 0x00FF00
+	PRINTFORM The %PLURALIZER(PLANT_TR(HATAKE_NAME:ARG), 2)% are growing 
+	IF PLANT_WITHERED(ARG)
+		SETCOLOR 0x994C00
+		PRINT (withered)
+	ELSE
+		SELECTCASE PLANT_GROW:ARG
+			CASE 10
+				SETCOLOR 0xFF0000
+				PRINT (ripe)
+			CASE 8,9
+				SETCOLOR 0xFF8000
+				PRINT (fruit)
+			CASE 6,7
+				SETCOLOR 0xFFFF00
+				PRINT (flower)
+			CASE 4,5
+				PRINT (leaf)
+			CASEELSE
+				PRINT (seedling)
+		ENDSELECT 
+	ENDIF
+	IF !PLANT_DRY:ARG
+		SETCOLOR C_AQUA
+		PRINT 　Watered
+	ENDIF
+	IF PLANT_FOOD:ARG
+		SETCOLOR C_CREAM
+		IF ITEM:三粒の天滴
+			PRINT 　Receiving the Earth God's blessing
+		ELSE
+			PRINT 　Fertilized
+		ENDIF
+	ENDIF
+	RESETCOLOR
+	;show extra info if you're not dum dum
+	SIF ABL:MASTER:教養 >= 3
+		CALL QoL_Function_GardenOverhaul_Extra("info", ARG)
+	PRINTL
+	;時間停止中は菜園の状態を見るだけ
+	SIF FLAG:70 == 1
+		RETURN
+	;水撒き
+	IF PLANT_DRY:ARG
+		LOCAL = ARG * 100 + 1
+		LOCALS = [%TOSTR(LOCAL, "000")%] - Water
+		PRINTBUTTONLC LOCALS, LOCAL
+	ELSE
+		PRINTLC 　
+	ENDIF
+	;収穫
+	IF 収穫可能(ARG)
+		LOCAL = ARG * 100 + 2
+		LOCALS = [%TOSTR(LOCAL, "000")%] - Harvest
+		SIF PLANT_GROW:ARG == 10
+			SETCOLOR 0xFF0000
+		PRINTBUTTONLC LOCALS, LOCAL
+		RESETCOLOR
+	ELSE
+		PRINTLC 　
+	ENDIF
+	;整地
+	LOCAL = ARG * 100 + 3
+	LOCALS = [%TOSTR(LOCAL, "000")%] - Remove
+	PRINTBUTTONLC LOCALS, ARG * 100 + 03
+	;スプリンクラー
+	IF ITEM:簡易プール && GETBIT (FLAG:プール, 2) && PLANT_DRY:ARG
+		LOCAL = ARG * 100 + 4
+		LOCALS = [%TOSTR(LOCAL, "000")%] - Use sprinkler
+		PRINTBUTTONLC LOCALS, LOCAL
+	ELSE
+		PRINTLC 　
+	ENDIF
+	;肥料を撒く
+	IF ITEM:こやし && PLANT_FOOD:ARG == 0
+		LOCAL = ARG * 100 + 5
+		LOCALS = [%TOSTR(LOCAL, "000")%] - Sow fertilizer
+		PRINTBUTTONLC LOCALS, LOCAL
+	ELSE
+		PRINTLC 　
+	ENDIF
+ELSE
+	PRINTL Empty
+	;時間停止中は菜園の状態を見るだけ
+	SIF FLAG:70 == 1
+		RETURN
+	;苗植え
+	LOCAL = ARG * 100 + 0
+	LOCALS = [%TOSTR(LOCAL, "000")%] - Plant seedlings
+	PRINTBUTTONLC LOCALS, LOCAL
+ENDIF
+PRINTL
+
+@PLANT_HARVEST(ARG)
+;八百屋で購入できるようになったため収穫条件の厳格化
+IF 収穫可能(ARG) == 0
+	PRINTW Cannot be harvested yet.
+	RETURN 0
+ENDIF
+SIF PLANT_DAYS:ARG > 9
+	PLANT_GROW:ARG += 2
+SIF PLANT_FOOD:ARG
+	PLANT_GROW:ARG ++
+SIF FLAG:天滴坤神 && RAND:2
+	PLANT_GROW:ARG += 2
+;大豊作…天滴とこやし補正でないと到達不能
+IF PLANT_GROW:ARG > 12
+	PRINTFORML A great harvest!
+	IF PLANT_FOOD:ARG
+		LOCAL = 20 + RAND:6 + RAND:4
+	ELSE
+		LOCAL = 20
+	ENDIF
+	LOCAL:1 = 1 + RAND:3 + RAND:2 + RAND:2
+ELSEIF PLANT_GROW:ARG > 10
+	PRINTFORML A good harvest.
+	IF PLANT_FOOD:ARG
+		LOCAL = 14 + RAND:4 + RAND:3
+	ELSE
+		LOCAL = 14
+	ENDIF
+	LOCAL:1 = RAND:2 + RAND:2 + RAND:2
+ELSEIF PLANT_GROW:ARG > 7
+	IF PLANT_FOOD:ARG
+		LOCAL = 7 + RAND:3 + RAND:2
+	ELSE
+		LOCAL = 7
+	ENDIF
+	LOCAL:1 = RAND:2
+ELSE
+	LOCAL = 5
+	LOCAL:1 = 0
+ENDIF
+;ローター一強を崩すため収穫量ダウン
+IF 苗対応作物番号取得(PLANT_TYPE:ARG) == 0
+	LOCAL /= 2
+	LOCAL:1 = 0
+ENDIF
+PRINTFORMW Harvested %PRINT_PLUR(PLANT_TR(HATAKE_NAME:ARG), LOCAL)%!
+ITEM:(苗対応作物番号取得(PLANT_TYPE:ARG)) += LOCAL
+;qol addition, recover some usable seeds from good harvests
+IF LOCAL:1
+	PRINTFORMW Recovered %PRINT_PLUR("seed", LOCAL:1)%!
+	ITEM:(PLANT_TYPE:ARG) += LOCAL:1
+ENDIF
+PLANT_TYPE:ARG = 0
+PLANT_DAYS:ARG = 0
+PLANT_GROW:ARG = 0
+PLANT_DRY:ARG = 0
+HATAKE_NAME:ARG =
+PLANT_FOOD:ARG = 0
+TIME += 20
+
+@PLANT_WATER(ARG, ARGS)
+IF PLANT_WITHERED(ARG)
+	PRINTFORMW The plant is already withered...
+ELSEIF !PLANT_DRY:ARG
+	PRINTFORMW That should be enough for today.
+ELSEIF ARGS != "sprinkler" && !TFLAG:水汲み
+	PRINTFORMW Has to have fetched water first.
+ELSE
+	PLANT_DRY:ARG = 0
+	PRINTFORMW The %PLURALIZER(PLANT_TR(HATAKE_NAME:ARG), 2)% have been watered.
+	SIF ITEM:三粒の天滴
+		FLAG:天滴坤神 = 1
+	TIME += 5
+ENDIF
+
+@PLANT_FERTILIZE(ARG)
+IF 収穫可能(ARG)
+	PRINTFORMW The plant is too old!
+ELSEIF PLANT_WITHERED(ARG)
+	PRINTFORMW The plant is already withered...
+ELSEIF PLANT_FOOD:ARG
+	PRINTFORMW Don't use too much fertilizer.
+ELSE
+	PLANT_FOOD:ARG = 1
+	PRINTFORMW The %PLURALIZER(PLANT_TR(HATAKE_NAME:ARG), 2)% have been fertilized.
+	TIME += 20
+	ITEM:こやし --
+ENDIF
+
+@PLANT_REMOVE(ARG)
+PRINTFORMW The %PLURALIZER(PLANT_TR(HATAKE_NAME:ARG), 2)% have been removed.
+PLANT_TYPE:ARG = 0
+PLANT_DAYS:ARG = 0
+PLANT_GROW:ARG = 0
+PLANT_DRY:ARG = 0
+HATAKE_NAME:ARG =
+PLANT_FOOD:ARG = 0
+TIME += 10
+
+@PLANT_COUNT(ARGS)
+#FUNCTION
+LOCAL = 0
+FOR LOCAL,0, 1 + FLAG:畑拡張
+	SELECTCASE ARGS
+		CASE "withered"
+			SIF PLANT_WITHERED(LOCAL)
+				LOCAL ++
+		CASE "ripe"
+			SIF PLANT_GROW:LOCAL == 10
+				LOCAL ++
+		CASE "harvest"
+			SIF PLANT_GROW:LOCAL > 7
+				LOCAL ++
+		CASE "dry"
+			SIF PLANT_DRY:LOCAL > 0
+				LOCAL ++
+		CASE "growing"
+			SIF HATAKE_NAME:LOCAL != "" && PLANT_TYPE:LOCAL > 0
+				LOCAL ++
+	ENDSELECT
+NEXT
+RETURNF LOCAL
+
+@PLANT_WITHERED(ARG)
+#FUNCTION
+RETURNF (PLANT_DRY:ARG > 4 || PLANT_GROW:ARG > 10)
+
+@QoL_Function_GardenOverhaul_Extra(ARGS, ARG)
+SELECTCASE ARGS
+	CASE "info"
+		PRINTFORM 　Age: %PRINT_PLUR("Day", PLANT_DAYS:ARG)%, Dry: {PLANT_DRY:ARG}
+	CASE "reactions"
+	CASE "ripewarn"
+		LOCAL:1 = 0
+		FOR LOCAL,0, 1 + FLAG:畑拡張
+			SIF PLANT_GROW:LOCAL == 10 && (++LOCAL:1)
+				CALL COLORMESSAGE(@"The %PLURALIZER(PLANT_TR(HATAKE_NAME:LOCAL), 2)% are ready for harvesting!",C_GREEN,2,1)
+		NEXT
+		SIF LOCAL:1
+			CALL COLORMESSAGE("Make sure to harvest them today before they go bad!",C_GREEN,2,1)
+	CASE "veggies"
+		DRAWLINE
+		PRINTFORML Held Vegetables:
+		CALL LIST_ITEM("野菜")
+		CALL LIST_ITEM("ローター")
+		DRAWLINE
+ENDSELECT
+
+@EVENTTRAIN
+#LATER
+CALL QoL_Function_GardenOverhaul_Extra("ripewarn")
+
+@UNWITHER()
+#FUNCTION
+FOR LOCAL, 0, 1 + FLAG:畑拡張
+	IF PLANT_WITHERED(LOCAL)
+		PLANT_DRY:LOCAL = 0
+		PLANT_GROW:LOCAL = 10
+	ENDIF
+NEXT
